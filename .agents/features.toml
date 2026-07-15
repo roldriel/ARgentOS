@@ -1,0 +1,30 @@
+# Feature flags for the .agents protocol.
+# All flags default to true. Users can disable individual capabilities via
+# environment variables with the AGENTS_FEATURE_<FLAG> prefix.
+
+[features]
+decision_trees = true
+rubrics = true
+knowledge_base = true
+caveman = true
+project_discovery = true
+
+# Technical practices
+tdd = true
+srp = true
+ocp = true
+lsp = true
+isp = true
+dip = true
+screaming_architecture = true
+clean_architecture = true
+dry = true
+layered_architecture = true
+grasp = true
+ddd_tactical = true
+ddd_strategic = true
+
+[health_check]
+# Maximum age of the last successful health check before the orchestrator
+# runs it automatically at session start.
+ttl_hours = 24

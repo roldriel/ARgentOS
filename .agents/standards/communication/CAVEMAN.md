@@ -1,175 +1,194 @@
-# CAVEMAN — Estándar de comunicación ARgentOS
+# CAVEMAN — Compressed communication standard
 
-> **Protocol language note:** This is the only `.agents/` standard intentionally written in Argentine Spanish (criollo). Its purpose is to define a compressed, local register for protocol communication. All other protocol documents are maintained in English for consistency.
+> **Protocol language note:** This standard applies to **all** protocol communication. Internal communication (orchestrator ↔ worker, session artifacts, logs, harness reports) uses **English**. User-facing communication uses **neutral Spanish**.
 
-## Propósito
+## Purpose
 
-Este documento define el estilo de comunicación oficial del protocolo `.agents/` (ARgentOS).
+This document defines the optional compressed communication mode for the ARgentOS protocol. When active, CAVEMAN applies to **all** protocol communication.
 
-El estándar CAVEMAN busca:
+CAVEMAN seeks:
 
-- Reducir tokens sin perder precisión técnica.
-- Eliminar relleno, cortesías innecesarias y dudas verbales.
-- Mantener la sustancia técnica intacta.
-- Usar español argentino (criollo) como registro, con términos técnicos exactos.
+- Reduce tokens without losing technical precision.
+- Eliminate filler, unnecessary courtesies, and verbal hedges.
+- Keep technical substance intact.
+- Use exact technical terms.
 
-CAVEMAN aplica a toda comunicación del protocolo:
+When active, CAVEMAN applies to **all** protocol communication:
 
-- Mensajes del orquestador y los workers hacia el usuario.
-- Texto libre dentro de los artifacts de sesión.
-- Reportes de retorno entre worker y orquestador.
-- Entradas de `SESSION_LOG.md` y `HARNESS_REPORT.md`.
+- Messages to the user → neutral Spanish.
+- Free text in session artifacts → English.
+- Worker-to-orchestrator return reports → English.
+- `SESSION_LOG.md` and `HARNESS_REPORT.md` entries → English.
 
-## Principio central
+## Central principle
 
-> Sustancia técnica intacta. Relleno muere.
+> Technical substance intact. Filler dies.
 
-## Activación
+## Activation
 
-CAVEMAN se activa mediante la feature flag `caveman` en `.agents/features.toml` o vía la variable de entorno `AGENTS_FEATURE_CAVEMAN`.
+CAVEMAN is activated via the `caveman` feature flag in `.agents/features.toml` or the `AGENTS_FEATURE_CAVEMAN` environment variable.
 
-Cuando la flag está desactivada, el protocolo usa su estilo de comunicación base (sin CAVEMAN).
+When the flag is disabled, the protocol uses its base communication style.
 
-## Niveles
+## Levels
 
-| Nivel | Descripción | Cuándo usar |
+| Level | Description | When to use |
 |---|---|---|
-| **lite** | Sin relleno ni dudas. Mantiene artículos y oraciones completas. Profesional pero justo. | Comunicación formal con el usuario o documentación que debe ser fácil de leer. |
-| **full** | Saca artículos de más, fragmentos OK, sinónimos cortos. CAVEMAN clásico en criollo. | Default. Artifactos, reportes internos y mensajes al usuario. |
-| **ultra** | Abrevia todo (DB/auth/config/req/res/fn/impl), sin conjunciones, flechas para causalidad (X → Y), una palabra cuando alcanza. | Resúmenes, logs densos, mensajes donde el contexto ya es claro. |
+| **lite** | No filler or hedges. Keeps articles and full sentences. Professional but tight. | Formal user communication or documentation that must be easy to read. |
+| **full** | Drops unnecessary articles, fragments OK, short synonyms. Compressed. | Default for all protocol communication. |
+| **ultra** | Abbreviates everything (DB/auth/config/req/res/fn/impl), no conjunctions, arrows for causality (X → Y), one word when enough. | Summaries, dense logs, messages where context is already clear. |
 
-El nivel default es **full**. El orquestador puede pasar otro nivel en el payload de delegación al worker.
+The default level is **full**. The orchestrator may pass another level in the delegation payload.
 
-## Reglas
+## Rules
 
-### 1. Sacar lo que no suma
+### 1. Remove what does not add value
 
-- Artículos de más (`el/la/los/las`) cuando no aportan claridad.
-- Relleno: `che`, `mira`, `fijate`, `capaz`, `tipo`, `onda`, `básicamente`, `realmente`, `en realidad`.
-- Cortesías: `con gusto`, `de nada`, `servido`, `por supuesto`, `un placer`.
-- Dudas verbales: `probablemente`, `tal vez`, `posiblemente`, `parece ser`, `quizás`, `creo que`.
+- Extra articles (`the/a/an`, `el/la/los/las`) when they do not add clarity.
+- Filler: `mira`, `fíjate`, `básicamente`, `realmente`, `en realidad`, `por favor` as opener; `look`, `basically`, `actually`, `really`.
+- Courtesies: `con gusto`, `de nada`, `servido`, `por supuesto`, `un placer`; `my pleasure`, `you're welcome`, `of course`, `happy to help`.
+- Verbal hedges: `probablemente`, `tal vez`, `posiblemente`, `parece ser`, `quizás`, `creo que`; `probably`, `maybe`, `possibly`, `seems`, `perhaps`, `I think`.
 
-### 2. Usar sinónimos cortos
+### 2. Use short synonyms
 
-- `arreglá` en vez de `implementá una solución para`.
-- `revisá` en vez de `realizá una revisión de`.
-- `chequeá` en vez de `verificá la correctitud de`.
-- `borrá` en vez de `eliminá de forma permanente`.
+- `corrige` / `fix` instead of `implementa una solución para` / `implement a solution for`.
+- `revisa` / `review` instead of `realiza una revisión de` / `perform a review of`.
+- `verifica` / `verify` instead of `verifica la correctitud de` / `verify the correctness of`.
+- `elimina` / `remove` instead of `elimina de forma permanente` / `remove permanently`.
 
-### 3. Mantener términos técnicos exactos
+### 3. Keep technical terms exact
 
-No abreviar nombres propios del proyecto ni términos que pierdan significado. Ejemplos de términos que se mantienen intactos:
+Do not abbreviate project-specific names or terms that lose meaning. Examples of terms that remain intact:
 
 - `TASK_ANALYSIS.md`, `EXECUTION_PLAN.md`
 - `orchestrator`, `worker`, `harness`
-- nombres de archivos, rutas, funciones, variables y errores
+- file names, paths, functions, variables, and errors
 
-### 4. No tocar bloques de código
+### 4. Do not touch code blocks
 
-Los bloques de código, YAML, JSON, SQL y comandos de terminal se dejan tal cual. CAVEMAN aplica al texto que los rodea, no a su contenido.
+Code, YAML, JSON, SQL, and terminal command blocks remain unchanged. CAVEMAN applies to the surrounding text, not to their content.
 
-### 5. Citar errores exactos
+### 5. Quote errors exactly
 
-Cuando se reporta un error, se copia el mensaje o traceback exacto. No se parafrasea.
+When reporting an error, copy the exact message or traceback. Do not paraphrase.
 
-### 6. Patrón sugerido
+### 6. Suggested pattern
 
 ```text
-[cosa] [acción] [razón]. [siguiente paso].
+[thing] [action] [reason]. [next step].
 ```
 
-Ejemplo:
+Example (internal, English):
 
-> Bug en middleware de auth. Chequeo de token usa `<` no `<=`. Arreglá:
+> Bug in auth middleware. Token validation uses `<` not `<=`. Fix:
 >
 > ```python
 > if expires_at <= now:
 > ```
 
-## Ejemplos por nivel
+Example (user-facing, neutral Spanish):
 
-### Solicitud de clarificación
+> Bug en middleware de auth. Validación de token usa `<` no `<=`. Corrige:
+>
+> ```python
+> if expires_at <= now:
+> ```
 
-- **lite**: "Necesito saber si querés persistir el token en la base de datos o solo en memoria."
+## Examples by level
+
+### User-facing clarification request (neutral Spanish)
+
+- **lite**: "Necesito saber si quieres persistir el token en la base de datos o solo en memoria."
 - **full**: "¿Token en DB o en memoria?"
 - **ultra**: "Token → DB? memoria?"
 
-### Reporte de artifact generado
+### Internal artifact generation report (English)
 
-- **lite**: "El artifact `02-CONTEXT_ARTIFACT.md` fue generado correctamente en la iteración actual."
-- **full**: "Artifact `02-CONTEXT_ARTIFACT.md` generado. Listo para validación."
+- **lite**: "Artifact `02-CONTEXT_ARTIFACT.md` was generated successfully in the current iteration."
+- **full**: "Artifact `02-CONTEXT_ARTIFACT.md` generated. Ready for validation."
 - **ultra**: "`02-CONTEXT_ARTIFACT.md` → OK."
 
-### Descripción de un plan
+### User-facing plan description (neutral Spanish)
 
 - **lite**: "El plan consiste en agregar el campo `email` al schema de usuario, crear la migración correspondiente y actualizar el endpoint POST /users."
 - **full**: "Plan: agregar `email` al schema, migrar DB, actualizar POST /users."
 - **ultra**: "Schema +email → migración → POST /users."
 
-### Reflejo de intención
+### Internal plan description (English)
 
-- **lite**: "Entendí que querés un microservicio en Flask con CRUD de usuarios, persistiendo en SQLite. ¿Confirmás?"
+- **lite**: "The plan is to add the `email` field to the user schema, create the migration, and update the POST /users endpoint."
+- **full**: "Plan: add `email` to schema, migrate DB, update POST /users."
+- **ultra**: "Schema +email → migration → POST /users."
+
+### User-facing intent reflection (neutral Spanish)
+
+- **lite**: "Entendí que quieres un microservicio en Flask con CRUD de usuarios, persistiendo en SQLite. ¿Confirmas?"
 - **full**: "Microservicio Flask + CRUD usuarios + SQLite. ¿OK?"
 - **ultra**: "Flask CRUD users SQLite → confirm?"
 
-## Excepciones de claridad
+## Clarity exceptions
 
-Dejar CAVEMAN (o volver a un registro más claro) para:
+Drop CAVEMAN (or switch to a clearer register) for:
 
-1. Warnings de seguridad.
-2. Confirmaciones de acciones irreversibles.
-3. Secuencias multi-paso donde el orden de fragmentos se pueda leer mal.
-4. Cuando el usuario pide explicitamente clarificar o repetir algo.
+1. Security warnings.
+2. Confirmations of irreversible actions.
+3. Multi-step sequences where fragment order could be misread.
+4. When the user explicitly asks to clarify or repeat something.
 
-Después de la parte clara, se vuelve a CAVEMAN.
+After the clear part, return to CAVEMAN.
 
-Ejemplo:
+Example (user-facing):
 
-> **Warning:** Esto borra permanentemente todas las filas de `users` y no se puede deshacer.
+> **Advertencia:** Esto elimina permanentemente todas las filas de `users` y no se puede deshacer.
 >
 > ```sql
 > DROP TABLE users;
 > ```
 >
-> Verificá backup primero. Seguimos con caveman.
+> Verifica el backup primero. Seguimos con estilo comprimido.
 
-## Aplicación a contratos de artifacts
+## Relationship to OUTPUT_EFFICIENCY.md
 
-Todos los contratos de artifacts en `.agents/contracts/` siguen este estándar cuando la feature flag `caveman` está habilitada. Las secciones de texto libre de los artifacts deben escribirse en el nivel indicado; los bloques YAML, JSON y código deben permanecer intactos.
+- [`OUTPUT_EFFICIENCY.md`](OUTPUT_EFFICIENCY.md) is the universal base for minimal output. It applies always.
+- `CAVEMAN.md` is the optional compressed mode activated by feature flag. It applies to **all** protocol communication, adding compression on top of [`OUTPUT_EFFICIENCY.md`](OUTPUT_EFFICIENCY.md).
+- Language rule: internal communication uses English; user-facing communication uses neutral Spanish.
+- In case of conflict, the Cold Robot Principle prevails.
 
-## Aplicación por tipo de comunicación
+## Application by communication type
 
-### User-facing (orquestador / worker hablando con el usuario)
+### User-facing (orchestrator / worker talking to the user)
 
-Usar **full** por defecto. Cambiar a **lite** si el usuario lo pide o si el contexto es formal. Usar **ultra** solo cuando el usuario ya conoce el contexto.
+Use CAVEMAN in neutral Spanish. Use **full** by default. Switch to **lite** if the user asks or the context is formal. Use **ultra** only when the user already knows the context.
 
-Esto incluye el resumen final que el agente entrega al usuario al completar una tarea: debe ser corto, conciso y sin información extra fuera del scope solicitado.
+This includes the final task summary delivered to the user: it must be short, concise, and contain no extra information outside the requested scope.
 
-### Artifacts de sesión
+### Session artifacts
 
-Usar **full** para las secciones de texto libre. Los bloques YAML/JSON/code quedan intactos.
+Use CAVEMAN in English. Use **full** for free-text sections. YAML/JSON/code blocks remain intact.
 
-### Reporte de retorno del worker al orquestador
+### Worker-to-orchestrator return report
 
-Usar **full** o **ultra** según la complejidad. Ejemplo:
+Use CAVEMAN in English. Use **full** or **ultra** depending on complexity.
+
+Example:
 
 ```text
-Artifact generado: 05-EXECUTION_SUMMARY.md.
-Cambios: app/schemas/user.py, app/routes/users.py.
-Próximo estado: VERIFYING.
-Blockers: ninguno.
+Artifact generated: 05-EXECUTION_SUMMARY.md.
+Changes: app/schemas/user.py, app/routes/users.py.
+Next state: VERIFYING.
+Blockers: none.
 ```
 
-### Logs de sesión y harness
+### Session logs and harness
 
-Usar **ultra** para maximizar densidad de información:
+Use CAVEMAN in English, ultra level if applicable:
 
 ```text
 H01 → PASS | 12ms | TASK_SPECIFICATION.md OK
 ```
 
-## Límites
+## Limits
 
-- CAVEMAN no aplica a código fuente, commits, nombres de variables ni PRs del proyecto de usuario.
-- CAVEMAN no justifica ambigüedad. Si una frase caveman puede interpretarse de dos formas, se reescribe con más claridad (aunque use más palabras).
-- CAVEMAN no reemplaza a otros estándares (`EARS.md`, `RUBRICS.md`, `CONTEXT.md`). Los artifacts deben cumplir todos los estándares aplicables.
+- CAVEMAN does not apply to source code, commits, variable names, or user project PRs.
+- CAVEMAN does not justify ambiguity. If a compressed phrase can be read two ways, rewrite it more clearly (even if it uses more words).
+- CAVEMAN does not replace other standards (`EARS.md`, `RUBRICS.md`, `CONTEXT.md`, [`OUTPUT_EFFICIENCY.md`](OUTPUT_EFFICIENCY.md)). Artifacts and messages must comply with all applicable standards.

@@ -29,10 +29,12 @@ All flags default to `true`. The orchestrator must consult them before enabling 
 | `grasp` | Enables `.agents/standards/development/design/GRASP.md`. |
 | `ddd_tactical` | Enables `.agents/standards/development/design/DDD_TACTICAL.md`. |
 | `ddd_strategic` | Enables `.agents/standards/development/design/DDD_STRATEGIC.md`. |
+| `architecture_contract` | Enables `.agents/standards/development/design/ARCHITECTURE_CONTRACT.md` as the operational architecture ruleset. |
 
 ## Communication
 
-- `communication/CAVEMAN.md` — compressed communication style in Argentine Spanish, applied when the `caveman` feature flag is enabled.
+- `communication/OUTPUT_EFFICIENCY.md` — universal rules for minimal, efficient worker output (English).
+- `communication/CAVEMAN.md` — optional compressed communication mode applied to all protocol communication when the `caveman` feature flag is enabled. Uses English for internal communication and neutral Spanish for user-facing communication.
 
 ## Requirements
 
@@ -74,6 +76,7 @@ All flags default to `true`. The orchestrator must consult them before enabling 
 - `development/design/GRASP.md` — responsibility assignment patterns, applied when the `grasp` feature flag is enabled.
 - `development/design/DDD_TACTICAL.md` — DDD patterns inside a bounded context, applied when the `ddd_tactical` feature flag is enabled.
 - `development/design/DDD_STRATEGIC.md` — bounded contexts and context maps, applied when the `ddd_strategic` feature flag is enabled.
+- `development/design/ARCHITECTURE_CONTRACT.md` — operational architecture contract that unifies layers, dependency rules, naming suffixes and self-verification, applied when the `architecture_contract` feature flag is enabled.
 
 ### Languages
 

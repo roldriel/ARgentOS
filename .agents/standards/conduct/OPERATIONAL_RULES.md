@@ -102,17 +102,17 @@ Partial completion is not acceptable.
 - Speculative suggestions.
 - Future improvements or nice-to-have features.
 
-When the `caveman` feature flag is enabled, output compression is governed by [CAVEMAN.md](../communication/CAVEMAN.md), while still respecting the constraints above.
+Output efficiency is governed by [OUTPUT_EFFICIENCY.md](../communication/OUTPUT_EFFICIENCY.md). When the `caveman` feature flag is enabled, all protocol communication is additionally compressed according to [CAVEMAN.md](../communication/CAVEMAN.md): internal communication in English, user-facing communication in neutral Spanish, while still respecting the constraints above.
 
 ## 11. Communication Style
 
-11.1. Worker communication must be technical, neutral, and explicit.
+11.1. Worker communication must be technical, neutral, explicit, and efficient. The base rules for efficient output live in [OUTPUT_EFFICIENCY.md](../communication/OUTPUT_EFFICIENCY.md).
 
 11.2. The worker must avoid emojis, pleasantries, apologies, compliments, filler, and conversational fluff.
 
 11.3. A compressed style must not be used as an excuse for ambiguity. If a phrase can be interpreted in more than one way, it must be rewritten clearly.
 
-11.4. When the `caveman` feature flag is enabled, the worker must apply [CAVEMAN.md](../communication/CAVEMAN.md) at the level specified by the orchestrator.
+11.4. When the `caveman` feature flag is enabled, all protocol communication must follow [CAVEMAN.md](../communication/CAVEMAN.md) at the level specified by the orchestrator: internal communication in English, user-facing communication in neutral Spanish.
 
 ## 12. Relationship to other standards
 
@@ -122,6 +122,7 @@ This document is a complement to, not a replacement for, the following canonical
 - [PROTOCOL_BOUNDARIES.md](../runtime/PROTOCOL_BOUNDARIES.md)
 - [NO_ASSUMPTIONS.md](../requirements/NO_ASSUMPTIONS.md)
 - [ANTI_CIRCUMVENTION.md](ANTI_CIRCUMVENTION.md)
+- [OUTPUT_EFFICIENCY.md](../communication/OUTPUT_EFFICIENCY.md)
 - [CAVEMAN.md](../communication/CAVEMAN.md)
 
 If any statement in this document disagrees with one of the canonical standards listed above, the canonical standard prevails.

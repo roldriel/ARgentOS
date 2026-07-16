@@ -23,6 +23,7 @@ layered_architecture = true
 grasp = true
 ddd_tactical = true
 ddd_strategic = true
+architecture_contract = false
 
 [health_check]
 # Maximum age of the last successful health check before the orchestrator

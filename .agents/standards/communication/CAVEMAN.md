@@ -1,6 +1,6 @@
 # CAVEMAN — Compressed communication standard
 
-> **Protocol language note:** This standard applies to **all** protocol communication. Internal communication (orchestrator ↔ worker, session artifacts, logs, harness reports) uses **English**. User-facing communication uses **neutral Spanish**.
+> **Protocol language note:** This standard applies to **all** protocol communication. Internal communication (orchestrator ↔ worker, session artifacts, logs, harness reports) uses **English**. User-facing communication uses **neutral Spanish**. This file is the only authorized exception to the English-only requirement; all other `.agents/` documentation must be in English.
 
 ## Purpose
 

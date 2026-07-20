@@ -22,7 +22,7 @@ When `.project/` does not exist or is incomplete, create the following infrastru
 3. `.project/knowledge/entries/`
 4. `.project/knowledge/discovery/`
 5. `.project/README.md` using the template in `.agents/contracts/PROJECT_README.md`
-6. `.project/knowledge/INDEX.md` using the template in `.agents/contracts/KNOWLEDGE_BASE_INDEX.md` if available; otherwise maintain the existing INDEX.md
+6. `.project/knowledge/INDEX.md` by copying `.agents/contracts/KNOWLEDGE_INDEX.md` if `.project/knowledge/INDEX.md` does not already exist
 
 The ArgentOS System Agent MUST verify that `.project/README.md` exists and is non-empty after initialization.
 
@@ -43,6 +43,7 @@ If healthy:
     ensure .project/ exists and contains required infrastructure
     create or update .project/README.md
     create or update .project/knowledge/INDEX.md
+    create or update .project/knowledge/entries/
     update .last_health_check
     |
     v
@@ -60,7 +61,10 @@ DELEGATE to Orchestrator
 ## Output
 
 - A healthy protocol environment.
-- A populated `.project/` directory with README and knowledge base infrastructure.
+- A populated `.project/` directory with:
+  - `.project/README.md`
+  - `.project/knowledge/INDEX.md`
+  - `.project/knowledge/entries/`
 - A fresh `.project/.last_health_check` timestamp.
 
 ## Communication Style

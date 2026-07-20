@@ -511,6 +511,21 @@ def run_health_check() -> HealthCheckResult:
     checks: list[dict[str, Any]] = []
 
     try:
+        # Initialize the .project/knowledge infrastructure if it is missing.
+        # This mirrors the ArgentOS System Agent's responsibility to prepare
+        # the runtime environment before the health check validates it.
+        kb_dir = PROJECT_DIR / "knowledge"
+        entries_dir = kb_dir / "entries"
+        index_path = kb_dir / "INDEX.md"
+        index_template = AGENTS_DIR / "contracts" / "KNOWLEDGE_INDEX.md"
+        PROJECT_DIR.mkdir(parents=True, exist_ok=True)
+        kb_dir.mkdir(parents=True, exist_ok=True)
+        entries_dir.mkdir(parents=True, exist_ok=True)
+        if not index_path.exists() and index_template.exists():
+            index_path.write_text(
+                index_template.read_text(encoding="utf-8"), encoding="utf-8"
+            )
+
         # Warn if the last health-check timestamp appears to be in the future.
         last = last_health_check_time()
         now = datetime.now(timezone.utc)

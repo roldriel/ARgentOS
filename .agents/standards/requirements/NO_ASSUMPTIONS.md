@@ -54,7 +54,7 @@ When the user provides a clarification:
 
 - If it becomes a fixed rule, record it under `Constraints` in `TASK_SPECIFICATION.md`.
 - If it becomes a verifiable behavior, record it as an acceptance criterion in `TASK_SPECIFICATION.md`.
-- If it is a confirmed fact that the implementation depends on, record it under `Assumptions` in `TASK_SPECIFICATION.md` and mark it as `user_confirmed`.
+- If it is a confirmed fact that the implementation depends on, record it as an `assumptions` entry in `TASK_SPECIFICATION.md` with `assumption: <text>` and `user_confirmed: true`.
 
 ## Relationship to other standards
 

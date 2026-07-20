@@ -1,6 +1,6 @@
 +++
 artifact = "CONTEXT_ARTIFACT.md"
-phase = "02"
+phase = "03"
 produced_by = "context_gatherer"
 +++
 
@@ -176,3 +176,12 @@ Current workflow state associated with this artifact.
 ```yaml
 state: ""
 ```
+
+## Relationship to project artifacts
+
+The `Project Context` section may reference the project's persistent context artifacts:
+
+- `project-map.md`
+- `technical-analysis.md`
+
+The structure of these artifacts is defined in `.agents/standards/context/PROJECT_ARTIFACTS.md`. This artifact does not replace them; it may summarize or cite them as evidence.

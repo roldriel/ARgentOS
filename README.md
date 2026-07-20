@@ -1,67 +1,19 @@
 # ARgentOS
 
-Agent-based stateful orchestration protocol under `.agents/`.
+ARgentOS is a state-based agent orchestration protocol governed by the `.agents/` directory.
 
-## Ejemplo: microservicio Flask 3 (ABM de Usuarios)
+## Protocol
 
-Este repositorio incluye un microservicio de ejemplo generado siguiendo el protocolo `.agents`.
+The full protocol entry point is [`AGENTS.md`](AGENTS.md).
 
-### Estructura
+## Testing the protocol
 
-```text
-src/
-├── api/              # Blueprints y schemas (capa de presentación)
-├── domain/           # Entidades y validadores (reglas de negocio)
-├── infrastructure/   # Modelos SQLAlchemy, repositorio y DB
-├── app.py            # Flask app factory
-└── config.py         # Configuración
-```
+To validate the `.agents/` workflow, a Flask ABM-style microservice with endpoints, validations, persistence, and tests is used as a model. This microservice is only a test model and may not be available depending on the tests executed at any given time.
 
-### Requisitos
+## Quick start
 
-- Python 3.10+
-- Entorno virtual activado (ver `venv/`)
-- Dependencias en `requirements.txt`
+Read [`AGENTS.md`](AGENTS.md) to learn how to use the protocol.
 
-### Instalación
+## Implementation plans
 
-```bash
-# Activar entorno virtual
-source venv/Scripts/activate  # Windows Git Bash
-# venv\Scripts\activate       # Windows CMD/PowerShell
-
-# Instalar dependencias
-pip install -r requirements.txt
-```
-
-### Ejecutar
-
-```bash
-python run.py
-```
-
-La API queda disponible en `http://localhost:5000`.
-
-### Endpoints
-
-| Método | Endpoint       | Descripción           |
-| ------ | -------------- | --------------------- |
-| POST   | /users         | Crear usuario         |
-| GET    | /users         | Listar usuarios       |
-| GET    | /users/<uuid>  | Obtener usuario       |
-| PUT    | /users/<uuid>  | Actualizar usuario    |
-| DELETE | /users/<uuid>  | Eliminar usuario      |
-| GET    | /health        | Health check          |
-
-### Tests
-
-```bash
-pytest tests/ -v
-```
-
-### Datos del usuario
-
-- `id`: UUID v4 generado automáticamente.
-- `email`: formato válido, único.
-- `username`: único, mínimo 3 caracteres.
-- `password`: alfanumérico, mínimo 6 caracteres; se almacena hasheado.
+All implementation plans generated for this project by agents (or otherwise) must be placed in the `plans/` directory at the repository root.

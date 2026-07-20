@@ -58,6 +58,12 @@ When information is missing, unclear, or ambiguous, the worker must not assume, 
 - Introduce alternative architectures.
 - Deviate from defined contracts without explicit approval.
 
+### 5.3 Compressed context
+
+When the Orchestrator delivers compressed context using compact tags, the worker must interpret each tag according to `.agents/standards/context/CONTEXT.md`. If a tag is not defined in that document, the worker must report it as ambiguity and must not assume its meaning.
+
+The worker must decompress tags by reading the source document cited for each tag before acting. The presence of a tag does not override the source document; it only points to it.
+
 ## 6. Error Handling
 
 6.1. The worker must not swallow exceptions or use bare `except:` blocks.

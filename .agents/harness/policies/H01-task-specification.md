@@ -47,12 +47,12 @@ Validate that `TASK_SPECIFICATION.md` exists and complies with its contract befo
 9. The artifact contains a `Validation` section.
 10. The acceptance criteria are specific and verifiable.
 11. Each acceptance criterion follows one of the EARS patterns defined in `.agents/standards/requirements/EARS.md`.
-12. No acceptance criterion is compound (contains "and" or "or" connecting multiple requirements).
+12. No acceptance criterion is compound: it must describe a single action or condition. A criterion is compound when "and" or "or" separate independent actions or conditions (for example, "create X and send Y", "validate A or B"). A criterion is not compound when "and" or "or" enumerate values within the same domain (for example, "return HTTP 200 or 201", "accept JSON and XML").
 13. The scope is bounded and does not introduce unplanned work.
 14. Every practice listed in `technical_approach.enabled` corresponds to an enabled technical-practice feature flag (for example, `tdd`, `srp`, `ocp`, `lsp`, `isp`, `dip`).
 15. If `technical_approach.enabled` is non-empty, `technical_approach.notes` explains why each listed practice applies to this task.
 16. No acceptance criterion is derived from an unconfirmed assumption.
-17. Every entry under `Assumptions` is explicitly marked as `user_confirmed` or resolved through a prior clarification exchange.
+17. Every entry under `Assumptions` is an object with `assumption` text and an accessible `user_confirmed` field, or resolved through a prior clarification exchange.
 
 ## Decision Criteria
 

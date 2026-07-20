@@ -1,10 +1,14 @@
 +++
 artifact = "KB_DISCOVERY_REPORT.md"
-phase = "02b"
+phase = "n/a"
 produced_by = "context_discoverer"
 +++
 
 # Contract: KB Discovery Report
+
+## Scope
+
+This artifact is produced by the `context_discoverer` worker. It is **not** a main workflow phase artifact; it is optional and runs during context gathering when the `knowledge_base` feature flag is enabled.
 
 ## Purpose
 

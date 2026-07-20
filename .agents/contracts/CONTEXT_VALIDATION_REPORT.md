@@ -1,6 +1,6 @@
 +++
 artifact = "CONTEXT_VALIDATION_REPORT.md"
-phase = "03"
+phase = "04"
 produced_by = "context_validator"
 +++
 
@@ -203,6 +203,14 @@ Example:
 transition:
   current_state: VALIDATING_CONTEXT
   next_state: CONTEXT_READY
+```
+
+If validation fails due to missing or ambiguous information:
+
+```yaml
+transition:
+  current_state: VALIDATING_CONTEXT
+  next_state: NEEDS_CLARIFICATION
 ```
 
 ---

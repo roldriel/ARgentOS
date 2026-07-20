@@ -54,7 +54,8 @@ All flags default to `true`. The orchestrator must consult them before enabling 
 
 ## Context
 
-- `context/CONTEXT.md` — context engineering and knowledge-base budgets.
+- `context/CONTEXT.md` — context engineering, knowledge-base budgets, context compression techniques, and compact tags.
+- `context/PROJECT_ARTIFACTS.md` — standard for project-level context artifacts `project-map.md` and `technical-analysis.md`.
 
 ## Testing
 
@@ -81,6 +82,23 @@ All flags default to `true`. The orchestrator must consult them before enabling 
 ### Languages
 
 - `development/languages/INDEX.md` — placeholder index for language-specific conventions.
+
+## Orchestration
+
+- `orchestration/ORCHESTRATION_GUIDE.md` — decision procedure for selecting worker profiles and delegation payloads.
+- `orchestration/README.md` — overview of orchestration standards.
+
+### Worker profiles
+
+Specialized worker profiles live in `.agents/roles/profiles/` and are enabled by the `profile` field in `.agents/delegation/WORKER_DELEGATION_CONTRACT.md`.
+
+- `.agents/roles/profiles/README.md` — catalog and usage guide.
+- `.agents/roles/profiles/backend_engineer.md` — business logic, endpoints, services.
+- `.agents/roles/profiles/database_engineer.md` — schemas, migrations, queries, persistence models.
+- `.agents/roles/profiles/integration_engineer.md` — external APIs, providers, adapters.
+- `.agents/roles/profiles/qa_engineer.md` — tests, cases, mocks, coverage.
+- `.agents/roles/profiles/tech_writer.md` — technical documentation for developers and agents.
+- `.agents/roles/profiles/functional_writer.md` — business documentation for non-technical stakeholders.
 
 ## Runtime
 

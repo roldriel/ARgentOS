@@ -1,6 +1,6 @@
 +++
 artifact = "VERIFICATION_REPORT.md"
-phase = "06"
+phase = "07"
 produced_by = "verifier"
 +++
 

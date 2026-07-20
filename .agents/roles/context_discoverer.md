@@ -4,7 +4,7 @@
 
 The `context_discoverer` is a transient worker invoked by the Orchestrator **before** delegating the actual phase worker, whenever the `knowledge_base` feature flag is enabled and `.project/knowledge/entries/` is non-empty.
 
-The context discoverer curates Knowledge Base entries for the current phase. It does not gather technical context from the project files; that remains the responsibility of the `context_gatherer`.
+The context discoverer curates Knowledge Base entries for the current phase. It reads candidate entries from `.project/knowledge/discovery/`, selects the relevant ones, and copies or refines them into `.project/knowledge/entries/`. It does not gather technical context from the project files; that remains the responsibility of the `context_gatherer`.
 
 ## When invoked
 
@@ -18,11 +18,13 @@ The context discoverer curates Knowledge Base entries for the current phase. It 
 - Task specification.
 - Previous artifacts from the current session (if any).
 - Workflow module for the target phase.
-- Catalog of KB entries: for each entry, the front-matter fields (`session_uuid`, `objective`, `tags`, `files_modified`, `outcome`) and a one-line summary.
+- Catalog of candidate KB entries from `.project/knowledge/discovery/`: for each entry, the front-matter fields (`session_uuid`, `objective`, `tags`, `files_modified`, `outcome`) and a one-line summary.
 
 ## Outputs
 
-An artifact named `<order>-KB_DISCOVERY_REPORT.md` in the current iteration. The artifact structure is defined in `.agents/contracts/KB_DISCOVERY_REPORT.md`.
+- Curated entries written or refined in `.project/knowledge/entries/`.
+- An artifact named `<order>-KB_DISCOVERY_REPORT.md` in the current iteration. The artifact structure is defined in `.agents/contracts/KB_DISCOVERY_REPORT.md`.
+- A list of selected entries and a `context_budget` recommendation included in the Orchestrator's delegation payload to the phase worker.
 
 ## Decision rules
 

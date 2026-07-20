@@ -63,3 +63,23 @@ The Orchestrator must:
 1. Record the failure in `HARNESS_REPORT.md`.
 2. If gaps can be filled by the Worker, return to `GATHERING_CONTEXT`.
 3. If gaps require user input, transition to `NEEDS_CLARIFICATION`.
+
+## Examples
+
+### PASS examples
+
+1. The report states `VALIDATED` and cites how each context item supports a task requirement.
+2. The report identifies one missing item (the exact version of a dependency) and specifies that it can be obtained automatically.
+3. The report explicitly discards an outdated context item and explains why it is irrelevant.
+
+### FAIL examples
+
+1. The report declares context sufficient without referencing any specific context item.
+2. The report ignores a direct contradiction between the task specification and an observed project file.
+3. The report invents a project convention ("the team always uses PostgreSQL") without evidence.
+
+### Yes/no questions for the evaluator
+
+1. Is every context item used in the plan or execution?
+2. Are there explicit contradictions between context and task specification?
+3. Was irrelevant context explicitly discarded or justified?

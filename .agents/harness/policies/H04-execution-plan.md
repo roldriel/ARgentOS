@@ -62,3 +62,23 @@ The Orchestrator must:
 1. Record the failure in `HARNESS_REPORT.md`.
 2. Return to `PLANNING` and re-invoke the Worker as `planner`, or
 3. Transition to `NEEDS_CLARIFICATION` if the plan cannot be completed safely.
+
+## Examples
+
+### PASS examples
+
+1. The plan contains all required sections, implementation steps are numbered, and each step includes what, where, and why.
+2. Each implementation step has a corresponding verification criterion (e.g., a test or manual check).
+3. The plan references the exact context from `CONTEXT_ARTIFACT.md` and `CONTEXT_VALIDATION_REPORT.md` and does not introduce new assumptions.
+
+### FAIL examples
+
+1. The plan includes a step that depends on an undocumented API that was never mentioned in the context.
+2. The plan adds a new database table even though the task specification only requested a query change.
+3. The plan lists implementation steps but does not define how to verify any of them.
+
+### Yes/no questions for the evaluator
+
+1. Does the plan reference every section defined in the `EXECUTION_PLAN.md` contract?
+2. Does every step have a verification criterion?
+3. Are there any steps that depend on undeclared information?

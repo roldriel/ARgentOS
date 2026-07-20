@@ -106,4 +106,4 @@ app/
 - [ ] A new developer can locate the code for a use case without searching generic folders.
 - [ ] The evidence in `EXECUTION_SUMMARY.md` names at least one domain module and its responsibility.
 
-> Para la aplicación operativa de estos principios, ver `.agents/standards/development/design/ARCHITECTURE_CONTRACT.md`.
+> For the operational application of these principles, see `.agents/standards/development/design/ARCHITECTURE_CONTRACT.md`.

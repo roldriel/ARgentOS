@@ -138,4 +138,4 @@ def create_user():
 - [ ] Business rules live in the domain or application layer, not in presentation or infrastructure.
 - [ ] The evidence in `EXECUTION_SUMMARY.md` lists the layers and any dependency violations found or fixed.
 
-> Para la aplicación operativa de estos principios, ver `.agents/standards/development/design/ARCHITECTURE_CONTRACT.md`.
+> For the operational application of these principles, see `.agents/standards/development/design/ARCHITECTURE_CONTRACT.md`.

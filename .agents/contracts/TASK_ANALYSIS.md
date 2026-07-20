@@ -141,6 +141,7 @@ recommended_next_state: ""
 Possible values:
 
 ```text
+CONFIRMING_INTENT
 BUILDING_TASK_SPECIFICATION
 NEEDS_CLARIFICATION
 ```

@@ -147,4 +147,4 @@ def create_user():
 - [ ] Each use case has a single, clearly defined responsibility.
 - [ ] The evidence in `EXECUTION_SUMMARY.md` lists the layers touched and any dependency-rule violations found or fixed.
 
-> Para la aplicación operativa de estos principios, ver `.agents/standards/development/design/ARCHITECTURE_CONTRACT.md`.
+> For the operational application of these principles, see `.agents/standards/development/design/ARCHITECTURE_CONTRACT.md`.

@@ -1,65 +1,65 @@
 # Architecture Contract
 
-## 1. Propósito y alcance
+## 1. Purpose and scope
 
-Este documento es un **contrato operativo** que convierte los principios arquitectónicos definidos en otros estándares del protocolo en reglas aplicables por los workers durante la generación o modificación de código.
+This document is an **operational contract** that turns the architectural principles defined in other protocol standards into rules enforceable by workers during code generation or modification.
 
-- No reemplaza ni duplica la teoría arquitectónica de `LAYERED_ARCHITECTURE.md`, `CLEAN_ARCHITECTURE.md`, `SCREAMING_ARCHITECTURE.md` ni `DDD_TACTICAL.md`; las consume y operativiza.
-- Es **opt-in**: el proyecto gobernado debe declarar explícitamente que lo adopta (ver [Activación](#2-activación)).
-- Aplica a todo código generado o modificado por workers mientras el contrato esté activo.
-- Si una tarea no puede completarse sin violar este contrato, el worker debe detenerse, explicar el conflicto y solicitar aclaración o autorización explícita.
+- It does not replace or duplicate the architectural theory of `LAYERED_ARCHITECTURE.md`, `CLEAN_ARCHITECTURE.md`, `SCREAMING_ARCHITECTURE.md` or `DDD_TACTICAL.md`; it consumes and operationalizes them.
+- It is **opt-in**: the governed project must explicitly declare that it adopts it (see [Activation](#2-activation)).
+- It applies to all code generated or modified by workers while the contract is active.
+- If a task cannot be completed without violating this contract, the worker must stop, explain the conflict, and request clarification or explicit authorization.
 
 ---
 
-## 2. Activación
+## 2. Activation
 
-El contrato se activa cuando **al menos una** de las siguientes condiciones se cumple:
+The contract is activated when **at least one** of the following conditions is met:
 
-1. El feature flag `architecture_contract` está habilitado en `.agents/features.toml`:
+1. The feature flag `architecture_contract` is enabled in `.agents/features.toml`:
    ```toml
    [features]
    architecture_contract = true
    ```
-2. La variable de entorno `AGENTS_FEATURE_ARCHITECTURE_CONTRACT` está configurada como `true`.
-3. El `TASK_SPECIFICATION.md` declara explícitamente:
+2. The environment variable `AGENTS_FEATURE_ARCHITECTURE_CONTRACT` is set to `true`.
+3. The `TASK_SPECIFICATION.md` explicitly declares:
    ```markdown
-   ## Arquitectura
-   Este proyecto adopta `.agents/standards/development/design/ARCHITECTURE_CONTRACT.md`.
+   ## Architecture
+   This project adopts `.agents/standards/development/design/ARCHITECTURE_CONTRACT.md`.
    ```
 
-> **Nota:** El proyecto puede adaptar las capas concretas al activar el contrato, pero debe documentar la equivalencia de responsabilidades, sufijos y reglas de dependencia. No puede reducir la lista mínima de sufijos ni eliminar las reglas duras de dependencia.
+> **Note:** The project may adapt the concrete layers when activating the contract, but it must document the equivalence of responsibilities, suffixes, and dependency rules. It cannot reduce the minimum suffix list or remove the hard dependency rules.
 
 ---
 
-## 3. Capas arquitectónicas
+## 3. Architectural layers
 
-El contrato define las siguientes capas por defecto. Un proyecto adoptante puede mapearlas a su estructura propia siempre que preserve las responsabilidades y restricciones.
+The contract defines the following default layers. An adopting project may map them to its own structure as long as it preserves the responsibilities and restrictions.
 
-| Capa | Responsabilidad | Sufijos |
+| Layer | Responsibility | Suffixes |
 |------|-----------------|---------|
-| **Views** | Interfaz de entrada. Recibe solicitudes, delega validación y lógica de negocio. | `View` |
-| **Validators** | Validación de entrada y contexto. Coordina uno o más schemas. | `Validator` |
-| **Schemas** | Serialización, deserialización y validación estructural de datos. | `Schema` |
-| **Services** | Lógica de negocio, reglas y orquestación de casos de uso. | `Service` |
-| **Models** | Entidades de persistencia y contratos de datos de infraestructura. | `Model` |
-| **Providers** | Adaptadores externos. Aíslan APIs, protocolos y sistemas de terceros. | `Provider` |
-| **Domain Errors** | Excepciones que modelan estados inválidos del dominio. | `Error`, `Exception` |
+| **Views** | Input interface. Receives requests, delegates validation and business logic. | `View` |
+| **Validators** | Input and context validation. Coordinates one or more schemas. | `Validator` |
+| **Schemas** | Serialization, deserialization, and structural data validation. | `Schema` |
+| **Services** | Business logic, rules, and use-case orchestration. | `Service` |
+| **Models** | Persistence entities and infrastructure data contracts. | `Model` |
+| **Providers** | External adapters. Isolate APIs, protocols, and third-party systems. | `Provider` |
+| **Domain Errors** | Exceptions that model invalid domain states. | `Error`, `Exception` |
 
-### Responsabilidades generales por capa
+### General responsibilities by layer
 
-- **Views**: manejar únicamente preocupaciones de entrada/salida; no contienen lógica de negocio.
-- **Validators**: validar solicitudes; no acceden a persistencia, servicios ni providers.
-- **Schemas**: definir forma y tipos de datos; no contienen lógica de negocio.
-- **Services**: implementar reglas de negocio; no dependen de frameworks de infraestructura.
-- **Models**: representar contratos de persistencia; no contienen flujos de negocio.
-- **Providers**: adaptar sistemas externos; no contienen lógica de negocio ni acceden directamente a models.
-- **Domain Errors**: expresar estados de dominio inválidos de forma explícita.
+- **Views**: handle only input/output concerns; do not contain business logic.
+- **Validators**: validate requests; do not access persistence, services, or providers.
+- **Schemas**: define data shape and types; do not contain business logic.
+- **Services**: implement business rules; do not depend on infrastructure frameworks.
+- **Models**: represent persistence contracts; do not contain business flows.
+- **Providers**: adapt external systems; do not contain business logic nor access models directly.
+- **Domain Errors**: express invalid domain states explicitly.
 
 ---
 
-## 4. Reglas de dependencia
+## 4. Dependency rules
 
-Las dependencias permitidas entre capas son:
+The allowed dependencies between layers are:
 
 ```text
 Views → Validators → Schemas
@@ -67,7 +67,7 @@ Views → Services → Models
 Services → Providers → External APIs
 ```
 
-### Dependencias prohibidas
+### Prohibited dependencies
 
 - Views → Models
 - Views → Providers
@@ -76,126 +76,126 @@ Services → Providers → External APIs
 - Schemas → Validators
 - Schemas → Services
 - Providers → Models
-- Models → cualquier capa superior
+- Models → any upper layer
 
-### Matriz de dependencias
+### Dependency matrix
 
-| Desde / Hacia | Views | Validators | Schemas | Services | Models | Providers |
+| From / To | Views | Validators | Schemas | Services | Models | Providers |
 |---------------|-------|------------|---------|----------|--------|-----------|
-| **Views**     | -     | Permitido  | No      | Permitido| Prohibido| Prohibido |
-| **Validators**| No    | -          | Permitido| Prohibido| Prohibido| Prohibido |
+| **Views**     | -     | Allowed    | No      | Allowed  | Prohibited | Prohibited |
+| **Validators**| No    | -          | Allowed | Prohibited | Prohibited | Prohibited |
 | **Schemas**   | No    | No         | -       | No       | No     | No        |
-| **Services**  | No    | No         | No      | -        | Permitido| Permitido |
+| **Services**  | No    | No         | No      | -        | Allowed | Allowed |
 | **Models**    | No    | No         | No      | No       | -      | No        |
-| **Providers** | No    | No         | No      | No       | Prohibido| -        |
+| **Providers** | No    | No         | No      | No       | Prohibited | -        |
 
-### Reglas adicionales
+### Additional rules
 
-- Los providers actúan como adaptadores: no contienen lógica de negocio ni acceden directamente a models.
-- La lógica de negocio no puede depender de frameworks de infraestructura.
-- Cualquier solución que requiera una dependencia prohibida es arquitectónicamente inválida.
+- Providers act as adapters: they do not contain business logic nor access models directly.
+- Business logic cannot depend on infrastructure frameworks.
+- Any solution requiring a prohibited dependency is architecturally invalid.
 
 ---
 
 ## 5. Naming suffixes
 
-Cada archivo/clase debe tener un sufijo que indique su capa arquitectónica.
+Each file/class must have a suffix indicating its architectural layer.
 
-### Lista mínima obligatoria
+### Mandatory minimum list
 
-| Capa | Sufijo |
+| Layer | Suffix |
 |------|--------|
 | View | `View` |
 | Validator | `Validator` |
 | Schema | `Schema` |
 | Service | `Service` |
 | Provider | `Provider` |
-| Domain Error | `Error` o `Exception` |
+| Domain Error | `Error` or `Exception` |
 
-### Reglas
+### Rules
 
-- El proyecto puede extender la lista de sufijos, pero **no puede reducirla**.
-- Los nombres deben ser explícitos, en inglés y revelar intención.
-- Están prohibidos los nombres genéricos sin sufijo como `Manager`, `Helper`, `Processor`, `Util`, `Handler`, `Common` para clases principales.
-- Los nombres de archivo usan `snake_case`; los nombres de clase usan `PascalCase`.
+- The project may extend the suffix list, but **cannot reduce it**.
+- Names must be explicit, in English, and reveal intent.
+- Generic names without suffixes such as `Manager`, `Helper`, `Processor`, `Util`, `Handler`, `Common` are prohibited for main classes.
+- File names use `snake_case`; class names use `PascalCase`.
 
-### Ejemplos
+### Examples
 
-| Componente | Nombre de archivo | Nombre de clase |
+| Component | File name | Class name |
 |------------|-------------------|-----------------|
-| Vista de pago | `payment_view.py` | `PaymentView` |
-| Validador de creación | `payment_create_validator.py` | `PaymentCreateValidator` |
-| Schema de entrada | `payment_create_schema.py` | `PaymentCreateSchema` |
-| Servicio de pago | `payment_service.py` | `PaymentService` |
-| Provider externo | `bind_payment_provider.py` | `BindPaymentProvider` |
-| Error de dominio | `invalid_amount_error.py` | `InvalidAmountError` |
+| Payment view | `payment_view.py` | `PaymentView` |
+| Creation validator | `payment_create_validator.py` | `PaymentCreateValidator` |
+| Input schema | `payment_create_schema.py` | `PaymentCreateSchema` |
+| Payment service | `payment_service.py` | `PaymentService` |
+| External provider | `bind_payment_provider.py` | `BindPaymentProvider` |
+| Domain error | `invalid_amount_error.py` | `InvalidAmountError` |
 
 ---
 
 ## 6. File identity
 
-Cada archivo del proyecto gobernado debe incluir como **primera línea** un comentario con su ruta relativa desde la raíz del proyecto.
+Each file in the governed project must include as its **first line** a comment with its relative path from the project root.
 
 ```python
 # apps/payments/services/payment_service.py
 ```
 
-### Reglas
+### Rules
 
-- La ruta declarada debe coincidir con la ubicación real del archivo.
-- Todos los imports deben ser **absolutos desde la raíz del proyecto**.
-- Los imports relativos están **prohibidos**.
-- Cada archivo debe tener **una responsabilidad principal**.
-
----
-
-## 7. Prohibiciones
-
-Quedan explícitamente prohibidas las siguientes prácticas:
-
-1. Mezclar lógica de capas en un mismo archivo.
-2. Importar infraestructura desde capas de dominio o servicios.
-3. Usar nombres genéricos sin sufijo (`Manager`, `Helper`, `Utils`, `Handler`, `Processor`, `Common`) como clase principal.
-4. Bypassear validadores desde views.
-5. Acceder a models directamente desde views.
-6. Realizar refactors arquitectónicos implícitos.
-7. Mezclar patrones arquitectónicos dentro de una misma tarea.
-8. Introducir dependencias prohibidas entre capas.
-9. Introducir alternativas arquitectónicas una vez que se decidió un patrón para la tarea.
+- The declared path must match the file's actual location.
+- All imports must be **absolute from the project root**.
+- Relative imports are **prohibited**.
+- Each file must have **one main responsibility**.
 
 ---
 
-## 8. Auto-verificación
+## 7. Prohibitions
 
-Antes de generar o modificar código, el worker debe ejecutar el siguiente checklist:
+The following practices are explicitly prohibited:
 
-- [ ] Identificar la capa arquitectónica del archivo.
-- [ ] Verificar que sus dependencias solo apuntan a capas permitidas.
-- [ ] Confirmar que el nombre del archivo y de la clase cumple con el sufijo obligatorio.
-- [ ] Confirmar que la línea 1 del archivo contiene el `file identity` con la ruta desde la raíz del proyecto.
-- [ ] Revisar que no se viole ninguna prohibición del contrato.
-- [ ] Asegurar que la lógica de negocio no dependa de frameworks de infraestructura.
-
-Si algún ítem falla, el worker debe detenerse, documentar el conflicto y solicitar aclaración o autorización explícita antes de continuar.
-
----
-
-## 9. Relación con otros estándares
-
-Este contrato consume y unifica los principios definidos en:
-
-- `LAYERED_ARCHITECTURE.md`: principios teóricos de capas horizontales.
-- `CLEAN_ARCHITECTURE.md`: principios de independencia de frameworks y dependencias hacia adentro.
-- `SCREAMING_ARCHITECTURE.md`: organización del proyecto por dominio.
-- `DDD_TACTICAL.md`: entidades, value objects, agregados y servicios de dominio.
-
-Este contrato las une en reglas aplicables a la generación de código. **En caso de conflicto entre este contrato y un estándar canónico correspondiente, prevalece el estándar canónico.**
+1. Mixing layer logic in the same file.
+2. Importing infrastructure from domain or service layers.
+3. Using generic names without suffix (`Manager`, `Helper`, `Utils`, `Handler`, `Processor`, `Common`) as the main class.
+4. Bypassing validators from views.
+5. Accessing models directly from views.
+6. Performing implicit architectural refactors.
+7. Mixing architectural patterns within the same task.
+8. Introducing prohibited dependencies between layers.
+9. Introducing architectural alternatives once a pattern has been decided for the task.
 
 ---
 
-## 10. Ejemplos
+## 8. Self-verification
 
-### 10.1 Archivo bien estructurado
+Before generating or modifying code, the worker must run the following checklist:
+
+- [ ] Identify the architectural layer of the file.
+- [ ] Verify that its dependencies only point to allowed layers.
+- [ ] Confirm that the file and class name comply with the mandatory suffix.
+- [ ] Confirm that line 1 of the file contains the `file identity` with the path from the project root.
+- [ ] Review that no prohibition of the contract is violated.
+- [ ] Ensure that business logic does not depend on infrastructure frameworks.
+
+If any item fails, the worker must stop, document the conflict, and request clarification or explicit authorization before continuing.
+
+---
+
+## 9. Relationship with other standards
+
+This contract consumes and unifies the principles defined in:
+
+- `LAYERED_ARCHITECTURE.md`: theoretical principles of horizontal layers.
+- `CLEAN_ARCHITECTURE.md`: principles of framework independence and inward dependencies.
+- `SCREAMING_ARCHITECTURE.md`: project organization by domain.
+- `DDD_TACTICAL.md`: entities, value objects, aggregates, and domain services.
+
+This contract unifies them into rules applicable to code generation. **In case of conflict between this contract and the corresponding canonical standard, the canonical standard prevails.**
+
+---
+
+## 10. Examples
+
+### 10.1 Well-structured file
 
 ```python
 # apps/payments/services/payment_service.py
@@ -217,7 +217,7 @@ class PaymentService:
         return self._provider.bind_payment(amount, currency)
 ```
 
-### 10.2 Dependencia permitida
+### 10.2 Allowed dependency
 
 ```python
 # apps/payments/views/payment_view.py
@@ -233,9 +233,9 @@ class PaymentView:
         return service.create_payment(**validated)
 ```
 
-### 10.3 Violación y corrección
+### 10.3 Violation and correction
 
-#### Violación: view accediendo directamente a un model
+#### Violation: view accessing a model directly
 
 ```python
 # apps/payments/views/payment_view.py
@@ -248,7 +248,7 @@ class PaymentView:
         return {"id": payment.id}
 ```
 
-#### Corrección: delegar en un service
+#### Correction: delegate to a service
 
 ```python
 # apps/payments/views/payment_view.py

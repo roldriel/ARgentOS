@@ -200,4 +200,4 @@ If the practice was not applied, set `applied: false` and provide a `reason`.
 - [ ] Domain events represent meaningful business occurrences.
 - [ ] The evidence in `EXECUTION_SUMMARY.md` lists the patterns applied and the invariants protected.
 
-> Para la aplicación operativa de estos principios, ver `.agents/standards/development/design/ARCHITECTURE_CONTRACT.md`.
+> For the operational application of these principles, see `.agents/standards/development/design/ARCHITECTURE_CONTRACT.md`.

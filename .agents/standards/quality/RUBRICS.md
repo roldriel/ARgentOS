@@ -14,7 +14,7 @@ Every criterion is scored with one of three levels:
 - `MEETS` — Satisfies the requirement.
 - `EXCEEDS` — Goes beyond the requirement with clear evidence.
 
-Critical criteria (marked with ✅) that are scored `INSUFFICIENT` force a `REWORK` recommendation from the `reviewer` or a `RECOVERY` decision from the `verifier`.
+Critical criteria (marked with ✅) that are scored `INSUFFICIENT` force a `REWORK` recommendation from the `reviewer` or a `RECOVERY` decision from the `verifier`. `REWORK` is a recommendation from the reviewer, not a protocol state; the Orchestrator must translate it into an allowed transition.
 
 ## Rubrics
 

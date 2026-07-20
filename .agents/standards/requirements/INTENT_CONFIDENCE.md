@@ -36,9 +36,9 @@ score = sum(applicable_positive_weights) + sum(applicable_negative_weights)
 
 | Score | Confidence | Recommended next state |
 |---|---|---|
-| score >= 6 | HIGH | `BUILDING_TASK_SPECIFICATION` (espejo generado para trazabilidad, sin confirmación obligatoria). |
-| 2 <= score <= 4 | MEDIUM | `CONFIRMING_INTENT` (confirmación obligatoria). |
-| score < 2 | LOW | `CONFIRMING_INTENT` (confirmación obligatoria, mensaje detallado). |
+| score >= 6 | HIGH | `BUILDING_TASK_SPECIFICATION` (reflection generated for traceability, confirmation optional). |
+| 2 <= score <= 5 | MEDIUM | `CONFIRMING_INTENT` (confirmation required). |
+| score < 2 | LOW | `CONFIRMING_INTENT` (confirmation required, detailed message). |
 
 ## Recording
 

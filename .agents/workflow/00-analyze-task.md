@@ -145,7 +145,7 @@ Evaluate how confident the agent is in its interpretation of the user's intent u
 Calculate the score, list the applied criteria, and derive the confidence level:
 
 * **HIGH** (score >= 6): proceed to `BUILDING_TASK_SPECIFICATION`. Generate `INTENT_REFLECTION.md` for traceability, but confirmation is optional.
-* **MEDIUM** (score 2–4): transition to `CONFIRMING_INTENT` and request user confirmation.
+* **MEDIUM** (score 2–5): transition to `CONFIRMING_INTENT` and request user confirmation.
 * **LOW** (score < 2): transition to `CONFIRMING_INTENT` with a detailed reflection and request user clarification or reformulation.
 
 If unresolved ambiguities require implementation decisions, route to `NEEDS_CLARIFICATION` regardless of confidence.

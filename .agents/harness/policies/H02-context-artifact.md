@@ -58,3 +58,23 @@ The Orchestrator must:
 1. Record the failure in `HARNESS_REPORT.md`.
 2. Return to `GATHERING_CONTEXT` and re-invoke the Worker as `context_gatherer`, or
 3. Transition to `NEEDS_CLARIFICATION` if the missing context requires user input.
+
+## Examples
+
+### PASS examples
+
+1. The artifact names `app/routes/users.py` and `app/services/user_service.py` and explains how each is relevant to adding a user endpoint.
+2. The artifact lists Flask 2.3 and SQLAlchemy 2.0 as dependencies and notes that the project uses an in-memory SQLite database for tests.
+3. Every section links back to a requirement in `TASK_SPECIFICATION.md`; no new assumptions are introduced.
+
+### FAIL examples
+
+1. The artifact describes "the backend" generically without naming any files, modules, or classes.
+2. The artifact states that "the database already enforces uniqueness" without providing evidence or a schema reference.
+3. The artifact describes dependencies that were not found in the project files.
+
+### Yes/no questions for the evaluator
+
+1. Does the context name at least one relevant file?
+2. Does the context contain no unstated assumptions?
+3. Can every section be linked to a task requirement?

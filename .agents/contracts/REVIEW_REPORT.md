@@ -1,10 +1,14 @@
 +++
 artifact = "REVIEW_REPORT.md"
-phase = "review"
+phase = "n/a"
 produced_by = "reviewer"
 +++
 
 # Contract: Review Report
+
+## Scope
+
+This artifact is produced by the `reviewer` worker. It is **not** a main workflow phase artifact; it is an internal review artifact used before critical transitions when the `rubrics` feature flag is enabled.
 
 ## Purpose
 

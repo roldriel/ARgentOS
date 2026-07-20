@@ -1,6 +1,6 @@
 +++
 artifact = "TASK_SPECIFICATION.md"
-phase = "01"
+phase = "02"
 produced_by = "task_specification_writer"
 +++
 
@@ -127,8 +127,12 @@ Information considered true but not explicitly confirmed.
 
 ```yaml
 assumptions:
-  - ""
+  - assumption: ""
+    user_confirmed: false
 ```
+
+- `assumption`: the assumption text.
+- `user_confirmed`: `true` if the user explicitly confirmed the assumption; `false` if the agent took it as a default and it has not yet been confirmed.
 
 ---
 

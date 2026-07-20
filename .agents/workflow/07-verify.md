@@ -49,6 +49,12 @@ workflow/08-recovery.md
 
 ---
 
+# Worker Invocation
+
+The Orchestrator delegates phase 07 to a worker adopting the `verifier` role. The `verifier` follows the instructions in `.agents/roles/verifier.md`.
+
+---
+
 # Input Artifacts
 
 ## Task Specification

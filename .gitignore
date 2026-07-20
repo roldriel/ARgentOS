@@ -1,0 +1,15 @@
+# Python compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Generated session artifacts
+.project/
+
+# Implementation plans
+plans/

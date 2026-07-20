@@ -26,6 +26,7 @@ The invocation is not a function call; it is a structured handoff of context and
   current_state: "<STATE_NAME>",
   target_phase: "<workflow/XX-name.md>",
   role_to_adopt: "<role_name>",
+  profile: "<backend_engineer|database_engineer|integration_engineer|qa_engineer|tech_writer|functional_writer|intent_reflector|intent_reflection_reviewer|null>",
   input_artifacts: [
     ".project/<uuid>/<iteration>/<order>-ARTIFACT_1.md",
     ".project/<uuid>/<iteration>/<order>-ARTIFACT_2.md"
@@ -61,18 +62,27 @@ The invocation is not a function call; it is a structured handoff of context and
 
 `technical_approach` is optional. It is populated by the Orchestrator when any technical-practice feature flag (`tdd`, `srp`, `ocp`, `lsp`, `isp`, `dip`, `screaming_architecture`, `clean_architecture`, `layered_architecture`, `dry`, `grasp`, `ddd_tactical`, `ddd_strategic`) is enabled and the `TASK_SPECIFICATION.md` contains a `## Technical Approach` section. The Worker MUST read and apply the corresponding standards (for example, `.agents/standards/testing/TDD.md`, `.agents/standards/development/design/SOLID/SRP.md`, `.agents/standards/development/design/SCREAMING_ARCHITECTURE.md`, or `.agents/standards/development/design/DDD_TACTICAL.md`) and record compliance evidence in the output artifact.
 
+### `profile`
+
+`profile` is optional. It is populated by the Orchestrator before delegating `workflow/06-execute.md` when a specialized worker profile applies, as determined by `.agents/standards/orchestration/ORCHESTRATION_GUIDE.md`.
+
+- If `profile` is `null` or omitted, the Worker acts as the generic worker (`worker.md`).
+- If `profile` is one of `backend_engineer`, `database_engineer`, `integration_engineer`, `qa_engineer`, `tech_writer`, `functional_writer`, `intent_reflector`, or `intent_reflection_reviewer`, the Worker MUST read `.agents/roles/profiles/<profile>.md` before executing the phase and apply its MUST_READ, restrictions, and prompt template.
+- The value MUST match a file name under `.agents/roles/profiles/` exactly, without the `.md` extension.
+
 ## Worker Execution
 
 Upon receiving the payload, the Worker:
 
 1. Adopts the specified role.
-2. Reads the target workflow module.
-3. Reads all input artifacts.
-4. Executes the phase according to the workflow instructions.
-5. Produces the required output artifact.
-6. Validates that the output complies with the corresponding contract.
-7. Prepares a return report.
-8. When `communication_style.enabled` is `true`, writes the artifact and the return report according to `.agents/standards/communication/CAVEMAN.md` at the requested level.
+2. If `profile` is not null, reads `.agents/roles/profiles/<profile>.md` and applies its rules.
+3. Reads the target workflow module.
+4. Reads all input artifacts.
+5. Executes the phase according to the workflow instructions and the active profile rules (if any).
+6. Produces the required output artifact.
+7. Validates that the output complies with the corresponding contract and profile restrictions (if any).
+8. Prepares a return report.
+9. When `communication_style.enabled` is `true`, writes the artifact and the return report according to `.agents/standards/communication/CAVEMAN.md` at the requested level.
 
 ## Worker Return Report
 
@@ -89,6 +99,7 @@ The Worker returns the following to the Orchestrator:
     "reasoning": "..."
   },
   role_executed: "<role_name>",
+  profile_executed: "<profile_name_or_null>",
   phase_completed: "<workflow/XX-name.md>",
   summary: "<what was done>",
   blockers: ["<list or empty>"],

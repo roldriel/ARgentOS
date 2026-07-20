@@ -22,6 +22,7 @@ def test_context_standard_exists():
 def test_knowledge_directory_structure_exists():
     assert (PROJECT_ROOT / ".project" / "knowledge" / "INDEX.md").is_file()
     assert (PROJECT_ROOT / ".project" / "knowledge" / "entries").is_dir()
+    assert (PROJECT_ROOT / ".project" / "knowledge" / "discovery").is_dir()
 
 
 def test_knowledge_entry_has_required_front_matter():
@@ -79,8 +80,8 @@ def test_delegation_contract_includes_kb_fields():
 def test_indexer_documented_not_implemented():
     index = PROJECT_ROOT / ".project" / "knowledge" / "INDEX.md"
     content = index.read_text(encoding="utf-8")
-    assert "indexer.py" in content
-    assert "not implemented" in content.lower() or "futuro" in content.lower()
+    assert "indexer" in content.lower()
+    assert "not implemented" in content.lower()
     assert not (PROJECT_ROOT / ".project" / "knowledge" / "indexer.py").exists()
 
 

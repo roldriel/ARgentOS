@@ -10,6 +10,7 @@ required_sections = [
   "Steps Executed",
   "Project Files Modified",
   "Intermediate Validations",
+  "Technical Practice Evidence",
   "Issues or Deviations",
   "Final Project State",
   "Confidence"

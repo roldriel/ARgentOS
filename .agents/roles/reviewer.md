@@ -29,7 +29,7 @@ A Review Report artifact named `<order>-REVIEW_REPORT.md` inside the current ite
 
 ## Decision rules
 
-The decision rules for `APPROVE`, `REWORK`, and `NEEDS_CLARIFICATION` are defined in `.agents/contracts/REVIEW_REPORT.md`.
+The possible recommendations are exactly `APPROVE`, `REWORK`, and `NEEDS_CLARIFICATION`. The detailed rules for each are defined in `.agents/contracts/REVIEW_REPORT.md`.
 
 ## Responsibilities
 

@@ -1,6 +1,6 @@
 +++
 artifact = "EXECUTION_PLAN.md"
-phase = "04"
+phase = "05"
 produced_by = "planner"
 +++
 
@@ -206,6 +206,14 @@ Example:
 transition:
   current_state: PLANNING
   next_state: PLAN_READY
+```
+
+If the plan cannot be completed safely:
+
+```yaml
+transition:
+  current_state: PLANNING
+  next_state: NEEDS_CLARIFICATION
 ```
 
 ---

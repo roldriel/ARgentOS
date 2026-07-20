@@ -80,14 +80,20 @@ When enabled, the Orchestrator invokes the `reviewer` before critical transition
 
 The active flags are recorded in `.project/<session-uuid>/SESSION_LOG.md` at session start. When `caveman` is enabled, the log entry itself should follow `.agents/standards/communication/CAVEMAN.md`.
 
-### 4.1 Reviewer Invocation
+### 4.1 Optional reviewer invocation
 
-When `rubrics` is enabled, before each critical transition the Orchestrator invokes the `reviewer` worker on the artifact that is about to be consumed. The reviewer returns a Review Report with recommendation `APPROVE`, `REWORK`, or `NEEDS_CLARIFICATION`.
+When `rubrics` is enabled, before each critical transition the Orchestrator MAY invoke the `reviewer` worker on the artifact that is about to be consumed. The reviewer returns a Review Report with recommendation `APPROVE`, `REWORK`, or `NEEDS_CLARIFICATION`.
+
+The Orchestrator may invoke the reviewer before transitions such as:
+
+- `TASK_READY → GATHERING_CONTEXT` (review `TASK_SPECIFICATION.md`).
+- `PLAN_READY → EXECUTING` (review `EXECUTION_PLAN.md`).
+- `EXECUTING → VERIFYING` (review `EXECUTION_SUMMARY.md`).
 
 The Orchestrator must:
 
 - On `APPROVE`: proceed with the harness and transition.
-- On `REWORK`: return the artifact to the corresponding worker role for correction (typically one retry).
+- On `REWORK`: route the artifact to the corresponding worker role for correction (typically one retry), or route to `RECOVERY` if the correction fails. `REWORK` is a recommendation from the reviewer, not a protocol state.
 - On `NEEDS_CLARIFICATION`: transition to `NEEDS_CLARIFICATION` and request user input.
 
 See `.agents/roles/reviewer.md` for the reviewer role details and `.agents/standards/quality/RUBRICS.md` for the rubric definitions.
@@ -114,6 +120,20 @@ See `.agents/roles/context_discoverer.md` and `.agents/standards/context/CONTEXT
   - Communication style (`caveman` level: `lite`, `full`, or `ultra`) when the `caveman` feature flag is enabled.
 - The worker executes exactly one phase, returns the output artifact, and terminates.
 
+### 5.1 Profile Selection Before Execution
+
+Before delegating `workflow/06-execute.md`, the Orchestrator MUST consult `.agents/standards/orchestration/ORCHESTRATION_GUIDE.md` and apply the 7 decision questions to select the appropriate worker profile.
+
+The selected profile MUST be recorded in the delegation payload using the `profile` field introduced by the worker profile catalog (see `.agents/roles/profiles/README.md`). If none of the specialized profiles apply, the Orchestrator MUST set `profile` to `null` and delegate a generic `worker`.
+
+The Orchestrator MUST:
+
+- Re-write the task objective using the selected profile's prompt template, not the user's original prompt.
+- Include the acceptance criteria from `TASK_SPECIFICATION.md` in the payload.
+- Record the selected profile and the rationale in `.project/<session-uuid>/SESSION_LOG.md`.
+
+The delegation payload MUST still comply with `.agents/delegation/WORKER_DELEGATION_CONTRACT.md` in all other fields.
+
 ### 6. Decision Making
 
 After receiving a worker result and a passing harness:
@@ -125,6 +145,24 @@ After receiving a worker result and a passing harness:
   - If the decision tree returns `ERROR` or `INCONCLUSIVE`, default to `RECOVERY_GENERIC` with `target_phase = "08-recovery.md"`.
   - When `decision_trees` is disabled, default directly to `RECOVERY_GENERIC` with `target_phase = "08-recovery.md"`. The markdown recovery policies have been removed; the TOML decision trees are the only supported recovery mechanism.
 - If the worker fails to produce a valid artifact, route to `RECOVERY`.
+
+## Recovery decision tree mapping
+
+When a harness trigger fails and the `decision_trees` feature flag is enabled, the Orchestrator MUST use the following mapping to choose the correct TOML decision tree. The Orchestrator MUST NOT select a different tree unless the failure is explicitly from another trigger.
+
+| Trigger | TOML file | Typical failure | Recommended target phase |
+|---|---|---|---|
+| H00 | `.agents/harness/decision_trees/H00_FAIL.toml` | Task analysis is missing required elements or recommends an invalid next state | `00-analyze-task.md` |
+| H01 | `.agents/harness/decision_trees/H01_FAIL.toml` | Task specification is incomplete, out of scope, or contains unconfirmed assumptions | `02-build-task-specification.md` |
+| H02 | `.agents/harness/decision_trees/H02_FAIL.toml` | Context artifact is insufficient or missing relevant components | `03-gather-context.md` |
+| H03 | `.agents/harness/decision_trees/H03_FAIL.toml` | Context validation fails or context is inconsistent with the task specification | `03-gather-context.md` |
+| H04 | `.agents/harness/decision_trees/H04_FAIL.toml` | Execution plan is unsafe, incomplete, or out of scope | `08-recovery.md` |
+| H05 | `.agents/harness/decision_trees/H05_FAIL.toml` | Execution did not complete or the project is not verifiable | `08-recovery.md` |
+| H06 | `.agents/harness/decision_trees/H06_FAIL.toml` | Verification report is invalid or the task is not verified | `08-recovery.md` |
+| H07 | `.agents/harness/decision_trees/H07_FAIL.toml` | Scope was exceeded or unauthorized work was performed | `08-recovery.md` |
+| H11 | `.agents/harness/decision_trees/H11_FAIL.toml` | Intent reflection is invalid or confidence is inconsistent | `01-confirm-intent.md` |
+
+The decision tree may refine the target phase based on additional context variables; the Orchestrator must populate those variables and invoke the tree as described in section 6.
 
 ### 7. Scope and Autonomy Enforcement
 
@@ -156,6 +194,20 @@ The Orchestrator MUST manage the `CONFIRMING_INTENT` state:
 - On user rejection without correction, the Orchestrator MUST transition to `NEEDS_CLARIFICATION`.
 - If `correction_cycle >= 2`, the Orchestrator MUST NOT allow another correction cycle; it MUST transition to `NEEDS_CLARIFICATION` and ask the user to reformulate the original task.
 - If confidence is `HIGH` and no ambiguity blocks progression, the Orchestrator MAY auto-confirm the reflection for traceability and proceed to `BUILDING_TASK_SPECIFICATION`. The `INTENT_REFLECTION.md` artifact should still be generated.
+
+## Phase 07: Verification
+
+When the workflow reaches `VERIFYING`, the Orchestrator MUST invoke the `verifier` worker. The `verifier` is the only role authorized to produce or finalize `VERIFICATION_REPORT.md`.
+
+The `verifier` MUST read:
+
+- `TASK_SPECIFICATION.md`
+- `EXECUTION_PLAN.md`
+- `EXECUTION_SUMMARY.md`
+
+The `verifier` MUST produce `VERIFICATION_REPORT.md` in the expected session artifact location.
+
+The Orchestrator MUST run harness triggers H06 and H07 on the report before allowing the transition to `COMPLETED`. If either trigger fails, the Orchestrator MUST transition to `RECOVERY`.
 
 ## Delegation Contract
 

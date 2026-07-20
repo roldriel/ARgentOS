@@ -198,20 +198,20 @@ The Orchestrator MUST route to `NEEDS_CLARIFICATION` if `correction_cycle >= 2`,
 # User-Facing Message Template
 
 ```text
-**Reflejo de intención**
+**Intent reflection**
 
-Entendí que querés: {reformulated_request}
+I understand that you want: {reformulated_request}
 
-**Detalles clave**
+**Key details**
 - {key_entity_1}
 - {key_entity_2}
 
-**Confianza**: {level} — {explanation}
+**Confidence**: {level} — {explanation}
 
-**¿Es correcto?**
-1. Sí, confirmo.
-2. No, corregilo: __________
-3. Otra: __________
+**Is this correct?**
+1. Yes, I confirm.
+2. No, correct it: __________
+3. Other: __________
 ```
 
 When `caveman` is enabled, adapt to the configured level. See `.agents/standards/communication/CAVEMAN.md` for examples.

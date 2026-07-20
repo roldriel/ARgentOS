@@ -315,6 +315,10 @@ None.
 
 All passed.
 
+## Technical Practice Evidence
+
+No technical practices were enabled for this task.
+
 ## Issues or Deviations
 
 None.
@@ -486,6 +490,96 @@ Complete.
     assert returncode == 1
     assert output["result"] == "FAIL"
     assert any(
+        c["id"].startswith("ears_atomic_") and c["result"] == "FAIL"
+        for c in output["checks"]
+    )
+
+
+def test_ears_allows_value_enumeration_with_or(session):
+    session_uuid, artifacts_dir = session
+    content = """# Task Specification
+
+## Objective
+
+Improve API responses.
+
+## Expected outcome
+
+Clear status codes.
+
+## Scope
+
+User endpoints.
+
+## Constraints
+
+None.
+
+## Acceptance Criteria
+
+- The API shall return HTTP 200 or 201.
+
+## Assumptions
+
+None.
+
+## Unknowns
+
+None.
+
+## Validation
+
+Complete.
+"""
+    write_artifact(artifacts_dir, session_uuid, "TASK_SPECIFICATION.md", content)
+    returncode, output = run_runner(artifacts_dir, session_uuid, "H01")
+
+    assert not any(
+        c["id"].startswith("ears_atomic_") and c["result"] == "FAIL"
+        for c in output["checks"]
+    )
+
+
+def test_ears_allows_value_enumeration_with_and(session):
+    session_uuid, artifacts_dir = session
+    content = """# Task Specification
+
+## Objective
+
+Improve API responses.
+
+## Expected outcome
+
+Clear status codes.
+
+## Scope
+
+User endpoints.
+
+## Constraints
+
+None.
+
+## Acceptance Criteria
+
+- The API shall accept JSON and XML.
+
+## Assumptions
+
+None.
+
+## Unknowns
+
+None.
+
+## Validation
+
+Complete.
+"""
+    write_artifact(artifacts_dir, session_uuid, "TASK_SPECIFICATION.md", content)
+    returncode, output = run_runner(artifacts_dir, session_uuid, "H01")
+
+    assert not any(
         c["id"].startswith("ears_atomic_") and c["result"] == "FAIL"
         for c in output["checks"]
     )
@@ -1407,6 +1501,10 @@ None.
 
 All passed.
 
+## Technical Practice Evidence
+
+No technical practices were enabled for this task.
+
 ## Issues or Deviations
 
 None.
@@ -1590,7 +1688,7 @@ technical_approach:
   enabled:
     - "srp"
   notes:
-    - "Extraer responsabilidad de validación."
+    - "Extract validation responsibility."
 ```
 
 ## Acceptance Criteria
@@ -1656,11 +1754,11 @@ technical_practice_evidence:
     applied: true
     responsibilities_identified:
       - location: "app/services/user_service.py"
-        responsibility: "Validación de email"
+        responsibility: "Email validation"
     extraction:
       - from: "app/services/user_service.py"
         to: "app/services/email_validator.py"
-        reasoning: "La validación no era responsabilidad del servicio."
+        reasoning: "Validation was not the service's responsibility."
 ```
 
 ## Issues or Deviations
@@ -1727,7 +1825,7 @@ technical_approach:
   enabled:
     - "srp"
   notes:
-    - "Extraer responsabilidad de validación."
+    - "Extract validation responsibility."
 ```
 
 ## Acceptance Criteria
@@ -1845,7 +1943,7 @@ technical_approach:
   enabled:
     - "dip"
   notes:
-    - "Invertir dependencia del servicio hacia un repositorio abstracto."
+    - "Invert service dependency toward an abstract repository."
 ```
 
 ## Acceptance Criteria

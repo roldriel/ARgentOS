@@ -29,17 +29,33 @@ Terminate
 
 ## Roles the Worker Can Adopt
 
-The Worker is stateless between invocations. For each phase, the Orchestrator tells the Worker which role to adopt. The phase-to-role mapping is in `.agents/workflow/INDEX.md`.
+The Worker is stateless between invocations. For each phase, the Orchestrator tells the Worker which role to adopt for the phase. The phase-to-role mapping is in `.agents/workflow/INDEX.md`.
 
-### Intent roles
+### Core roles
 
-- `intent_reflector`: reflects the user's intent back to them in a structured way and records their confirmation or correction. Produces `INTENT_REFLECTION.md`.
-- `intent_reflection_reviewer`: validates the fidelity and quality of `INTENT_REFLECTION.md` before it is presented to the user. Returns `APPROVE`, `REWORK`, or `NEEDS_CLARIFICATION`.
+- `worker`: the generic worker that executes the phase instructions.
+- `reviewer`: evaluates an artifact before a critical transition and produces `REVIEW_REPORT.md`.
+- `verifier`: evaluates the executed work against the specification and produces `VERIFICATION_REPORT.md`.
+- `context_discoverer`: curates Knowledge Base entries before the real phase worker is invoked.
+
+### Worker profiles
+
+The generic `worker` may adopt a specialized profile to adjust how it executes a phase. Profiles are optional and live in `.agents/roles/profiles/`.
+
+Available profiles include:
+
+- `backend_engineer`
+- `database_engineer`
+- `integration_engineer`
+- `qa_engineer`
+- `tech_writer`
+- `functional_writer`
+- `intent_reflector` — reflects the user's intent back to them in a structured way and records their confirmation or correction. Produces `INTENT_REFLECTION.md`.
+- `intent_reflection_reviewer` — validates the fidelity and quality of `INTENT_REFLECTION.md` before it is presented to the user. Returns `APPROVE`, `REWORK`, or `NEEDS_CLARIFICATION`.
 
 ### Context roles
 
 - `context_gatherer`: collects technical context from the project (files, dependencies, existing behavior). It does not access the Knowledge Base directly; any KB entries are provided by the Orchestrator in the payload.
-- `context_discoverer`: curates Knowledge Base entries before the real phase worker is invoked. It does not gather project context; it only selects relevant historical summaries.
 
 ## Input from Orchestrator
 
@@ -49,20 +65,23 @@ Every Worker invocation must include:
 2. **Current state** — from the state machine.
 3. **Target phase** — which workflow module to execute.
 4. **Role to adopt** — one of the roles listed above.
-5. **Input artifacts** — paths to required input artifacts.
-6. **Workflow module path** — e.g., `workflow/03-gather-context.md`.
-7. **Relevant harness policy** — policy the Orchestrator will apply after the phase.
-8. **Task specification summary** — context about the overall objective.
+5. **Profile** — optional; one of `backend_engineer`, `database_engineer`, `integration_engineer`, `qa_engineer`, `tech_writer`, `functional_writer`, or `null` for the generic worker.
+6. **Input artifacts** — paths to required input artifacts.
+7. **Workflow module path** — e.g., `workflow/03-gather-context.md`.
+8. **Relevant harness policy** — policy the Orchestrator will apply after the phase.
+9. **Task specification summary** — context about the overall objective.
 
 ## Responsibilities
 
 1. Read the assigned workflow module.
-2. Execute only that phase.
-3. Apply any technical-practice standards listed in the delegation payload (see `.agents/standards/INDEX.md` for the catalog).
-4. Produce the required output artifact for the phase.
-5. Ensure the output complies with the corresponding contract in `.agents/contracts/`.
-6. Report back to the Orchestrator with:
+2. If the delegation payload includes a non-null `profile`, read `.agents/roles/profiles/<profile>.md` and apply its MUST_READ, restrictions, and prompt template.
+3. Execute only that phase.
+4. Apply any technical-practice standards listed in the delegation payload (see `.agents/standards/INDEX.md` for the catalog).
+5. Produce the required output artifact for the phase.
+6. Ensure the output complies with the corresponding contract in `.agents/contracts/` and with the active profile restrictions (if any).
+7. Report back to the Orchestrator with:
    - Path to the output artifact.
+   - Profile executed (or `null`).
    - Recommended next state.
    - Any blockers or uncertainties.
    - Any error, bug, or inconsistency discovered that is outside the phase scope.
@@ -106,14 +125,19 @@ The Worker MUST follow `.agents/standards/requirements/NO_ASSUMPTIONS.md` and `.
 
 When the `caveman` feature flag is enabled, the Worker MUST follow `.agents/standards/communication/CAVEMAN.md` for all natural-language output. The Orchestrator communicates the desired level (`lite`, `full`, or `ultra`) in the delegation payload; the default level is `full`.
 
-## Future Extension: Profiles
+## Worker Profiles
 
-In a later stage, specialized worker profiles may be added under:
+Specialized worker profiles live in `.agents/roles/profiles/` and are activated by the optional `profile` field in the delegation payload. When `profile` is non-null, the Worker must read the corresponding profile file and apply its rules before executing the phase.
 
-```text
-.agents/roles/profiles/
-```
+Available profiles:
 
-Examples: `frontend_worker.md`, `database_worker.md`, `testing_worker.md`.
+- `backend_engineer`
+- `database_engineer`
+- `integration_engineer`
+- `qa_engineer`
+- `tech_writer`
+- `functional_writer`
+- `intent_reflector`
+- `intent_reflection_reviewer`
 
-Until then, the generic Worker adopts the appropriate role for each phase.
+When `profile` is `null` or omitted, the Worker acts as the generic Worker.

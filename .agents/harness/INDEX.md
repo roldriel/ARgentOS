@@ -90,13 +90,15 @@ H08 for `EXECUTION_SUMMARY.md` is intentionally omitted because H05 already perf
 
 ## Project Discovery
 
-When the `project_discovery` feature flag is enabled, the ArgentOS System Agent health-check also runs a lightweight project discovery scan. The scan parses common project files (`pyproject.toml`, `requirements.txt`, `package.json`, `Dockerfile`, `README.md`, etc.) and writes themed knowledge-base entries to `.project/knowledge/discovery/`.
+Project discovery is performed by the **Discovery Orchestrator**, an agent-based subsystem in the `discovery` domain (`.agents/orchestrators/discovery/`). It has its own state machine (`discovery:DISCOVERY_*` states), its own workflow modules (numbered `00`–`08` inside `.agents/orchestrators/discovery/workflow/`), and its own harness triggers, which use the `D` prefix instead of the core `H` prefix. Workflow and harness numbering is therefore per-domain.
 
-The discovery module:
+The Discovery Orchestrator:
 
-- Uses only Python standard-library modules inside `.agents/`.
-- Respects the health-check TTL to avoid running on every invocation.
-- Leaves placeholders for LLM-synthesized entries (architecture, business rules, technical debt, known errors, project flow) to be populated by a separate synthesis step.
+- Produces and maintains the knowledge base under `.project/knowledge/discovery/` through specialized workers (`init_worker`, `environment_worker`, `stack_worker`, `framework_worker`, `patterns_worker`, `business_worker`, `synthesis_worker`).
+- Consumes and enriches knowledge from previous sessions instead of regenerating everything on each invocation.
+- Is invoked by the core Orchestrator with a scope (`full`, `env`, `stack`, `patterns`, `business`).
+
+Its output is validated by two gates: `core:H10-kb-discovery-report` (structure) and `D01-discovery-output` (ground truth; see `.agents/orchestrators/discovery/harness/policies/D01-discovery-output.md`).
 
 For details on the entry format, see `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md`.
 

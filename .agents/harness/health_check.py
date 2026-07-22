@@ -22,7 +22,6 @@ if str(_HARNESS_DIR) not in sys.path:
     sys.path.insert(0, str(_HARNESS_DIR))
 
 import feature_flags
-import project_discovery
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 AGENTS_DIR = PROJECT_ROOT / ".agents"
@@ -33,8 +32,6 @@ DISCOVERY_DIR_DOMAIN = ORCHESTRATORS_DIR / "discovery"
 DECISION_TREES_DIR = CORE_DIR / "harness" / "decision_trees"
 PROJECT_DIR = PROJECT_ROOT / ".project"
 LAST_HEALTH_CHECK_FILE = PROJECT_DIR / ".last_health_check"
-DISCOVERY_DIR = PROJECT_DIR / "knowledge" / "discovery"
-DISCOVERY_LAST_RUN_FILE = DISCOVERY_DIR / ".last_discovery"
 
 
 def required_dirs() -> list[Path]:
@@ -379,64 +376,6 @@ def check_knowledge_base(checks: list[dict[str, Any]]) -> bool:
     return all_valid
 
 
-def check_project_discovery(checks: list[dict[str, Any]], ttl_hours: int = 24) -> bool:
-    """Run project discovery if enabled and discovery data is missing or stale."""
-    if not feature_flags.is_enabled("project_discovery"):
-        _check(
-            checks,
-            "project_discovery_enabled",
-            True,
-            "project_discovery feature is disabled; skipping discovery",
-        )
-        return True
-
-    if not DISCOVERY_DIR.exists() or not any(DISCOVERY_DIR.glob("*.md")):
-        reason = "discovery directory missing or empty"
-        should_run = True
-    else:
-        last = None
-        if DISCOVERY_LAST_RUN_FILE.exists():
-            try:
-                raw = DISCOVERY_LAST_RUN_FILE.read_text(encoding="utf-8").strip()
-                last = datetime.fromisoformat(raw)
-            except (OSError, ValueError):
-                last = None
-        now = datetime.now(timezone.utc)
-        should_run = last is None or (now - last).total_seconds() > ttl_hours * 3600
-        reason = f"last discovery run at {last}" if last else "no last-run timestamp"
-
-    if not should_run:
-        _check(
-            checks,
-            "project_discovery_fresh",
-            True,
-            f"Discovery data is fresh ({reason}); skipping run",
-        )
-        return True
-
-    try:
-        result = project_discovery.run_discovery(PROJECT_ROOT)
-        written = project_discovery.write_kb_entries(result, DISCOVERY_DIR)
-        DISCOVERY_LAST_RUN_FILE.write_text(
-            datetime.now(timezone.utc).isoformat(), encoding="utf-8"
-        )
-        _check(
-            checks,
-            "project_discovery_run",
-            True,
-            f"Ran project discovery; wrote {len(written)} entries to {DISCOVERY_DIR}",
-        )
-        return True
-    except Exception as exc:
-        _check(
-            checks,
-            "project_discovery_run",
-            False,
-            f"Project discovery failed: {exc}",
-        )
-        return False
-
-
 TECHNICAL_PRACTICE_STANDARDS: dict[str, Path] = {
     "tdd": AGENTS_DIR / "standards" / "testing" / "TDD.md",
     "srp": AGENTS_DIR / "standards" / "development" / "design" / "SOLID" / "SRP.md",
@@ -551,7 +490,6 @@ def run_health_check() -> HealthCheckResult:
         ok_dt = check_decision_trees(checks)
         ok_rubrics = check_rubrics(checks)
         ok_kb = check_knowledge_base(checks)
-        ok_discovery = check_project_discovery(checks)
         ok_technical_practices = check_technical_practice_standards(checks)
 
         passed = (
@@ -561,7 +499,6 @@ def run_health_check() -> HealthCheckResult:
             and ok_dt
             and ok_rubrics
             and ok_kb
-            and ok_discovery
             and ok_technical_practices
         )
         result = HealthCheckResult(

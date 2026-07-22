@@ -24,7 +24,6 @@ DEFAULTS: dict[str, bool] = {
     "rubrics": True,
     "knowledge_base": True,
     "caveman": True,
-    "project_discovery": True,
     "tdd": True,
     "srp": True,
     "ocp": True,

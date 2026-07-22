@@ -135,6 +135,9 @@ Before modifying anything:
 * Confirm that the current state is `EXECUTING`.
 * Verify that all required input artifacts are available.
 * Identify which project files will be affected.
+* Verify that the discovery knowledge-base entries `.project/knowledge/discovery/environment.md` and `.project/knowledge/discovery/development_patterns.md` exist. If they are missing, report it to the Orchestrator so it can invoke the Discovery Orchestrator before executing.
+* Use the shell and tools recommended by `environment.md` for every command.
+* Apply the patterns from `development_patterns.md` when writing or modifying code, following `.agents/standards/context/USING_PATTERNS.md`.
 
 ## 2. Execute Implementation Steps in Order
 

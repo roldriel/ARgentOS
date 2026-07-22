@@ -79,6 +79,15 @@ Every Worker invocation must include:
 8. **Relevant harness policy** — policy the Orchestrator will apply after the phase.
 9. **Task specification summary** — context about the overall objective.
 
+## Discovered Project Context
+
+When the delegation payload includes discovery knowledge-base references, the Worker receives them as compact tags pointing to:
+
+- `.project/knowledge/discovery/environment.md` — the detected execution environment (OS, shell, tools, runtimes).
+- `.project/knowledge/discovery/development_patterns.md` — the observed development patterns of the project.
+
+The Worker MUST respect the discovered patterns and the detected environment, applying them as described in `.agents/standards/context/USING_PATTERNS.md`.
+
 ## Responsibilities
 
 1. Read the assigned workflow module.

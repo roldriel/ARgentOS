@@ -27,7 +27,10 @@ import project_discovery
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 AGENTS_DIR = PROJECT_ROOT / ".agents"
 HARNESS_DIR = AGENTS_DIR / "harness"
-DECISION_TREES_DIR = HARNESS_DIR / "decision_trees"
+ORCHESTRATORS_DIR = AGENTS_DIR / "orchestrators"
+CORE_DIR = ORCHESTRATORS_DIR / "core"
+DISCOVERY_DIR_DOMAIN = ORCHESTRATORS_DIR / "discovery"
+DECISION_TREES_DIR = CORE_DIR / "harness" / "decision_trees"
 PROJECT_DIR = PROJECT_ROOT / ".project"
 LAST_HEALTH_CHECK_FILE = PROJECT_DIR / ".last_health_check"
 DISCOVERY_DIR = PROJECT_DIR / "knowledge" / "discovery"
@@ -37,9 +40,9 @@ DISCOVERY_LAST_RUN_FILE = DISCOVERY_DIR / ".last_discovery"
 def required_dirs() -> list[Path]:
     """Return the list of required protocol directories (resolved at call time)."""
     return [
-        AGENTS_DIR / "states",
+        CORE_DIR / "states",
         AGENTS_DIR / "roles",
-        AGENTS_DIR / "workflow",
+        CORE_DIR / "workflow",
         AGENTS_DIR / "contracts",
         HARNESS_DIR / "policies",
     ]
@@ -47,8 +50,8 @@ def required_dirs() -> list[Path]:
 
 REQUIRED_INDEX_FILES = [
     AGENTS_DIR / "INDEX.md",
-    AGENTS_DIR / "states" / "AGENT_STATE_MACHINE.md",
-    AGENTS_DIR / "roles" / "orchestrator.md",
+    CORE_DIR / "states" / "AGENT_STATE_MACHINE.md",
+    CORE_DIR / "roles" / "orchestrator.md",
 ]
 
 
@@ -240,7 +243,9 @@ def check_decision_trees(checks: list[dict[str, Any]]) -> bool:
 def check_contracts_front_matter(checks: list[dict[str, Any]]) -> bool:
     """Validate that all contract files have a consistent TOML front matter."""
     all_valid = True
-    for contract_path in sorted((AGENTS_DIR / "contracts").glob("*.md")):
+    contract_paths = sorted((AGENTS_DIR / "contracts").glob("*.md"))
+    contract_paths += sorted(ORCHESTRATORS_DIR.glob("*/contracts/*.md"))
+    for contract_path in contract_paths:
         content = contract_path.read_text(encoding="utf-8")
         try:
             match = re.match(r"^\+\+\+\s*\n(.*?)\n\+\+\+\s*\n", content, re.DOTALL)
@@ -356,12 +361,15 @@ def check_knowledge_base(checks: list[dict[str, Any]]) -> bool:
     if not discoverer_exists:
         all_valid = False
 
-    for contract in ("KB_DISCOVERY_REPORT.md", "SESSION_LOG.md"):
-        contract_path = AGENTS_DIR / "contracts" / contract
+    for contract in (
+        DISCOVERY_DIR_DOMAIN / "contracts" / "KB_DISCOVERY_REPORT.md",
+        AGENTS_DIR / "contracts" / "SESSION_LOG.md",
+    ):
+        contract_path = contract
         present = contract_path.is_file()
         _check(
             checks,
-            f"knowledge_base_contract_{contract.replace('.', '_')}_present",
+            f"knowledge_base_contract_{contract_path.name.replace('.', '_')}_present",
             present,
             f"{'Found' if present else 'Missing'} {contract_path}",
         )

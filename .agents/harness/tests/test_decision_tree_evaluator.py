@@ -12,7 +12,14 @@ import pytest
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 RUNNER_PATH = PROJECT_ROOT / ".agents" / "harness" / "runner.py"
-TREES_DIR = PROJECT_ROOT / ".agents" / "harness" / "decision_trees"
+TREES_DIR = (
+    PROJECT_ROOT
+    / ".agents"
+    / "orchestrators"
+    / "core"
+    / "harness"
+    / "decision_trees"
+)
 
 import decision_tree_evaluator as dte
 

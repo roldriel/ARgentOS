@@ -24,7 +24,7 @@ The invocation is not a function call; it is a structured handoff of context and
 {
   session_uuid: "<uuid>",
   current_state: "<STATE_NAME>",
-  target_phase: "<workflow/XX-name.md>",
+  target_phase: "<orchestrators/core/workflow/XX-name.md>",
   role_to_adopt: "<role_name>",
   profile: "<backend_engineer|database_engineer|integration_engineer|qa_engineer|tech_writer|functional_writer|intent_reflector|intent_reflection_reviewer|null>",
   input_artifacts: [
@@ -64,7 +64,7 @@ The invocation is not a function call; it is a structured handoff of context and
 
 ### `profile`
 
-`profile` is optional. It is populated by the Orchestrator before delegating `workflow/06-execute.md` when a specialized worker profile applies, as determined by `.agents/standards/orchestration/ORCHESTRATION_GUIDE.md`.
+`profile` is optional. It is populated by the Orchestrator before delegating `orchestrators/core/workflow/06-execute.md` when a specialized worker profile applies, as determined by `.agents/standards/orchestration/ORCHESTRATION_GUIDE.md`.
 
 - If `profile` is `null` or omitted, the Worker acts as the generic worker (`worker.md`).
 - If `profile` is one of `backend_engineer`, `database_engineer`, `integration_engineer`, `qa_engineer`, `tech_writer`, `functional_writer`, `intent_reflector`, or `intent_reflection_reviewer`, the Worker MUST read `.agents/roles/profiles/<profile>.md` before executing the phase and apply its MUST_READ, restrictions, and prompt template.
@@ -100,7 +100,7 @@ The Worker returns the following to the Orchestrator:
   },
   role_executed: "<role_name>",
   profile_executed: "<profile_name_or_null>",
-  phase_completed: "<workflow/XX-name.md>",
+  phase_completed: "<orchestrators/core/workflow/XX-name.md>",
   summary: "<what was done>",
   blockers: ["<list or empty>"],
   deviations: ["<list or empty>"]

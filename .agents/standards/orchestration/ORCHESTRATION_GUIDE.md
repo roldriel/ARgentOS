@@ -7,7 +7,7 @@ Provide the Orchestrator with a practical manual for deciding **which worker pro
 This guide aims to:
 
 - Reduce cognitive load and token consumption in the Orchestrator prompt.
-- Ensure consistency with the state machine defined in `.agents/states/AGENT_STATE_MACHINE.md`.
+- Ensure consistency with the state machine defined in `.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md`.
 - Guarantee that the delegation payload complies with `.agents/delegation/WORKER_DELEGATION_CONTRACT.md`.
 
 ---
@@ -16,7 +16,7 @@ This guide aims to:
 
 ### Mainly
 
-At the `PLAN_READY → EXECUTING` transition, **before delegating** the `workflow/06-execute.md` phase.
+At the `PLAN_READY → EXECUTING` transition, **before delegating** the `orchestrators/core/workflow/06-execute.md` phase.
 
 ### Also applies in optional transitions
 
@@ -143,7 +143,7 @@ The payload must be a concrete instance of `.agents/delegation/WORKER_DELEGATION
 {
   "session_uuid": "<uuid>",
   "current_state": "EXECUTING",
-  "target_phase": "workflow/06-execute.md",
+  "target_phase": "orchestrators/core/workflow/06-execute.md",
   "role_to_adopt": "worker",
   "profile": "<perfil o null>",
   "input_artifacts": [
@@ -151,7 +151,7 @@ The payload must be a concrete instance of `.agents/delegation/WORKER_DELEGATION
     ".project/<uuid>/<iteration>/<order>-CONTEXT_VALIDATION_REPORT.md",
     ".project/<uuid>/<iteration>/<order>-EXECUTION_PLAN.md"
   ],
-  "harness_policy": "harness/policies/H05-execution-completed.md",
+  "harness_policy": "orchestrators/core/harness/policies/H05-execution-completed.md",
   "task_summary": "<objetivo reescrito usando plantilla del perfil>",
   "knowledge_entries": [],
   "context_budget": 4000,
@@ -166,11 +166,11 @@ The payload must be a concrete instance of `.agents/delegation/WORKER_DELEGATION
 |---|---|
 | `session_uuid` | UUID of the active session. |
 | `current_state` | Current state of the state machine (`EXECUTING` for phase 06). |
-| `target_phase` | Path of the workflow module to execute (`workflow/06-execute.md`). |
+| `target_phase` | Path of the workflow module to execute (`orchestrators/core/workflow/06-execute.md`). |
 | `role_to_adopt` | Always `worker`; the profile is indicated in `profile`. |
 | `profile` | Result of the 7 questions (`backend_engineer`, `database_engineer`, etc.) or `null` if generic worker. |
 | `input_artifacts` | Artifacts required by the workflow module. |
-| `harness_policy` | Harness policy that protects the transition (`harness/policies/H05-execution-completed.md`). |
+| `harness_policy` | Harness policy that protects the transition (`orchestrators/core/harness/policies/H05-execution-completed.md`). |
 | `task_summary` | Rewritten objective, never the original user prompt. |
 | `knowledge_entries` | Populated by `context_discoverer` when `knowledge_base` is active. |
 | `context_budget` | Recommended by `context_discoverer` or by `.agents/standards/context/CONTEXT.md`. |
@@ -203,7 +203,7 @@ The payload must be a concrete instance of `.agents/delegation/WORKER_DELEGATION
 {
   "session_uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   "current_state": "EXECUTING",
-  "target_phase": "workflow/06-execute.md",
+  "target_phase": "orchestrators/core/workflow/06-execute.md",
   "role_to_adopt": "worker",
   "profile": null,
   "input_artifacts": [
@@ -211,7 +211,7 @@ The payload must be a concrete instance of `.agents/delegation/WORKER_DELEGATION
     ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-03-CONTEXT_VALIDATION_REPORT.md",
     ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-04-EXECUTION_PLAN.md"
   ],
-  "harness_policy": "harness/policies/H05-execution-completed.md",
+  "harness_policy": "orchestrators/core/harness/policies/H05-execution-completed.md",
   "task_summary": "Corregir el typo identificado en README.md según el criterio de aceptación AC-1 de TASK_SPECIFICATION.md. No modificar otros archivos.",
   "knowledge_entries": [],
   "context_budget": 4000,
@@ -246,7 +246,7 @@ The payload must be a concrete instance of `.agents/delegation/WORKER_DELEGATION
 {
   "session_uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   "current_state": "EXECUTING",
-  "target_phase": "workflow/06-execute.md",
+  "target_phase": "orchestrators/core/workflow/06-execute.md",
   "role_to_adopt": "worker",
   "profile": "backend_engineer",
   "input_artifacts": [
@@ -254,7 +254,7 @@ The payload must be a concrete instance of `.agents/delegation/WORKER_DELEGATION
     ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-03-CONTEXT_VALIDATION_REPORT.md",
     ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-04-EXECUTION_PLAN.md"
   ],
-  "harness_policy": "harness/policies/H05-execution-completed.md",
+  "harness_policy": "orchestrators/core/harness/policies/H05-execution-completed.md",
   "task_summary": "Implementar el endpoint de listado de usuarios respetando la capa View → Service → Model definida en ARCHITECTURE_CONTRACT.md. Los criterios de aceptación son: AC-1 (paginación), AC-2 (orden por nombre) y AC-3 (respuesta 200).",
   "knowledge_entries": [],
   "context_budget": 4000,
@@ -289,7 +289,7 @@ The payload must be a concrete instance of `.agents/delegation/WORKER_DELEGATION
 {
   "session_uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   "current_state": "EXECUTING",
-  "target_phase": "workflow/06-execute.md",
+  "target_phase": "orchestrators/core/workflow/06-execute.md",
   "role_to_adopt": "worker",
   "profile": "database_engineer",
   "input_artifacts": [
@@ -297,7 +297,7 @@ The payload must be a concrete instance of `.agents/delegation/WORKER_DELEGATION
     ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-03-CONTEXT_VALIDATION_REPORT.md",
     ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-04-EXECUTION_PLAN.md"
   ],
-  "harness_policy": "harness/policies/H05-execution-completed.md",
+  "harness_policy": "orchestrators/core/harness/policies/H05-execution-completed.md",
   "task_summary": "Agregar la columna `email_verified` (BOOLEAN, NOT NULL DEFAULT false) a la tabla `users` mediante migración. Actualizar el model correspondiente sin introducir lógica de negocio. Criterios: AC-1 (migración reversible), AC-2 (model sincronizado).",
   "knowledge_entries": [],
   "context_budget": 4000,
@@ -327,7 +327,7 @@ It cannot be solved with a single profile without violating the mutual-exclusion
 {
   "session_uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   "current_state": "EXECUTING",
-  "target_phase": "workflow/06-execute.md",
+  "target_phase": "orchestrators/core/workflow/06-execute.md",
   "role_to_adopt": "worker",
   "profile": "integration_engineer",
   "input_artifacts": [
@@ -335,7 +335,7 @@ It cannot be solved with a single profile without violating the mutual-exclusion
     ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-03-CONTEXT_VALIDATION_REPORT.md",
     ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-04-EXECUTION_PLAN.md"
   ],
-  "harness_policy": "harness/policies/H05-execution-completed.md",
+  "harness_policy": "orchestrators/core/harness/policies/H05-execution-completed.md",
   "task_summary": "Implementar el provider `PaymentProvider` que adapta la API externa de pagos. Incluir manejo de errores, timeout y mapeo de respuestas. Criterios: AC-1 (provider aislado), AC-2 (tests de contrato).",
   "knowledge_entries": [],
   "context_budget": 4000,
@@ -350,7 +350,7 @@ It cannot be solved with a single profile without violating the mutual-exclusion
 {
   "session_uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   "current_state": "EXECUTING",
-  "target_phase": "workflow/06-execute.md",
+  "target_phase": "orchestrators/core/workflow/06-execute.md",
   "role_to_adopt": "worker",
   "profile": "functional_writer",
   "input_artifacts": [
@@ -359,7 +359,7 @@ It cannot be solved with a single profile without violating the mutual-exclusion
     ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-04-EXECUTION_PLAN.md",
     ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-05-EXECUTION_SUMMARY.md"
   ],
-  "harness_policy": "harness/policies/H05-execution-completed.md",
+  "harness_policy": "orchestrators/core/harness/policies/H05-execution-completed.md",
   "task_summary": "Documentar el flujo funcional de integración con la API externa de pagos para lectores de negocio. Incluir pasos del usuario, estados del pago y posibles errores. Criterio: AC-3 (documentación funcional aprobada).",
   "knowledge_entries": [],
   "context_budget": 4000,

@@ -23,7 +23,7 @@ The context discoverer curates Knowledge Base entries for the current phase. It 
 ## Outputs
 
 - Curated entries written or refined in `.project/knowledge/entries/`.
-- An artifact named `<order>-KB_DISCOVERY_REPORT.md` in the current iteration. The artifact structure is defined in `.agents/contracts/KB_DISCOVERY_REPORT.md`.
+- An artifact named `<order>-KB_DISCOVERY_REPORT.md` in the current iteration. The artifact structure is defined in `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_REPORT.md`.
 - A list of selected entries and a `context_budget` recommendation included in the Orchestrator's delegation payload to the phase worker.
 
 ## Decision rules

@@ -29,7 +29,7 @@ Terminate
 
 ## Roles the Worker Can Adopt
 
-The Worker is stateless between invocations. For each phase, the Orchestrator tells the Worker which role to adopt for the phase. The phase-to-role mapping is in `.agents/workflow/INDEX.md`.
+The Worker is stateless between invocations. For each phase, the Orchestrator tells the Worker which role to adopt for the phase. The phase-to-role mapping is in `.agents/orchestrators/core/workflow/INDEX.md`.
 
 ### Core roles
 
@@ -67,7 +67,7 @@ Every Worker invocation must include:
 4. **Role to adopt** — one of the roles listed above.
 5. **Profile** — optional; one of `backend_engineer`, `database_engineer`, `integration_engineer`, `qa_engineer`, `tech_writer`, `functional_writer`, or `null` for the generic worker.
 6. **Input artifacts** — paths to required input artifacts.
-7. **Workflow module path** — e.g., `workflow/03-gather-context.md`.
+7. **Workflow module path** — e.g., `orchestrators/core/workflow/03-gather-context.md`.
 8. **Relevant harness policy** — policy the Orchestrator will apply after the phase.
 9. **Task specification summary** — context about the overall objective.
 

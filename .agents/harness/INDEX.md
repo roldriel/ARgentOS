@@ -7,7 +7,7 @@ The harness is a set of validation policies invoked by the Orchestrator before c
 It ensures that:
 
 1. Required artifacts exist and comply with their contracts.
-2. State transitions follow the rules in `states/AGENT_STATE_MACHINE.md`.
+2. State transitions follow the rules in `orchestrators/core/states/AGENT_STATE_MACHINE.md`.
 3. Workflow phases were executed in order without skipped steps.
 4. The process remains auditable and reproducible.
 
@@ -27,15 +27,15 @@ The harness runs as a gate **before** each critical transition:
 
 | Trigger | Transition | Policy |
 | --- | --- | --- |
-| H00 | `ANALYZING_TASK → BUILDING_TASK_SPECIFICATION`, `CONFIRMING_INTENT`, or `NEEDS_CLARIFICATION` | `policies/H00-task-analysis.md` |
-| H11 | `CONFIRMING_INTENT → BUILDING_TASK_SPECIFICATION` | `policies/H11-intent-reflection.md` |
-| H01 | `BUILDING_TASK_SPECIFICATION → TASK_READY` | `policies/H01-task-specification.md` |
-| H02 | `GATHERING_CONTEXT → CONTEXT_GATHERED` | `policies/H02-context-artifact.md` |
-| H03 | `VALIDATING_CONTEXT → CONTEXT_READY` | `policies/H03-context-validation.md` |
-| H04 | `PLANNING → PLAN_READY` | `policies/H04-execution-plan.md` |
-| H05 | `EXECUTING → VERIFYING` | `policies/H05-execution-completed.md` |
-| H06 | `VERIFYING → COMPLETED` | `policies/H06-verification-report.md` |
-| H07 | `VERIFYING → COMPLETED` | `policies/H07-scope-compliance.md` |
+| H00 | `ANALYZING_TASK → BUILDING_TASK_SPECIFICATION`, `CONFIRMING_INTENT`, or `NEEDS_CLARIFICATION` | `.agents/orchestrators/core/harness/policies/H00-task-analysis.md` |
+| H11 | `CONFIRMING_INTENT → BUILDING_TASK_SPECIFICATION` | `.agents/orchestrators/core/harness/policies/H11-intent-reflection.md` |
+| H01 | `BUILDING_TASK_SPECIFICATION → TASK_READY` | `.agents/orchestrators/core/harness/policies/H01-task-specification.md` |
+| H02 | `GATHERING_CONTEXT → CONTEXT_GATHERED` | `.agents/orchestrators/core/harness/policies/H02-context-artifact.md` |
+| H03 | `VALIDATING_CONTEXT → CONTEXT_READY` | `.agents/orchestrators/core/harness/policies/H03-context-validation.md` |
+| H04 | `PLANNING → PLAN_READY` | `.agents/orchestrators/core/harness/policies/H04-execution-plan.md` |
+| H05 | `EXECUTING → VERIFYING` | `.agents/orchestrators/core/harness/policies/H05-execution-completed.md` |
+| H06 | `VERIFYING → COMPLETED` | `.agents/orchestrators/core/harness/policies/H06-verification-report.md` |
+| H07 | `VERIFYING → COMPLETED` | `.agents/orchestrators/core/harness/policies/H07-scope-compliance.md` |
 
 ## How the Harness Works
 
@@ -75,7 +75,7 @@ If a harness trigger fails:
 
 ## Recovery Mechanism
 
-When a harness trigger fails, the Orchestrator routes to recovery. The recovery logic is implemented as TOML decision trees under `.agents/harness/decision_trees/H*_FAIL.toml` and is evaluated via the runner. See `.agents/harness/RUNNER.md` for the `decide` subcommand.
+When a harness trigger fails, the Orchestrator routes to recovery. The recovery logic is implemented as TOML decision trees under `.agents/orchestrators/core/harness/decision_trees/H*_FAIL.toml` and is evaluated via the runner. See `.agents/harness/RUNNER.md` for the `decide` subcommand.
 
 ## Optional Triggers
 
@@ -83,8 +83,8 @@ The following triggers are defined but not integrated into the state machine. Th
 
 | Trigger | Transition | Policy | Artifact |
 |---|---|---|---|
-| H09 | `RECOVERY → PLANNING` | `policies/H09-recovery-report.md` | `RECOVERY_REPORT.md` |
-| H10 | Before using KB discovery | `policies/H10-kb-discovery-report.md` | `KB_DISCOVERY_REPORT.md` |
+| H09 | `RECOVERY → PLANNING` | `.agents/orchestrators/core/harness/policies/H09-recovery-report.md` | `RECOVERY_REPORT.md` |
+| H10 | Before using KB discovery | `.agents/orchestrators/core/harness/policies/H10-kb-discovery-report.md` | `KB_DISCOVERY_REPORT.md` |
 
 H08 for `EXECUTION_SUMMARY.md` is intentionally omitted because H05 already performs semantic validation of that artifact.
 
@@ -98,7 +98,7 @@ The discovery module:
 - Respects the health-check TTL to avoid running on every invocation.
 - Leaves placeholders for LLM-synthesized entries (architecture, business rules, technical debt, known errors, project flow) to be populated by a separate synthesis step.
 
-For details on the entry format, see `.agents/contracts/KB_DISCOVERY_ENTRY.md`.
+For details on the entry format, see `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md`.
 
 ## Constraints
 

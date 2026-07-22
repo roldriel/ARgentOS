@@ -7,15 +7,15 @@ The human- and agent-facing entry point is `AGENTS.md` at the project root. This
 ## Before executing any task
 
 1. Load the system role:
-   → `roles/argentos.md`
+   → `orchestrators/system/roles/argentos.md`
 
 2. The **ArgentOS** system agent verifies protocol health and initializes `.project/` (including `.project/knowledge/`).
 
 3. Load the state machine:
-   → `states/AGENT_STATE_MACHINE.md`
+   → `orchestrators/core/states/AGENT_STATE_MACHINE.md`
 
 4. Load the orchestrator role:
-   → `roles/orchestrator.md`
+   → `orchestrators/core/roles/orchestrator.md`
 
 5. The orchestrator will delegate each workflow phase to a **worker** invoked as a subagent.
 

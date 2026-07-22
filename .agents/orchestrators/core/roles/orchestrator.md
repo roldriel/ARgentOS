@@ -63,7 +63,7 @@ EXECUTING → VERIFYING → COMPLETED or RECOVERY
 
 - The Orchestrator is the only role allowed to invoke the harness.
 - A harness trigger runs **before** each critical state transition.
-- The harness reads the policy file from `.agents/harness/policies/` and returns `PASS` or `FAIL`.
+- The harness reads the policy file from `.agents/orchestrators/core/harness/policies/` and returns `PASS` or `FAIL`.
 - The result is recorded in `.project/<session-uuid>/HARNESS_REPORT.md`.
 
 ### 4. Feature Flag Awareness
@@ -122,7 +122,7 @@ See `.agents/roles/context_discoverer.md` and `.agents/standards/context/CONTEXT
 
 ### 5.1 Profile Selection Before Execution
 
-Before delegating `workflow/06-execute.md`, the Orchestrator MUST consult `.agents/standards/orchestration/ORCHESTRATION_GUIDE.md` and apply the 7 decision questions to select the appropriate worker profile.
+Before delegating `orchestrators/core/workflow/06-execute.md`, the Orchestrator MUST consult `.agents/standards/orchestration/ORCHESTRATION_GUIDE.md` and apply the 7 decision questions to select the appropriate worker profile.
 
 The selected profile MUST be recorded in the delegation payload using the `profile` field introduced by the worker profile catalog (see `.agents/roles/profiles/README.md`). If none of the specialized profiles apply, the Orchestrator MUST set `profile` to `null` and delegate a generic `worker`.
 
@@ -152,15 +152,15 @@ When a harness trigger fails and the `decision_trees` feature flag is enabled, t
 
 | Trigger | TOML file | Typical failure | Recommended target phase |
 |---|---|---|---|
-| H00 | `.agents/harness/decision_trees/H00_FAIL.toml` | Task analysis is missing required elements or recommends an invalid next state | `00-analyze-task.md` |
-| H01 | `.agents/harness/decision_trees/H01_FAIL.toml` | Task specification is incomplete, out of scope, or contains unconfirmed assumptions | `02-build-task-specification.md` |
-| H02 | `.agents/harness/decision_trees/H02_FAIL.toml` | Context artifact is insufficient or missing relevant components | `03-gather-context.md` |
-| H03 | `.agents/harness/decision_trees/H03_FAIL.toml` | Context validation fails or context is inconsistent with the task specification | `03-gather-context.md` |
-| H04 | `.agents/harness/decision_trees/H04_FAIL.toml` | Execution plan is unsafe, incomplete, or out of scope | `08-recovery.md` |
-| H05 | `.agents/harness/decision_trees/H05_FAIL.toml` | Execution did not complete or the project is not verifiable | `08-recovery.md` |
-| H06 | `.agents/harness/decision_trees/H06_FAIL.toml` | Verification report is invalid or the task is not verified | `08-recovery.md` |
-| H07 | `.agents/harness/decision_trees/H07_FAIL.toml` | Scope was exceeded or unauthorized work was performed | `08-recovery.md` |
-| H11 | `.agents/harness/decision_trees/H11_FAIL.toml` | Intent reflection is invalid or confidence is inconsistent | `01-confirm-intent.md` |
+| H00 | `.agents/orchestrators/core/harness/decision_trees/H00_FAIL.toml` | Task analysis is missing required elements or recommends an invalid next state | `00-analyze-task.md` |
+| H01 | `.agents/orchestrators/core/harness/decision_trees/H01_FAIL.toml` | Task specification is incomplete, out of scope, or contains unconfirmed assumptions | `02-build-task-specification.md` |
+| H02 | `.agents/orchestrators/core/harness/decision_trees/H02_FAIL.toml` | Context artifact is insufficient or missing relevant components | `03-gather-context.md` |
+| H03 | `.agents/orchestrators/core/harness/decision_trees/H03_FAIL.toml` | Context validation fails or context is inconsistent with the task specification | `03-gather-context.md` |
+| H04 | `.agents/orchestrators/core/harness/decision_trees/H04_FAIL.toml` | Execution plan is unsafe, incomplete, or out of scope | `08-recovery.md` |
+| H05 | `.agents/orchestrators/core/harness/decision_trees/H05_FAIL.toml` | Execution did not complete or the project is not verifiable | `08-recovery.md` |
+| H06 | `.agents/orchestrators/core/harness/decision_trees/H06_FAIL.toml` | Verification report is invalid or the task is not verified | `08-recovery.md` |
+| H07 | `.agents/orchestrators/core/harness/decision_trees/H07_FAIL.toml` | Scope was exceeded or unauthorized work was performed | `08-recovery.md` |
+| H11 | `.agents/orchestrators/core/harness/decision_trees/H11_FAIL.toml` | Intent reflection is invalid or confidence is inconsistent | `01-confirm-intent.md` |
 
 The decision tree may refine the target phase based on additional context variables; the Orchestrator must populate those variables and invoke the tree as described in section 6.
 
@@ -228,7 +228,7 @@ The Orchestrator MUST maintain `.project/<session-uuid>/SESSION_BRIEF.md`:
 
 ## Harness Triggers
 
-The trigger catalog (H00–H07, H11, optional H09–H10) and the transition each one protects are documented in `.agents/harness/INDEX.md` and `.agents/workflow/INDEX.md`.
+The trigger catalog (H00–H07, H11, optional H09–H10) and the transition each one protects are documented in `.agents/harness/INDEX.md` and `.agents/orchestrators/core/workflow/INDEX.md`.
 
 H08 is intentionally omitted because H05 already validates `EXECUTION_SUMMARY.md` semantically.
 
@@ -239,4 +239,4 @@ H08 is intentionally omitted because H05 already validates `EXECUTION_SUMMARY.md
 - The Orchestrator MUST NOT skip the harness.
 - The Orchestrator MUST NOT invoke more than one phase per worker instance.
 - The Orchestrator MUST NOT skip required lifecycle phases, even for trivial tasks.
-- The Orchestrator MUST NOT authorize a worker to violate `.agents/states/AGENT_STATE_MACHINE.md` or `.agents/standards/conduct/ANTI_CIRCUMVENTION.md`.
+- The Orchestrator MUST NOT authorize a worker to violate `.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md` or `.agents/standards/conduct/ANTI_CIRCUMVENTION.md`.

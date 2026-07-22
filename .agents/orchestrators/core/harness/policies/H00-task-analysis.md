@@ -32,7 +32,7 @@ Validate that `TASK_ANALYSIS.md` exists and complies with its contract before al
 - Current state: `ANALYZING_TASK`
 - Target state: `BUILDING_TASK_SPECIFICATION`, `CONFIRMING_INTENT`, or `NEEDS_CLARIFICATION`
 - Artifact: `.project/<session-uuid>/<iteration>/<order>-TASK_ANALYSIS.md`
-- Contract: `.agents/contracts/TASK_ANALYSIS.md`
+- Contract: `.agents/orchestrators/core/contracts/TASK_ANALYSIS.md`
 
 ## Checklist
 

@@ -44,7 +44,7 @@ The verification identified failures or gaps that must be corrected.
 Next module:
 
 ```text
-workflow/08-recovery.md
+orchestrators/core/workflow/08-recovery.md
 ```
 
 ---
@@ -192,7 +192,7 @@ VERIFYING
 COMPLETED
 ```
 
-This transition is gated by harness trigger H06 (`harness/policies/H06-verification-report.md`).
+This transition is gated by harness trigger H06 (`orchestrators/core/harness/policies/H06-verification-report.md`).
 
 ## Verification Failed
 
@@ -208,7 +208,7 @@ RECOVERY
 Continue with:
 
 ```text
-workflow/08-recovery.md
+orchestrators/core/workflow/08-recovery.md
 ```
 
 ---

@@ -32,7 +32,7 @@ Validate that the context validation report justifies whether the gathered conte
 - Current state: `VALIDATING_CONTEXT`
 - Target state: `CONTEXT_READY`
 - Artifact: `.project/<session-uuid>/<iteration>/<order>-CONTEXT_VALIDATION_REPORT.md`
-- Contract: `.agents/contracts/CONTEXT_VALIDATION_REPORT.md`
+- Contract: `.agents/orchestrators/core/contracts/CONTEXT_VALIDATION_REPORT.md`
 - Reference: `TASK_SPECIFICATION.md`, `CONTEXT_ARTIFACT.md`
 
 ## Checklist

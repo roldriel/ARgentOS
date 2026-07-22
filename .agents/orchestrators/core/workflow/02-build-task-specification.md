@@ -38,7 +38,7 @@ The task specification is complete and contains enough information to continue.
 Next module:
 
 ```text
-workflow/03-gather-context.md
+orchestrators/core/workflow/03-gather-context.md
 ```
 
 ---
@@ -170,7 +170,7 @@ Transition:
 BUILDING_TASK_SPECIFICATION → TASK_READY
 ```
 
-This transition is gated by harness trigger H01 (`harness/policies/H01-task-specification.md`).
+This transition is gated by harness trigger H01 (`orchestrators/core/harness/policies/H01-task-specification.md`).
 
 ## 3. Update Session Brief
 

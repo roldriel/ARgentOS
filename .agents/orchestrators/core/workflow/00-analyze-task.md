@@ -39,7 +39,7 @@ The request is understood well enough to structure a task specification.
 Next module:
 
 ```text
-workflow/02-build-task-specification.md
+orchestrators/core/workflow/02-build-task-specification.md
 ```
 
 ---
@@ -228,7 +228,7 @@ BUILDING_TASK_SPECIFICATION
 Continue with:
 
 ```text
-workflow/02-build-task-specification.md
+orchestrators/core/workflow/02-build-task-specification.md
 ```
 
 ## Intent Requires Confirmation
@@ -245,7 +245,7 @@ CONFIRMING_INTENT
 Continue with:
 
 ```text
-workflow/01-confirm-intent.md
+orchestrators/core/workflow/01-confirm-intent.md
 ```
 
 ## Request Unclear

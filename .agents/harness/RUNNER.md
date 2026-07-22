@@ -16,7 +16,7 @@ If `--iteration` is not specified, the runner finds the most recent iteration co
 
 The runner:
 
-- Reads the corresponding policy from `.agents/harness/policies/`.
+- Reads the corresponding policy from `.agents/orchestrators/core/harness/policies/`.
 - Validates the artifact against the contract.
 - Updates `HARNESS_REPORT.md` at the session root.
 - Returns JSON with result `PASS`/`FAIL`.

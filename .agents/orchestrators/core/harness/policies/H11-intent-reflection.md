@@ -29,7 +29,7 @@ Validate that `INTENT_REFLECTION.md` exists, complies with its contract, and rec
 - Current state: `CONFIRMING_INTENT`
 - Target state: `BUILDING_TASK_SPECIFICATION`
 - Artifact: `.project/<session-uuid>/<iteration>/<order>-INTENT_REFLECTION.md`
-- Contract: `.agents/contracts/INTENT_REFLECTION.md`
+- Contract: `.agents/orchestrators/core/contracts/INTENT_REFLECTION.md`
 
 ## Checklist
 

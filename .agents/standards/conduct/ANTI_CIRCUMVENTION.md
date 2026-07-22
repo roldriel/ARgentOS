@@ -9,7 +9,7 @@ This standard explicitly forbids bypassing, violating, or hallucinating protocol
 The agent MUST NOT:
 
 1. Deliberately skip any required workflow phase.
-2. Deliberately violate the state machine defined in `.agents/states/AGENT_STATE_MACHINE.md`.
+2. Deliberately violate the state machine defined in `.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md`.
 3. Skip, violate, or hallucinate rules, requirements, or context because the task appears small, simple, urgent, or easy to "guess".
 
 ## What counts as circumvention
@@ -29,4 +29,4 @@ The agent MUST NOT:
 
 ## Relationship to other standards
 
-This standard complements `.agents/standards/requirements/NO_ASSUMPTIONS.md` and `.agents/states/AGENT_STATE_MACHINE.md`. Where those documents define the protocol, this document forbids deliberate evasion of it.
+This standard complements `.agents/standards/requirements/NO_ASSUMPTIONS.md` and `.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md`. Where those documents define the protocol, this document forbids deliberate evasion of it.

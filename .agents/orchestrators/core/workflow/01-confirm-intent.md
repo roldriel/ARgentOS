@@ -39,7 +39,7 @@ The user has confirmed the reflected intent. The agent can now build the task sp
 Next module:
 
 ```text
-workflow/02-build-task-specification.md
+orchestrators/core/workflow/02-build-task-specification.md
 ```
 
 ---
@@ -51,7 +51,7 @@ The user has corrected the reflected intent. The agent must re-analyze the reque
 Next module:
 
 ```text
-workflow/00-analyze-task.md
+orchestrators/core/workflow/00-analyze-task.md
 ```
 
 ---

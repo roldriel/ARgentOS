@@ -34,7 +34,7 @@ import health_check
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 AGENTS_DIR = PROJECT_ROOT / ".agents"
 HARNESS_DIR = AGENTS_DIR / "harness"
-POLICIES_DIR = HARNESS_DIR / "policies"
+POLICIES_DIR = AGENTS_DIR / "orchestrators" / "core" / "harness" / "policies"
 ARTIFACTS_DIR: Path = PROJECT_ROOT / ".project"
 
 
@@ -1532,7 +1532,14 @@ def cmd_health_check() -> int:
 
 def cmd_decide(args: argparse.Namespace) -> int:
     """Evaluate a decision tree for a failed harness trigger."""
-    tree_path = AGENTS_DIR / "harness" / "decision_trees" / f"{args.trigger}_FAIL.toml"
+    tree_path = (
+        AGENTS_DIR
+        / "orchestrators"
+        / "core"
+        / "harness"
+        / "decision_trees"
+        / f"{args.trigger}_FAIL.toml"
+    )
     if not tree_path.exists():
         print(
             json.dumps(

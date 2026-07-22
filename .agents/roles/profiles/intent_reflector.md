@@ -36,7 +36,7 @@ This profile is invoked during phase `01` (`CONFIRMING_INTENT`).
 
 ## Output format
 
-Follow `.agents/contracts/INTENT_REFLECTION.md`.
+Follow `.agents/orchestrators/core/contracts/INTENT_REFLECTION.md`.
 
 ## Communication style
 

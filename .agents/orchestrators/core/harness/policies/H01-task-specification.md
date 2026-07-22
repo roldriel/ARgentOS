@@ -32,7 +32,7 @@ Validate that `TASK_SPECIFICATION.md` exists and complies with its contract befo
 - Current state: `BUILDING_TASK_SPECIFICATION`
 - Target state: `TASK_READY`
 - Artifact: `.project/<session-uuid>/<iteration>/<order>-TASK_SPECIFICATION.md`
-- Contract: `.agents/contracts/TASK_SPECIFICATION.md`
+- Contract: `.agents/orchestrators/core/contracts/TASK_SPECIFICATION.md`
 
 ## Checklist
 

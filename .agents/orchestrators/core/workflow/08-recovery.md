@@ -37,7 +37,7 @@ The failure can be corrected by creating a new or updated execution plan.
 Next module:
 
 ```text
-workflow/05-plan.md
+orchestrators/core/workflow/05-plan.md
 ```
 
 ### NEEDS_CLARIFICATION
@@ -215,7 +215,7 @@ PLANNING
 Continue with:
 
 ```text
-workflow/05-plan.md
+orchestrators/core/workflow/05-plan.md
 ```
 
 ## Recovery via Clarification

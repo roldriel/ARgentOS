@@ -129,7 +129,7 @@ This state produces the task analysis artifact. The artifact must comply with th
 
 ### Harness
 
-This transition is gated by harness trigger `H00` (`harness/policies/H00-task-analysis.md`).
+This transition is gated by harness trigger `H00` (`orchestrators/core/harness/policies/H00-task-analysis.md`).
 
 ### Allowed Transitions
 
@@ -184,7 +184,7 @@ This state is an extension of the no-assumption policy: the agent must not assum
 
 ### Harness
 
-This transition is gated by harness trigger `H11` (`harness/policies/H11-intent-reflection.md`).
+This transition is gated by harness trigger `H11` (`orchestrators/core/harness/policies/H11-intent-reflection.md`).
 
 ### Allowed Transitions
 
@@ -244,7 +244,7 @@ The artifact must contain:
 
 ### Harness
 
-This transition is gated by harness trigger `H01` (`harness/policies/H01-task-specification.md`).
+This transition is gated by harness trigger `H01` (`orchestrators/core/harness/policies/H01-task-specification.md`).
 
 ### Allowed Transitions
 
@@ -332,7 +332,7 @@ Output:
 
 ### Harness
 
-This transition is gated by harness trigger `H02` (`harness/policies/H02-context-artifact.md`).
+This transition is gated by harness trigger `H02` (`orchestrators/core/harness/policies/H02-context-artifact.md`).
 
 ### Allowed Transitions
 
@@ -402,7 +402,7 @@ The agent evaluates whether the gathered context is sufficient, relevant, and co
 
 ### Harness
 
-This transition is gated by harness trigger `H03` (`harness/policies/H03-context-validation.md`).
+This transition is gated by harness trigger `H03` (`orchestrators/core/harness/policies/H03-context-validation.md`).
 
 ### Allowed Transitions
 
@@ -469,7 +469,7 @@ The agent defines how the task will be executed.
 
 ### Harness
 
-This transition is gated by harness trigger `H04` (`harness/policies/H04-execution-plan.md`).
+This transition is gated by harness trigger `H04` (`orchestrators/core/harness/policies/H04-execution-plan.md`).
 
 ### Allowed Transitions
 
@@ -536,7 +536,7 @@ This artifact records the changes applied, the steps executed, and the final pro
 
 ### Harness
 
-This transition is gated by harness trigger `H05` (`harness/policies/H05-execution-completed.md`).
+This transition is gated by harness trigger `H05` (`orchestrators/core/harness/policies/H05-execution-completed.md`).
 
 ### Allowed Transitions
 
@@ -585,8 +585,8 @@ COMPLETED
 
 This transition is gated by harness triggers:
 
-- H06 (`harness/policies/H06-verification-report.md`) validates the verification report.
-- H07 (`harness/policies/H07-scope-compliance.md`) validates that the agent executed only the assigned task and did not perform unrequested work.
+- H06 (`orchestrators/core/harness/policies/H06-verification-report.md`) validates the verification report.
+- H07 (`orchestrators/core/harness/policies/H07-scope-compliance.md`) validates that the agent executed only the assigned task and did not perform unrequested work.
 
 If failed:
 

@@ -23,7 +23,7 @@ Validate that the executed work stayed strictly within the task assigned by the 
 - Current state: `VERIFYING`
 - Target state: `COMPLETED`
 - Artifact: `.project/<session-uuid>/<iteration>/<order>-VERIFICATION_REPORT.md`
-- Contract: `.agents/contracts/VERIFICATION_REPORT.md`
+- Contract: `.agents/orchestrators/core/contracts/VERIFICATION_REPORT.md`
 - Reference: `TASK_SPECIFICATION.md`, `EXECUTION_PLAN.md`
 
 ## Checklist

@@ -27,7 +27,7 @@ Validate that `RECOVERY_REPORT.md` exists and contains the required sections bef
 ## Input
 
 - Artifact: `.project/<session-uuid>/<iteration>/<order>-RECOVERY_REPORT.md`
-- Contract: `.agents/contracts/RECOVERY_REPORT.md`
+- Contract: `.agents/orchestrators/core/contracts/RECOVERY_REPORT.md`
 
 ## Decision Criteria
 

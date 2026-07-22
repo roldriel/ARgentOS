@@ -33,7 +33,7 @@ Validate that `VERIFICATION_REPORT.md` demonstrates the task was completed and v
 - Current state: `VERIFYING`
 - Target state: `COMPLETED`
 - Artifact: `.project/<session-uuid>/<iteration>/<order>-VERIFICATION_REPORT.md`
-- Contract: `.agents/contracts/VERIFICATION_REPORT.md`
+- Contract: `.agents/orchestrators/core/contracts/VERIFICATION_REPORT.md`
 - Reference: `TASK_SPECIFICATION.md`, `EXECUTION_PLAN.md`
 
 ## Checklist

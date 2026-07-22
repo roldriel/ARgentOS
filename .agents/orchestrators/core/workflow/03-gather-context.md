@@ -140,12 +140,12 @@ GATHERING_CONTEXT
 CONTEXT_GATHERED
 ```
 
-This transition is gated by harness trigger H02 (`harness/policies/H02-context-artifact.md`).
+This transition is gated by harness trigger H02 (`orchestrators/core/harness/policies/H02-context-artifact.md`).
 
 Continue with:
 
 ```text
-workflow/04-validate-context.md
+orchestrators/core/workflow/04-validate-context.md
 ```
 
 ## Context Insufficient

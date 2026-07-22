@@ -184,12 +184,12 @@ VALIDATING_CONTEXT
 CONTEXT_READY
 ```
 
-This transition is gated by harness trigger H03 (`harness/policies/H03-context-validation.md`).
+This transition is gated by harness trigger H03 (`orchestrators/core/harness/policies/H03-context-validation.md`).
 
 Continue with:
 
 ```text
-workflow/05-plan.md
+orchestrators/core/workflow/05-plan.md
 ```
 
 ---

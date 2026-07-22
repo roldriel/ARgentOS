@@ -191,12 +191,12 @@ PLANNING
 PLAN_READY
 ```
 
-This transition is gated by harness trigger H04 (`harness/policies/H04-execution-plan.md`).
+This transition is gated by harness trigger H04 (`orchestrators/core/harness/policies/H04-execution-plan.md`).
 
 Continue with:
 
 ```text
-workflow/06-execute.md
+orchestrators/core/workflow/06-execute.md
 ```
 
 ---

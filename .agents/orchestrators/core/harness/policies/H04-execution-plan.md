@@ -34,7 +34,7 @@ Validate that `EXECUTION_PLAN.md` defines an executable, safe, and scope-respect
 - Current state: `PLANNING`
 - Target state: `PLAN_READY`
 - Artifact: `.project/<session-uuid>/<iteration>/<order>-EXECUTION_PLAN.md`
-- Contract: `.agents/contracts/EXECUTION_PLAN.md`
+- Contract: `.agents/orchestrators/core/contracts/EXECUTION_PLAN.md`
 - Reference: `TASK_SPECIFICATION.md`, `CONTEXT_ARTIFACT.md`, `CONTEXT_VALIDATION_REPORT.md`
 
 ## Checklist

@@ -23,7 +23,7 @@ Validate that `KB_DISCOVERY_REPORT.md` exists and contains the required sections
 ## Input
 
 - Artifact: `.project/<session-uuid>/<iteration>/<order>-KB_DISCOVERY_REPORT.md`
-- Contract: `.agents/contracts/KB_DISCOVERY_REPORT.md`
+- Contract: `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_REPORT.md`
 
 ## Decision Criteria
 

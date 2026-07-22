@@ -33,7 +33,7 @@ Validate that `CONTEXT_ARTIFACT.md` exists and captures sufficient technical con
 - Current state: `GATHERING_CONTEXT`
 - Target state: `CONTEXT_GATHERED`
 - Artifact: `.project/<session-uuid>/<iteration>/<order>-CONTEXT_ARTIFACT.md`
-- Contract: `.agents/contracts/CONTEXT_ARTIFACT.md`
+- Contract: `.agents/orchestrators/core/contracts/CONTEXT_ARTIFACT.md`
 - Reference: `TASK_SPECIFICATION.md`
 
 ## Checklist

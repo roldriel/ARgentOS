@@ -21,7 +21,7 @@ The Orchestrator invokes the verifier during the `VERIFYING` phase. If the `rubr
 
 ## Outputs
 
-An updated or finalized `VERIFICATION_REPORT.md`. The artifact structure, including the `## Rubric Evaluation` section, is defined in `.agents/contracts/VERIFICATION_REPORT.md`. The rubric definitions are in `.agents/standards/quality/RUBRICS.md`.
+An updated or finalized `VERIFICATION_REPORT.md`. The artifact structure, including the `## Rubric Evaluation` section, is defined in `.agents/orchestrators/core/contracts/VERIFICATION_REPORT.md`. The rubric definitions are in `.agents/standards/quality/RUBRICS.md`.
 
 ## Decision rules
 

@@ -46,7 +46,7 @@ The planned changes have been applied and are ready for verification.
 Next module:
 
 ```text
-workflow/07-verify.md
+orchestrators/core/workflow/07-verify.md
 ```
 
 ---
@@ -58,7 +58,7 @@ An unexpected issue prevented safe execution and the situation requires analysis
 Next module:
 
 ```text
-workflow/08-recovery.md
+orchestrators/core/workflow/08-recovery.md
 ```
 
 ---
@@ -248,12 +248,12 @@ EXECUTING
 VERIFYING
 ```
 
-This transition is gated by harness trigger H05 (`harness/policies/H05-execution-completed.md`).
+This transition is gated by harness trigger H05 (`orchestrators/core/harness/policies/H05-execution-completed.md`).
 
 Continue with:
 
 ```text
-workflow/07-verify.md
+orchestrators/core/workflow/07-verify.md
 ```
 
 ## Execution Blocked
@@ -270,7 +270,7 @@ RECOVERY
 Continue with:
 
 ```text
-workflow/08-recovery.md
+orchestrators/core/workflow/08-recovery.md
 ```
 
 ---

@@ -18,6 +18,20 @@ rubric_validation = true
 semantic_validation = true
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: harness
+domain: core
+harness_id: H06
+name: verification-report
+state: core:VERIFYING
+lifecycle: execution
+gates:
+  - "core:VERIFYING -> core:COMPLETED"
+artifact_validated: VERIFICATION_REPORT.md
+---
+
 # Harness Policy H06: Verification Report
 
 ## Trigger

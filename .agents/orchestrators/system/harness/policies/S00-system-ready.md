@@ -5,6 +5,20 @@ artifact = ".project/.last_health_check"
 required_sections = []
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: harness
+domain: system
+harness_id: S00
+name: system-ready
+state: system:VERIFYING_PROTOCOL_HEALTH
+lifecycle: system
+gates:
+  - "system:VERIFYING_PROTOCOL_HEALTH -> system:ENVIRONMENT_READY"
+artifact_validated: .project/.last_health_check
+---
+
 # Harness Policy S00: System Ready
 
 ## Trigger

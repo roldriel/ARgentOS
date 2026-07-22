@@ -4,6 +4,17 @@ phase = "all"
 produced_by = "orchestrator"
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: contract
+domain: cross-cutting
+artifact: SESSION_LOG.md
+lifecycle: null
+produced_by: [core:TASK_RECEIVED]
+consumed_by: [core:COMPLETED, core:RECOVERY]
+---
+
 # Contract: Session Log
 
 ## Purpose

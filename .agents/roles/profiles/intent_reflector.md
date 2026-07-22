@@ -1,3 +1,13 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: worker
+domain: cross-cutting
+worker_id: intent_reflector
+state: core:CONFIRMING_INTENT
+lifecycle: task
+actor: orchestrator
+---
+
 # Profile: intent_reflector
 
 ## Purpose

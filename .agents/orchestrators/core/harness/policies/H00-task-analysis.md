@@ -17,6 +17,22 @@ required_sections = [
 ]
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: harness
+domain: core
+harness_id: H00
+name: task-analysis
+state: core:ANALYZING_TASK
+lifecycle: task
+gates:
+  - "core:ANALYZING_TASK -> core:BUILDING_TASK_SPECIFICATION"
+  - "core:ANALYZING_TASK -> core:CONFIRMING_INTENT"
+  - "core:ANALYZING_TASK -> core:NEEDS_CLARIFICATION"
+artifact_validated: TASK_ANALYSIS.md
+---
+
 # Harness Policy H00: Task Analysis
 
 ## Trigger

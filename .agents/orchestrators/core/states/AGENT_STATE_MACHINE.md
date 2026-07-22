@@ -1,3 +1,29 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: state_machine
+domain: core
+actor: orchestrator
+states_defined:
+  - SYSTEM_READY
+  - TASK_RECEIVED
+  - ANALYZING_TASK
+  - CONFIRMING_INTENT
+  - BUILDING_TASK_SPECIFICATION
+  - NEEDS_CLARIFICATION
+  - TASK_READY
+  - GATHERING_CONTEXT
+  - CONTEXT_GATHERED
+  - VALIDATING_CONTEXT
+  - CONTEXT_READY
+  - PLANNING
+  - PLAN_READY
+  - EXECUTING
+  - VERIFYING
+  - RECOVERY
+  - COMPLETED
+  - ABORT
+---
+
 # Agent State Machine
 
 ## Purpose

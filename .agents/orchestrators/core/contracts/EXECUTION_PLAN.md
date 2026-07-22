@@ -4,6 +4,17 @@ phase = "05"
 produced_by = "planner"
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: contract
+domain: core
+artifact: EXECUTION_PLAN.md
+lifecycle: planning
+produced_by: [core:PLANNING]
+consumed_by: [core:EXECUTING]
+---
+
 # Execution Plan Contract
 
 ## Purpose

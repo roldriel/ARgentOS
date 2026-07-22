@@ -1,3 +1,18 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: workflow
+domain: core
+state: RECOVERY
+lifecycle: exception
+previous_states: [core:EXECUTING, core:VERIFYING]
+next_states: [core:PLANNING, core:NEEDS_CLARIFICATION, core:ABORT]
+input_artifacts: [VERIFICATION_REPORT.md]
+output_artifacts: [RECOVERY_REPORT.md]
+harness: [H09-recovery-report]
+actor: orchestrator
+profile: recovery_analyst
+---
+
 # Recovery
 
 ## Purpose

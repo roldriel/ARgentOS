@@ -1,3 +1,18 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: workflow
+domain: system
+state: VERIFYING_PROTOCOL_HEALTH
+lifecycle: system
+previous_states: [system:SYSTEM_INIT, system:BOOTSTRAP_FAILED]
+next_states: [system:ENVIRONMENT_READY, system:BOOTSTRAP_FAILED]
+input_artifacts: []
+output_artifacts: [.project/.last_health_check]
+harness: [S00-system-ready]
+actor: system_agent
+profile: null
+---
+
 # System Bootstrap
 
 ## Purpose

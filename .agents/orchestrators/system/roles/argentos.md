@@ -1,3 +1,17 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: role
+domain: system
+role_id: argentos
+actor: system_agent
+states:
+  - system:SYSTEM_INIT
+  - system:VERIFYING_PROTOCOL_HEALTH
+  - system:ENVIRONMENT_READY
+  - system:BOOTSTRAP_FAILED
+  - core:SYSTEM_READY
+---
+
 # Role: ArgentOS System Agent
 
 ## Purpose

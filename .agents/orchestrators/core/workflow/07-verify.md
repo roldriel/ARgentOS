@@ -1,3 +1,18 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: workflow
+domain: core
+state: VERIFYING
+lifecycle: execution
+previous_states: [core:EXECUTING]
+next_states: [core:COMPLETED, core:RECOVERY]
+input_artifacts: [EXECUTION_SUMMARY.md]
+output_artifacts: [VERIFICATION_REPORT.md]
+harness: [H06-verification-report, H07-scope-compliance]
+actor: orchestrator
+profile: verifier
+---
+
 # Verify
 
 ## Purpose

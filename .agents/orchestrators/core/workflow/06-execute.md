@@ -1,3 +1,18 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: workflow
+domain: core
+state: EXECUTING
+lifecycle: execution
+previous_states: [core:PLAN_READY]
+next_states: [core:VERIFYING, core:RECOVERY]
+input_artifacts: [TASK_SPECIFICATION.md, CONTEXT_VALIDATION_REPORT.md, EXECUTION_PLAN.md]
+output_artifacts: [EXECUTION_SUMMARY.md]
+harness: [H05-execution-completed]
+actor: orchestrator
+profile: executor
+---
+
 # Execute
 
 ## Purpose

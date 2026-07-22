@@ -1,3 +1,15 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: state_machine
+domain: system
+actor: system_agent
+states_defined:
+  - SYSTEM_INIT
+  - VERIFYING_PROTOCOL_HEALTH
+  - ENVIRONMENT_READY
+  - BOOTSTRAP_FAILED
+---
+
 # System State Machine
 
 ## Purpose

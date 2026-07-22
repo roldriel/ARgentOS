@@ -5,6 +5,20 @@ artifact = "KB_DISCOVERY_REPORT.md"
 required_sections = []
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: harness
+domain: discovery
+harness_id: D00
+name: discovery-init
+state: discovery:DISCOVERY_INIT
+lifecycle: discovery
+gates:
+  - "discovery:DISCOVERY_INIT -> discovery:DISCOVERY_RUNNING"
+artifact_validated: KB_DISCOVERY_REPORT.md
+---
+
 # Harness Policy D00: Discovery Init
 
 ## Trigger

@@ -4,6 +4,17 @@ phase = "n/a"
 produced_by = "reviewer"
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: contract
+domain: cross-cutting
+artifact: REVIEW_REPORT.md
+lifecycle: null
+produced_by: [core:VERIFYING]
+consumed_by: [core:COMPLETED]
+---
+
 # Contract: Review Report
 
 ## Scope

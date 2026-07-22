@@ -1,3 +1,18 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: workflow
+domain: discovery
+state: DISCOVERY_INIT
+lifecycle: discovery
+previous_states: []
+next_states: [discovery:DISCOVERY_RUNNING, discovery:DISCOVERY_FAILED]
+input_artifacts: []
+output_artifacts: [KB_DISCOVERY_REPORT.md]
+harness: [D00-discovery-init]
+actor: discovery_orchestrator
+profile: init_worker
+---
+
 # Discovery Init
 
 ## Purpose

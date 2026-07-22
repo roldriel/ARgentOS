@@ -1,3 +1,18 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: workflow
+domain: core
+state: GATHERING_CONTEXT
+lifecycle: context
+previous_states: [core:TASK_READY]
+next_states: [core:CONTEXT_GATHERED, core:NEEDS_CLARIFICATION]
+input_artifacts: [TASK_SPECIFICATION.md]
+output_artifacts: [CONTEXT_ARTIFACT.md]
+harness: [H02-context-artifact, H10-kb-discovery-report]
+actor: orchestrator
+profile: context_gatherer
+---
+
 # Gather Context
 
 ## Purpose

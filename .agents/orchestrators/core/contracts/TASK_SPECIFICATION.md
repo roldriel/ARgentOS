@@ -4,6 +4,17 @@ phase = "02"
 produced_by = "task_specification_writer"
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: contract
+domain: core
+artifact: TASK_SPECIFICATION.md
+lifecycle: task
+produced_by: [core:BUILDING_TASK_SPECIFICATION]
+consumed_by: [core:TASK_READY, core:VALIDATING_CONTEXT, core:EXECUTING]
+---
+
 # Task Specification Contract
 
 ## Purpose

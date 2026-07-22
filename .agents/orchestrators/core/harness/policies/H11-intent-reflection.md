@@ -14,6 +14,20 @@ required_sections = [
 ]
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: harness
+domain: core
+harness_id: H11
+name: intent-reflection
+state: core:CONFIRMING_INTENT
+lifecycle: task
+gates:
+  - "core:CONFIRMING_INTENT -> core:BUILDING_TASK_SPECIFICATION"
+artifact_validated: INTENT_REFLECTION.md
+---
+
 # Harness Policy H11: Intent Reflection
 
 ## Trigger

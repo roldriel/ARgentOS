@@ -1,3 +1,18 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: workflow
+domain: core
+state: VALIDATING_CONTEXT
+lifecycle: context
+previous_states: [core:CONTEXT_GATHERED]
+next_states: [core:CONTEXT_READY, core:NEEDS_CLARIFICATION]
+input_artifacts: [TASK_SPECIFICATION.md, CONTEXT_ARTIFACT.md]
+output_artifacts: [CONTEXT_VALIDATION_REPORT.md]
+harness: [H03-context-validation]
+actor: orchestrator
+profile: context_validator
+---
+
 # Validate Context
 
 ## Purpose

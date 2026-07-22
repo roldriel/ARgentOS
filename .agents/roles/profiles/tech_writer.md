@@ -1,3 +1,13 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: worker
+domain: cross-cutting
+worker_id: tech_writer
+state: core:EXECUTING
+lifecycle: execution
+actor: orchestrator
+---
+
 # Technical Writer
 
 ## 1. Purpose

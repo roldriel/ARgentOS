@@ -4,6 +4,17 @@ phase = "08"
 produced_by = "recovery_analyst"
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: contract
+domain: core
+artifact: RECOVERY_REPORT.md
+lifecycle: exception
+produced_by: [core:RECOVERY]
+consumed_by: [core:PLANNING]
+---
+
 # Recovery Report Contract
 
 ## Purpose

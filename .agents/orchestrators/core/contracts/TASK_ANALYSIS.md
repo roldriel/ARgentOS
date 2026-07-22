@@ -4,6 +4,17 @@ phase = "00"
 produced_by = "task_analyst"
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: contract
+domain: core
+artifact: TASK_ANALYSIS.md
+lifecycle: task
+produced_by: [core:ANALYZING_TASK]
+consumed_by: [core:BUILDING_TASK_SPECIFICATION, core:CONFIRMING_INTENT]
+---
+
 # Task Analysis Contract
 
 ## Purpose

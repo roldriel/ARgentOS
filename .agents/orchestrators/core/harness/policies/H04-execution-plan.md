@@ -19,6 +19,20 @@ required_sections = [
 ]
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: harness
+domain: core
+harness_id: H04
+name: execution-plan
+state: core:PLANNING
+lifecycle: planning
+gates:
+  - "core:PLANNING -> core:PLAN_READY"
+artifact_validated: EXECUTION_PLAN.md
+---
+
 # Harness Policy H04: Execution Plan
 
 ## Trigger

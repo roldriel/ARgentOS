@@ -30,6 +30,7 @@ Once ArgentOS confirms a healthy environment, the orchestrator takes control.
 | Roles | `.agents/roles/*.md` |
 | Workflow phases | `.agents/orchestrators/core/workflow/*.md` |
 | Artifact contracts | `.agents/contracts/*.md` |
+| Protocol taxonomy (master dictionary) | `.agents/standards/runtime/PROTOCOL_TAXONOMY.md` |
 
 ## Hard boundary
 

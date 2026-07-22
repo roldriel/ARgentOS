@@ -8,6 +8,20 @@ required_sections = [
 semantic_validation = true
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: harness
+domain: core
+harness_id: H07
+name: scope-compliance
+state: core:VERIFYING
+lifecycle: execution
+gates:
+  - "core:VERIFYING -> core:COMPLETED"
+artifact_validated: VERIFICATION_REPORT.md
+---
+
 # Harness Policy H07: Scope Compliance
 
 ## Trigger

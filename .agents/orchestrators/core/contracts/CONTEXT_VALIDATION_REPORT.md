@@ -4,6 +4,17 @@ phase = "04"
 produced_by = "context_validator"
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: contract
+domain: core
+artifact: CONTEXT_VALIDATION_REPORT.md
+lifecycle: context
+produced_by: [core:VALIDATING_CONTEXT]
+consumed_by: [core:CONTEXT_READY, core:EXECUTING]
+---
+
 # Context Validation Report Contract
 
 ## Purpose

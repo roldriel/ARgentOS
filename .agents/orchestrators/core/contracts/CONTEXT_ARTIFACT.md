@@ -4,6 +4,17 @@ phase = "03"
 produced_by = "context_gatherer"
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: contract
+domain: core
+artifact: CONTEXT_ARTIFACT.md
+lifecycle: context
+produced_by: [core:GATHERING_CONTEXT]
+consumed_by: [core:VALIDATING_CONTEXT, core:CONTEXT_READY]
+---
+
 # Context Artifact Contract
 
 ## Purpose

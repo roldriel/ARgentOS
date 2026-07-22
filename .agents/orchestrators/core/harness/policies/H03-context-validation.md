@@ -17,6 +17,20 @@ required_sections = [
 ]
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: harness
+domain: core
+harness_id: H03
+name: context-validation
+state: core:VALIDATING_CONTEXT
+lifecycle: context
+gates:
+  - "core:VALIDATING_CONTEXT -> core:CONTEXT_READY"
+artifact_validated: CONTEXT_VALIDATION_REPORT.md
+---
+
 # Harness Policy H03: Context Validation Report
 
 ## Trigger

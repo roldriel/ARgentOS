@@ -18,6 +18,20 @@ required_sections = [
 semantic_validation = true
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: harness
+domain: core
+harness_id: H05
+name: execution-completed
+state: core:EXECUTING
+lifecycle: execution
+gates:
+  - "core:EXECUTING -> core:VERIFYING"
+artifact_validated: EXECUTION_SUMMARY.md
+---
+
 # Harness Policy H05: Execution Completed
 
 ## Trigger

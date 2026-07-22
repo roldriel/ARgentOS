@@ -4,6 +4,17 @@ phase = "n/a"
 produced_by = "project_discovery"
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: contract
+domain: discovery
+artifact: KB_DISCOVERY_ENTRY.md
+lifecycle: discovery
+produced_by: [discovery:DISCOVERY_INIT]
+consumed_by: [core:GATHERING_CONTEXT]
+---
+
 # KB Discovery Entry Contract
 
 ## Purpose

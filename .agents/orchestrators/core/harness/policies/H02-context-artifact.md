@@ -18,6 +18,20 @@ required_sections = [
 ]
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: harness
+domain: core
+harness_id: H02
+name: context-artifact
+state: core:GATHERING_CONTEXT
+lifecycle: context
+gates:
+  - "core:GATHERING_CONTEXT -> core:CONTEXT_GATHERED"
+artifact_validated: CONTEXT_ARTIFACT.md
+---
+
 # Harness Policy H02: Context Artifact
 
 ## Trigger

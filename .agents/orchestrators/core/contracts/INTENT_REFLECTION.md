@@ -4,6 +4,17 @@ phase = "01"
 produced_by = "intent_reflector"
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: contract
+domain: core
+artifact: INTENT_REFLECTION.md
+lifecycle: task
+produced_by: [core:CONFIRMING_INTENT]
+consumed_by: [core:BUILDING_TASK_SPECIFICATION, core:ANALYZING_TASK]
+---
+
 # Intent Reflection Contract
 
 ## Purpose

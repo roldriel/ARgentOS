@@ -10,6 +10,20 @@ required_sections = [
 ]
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: harness
+domain: core
+harness_id: H10
+name: kb-discovery-report
+state: core:GATHERING_CONTEXT
+lifecycle: context
+gates:
+  - "core:GATHERING_CONTEXT -> core:CONTEXT_GATHERED"
+artifact_validated: KB_DISCOVERY_REPORT.md
+---
+
 # Harness Policy H10: KB Discovery Report (optional)
 
 ## Trigger

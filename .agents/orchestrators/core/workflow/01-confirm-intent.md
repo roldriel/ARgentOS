@@ -1,3 +1,18 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: workflow
+domain: core
+state: CONFIRMING_INTENT
+lifecycle: task
+previous_states: [core:ANALYZING_TASK]
+next_states: [core:BUILDING_TASK_SPECIFICATION, core:ANALYZING_TASK, core:NEEDS_CLARIFICATION]
+input_artifacts: [TASK_ANALYSIS.md]
+output_artifacts: [INTENT_REFLECTION.md]
+harness: [H11-intent-reflection]
+actor: orchestrator
+profile: intent_reflector
+---
+
 # Confirm Intent
 
 ## Purpose

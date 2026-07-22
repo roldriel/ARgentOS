@@ -4,6 +4,17 @@ phase = "bootstrap"
 produced_by = "argentos_system_agent"
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: contract
+domain: cross-cutting
+artifact: PROJECT_README.md
+lifecycle: null
+produced_by: [system:VERIFYING_PROTOCOL_HEALTH]
+consumed_by: [core:GATHERING_CONTEXT]
+---
+
 # Contract: `.project/` README
 
 ## Purpose

@@ -1,3 +1,13 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: worker
+domain: cross-cutting
+worker_id: database_engineer
+state: core:EXECUTING
+lifecycle: execution
+actor: orchestrator
+---
+
 # Database Engineer
 
 ## 1. Purpose

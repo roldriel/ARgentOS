@@ -17,6 +17,20 @@ ears_section = "Acceptance Criteria"
 semantic_validation = true
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: harness
+domain: core
+harness_id: H01
+name: task-specification
+state: core:BUILDING_TASK_SPECIFICATION
+lifecycle: task
+gates:
+  - "core:BUILDING_TASK_SPECIFICATION -> core:TASK_READY"
+artifact_validated: TASK_SPECIFICATION.md
+---
+
 # Harness Policy H01: Task Specification
 
 ## Trigger

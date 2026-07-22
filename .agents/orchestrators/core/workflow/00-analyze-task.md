@@ -1,3 +1,18 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: workflow
+domain: core
+state: ANALYZING_TASK
+lifecycle: task
+previous_states: [core:TASK_RECEIVED]
+next_states: [core:BUILDING_TASK_SPECIFICATION, core:CONFIRMING_INTENT, core:NEEDS_CLARIFICATION]
+input_artifacts: []
+output_artifacts: [TASK_ANALYSIS.md]
+harness: [H00-task-analysis]
+actor: orchestrator
+profile: task_analyst
+---
+
 # Analyze Task
 
 ## Purpose

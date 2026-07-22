@@ -1,3 +1,30 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: role
+domain: core
+role_id: orchestrator
+actor: orchestrator
+states:
+  - core:SYSTEM_READY
+  - core:TASK_RECEIVED
+  - core:ANALYZING_TASK
+  - core:CONFIRMING_INTENT
+  - core:BUILDING_TASK_SPECIFICATION
+  - core:NEEDS_CLARIFICATION
+  - core:TASK_READY
+  - core:GATHERING_CONTEXT
+  - core:CONTEXT_GATHERED
+  - core:VALIDATING_CONTEXT
+  - core:CONTEXT_READY
+  - core:PLANNING
+  - core:PLAN_READY
+  - core:EXECUTING
+  - core:VERIFYING
+  - core:RECOVERY
+  - core:COMPLETED
+  - core:ABORT
+---
+
 # Role: Orchestrator
 
 ## Purpose

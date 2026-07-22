@@ -4,6 +4,17 @@ phase = "07"
 produced_by = "verifier"
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: contract
+domain: core
+artifact: VERIFICATION_REPORT.md
+lifecycle: execution
+produced_by: [core:VERIFYING]
+consumed_by: [core:COMPLETED, core:RECOVERY]
+---
+
 # Verification Report Contract
 
 ## Purpose

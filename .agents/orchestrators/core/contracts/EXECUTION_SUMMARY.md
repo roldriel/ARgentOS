@@ -4,6 +4,17 @@ phase = "06"
 produced_by = "executor"
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: contract
+domain: core
+artifact: EXECUTION_SUMMARY.md
+lifecycle: execution
+produced_by: [core:EXECUTING]
+consumed_by: [core:VERIFYING]
+---
+
 # Execution Summary Contract
 
 ## Purpose

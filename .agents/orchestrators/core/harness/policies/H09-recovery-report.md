@@ -14,6 +14,20 @@ required_sections = [
 ]
 +++
 
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: harness
+domain: core
+harness_id: H09
+name: recovery-report
+state: core:RECOVERY
+lifecycle: exception
+gates:
+  - "core:RECOVERY -> core:PLANNING"
+artifact_validated: RECOVERY_REPORT.md
+---
+
 # Harness Policy H09: Recovery Report (optional)
 
 ## Trigger

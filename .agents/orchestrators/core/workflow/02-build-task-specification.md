@@ -1,3 +1,18 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: workflow
+domain: core
+state: BUILDING_TASK_SPECIFICATION
+lifecycle: task
+previous_states: [core:ANALYZING_TASK, core:CONFIRMING_INTENT]
+next_states: [core:TASK_READY, core:NEEDS_CLARIFICATION]
+input_artifacts: [TASK_ANALYSIS.md, INTENT_REFLECTION.md]
+output_artifacts: [TASK_SPECIFICATION.md]
+harness: [H01-task-specification]
+actor: orchestrator
+profile: task_specification_writer
+---
+
 # Build Task Specification
 
 ## Purpose

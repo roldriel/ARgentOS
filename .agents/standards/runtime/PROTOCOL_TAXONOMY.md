@@ -560,6 +560,9 @@ entities:
       - discovery:DISCOVERY_INIT
     next:
       - discovery:DISCOVERY_ENV
+      - discovery:DISCOVERY_STACK
+      - discovery:DISCOVERY_PATTERNS
+      - discovery:DISCOVERY_BUSINESS
       - discovery:DISCOVERY_FAILED
     artifacts_input:
       - KB_DISCOVERY_REPORT.md
@@ -574,15 +577,18 @@ entities:
     domain: discovery
     lifecycle: discovery
     name: Discovery Environment
-    description: Discover the runtime environment of the project. (Planned; see PLAN_DISCOVERY_ORCHESTRATOR.)
+    description: Discover the runtime environment of the project.
     previous:
       - discovery:DISCOVERY_RUNNING
     next:
-      - discovery:DISCOVERY_STACK
+      - discovery:DISCOVERY_MERGE
       - discovery:DISCOVERY_FAILED
-    artifacts_input: []
-    artifacts_output: []
-    workflow: null
+    artifacts_input:
+      - discovery_input.json
+    artifacts_output:
+      - worker_environment.json
+      - ENVIRONMENT_DISCOVERY.md
+    workflow: .agents/orchestrators/discovery/workflow/01-discovery-env.md
     harness: []
     actor: discovery_orchestrator
     profile: environment_worker
@@ -592,15 +598,17 @@ entities:
     domain: discovery
     lifecycle: discovery
     name: Discovery Stack
-    description: Discover the technology stack. (Planned; see PLAN_DISCOVERY_ORCHESTRATOR.)
+    description: Discover the technology stack.
     previous:
-      - discovery:DISCOVERY_ENV
+      - discovery:DISCOVERY_RUNNING
     next:
       - discovery:DISCOVERY_FRAMEWORK
       - discovery:DISCOVERY_FAILED
-    artifacts_input: []
-    artifacts_output: []
-    workflow: null
+    artifacts_input:
+      - discovery_input.json
+    artifacts_output:
+      - worker_stack.json
+    workflow: .agents/orchestrators/discovery/workflow/02-discovery-stack.md
     harness: []
     actor: discovery_orchestrator
     profile: stack_worker
@@ -610,15 +618,17 @@ entities:
     domain: discovery
     lifecycle: discovery
     name: Discovery Framework
-    description: Discover frameworks in use. (Planned; see PLAN_DISCOVERY_ORCHESTRATOR.)
+    description: Discover frameworks in use.
     previous:
       - discovery:DISCOVERY_STACK
     next:
-      - discovery:DISCOVERY_PATTERNS
+      - discovery:DISCOVERY_MERGE
       - discovery:DISCOVERY_FAILED
-    artifacts_input: []
-    artifacts_output: []
-    workflow: null
+    artifacts_input:
+      - worker_stack.json
+    artifacts_output:
+      - worker_framework.json
+    workflow: .agents/orchestrators/discovery/workflow/03-discovery-framework.md
     harness: []
     actor: discovery_orchestrator
     profile: framework_worker
@@ -628,15 +638,18 @@ entities:
     domain: discovery
     lifecycle: discovery
     name: Discovery Patterns
-    description: Discover architectural and code patterns. (Planned; see PLAN_DISCOVERY_ORCHESTRATOR.)
+    description: Discover architectural and code patterns.
     previous:
-      - discovery:DISCOVERY_FRAMEWORK
+      - discovery:DISCOVERY_RUNNING
     next:
-      - discovery:DISCOVERY_BUSINESS
+      - discovery:DISCOVERY_MERGE
       - discovery:DISCOVERY_FAILED
-    artifacts_input: []
-    artifacts_output: []
-    workflow: null
+    artifacts_input:
+      - discovery_input.json
+    artifacts_output:
+      - worker_patterns.json
+      - DEVELOPMENT_PATTERNS.md
+    workflow: .agents/orchestrators/discovery/workflow/04-discovery-patterns.md
     harness: []
     actor: discovery_orchestrator
     profile: patterns_worker
@@ -646,15 +659,17 @@ entities:
     domain: discovery
     lifecycle: discovery
     name: Discovery Business
-    description: Discover the business domain. (Planned; see PLAN_DISCOVERY_ORCHESTRATOR.)
+    description: Discover the business domain.
     previous:
-      - discovery:DISCOVERY_PATTERNS
+      - discovery:DISCOVERY_RUNNING
     next:
       - discovery:DISCOVERY_MERGE
       - discovery:DISCOVERY_FAILED
-    artifacts_input: []
-    artifacts_output: []
-    workflow: null
+    artifacts_input:
+      - discovery_input.json
+    artifacts_output:
+      - worker_business.json
+    workflow: .agents/orchestrators/discovery/workflow/05-discovery-business.md
     harness: []
     actor: discovery_orchestrator
     profile: business_worker
@@ -664,15 +679,24 @@ entities:
     domain: discovery
     lifecycle: discovery
     name: Discovery Merge
-    description: Merge partial discovery results. (Planned; see PLAN_DISCOVERY_ORCHESTRATOR.)
+    description: Merge partial discovery results.
     previous:
+      - discovery:DISCOVERY_ENV
+      - discovery:DISCOVERY_FRAMEWORK
+      - discovery:DISCOVERY_PATTERNS
       - discovery:DISCOVERY_BUSINESS
     next:
       - discovery:DISCOVERY_VALIDATE
       - discovery:DISCOVERY_FAILED
-    artifacts_input: []
-    artifacts_output: []
-    workflow: null
+    artifacts_input:
+      - worker_environment.json
+      - worker_stack.json
+      - worker_framework.json
+      - worker_patterns.json
+      - worker_business.json
+    artifacts_output:
+      - DISCOVERY_MANIFEST.md
+    workflow: .agents/orchestrators/discovery/workflow/06-discovery-merge.md
     harness: []
     actor: discovery_orchestrator
     profile: synthesis_worker
@@ -682,19 +706,21 @@ entities:
     domain: discovery
     lifecycle: discovery
     name: Discovery Validate
-    description: Validate the merged discovery output. (Planned; see PLAN_DISCOVERY_ORCHESTRATOR.)
+    description: Validate the merged discovery output.
     previous:
       - discovery:DISCOVERY_MERGE
     next:
       - discovery:DISCOVERY_READY
       - discovery:DISCOVERY_FAILED
-    artifacts_input: []
+    artifacts_input:
+      - DISCOVERY_MANIFEST.md
     artifacts_output: []
-    workflow: null
+    workflow: .agents/orchestrators/discovery/workflow/07-discovery-validate.md
     harness:
+      - H10-kb-discovery-report
       - D01-discovery-output
     actor: discovery_orchestrator
-    profile: synthesis_worker
+    profile: null
 
   "discovery:DISCOVERY_READY":
     kind: state
@@ -705,9 +731,10 @@ entities:
     previous:
       - discovery:DISCOVERY_VALIDATE
     next: []
-    artifacts_input: []
+    artifacts_input:
+      - DISCOVERY_MANIFEST.md
     artifacts_output: []
-    workflow: null
+    workflow: .agents/orchestrators/discovery/workflow/08-discovery-ready.md
     harness: []
     actor: discovery_orchestrator
     profile: null
@@ -878,6 +905,55 @@ entities:
     consumed_by:
       - core:GATHERING_CONTEXT
     contract: .agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md
+
+  DISCOVERY_MANIFEST.md:
+    kind: artifact
+    domain: discovery
+    lifecycle: discovery
+    tag: knowledge
+    description: Manifest of the accumulative discovery knowledge base.
+    produced_by:
+      - discovery:DISCOVERY_MERGE
+    consumed_by:
+      - discovery:DISCOVERY_INIT
+      - discovery:DISCOVERY_VALIDATE
+    contract: .agents/orchestrators/discovery/contracts/DISCOVERY_MANIFEST.md
+
+  DEVELOPMENT_PATTERNS.md:
+    kind: artifact
+    domain: discovery
+    lifecycle: discovery
+    tag: knowledge
+    description: Knowledge-base entry with the development patterns detected in the project.
+    produced_by:
+      - discovery:DISCOVERY_PATTERNS
+    consumed_by:
+      - discovery:DISCOVERY_MERGE
+    contract: .agents/orchestrators/discovery/contracts/DEVELOPMENT_PATTERNS.md
+
+  ENVIRONMENT_DISCOVERY.md:
+    kind: artifact
+    domain: discovery
+    lifecycle: discovery
+    tag: knowledge
+    description: Knowledge-base entry with the execution environment detected by discovery.
+    produced_by:
+      - discovery:DISCOVERY_ENV
+    consumed_by:
+      - discovery:DISCOVERY_MERGE
+    contract: .agents/orchestrators/discovery/contracts/ENVIRONMENT_DISCOVERY.md
+
+  INTER_WORKER_MESSAGE.md:
+    kind: artifact
+    domain: discovery
+    lifecycle: discovery
+    tag: knowledge
+    description: Message exchanged between the workers of the Discovery Orchestrator.
+    produced_by:
+      - discovery:DISCOVERY_INIT
+    consumed_by:
+      - discovery:DISCOVERY_MERGE
+    contract: .agents/orchestrators/discovery/contracts/INTER_WORKER_MESSAGE.md
 
   SESSION_LOG.md:
     kind: artifact
@@ -1114,7 +1190,6 @@ entities:
       - discovery:DISCOVERY_VALIDATE -> discovery:DISCOVERY_READY
     artifact_validated: KB_DISCOVERY_REPORT.md
     policy_file: .agents/orchestrators/discovery/harness/policies/D01-discovery-output.md
-    status: planned
 
   S00-system-ready:
     kind: harness
@@ -1162,9 +1237,8 @@ entities:
     kind: actor
     domain: discovery
     name: Discovery Orchestrator
-    description: Governs the knowledge-base discovery lifecycle. (Planned; see PLAN_DISCOVERY_ORCHESTRATOR.)
+    description: Governs the knowledge-base discovery lifecycle.
     role_file: .agents/orchestrators/discovery/roles/discovery_orchestrator.md
-    status: planned
 
   # -------------------------------------------------------------------------
   # Roles
@@ -1217,7 +1291,6 @@ entities:
     role_id: discovery_orchestrator
     actor: discovery_orchestrator
     role_file: .agents/orchestrators/discovery/roles/discovery_orchestrator.md
-    status: planned
 
   # -------------------------------------------------------------------------
   # Workers
@@ -1407,9 +1480,11 @@ entities:
     state: discovery:DISCOVERY_INIT
     lifecycle: discovery
     actor: discovery_orchestrator
+    profile_file: .agents/orchestrators/discovery/roles/workers/init_worker.md
+    input_artifacts: []
     output_artifacts:
-      - KB_DISCOVERY_REPORT.md
-    status: planned
+      - discovery_input.json
+      - invalidation_report.json
 
   environment_worker:
     kind: worker
@@ -1419,7 +1494,11 @@ entities:
     state: discovery:DISCOVERY_ENV
     lifecycle: discovery
     actor: discovery_orchestrator
-    status: planned
+    profile_file: .agents/orchestrators/discovery/roles/workers/environment_worker.md
+    input_artifacts:
+      - discovery_input.json
+    output_artifacts:
+      - environment.md
 
   stack_worker:
     kind: worker
@@ -1429,7 +1508,14 @@ entities:
     state: discovery:DISCOVERY_STACK
     lifecycle: discovery
     actor: discovery_orchestrator
-    status: planned
+    profile_file: .agents/orchestrators/discovery/roles/workers/stack_worker.md
+    input_artifacts:
+      - discovery_input.json
+    output_artifacts:
+      - stack.md
+      - dependencies.md
+      - containers.md
+      - database.md
 
   framework_worker:
     kind: worker
@@ -1439,7 +1525,12 @@ entities:
     state: discovery:DISCOVERY_FRAMEWORK
     lifecycle: discovery
     actor: discovery_orchestrator
-    status: planned
+    profile_file: .agents/orchestrators/discovery/roles/workers/framework_worker.md
+    input_artifacts:
+      - worker_stack.json
+    output_artifacts:
+      - architecture.md
+      - configuration.md
 
   patterns_worker:
     kind: worker
@@ -1449,7 +1540,11 @@ entities:
     state: discovery:DISCOVERY_PATTERNS
     lifecycle: discovery
     actor: discovery_orchestrator
-    status: planned
+    profile_file: .agents/orchestrators/discovery/roles/workers/patterns_worker.md
+    input_artifacts:
+      - discovery_input.json
+    output_artifacts:
+      - development_patterns.md
 
   business_worker:
     kind: worker
@@ -1459,7 +1554,14 @@ entities:
     state: discovery:DISCOVERY_BUSINESS
     lifecycle: discovery
     actor: discovery_orchestrator
-    status: planned
+    profile_file: .agents/orchestrators/discovery/roles/workers/business_worker.md
+    input_artifacts:
+      - discovery_input.json
+    output_artifacts:
+      - business_rules.md
+      - project_flow.md
+      - technical_debt.md
+      - known_errors.md
 
   synthesis_worker:
     kind: worker
@@ -1469,7 +1571,16 @@ entities:
     state: discovery:DISCOVERY_MERGE
     lifecycle: discovery
     actor: discovery_orchestrator
-    status: planned
+    profile_file: .agents/orchestrators/discovery/roles/workers/synthesis_worker.md
+    input_artifacts:
+      - worker_environment.json
+      - worker_stack.json
+      - worker_framework.json
+      - worker_patterns.json
+      - worker_business.json
+    output_artifacts:
+      - summary.md
+      - .discovery_manifest
 
   # -------------------------------------------------------------------------
   # Workflows
@@ -1684,6 +1795,165 @@ entities:
     profile: init_worker
     file: .agents/orchestrators/discovery/workflow/00-discovery-init.md
 
+  workflow:discovery-01-discovery-env:
+    kind: workflow
+    domain: discovery
+    state: discovery:DISCOVERY_ENV
+    lifecycle: discovery
+    previous_states:
+      - discovery:DISCOVERY_RUNNING
+    next_states:
+      - discovery:DISCOVERY_MERGE
+      - discovery:DISCOVERY_FAILED
+    input_artifacts:
+      - discovery_input.json
+    output_artifacts:
+      - worker_environment.json
+      - ENVIRONMENT_DISCOVERY.md
+    harness: []
+    actor: discovery_orchestrator
+    profile: environment_worker
+    file: .agents/orchestrators/discovery/workflow/01-discovery-env.md
+
+  workflow:discovery-02-discovery-stack:
+    kind: workflow
+    domain: discovery
+    state: discovery:DISCOVERY_STACK
+    lifecycle: discovery
+    previous_states:
+      - discovery:DISCOVERY_RUNNING
+    next_states:
+      - discovery:DISCOVERY_FRAMEWORK
+      - discovery:DISCOVERY_FAILED
+    input_artifacts:
+      - discovery_input.json
+    output_artifacts:
+      - worker_stack.json
+    harness: []
+    actor: discovery_orchestrator
+    profile: stack_worker
+    file: .agents/orchestrators/discovery/workflow/02-discovery-stack.md
+
+  workflow:discovery-03-discovery-framework:
+    kind: workflow
+    domain: discovery
+    state: discovery:DISCOVERY_FRAMEWORK
+    lifecycle: discovery
+    previous_states:
+      - discovery:DISCOVERY_STACK
+    next_states:
+      - discovery:DISCOVERY_MERGE
+      - discovery:DISCOVERY_FAILED
+    input_artifacts:
+      - worker_stack.json
+    output_artifacts:
+      - worker_framework.json
+    harness: []
+    actor: discovery_orchestrator
+    profile: framework_worker
+    file: .agents/orchestrators/discovery/workflow/03-discovery-framework.md
+
+  workflow:discovery-04-discovery-patterns:
+    kind: workflow
+    domain: discovery
+    state: discovery:DISCOVERY_PATTERNS
+    lifecycle: discovery
+    previous_states:
+      - discovery:DISCOVERY_RUNNING
+    next_states:
+      - discovery:DISCOVERY_MERGE
+      - discovery:DISCOVERY_FAILED
+    input_artifacts:
+      - discovery_input.json
+    output_artifacts:
+      - worker_patterns.json
+      - DEVELOPMENT_PATTERNS.md
+    harness: []
+    actor: discovery_orchestrator
+    profile: patterns_worker
+    file: .agents/orchestrators/discovery/workflow/04-discovery-patterns.md
+
+  workflow:discovery-05-discovery-business:
+    kind: workflow
+    domain: discovery
+    state: discovery:DISCOVERY_BUSINESS
+    lifecycle: discovery
+    previous_states:
+      - discovery:DISCOVERY_RUNNING
+    next_states:
+      - discovery:DISCOVERY_MERGE
+      - discovery:DISCOVERY_FAILED
+    input_artifacts:
+      - discovery_input.json
+    output_artifacts:
+      - worker_business.json
+    harness: []
+    actor: discovery_orchestrator
+    profile: business_worker
+    file: .agents/orchestrators/discovery/workflow/05-discovery-business.md
+
+  workflow:discovery-06-discovery-merge:
+    kind: workflow
+    domain: discovery
+    state: discovery:DISCOVERY_MERGE
+    lifecycle: discovery
+    previous_states:
+      - discovery:DISCOVERY_ENV
+      - discovery:DISCOVERY_FRAMEWORK
+      - discovery:DISCOVERY_PATTERNS
+      - discovery:DISCOVERY_BUSINESS
+    next_states:
+      - discovery:DISCOVERY_VALIDATE
+      - discovery:DISCOVERY_FAILED
+    input_artifacts:
+      - worker_environment.json
+      - worker_stack.json
+      - worker_framework.json
+      - worker_patterns.json
+      - worker_business.json
+    output_artifacts:
+      - DISCOVERY_MANIFEST.md
+    harness: []
+    actor: discovery_orchestrator
+    profile: synthesis_worker
+    file: .agents/orchestrators/discovery/workflow/06-discovery-merge.md
+
+  workflow:discovery-07-discovery-validate:
+    kind: workflow
+    domain: discovery
+    state: discovery:DISCOVERY_VALIDATE
+    lifecycle: discovery
+    previous_states:
+      - discovery:DISCOVERY_MERGE
+    next_states:
+      - discovery:DISCOVERY_READY
+      - discovery:DISCOVERY_FAILED
+    input_artifacts:
+      - DISCOVERY_MANIFEST.md
+    output_artifacts: []
+    harness:
+      - H10-kb-discovery-report
+      - D01-discovery-output
+    actor: discovery_orchestrator
+    profile: null
+    file: .agents/orchestrators/discovery/workflow/07-discovery-validate.md
+
+  workflow:discovery-08-discovery-ready:
+    kind: workflow
+    domain: discovery
+    state: discovery:DISCOVERY_READY
+    lifecycle: discovery
+    previous_states:
+      - discovery:DISCOVERY_VALIDATE
+    next_states: []
+    input_artifacts:
+      - DISCOVERY_MANIFEST.md
+    output_artifacts: []
+    harness: []
+    actor: discovery_orchestrator
+    profile: null
+    file: .agents/orchestrators/discovery/workflow/08-discovery-ready.md
+
   workflow:system-00-bootstrap:
     kind: workflow
     domain: system
@@ -1891,6 +2161,51 @@ entities:
     consumed_by:
       - core:GATHERING_CONTEXT
     file: .agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md
+
+  contract:DISCOVERY_MANIFEST.md:
+    kind: contract
+    domain: discovery
+    artifact: DISCOVERY_MANIFEST.md
+    lifecycle: discovery
+    produced_by:
+      - discovery:DISCOVERY_MERGE
+    consumed_by:
+      - discovery:DISCOVERY_INIT
+      - discovery:DISCOVERY_VALIDATE
+    file: .agents/orchestrators/discovery/contracts/DISCOVERY_MANIFEST.md
+
+  contract:DEVELOPMENT_PATTERNS.md:
+    kind: contract
+    domain: discovery
+    artifact: DEVELOPMENT_PATTERNS.md
+    lifecycle: discovery
+    produced_by:
+      - discovery:DISCOVERY_PATTERNS
+    consumed_by:
+      - discovery:DISCOVERY_MERGE
+    file: .agents/orchestrators/discovery/contracts/DEVELOPMENT_PATTERNS.md
+
+  contract:ENVIRONMENT_DISCOVERY.md:
+    kind: contract
+    domain: discovery
+    artifact: ENVIRONMENT_DISCOVERY.md
+    lifecycle: discovery
+    produced_by:
+      - discovery:DISCOVERY_ENV
+    consumed_by:
+      - discovery:DISCOVERY_MERGE
+    file: .agents/orchestrators/discovery/contracts/ENVIRONMENT_DISCOVERY.md
+
+  contract:INTER_WORKER_MESSAGE.md:
+    kind: contract
+    domain: discovery
+    artifact: INTER_WORKER_MESSAGE.md
+    lifecycle: discovery
+    produced_by:
+      - discovery:DISCOVERY_INIT
+    consumed_by:
+      - discovery:DISCOVERY_MERGE
+    file: .agents/orchestrators/discovery/contracts/INTER_WORKER_MESSAGE.md
 
 tags:
   domain:

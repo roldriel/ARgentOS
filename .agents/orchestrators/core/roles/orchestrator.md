@@ -133,6 +133,64 @@ The Orchestrator then reads the discovery report, selects the recommended entrie
 
 See `.agents/roles/context_discoverer.md` and `.agents/standards/context/CONTEXT.md` for details.
 
+### 4.3 Discovery Orchestrator Invocation
+
+When the `discovery_orchestrator` feature flag is enabled, the Orchestrator maintains the discovery knowledge base (`.project/knowledge/discovery/`) by invoking the Discovery Orchestrator of the `discovery` domain (`.agents/orchestrators/discovery/roles/discovery_orchestrator.md`). The Orchestrator does not know the internal details of the discovery subsystem; it only detects the need, invokes with a scope, and consumes the result.
+
+**Detection.** The Orchestrator invokes the Discovery Orchestrator when any of the following holds:
+
+1. `.project/knowledge/discovery/` does not exist.
+2. `.last_discovery` exceeds the project TTL (`discovery_project_ttl_hours`, default 24h).
+3. The config files hash changed.
+4. The sample files hash changed.
+5. The user requested an explicit refresh.
+6. An execution worker reports an inconsistency.
+7. The environment TTL (`discovery_environment_ttl_hours`, default 6h) expired and the scope is `env`.
+
+Both TTLs are configured in `.agents/features.toml`.
+
+**Hash calculation.** Before invoking, the Orchestrator computes:
+
+1. **Config files hash:** SHA-256 of the relevant configuration files in deterministic order.
+2. **Sample files hash:** SHA-256 of the selected code sample.
+3. **Environment hash:** SHA-256 of the environment probe results.
+
+**Invocation.** The Orchestrator invokes the Discovery Orchestrator with a scope and the following payload:
+
+| Scope | Workers invoked | Use |
+|-------|-----------------|-----|
+| `full` | All | First run or major change. |
+| `env` | `init_worker`, `environment_worker`, `synthesis_worker` | Tooling change. |
+| `stack` | `init_worker`, `stack_worker`, `framework_worker`, `synthesis_worker` | New dependencies. |
+| `patterns` | `init_worker`, `patterns_worker`, `synthesis_worker` | Convention change. |
+| `business` | `init_worker`, `business_worker`, `synthesis_worker` | Business logic change. |
+
+```json
+{
+  "project_root": "/path/to/project",
+  "scope": "full",
+  "context_budget": 100000,
+  "sample_size": 10,
+  "hashes": {
+    "config_files_hash": "sha256:abc...",
+    "sample_files_hash": "sha256:def...",
+    "environment_hash": "sha256:ghi..."
+  }
+}
+```
+
+This payload is an inter-orchestrator invocation (core → discovery), not an inter-worker message; it does not carry `message_version` / `from_worker` / `to_worker`.
+
+**Response handling.** The Discovery Orchestrator returns a structured result and never responds to the user:
+
+- On `discovery:DISCOVERY_READY`: the KB is updated and valid. The Orchestrator continues its own state machine; the KB is available for `GATHERING_CONTEXT`, `PLANNING` and `EXECUTING`.
+- On `discovery:DISCOVERY_FAILED`: the Orchestrator decides, according to how critical the KB is for the task:
+  1. **Abort the task** (`ABORT`) if the KB is indispensable and execution cannot continue.
+  2. **Route to `RECOVERY`** to replan with a reduced scope or a minimal discovery.
+  3. **Continue with a minimal discovery** if applicable: README + stack inferred from file extensions, without qualitative analysis.
+
+The decision and the received status are recorded in `SESSION_LOG.md`.
+
 ### 5. Worker Delegation
 
 - For each phase, the Orchestrator invokes a new `worker` subagent.
@@ -145,6 +203,7 @@ See `.agents/roles/context_discoverer.md` and `.agents/standards/context/CONTEXT
   - Relevant harness policy.
   - `technical_approach` from `TASK_SPECIFICATION.md` when any technical-practice feature flag is enabled (see `.agents/standards/INDEX.md` for the catalog).
   - Communication style (`caveman` level: `lite`, `full`, or `ultra`) when the `caveman` feature flag is enabled.
+- When the discovery KB exists, delegations to execution workers (phase `06-execute.md`) MUST include references to `.project/knowledge/discovery/environment.md` and `.project/knowledge/discovery/development_patterns.md`, so execution respects the detected environment and development patterns.
 - The worker executes exactly one phase, returns the output artifact, and terminates.
 
 ### 5.1 Profile Selection Before Execution

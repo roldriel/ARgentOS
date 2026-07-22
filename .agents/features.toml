@@ -7,7 +7,13 @@ decision_trees = true
 rubrics = true
 knowledge_base = true
 caveman = true
-project_discovery = true
+
+# Discovery subsystem (plans/PLAN_DISCOVERY_ORCHESTRATOR_02_EXECUTION.md)
+llm_discovery = true
+discovery_orchestrator = true
+discovery_sample_size = 10
+discovery_environment_ttl_hours = 6
+discovery_project_ttl_hours = 24
 
 # Technical practices
 tdd = true

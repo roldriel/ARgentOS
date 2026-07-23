@@ -458,9 +458,7 @@ DISCOVERY_FAILED
 
 Validate the merged KB before publishing it:
 
-* `core:H10-kb-discovery-report` validates the KB structure
-  (`.agents/orchestrators/core/harness/policies/H10-kb-discovery-report.md`).
-* `D01-discovery-output` validates ground truth
+* `D01-discovery-output` validates the KB structure and ground truth
   (`.agents/orchestrators/discovery/harness/policies/D01-discovery-output.md`).
 
 ### Required Input Artifacts
@@ -477,12 +475,11 @@ Validation results are recorded in the session `HARNESS_REPORT.md`.
 
 ### Harness
 
-This state's exit transitions are gated by harness triggers `core:H10` and
-`D01`.
+This state's exit transitions are gated by the harness trigger `D01`.
 
 ### Allowed Transitions
 
-If both validations pass:
+If the validation passes:
 
 ```text
 DISCOVERY_VALIDATE
@@ -500,6 +497,15 @@ DISCOVERY_VALIDATE
 DISCOVERY_FAILED
 ```
 
+If validation fails with recoverable findings (inconsistent or incomplete merge):
+
+```text
+DISCOVERY_VALIDATE
+    |
+    v
+DISCOVERY_MERGE
+```
+
 ---
 
 ## DISCOVERY_READY
@@ -508,6 +514,9 @@ DISCOVERY_FAILED
 
 The KB is updated and valid. Terminal state. The Discovery Orchestrator
 returns control to the core Orchestrator with status `DISCOVERY_READY`.
+
+On entering this state, the Discovery Orchestrator writes the marker file
+`.project/.last_discovery` (see "Invocation Conditions" below).
 
 ### Required Input Artifacts
 
@@ -554,6 +563,24 @@ The core Orchestrator invokes the Discovery Orchestrator when:
 5. The user requested an explicit refresh.
 6. An execution worker reports an inconsistency.
 7. The environment TTL (6h) expired and the scope is `env`.
+
+## The `.last_discovery` marker
+
+`.project/.last_discovery` is a small JSON file written by the Discovery
+Orchestrator when a run reaches `DISCOVERY_READY`. It is the discovery
+equivalent of `.project/.last_health_check` and drives condition 2 (and the
+TTL checks of condition 7). Shape:
+
+```json
+{
+  "timestamp": "<ISO-8601 UTC>",
+  "scope": "full|env|stack|patterns|business",
+  "status": "DISCOVERY_READY"
+}
+```
+
+If the file is missing or unparsable, the core Orchestrator treats the TTL as
+expired (i.e., discovery is invoked).
 
 # Scopes
 

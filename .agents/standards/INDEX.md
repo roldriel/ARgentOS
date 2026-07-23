@@ -8,7 +8,7 @@ The protocol supports *feature flags* to enable improvements independently. Conf
 
 Priority: environment variables > `.agents/features.toml` > defaults.
 
-All flags default to `true`. The orchestrator must consult them before enabling any improvement and record active flags in `SESSION_LOG.md`.
+Boolean flags default to `true` unless explicitly set otherwise in `.agents/features.toml` (currently only `architecture_contract` defaults to `false`). The discovery flags include two non-boolean tunables (`discovery_sample_size`, `discovery_environment_ttl_hours`, `discovery_project_ttl_hours`). The orchestrator must consult them before enabling any improvement and record active flags in `SESSION_LOG.md`.
 
 | Flag | Description |
 |------|-------------|
@@ -16,6 +16,11 @@ All flags default to `true`. The orchestrator must consult them before enabling 
 | `rubrics` | Enables the `reviewer` role and the `## Rubric Evaluation` section in verification. |
 | `knowledge_base` | Enables the `context_discoverer` role and enrichment with KB entries. |
 | `caveman` | Applies `.agents/standards/communication/CAVEMAN.md` to all protocol communication. |
+| `llm_discovery` | Enables LLM-based project discovery. |
+| `discovery_orchestrator` | Enables the Discovery Orchestrator of the `discovery` domain. |
+| `discovery_sample_size` | Number of files sampled during discovery (default 10; not boolean). |
+| `discovery_environment_ttl_hours` | TTL of the environment discovery entry (default 6; not boolean). |
+| `discovery_project_ttl_hours` | TTL of the project discovery KB (default 24; not boolean). |
 | `tdd` | Enables `.agents/standards/testing/TDD.md` to enforce red-green-refactor. |
 | `srp` | Enables `.agents/standards/development/design/SOLID/SRP.md`. |
 | `ocp` | Enables `.agents/standards/development/design/SOLID/OCP.md`. |
@@ -45,7 +50,7 @@ All flags default to `true`. The orchestrator must consult them before enabling 
 ## Conduct
 
 - `conduct/ANTI_CIRCUMVENTION.md` — explicit prohibition against skipping phases, violating the state machine, or hallucinating context for convenience or simplicity.
-- `conduct/OPERATIONAL_RULES.md` — operational contract for workers, referencing canonical conduct standards.
+- `conduct/OPERATIONAL_RULES.md` — index that maps each operational rule for workers to its canonical conduct standard.
 
 ## Quality
 
@@ -56,6 +61,8 @@ All flags default to `true`. The orchestrator must consult them before enabling 
 
 - `context/CONTEXT.md` — context engineering, knowledge-base budgets, context compression techniques, and compact tags.
 - `context/PROJECT_ARTIFACTS.md` — standard for project-level context artifacts `project-map.md` and `technical-analysis.md`.
+- `context/ENVIRONMENT_PROBE.md` — rules for probing the execution environment (OS, shell, tools) before acting.
+- `context/USING_PATTERNS.md` — how workers consume the discovery knowledge base (detected environment and development patterns).
 
 ## Testing
 

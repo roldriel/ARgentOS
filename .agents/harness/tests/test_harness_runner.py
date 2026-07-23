@@ -280,10 +280,10 @@ def test_h05_validates_execution_summary(session):
 
 ## Metadata
 
-```yaml
-id: "test"
-created_at: "2024-01-01T00:00:00Z"
-status: "DONE"
+```toml
+id = "test"
+created_at = "2024-01-01T00:00:00Z"
+status = "DONE"
 ```
 
 ## Task Reference
@@ -300,11 +300,11 @@ Summary.
 
 ## Steps Executed
 
-```yaml
-steps_executed:
-  - order: 1
-    action: "Update schema"
-    status: "COMPLETED"
+```toml
+[[steps_executed]]
+order = 1
+action = "Update schema"
+status = "COMPLETED"
 ```
 
 ## Project Files Modified
@@ -325,10 +325,10 @@ None.
 
 ## Final Project State
 
-```yaml
-final_state:
-  status: "VERIFIABLE"
-  reasoning: "Tests pass."
+```toml
+[final_state]
+status = "VERIFIABLE"
+reasoning = "Tests pass."
 ```
 
 ## Confidence
@@ -591,13 +591,13 @@ def test_h07_passes_with_valid_scope_compliance(session):
 
 ## Scope Compliance
 
-```yaml
-scope_compliance:
-  scope_respected: true
-  unplanned_changes: []
-  out_of_scope_issues: []
-  user_authorized_extra_work: false
-  notes: "Only planned work was performed."
+```toml
+[scope_compliance]
+scope_respected = true
+unplanned_changes = []
+out_of_scope_issues = []
+user_authorized_extra_work = false
+notes = "Only planned work was performed."
 ```
 """
     write_artifact(artifacts_dir, session_uuid, "VERIFICATION_REPORT.md", content)
@@ -625,11 +625,11 @@ def test_h07_fails_scope_respected_false(session):
 
 ## Scope Compliance
 
-```yaml
-scope_compliance:
-  scope_respected: false
-  unplanned_changes: []
-  user_authorized_extra_work: false
+```toml
+[scope_compliance]
+scope_respected = false
+unplanned_changes = []
+user_authorized_extra_work = false
 ```
 """
     write_artifact(artifacts_dir, session_uuid, "VERIFICATION_REPORT.md", content)
@@ -649,12 +649,11 @@ def test_h07_fails_unplanned_changes_not_empty(session):
 
 ## Scope Compliance
 
-```yaml
-scope_compliance:
-  scope_respected: true
-  unplanned_changes:
-    - "foo.py"
-  user_authorized_extra_work: false
+```toml
+[scope_compliance]
+scope_respected = true
+unplanned_changes = ["foo.py"]
+user_authorized_extra_work = false
 ```
 """
     write_artifact(artifacts_dir, session_uuid, "VERIFICATION_REPORT.md", content)
@@ -674,18 +673,18 @@ def test_h06_fails_when_decision_is_failed(session):
 
 ## Final Decision
 
-```yaml
-decision:
-  result: "FAILED"
+```toml
+[decision]
+result = "FAILED"
 ```
 
 ## Acceptance Criteria Evaluation
 
-```yaml
-acceptance_criteria:
-  - criterion: "The API shall reject empty names."
-    result: "PASS"
-    evidence: "Tested."
+```toml
+[[acceptance_criteria]]
+criterion = "The API shall reject empty names."
+result = "PASS"
+evidence = "Tested."
 ```
 """
     write_artifact(artifacts_dir, session_uuid, "VERIFICATION_REPORT.md", content)
@@ -705,10 +704,10 @@ def test_h05_fails_when_final_state_blocked(session):
 
 ## Metadata
 
-```yaml
-id: "test"
-created_at: "2024-01-01T00:00:00Z"
-status: "DONE"
+```toml
+id = "test"
+created_at = "2024-01-01T00:00:00Z"
+status = "DONE"
 ```
 
 ## Task Reference
@@ -725,11 +724,11 @@ Summary.
 
 ## Steps Executed
 
-```yaml
-steps_executed:
-  - order: 1
-    action: "Update schema"
-    status: "COMPLETED"
+```toml
+[[steps_executed]]
+order = 1
+action = "Update schema"
+status = "COMPLETED"
 ```
 
 ## Project Files Modified
@@ -746,10 +745,10 @@ None.
 
 ## Final Project State
 
-```yaml
-final_state:
-  status: "BLOCKED"
-  reasoning: "Tests fail."
+```toml
+[final_state]
+status = "BLOCKED"
+reasoning = "Tests fail."
 ```
 
 ## Confidence
@@ -773,10 +772,10 @@ def test_h05_fails_when_final_state_invalid(session):
 
 ## Metadata
 
-```yaml
-id: "test"
-created_at: "2024-01-01T00:00:00Z"
-status: "DONE"
+```toml
+id = "test"
+created_at = "2024-01-01T00:00:00Z"
+status = "DONE"
 ```
 
 ## Task Reference
@@ -793,11 +792,11 @@ Summary.
 
 ## Steps Executed
 
-```yaml
-steps_executed:
-  - order: 1
-    action: "Update schema"
-    status: "COMPLETED"
+```toml
+[[steps_executed]]
+order = 1
+action = "Update schema"
+status = "COMPLETED"
 ```
 
 ## Project Files Modified
@@ -814,10 +813,10 @@ None.
 
 ## Final Project State
 
-```yaml
-final_state:
-  status: "UNKNOWN"
-  reasoning: "Unexpected status."
+```toml
+[final_state]
+status = "UNKNOWN"
+reasoning = "Unexpected status."
 ```
 
 ## Confidence
@@ -841,10 +840,10 @@ def test_h05_fails_when_step_blocked(session):
 
 ## Metadata
 
-```yaml
-id: "test"
-created_at: "2024-01-01T00:00:00Z"
-status: "DONE"
+```toml
+id = "test"
+created_at = "2024-01-01T00:00:00Z"
+status = "DONE"
 ```
 
 ## Task Reference
@@ -861,11 +860,11 @@ Summary.
 
 ## Steps Executed
 
-```yaml
-steps_executed:
-  - order: 1
-    action: "Update schema"
-    status: "BLOCKED"
+```toml
+[[steps_executed]]
+order = 1
+action = "Update schema"
+status = "BLOCKED"
 ```
 
 ## Project Files Modified
@@ -882,10 +881,10 @@ None.
 
 ## Final Project State
 
-```yaml
-final_state:
-  status: "VERIFIABLE"
-  reasoning: "Tests pass."
+```toml
+[final_state]
+status = "VERIFIABLE"
+reasoning = "Tests pass."
 ```
 
 ## Confidence
@@ -909,19 +908,19 @@ def test_h06_fails_when_acceptance_criterion_failed(session):
 
 ## Final Decision
 
-```yaml
-decision:
-  result: "COMPLETED"
-  reasoning: "All good."
+```toml
+[decision]
+result = "COMPLETED"
+reasoning = "All good."
 ```
 
 ## Acceptance Criteria Evaluation
 
-```yaml
-acceptance_criteria:
-  - criterion: "The API shall reject empty names."
-    result: "FAIL"
-    evidence: "Not implemented."
+```toml
+[[acceptance_criteria]]
+criterion = "The API shall reject empty names."
+result = "FAIL"
+evidence = "Not implemented."
 ```
 """
     write_artifact(artifacts_dir, session_uuid, "VERIFICATION_REPORT.md", content)
@@ -1013,7 +1012,7 @@ None.
 
 No notes.
 """
-    write_artifact(artifacts_dir, session_uuid, "KB_DISCOVERY_REPORT.md", content)
+    write_artifact(artifacts_dir, session_uuid, "KB_RECOMMENDATION.md", content)
     returncode, output = run_runner(artifacts_dir, session_uuid, "H10")
 
     assert returncode == 0
@@ -1028,7 +1027,7 @@ def test_h10_fails_missing_kb_discovery_report_section(session):
 
 Find relevant KB entries.
 """
-    write_artifact(artifacts_dir, session_uuid, "KB_DISCOVERY_REPORT.md", content)
+    write_artifact(artifacts_dir, session_uuid, "KB_RECOMMENDATION.md", content)
     returncode, output = run_runner(artifacts_dir, session_uuid, "H10")
 
     assert returncode == 1
@@ -1057,12 +1056,10 @@ No breaking changes.
 
 ## Technical Approach
 
-```yaml
-technical_approach:
-  enabled:
-    - "tdd"
-  notes:
-    - "Write a failing test for empty-name validation before the fix."
+```toml
+[technical_approach]
+enabled = ["tdd"]
+notes = ["Write a failing test for empty-name validation before the fix."]
 ```
 
 ## Acceptance Criteria
@@ -1123,11 +1120,10 @@ No breaking changes.
 
 ## Technical Approach
 
-```yaml
-technical_approach:
-  enabled:
-    - "tdd"
-  notes: []
+```toml
+[technical_approach]
+enabled = ["tdd"]
+notes = []
 ```
 
 ## Acceptance Criteria
@@ -1184,12 +1180,10 @@ No breaking changes.
 
 ## Technical Approach
 
-```yaml
-technical_approach:
-  enabled:
-    - "tdd"
-  notes:
-    - "Write a failing test before the fix."
+```toml
+[technical_approach]
+enabled = ["tdd"]
+notes = ["Write a failing test before the fix."]
 ```
 
 ## Acceptance Criteria
@@ -1212,10 +1206,10 @@ Complete.
 
 ## Metadata
 
-```yaml
-id: "test"
-created_at: "2024-01-01T00:00:00Z"
-status: "DONE"
+```toml
+id = "test"
+created_at = "2024-01-01T00:00:00Z"
+status = "DONE"
 ```
 
 ## Task Reference
@@ -1232,11 +1226,11 @@ Summary.
 
 ## Steps Executed
 
-```yaml
-steps_executed:
-  - order: 1
-    action: "Write failing test and fix validation"
-    status: "COMPLETED"
+```toml
+[[steps_executed]]
+order = 1
+action = "Write failing test and fix validation"
+status = "COMPLETED"
 ```
 
 ## Project Files Modified
@@ -1249,18 +1243,21 @@ All passed.
 
 ## Technical Practice Evidence
 
-```yaml
-technical_practice_evidence:
-  tdd:
-    applied: true
-    failing_tests:
-      - file: "tests/test_users.py"
-        description: "Test that reproduces the empty-name bug"
-    production_changes:
-      - file: "app/schemas/user.py"
-        description: "Added empty-name validation"
-    final_test_result: "PASS"
-    reason: ""
+```toml
+[technical_practice_evidence]
+
+[technical_practice_evidence.tdd]
+applied = true
+final_test_result = "PASS"
+reason = ""
+
+[[technical_practice_evidence.tdd.failing_tests]]
+file = "tests/test_users.py"
+description = "Test that reproduces the empty-name bug"
+
+[[technical_practice_evidence.tdd.production_changes]]
+file = "app/schemas/user.py"
+description = "Added empty-name validation"
 ```
 
 ## Issues or Deviations
@@ -1269,10 +1266,10 @@ None.
 
 ## Final Project State
 
-```yaml
-final_state:
-  status: "VERIFIABLE"
-  reasoning: "Tests pass."
+```toml
+[final_state]
+status = "VERIFIABLE"
+reasoning = "Tests pass."
 ```
 
 ## Confidence
@@ -1322,12 +1319,10 @@ No breaking changes.
 
 ## Technical Approach
 
-```yaml
-technical_approach:
-  enabled:
-    - "tdd"
-  notes:
-    - "Write a failing test before the fix."
+```toml
+[technical_approach]
+enabled = ["tdd"]
+notes = ["Write a failing test before the fix."]
 ```
 
 ## Acceptance Criteria
@@ -1350,10 +1345,10 @@ Complete.
 
 ## Metadata
 
-```yaml
-id: "test"
-created_at: "2024-01-01T00:00:00Z"
-status: "DONE"
+```toml
+id = "test"
+created_at = "2024-01-01T00:00:00Z"
+status = "DONE"
 ```
 
 ## Task Reference
@@ -1370,11 +1365,11 @@ Summary.
 
 ## Steps Executed
 
-```yaml
-steps_executed:
-  - order: 1
-    action: "Fix validation"
-    status: "COMPLETED"
+```toml
+[[steps_executed]]
+order = 1
+action = "Fix validation"
+status = "COMPLETED"
 ```
 
 ## Project Files Modified
@@ -1391,10 +1386,10 @@ None.
 
 ## Final Project State
 
-```yaml
-final_state:
-  status: "VERIFIABLE"
-  reasoning: "Tests pass."
+```toml
+[final_state]
+status = "VERIFIABLE"
+reasoning = "Tests pass."
 ```
 
 ## Confidence
@@ -1440,10 +1435,10 @@ No breaking changes.
 
 ## Technical Approach
 
-```yaml
-technical_approach:
-  enabled: []
-  notes: []
+```toml
+[technical_approach]
+enabled = []
+notes = []
 ```
 
 ## Acceptance Criteria
@@ -1466,10 +1461,10 @@ Complete.
 
 ## Metadata
 
-```yaml
-id: "test"
-created_at: "2024-01-01T00:00:00Z"
-status: "DONE"
+```toml
+id = "test"
+created_at = "2024-01-01T00:00:00Z"
+status = "DONE"
 ```
 
 ## Task Reference
@@ -1486,11 +1481,11 @@ Summary.
 
 ## Steps Executed
 
-```yaml
-steps_executed:
-  - order: 1
-    action: "Fix validation"
-    status: "COMPLETED"
+```toml
+[[steps_executed]]
+order = 1
+action = "Fix validation"
+status = "COMPLETED"
 ```
 
 ## Project Files Modified
@@ -1511,10 +1506,10 @@ None.
 
 ## Final Project State
 
-```yaml
-final_state:
-  status: "VERIFIABLE"
-  reasoning: "Tests pass."
+```toml
+[final_state]
+status = "VERIFIABLE"
+reasoning = "Tests pass."
 ```
 
 ## Confidence
@@ -1560,12 +1555,10 @@ No breaking changes.
 
 ## Technical Approach
 
-```yaml
-technical_approach:
-  enabled:
-    - "foo"
-  notes:
-    - "foo is not a known practice"
+```toml
+[technical_approach]
+enabled = ["foo"]
+notes = ["foo is not a known practice"]
 ```
 
 ## Acceptance Criteria
@@ -1621,12 +1614,10 @@ No breaking changes.
 
 ## Technical Approach
 
-```yaml
-technical_approach:
-  enabled:
-    - "srp"
-  notes:
-    - "SRP should be applied."
+```toml
+[technical_approach]
+enabled = ["srp"]
+notes = ["SRP should be applied."]
 ```
 
 ## Acceptance Criteria
@@ -1683,12 +1674,10 @@ No breaking changes.
 
 ## Technical Approach
 
-```yaml
-technical_approach:
-  enabled:
-    - "srp"
-  notes:
-    - "Extract validation responsibility."
+```toml
+[technical_approach]
+enabled = ["srp"]
+notes = ["Extract validation responsibility."]
 ```
 
 ## Acceptance Criteria
@@ -1711,10 +1700,10 @@ Complete.
 
 ## Metadata
 
-```yaml
-id: "test"
-created_at: "2024-01-01T00:00:00Z"
-status: "DONE"
+```toml
+id = "test"
+created_at = "2024-01-01T00:00:00Z"
+status = "DONE"
 ```
 
 ## Task Reference
@@ -1731,11 +1720,11 @@ Summary.
 
 ## Steps Executed
 
-```yaml
-steps_executed:
-  - order: 1
-    action: "Extract email validation responsibility"
-    status: "COMPLETED"
+```toml
+[[steps_executed]]
+order = 1
+action = "Extract email validation responsibility"
+status = "COMPLETED"
 ```
 
 ## Project Files Modified
@@ -1748,17 +1737,20 @@ All passed.
 
 ## Technical Practice Evidence
 
-```yaml
-technical_practice_evidence:
-  srp:
-    applied: true
-    responsibilities_identified:
-      - location: "app/services/user_service.py"
-        responsibility: "Email validation"
-    extraction:
-      - from: "app/services/user_service.py"
-        to: "app/services/email_validator.py"
-        reasoning: "Validation was not the service's responsibility."
+```toml
+[technical_practice_evidence]
+
+[technical_practice_evidence.srp]
+applied = true
+
+[[technical_practice_evidence.srp.responsibilities_identified]]
+location = "app/services/user_service.py"
+responsibility = "Email validation"
+
+[[technical_practice_evidence.srp.extraction]]
+from = "app/services/user_service.py"
+to = "app/services/email_validator.py"
+reasoning = "Validation was not the service's responsibility."
 ```
 
 ## Issues or Deviations
@@ -1767,10 +1759,10 @@ None.
 
 ## Final Project State
 
-```yaml
-final_state:
-  status: "VERIFIABLE"
-  reasoning: "Refactor completed."
+```toml
+[final_state]
+status = "VERIFIABLE"
+reasoning = "Refactor completed."
 ```
 
 ## Confidence
@@ -1820,12 +1812,10 @@ No breaking changes.
 
 ## Technical Approach
 
-```yaml
-technical_approach:
-  enabled:
-    - "srp"
-  notes:
-    - "Extract validation responsibility."
+```toml
+[technical_approach]
+enabled = ["srp"]
+notes = ["Extract validation responsibility."]
 ```
 
 ## Acceptance Criteria
@@ -1848,10 +1838,10 @@ Complete.
 
 ## Metadata
 
-```yaml
-id: "test"
-created_at: "2024-01-01T00:00:00Z"
-status: "DONE"
+```toml
+id = "test"
+created_at = "2024-01-01T00:00:00Z"
+status = "DONE"
 ```
 
 ## Task Reference
@@ -1868,11 +1858,11 @@ Summary.
 
 ## Steps Executed
 
-```yaml
-steps_executed:
-  - order: 1
-    action: "Fix validation"
-    status: "COMPLETED"
+```toml
+[[steps_executed]]
+order = 1
+action = "Fix validation"
+status = "COMPLETED"
 ```
 
 ## Project Files Modified
@@ -1889,10 +1879,10 @@ None.
 
 ## Final Project State
 
-```yaml
-final_state:
-  status: "VERIFIABLE"
-  reasoning: "Tests pass."
+```toml
+[final_state]
+status = "VERIFIABLE"
+reasoning = "Tests pass."
 ```
 
 ## Confidence
@@ -1938,12 +1928,10 @@ No breaking changes.
 
 ## Technical Approach
 
-```yaml
-technical_approach:
-  enabled:
-    - "dip"
-  notes:
-    - "Invert service dependency toward an abstract repository."
+```toml
+[technical_approach]
+enabled = ["dip"]
+notes = ["Invert service dependency toward an abstract repository."]
 ```
 
 ## Acceptance Criteria
@@ -1966,10 +1954,10 @@ Complete.
 
 ## Metadata
 
-```yaml
-id: "test"
-created_at: "2024-01-01T00:00:00Z"
-status: "DONE"
+```toml
+id = "test"
+created_at = "2024-01-01T00:00:00Z"
+status = "DONE"
 ```
 
 ## Task Reference
@@ -1986,11 +1974,11 @@ Summary.
 
 ## Steps Executed
 
-```yaml
-steps_executed:
-  - order: 1
-    action: "Introduce UserRepository abstraction"
-    status: "COMPLETED"
+```toml
+[[steps_executed]]
+order = 1
+action = "Introduce UserRepository abstraction"
+status = "COMPLETED"
 ```
 
 ## Project Files Modified
@@ -2003,17 +1991,20 @@ All passed.
 
 ## Technical Practice Evidence
 
-```yaml
-technical_practice_evidence:
-  dip:
-    applied: true
-    abstractions_introduced:
-      - name: "UserRepository"
-        location: "app/repositories/user_repository.py"
-    dependencies_inverted:
-      - module: "app/services/user_service.py"
-        now_depends_on: "UserRepository"
-        previously_depended_on: "app.db.session"
+```toml
+[technical_practice_evidence]
+
+[technical_practice_evidence.dip]
+applied = true
+
+[[technical_practice_evidence.dip.abstractions_introduced]]
+name = "UserRepository"
+location = "app/repositories/user_repository.py"
+
+[[technical_practice_evidence.dip.dependencies_inverted]]
+module = "app/services/user_service.py"
+now_depends_on = "UserRepository"
+previously_depended_on = "app.db.session"
 ```
 
 ## Issues or Deviations
@@ -2022,10 +2013,10 @@ None.
 
 ## Final Project State
 
-```yaml
-final_state:
-  status: "VERIFIABLE"
-  reasoning: "Refactor completed."
+```toml
+[final_state]
+status = "VERIFIABLE"
+reasoning = "Refactor completed."
 ```
 
 ## Confidence
@@ -2071,12 +2062,10 @@ No breaking changes.
 
 ## Technical Approach
 
-```yaml
-technical_approach:
-  enabled:
-    - "tdd"
-  notes:
-    - "Write a failing test before the fix."
+```toml
+[technical_approach]
+enabled = ["tdd"]
+notes = ["Write a failing test before the fix."]
 ```
 
 ## Acceptance Criteria
@@ -2099,10 +2088,10 @@ Complete.
 
 ## Metadata
 
-```yaml
-id: "test"
-created_at: "2024-01-01T00:00:00Z"
-status: "DONE"
+```toml
+id = "test"
+created_at = "2024-01-01T00:00:00Z"
+status = "DONE"
 ```
 
 ## Task Reference
@@ -2119,11 +2108,11 @@ Verify the fix.
 
 ## Acceptance Criteria Evaluation
 
-```yaml
-acceptance_criteria:
-  - criterion: "The API shall reject empty names."
-    result: "PASS"
-    evidence: "Tested."
+```toml
+[[acceptance_criteria]]
+criterion = "The API shall reject empty names."
+result = "PASS"
+evidence = "Tested."
 ```
 
 ## Test Results
@@ -2136,10 +2125,10 @@ None.
 
 ## Final Decision
 
-```yaml
-decision:
-  result: "COMPLETED"
-  reasoning: "All criteria met."
+```toml
+[decision]
+result = "COMPLETED"
+reasoning = "All criteria met."
 ```
 
 ## Confidence
@@ -2148,10 +2137,10 @@ High.
 
 ## State Transition
 
-```yaml
-transition:
-  current_state: "VERIFYING"
-  next_state: "COMPLETED"
+```toml
+[transition]
+current_state = "VERIFYING"
+next_state = "COMPLETED"
 ```
 
 ## Rubric Evaluation
@@ -2240,12 +2229,10 @@ No breaking changes.
 
 ## Technical Approach
 
-```yaml
-technical_approach:
-  enabled:
-    - "tdd"
-  notes:
-    - "Write a failing test before the fix."
+```toml
+[technical_approach]
+enabled = ["tdd"]
+notes = ["Write a failing test before the fix."]
 ```
 
 ## Acceptance Criteria
@@ -2268,10 +2255,10 @@ Complete.
 
 ## Metadata
 
-```yaml
-id: "test"
-created_at: "2024-01-01T00:00:00Z"
-status: "DONE"
+```toml
+id = "test"
+created_at = "2024-01-01T00:00:00Z"
+status = "DONE"
 ```
 
 ## Task Reference
@@ -2288,11 +2275,11 @@ Verify the fix.
 
 ## Acceptance Criteria Evaluation
 
-```yaml
-acceptance_criteria:
-  - criterion: "The API shall reject empty names."
-    result: "PASS"
-    evidence: "Tested."
+```toml
+[[acceptance_criteria]]
+criterion = "The API shall reject empty names."
+result = "PASS"
+evidence = "Tested."
 ```
 
 ## Test Results
@@ -2305,10 +2292,10 @@ None.
 
 ## Final Decision
 
-```yaml
-decision:
-  result: "COMPLETED"
-  reasoning: "All criteria met."
+```toml
+[decision]
+result = "COMPLETED"
+reasoning = "All criteria met."
 ```
 
 ## Confidence
@@ -2317,10 +2304,10 @@ High.
 
 ## State Transition
 
-```yaml
-transition:
-  current_state: "VERIFYING"
-  next_state: "COMPLETED"
+```toml
+[transition]
+current_state = "VERIFYING"
+next_state = "COMPLETED"
 ```
 
 ## Rubric Evaluation
@@ -2399,12 +2386,10 @@ No breaking changes.
 
 ## Technical Approach
 
-```yaml
-technical_approach:
-  enabled:
-    - "{practice}"
-  notes:
-    - "{notes}"
+```toml
+[technical_approach]
+enabled = ["{practice}"]
+notes = ["{notes}"]
 ```
 
 ## Acceptance Criteria
@@ -2425,15 +2410,15 @@ Complete.
 """
 
 
-def _execution_summary_with_evidence(evidence_yaml: str) -> str:
+def _execution_summary_with_evidence(evidence_toml: str) -> str:
     return f"""# Execution Summary
 
 ## Metadata
 
-```yaml
-id: "test"
-created_at: "2024-01-01T00:00:00Z"
-status: "DONE"
+```toml
+id = "test"
+created_at = "2024-01-01T00:00:00Z"
+status = "DONE"
 ```
 
 ## Task Reference
@@ -2450,11 +2435,11 @@ Summary.
 
 ## Steps Executed
 
-```yaml
-steps_executed:
-  - order: 1
-    action: "Apply technical practice"
-    status: "COMPLETED"
+```toml
+[[steps_executed]]
+order = 1
+action = "Apply technical practice"
+status = "COMPLETED"
 ```
 
 ## Project Files Modified
@@ -2467,9 +2452,8 @@ All passed.
 
 ## Technical Practice Evidence
 
-```yaml
-technical_practice_evidence:
-{evidence_yaml}
+```toml
+{evidence_toml}
 ```
 
 ## Issues or Deviations
@@ -2478,10 +2462,10 @@ None.
 
 ## Final Project State
 
-```yaml
-final_state:
-  status: "VERIFIABLE"
-  reasoning: "Refactor completed."
+```toml
+[final_state]
+status = "VERIFIABLE"
+reasoning = "Refactor completed."
 ```
 
 ## Confidence
@@ -2516,15 +2500,18 @@ def test_h05_passes_with_screaming_architecture_evidence(session):
     spec = _task_spec_with_practice(
         "screaming_architecture", "Group user-related code under app/users/."
     )
-    evidence = """  screaming_architecture:
-    applied: true
-    domain_modules:
-      - name: "users"
-        path: "app/users/"
-        responsibility: "User registration and validation."
-    framework_modules: []
-    structural_changes: []
-    rationale: "Domain grouping improves discoverability."
+    evidence = """[technical_practice_evidence]
+
+[technical_practice_evidence.screaming_architecture]
+applied = true
+framework_modules = []
+structural_changes = []
+rationale = "Domain grouping improves discoverability."
+
+[[technical_practice_evidence.screaming_architecture.domain_modules]]
+name = "users"
+path = "app/users/"
+responsibility = "User registration and validation."
 """
     summary = _execution_summary_with_evidence(evidence)
     write_artifact(artifacts_dir, session_uuid, "TASK_SPECIFICATION.md", spec)
@@ -2550,7 +2537,7 @@ def test_h05_fails_missing_screaming_architecture_evidence(session):
         "screaming_architecture", "Group user-related code under app/users/."
     )
     summary = _execution_summary_with_evidence(
-        "  screaming_architecture:\n    applied: false\n    reason: " "\n"
+        "[technical_practice_evidence]\n\n[technical_practice_evidence.screaming_architecture]\napplied = false\nreason = \"\"\n"
     )
     write_artifact(artifacts_dir, session_uuid, "TASK_SPECIFICATION.md", spec)
     write_artifact(artifacts_dir, session_uuid, "EXECUTION_SUMMARY.md", summary)
@@ -2598,25 +2585,30 @@ def test_h05_passes_with_clean_architecture_evidence(session):
         "clean_architecture",
         "Introduce UserRepository port and move business rules to use cases.",
     )
-    evidence = """  clean_architecture:
-    applied: true
-    layers_touched:
-      - layer: "use_cases"
-        files:
-          - "app/use_cases/register_user.py"
-      - layer: "interface_adapters"
-        files:
-          - "app/adapters/user_repository.py"
-      - layer: "frameworks_and_drivers"
-        files:
-          - "app/persistence/sqlalchemy_user_repository.py"
-    dependency_rule_violations_found: []
-    dependency_rule_violations_fixed: []
-    abstractions_introduced:
-      - name: "UserRepository"
-        location: "app/adapters/user_repository.py"
-        purpose: "Persistence port for user use cases."
-    rationale: "Business rules no longer depend on SQLAlchemy."
+    evidence = """[technical_practice_evidence]
+
+[technical_practice_evidence.clean_architecture]
+applied = true
+dependency_rule_violations_found = []
+dependency_rule_violations_fixed = []
+rationale = "Business rules no longer depend on SQLAlchemy."
+
+[[technical_practice_evidence.clean_architecture.layers_touched]]
+layer = "use_cases"
+files = ["app/use_cases/register_user.py"]
+
+[[technical_practice_evidence.clean_architecture.layers_touched]]
+layer = "interface_adapters"
+files = ["app/adapters/user_repository.py"]
+
+[[technical_practice_evidence.clean_architecture.layers_touched]]
+layer = "frameworks_and_drivers"
+files = ["app/persistence/sqlalchemy_user_repository.py"]
+
+[[technical_practice_evidence.clean_architecture.abstractions_introduced]]
+name = "UserRepository"
+location = "app/adapters/user_repository.py"
+purpose = "Persistence port for user use cases."
 """
     summary = _execution_summary_with_evidence(evidence)
     write_artifact(artifacts_dir, session_uuid, "TASK_SPECIFICATION.md", spec)
@@ -2643,7 +2635,7 @@ def test_h05_fails_missing_clean_architecture_evidence(session):
         "Introduce UserRepository port and move business rules to use cases.",
     )
     summary = _execution_summary_with_evidence(
-        "  clean_architecture:\n    applied: false\n    reason: " "\n"
+        "[technical_practice_evidence]\n\n[technical_practice_evidence.clean_architecture]\napplied = false\nreason = \"\"\n"
     )
     write_artifact(artifacts_dir, session_uuid, "TASK_SPECIFICATION.md", spec)
     write_artifact(artifacts_dir, session_uuid, "EXECUTION_SUMMARY.md", summary)
@@ -2686,18 +2678,19 @@ def test_h01_passes_with_dry_approach(session):
 def test_h05_passes_with_dry_evidence(session):
     session_uuid, artifacts_dir = session
     spec = _task_spec_with_practice("dry", "Consolidate duplicated email validation.")
-    evidence = """  dry:
-    applied: true
-    duplicates_found:
-      - locations:
-          - "app/services/user_service.py:42"
-          - "app/services/admin_service.py:38"
-        description: "Email validation regex duplicated."
-        knowledge: "Valid email format"
-        consolidation_strategy: "Extracted EmailValidator."
-        lines_saved: 8
-    duplicates_intentionally_kept: []
-    rationale: "Single source of truth for email validation."
+    evidence = """[technical_practice_evidence]
+
+[technical_practice_evidence.dry]
+applied = true
+duplicates_intentionally_kept = []
+rationale = "Single source of truth for email validation."
+
+[[technical_practice_evidence.dry.duplicates_found]]
+locations = ["app/services/user_service.py:42", "app/services/admin_service.py:38"]
+description = "Email validation regex duplicated."
+knowledge = "Valid email format"
+consolidation_strategy = "Extracted EmailValidator."
+lines_saved = 8
 """
     summary = _execution_summary_with_evidence(evidence)
     write_artifact(artifacts_dir, session_uuid, "TASK_SPECIFICATION.md", spec)
@@ -2721,7 +2714,7 @@ def test_h05_fails_missing_dry_evidence(session):
     session_uuid, artifacts_dir = session
     spec = _task_spec_with_practice("dry", "Consolidate duplicated email validation.")
     summary = _execution_summary_with_evidence(
-        "  dry:\n    applied: false\n    reason: " "\n"
+        "[technical_practice_evidence]\n\n[technical_practice_evidence.dry]\napplied = false\nreason = \"\"\n"
     )
     write_artifact(artifacts_dir, session_uuid, "TASK_SPECIFICATION.md", spec)
     write_artifact(artifacts_dir, session_uuid, "EXECUTION_SUMMARY.md", summary)
@@ -2747,10 +2740,10 @@ def test_h06_passes_with_dry_rubric(session):
 
 ## Metadata
 
-```yaml
-id: "test"
-created_at: "2024-01-01T00:00:00Z"
-status: "DONE"
+```toml
+id = "test"
+created_at = "2024-01-01T00:00:00Z"
+status = "DONE"
 ```
 
 ## Task Reference
@@ -2767,11 +2760,11 @@ Verify the fix.
 
 ## Acceptance Criteria Evaluation
 
-```yaml
-acceptance_criteria:
-  - criterion: "The API shall reject empty names."
-    result: "PASS"
-    evidence: "Tested."
+```toml
+[[acceptance_criteria]]
+criterion = "The API shall reject empty names."
+result = "PASS"
+evidence = "Tested."
 ```
 
 ## Test Results
@@ -2784,10 +2777,10 @@ None.
 
 ## Final Decision
 
-```yaml
-decision:
-  result: "COMPLETED"
-  reasoning: "All criteria met."
+```toml
+[decision]
+result = "COMPLETED"
+reasoning = "All criteria met."
 ```
 
 ## Confidence
@@ -2796,10 +2789,10 @@ High.
 
 ## State Transition
 
-```yaml
-transition:
-  current_state: "VERIFYING"
-  next_state: "COMPLETED"
+```toml
+[transition]
+current_state = "VERIFYING"
+next_state = "COMPLETED"
 ```
 
 ## Rubric Evaluation
@@ -2894,28 +2887,34 @@ def test_h05_passes_with_layered_architecture_evidence(session):
         "layered_architecture",
         "Move business rules from controllers to application services.",
     )
-    evidence = """  layered_architecture:
-    applied: true
-    layers:
-      - name: "presentation"
-        path: "app/web/"
-        responsibility: "HTTP routes."
-      - name: "application"
-        path: "app/services/"
-        responsibility: "Use cases."
-      - name: "domain"
-        path: "app/domain/"
-        responsibility: "Business rules."
-    changes:
-      - description: "Moved validation from route to service."
-        from_layer: "presentation"
-        to_layer: "application"
-        files_affected:
-          - "app/web/user_routes.py"
-          - "app/services/user_service.py"
-    downward_dependency_violations_found: []
-    downward_dependency_violations_fixed: []
-    rationale: "Thinner controllers, reusable business logic."
+    evidence = """[technical_practice_evidence]
+
+[technical_practice_evidence.layered_architecture]
+applied = true
+downward_dependency_violations_found = []
+downward_dependency_violations_fixed = []
+rationale = "Thinner controllers, reusable business logic."
+
+[[technical_practice_evidence.layered_architecture.layers]]
+name = "presentation"
+path = "app/web/"
+responsibility = "HTTP routes."
+
+[[technical_practice_evidence.layered_architecture.layers]]
+name = "application"
+path = "app/services/"
+responsibility = "Use cases."
+
+[[technical_practice_evidence.layered_architecture.layers]]
+name = "domain"
+path = "app/domain/"
+responsibility = "Business rules."
+
+[[technical_practice_evidence.layered_architecture.changes]]
+description = "Moved validation from route to service."
+from_layer = "presentation"
+to_layer = "application"
+files_affected = ["app/web/user_routes.py", "app/services/user_service.py"]
 """
     summary = _execution_summary_with_evidence(evidence)
     write_artifact(artifacts_dir, session_uuid, "TASK_SPECIFICATION.md", spec)
@@ -2942,7 +2941,7 @@ def test_h05_fails_missing_layered_architecture_evidence(session):
         "Move business rules from controllers to application services.",
     )
     summary = _execution_summary_with_evidence(
-        '  layered_architecture:\n    applied: false\n    reason: ""\n'
+        '[technical_practice_evidence.layered_architecture]\napplied = false\nreason = ""\n'
     )
     write_artifact(artifacts_dir, session_uuid, "TASK_SPECIFICATION.md", spec)
     write_artifact(artifacts_dir, session_uuid, "EXECUTION_SUMMARY.md", summary)
@@ -2988,19 +2987,21 @@ def test_h05_passes_with_grasp_evidence(session):
     spec = _task_spec_with_practice(
         "grasp", "Assign validation responsibility to the information expert."
     )
-    evidence = """  grasp:
-    applied: true
-    patterns_applied:
-      - pattern: "Information Expert"
-        before: "UserService validated email format."
-        after: "EmailValidator owns validation."
-        files_affected:
-          - "app/validators/email_validator.py"
-          - "app/services/user_service.py"
-    coupling_or_cohesion_issues_found:
-      - description: "UserService mixed validation with orchestration."
-        resolution: "Extracted EmailValidator."
-    rationale: "Validation rule now lives with the class that owns it."
+    evidence = """[technical_practice_evidence]
+
+[technical_practice_evidence.grasp]
+applied = true
+rationale = "Validation rule now lives with the class that owns it."
+
+[[technical_practice_evidence.grasp.patterns_applied]]
+pattern = "Information Expert"
+before = "UserService validated email format."
+after = "EmailValidator owns validation."
+files_affected = ["app/validators/email_validator.py", "app/services/user_service.py"]
+
+[[technical_practice_evidence.grasp.coupling_or_cohesion_issues_found]]
+description = "UserService mixed validation with orchestration."
+resolution = "Extracted EmailValidator."
 """
     summary = _execution_summary_with_evidence(evidence)
     write_artifact(artifacts_dir, session_uuid, "TASK_SPECIFICATION.md", spec)
@@ -3026,7 +3027,7 @@ def test_h05_fails_missing_grasp_evidence(session):
         "grasp", "Assign validation responsibility to the information expert."
     )
     summary = _execution_summary_with_evidence(
-        '  grasp:\n    applied: false\n    reason: ""\n'
+        '[technical_practice_evidence.grasp]\napplied = false\nreason = ""\n'
     )
     write_artifact(artifacts_dir, session_uuid, "TASK_SPECIFICATION.md", spec)
     write_artifact(artifacts_dir, session_uuid, "EXECUTION_SUMMARY.md", summary)
@@ -3071,28 +3072,35 @@ def test_h05_passes_with_ddd_tactical_evidence(session):
     spec = _task_spec_with_practice(
         "ddd_tactical", "Model Invoice as an aggregate root with Money value object."
     )
-    evidence = """  ddd_tactical:
-    applied: true
-    bounded_context: "billing"
-    patterns_applied:
-      - pattern: "Aggregate Root"
-        name: "Invoice"
-        location: "app/domain/invoice.py"
-        invariant: "An invoice must have at least one line item."
-      - pattern: "Value Object"
-        name: "Money"
-        location: "app/domain/money.py"
-        invariant: "Currency is immutable."
-      - pattern: "Domain Event"
-        name: "InvoicePaid"
-        location: "app/domain/events.py"
-        purpose: "Notify other contexts."
-    invariants_enforced:
-      - "Invoice cannot be paid twice."
-    anemic_models_refactored:
-      - before: "app/models/invoice.py"
-        after: "app/domain/invoice.py"
-    rationale: "Replaced anemic model with rich domain aggregate."
+    evidence = """[technical_practice_evidence]
+
+[technical_practice_evidence.ddd_tactical]
+applied = true
+bounded_context = "billing"
+invariants_enforced = ["Invoice cannot be paid twice."]
+rationale = "Replaced anemic model with rich domain aggregate."
+
+[[technical_practice_evidence.ddd_tactical.patterns_applied]]
+pattern = "Aggregate Root"
+name = "Invoice"
+location = "app/domain/invoice.py"
+invariant = "An invoice must have at least one line item."
+
+[[technical_practice_evidence.ddd_tactical.patterns_applied]]
+pattern = "Value Object"
+name = "Money"
+location = "app/domain/money.py"
+invariant = "Currency is immutable."
+
+[[technical_practice_evidence.ddd_tactical.patterns_applied]]
+pattern = "Domain Event"
+name = "InvoicePaid"
+location = "app/domain/events.py"
+purpose = "Notify other contexts."
+
+[[technical_practice_evidence.ddd_tactical.anemic_models_refactored]]
+before = "app/models/invoice.py"
+after = "app/domain/invoice.py"
 """
     summary = _execution_summary_with_evidence(evidence)
     write_artifact(artifacts_dir, session_uuid, "TASK_SPECIFICATION.md", spec)
@@ -3118,7 +3126,7 @@ def test_h05_fails_missing_ddd_tactical_evidence(session):
         "ddd_tactical", "Model Invoice as an aggregate root with Money value object."
     )
     summary = _execution_summary_with_evidence(
-        '  ddd_tactical:\n    applied: false\n    reason: ""\n'
+        '[technical_practice_evidence.ddd_tactical]\napplied = false\nreason = ""\n'
     )
     write_artifact(artifacts_dir, session_uuid, "TASK_SPECIFICATION.md", spec)
     write_artifact(artifacts_dir, session_uuid, "EXECUTION_SUMMARY.md", summary)
@@ -3163,32 +3171,36 @@ def test_h05_passes_with_ddd_strategic_evidence(session):
     spec = _task_spec_with_practice(
         "ddd_strategic", "Separate sales, billing, and shipping into bounded contexts."
     )
-    evidence = """  ddd_strategic:
-    applied: true
-    bounded_contexts:
-      - name: "sales"
-        responsibility: "Quotes and orders."
-        files:
-          - "app/sales/"
-      - name: "billing"
-        responsibility: "Invoices and payments."
-        files:
-          - "app/billing/"
-    context_map_changes:
-      - contexts:
-          - "sales"
-          - "billing"
-        pattern: "Customer-Supplier"
-        description: "Sales publishes OrderPlaced events."
-    anti_corruption_layers_added:
-      - context: "billing"
-        adapter: "SalesEventAdapter"
-        location: "app/billing/acl/sales_event_adapter.py"
-    ubiquitous_language_terms_defined:
-      - context: "sales"
-        term: "Order"
-        meaning: "Customer purchase request."
-    rationale: "Avoided shared Order model across contexts."
+    evidence = """[technical_practice_evidence]
+
+[technical_practice_evidence.ddd_strategic]
+applied = true
+rationale = "Avoided shared Order model across contexts."
+
+[[technical_practice_evidence.ddd_strategic.bounded_contexts]]
+name = "sales"
+responsibility = "Quotes and orders."
+files = ["app/sales/"]
+
+[[technical_practice_evidence.ddd_strategic.bounded_contexts]]
+name = "billing"
+responsibility = "Invoices and payments."
+files = ["app/billing/"]
+
+[[technical_practice_evidence.ddd_strategic.context_map_changes]]
+contexts = ["sales", "billing"]
+pattern = "Customer-Supplier"
+description = "Sales publishes OrderPlaced events."
+
+[[technical_practice_evidence.ddd_strategic.anti_corruption_layers_added]]
+context = "billing"
+adapter = "SalesEventAdapter"
+location = "app/billing/acl/sales_event_adapter.py"
+
+[[technical_practice_evidence.ddd_strategic.ubiquitous_language_terms_defined]]
+context = "sales"
+term = "Order"
+meaning = "Customer purchase request."
 """
     summary = _execution_summary_with_evidence(evidence)
     write_artifact(artifacts_dir, session_uuid, "TASK_SPECIFICATION.md", spec)
@@ -3214,7 +3226,7 @@ def test_h05_fails_missing_ddd_strategic_evidence(session):
         "ddd_strategic", "Separate sales, billing, and shipping into bounded contexts."
     )
     summary = _execution_summary_with_evidence(
-        '  ddd_strategic:\n    applied: false\n    reason: ""\n'
+        '[technical_practice_evidence.ddd_strategic]\napplied = false\nreason = ""\n'
     )
     write_artifact(artifacts_dir, session_uuid, "TASK_SPECIFICATION.md", spec)
     write_artifact(artifacts_dir, session_uuid, "EXECUTION_SUMMARY.md", summary)
@@ -3230,4 +3242,139 @@ def test_h05_fails_missing_ddd_strategic_evidence(session):
     assert any(
         c["id"] == "ddd_strategic_not_applied_has_reason" and c["result"] == "FAIL"
         for c in output["checks"]
+    )
+
+
+def test_load_policy_resolves_non_core_domains():
+    """Policies outside the core domain (D*, S*) must be resolvable."""
+    import runner
+
+    for trigger in ("D00", "D01", "S00"):
+        policy = runner.load_policy(trigger)
+        assert policy["trigger"] == trigger
+
+
+VALID_TASK_SPEC = """# Task Specification
+
+## Objective
+
+Fix user validation.
+
+## Expected outcome
+
+Validation errors are clear.
+
+## Scope
+
+Included: schema changes.
+
+## Constraints
+
+No breaking changes.
+
+## Acceptance Criteria
+
+- The API shall reject empty names.
+
+## Assumptions
+
+None.
+
+## Unknowns
+
+None.
+
+## Validation
+
+Complete.
+"""
+
+
+def test_update_report_warns_on_corrupt_entries(session):
+    """A corrupt ENTRY marker must produce a stderr warning and be counted."""
+    session_uuid, artifacts_dir = session
+    write_artifact(artifacts_dir, session_uuid, "TASK_SPECIFICATION.md", VALID_TASK_SPEC)
+
+    report = artifacts_dir / session_uuid / "HARNESS_REPORT.md"
+    report.write_text(
+        "# Harness Report\n\n"
+        '<!-- ENTRY: {"trigger": "H00", "transition": "T", "result": "PASS", '
+        '"timestamp": "t0", "checks": []} -->\n\n'
+        "<!-- ENTRY: {not valid json} -->\n\n"
+        '<!-- ENTRY: {"trigger": "H01", "broken": } -->\n',
+        encoding="utf-8",
+    )
+
+    cmd = [
+        sys.executable,
+        str(RUNNER_PATH),
+        "--session",
+        session_uuid,
+        "--trigger",
+        "H01",
+        "--artifacts-dir",
+        str(artifacts_dir),
+    ]
+    result = subprocess.run(cmd, cwd=PROJECT_ROOT, capture_output=True, text=True)
+
+    assert result.returncode == 0
+    assert "WARNING" in result.stderr
+    assert "corrupt" in result.stderr.lower()
+
+    updated = report.read_text(encoding="utf-8")
+    assert "Corrupt entries discarded: 2" in updated
+    # The one valid pre-existing entry is preserved.
+    assert '"trigger": "H00"' in updated
+
+
+def test_unknown_semantic_validator_fails_explicitly(monkeypatch, tmp_path):
+    """A policy declaring a semantic check the runner cannot execute must FAIL."""
+    import runner_paths
+    import runner_validators
+
+    monkeypatch.setattr(
+        runner_validators,
+        "load_policy",
+        lambda trigger: {
+            "trigger": "H99",
+            "transition": "X → Y",
+            "artifact": None,
+            "validation_type": "none",
+            "semantic_validation": True,
+            "semantic_checks": ["does_not_exist"],
+        },
+    )
+    monkeypatch.setattr(runner_paths, "ARTIFACTS_DIR", tmp_path)
+
+    result = runner_validators.run_trigger("test-session", "H99")
+    assert result.result == "FAIL"
+    assert any(
+        c.id == "semantic_validator_does_not_exist_known" and c.result == "FAIL"
+        for c in result.checks
+    )
+
+
+def test_semantic_checks_dispatch_from_policy(monkeypatch, tmp_path):
+    """Known validators declared by the policy are dispatched by name."""
+    import runner_paths
+    import runner_validators
+
+    monkeypatch.setattr(
+        runner_validators,
+        "load_policy",
+        lambda trigger: {
+            "trigger": "H99",
+            "transition": "X → Y",
+            "artifact": None,
+            "validation_type": "none",
+            "semantic_validation": True,
+            "semantic_checks": ["technical_approach"],
+        },
+    )
+    monkeypatch.setattr(runner_paths, "ARTIFACTS_DIR", tmp_path)
+
+    result = runner_validators.run_trigger("test-session", "H99")
+    check_ids = {c.id for c in result.checks}
+    assert "technical_approach_spec_exists" in check_ids or (
+        "technical_practices_disabled" in check_ids
     )

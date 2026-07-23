@@ -29,10 +29,10 @@ This artifact records what was changed, how it aligns with the execution plan, w
 
 ## Metadata
 
-```yaml
-id: ""
-created_at: ""
-status: ""
+```toml
+id = ""
+created_at = ""
+status = ""
 ```
 
 ---
@@ -41,9 +41,9 @@ status: ""
 
 Reference to the task specification that originated this execution.
 
-```yaml
-task_reference:
-  specification: ""
+```toml
+[task_reference]
+specification = ""
 ```
 
 ---
@@ -52,9 +52,9 @@ task_reference:
 
 Reference to the execution plan that was followed.
 
-```yaml
-plan_reference:
-  execution_plan: ""
+```toml
+[plan_reference]
+execution_plan = ""
 ```
 
 ---
@@ -63,9 +63,9 @@ plan_reference:
 
 High-level description of the changes applied to the project.
 
-```yaml
-summary:
-  description: ""
+```toml
+[summary]
+description = ""
 ```
 
 ---
@@ -74,12 +74,12 @@ summary:
 
 Ordered list of implementation steps and their execution status.
 
-```yaml
-steps:
-  - order: 1
-    action: ""
-    status: ""
-    notes: ""
+```toml
+[[steps]]
+order = 1
+action = ""
+status = ""
+notes = ""
 ```
 
 Possible values for `status`:
@@ -96,10 +96,10 @@ BLOCKED
 
 List of project files that were created, updated, or deleted.
 
-```yaml
-project_files_modified:
-  - file: ""
-    change: ""
+```toml
+[[project_files_modified]]
+file = ""
+change = ""
 ```
 
 ---
@@ -108,11 +108,11 @@ project_files_modified:
 
 Results of validations defined in the execution plan and run during execution.
 
-```yaml
-validations:
-  - validation: ""
-    result: ""
-    details: ""
+```toml
+[[validations]]
+validation = ""
+result = ""
+details = ""
 ```
 
 Possible values for `result`:
@@ -129,23 +129,25 @@ SKIPPED
 
 Evidence that enabled technical practices (for example, TDD) were followed.
 
-```yaml
-technical_practice_evidence:
-  tdd:
-    applied: true
-    failing_tests:
-      - file: ""
-        description: ""
-    production_changes:
-      - file: ""
-        description: ""
-    final_test_result: ""
-    reason: ""
-  srp:
-    applied: true
-    responsibilities_identified: []
-    extraction: []
-    reason: ""
+```toml
+[technical_practice_evidence.tdd]
+applied = true
+final_test_result = ""
+reason = ""
+
+[[technical_practice_evidence.tdd.failing_tests]]
+file = ""
+description = ""
+
+[[technical_practice_evidence.tdd.production_changes]]
+file = ""
+description = ""
+
+[technical_practice_evidence.srp]
+applied = true
+responsibilities_identified = []
+extraction = []
+reason = ""
 ```
 
 ---
@@ -154,10 +156,10 @@ technical_practice_evidence:
 
 Any unexpected issues, blockers, or deviations from the execution plan.
 
-```yaml
-issues:
-  - description: ""
-    severity: ""
+```toml
+[[issues]]
+description = ""
+severity = ""
 ```
 
 Possible values for `severity`:
@@ -175,10 +177,10 @@ CRITICAL
 
 Indication of whether the project is ready for verification.
 
-```yaml
-final_state:
-  status: ""
-  reasoning: ""
+```toml
+[final_state]
+status = ""
+reasoning = ""
 ```
 
 Possible values for `status`:
@@ -196,10 +198,10 @@ The project must be `VERIFIABLE` for H05 to pass. `BLOCKED` indicates that execu
 
 Confidence level of the execution summary.
 
-```yaml
-confidence:
-  level: ""
-  explanation: ""
+```toml
+[confidence]
+level = ""
+explanation = ""
 ```
 
 Possible values:
@@ -212,26 +214,26 @@ HIGH
 
 ---
 
-## Machine-readable YAML blocks
+## Machine-readable TOML blocks
 
-The following sections MUST contain a fenced `yaml` code block with the exact structure described below.
+The following sections MUST contain a fenced `toml` code block with the exact structure described below.
 
 ### `## Final Project State`
 
-```yaml
-final_state:
-  status: "VERIFIABLE" | "BLOCKED"
-  reasoning: "string"
+```toml
+[final_state]
+status = "VERIFIABLE" # or "BLOCKED"
+reasoning = "string"
 ```
 
 ### `## Steps Executed`
 
-```yaml
-steps_executed:
-  - order: 1
-    action: "string"
-    status: "COMPLETED" | "SKIPPED" | "BLOCKED"
-    notes: "string"  # required when status is SKIPPED or BLOCKED
+```toml
+[[steps_executed]]
+order = 1
+action = "string"
+status = "COMPLETED" # or "SKIPPED" or "BLOCKED"
+notes = "string" # required when status is SKIPPED or BLOCKED
 ```
 
 ---

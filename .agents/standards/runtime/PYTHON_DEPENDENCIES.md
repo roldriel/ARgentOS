@@ -9,6 +9,8 @@ All Python runtime code under `.agents/` MUST use only the Python standard libra
 ## Python-specific notes
 
 - Use `tomllib` (Python 3.11+) for TOML parsing.
+- All machine-readable structured blocks that the harness parses are TOML: policy/contract front matter (`+++ ... +++`) and the fenced ````toml` blocks inside session artifacts (e.g. `## Final Project State`, `## Steps Executed`, `## Scope Compliance`, `## Final Decision`, `## Acceptance Criteria Evaluation`, `## Technical Approach`, `## Technical Practice Evidence`). The runner extracts them with `extract_toml_block` in `.agents/harness/runner.py`. YAML is not parsed anywhere in the runtime (there is no YAML parser in the standard library); the historical `safe_yaml_load` parser was removed.
+- Exception: the protocol taxonomy metadata blocks (`--- ... ---`) and the master dictionary `PROTOCOL_TAXONOMY.md` remain YAML and are validated only by the dev-only test suite (`test_protocol_taxonomy.py`, which uses `pyyaml` as a dev dependency). See `.agents/harness/policies/H13-protocol-taxonomy.md`.
 - Use `json`, `urllib`, `pathlib`, `re`, and other standard-library modules as needed.
 - `pytest` or `unittest` are allowed only for testing the protocol itself, declared as dev-only dependencies.
 - Do not add entries to `requirements.txt`, `pyproject.toml`, or any other project dependency manifest for the sake of `.agents/` runtime code.

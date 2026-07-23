@@ -39,18 +39,30 @@ Terminate
 
 The Worker is stateless between invocations. For each phase, the Orchestrator tells the Worker which role to adopt for the phase. The phase-to-role mapping is in `.agents/orchestrators/core/workflow/INDEX.md`.
 
-### Core roles
+### Phase roles
+
+One role per workflow phase, each defined in its own file under `.agents/roles/`:
+
+- `task_analyst` — phase 00, produces `TASK_ANALYSIS.md`.
+- `task_specification_writer` — phase 02, produces `TASK_SPECIFICATION.md`.
+- `context_gatherer` — phase 03, produces `CONTEXT_ARTIFACT.md`. It does not access the Knowledge Base directly; any KB entries are provided by the Orchestrator in the payload.
+- `context_validator` — phase 04, produces `CONTEXT_VALIDATION_REPORT.md`.
+- `planner` — phase 05, produces `EXECUTION_PLAN.md`.
+- `executor` — phase 06, produces `EXECUTION_SUMMARY.md` plus project file changes.
+- `verifier` — phase 07, produces `VERIFICATION_REPORT.md`.
+- `recovery_analyst` — phase 08, produces `RECOVERY_REPORT.md`.
+
+### Supporting roles
 
 - `worker`: the generic worker that executes the phase instructions.
 - `reviewer`: evaluates an artifact before a critical transition and produces `REVIEW_REPORT.md`.
-- `verifier`: evaluates the executed work against the specification and produces `VERIFICATION_REPORT.md`.
 - `context_discoverer`: curates Knowledge Base entries before the real phase worker is invoked.
 
 ### Worker profiles
 
 The generic `worker` may adopt a specialized profile to adjust how it executes a phase. Profiles are optional and live in `.agents/roles/profiles/`.
 
-Available profiles include:
+Available profiles:
 
 - `backend_engineer`
 - `database_engineer`
@@ -61,10 +73,6 @@ Available profiles include:
 - `intent_reflector` — reflects the user's intent back to them in a structured way and records their confirmation or correction. Produces `INTENT_REFLECTION.md`.
 - `intent_reflection_reviewer` — validates the fidelity and quality of `INTENT_REFLECTION.md` before it is presented to the user. Returns `APPROVE`, `REWORK`, or `NEEDS_CLARIFICATION`.
 
-### Context roles
-
-- `context_gatherer`: collects technical context from the project (files, dependencies, existing behavior). It does not access the Knowledge Base directly; any KB entries are provided by the Orchestrator in the payload.
-
 ## Input from Orchestrator
 
 Every Worker invocation must include:
@@ -73,7 +81,7 @@ Every Worker invocation must include:
 2. **Current state** — from the state machine.
 3. **Target phase** — which workflow module to execute.
 4. **Role to adopt** — one of the roles listed above.
-5. **Profile** — optional; one of `backend_engineer`, `database_engineer`, `integration_engineer`, `qa_engineer`, `tech_writer`, `functional_writer`, or `null` for the generic worker.
+5. **Profile** — optional; one of the profiles listed under "Worker profiles" above, or `null` for the generic worker.
 6. **Input artifacts** — paths to required input artifacts.
 7. **Workflow module path** — e.g., `orchestrators/core/workflow/03-gather-context.md`.
 8. **Relevant harness policy** — policy the Orchestrator will apply after the phase.
@@ -95,7 +103,7 @@ The Worker MUST respect the discovered patterns and the detected environment, ap
 3. Execute only that phase.
 4. Apply any technical-practice standards listed in the delegation payload (see `.agents/standards/INDEX.md` for the catalog).
 5. Produce the required output artifact for the phase.
-6. Ensure the output complies with the corresponding contract in `.agents/contracts/` and with the active profile restrictions (if any).
+6. Ensure the output complies with the corresponding contract (`.agents/contracts/` for cross-cutting artifacts, `.agents/orchestrators/core/contracts/` for phase artifacts) and with the active profile restrictions (if any).
 7. Report back to the Orchestrator with:
    - Path to the output artifact.
    - Profile executed (or `null`).
@@ -131,7 +139,7 @@ The Worker MUST follow `.agents/standards/requirements/NO_ASSUMPTIONS.md` and `.
 ## Output
 
 - One artifact.
-- For phase `05`, the artifact is accompanied by project file changes.
+- For phase `06`, the artifact is accompanied by project file changes.
 - A concise report to the Orchestrator containing:
   - What was done.
   - Where the output artifact is located.

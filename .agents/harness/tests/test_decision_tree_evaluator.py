@@ -295,6 +295,40 @@ def test_cli_exit_code_error():
     assert output["result"] == "ERROR"
 
 
+def test_omitted_optional_boolean_defaults_false(base_vars):
+    """Regression: an omitted optional boolean used with `== false` must default
+    to False and take the true branch (e.g. `scope_compliant` in H07_FAIL)."""
+    tree = {
+        "metadata": {"trigger": "H07"},
+        "nodes": {
+            "start": {
+                "condition": "scope_compliant == false",
+                "true": {
+                    "action": "RETRY_WORKER",
+                    "target_phase": "x.md",
+                    "role": "worker",
+                },
+                "false": {
+                    "action": "RECOVERY_GENERIC",
+                    "target_phase": "08-recovery.md",
+                },
+            }
+        },
+    }
+    result = dte.evaluate_tree(tree, base_vars)
+    assert result.result == "DECISION"
+    assert result.action == "RETRY_WORKER"
+
+
+def test_cli_decide_discovery_domain_tree():
+    """Trees outside the core domain (D*) must be resolvable too."""
+    returncode, output = run_decide(
+        "D00", json.dumps({"artifact_exists": True, "retry_count": 0})
+    )
+    assert returncode == 0
+    assert output["result"] == "DECISION"
+
+
 def test_cli_tree_not_found():
     returncode, output = run_decide(
         "H99", json.dumps({"artifact_exists": True, "retry_count": 0})

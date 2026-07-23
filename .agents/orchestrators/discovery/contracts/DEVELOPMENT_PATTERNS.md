@@ -66,5 +66,5 @@ Each pattern MUST use the following structure:
 
 ## Validation
 
-- Structural validation (fields present, example present): harness `H10-kb-discovery-report` (core domain).
-- Ground-truth validation (source files are real paths, examples verifiable): harness `D01-discovery-output` (discovery domain), not H10.
+- Structural validation (fields present, example present): harness `D01-discovery-output` (discovery domain).
+- Ground-truth validation (source files are real paths, examples verifiable): harness `D01-discovery-output` (discovery domain).

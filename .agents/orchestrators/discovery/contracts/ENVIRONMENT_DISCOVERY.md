@@ -67,5 +67,5 @@ Bullet list of environment facts, for example:
 
 ## Validation
 
-- Structural validation (required fields and sections present): harness `H10-kb-discovery-report` (core domain).
-- Ground-truth validation (`system_probe` used only for environment, no secrets present): harness `D01-discovery-output` (discovery domain), not H10.
+- Structural validation (required fields and sections present): harness `D01-discovery-output` (discovery domain).
+- Ground-truth validation (`system_probe` used only for environment, no secrets present): harness `D01-discovery-output` (discovery domain).

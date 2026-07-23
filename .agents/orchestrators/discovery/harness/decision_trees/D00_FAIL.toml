@@ -26,7 +26,7 @@ reason = "Discovery request is missing critical information (scope, target, or r
 next = "check_retry"
 
 [nodes.check_retry]
-condition = "retry_count >= 1"
+condition = "retry_count >= 3"
 
 [nodes.check_retry.true]
 action = "RECOVERY_GENERIC"

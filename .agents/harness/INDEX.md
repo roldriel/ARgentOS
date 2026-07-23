@@ -11,7 +11,7 @@ It ensures that:
 3. Workflow phases were executed in order without skipped steps.
 4. The process remains auditable and reproducible.
 
-The harness is implemented as a set of policies and an executable runner (`runner.py`). The runner validates artifacts against policies, runs health checks, and evaluates recovery decision trees when enabled.
+The harness is implemented as a set of policies and an executable runner (`runner.py`, split into `runner_*.py` modules — see `.agents/harness/RUNNER.md` for the layout). The runner validates artifacts against policies, runs health checks, and evaluates recovery decision trees when enabled.
 
 For runner usage (CLI, health-check, metrics, tests), see `.agents/harness/RUNNER.md`.
 
@@ -75,7 +75,11 @@ If a harness trigger fails:
 
 ## Recovery Mechanism
 
-When a harness trigger fails, the Orchestrator routes to recovery. The recovery logic is implemented as TOML decision trees under `.agents/orchestrators/core/harness/decision_trees/H*_FAIL.toml` and is evaluated via the runner. See `.agents/harness/RUNNER.md` for the `decide` subcommand.
+When a harness trigger fails, the Orchestrator routes to recovery. The recovery logic is implemented as TOML decision trees under `.agents/orchestrators/core/harness/decision_trees/H*_FAIL.toml` (core domain) and `.agents/orchestrators/discovery/harness/decision_trees/D*_FAIL.toml` (discovery domain), and is evaluated via the runner. See `.agents/harness/RUNNER.md` for the `decide` subcommand.
+
+The runner resolves policies and decision trees across domains: core (`H*`), discovery (`D*`), system (`S*`) and cross-cutting (`.agents/harness/policies/`). The health check validates the trees of every domain that provides them: expected triggers are derived from the domain's policy files, and each tree is structurally validated (references and cycles).
+
+H09 and H10 have no dedicated decision trees. When either fails and the `decision_trees` feature flag is enabled, the Orchestrator applies the generic recovery fallback (`RECOVERY_GENERIC` → `08-recovery.md`).
 
 ## Optional Triggers
 
@@ -84,7 +88,7 @@ The following triggers are defined but not integrated into the state machine. Th
 | Trigger | Transition | Policy | Artifact |
 |---|---|---|---|
 | H09 | `RECOVERY → PLANNING` | `.agents/orchestrators/core/harness/policies/H09-recovery-report.md` | `RECOVERY_REPORT.md` |
-| H10 | Before using KB discovery | `.agents/orchestrators/core/harness/policies/H10-kb-discovery-report.md` | `KB_DISCOVERY_REPORT.md` |
+| H10 | Before using KB recommendations | `.agents/orchestrators/core/harness/policies/H10-kb-discovery-report.md` | `KB_RECOMMENDATION.md` |
 
 H08 for `EXECUTION_SUMMARY.md` is intentionally omitted because H05 already performs semantic validation of that artifact.
 
@@ -98,13 +102,13 @@ The Discovery Orchestrator:
 - Consumes and enriches knowledge from previous sessions instead of regenerating everything on each invocation.
 - Is invoked by the core Orchestrator with a scope (`full`, `env`, `stack`, `patterns`, `business`).
 
-Its output is validated by two gates: `core:H10-kb-discovery-report` (structure) and `D01-discovery-output` (ground truth; see `.agents/orchestrators/discovery/harness/policies/D01-discovery-output.md`).
+Its output is validated by the gate `D01-discovery-output` (structure and ground truth; see `.agents/orchestrators/discovery/harness/policies/D01-discovery-output.md`). Separately, the optional core gate `H10-kb-discovery-report` validates the per-task `KB_RECOMMENDATION.md` artifact produced by the `context_discoverer`.
 
 For details on the entry format, see `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md`.
 
 ## Constraints
 
-- The harness MUST NOT modify project files.
+- The harness MUST NOT modify project source files. Environment preparation performed by the health check (creating `.project/knowledge/` and its `INDEX.md`, writing `.project/.last_health_check`) is part of the bootstrap role and is exempt from this rule.
 - The harness MUST NOT write phase artifacts.
 - The harness MUST NOT skip any check in the policy.
 - The harness MUST leave an audit trail in `HARNESS_REPORT.md`.

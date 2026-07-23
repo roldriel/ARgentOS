@@ -1,7 +1,7 @@
 +++
 trigger = "H10"
-transition = "Before using KB discovery (optional)"
-artifact = "KB_DISCOVERY_REPORT.md"
+transition = "Before using KB recommendations (optional)"
+artifact = "KB_RECOMMENDATION.md"
 required_sections = [
   "Discovery Objective",
   "Recommended Entries",
@@ -21,46 +21,36 @@ state: core:GATHERING_CONTEXT
 lifecycle: context
 gates:
   - "core:GATHERING_CONTEXT -> core:CONTEXT_GATHERED"
-artifact_validated: KB_DISCOVERY_REPORT.md
+artifact_validated: KB_RECOMMENDATION.md
 ---
 
-# Harness Policy H10: KB Discovery Report (optional)
+# Harness Policy H10: KB Recommendation Report (optional)
 
 ## Trigger
 
-Before using KB discovery (optional gate)
+Before using KB recommendations (optional gate)
 
 ## Purpose
 
-Structural validation of the discovery knowledge base. H10 verifies that the KB entries exist and are structurally conformant with their contracts. H10 does **not** verify ground truth (that `source_files` are real project paths, that examples are verifiable, or that `environment.md` is secret-free): that is the exclusive responsibility of `D01-discovery-output` (discovery domain).
+Structural validation of the `KB_RECOMMENDATION.md` artifact produced by the `context_discoverer`. H10 verifies that the recommendation report exists and contains the required sections of its contract.
+
+Validation of the discovery knowledge base itself (entries, manifest, structure, and ground truth) belongs to the discovery domain: see `D01-discovery-output` and the contracts under `.agents/orchestrators/discovery/contracts/`.
+
+H10 does NOT participate in the discovery cycle (`discovery:DISCOVERY_VALIDATE` is gated only by `D01`). Its scope is limited to the per-task `KB_RECOMMENDATION.md` artifact produced by the `context_discoverer` during `core:GATHERING_CONTEXT`.
 
 ## Input
 
-- KB entries: `.project/knowledge/discovery/*.md`
-- Manifest: `.project/knowledge/discovery/.discovery_manifest`
-- Contracts:
-  - `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md`
-  - `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_REPORT.md`
-  - `.agents/orchestrators/discovery/contracts/DISCOVERY_MANIFEST.md`
-  - `.agents/orchestrators/discovery/contracts/DEVELOPMENT_PATTERNS.md`
-  - `.agents/orchestrators/discovery/contracts/ENVIRONMENT_DISCOVERY.md`
+- Artifact: `.project/<session-uuid>/<iteration>/<order>-KB_RECOMMENDATION.md`
+- Contract: `.agents/orchestrators/core/contracts/KB_RECOMMENDATION.md`
 
 ## Decision Criteria
 
 `PASS` when all of the following hold; `FAIL` otherwise:
 
-- All expected KB entries exist and satisfy the base entry contract (`KB_DISCOVERY_ENTRY.md`).
-- The TOML front-matter headers of the entries are valid.
-- The required fields are present in every entry.
-- The manifest is complete (all required sections of `DISCOVERY_MANIFEST.md` are present).
-- Every pattern in `development_patterns.md` has `source_files`, `confidence` and an `example`.
-- `environment.md` and `development_patterns.md` exist.
-
-Explicitly out of scope (D01, not H10):
-
-- Verifying that `source_files` are real paths in the project.
-- Verifying that detected facts match real configuration files.
-- Verifying that `environment.md` contains no secrets.
+- The artifact exists.
+- All required sections are present: `Discovery Objective`, `Recommended Entries`, `Context Budget Recommendation`, `Notes`.
+- The report does not include full artifacts from previous sessions.
+- The report does not include credentials, tokens, or personal data.
 
 ## Note
 

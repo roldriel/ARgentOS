@@ -6,6 +6,7 @@ required_sections = [
   "Scope Compliance"
 ]
 semantic_validation = true
+semantic_checks = ["scope_compliance"]
 +++
 
 

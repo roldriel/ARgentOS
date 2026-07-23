@@ -29,21 +29,24 @@ Before modifying a module:
 
 Record evidence in `EXECUTION_SUMMARY.md` under `## Technical Practice Evidence`:
 
-```yaml
-technical_practice_evidence:
-  srp:
-    applied: true
-    responsibilities_identified:
-      - location: "app/services/user_service.py"
-        responsibility: "Email validation"
-    extraction:
-      - from: "app/services/user_service.py"
-        to: "app/services/email_validator.py"
-        reasoning: "Email validation was not the user service's responsibility."
-    reason: ""
+```toml
+[technical_practice_evidence]
+
+[technical_practice_evidence.srp]
+applied = true
+reason = ""
+
+[[technical_practice_evidence.srp.responsibilities_identified]]
+location = "app/services/user_service.py"
+responsibility = "Email validation"
+
+[[technical_practice_evidence.srp.extraction]]
+from = "app/services/user_service.py"
+to = "app/services/email_validator.py"
+reasoning = "Email validation was not the user service's responsibility."
 ```
 
-If SRP could not be applied, set `applied: false` and document the reason.
+If SRP could not be applied, set `applied = false` and document the reason.
 
 ## Communication style
 

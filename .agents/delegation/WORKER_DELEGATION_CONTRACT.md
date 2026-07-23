@@ -31,7 +31,7 @@ The invocation is not a function call; it is a structured handoff of context and
     ".project/<uuid>/<iteration>/<order>-ARTIFACT_1.md",
     ".project/<uuid>/<iteration>/<order>-ARTIFACT_2.md"
   ],
-  harness_policy: "harness/policies/HXX-name.md",
+  harness_policy: ".agents/orchestrators/core/harness/policies/HXX-name.md",
   task_summary: "<brief summary of the overall task objective>",
   knowledge_entries: [
     {
@@ -69,6 +69,8 @@ The invocation is not a function call; it is a structured handoff of context and
 - If `profile` is `null` or omitted, the Worker acts as the generic worker (`worker.md`).
 - If `profile` is one of `backend_engineer`, `database_engineer`, `integration_engineer`, `qa_engineer`, `tech_writer`, `functional_writer`, `intent_reflector`, or `intent_reflection_reviewer`, the Worker MUST read `.agents/roles/profiles/<profile>.md` before executing the phase and apply its MUST_READ, restrictions, and prompt template.
 - The value MUST match a file name under `.agents/roles/profiles/` exactly, without the `.md` extension.
+
+> **Note:** The `profile:` field in workflow front-matter (e.g., `profile: task_analyst` in `00-analyze-task.md`) names the *phase role* the Worker adopts (`role_to_adopt` in this payload), defined by a file under `.agents/roles/`. It is a different concept from this payload's `profile` field, which selects an optional specialized profile from `.agents/roles/profiles/`.
 
 ## Worker Execution
 
@@ -109,7 +111,7 @@ The Worker returns the following to the Orchestrator:
 
 > **Deprecated:** The `recommended_next_state` field is deprecated and will be removed in a future version of the protocol. Workers should populate `recommendation.next_state` instead. The Orchestrator has never consumed `recommended_next_state`; it only uses `recommendation.next_state`.
 
-Fields `project_changes` and `recommendation` are optional and used only for phases `05` and `07`, respectively. For all other phases they may be omitted or left empty.
+Fields `project_changes` and `recommendation` are optional and used only for phases `06` and `07`, respectively. For all other phases they may be omitted or left empty.
 
 ## Orchestrator Validation
 
@@ -117,7 +119,7 @@ After receiving the Worker report, the Orchestrator:
 
 1. Confirms the Worker executed the requested phase and role.
 2. Verifies the output artifact exists.
-3. Reads `project_changes` (for phase `05`) or `recommendation` (for phase `07`) when present.
+3. Reads `project_changes` (for phase `06`) or `recommendation` (for phase `07`) when present.
 4. Runs the harness trigger for the target transition (when applicable).
 5. If the harness passes, transitions to the next state.
 6. If the harness fails or the output is invalid, routes to `RECOVERY` or `NEEDS_CLARIFICATION`.

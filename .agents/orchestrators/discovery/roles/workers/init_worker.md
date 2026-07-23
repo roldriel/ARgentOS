@@ -8,7 +8,7 @@ state: discovery:DISCOVERY_INIT
 lifecycle: discovery
 actor: discovery_orchestrator
 input_artifacts: []
-output_artifacts: [discovery_input.json, invalidation_report.json]
+output_artifacts: [discovery_input.json, invalidation_report.json, KB_DISCOVERY_REPORT.md]
 ---
 
 # Worker: init_worker
@@ -35,6 +35,11 @@ the remaining workers.
   scope. `provenance` does not apply to this message (see the contract).
 - `invalidation_report.json` — list of KB entries that became stale, with the
   reason (hash change, TTL, etc.).
+- `KB_DISCOVERY_REPORT.md` — the initialization report of the run (objective,
+  scope and inputs, invalidation summary, selected workers), following
+  `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_REPORT.md`. Written to
+  the session artifact directory as `<order>-KB_DISCOVERY_REPORT.md`; validated
+  by gate `D00-discovery-init`.
 
 Both are written to `.project/<session-uuid>/discovery/` following the
 intermediate-working-directory mechanism (Option A).

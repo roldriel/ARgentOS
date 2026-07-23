@@ -29,10 +29,10 @@ This artifact captures the interpreted user request, the identified objective, r
 
 ## Metadata
 
-```yaml
-id: ""
-created_at: ""
-status: ""
+```toml
+id = ""
+created_at = ""
+status = ""
 ```
 
 ---
@@ -41,8 +41,8 @@ status: ""
 
 The original request provided by the user.
 
-```yaml
-original_request: ""
+```toml
+original_request = ""
 ```
 
 ---
@@ -51,9 +51,9 @@ original_request: ""
 
 A precise description of what the user wants to achieve, as understood by the agent.
 
-```yaml
-objective:
-  description: ""
+```toml
+[objective]
+description = ""
 ```
 
 ---
@@ -62,9 +62,9 @@ objective:
 
 The final result expected by the user from the user's perspective.
 
-```yaml
-expected_outcome:
-  description: ""
+```toml
+[expected_outcome]
+description = ""
 ```
 
 ---
@@ -73,9 +73,8 @@ expected_outcome:
 
 Requirements that the user explicitly stated.
 
-```yaml
-requirements:
-  - ""
+```toml
+requirements = [""]
 ```
 
 ---
@@ -84,9 +83,8 @@ requirements:
 
 Constraints or limitations that the user explicitly mentioned.
 
-```yaml
-restrictions:
-  - ""
+```toml
+restrictions = [""]
 ```
 
 ---
@@ -95,18 +93,23 @@ restrictions:
 
 Unresolved ambiguities, missing information, or contradictory requirements that could affect the solution.
 
-```yaml
-ambiguities:
-  - description: ""
-    impact: ""
-    options:
-      - label: "Option A"
-        description: ""
-      - label: "Option B"
-        description: ""
-      - label: "Other"
-        description: "User provides a custom answer."
-    recommended_default: ""
+```toml
+[[ambiguities]]
+description = ""
+impact = ""
+recommended_default = ""
+
+[[ambiguities.options]]
+label = "Option A"
+description = ""
+
+[[ambiguities.options]]
+label = "Option B"
+description = ""
+
+[[ambiguities.options]]
+label = "Other"
+description = "User provides a custom answer."
 ```
 
 Each ambiguity that would require an implementation decision MUST include at least two concrete options and an `Other` option.
@@ -117,12 +120,12 @@ Each ambiguity that would require an implementation decision MUST include at lea
 
 Evaluation of how confident the agent is in its interpretation of the user's intent.
 
-```yaml
-intent_confidence:
-  level: ""  # HIGH, MEDIUM, LOW
-  score: 0
-  applied_criteria: []
-  explanation: ""
+```toml
+[intent_confidence]
+level = ""  # HIGH, MEDIUM, LOW
+score = 0
+applied_criteria = []
+explanation = ""
 ```
 
 The assessment must follow the objective criteria defined in `.agents/standards/requirements/INTENT_CONFIDENCE.md`. Use it to decide whether to proceed directly to specification or to request confirmation through `CONFIRMING_INTENT`.
@@ -133,10 +136,10 @@ The assessment must follow the objective criteria defined in `.agents/standards/
 
 Evaluation of whether the request is sufficiently understood to proceed to task specification.
 
-```yaml
-sufficiency:
-  ready_for_specification: false
-  reasoning: ""
+```toml
+[sufficiency]
+ready_for_specification = false
+reasoning = ""
 ```
 
 ---
@@ -145,8 +148,8 @@ sufficiency:
 
 The state the agent recommends transitioning to after analysis.
 
-```yaml
-recommended_next_state: ""
+```toml
+recommended_next_state = ""
 ```
 
 Possible values:
@@ -163,10 +166,10 @@ NEEDS_CLARIFICATION
 
 Confidence level of the analysis.
 
-```yaml
-confidence:
-  level: ""
-  explanation: ""
+```toml
+[confidence]
+level = ""
+explanation = ""
 ```
 
 Possible values:

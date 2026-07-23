@@ -4,7 +4,7 @@ transition = "BUILDING_TASK_SPECIFICATION → TASK_READY"
 artifact = "TASK_SPECIFICATION.md"
 required_sections = [
   "Objective",
-  "Expected outcome",
+  "Expected Outcome",
   "Scope",
   "Constraints",
   "Acceptance Criteria",
@@ -15,6 +15,7 @@ required_sections = [
 ears_validation = true
 ears_section = "Acceptance Criteria"
 semantic_validation = true
+semantic_checks = ["technical_approach"]
 +++
 
 

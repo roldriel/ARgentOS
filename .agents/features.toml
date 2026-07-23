@@ -1,21 +1,35 @@
 # Feature flags for the .agents protocol.
-# All flags default to true. Users can disable individual capabilities via
-# environment variables with the AGENTS_FEATURE_<FLAG> prefix.
+# Boolean flags default to true unless explicitly set otherwise below
+# (`architecture_contract` is the current exception). Users can disable
+# individual capabilities via environment variables with the
+# AGENTS_FEATURE_<FLAG> prefix.
+#
+# Consumption: flags marked [code] are read by the harness Python code
+# (feature_flags.py / health_check.py / runner). Flags and settings marked
+# [declarative] are consumed by agents reading this file; the harness only
+# resolves and exposes them via `runner.py features` / feature_flags.all_flags().
 
 [features]
+# [code] decision_trees, rubrics, knowledge_base — gate harness validations.
 decision_trees = true
 rubrics = true
 knowledge_base = true
+# [declarative] caveman — read by agents (caveman skill), not by harness code.
 caveman = true
 
-# Discovery subsystem (plans/PLAN_DISCOVERY_ORCHESTRATOR_02_EXECUTION.md)
+# Discovery subsystem (.agents/orchestrators/discovery/)
+# [declarative] llm_discovery, discovery_orchestrator — read by discovery agents.
 llm_discovery = true
 discovery_orchestrator = true
+# [declarative] integer settings for the discovery agents (resolved via
+# feature_flags.get_setting / the `features` subcommand).
 discovery_sample_size = 10
 discovery_environment_ttl_hours = 6
 discovery_project_ttl_hours = 24
 
 # Technical practices
+# [code] read by health_check (standards presence) and the H01/H05 semantic
+# validators; also consumed declaratively by workers.
 tdd = true
 srp = true
 ocp = true
@@ -33,5 +47,6 @@ architecture_contract = false
 
 [health_check]
 # Maximum age of the last successful health check before the orchestrator
-# runs it automatically at session start.
+# runs it automatically at session start. [code] read via
+# feature_flags.health_check_ttl_hours() by health_check.should_run_health_check.
 ttl_hours = 24

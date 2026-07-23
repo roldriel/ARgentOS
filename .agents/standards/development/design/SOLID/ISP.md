@@ -29,23 +29,24 @@ When designing or changing interfaces:
 
 Record evidence in `EXECUTION_SUMMARY.md` under `## Technical Practice Evidence`:
 
-```yaml
-technical_practice_evidence:
-  isp:
-    applied: true
-    interfaces_split:
-      - original: "app/interfaces/storage.py"
-        split_into:
-          - "app/interfaces/reader.py"
-          - "app/interfaces/writer.py"
-        reasoning: "Read-only clients do not need write methods."
-    clients_affected:
-      - location: "app/services/report_service.py"
-        now_uses: "app/interfaces/reader.py"
-    reason: ""
+```toml
+[technical_practice_evidence]
+
+[technical_practice_evidence.isp]
+applied = true
+reason = ""
+
+[[technical_practice_evidence.isp.interfaces_split]]
+original = "app/interfaces/storage.py"
+split_into = ["app/interfaces/reader.py", "app/interfaces/writer.py"]
+reasoning = "Read-only clients do not need write methods."
+
+[[technical_practice_evidence.isp.clients_affected]]
+location = "app/services/report_service.py"
+now_uses = "app/interfaces/reader.py"
 ```
 
-If ISP could not be applied, set `applied: false` and document the reason.
+If ISP could not be applied, set `applied = false` and document the reason.
 
 ## Communication style
 

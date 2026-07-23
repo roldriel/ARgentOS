@@ -35,7 +35,7 @@ The file MUST contain at least:
 
 ## Template
 
-```markdown
+````markdown
 # `.project/` Directory
 
 This directory is owned by the `.agents` protocol (ARgentOS). It contains session artifacts, the knowledge base, and runtime metadata.
@@ -60,7 +60,7 @@ This directory is owned by the `.agents` protocol (ARgentOS). It contains sessio
 
 - Do not place user-project deliverables here.
 - Generated artifacts follow the naming convention `<order>-ARTIFACT_NAME.md`.
-```
+````
 
 ## Constraints
 

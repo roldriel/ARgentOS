@@ -222,9 +222,9 @@ The worker who performs any of these changes must update the corresponding artif
 
 `CONTEXT_ARTIFACT.md` is the contract for a **temporary artifact per task**. The context gatherer may cite `project-map.md` and `technical-analysis.md` as stable sources, but it does not replace them.
 
-### 8.2 `KB_DISCOVERY_REPORT.md`
+### 8.2 `KB_RECOMMENDATION.md`
 
-`KB_DISCOVERY_REPORT.md` is the contract for a **Knowledge Base recommendations report per task**. It does not contain project artifacts nor permanent references to them.
+`KB_RECOMMENDATION.md` is the contract for a **Knowledge Base recommendations report per task**. It does not contain project artifacts nor permanent references to them.
 
 ---
 
@@ -313,4 +313,4 @@ Adopted pattern and key decisions.
 | `project-map.md` | "What components exist and where are they?" | Deep risk analysis, technical debt, or extensive architectural decisions. |
 | `technical-analysis.md` | "How does it work and what technical risks does it have?" | Folder navigation map or endpoint list without analysis. |
 | `CONTEXT_ARTIFACT.md` | Temporary context per task. | Does not replace `project-map.md` or `technical-analysis.md`. |
-| `KB_DISCOVERY_REPORT.md` | KB recommendations per task. | Does not permanently reference project artifacts. |
+| `KB_RECOMMENDATION.md` | KB recommendations per task. | Does not permanently reference project artifacts. |

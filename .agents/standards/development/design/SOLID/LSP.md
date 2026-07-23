@@ -29,24 +29,24 @@ When working with inheritance:
 
 Record evidence in `EXECUTION_SUMMARY.md` under `## Technical Practice Evidence`:
 
-```yaml
-technical_practice_evidence:
-  lsp:
-    applied: true
-    hierarchy:
-      base: "app/payments/payment_processor.py"
-      subclasses:
-        - "app/payments/stripe_processor.py"
-        - "app/payments/paypal_processor.py"
-    substitution_tests:
-      - description: "Each processor accepts the same payload and returns the same result type."
-        result: "PASS"
-    behavior_preserved:
-      - "No more restrictive exceptions are thrown in subclasses."
-    reason: ""
+```toml
+[technical_practice_evidence]
+
+[technical_practice_evidence.lsp]
+applied = true
+behavior_preserved = ["No more restrictive exceptions are thrown in subclasses."]
+reason = ""
+
+[technical_practice_evidence.lsp.hierarchy]
+base = "app/payments/payment_processor.py"
+subclasses = ["app/payments/stripe_processor.py", "app/payments/paypal_processor.py"]
+
+[[technical_practice_evidence.lsp.substitution_tests]]
+description = "Each processor accepts the same payload and returns the same result type."
+result = "PASS"
 ```
 
-If LSP could not be applied, set `applied: false` and document the reason.
+If LSP could not be applied, set `applied = false` and document the reason.
 
 ## Caution
 

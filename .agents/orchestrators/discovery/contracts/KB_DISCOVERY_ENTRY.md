@@ -29,22 +29,17 @@ These entries live in `.project/knowledge/discovery/` and provide pre-processed 
 
 ## Metadata
 
-```yaml
-artifact: "KB_DISCOVERY_ENTRY.md"
-title: "Stack"
-generated_at: ""
-updated_at: ""
-tags:
-  - "discovery"
-  - "stack"
-source_files:
-  - "pyproject.toml"
-source_workers:
-  - "stack_worker"
-source_sessions:
-  - "session-68c54119"
-status: "active"
-previous_versions: []
+```toml
+artifact = "KB_DISCOVERY_ENTRY.md"
+title = "Stack"
+generated_at = ""
+updated_at = ""
+tags = ["discovery", "stack"]
+source_files = ["pyproject.toml"]
+source_workers = ["stack_worker"]
+source_sessions = ["session-68c54119"]
+status = "active"
+previous_versions = []
 ```
 
 ---

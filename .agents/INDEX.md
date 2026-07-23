@@ -10,6 +10,7 @@ The human- and agent-facing entry point is `AGENTS.md` at the project root. This
    → `orchestrators/system/roles/argentos.md`
 
 2. The **ArgentOS** system agent verifies protocol health and initializes `.project/` (including `.project/knowledge/`).
+   Its bootstrap lifecycle is defined in `orchestrators/system/states/SYSTEM_STATE_MACHINE.md`.
 
 3. Load the state machine:
    → `orchestrators/core/states/AGENT_STATE_MACHINE.md`

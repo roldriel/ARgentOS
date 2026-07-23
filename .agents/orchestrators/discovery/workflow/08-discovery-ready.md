@@ -37,7 +37,7 @@ This module must not:
 DISCOVERY_VALIDATE
 ```
 
-Both `core:H10` and `D01` must have passed before entering this module.
+`D01` must have passed before entering this module.
 
 ---
 
@@ -81,4 +81,4 @@ KB available for `core:GATHERING_CONTEXT`, `core:PLANNING` and
 # Harness
 
 This module has no harness gate; entry into `DISCOVERY_READY` was already
-gated by `core:H10` and `D01` in `DISCOVERY_VALIDATE`.
+gated by `D01` in `DISCOVERY_VALIDATE`.

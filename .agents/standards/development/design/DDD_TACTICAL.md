@@ -143,38 +143,45 @@ Avoid DDD Tactical for:
 
 When `ddd_tactical` is selected in `technical_approach.enabled`, the executor records evidence under `## Technical Practice Evidence` in `EXECUTION_SUMMARY.md`:
 
-```yaml
-technical_practice_evidence:
-  ddd_tactical:
-    applied: true
-    bounded_context: "billing"
-    patterns_applied:
-      - pattern: "Aggregate Root"
-        name: "Invoice"
-        location: "app/domain/invoice.py"
-        invariant: "An invoice must have at least one line item."
-      - pattern: "Value Object"
-        name: "Money"
-        location: "app/domain/money.py"
-        invariant: "Currency cannot change after creation."
-      - pattern: "Domain Event"
-        name: "InvoicePaid"
-        location: "app/domain/events.py"
-        purpose: "Notify other contexts that an invoice was paid."
-      - pattern: "Repository"
-        name: "InvoiceRepository"
-        location: "app/domain/repositories.py"
-        purpose: "Persist and retrieve Invoice aggregates."
-    invariants_enforced:
-      - "Invoice cannot be paid twice."
-      - "Line item quantity must be positive."
-    anemic_models_refactored:
-      - before: "app/models/invoice.py"
-        after: "app/domain/invoice.py"
-    rationale: "Replaced data-centric models with behavior-rich domain objects."
+```toml
+[technical_practice_evidence]
+
+[technical_practice_evidence.ddd_tactical]
+applied = true
+bounded_context = "billing"
+invariants_enforced = ["Invoice cannot be paid twice.", "Line item quantity must be positive."]
+rationale = "Replaced data-centric models with behavior-rich domain objects."
+
+[[technical_practice_evidence.ddd_tactical.patterns_applied]]
+pattern = "Aggregate Root"
+name = "Invoice"
+location = "app/domain/invoice.py"
+invariant = "An invoice must have at least one line item."
+
+[[technical_practice_evidence.ddd_tactical.patterns_applied]]
+pattern = "Value Object"
+name = "Money"
+location = "app/domain/money.py"
+invariant = "Currency cannot change after creation."
+
+[[technical_practice_evidence.ddd_tactical.patterns_applied]]
+pattern = "Domain Event"
+name = "InvoicePaid"
+location = "app/domain/events.py"
+purpose = "Notify other contexts that an invoice was paid."
+
+[[technical_practice_evidence.ddd_tactical.patterns_applied]]
+pattern = "Repository"
+name = "InvoiceRepository"
+location = "app/domain/repositories.py"
+purpose = "Persist and retrieve Invoice aggregates."
+
+[[technical_practice_evidence.ddd_tactical.anemic_models_refactored]]
+before = "app/models/invoice.py"
+after = "app/domain/invoice.py"
 ```
 
-If the practice was not applied, set `applied: false` and provide a `reason`.
+If the practice was not applied, set `applied = false` and provide a `reason`.
 
 ## Guidelines
 

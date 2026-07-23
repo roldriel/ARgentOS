@@ -37,7 +37,7 @@ If N entries are selected, each entry receives at most `budget / N` characters, 
 
 ## 5. Selection criteria
 
-A KB entry is relevant when it shares tags, modified files, or objective keywords with the current task. The `context_discoverer` documents the reason for each recommendation in `KB_DISCOVERY_REPORT.md`.
+A KB entry is relevant when it shares tags, modified files, or objective keywords with the current task. The `context_discoverer` documents the reason for each recommendation in `KB_RECOMMENDATION.md`.
 
 ## 6. Session Brief
 
@@ -66,14 +66,14 @@ The Orchestrator may use the following tags in a worker payload:
 
 | Tag | Meaning | Source document | Example |
 |-----|---------|-----------------|---------|
-| `[AUTHORITY:<source>]` | Canonical source that prevails in case of conflict. | `OPERATIONAL_RULES.md` §1.3 | `[AUTHORITY:OPERATIONAL_RULES]` |
-| `[SCOPE:<scope>]` | Allowed scope of the task. | `OPERATIONAL_RULES.md` §2.1 | `[SCOPE:ONLY_EXPLICIT_FILES]` |
+| `[AUTHORITY:<source>]` | Canonical source that prevails in case of conflict. | `OPERATIONAL_RULES.md` (index of canonical documents) | `[AUTHORITY:PROTOCOL_BOUNDARIES]` |
+| `[SCOPE:<scope>]` | Allowed scope of the task. | `PROTOCOL_BOUNDARIES.md` ("Agent Scope and Autonomy") | `[SCOPE:ONLY_EXPLICIT_FILES]` |
 | `[LAYER:<layer>]` | Architectural layer affected. | `ARCHITECTURE_CONTRACT.md` §3 | `[LAYER:Service]` |
 | `[DEPENDENCY:<rule>]` | Permitted dependency direction. | `ARCHITECTURE_CONTRACT.md` §4 | `[DEPENDENCY:Views->Services->Models]` |
 | `[NAMING:<convention>]` | Naming convention that applies. | `ARCHITECTURE_CONTRACT.md` §5 | `[NAMING:Suffix]` |
-| `[NO_ASSUME]` | The worker must ask for clarification if information is missing. | `NO_ASSUMPTIONS.md` §2 | `[NO_ASSUME]` |
-| `[OUTPUT:<mode>]` | Output mode expected from the worker. | `OUTPUT_EFFICIENCY.md` §4; `CAVEMAN.md` §3 | `[OUTPUT:minimal]` |
-| `[STATE:<state>]` | Current state of the protocol state machine. | `AGENT_STATE_MACHINE.md` | `[STATE:EXECUTING]` |
+| `[NO_ASSUME]` | The worker must ask for clarification if information is missing. | `NO_ASSUMPTIONS.md` ("When to ask for clarification") | `[NO_ASSUME]` |
+| `[OUTPUT:<mode>]` | Output mode expected from the worker. | `OUTPUT_EFFICIENCY.md` §4; `CAVEMAN.md` ("Levels") | `[OUTPUT:minimal]` |
+| `[STATE:<state>]` | Current state of the protocol state machine, in canonical `<domain>:<state>` form. | `AGENT_STATE_MACHINE.md` | `[STATE:core:EXECUTING]` |
 
 Allowed values for `[OUTPUT:<mode>]`:
 

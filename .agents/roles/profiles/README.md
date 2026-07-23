@@ -31,3 +31,6 @@ If none of the 7 questions applies, the orchestrator must use the generic worker
 2. Update this table.
 3. Update `.agents/standards/orchestration/ORCHESTRATION_GUIDE.md` if the profile requires a new decision question.
 4. Update `.agents/standards/INDEX.md`.
+5. Update the profile list in `.agents/roles/worker.md` ("Worker profiles" section).
+6. Update the `profile` enum in `.agents/delegation/WORKER_DELEGATION_CONTRACT.md`.
+7. Register the profile in `.agents/standards/runtime/PROTOCOL_TAXONOMY.md` (worker entity with `profile_file`).

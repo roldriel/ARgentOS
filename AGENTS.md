@@ -29,7 +29,7 @@ Once ArgentOS confirms a healthy environment, the orchestrator takes control.
 | Anti-circumvention (no skipping, no state-machine violations, no hallucinating for simplicity) | `.agents/standards/conduct/ANTI_CIRCUMVENTION.md` |
 | Roles | `.agents/roles/*.md` |
 | Workflow phases | `.agents/orchestrators/core/workflow/*.md` |
-| Artifact contracts | `.agents/contracts/*.md` |
+| Artifact contracts | `.agents/contracts/*.md` (cross-cutting), `.agents/orchestrators/core/contracts/*.md` (phase artifacts), `.agents/orchestrators/discovery/contracts/*.md` (discovery) |
 | Protocol taxonomy (master dictionary) | `.agents/standards/runtime/PROTOCOL_TAXONOMY.md` |
 
 ## Hard boundary

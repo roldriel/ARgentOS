@@ -127,7 +127,7 @@ See `.agents/roles/reviewer.md` for the reviewer role details and `.agents/stand
 
 ### 4.2 Context Discoverer Invocation
 
-When `knowledge_base` is enabled and `.project/knowledge/entries/` is non-empty, the Orchestrator invokes the `context_discoverer` worker before delegating the real phase worker. The discoverer produces `KB_DISCOVERY_REPORT.md` with recommended KB entries and a context budget.
+When `knowledge_base` is enabled and `.project/knowledge/entries/` is non-empty, the Orchestrator invokes the `context_discoverer` worker before delegating the real phase worker. The discoverer produces `KB_RECOMMENDATION.md` with recommended KB entries and a context budget.
 
 The Orchestrator then reads the discovery report, selects the recommended entries (or overrides the selection and records the reason in `SESSION_LOG.md`), and includes the selected `knowledge_entries` and `context_budget` in the delegation payload to the phase worker. If the discoverer reports no relevant entries, the Orchestrator omits `knowledge_entries` from the payload.
 
@@ -140,7 +140,7 @@ When the `discovery_orchestrator` feature flag is enabled, the Orchestrator main
 **Detection.** The Orchestrator invokes the Discovery Orchestrator when any of the following holds:
 
 1. `.project/knowledge/discovery/` does not exist.
-2. `.last_discovery` exceeds the project TTL (`discovery_project_ttl_hours`, default 24h).
+2. `.last_discovery` exceeds the project TTL (`discovery_project_ttl_hours`, default 24h). The marker file `.project/.last_discovery` is written by the Discovery Orchestrator on `DISCOVERY_READY`; its format is defined in `.agents/orchestrators/discovery/states/DISCOVERY_STATE_MACHINE.md` ("The `.last_discovery` marker").
 3. The config files hash changed.
 4. The sample files hash changed.
 5. The user requested an explicit refresh.
@@ -249,6 +249,8 @@ When a harness trigger fails and the `decision_trees` feature flag is enabled, t
 | H11 | `.agents/orchestrators/core/harness/decision_trees/H11_FAIL.toml` | Intent reflection is invalid or confidence is inconsistent | `01-confirm-intent.md` |
 
 The decision tree may refine the target phase based on additional context variables; the Orchestrator must populate those variables and invoke the tree as described in section 6.
+
+H09 and H10 have no dedicated decision trees and are intentionally absent from this mapping: when either fails, the Orchestrator defaults to `RECOVERY_GENERIC` with `target_phase = "08-recovery.md"` (whether or not `decision_trees` is enabled).
 
 ### 7. Scope and Autonomy Enforcement
 

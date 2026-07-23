@@ -29,10 +29,10 @@ This artifact represents the minimum validated definition required before contin
 
 ## Metadata
 
-```yaml
-id: ""
-created_at: ""
-status: ""
+```toml
+id = ""
+created_at = ""
+status = ""
 ```
 
 ---
@@ -41,8 +41,8 @@ status: ""
 
 The original request provided by the user.
 
-```yaml
-original_request: ""
+```toml
+original_request = ""
 ```
 
 ---
@@ -51,9 +51,9 @@ original_request: ""
 
 A precise description of what must be achieved.
 
-```yaml
-objective:
-  description: ""
+```toml
+[objective]
+description = ""
 ```
 
 ---
@@ -62,9 +62,9 @@ objective:
 
 Describe the final result expected by the user.
 
-```yaml
-expected_outcome:
-  description: ""
+```toml
+[expected_outcome]
+description = ""
 ```
 
 ---
@@ -73,12 +73,10 @@ expected_outcome:
 
 Define what is included and excluded from the task.
 
-```yaml
-scope:
-  included:
-    - ""
-  excluded:
-    - ""
+```toml
+[scope]
+included = [""]
+excluded = [""]
 ```
 
 ---
@@ -87,9 +85,8 @@ scope:
 
 Known limitations, requirements, conventions, or restrictions.
 
-```yaml
-constraints:
-  - ""
+```toml
+constraints = [""]
 ```
 
 ---
@@ -100,14 +97,13 @@ Optional technical practices to apply during execution.
 
 Each practice must be listed only if it is enabled at protocol level and selected for this task.
 
-```yaml
-technical_approach:
-  enabled:
-    - "tdd"
-    - "srp"
-  notes:
-    - "tdd: write a test that reproduces the bug before applying the fix."
-    - "srp: extract the email validation responsibility from the user service."
+```toml
+[technical_approach]
+enabled = ["tdd", "srp"]
+notes = [
+  "tdd: write a test that reproduces the bug before applying the fix.",
+  "srp: extract the email validation responsibility from the user service.",
+]
 ```
 
 ---
@@ -118,9 +114,8 @@ Conditions that determine whether the task is considered correctly completed.
 
 Each acceptance criterion must be written using the EARS syntax defined in `.agents/standards/requirements/EARS.md`. Criteria must be atomic, unambiguous, and verifiable.
 
-```yaml
-acceptance_criteria:
-  - ""
+```toml
+acceptance_criteria = [""]
 ```
 
 Example:
@@ -136,10 +131,10 @@ Example:
 
 Information considered true but not explicitly confirmed.
 
-```yaml
-assumptions:
-  - assumption: ""
-    user_confirmed: false
+```toml
+[[assumptions]]
+assumption = ""
+user_confirmed = false
 ```
 
 - `assumption`: the assumption text.
@@ -151,9 +146,8 @@ assumptions:
 
 Information that is missing and may block execution.
 
-```yaml
-unknowns:
-  - ""
+```toml
+unknowns = [""]
 ```
 
 ---
@@ -162,11 +156,10 @@ unknowns:
 
 Result of the specification review.
 
-```yaml
-validation:
-  complete: false
-  notes:
-    - ""
+```toml
+[validation]
+complete = false
+notes = [""]
 ```
 
 ---
@@ -175,6 +168,6 @@ validation:
 
 Current workflow state associated with this artifact.
 
-```yaml
-state: ""
+```toml
+state = ""
 ```

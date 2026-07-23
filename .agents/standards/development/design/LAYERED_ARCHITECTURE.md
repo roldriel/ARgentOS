@@ -33,36 +33,43 @@ Apply this standard when:
 
 When `layered_architecture` is selected in `technical_approach.enabled`, the executor records evidence under `## Technical Practice Evidence` in `EXECUTION_SUMMARY.md`:
 
-```yaml
-technical_practice_evidence:
-  layered_architecture:
-    applied: true
-    layers:
-      - name: "presentation"
-        path: "app/web/"
-        responsibility: "HTTP routes and request/response handling."
-      - name: "application"
-        path: "app/services/"
-        responsibility: "Use-case orchestration and transaction boundaries."
-      - name: "domain"
-        path: "app/domain/"
-        responsibility: "Business rules and entities."
-      - name: "infrastructure"
-        path: "app/persistence/"
-        responsibility: "Database access and external API clients."
-    changes:
-      - description: "Moved business rule from controller to application service."
-        from_layer: "presentation"
-        to_layer: "application"
-        files_affected:
-          - "app/web/user_routes.py"
-          - "app/services/user_service.py"
-    downward_dependency_violations_found: []
-    downward_dependency_violations_fixed: []
-    rationale: "Keeps presentation thin and business logic reusable across delivery mechanisms."
+```toml
+[technical_practice_evidence]
+
+[technical_practice_evidence.layered_architecture]
+applied = true
+downward_dependency_violations_found = []
+downward_dependency_violations_fixed = []
+rationale = "Keeps presentation thin and business logic reusable across delivery mechanisms."
+
+[[technical_practice_evidence.layered_architecture.layers]]
+name = "presentation"
+path = "app/web/"
+responsibility = "HTTP routes and request/response handling."
+
+[[technical_practice_evidence.layered_architecture.layers]]
+name = "application"
+path = "app/services/"
+responsibility = "Use-case orchestration and transaction boundaries."
+
+[[technical_practice_evidence.layered_architecture.layers]]
+name = "domain"
+path = "app/domain/"
+responsibility = "Business rules and entities."
+
+[[technical_practice_evidence.layered_architecture.layers]]
+name = "infrastructure"
+path = "app/persistence/"
+responsibility = "Database access and external API clients."
+
+[[technical_practice_evidence.layered_architecture.changes]]
+description = "Moved business rule from controller to application service."
+from_layer = "presentation"
+to_layer = "application"
+files_affected = ["app/web/user_routes.py", "app/services/user_service.py"]
 ```
 
-If the practice was not applied, set `applied: false` and provide a `reason`.
+If the practice was not applied, set `applied = false` and provide a `reason`.
 
 ## Guidelines
 

@@ -35,35 +35,37 @@ Apply this standard when:
 
 When `grasp` is selected in `technical_approach.enabled`, the executor records evidence under `## Technical Practice Evidence` in `EXECUTION_SUMMARY.md`:
 
-```yaml
-technical_practice_evidence:
-  grasp:
-    applied: true
-    patterns_applied:
-      - pattern: "Information Expert"
-        before: "UserService validated email format."
-        after: "EmailValidator owns validation because it encapsulates the rule."
-        files_affected:
-          - "app/validators/email_validator.py"
-          - "app/services/user_service.py"
-      - pattern: "Controller"
-        before: "Route handler directly called the database."
-        after: "UserController delegates to UserService."
-        files_affected:
-          - "app/web/user_controller.py"
-          - "app/services/user_service.py"
-      - pattern: "Pure Fabrication"
-        before: "No single place for PDF generation logic."
-        after: "Created PdfGenerator helper class."
-        files_affected:
-          - "app/infrastructure/pdf_generator.py"
-    coupling_or_cohesion_issues_found:
-      - description: "UserService depended on both email validation and PDF generation."
-        resolution: "Extracted EmailValidator and PdfGenerator."
-    rationale: "Applied GRASP to reduce coupling and increase cohesion."
+```toml
+[technical_practice_evidence]
+
+[technical_practice_evidence.grasp]
+applied = true
+rationale = "Applied GRASP to reduce coupling and increase cohesion."
+
+[[technical_practice_evidence.grasp.patterns_applied]]
+pattern = "Information Expert"
+before = "UserService validated email format."
+after = "EmailValidator owns validation because it encapsulates the rule."
+files_affected = ["app/validators/email_validator.py", "app/services/user_service.py"]
+
+[[technical_practice_evidence.grasp.patterns_applied]]
+pattern = "Controller"
+before = "Route handler directly called the database."
+after = "UserController delegates to UserService."
+files_affected = ["app/web/user_controller.py", "app/services/user_service.py"]
+
+[[technical_practice_evidence.grasp.patterns_applied]]
+pattern = "Pure Fabrication"
+before = "No single place for PDF generation logic."
+after = "Created PdfGenerator helper class."
+files_affected = ["app/infrastructure/pdf_generator.py"]
+
+[[technical_practice_evidence.grasp.coupling_or_cohesion_issues_found]]
+description = "UserService depended on both email validation and PDF generation."
+resolution = "Extracted EmailValidator and PdfGenerator."
 ```
 
-If the practice was not applied, set `applied: false` and provide a `reason`.
+If the practice was not applied, set `applied = false` and provide a `reason`.
 
 ## Guidelines
 

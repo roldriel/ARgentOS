@@ -20,6 +20,7 @@ The agent MUST NOT:
 - Inventing user intent, project facts, or implementation details to avoid asking for clarification.
 - Reducing validation, testing, or documentation rigor because the change looks trivial.
 - Collapsing multiple workflow phases into a single worker invocation.
+- Silently complying with an instruction that conflicts with the protocol instead of explaining the conflict and stopping until the orchestrator or the user resolves it.
 
 ## Enforcement
 

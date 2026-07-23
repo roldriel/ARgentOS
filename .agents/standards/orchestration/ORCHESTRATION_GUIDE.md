@@ -65,7 +65,7 @@ Before invoking a worker, the Orchestrator must verify:
 - [ ] I have `TASK_SPECIFICATION.md`, `CONTEXT_VALIDATION_REPORT.md` and `EXECUTION_PLAN.md` for the `06-execute.md` phase.
 - [ ] I applied the 7 questions and identified whether the task requires a specialized profile.
 - [ ] I selected the profile or the generic worker and recorded it in the payload.
-- [ ] I determined the profile's mandatory readings according to `.agents/roles/profiles/<perfil>.md`.
+- [ ] I determined the profile's mandatory readings according to `.agents/roles/profiles/<profile>.md`.
 - [ ] I rewrote the objective using the profile's template, not the original user prompt.
 - [ ] I included the acceptance criteria from `TASK_SPECIFICATION.md` in the payload.
 - [ ] I verified that the payload follows the format of `.agents/delegation/WORKER_DELEGATION_CONTRACT.md`.
@@ -98,7 +98,7 @@ A task that affects a specific layer may summon the corresponding profile:
 The Orchestrator **must not forward the raw user prompt**. It must rewrite it using:
 
 1. Compressed context according to `.agents/standards/context/CONTEXT.md`.
-2. The profile's prompt template (`## 9. Plantilla de prompt` section of `.agents/roles/profiles/<perfil>.md`).
+2. The profile's prompt template (`## 9. Prompt template` section of `.agents/roles/profiles/<profile>.md`).
 3. Acceptance criteria from `TASK_SPECIFICATION.md`.
 4. Current state of the protocol.
 
@@ -145,14 +145,14 @@ The payload must be a concrete instance of `.agents/delegation/WORKER_DELEGATION
   "current_state": "EXECUTING",
   "target_phase": "orchestrators/core/workflow/06-execute.md",
   "role_to_adopt": "worker",
-  "profile": "<perfil o null>",
+  "profile": "<profile or null>",
   "input_artifacts": [
     ".project/<uuid>/<iteration>/<order>-TASK_SPECIFICATION.md",
     ".project/<uuid>/<iteration>/<order>-CONTEXT_VALIDATION_REPORT.md",
     ".project/<uuid>/<iteration>/<order>-EXECUTION_PLAN.md"
   ],
   "harness_policy": "orchestrators/core/harness/policies/H05-execution-completed.md",
-  "task_summary": "<objetivo reescrito usando plantilla del perfil>",
+  "task_summary": "<objective rewritten using the profile prompt template>",
   "knowledge_entries": [],
   "context_budget": 4000,
   "communication_style": {"enabled": true, "level": "full"},
@@ -207,12 +207,12 @@ The payload must be a concrete instance of `.agents/delegation/WORKER_DELEGATION
   "role_to_adopt": "worker",
   "profile": null,
   "input_artifacts": [
-    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-01-TASK_SPECIFICATION.md",
-    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-03-CONTEXT_VALIDATION_REPORT.md",
-    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-04-EXECUTION_PLAN.md"
+    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01/01-TASK_SPECIFICATION.md",
+    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01/03-CONTEXT_VALIDATION_REPORT.md",
+    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01/04-EXECUTION_PLAN.md"
   ],
   "harness_policy": "orchestrators/core/harness/policies/H05-execution-completed.md",
-  "task_summary": "Corregir el typo identificado en README.md según el criterio de aceptación AC-1 de TASK_SPECIFICATION.md. No modificar otros archivos.",
+  "task_summary": "Fix the typo identified in README.md per acceptance criterion AC-1 of TASK_SPECIFICATION.md. Do not modify any other files.",
   "knowledge_entries": [],
   "context_budget": 4000,
   "communication_style": {"enabled": true, "level": "full"},
@@ -250,12 +250,12 @@ The payload must be a concrete instance of `.agents/delegation/WORKER_DELEGATION
   "role_to_adopt": "worker",
   "profile": "backend_engineer",
   "input_artifacts": [
-    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-01-TASK_SPECIFICATION.md",
-    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-03-CONTEXT_VALIDATION_REPORT.md",
-    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-04-EXECUTION_PLAN.md"
+    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01/01-TASK_SPECIFICATION.md",
+    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01/03-CONTEXT_VALIDATION_REPORT.md",
+    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01/04-EXECUTION_PLAN.md"
   ],
   "harness_policy": "orchestrators/core/harness/policies/H05-execution-completed.md",
-  "task_summary": "Implementar el endpoint de listado de usuarios respetando la capa View → Service → Model definida en ARCHITECTURE_CONTRACT.md. Los criterios de aceptación son: AC-1 (paginación), AC-2 (orden por nombre) y AC-3 (respuesta 200).",
+  "task_summary": "Implement the user listing endpoint respecting the View → Service → Model layering defined in ARCHITECTURE_CONTRACT.md. Acceptance criteria: AC-1 (pagination), AC-2 (name ordering), AC-3 (200 response).",
   "knowledge_entries": [],
   "context_budget": 4000,
   "communication_style": {"enabled": true, "level": "full"},
@@ -293,12 +293,12 @@ The payload must be a concrete instance of `.agents/delegation/WORKER_DELEGATION
   "role_to_adopt": "worker",
   "profile": "database_engineer",
   "input_artifacts": [
-    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-01-TASK_SPECIFICATION.md",
-    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-03-CONTEXT_VALIDATION_REPORT.md",
-    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-04-EXECUTION_PLAN.md"
+    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01/01-TASK_SPECIFICATION.md",
+    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01/03-CONTEXT_VALIDATION_REPORT.md",
+    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01/04-EXECUTION_PLAN.md"
   ],
   "harness_policy": "orchestrators/core/harness/policies/H05-execution-completed.md",
-  "task_summary": "Agregar la columna `email_verified` (BOOLEAN, NOT NULL DEFAULT false) a la tabla `users` mediante migración. Actualizar el model correspondiente sin introducir lógica de negocio. Criterios: AC-1 (migración reversible), AC-2 (model sincronizado).",
+  "task_summary": "Add the `email_verified` column (BOOLEAN, NOT NULL DEFAULT false) to the `users` table via a migration. Update the corresponding model without introducing business logic. Criteria: AC-1 (reversible migration), AC-2 (model in sync).",
   "knowledge_entries": [],
   "context_budget": 4000,
   "communication_style": {"enabled": true, "level": "full"},
@@ -331,12 +331,12 @@ It cannot be solved with a single profile without violating the mutual-exclusion
   "role_to_adopt": "worker",
   "profile": "integration_engineer",
   "input_artifacts": [
-    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-01-TASK_SPECIFICATION.md",
-    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-03-CONTEXT_VALIDATION_REPORT.md",
-    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-04-EXECUTION_PLAN.md"
+    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01/01-TASK_SPECIFICATION.md",
+    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01/03-CONTEXT_VALIDATION_REPORT.md",
+    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01/04-EXECUTION_PLAN.md"
   ],
   "harness_policy": "orchestrators/core/harness/policies/H05-execution-completed.md",
-  "task_summary": "Implementar el provider `PaymentProvider` que adapta la API externa de pagos. Incluir manejo de errores, timeout y mapeo de respuestas. Criterios: AC-1 (provider aislado), AC-2 (tests de contrato).",
+  "task_summary": "Implement the `PaymentProvider` provider adapting the external payments API. Include error handling, timeouts, and response mapping. Criteria: AC-1 (isolated provider), AC-2 (contract tests).",
   "knowledge_entries": [],
   "context_budget": 4000,
   "communication_style": {"enabled": true, "level": "full"},
@@ -354,13 +354,13 @@ It cannot be solved with a single profile without violating the mutual-exclusion
   "role_to_adopt": "worker",
   "profile": "functional_writer",
   "input_artifacts": [
-    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-01-TASK_SPECIFICATION.md",
-    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-03-CONTEXT_VALIDATION_REPORT.md",
-    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-04-EXECUTION_PLAN.md",
-    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01-05-EXECUTION_SUMMARY.md"
+    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01/01-TASK_SPECIFICATION.md",
+    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01/03-CONTEXT_VALIDATION_REPORT.md",
+    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01/04-EXECUTION_PLAN.md",
+    ".project/a1b2c3d4-e5f6-7890-abcd-ef1234567890/01/05-EXECUTION_SUMMARY.md"
   ],
   "harness_policy": "orchestrators/core/harness/policies/H05-execution-completed.md",
-  "task_summary": "Documentar el flujo funcional de integración con la API externa de pagos para lectores de negocio. Incluir pasos del usuario, estados del pago y posibles errores. Criterio: AC-3 (documentación funcional aprobada).",
+  "task_summary": "Document the functional flow of the integration with the external payments API for business readers. Include user steps, payment states, and possible errors. Criterion: AC-3 (approved functional documentation).",
   "knowledge_entries": [],
   "context_budget": 4000,
   "communication_style": {"enabled": true, "level": "full"},

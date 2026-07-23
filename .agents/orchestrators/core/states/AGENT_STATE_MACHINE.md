@@ -631,6 +631,8 @@ RECOVERY
 
 The agent analyzes failures and determines corrective actions.
 
+`RECOVERY` may be entered from any non-terminal state when a harness gate fails after the allowed retries, when a recovery decision tree returns `RECOVERY_GENERIC`, or when a worker reports an unrecoverable blocker. This includes gate failures in early phases (H00–H04, H10, H11), not only execution and verification failures.
+
 ### Required Artifact
 
 ```text
@@ -657,6 +659,15 @@ RECOVERY
         |
         v
 NEEDS_CLARIFICATION
+```
+
+If the failure is unrecoverable or a recovery decision tree returns `ABORT`:
+
+```text
+RECOVERY
+        |
+        v
+ABORT
 ```
 
 ---

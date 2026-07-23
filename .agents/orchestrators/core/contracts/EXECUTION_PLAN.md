@@ -31,10 +31,10 @@ The execution plan must define **how the task will be executed**, but it must no
 
 ## Metadata
 
-```yaml
-id: ""
-created_at: ""
-status: ""
+```toml
+id = ""
+created_at = ""
+status = ""
 ```
 
 ---
@@ -43,9 +43,9 @@ status: ""
 
 Reference to the task specification that originated this plan.
 
-```yaml
-task_reference:
-  specification: ""
+```toml
+[task_reference]
+specification = ""
 ```
 
 ---
@@ -54,10 +54,10 @@ task_reference:
 
 Reference to the validated context used to create this plan.
 
-```yaml
-context_reference:
-  artifact: ""
-  validation_report: ""
+```toml
+[context_reference]
+artifact = ""
+validation_report = ""
 ```
 
 ---
@@ -66,9 +66,9 @@ context_reference:
 
 Describe the goal that this plan intends to achieve.
 
-```yaml
-objective:
-  description: ""
+```toml
+[objective]
+description = ""
 ```
 
 ---
@@ -77,9 +77,9 @@ objective:
 
 High-level description of the selected approach.
 
-```yaml
-approach:
-  description: ""
+```toml
+[approach]
+description = ""
 ```
 
 ---
@@ -88,14 +88,10 @@ approach:
 
 Technical practices selected for this execution.
 
-```yaml
-technical_approach:
-  enabled:
-    - "tdd"
-    - "srp"
-  notes:
-    - "tdd: write a failing test before the fix."
-    - "srp: extract validation responsibility if needed."
+```toml
+[technical_approach]
+enabled = ["tdd", "srp"]
+notes = ["tdd: write a failing test before the fix.", "srp: extract validation responsibility if needed."]
 ```
 
 ---
@@ -110,12 +106,12 @@ Each step should describe:
 * Where the change will occur.
 * Why the change is necessary.
 
-```yaml
-steps:
-  - order: 1
-    action: ""
-    target: ""
-    reason: ""
+```toml
+[[steps]]
+order = 1
+action = ""
+target = ""
+reason = ""
 ```
 
 ---
@@ -124,11 +120,11 @@ steps:
 
 List the components expected to be modified.
 
-```yaml
-affected_components:
-  - name: ""
-    location: ""
-    expected_change: ""
+```toml
+[[affected_components]]
+name = ""
+location = ""
+expected_change = ""
 ```
 
 ---
@@ -137,10 +133,10 @@ affected_components:
 
 List dependencies required for execution.
 
-```yaml
-dependencies:
-  - name: ""
-    purpose: ""
+```toml
+[[dependencies]]
+name = ""
+purpose = ""
 ```
 
 ---
@@ -149,10 +145,10 @@ dependencies:
 
 Identify possible risks associated with the execution plan.
 
-```yaml
-risks:
-  - description: ""
-    mitigation: ""
+```toml
+[[risks]]
+description = ""
+mitigation = ""
 ```
 
 ---
@@ -161,12 +157,10 @@ risks:
 
 Define how the result will be verified after execution.
 
-```yaml
-validation:
-  methods:
-    - ""
-  expected_results:
-    - ""
+```toml
+[validation]
+methods = [""]
+expected_results = [""]
 ```
 
 Examples:
@@ -182,9 +176,9 @@ Examples:
 
 Describe how changes can be reverted if execution fails.
 
-```yaml
-rollback:
-  strategy: ""
+```toml
+[rollback]
+strategy = ""
 ```
 
 ---
@@ -193,10 +187,10 @@ rollback:
 
 Final planning decision.
 
-```yaml
-decision:
-  approved: false
-  reasoning: ""
+```toml
+[decision]
+approved = false
+reasoning = ""
 ```
 
 ---
@@ -205,26 +199,26 @@ decision:
 
 Defines the resulting workflow transition.
 
-```yaml
-transition:
-  current_state: ""
-  next_state: ""
+```toml
+[transition]
+current_state = ""
+next_state = ""
 ```
 
 Example:
 
-```yaml
-transition:
-  current_state: PLANNING
-  next_state: PLAN_READY
+```toml
+[transition]
+current_state = "PLANNING"
+next_state = "PLAN_READY"
 ```
 
 If the plan cannot be completed safely:
 
-```yaml
-transition:
-  current_state: PLANNING
-  next_state: NEEDS_CLARIFICATION
+```toml
+[transition]
+current_state = "PLANNING"
+next_state = "NEEDS_CLARIFICATION"
 ```
 
 ---

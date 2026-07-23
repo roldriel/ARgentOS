@@ -63,8 +63,8 @@ only:
 3. Execute workers in parallel where possible (see pipeline below).
 4. Collect partial outputs.
 5. Invoke the `synthesis_worker` to merge partial outputs and write the KB.
-6. Validate with `H10-kb-discovery-report` (core, structural) and
-   `D01-discovery-output` (discovery, ground truth).
+6. Validate with `D01-discovery-output` (discovery domain: structure and
+   ground truth).
 7. Report the final state to the core Orchestrator.
 
 ## Execution pipeline
@@ -72,25 +72,23 @@ only:
 ```text
 init_worker
     │
-    ├─→ environment_worker ──┐
-    ├─→ stack_worker ───┬────┼────┐
-    │                   │    │    │
-    │                   ▼    │    │
-    │            framework_worker  │
-    │                   │    │    │
-    │                   ▼    ▼    ▼
-    │                 DISCOVERY_MERGE
-    │                       │
-    │                       ▼
-    │                 synthesis_worker
-    │                       │
-    │                       ▼
-    │                 DISCOVERY_VALIDATE
-    │                       │
-    │                       ▼
-    │                 DISCOVERY_READY
-    │
-    └─→ business_worker ────┘
+    ├─→ environment_worker ─────────┐
+    ├─→ stack_worker ─┐             │
+    │                 ▼             │
+    │          framework_worker ────┤
+    ├─→ patterns_worker ────────────┤
+    ├─→ business_worker ────────────┤
+    │                               ▼
+    │                         DISCOVERY_MERGE
+    │                               │
+    │                               ▼
+    │                         synthesis_worker
+    │                               │
+    │                               ▼
+    │                         DISCOVERY_VALIDATE
+    │                               │
+    │                               ▼
+    │                         DISCOVERY_READY
 ```
 
 - `environment_worker`, `stack_worker`, `patterns_worker` and `business_worker`
@@ -103,7 +101,7 @@ init_worker
 The pipeline states (`DISCOVERY_MERGE`, `DISCOVERY_VALIDATE`, `DISCOVERY_READY`)
 belong to the state machine of the `discovery` domain; outside the domain they are
 referenced as `discovery:DISCOVERY_*`. The full state machine is defined by
-`plans/PLAN_DISCOVERY_ORCHESTRATOR_04_ORCHESTRATION.md`.
+`.agents/orchestrators/discovery/states/DISCOVERY_STATE_MACHINE.md`.
 
 ## Workers
 
@@ -170,7 +168,8 @@ The KB is a **project memory**, not a disposable snapshot:
 2. If a configuration hash changed, the affected entries are invalidated.
 3. Each worker updates only the entries it owns.
 4. The `synthesis_worker` resolves conflicts between the previous KB and new
-   findings following the merge rules (see master plan).
+   findings following the merge rules (see
+   `.agents/orchestrators/discovery/workflow/06-discovery-merge.md`).
 5. Every entry carries `generated_at` / `updated_at` and provenance
    (`source_workers`, `source_sessions`).
 

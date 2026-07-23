@@ -29,10 +29,10 @@ This artifact captures the agent's interpretation of the user's request, reformu
 
 ## Metadata
 
-```yaml
-id: ""
-created_at: ""
-status: ""
+```toml
+id = ""
+created_at = ""
+status = ""
 ```
 
 ---
@@ -41,8 +41,8 @@ status: ""
 
 The original request provided by the user.
 
-```yaml
-original_request: ""
+```toml
+original_request = ""
 ```
 
 ---
@@ -51,10 +51,10 @@ original_request: ""
 
 The agent's understanding of what the user wants to achieve.
 
-```yaml
-detected_intent:
-  summary: ""
-  goal: ""
+```toml
+[detected_intent]
+summary = ""
+goal = ""
 ```
 
 ---
@@ -63,12 +63,12 @@ detected_intent:
 
 A structured reformulation of the request, preserving the original intent while ordering and clarifying the information.
 
-```yaml
-reflection:
-  reformulated_request: ""
-  key_entities: []
-  explicit_requirements: []
-  implicit_assumptions: []
+```toml
+[reflection]
+reformulated_request = ""
+key_entities = []
+explicit_requirements = []
+implicit_assumptions = []
 ```
 
 ---
@@ -77,12 +77,12 @@ reflection:
 
 Confidence level of the intent interpretation.
 
-```yaml
-confidence:
-  level: ""
-  score: 0
-  applied_criteria: []
-  explanation: ""
+```toml
+[confidence]
+level = ""
+score = 0
+applied_criteria = []
+explanation = ""
 ```
 
 Possible values for `level`:
@@ -99,8 +99,8 @@ LOW
 
 Number of times the user has corrected the reflected intent in this session.
 
-```yaml
-correction_cycle: 0
+```toml
+correction_cycle = 0
 ```
 
 The `correction_cycle` must increment each time the workflow transitions `CONFIRMING_INTENT → ANALYZING_TASK → CONFIRMING_INTENT`. If it reaches 2, the Orchestrator must route to `NEEDS_CLARIFICATION` instead of allowing a third correction.
@@ -109,10 +109,10 @@ The `correction_cycle` must increment each time the workflow transitions `CONFIR
 
 The user's reaction to the reflected intent.
 
-```yaml
-user_response:
-  status: ""
-  correction: ""
+```toml
+[user_response]
+status = ""
+correction = ""
 ```
 
 Possible values for `status`:
@@ -130,8 +130,8 @@ REJECTED
 
 The state the agent recommends transitioning to after receiving the user's response.
 
-```yaml
-next_state: ""
+```toml
+next_state = ""
 ```
 
 Possible values:

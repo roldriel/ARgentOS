@@ -29,15 +29,15 @@ These default to `false` when not provided.
 | `execution_complete` | All execution steps have been completed. |
 | `execution_blocked` | Execution is blocked by an unexpected issue. |
 | `project_unrecoverable` | The project state cannot be recovered. |
-| `verification_passed` | Verification completed successfully. |
 | `failures_fixable` | Verification failures can be corrected by replanning. |
 | `failures_require_user` | Verification failures require a user decision. |
 | `task_fundamentally_unachievable` | The task is impossible to complete as specified. |
 | `scope_compliant` | The work stays within the agreed task scope. |
 | `scope_expansion_requested` | The worker requests expanding the current scope. |
 | `scope_violation_severe` | The scope violation is severe or repeated. |
-| `worker_returned_valid_artifact` | The worker produced a valid artifact. |
-| `user_clarified` | The user provided clarifying information. |
+| `correction_cycle_exceeded` | The maximum number of correction cycles has been reached (H11). |
+| `user_rejected` | The user rejected the proposed correction or artifact (H11). |
+| `user_unclear` | The user's response did not clarify how to proceed (H11). |
 
 ## Notes
 

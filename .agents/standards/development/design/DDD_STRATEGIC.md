@@ -69,49 +69,55 @@ Avoid DDD Strategic for:
 
 When `ddd_strategic` is selected in `technical_approach.enabled`, the executor records evidence under `## Technical Practice Evidence` in `EXECUTION_SUMMARY.md`:
 
-```yaml
-technical_practice_evidence:
-  ddd_strategic:
-    applied: true
-    bounded_contexts:
-      - name: "sales"
-        responsibility: "Quotes, orders, and customer checkout."
-        files:
-          - "app/sales/"
-      - name: "billing"
-        responsibility: "Invoices, payments, and refunds."
-        files:
-          - "app/billing/"
-      - name: "shipping"
-        responsibility: "Deliveries, carriers, and tracking."
-        files:
-          - "app/shipping/"
-    context_map_changes:
-      - contexts:
-          - "sales"
-          - "billing"
-        pattern: "Customer-Supplier"
-        description: "Sales publishes OrderPlaced events; Billing consumes them."
-      - contexts:
-          - "billing"
-          - "shipping"
-        pattern: "Anti-Corruption Layer"
-        description: "Shipping uses an ACL to adapt Billing's InvoicePaid events."
-    anti_corruption_layers_added:
-      - context: "shipping"
-        adapter: "BillingEventAdapter"
-        location: "app/shipping/acl/billing_event_adapter.py"
-    ubiquitous_language_terms_defined:
-      - context: "sales"
-        term: "Order"
-        meaning: "A customer's request to purchase products."
-      - context: "billing"
-        term: "Invoice"
-        meaning: "A bill generated from a placed order."
-    rationale: "Separated models to avoid one-size-fits-all domain confusion."
+```toml
+[technical_practice_evidence]
+
+[technical_practice_evidence.ddd_strategic]
+applied = true
+rationale = "Separated models to avoid one-size-fits-all domain confusion."
+
+[[technical_practice_evidence.ddd_strategic.bounded_contexts]]
+name = "sales"
+responsibility = "Quotes, orders, and customer checkout."
+files = ["app/sales/"]
+
+[[technical_practice_evidence.ddd_strategic.bounded_contexts]]
+name = "billing"
+responsibility = "Invoices, payments, and refunds."
+files = ["app/billing/"]
+
+[[technical_practice_evidence.ddd_strategic.bounded_contexts]]
+name = "shipping"
+responsibility = "Deliveries, carriers, and tracking."
+files = ["app/shipping/"]
+
+[[technical_practice_evidence.ddd_strategic.context_map_changes]]
+contexts = ["sales", "billing"]
+pattern = "Customer-Supplier"
+description = "Sales publishes OrderPlaced events; Billing consumes them."
+
+[[technical_practice_evidence.ddd_strategic.context_map_changes]]
+contexts = ["billing", "shipping"]
+pattern = "Anti-Corruption Layer"
+description = "Shipping uses an ACL to adapt Billing's InvoicePaid events."
+
+[[technical_practice_evidence.ddd_strategic.anti_corruption_layers_added]]
+context = "shipping"
+adapter = "BillingEventAdapter"
+location = "app/shipping/acl/billing_event_adapter.py"
+
+[[technical_practice_evidence.ddd_strategic.ubiquitous_language_terms_defined]]
+context = "sales"
+term = "Order"
+meaning = "A customer's request to purchase products."
+
+[[technical_practice_evidence.ddd_strategic.ubiquitous_language_terms_defined]]
+context = "billing"
+term = "Invoice"
+meaning = "A bill generated from a placed order."
 ```
 
-If the practice was not applied, set `applied: false` and provide a `reason`.
+If the practice was not applied, set `applied = false` and provide a `reason`.
 
 ## Guidelines
 

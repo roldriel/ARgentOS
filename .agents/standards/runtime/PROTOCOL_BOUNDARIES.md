@@ -75,3 +75,21 @@ An agent MUST execute only the specific task assigned by the user and nothing be
 - If the agent discovers an error, bug, or inconsistency, it MUST report it to the user and wait for explicit instruction before acting on it.
 - The user has the final word on every scope decision. The agent MUST NOT decide autonomously to bypass a blocker, expand the task, or take liberties beyond the assigned instructions.
 - The Orchestrator is responsible for enforcing this boundary; the Worker is responsible for respecting it while executing a phase.
+
+### Tooling restrictions
+
+Unless explicitly authorized, the agent MUST NOT:
+
+- Install packages, dependencies, or tools.
+- Modify environment configuration, shell profiles, or system settings.
+- Run linters, formatters, type checkers, or test suites.
+
+The technical practices selected in `TASK_SPECIFICATION.md` (`## Technical Approach`) constitute explicit authorization for the commands they require. For example, when `tdd` is enabled (see `.agents/standards/testing/TDD.md`), the worker is authorized to write and run the tests the TDD cycle demands.
+
+### External interaction
+
+Unless explicitly instructed, the agent MUST NOT:
+
+- Perform external HTTP requests or network calls.
+- Simulate payments, transfers, callbacks, or any other financial transaction.
+- Trigger side effects outside the local codebase.

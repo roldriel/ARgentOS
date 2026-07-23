@@ -22,6 +22,8 @@ if str(_HARNESS_DIR) not in sys.path:
     sys.path.insert(0, str(_HARNESS_DIR))
 
 import feature_flags
+import technical_practices
+import decision_tree_evaluator
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 AGENTS_DIR = PROJECT_ROOT / ".agents"
@@ -29,9 +31,45 @@ HARNESS_DIR = AGENTS_DIR / "harness"
 ORCHESTRATORS_DIR = AGENTS_DIR / "orchestrators"
 CORE_DIR = ORCHESTRATORS_DIR / "core"
 DISCOVERY_DIR_DOMAIN = ORCHESTRATORS_DIR / "discovery"
+SYSTEM_DIR_DOMAIN = ORCHESTRATORS_DIR / "system"
 DECISION_TREES_DIR = CORE_DIR / "harness" / "decision_trees"
 PROJECT_DIR = PROJECT_ROOT / ".project"
 LAST_HEALTH_CHECK_FILE = PROJECT_DIR / ".last_health_check"
+
+# Domains whose harness policies may require recovery decision trees.
+# (domain name, policies dir, decision trees dir)
+DECISION_TREE_DOMAINS: list[tuple[str, Path, Path]] = [
+    (
+        "core",
+        CORE_DIR / "harness" / "policies",
+        CORE_DIR / "harness" / "decision_trees",
+    ),
+    (
+        "discovery",
+        DISCOVERY_DIR_DOMAIN / "harness" / "policies",
+        DISCOVERY_DIR_DOMAIN / "harness" / "decision_trees",
+    ),
+    (
+        "system",
+        SYSTEM_DIR_DOMAIN / "harness" / "policies",
+        SYSTEM_DIR_DOMAIN / "harness" / "decision_trees",
+    ),
+]
+
+# Policy triggers documented as intentionally having no decision tree
+# (see .agents/harness/INDEX.md, "Recovery Mechanism").
+TRIGGERS_WITHOUT_DECISION_TREES = {"H09", "H10"}
+
+
+def expected_tree_triggers(policies_dir: Path) -> set[str]:
+    """Derive the triggers that must have a decision tree from policy files."""
+    triggers = set()
+    if policies_dir.is_dir():
+        for policy in policies_dir.glob("*.md"):
+            trigger = policy.stem.split("-", 1)[0].upper()
+            if trigger and trigger not in TRIGGERS_WITHOUT_DECISION_TREES:
+                triggers.add(trigger)
+    return triggers
 
 
 def required_dirs() -> list[Path]:
@@ -112,7 +150,14 @@ def check_required_files(checks: list[dict[str, Any]]) -> bool:
 
 
 def check_decision_trees(checks: list[dict[str, Any]]) -> bool:
-    """Validate decision-tree TOML files if the feature is enabled."""
+    """Validate decision-tree TOML files if the feature is enabled.
+
+    Expected triggers are derived from the policy files of every domain that
+    provides a decision_trees directory (core H*, discovery D*, system S*),
+    minus the documented exemptions in TRIGGERS_WITHOUT_DECISION_TREES.
+    Structural validation (node refs, cycles) is delegated to
+    decision_tree_evaluator._validate_tree.
+    """
     if not feature_flags.is_enabled("decision_trees"):
         _check(
             checks,
@@ -122,117 +167,69 @@ def check_decision_trees(checks: list[dict[str, Any]]) -> bool:
         )
         return True
 
-    toml_files = sorted(DECISION_TREES_DIR.glob("H*_FAIL.toml"))
-    found_triggers = {path.stem.replace("_FAIL", "") for path in toml_files}
-    expected_triggers = {f"H{i:02d}" for i in range(8)} | {"H11"}
-    missing = expected_triggers - found_triggers
-
-    if missing:
-        _check(
-            checks,
-            "decision_trees_all_triggers_present",
-            False,
-            f"Missing decision tree files for triggers: {', '.join(sorted(missing))}",
-        )
-        all_valid = False
-    else:
-        _check(
-            checks,
-            "decision_trees_all_triggers_present",
-            True,
-            f"Found decision tree files for all triggers: {', '.join(sorted(found_triggers))}",
-        )
-        all_valid = True
-
+    all_valid = True
     parsed: dict[Path, dict[str, Any]] = {}
-    for path in toml_files:
+
+    for domain, policies_dir, trees_dir in DECISION_TREE_DOMAINS:
+        if not trees_dir.is_dir():
+            continue
+        toml_files = sorted(trees_dir.glob("*_FAIL.toml"))
+        found_triggers = {path.stem.replace("_FAIL", "") for path in toml_files}
+        expected_triggers = expected_tree_triggers(policies_dir)
+        missing = expected_triggers - found_triggers
+
+        if missing:
+            _check(
+                checks,
+                f"decision_trees_all_triggers_present_{domain}",
+                False,
+                f"Missing decision tree files for triggers: {', '.join(sorted(missing))}",
+            )
+            all_valid = False
+        else:
+            _check(
+                checks,
+                f"decision_trees_all_triggers_present_{domain}",
+                True,
+                f"Found decision tree files for all triggers: {', '.join(sorted(found_triggers))}",
+            )
+
+        for path in toml_files:
+            try:
+                parsed[path] = tomllib.loads(path.read_text(encoding="utf-8"))
+                _check(
+                    checks,
+                    f"decision_tree_toml_valid_{path.stem}",
+                    True,
+                    f"{path.name} parsed successfully",
+                )
+            except tomllib.TOMLDecodeError as exc:
+                _check(
+                    checks,
+                    f"decision_tree_toml_valid_{path.stem}",
+                    False,
+                    f"{path.name} TOML error: {exc}",
+                )
+                all_valid = False
+
+    # Structural checks (start node, branches, node references, cycles).
+    for path, data in parsed.items():
         try:
-            data = tomllib.loads(path.read_text(encoding="utf-8"))
-            parsed[path] = data
+            decision_tree_evaluator._validate_tree(data)
             _check(
                 checks,
-                f"decision_tree_toml_valid_{path.stem}",
+                f"decision_tree_structure_valid_{path.stem}",
                 True,
-                f"{path.name} parsed successfully",
+                f"{path.name} structure is valid (refs resolved, no cycles)",
             )
-        except tomllib.TOMLDecodeError as exc:
+        except decision_tree_evaluator.DecisionTreeError as exc:
             _check(
                 checks,
-                f"decision_tree_toml_valid_{path.stem}",
+                f"decision_tree_structure_valid_{path.stem}",
                 False,
-                f"{path.name} TOML error: {exc}",
+                f"{path.name} invalid: {exc}",
             )
             all_valid = False
-
-    if not all_valid:
-        return False
-
-    def _branches(node: dict[str, Any]) -> list[dict[str, Any]]:
-        """Return the true/false branches of a node in a flat structure."""
-        return [node.get("true", {}), node.get("false", {})]
-
-    # Structural checks: every 'next' reference must point to an existing node.
-    for path, data in parsed.items():
-        nodes = data.get("nodes", {})
-        missing_refs: list[str] = []
-        for node_id, node in nodes.items():
-            for branch in _branches(node):
-                nxt = branch.get("next")
-                if nxt is not None and nxt not in nodes:
-                    missing_refs.append(f"{node_id}->{nxt}")
-        if missing_refs:
-            _check(
-                checks,
-                f"decision_tree_refs_valid_{path.stem}",
-                False,
-                f"Missing node references in {path.name}: {', '.join(missing_refs)}",
-            )
-            all_valid = False
-        else:
-            _check(
-                checks,
-                f"decision_tree_refs_valid_{path.stem}",
-                True,
-                f"All node references resolved in {path.name}",
-            )
-
-    # Cycle detection (simple DFS over 'next' edges).
-    for path, data in parsed.items():
-        nodes = data.get("nodes", {})
-        has_cycle = False
-        cycle = ""
-        for start in nodes:
-            stack: list[tuple[str, list[str]]] = [(start, [])]
-            while stack:
-                node_id, path_trace = stack.pop()
-                if node_id in path_trace:
-                    has_cycle = True
-                    cycle = " -> ".join(
-                        path_trace[path_trace.index(node_id) :] + [node_id]
-                    )
-                    break
-                node = nodes.get(node_id, {})
-                for branch in _branches(node):
-                    nxt = branch.get("next")
-                    if nxt is not None:
-                        stack.append((nxt, path_trace + [node_id]))
-            if has_cycle:
-                break
-        if has_cycle:
-            _check(
-                checks,
-                f"decision_tree_no_cycles_{path.stem}",
-                False,
-                f"Cycle detected in {path.name}: {cycle}",
-            )
-            all_valid = False
-        else:
-            _check(
-                checks,
-                f"decision_tree_no_cycles_{path.stem}",
-                True,
-                f"No cycles detected in {path.name}",
-            )
 
     return all_valid
 
@@ -376,41 +373,7 @@ def check_knowledge_base(checks: list[dict[str, Any]]) -> bool:
     return all_valid
 
 
-TECHNICAL_PRACTICE_STANDARDS: dict[str, Path] = {
-    "tdd": AGENTS_DIR / "standards" / "testing" / "TDD.md",
-    "srp": AGENTS_DIR / "standards" / "development" / "design" / "SOLID" / "SRP.md",
-    "ocp": AGENTS_DIR / "standards" / "development" / "design" / "SOLID" / "OCP.md",
-    "lsp": AGENTS_DIR / "standards" / "development" / "design" / "SOLID" / "LSP.md",
-    "isp": AGENTS_DIR / "standards" / "development" / "design" / "SOLID" / "ISP.md",
-    "dip": AGENTS_DIR / "standards" / "development" / "design" / "SOLID" / "DIP.md",
-    "screaming_architecture": AGENTS_DIR
-    / "standards"
-    / "development"
-    / "design"
-    / "SCREAMING_ARCHITECTURE.md",
-    "clean_architecture": AGENTS_DIR
-    / "standards"
-    / "development"
-    / "design"
-    / "CLEAN_ARCHITECTURE.md",
-    "dry": AGENTS_DIR / "standards" / "development" / "design" / "DRY.md",
-    "layered_architecture": AGENTS_DIR
-    / "standards"
-    / "development"
-    / "design"
-    / "LAYERED_ARCHITECTURE.md",
-    "grasp": AGENTS_DIR / "standards" / "development" / "design" / "GRASP.md",
-    "ddd_tactical": AGENTS_DIR
-    / "standards"
-    / "development"
-    / "design"
-    / "DDD_TACTICAL.md",
-    "ddd_strategic": AGENTS_DIR
-    / "standards"
-    / "development"
-    / "design"
-    / "DDD_STRATEGIC.md",
-}
+TECHNICAL_PRACTICE_STANDARDS: dict[str, Path] = technical_practices.TECHNICAL_PRACTICE_STANDARDS
 
 
 def check_technical_practice_standards(checks: list[dict[str, Any]]) -> bool:
@@ -535,8 +498,15 @@ def last_health_check_time() -> datetime | None:
         return None
 
 
-def should_run_health_check(ttl_hours: int = 24) -> bool:
-    """Return True if the health check should be run based on TTL."""
+def should_run_health_check(ttl_hours: int | None = None) -> bool:
+    """Return True if the health check should be run based on TTL.
+
+    When ttl_hours is not provided, the configured TTL is used
+    (`.agents/features.toml` [health_check] ttl_hours, overridable via the
+    AGENTS_HEALTH_CHECK_TTL_HOURS environment variable; default 24).
+    """
+    if ttl_hours is None:
+        ttl_hours = feature_flags.health_check_ttl_hours()
     last = last_health_check_time()
     if last is None:
         return True

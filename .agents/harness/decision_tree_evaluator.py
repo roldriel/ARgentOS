@@ -323,19 +323,34 @@ def _prepare_variables(input_vars: dict[str, Any]) -> dict[str, Any]:
             )
 
     # Apply defaults only when the type is obvious from a declared hint; here we
-    # keep it conservative: known optional booleans default to False.
+    # keep it conservative: known optional booleans default to False. This list
+    # covers every boolean variable referenced by the core and discovery
+    # decision trees (see the VARIABLES.md next to each tree set).
     known_booleans = [
         "artifact_exists",
-        "ears_valid",
-        "objective_is_ambiguous",
-        "scope_is_clear",
-        "context_sufficient",
-        "plan_feasible",
+        "context_contradictory",
+        "context_user_specific",
+        "correction_cycle_exceeded",
+        "execution_blocked",
         "execution_complete",
-        "verification_passed",
-        "rubric_critical_failed",
-        "worker_returned_valid_artifact",
-        "user_clarified",
+        "failures_fixable",
+        "failures_require_user",
+        "gaps_actionable",
+        "merge_inconsistent",
+        "objective_is_ambiguous",
+        "plan_depends_on_user",
+        "plan_out_of_scope",
+        "project_unrecoverable",
+        "request_is_ambiguous",
+        "scope_compliant",
+        "scope_expansion_requested",
+        "scope_is_clear",
+        "scope_violation_severe",
+        "secrets_leaked",
+        "task_fundamentally_unachievable",
+        "unsourced_claims_found",
+        "user_rejected",
+        "user_unclear",
     ]
     for name in known_booleans:
         if name not in variables:

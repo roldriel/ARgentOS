@@ -31,10 +31,10 @@ This artifact does not contain new context. It only evaluates the existing conte
 
 ## Metadata
 
-```yaml
-id: ""
-created_at: ""
-status: ""
+```toml
+id = ""
+created_at = ""
+status = ""
 ```
 
 ---
@@ -43,9 +43,9 @@ status: ""
 
 Reference to the context artifact being validated.
 
-```yaml
-context_reference:
-  artifact: ""
+```toml
+[context_reference]
+artifact = ""
 ```
 
 ---
@@ -54,9 +54,9 @@ context_reference:
 
 Describe what was evaluated.
 
-```yaml
-objective:
-  description: ""
+```toml
+[objective]
+description = ""
 ```
 
 ---
@@ -65,11 +65,10 @@ objective:
 
 Determines whether the gathered context covers the information required by the task specification.
 
-```yaml
-completeness:
-  status: ""
-  missing_information:
-    - ""
+```toml
+[completeness]
+status = ""
+missing_information = [""]
 ```
 
 Possible values:
@@ -85,11 +84,10 @@ INCOMPLETE
 
 Determines whether the collected information is related to the task.
 
-```yaml
-relevance:
-  status: ""
-  irrelevant_information:
-    - ""
+```toml
+[relevance]
+status = ""
+irrelevant_information = [""]
 ```
 
 Possible values:
@@ -105,11 +103,10 @@ INVALID
 
 Determines whether the collected context contains contradictions.
 
-```yaml
-consistency:
-  status: ""
-  conflicts:
-    - ""
+```toml
+[consistency]
+status = ""
+conflicts = [""]
 ```
 
 Possible values:
@@ -125,10 +122,10 @@ CONFLICTING
 
 Identifies risks caused by insufficient or uncertain context.
 
-```yaml
-risks:
-  - description: ""
-    severity: ""
+```toml
+[[risks]]
+description = ""
+severity = ""
 ```
 
 Possible values:
@@ -145,10 +142,10 @@ HIGH
 
 Final decision based on all evaluations.
 
-```yaml
-decision:
-  result: ""
-  reasoning: ""
+```toml
+[decision]
+result = ""
+reasoning = ""
 ```
 
 Possible values:
@@ -165,9 +162,8 @@ REJECTED
 
 Actions needed before continuing.
 
-```yaml
-required_actions:
-  - ""
+```toml
+required_actions = [""]
 ```
 
 Examples:
@@ -182,10 +178,10 @@ Examples:
 
 Confidence level of the validation result.
 
-```yaml
-confidence:
-  level: ""
-  explanation: ""
+```toml
+[confidence]
+level = ""
+explanation = ""
 ```
 
 Possible values:
@@ -202,26 +198,26 @@ HIGH
 
 Defines the allowed workflow transition.
 
-```yaml
-transition:
-  current_state: ""
-  next_state: ""
+```toml
+[transition]
+current_state = ""
+next_state = ""
 ```
 
 Example:
 
-```yaml
-transition:
-  current_state: VALIDATING_CONTEXT
-  next_state: CONTEXT_READY
+```toml
+[transition]
+current_state = "VALIDATING_CONTEXT"
+next_state = "CONTEXT_READY"
 ```
 
 If validation fails due to missing or ambiguous information:
 
-```yaml
-transition:
-  current_state: VALIDATING_CONTEXT
-  next_state: NEEDS_CLARIFICATION
+```toml
+[transition]
+current_state = "VALIDATING_CONTEXT"
+next_state = "NEEDS_CLARIFICATION"
 ```
 
 ---

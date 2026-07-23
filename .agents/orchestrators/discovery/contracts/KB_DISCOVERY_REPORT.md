@@ -1,7 +1,7 @@
 +++
 artifact = "KB_DISCOVERY_REPORT.md"
-phase = "n/a"
-produced_by = "context_discoverer"
+phase = "00-discovery-init"
+produced_by = "init_worker"
 +++
 
 
@@ -12,47 +12,31 @@ domain: discovery
 artifact: KB_DISCOVERY_REPORT.md
 lifecycle: discovery
 produced_by: [discovery:DISCOVERY_INIT]
-consumed_by: [core:GATHERING_CONTEXT]
+consumed_by: [discovery:DISCOVERY_RUNNING]
 ---
 
 # Contract: KB Discovery Report
 
 ## Scope
 
-This artifact is produced by the `context_discoverer` worker. It is **not** a main workflow phase artifact; it is optional and runs during context gathering when the `knowledge_base` feature flag is enabled.
+This artifact is the initialization report of a discovery run. It is produced by the `init_worker` during `discovery:DISCOVERY_INIT` and validated by gate `D00-discovery-init` before the run proceeds to `discovery:DISCOVERY_RUNNING`.
+
+Do not confuse it with `KB_RECOMMENDATION.md` (core domain), which records the per-task KB entry recommendations of the `context_discoverer`.
 
 ## Purpose
 
-The `KB_DISCOVERY_REPORT.md` artifact records which Knowledge Base entries the `context_discoverer` recommends for the current phase, why they are relevant, and the recommended context budget.
+The `KB_DISCOVERY_REPORT.md` artifact records how the discovery run was initialized: the scope and inputs used, which previous KB entries were invalidated, and which workers were selected for the run.
 
 ## Required sections
 
-1. `## Discovery Objective` — what the discoverer was asked to find.
-2. `## Recommended Entries` — list of recommended KB entries with priority, sections to include, and reason.
-3. `## Context Budget Recommendation` — recommended KB context budget in characters.
-4. `## Notes` — caveats or reasons to ignore recommendations.
-
-## Optional embedded JSON
-
-The report may include a machine-readable JSON block (for example, inside a fenced code block) with the following shape:
-
-```json
-{
-  "discovery_objective": "string",
-  "recommended_entries": [
-    {
-      "session_uuid": "string",
-      "priority": 1,
-      "include_sections": ["lessons_learned"],
-      "reason": "string"
-    }
-  ],
-  "context_budget_recommendation": 4000,
-  "notes": "string"
-}
-```
+1. `## Discovery Objective` — what the discovery run was asked to analyze.
+2. `## Scope and Inputs` — the discovery scope (`full`, `env`, `stack`, `patterns`, or `business`) and the inputs used (project root, previous KB, session artifacts).
+3. `## Invalidation Summary` — previous KB entries that became stale, with the reason (hash change, TTL, legacy), or an explicit "none" statement. Details live in `invalidation_report.json`.
+4. `## Selected Workers` — the workers selected for the run according to the scope.
+5. `## Notes` — caveats, assumptions, or reasons the run may be partial.
 
 ## Constraints
 
-- The report must not include full artifacts from previous sessions.
+- The report must record the discovery scope and inputs used for the run (gate D00 checklist).
 - The report must not include credentials, tokens, or personal data.
+- Machine-readable outputs of the initialization (`discovery_input.json`, `invalidation_report.json`) live in `.project/<session-uuid>/discovery/`; this report summarizes them, it does not replace them.

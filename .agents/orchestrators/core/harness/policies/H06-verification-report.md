@@ -16,6 +16,7 @@ required_sections = [
 ]
 rubric_validation = true
 semantic_validation = true
+semantic_checks = ["final_decision", "acceptance_criteria_evaluation"]
 +++
 
 

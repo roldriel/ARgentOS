@@ -67,11 +67,11 @@ def write_verification_report(
 
 ## Acceptance Criteria Evaluation
 
-```yaml
-acceptance_criteria:
-  - criterion: "The API shall reject empty names."
-    result: "PASS"
-    evidence: "Tested."
+```toml
+[[acceptance_criteria]]
+criterion = "The API shall reject empty names."
+result = "PASS"
+evidence = "Tested."
 ```
 
 ## Test Results
@@ -80,10 +80,10 @@ acceptance_criteria:
 
 ## Final Decision
 
-```yaml
-decision:
-  result: "COMPLETED"
-  reasoning: "All criteria met."
+```toml
+[decision]
+result = "COMPLETED"
+reasoning = "All criteria met."
 ```
 
 ## Confidence

@@ -29,20 +29,23 @@ When adding new behavior:
 
 Record evidence in `EXECUTION_SUMMARY.md` under `## Technical Practice Evidence`:
 
-```yaml
-technical_practice_evidence:
-  ocp:
-    applied: true
-    extension_points:
-      - location: "app/strategies/notification_strategy.py"
-        description: "New SMS notification strategy"
-    base_unchanged:
-      - location: "app/services/notification_service.py"
-        justification: "The service delegates to the strategy; its logic was not modified."
-    reason: ""
+```toml
+[technical_practice_evidence]
+
+[technical_practice_evidence.ocp]
+applied = true
+reason = ""
+
+[[technical_practice_evidence.ocp.extension_points]]
+location = "app/strategies/notification_strategy.py"
+description = "New SMS notification strategy"
+
+[[technical_practice_evidence.ocp.base_unchanged]]
+location = "app/services/notification_service.py"
+justification = "The service delegates to the strategy; its logic was not modified."
 ```
 
-If OCP could not be applied, set `applied: false` and document the reason.
+If OCP could not be applied, set `applied = false` and document the reason.
 
 ## Caution
 

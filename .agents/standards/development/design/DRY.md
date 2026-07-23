@@ -33,30 +33,30 @@ It is acceptable to keep superficial duplication when:
 
 When `dry` is selected in `technical_approach.enabled`, the executor records evidence under `## Technical Practice Evidence` in `EXECUTION_SUMMARY.md`:
 
-```yaml
-technical_practice_evidence:
-  dry:
-    applied: true
-    duplicates_found:
-      - locations:
-          - "app/services/user_service.py:42"
-          - "app/services/admin_service.py:38"
-        description: "Email format validation regex duplicated in two services."
-        knowledge: "Valid email format rule"
-        consolidation_strategy: "Extracted EmailValidator to app/validators/email_validator.py; both services now use it."
-        lines_saved: 8
-      - locations:
-          - "app/schemas/user.py"
-          - "app/schemas/admin.py"
-        description: "Shared user fields (id, email) repeated in two schemas."
-        knowledge: "User identity fields"
-        consolidation_strategy: "Created UserBaseSchema and inherited from it."
-        lines_saved: 12
-    duplicates_intentionally_kept: []
-    rationale: "Consolidated validation and schema duplication to reduce future maintenance."
+```toml
+[technical_practice_evidence]
+
+[technical_practice_evidence.dry]
+applied = true
+duplicates_intentionally_kept = []
+rationale = "Consolidated validation and schema duplication to reduce future maintenance."
+
+[[technical_practice_evidence.dry.duplicates_found]]
+locations = ["app/services/user_service.py:42", "app/services/admin_service.py:38"]
+description = "Email format validation regex duplicated in two services."
+knowledge = "Valid email format rule"
+consolidation_strategy = "Extracted EmailValidator to app/validators/email_validator.py; both services now use it."
+lines_saved = 8
+
+[[technical_practice_evidence.dry.duplicates_found]]
+locations = ["app/schemas/user.py", "app/schemas/admin.py"]
+description = "Shared user fields (id, email) repeated in two schemas."
+knowledge = "User identity fields"
+consolidation_strategy = "Created UserBaseSchema and inherited from it."
+lines_saved = 12
 ```
 
-If the practice was not applied, set `applied: false` and provide a `reason`.
+If the practice was not applied, set `applied = false` and provide a `reason`.
 
 ## Guidelines
 

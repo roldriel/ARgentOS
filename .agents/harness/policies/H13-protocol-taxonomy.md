@@ -22,9 +22,8 @@ protocol itself. It runs on demand (via its test suite) whenever the protocol st
 
 H13 lives in `.agents/harness/policies/` (cross-cutting), not in
 `.agents/orchestrators/core/harness/policies/`, because it validates the complete protocol
-across all domains. It is the only `H`-prefixed policy outside the `core` domain. This exception
-is documented in `plans/PLAN_ORCHESTRATORS_DOMAIN.md` (organization rules) and
-`plans/PLAN_PROTOCOL_TAXONOMY.md`.
+across all domains. It is the only `H`-prefixed policy outside the `core` domain (historical
+exception kept after the protocol was split into domains).
 
 ## Purpose
 
@@ -60,7 +59,7 @@ state machines, workflows, harness policies, contracts, roles and workers.
    `taxonomy`, `kind` and `domain`.
 9. Entities marked `status: planned` (e.g. `D01-discovery-output`, discovery orchestrator role
    and workers) are validated for internal coherence but their files are not required to exist
-   yet; they are created by `plans/PLAN_DISCOVERY_ORCHESTRATOR.md`.
+   yet; they are created by the discovery-orchestrator rollout.
 10. Every workflow file on disk must have a `kind: workflow` entity in the taxonomy whose
     `domain`, `state`, `lifecycle`, `previous_states`, `next_states`, `input_artifacts`,
     `output_artifacts`, `harness` and `actor` match the file's metadata block, and vice versa

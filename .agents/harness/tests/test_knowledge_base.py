@@ -51,7 +51,7 @@ def test_context_discoverer_role_exists():
     path = PROJECT_ROOT / ".agents" / "roles" / "context_discoverer.md"
     assert path.is_file()
     content = path.read_text(encoding="utf-8")
-    assert "KB_DISCOVERY_REPORT.md" in content
+    assert "KB_RECOMMENDATION.md" in content
 
 
 def test_kb_discovery_contract_exists():
@@ -59,9 +59,9 @@ def test_kb_discovery_contract_exists():
         PROJECT_ROOT
         / ".agents"
         / "orchestrators"
-        / "discovery"
+        / "core"
         / "contracts"
-        / "KB_DISCOVERY_REPORT.md"
+        / "KB_RECOMMENDATION.md"
     )
     assert path.is_file()
     content = path.read_text(encoding="utf-8")

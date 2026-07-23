@@ -29,22 +29,25 @@ When introducing or changing dependencies:
 
 Record evidence in `EXECUTION_SUMMARY.md` under `## Technical Practice Evidence`:
 
-```yaml
-technical_practice_evidence:
-  dip:
-    applied: true
-    abstractions_introduced:
-      - name: "UserRepository"
-        location: "app/repositories/user_repository.py"
-    dependencies_inverted:
-      - module: "app/services/user_service.py"
-        now_depends_on: "UserRepository"
-        previously_depended_on: "app.db.session"
-    injection_mechanism: "Constructor injection"
-    reason: ""
+```toml
+[technical_practice_evidence]
+
+[technical_practice_evidence.dip]
+applied = true
+injection_mechanism = "Constructor injection"
+reason = ""
+
+[[technical_practice_evidence.dip.abstractions_introduced]]
+name = "UserRepository"
+location = "app/repositories/user_repository.py"
+
+[[technical_practice_evidence.dip.dependencies_inverted]]
+module = "app/services/user_service.py"
+now_depends_on = "UserRepository"
+previously_depended_on = "app.db.session"
 ```
 
-If DIP could not be applied, set `applied: false` and document the reason.
+If DIP could not be applied, set `applied = false` and document the reason.
 
 ## Caution
 

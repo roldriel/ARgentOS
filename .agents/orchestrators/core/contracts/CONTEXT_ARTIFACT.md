@@ -31,10 +31,10 @@ The artifact must contain only relevant and traceable context.
 
 ## Metadata
 
-```yaml
-id: ""
-created_at: ""
-status: ""
+```toml
+id = ""
+created_at = ""
+status = ""
 ```
 
 ---
@@ -43,9 +43,9 @@ status: ""
 
 Reference to the task specification that originated this context gathering process.
 
-```yaml
-task_reference:
-  specification: ""
+```toml
+[task_reference]
+specification = ""
 ```
 
 ---
@@ -54,9 +54,9 @@ task_reference:
 
 Describe why this context was collected.
 
-```yaml
-objective:
-  description: ""
+```toml
+[objective]
+description = ""
 ```
 
 ---
@@ -73,9 +73,9 @@ Examples:
 * Project structure.
 * Relevant conventions.
 
-```yaml
-project_context:
-  description: ""
+```toml
+[project_context]
+description = ""
 ```
 
 ---
@@ -93,11 +93,11 @@ Examples:
 * APIs.
 * Configurations.
 
-```yaml
-relevant_components:
-  - name: ""
-    location: ""
-    relevance: ""
+```toml
+[[relevant_components]]
+name = ""
+location = ""
+relevance = ""
 ```
 
 ---
@@ -106,9 +106,9 @@ relevant_components:
 
 Describe current behavior related to the requested change.
 
-```yaml
-existing_behavior:
-  description: ""
+```toml
+[existing_behavior]
+description = ""
 ```
 
 ---
@@ -117,10 +117,10 @@ existing_behavior:
 
 List internal or external dependencies that affect the task.
 
-```yaml
-dependencies:
-  - name: ""
-    reason: ""
+```toml
+[[dependencies]]
+name = ""
+reason = ""
 ```
 
 ---
@@ -129,9 +129,8 @@ dependencies:
 
 Constraints identified during context gathering.
 
-```yaml
-constraints:
-  - ""
+```toml
+constraints = [""]
 ```
 
 ---
@@ -147,10 +146,10 @@ Examples:
 * Tests.
 * Configuration files.
 
-```yaml
-evidence:
-  - source: ""
-    description: ""
+```toml
+[[evidence]]
+source = ""
+description = ""
 ```
 
 ---
@@ -159,9 +158,8 @@ evidence:
 
 Information that could not be determined.
 
-```yaml
-unknowns:
-  - ""
+```toml
+unknowns = [""]
 ```
 
 ---
@@ -170,12 +168,11 @@ unknowns:
 
 Current validation state.
 
-```yaml
-validation:
-  complete: false
-  confidence: ""
-  notes:
-    - ""
+```toml
+[validation]
+complete = false
+confidence = ""
+notes = [""]
 ```
 
 ---
@@ -184,8 +181,8 @@ validation:
 
 Current workflow state associated with this artifact.
 
-```yaml
-state: ""
+```toml
+state = ""
 ```
 
 ## Relationship to project artifacts

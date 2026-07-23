@@ -15,8 +15,8 @@ Rules:
 - Every entity carries a `domain` (`core`, `discovery`, `system`, `cross-cutting`).
 - States are referenced as `<domain>:<state>` (e.g. `core:ANALYZING_TASK`).
 - Harness IDs use the domain namespace: `HNN` (core), `DNN` (discovery), `SNN` (system).
-  `H13-protocol-taxonomy` is the documented cross-cutting exception (see
-  `plans/PLAN_ORCHESTRATORS_DOMAIN.md` and `plans/PLAN_PROTOCOL_TAXONOMY.md`).
+  `H13-protocol-taxonomy` is the documented cross-cutting exception (kept in the core
+  `H` namespace for historical reasons after the protocol was split into domains).
   `H08` is intentionally omitted and `H12` is free (former `H12` became `D01`);
   neither is reported as missing.
 - Protocol files reference this dictionary through a YAML metadata block; they do not
@@ -124,6 +124,7 @@ entities:
       - core:BUILDING_TASK_SPECIFICATION
       - core:CONFIRMING_INTENT
       - core:NEEDS_CLARIFICATION
+      - core:RECOVERY
     artifacts_input:
       - SESSION_BRIEF.md
     artifacts_output:
@@ -146,6 +147,7 @@ entities:
       - core:BUILDING_TASK_SPECIFICATION
       - core:ANALYZING_TASK
       - core:NEEDS_CLARIFICATION
+      - core:RECOVERY
     artifacts_input:
       - TASK_ANALYSIS.md
     artifacts_output:
@@ -168,6 +170,7 @@ entities:
     next:
       - core:TASK_READY
       - core:NEEDS_CLARIFICATION
+      - core:RECOVERY
     artifacts_input:
       - TASK_ANALYSIS.md
       - INTENT_REFLECTION.md
@@ -231,9 +234,10 @@ entities:
     next:
       - core:CONTEXT_GATHERED
       - core:NEEDS_CLARIFICATION
+      - core:RECOVERY
     artifacts_input:
       - TASK_SPECIFICATION.md
-      - KB_DISCOVERY_REPORT.md
+      - KB_RECOMMENDATION.md
       - KNOWLEDGE_INDEX.md
     artifacts_output:
       - CONTEXT_ARTIFACT.md
@@ -273,6 +277,7 @@ entities:
     next:
       - core:CONTEXT_READY
       - core:NEEDS_CLARIFICATION
+      - core:RECOVERY
     artifacts_input:
       - TASK_SPECIFICATION.md
       - CONTEXT_ARTIFACT.md
@@ -316,6 +321,7 @@ entities:
     next:
       - core:PLAN_READY
       - core:NEEDS_CLARIFICATION
+      - core:RECOVERY
     artifacts_input:
       - TASK_SPECIFICATION.md
       - CONTEXT_VALIDATION_REPORT.md
@@ -400,6 +406,12 @@ entities:
     name: Recovery
     description: Analyze failures and determine corrective actions.
     previous:
+      - core:ANALYZING_TASK
+      - core:CONFIRMING_INTENT
+      - core:BUILDING_TASK_SPECIFICATION
+      - core:GATHERING_CONTEXT
+      - core:VALIDATING_CONTEXT
+      - core:PLANNING
       - core:EXECUTING
       - core:VERIFYING
     next:
@@ -526,8 +538,8 @@ entities:
 
   # -------------------------------------------------------------------------
   # States — domain: discovery
-  # Detailed in plans/PLAN_DISCOVERY_ORCHESTRATOR.md, which must keep this
-  # section synchronized.
+  # This section must stay synchronized with the discovery state machine
+  # (.agents/orchestrators/discovery/states/DISCOVERY_STATE_MACHINE.md).
   # -------------------------------------------------------------------------
   "discovery:DISCOVERY_INIT":
     kind: state
@@ -685,6 +697,7 @@ entities:
       - discovery:DISCOVERY_FRAMEWORK
       - discovery:DISCOVERY_PATTERNS
       - discovery:DISCOVERY_BUSINESS
+      - discovery:DISCOVERY_VALIDATE
     next:
       - discovery:DISCOVERY_VALIDATE
       - discovery:DISCOVERY_FAILED
@@ -712,12 +725,12 @@ entities:
     next:
       - discovery:DISCOVERY_READY
       - discovery:DISCOVERY_FAILED
+      - discovery:DISCOVERY_MERGE
     artifacts_input:
       - DISCOVERY_MANIFEST.md
     artifacts_output: []
     workflow: .agents/orchestrators/discovery/workflow/07-discovery-validate.md
     harness:
-      - H10-kb-discovery-report
       - D01-discovery-output
     actor: discovery_orchestrator
     profile: null
@@ -887,12 +900,26 @@ entities:
     domain: discovery
     lifecycle: discovery
     tag: knowledge
-    description: Discovery report with recommended knowledge-base entries.
+    description: Initialization report of a discovery run (scope, inputs, invalidations).
     produced_by:
       - discovery:DISCOVERY_INIT
     consumed_by:
-      - core:GATHERING_CONTEXT
+      - discovery:DISCOVERY_RUNNING
     contract: .agents/orchestrators/discovery/contracts/KB_DISCOVERY_REPORT.md
+
+  KB_RECOMMENDATION.md:
+    kind: artifact
+    domain: core
+    lifecycle: context
+    tag: knowledge
+    description: Knowledge-base entries recommended by the context_discoverer for the current task.
+    produced_by:
+      - core:GATHERING_CONTEXT
+    consumed_by:
+      - core:PLANNING
+      - core:EXECUTING
+      - core:VERIFYING
+    contract: .agents/orchestrators/core/contracts/KB_RECOMMENDATION.md
 
   KB_DISCOVERY_ENTRY.md:
     kind: artifact
@@ -1016,6 +1043,20 @@ entities:
     consumed_by:
       - core:COMPLETED
     contract: .agents/contracts/REVIEW_REPORT.md
+
+  HARNESS_REPORT.md:
+    kind: artifact
+    domain: cross-cutting
+    lifecycle: null
+    tag: report
+    description: Audit trail of harness trigger invocations, written by the harness runner at the session root.
+    produced_by:
+      - core:TASK_RECEIVED
+    consumed_by:
+      - core:RECOVERY
+      - core:COMPLETED
+      - discovery:DISCOVERY_READY
+    contract: .agents/contracts/HARNESS_REPORT.md
 
   # -------------------------------------------------------------------------
   # Harness policies
@@ -1162,7 +1203,7 @@ entities:
     state: core:GATHERING_CONTEXT
     gates:
       - core:GATHERING_CONTEXT -> core:CONTEXT_GATHERED
-    artifact_validated: KB_DISCOVERY_REPORT.md
+    artifact_validated: KB_RECOMMENDATION.md
     policy_file: .agents/orchestrators/core/harness/policies/H10-kb-discovery-report.md
 
   D00-discovery-init:
@@ -1188,7 +1229,7 @@ entities:
     state: discovery:DISCOVERY_VALIDATE
     gates:
       - discovery:DISCOVERY_VALIDATE -> discovery:DISCOVERY_READY
-    artifact_validated: KB_DISCOVERY_REPORT.md
+    artifact_validated: KB_DISCOVERY_ENTRY.md
     policy_file: .agents/orchestrators/discovery/harness/policies/D01-discovery-output.md
 
   S00-system-ready:
@@ -1301,6 +1342,7 @@ entities:
     kind: worker
     domain: core
     worker_id: task_analyst
+    role_file: .agents/roles/task_analyst.md
     state: core:ANALYZING_TASK
     lifecycle: task
     actor: orchestrator
@@ -1325,6 +1367,7 @@ entities:
     kind: worker
     domain: core
     worker_id: task_specification_writer
+    role_file: .agents/roles/task_specification_writer.md
     state: core:BUILDING_TASK_SPECIFICATION
     lifecycle: task
     actor: orchestrator
@@ -1338,6 +1381,7 @@ entities:
     kind: worker
     domain: core
     worker_id: context_gatherer
+    role_file: .agents/roles/context_gatherer.md
     state: core:GATHERING_CONTEXT
     lifecycle: context
     actor: orchestrator
@@ -1350,6 +1394,7 @@ entities:
     kind: worker
     domain: core
     worker_id: context_validator
+    role_file: .agents/roles/context_validator.md
     state: core:VALIDATING_CONTEXT
     lifecycle: context
     actor: orchestrator
@@ -1363,6 +1408,7 @@ entities:
     kind: worker
     domain: core
     worker_id: planner
+    role_file: .agents/roles/planner.md
     state: core:PLANNING
     lifecycle: planning
     actor: orchestrator
@@ -1376,6 +1422,7 @@ entities:
     kind: worker
     domain: core
     worker_id: executor
+    role_file: .agents/roles/executor.md
     state: core:EXECUTING
     lifecycle: execution
     actor: orchestrator
@@ -1401,6 +1448,7 @@ entities:
     kind: worker
     domain: core
     worker_id: recovery_analyst
+    role_file: .agents/roles/recovery_analyst.md
     state: core:RECOVERY
     lifecycle: exception
     actor: orchestrator
@@ -1761,6 +1809,12 @@ entities:
     state: core:RECOVERY
     lifecycle: exception
     previous_states:
+      - core:ANALYZING_TASK
+      - core:CONFIRMING_INTENT
+      - core:BUILDING_TASK_SPECIFICATION
+      - core:GATHERING_CONTEXT
+      - core:VALIDATING_CONTEXT
+      - core:PLANNING
       - core:EXECUTING
       - core:VERIFYING
     next_states:
@@ -1782,12 +1836,15 @@ entities:
     domain: discovery
     state: discovery:DISCOVERY_INIT
     lifecycle: discovery
-    previous_states: []
+    previous_states:
+      - discovery:DISCOVERY_FAILED
     next_states:
       - discovery:DISCOVERY_RUNNING
       - discovery:DISCOVERY_FAILED
     input_artifacts: []
     output_artifacts:
+      - discovery_input.json
+      - invalidation_report.json
       - KB_DISCOVERY_REPORT.md
     harness:
       - D00-discovery-init
@@ -1928,11 +1985,11 @@ entities:
     next_states:
       - discovery:DISCOVERY_READY
       - discovery:DISCOVERY_FAILED
+      - discovery:DISCOVERY_MERGE
     input_artifacts:
       - DISCOVERY_MANIFEST.md
     output_artifacts: []
     harness:
-      - H10-kb-discovery-report
       - D01-discovery-output
     actor: discovery_orchestrator
     profile: null
@@ -2140,6 +2197,19 @@ entities:
       - core:COMPLETED
     file: .agents/contracts/REVIEW_REPORT.md
 
+  contract:HARNESS_REPORT.md:
+    kind: contract
+    domain: cross-cutting
+    artifact: HARNESS_REPORT.md
+    lifecycle: null
+    produced_by:
+      - core:TASK_RECEIVED
+    consumed_by:
+      - core:RECOVERY
+      - core:COMPLETED
+      - discovery:DISCOVERY_READY
+    file: .agents/contracts/HARNESS_REPORT.md
+
   contract:KB_DISCOVERY_REPORT.md:
     kind: contract
     domain: discovery
@@ -2148,8 +2218,21 @@ entities:
     produced_by:
       - discovery:DISCOVERY_INIT
     consumed_by:
-      - core:GATHERING_CONTEXT
+      - discovery:DISCOVERY_RUNNING
     file: .agents/orchestrators/discovery/contracts/KB_DISCOVERY_REPORT.md
+
+  contract:KB_RECOMMENDATION.md:
+    kind: contract
+    domain: core
+    artifact: KB_RECOMMENDATION.md
+    lifecycle: context
+    produced_by:
+      - core:GATHERING_CONTEXT
+    consumed_by:
+      - core:PLANNING
+      - core:EXECUTING
+      - core:VERIFYING
+    file: .agents/orchestrators/core/contracts/KB_RECOMMENDATION.md
 
   contract:KB_DISCOVERY_ENTRY.md:
     kind: contract

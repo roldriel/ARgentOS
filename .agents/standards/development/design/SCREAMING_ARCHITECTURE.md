@@ -24,34 +24,39 @@ Apply this standard when:
 
 When `screaming_architecture` is selected in `technical_approach.enabled`, the executor records evidence under `## Technical Practice Evidence` in `EXECUTION_SUMMARY.md`:
 
-```yaml
-technical_practice_evidence:
-  screaming_architecture:
-    applied: true
-    domain_modules:
-      - name: "users"
-        path: "app/users/"
-        responsibility: "User registration, authentication, and profile management."
-      - name: "billing"
-        path: "app/billing/"
-        responsibility: "Invoices, payments, and subscriptions."
-    framework_modules:
-      - name: "web"
-        path: "app/web/"
-        responsibility: "HTTP framework adapters and routing."
-      - name: "persistence"
-        path: "app/persistence/"
-        responsibility: "Database and ORM adapters."
-    structural_changes:
-      - description: "Moved user-related code from app/controllers/ and app/models/ to app/users/."
-        files_affected:
-          - "app/users/routes.py"
-          - "app/users/schemas.py"
-          - "app/users/services.py"
-    rationale: "Grouping by domain makes the use cases discoverable and reduces cross-module coupling."
+```toml
+[technical_practice_evidence]
+
+[technical_practice_evidence.screaming_architecture]
+applied = true
+rationale = "Grouping by domain makes the use cases discoverable and reduces cross-module coupling."
+
+[[technical_practice_evidence.screaming_architecture.domain_modules]]
+name = "users"
+path = "app/users/"
+responsibility = "User registration, authentication, and profile management."
+
+[[technical_practice_evidence.screaming_architecture.domain_modules]]
+name = "billing"
+path = "app/billing/"
+responsibility = "Invoices, payments, and subscriptions."
+
+[[technical_practice_evidence.screaming_architecture.framework_modules]]
+name = "web"
+path = "app/web/"
+responsibility = "HTTP framework adapters and routing."
+
+[[technical_practice_evidence.screaming_architecture.framework_modules]]
+name = "persistence"
+path = "app/persistence/"
+responsibility = "Database and ORM adapters."
+
+[[technical_practice_evidence.screaming_architecture.structural_changes]]
+description = "Moved user-related code from app/controllers/ and app/models/ to app/users/."
+files_affected = ["app/users/routes.py", "app/users/schemas.py", "app/users/services.py"]
 ```
 
-If the practice was not applied, set `applied: false` and provide a `reason`.
+If the practice was not applied, set `applied = false` and provide a `reason`.
 
 ## Guidelines
 

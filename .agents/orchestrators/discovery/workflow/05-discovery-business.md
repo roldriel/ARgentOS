@@ -97,4 +97,4 @@ unrecoverable.
 # Harness
 
 This module has no exit gate. The merged output is validated later in
-`DISCOVERY_VALIDATE` (`core:H10` / `D01`).
+`DISCOVERY_VALIDATE` (`D01`).

@@ -46,6 +46,8 @@ The ArgentOS System Agent MUST verify that `.project/README.md` exists and is no
 
 ## Lifecycle
 
+The full state machine for this lifecycle (domain `system`) is defined in `.agents/orchestrators/system/states/SYSTEM_STATE_MACHINE.md`.
+
 ```text
 BOOTSTRAP
     |

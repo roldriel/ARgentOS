@@ -15,7 +15,7 @@ This checklist is a mental self-evaluation. The worker reviews it before acting 
 ## 3. Tooling and Execution Restrictions
 
 - [ ] I will not install packages or modify the environment configuration. → [OPERATIONAL_RULES.md](../conduct/OPERATIONAL_RULES.md)
-- [ ] I will not run linters, formatters, type checkers, or tests unless explicitly instructed. → [OPERATIONAL_RULES.md](../conduct/OPERATIONAL_RULES.md)
+- [ ] I will not run linters, formatters, type checkers, or tests unless explicitly instructed — note that technical practices selected in `TASK_SPECIFICATION.md` (e.g., `tdd`) count as explicit instruction. → [OPERATIONAL_RULES.md](../conduct/OPERATIONAL_RULES.md)
 
 ## 4. Missing or Ambiguous Information
 

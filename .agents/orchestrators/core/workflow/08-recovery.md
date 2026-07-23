@@ -4,7 +4,7 @@ kind: workflow
 domain: core
 state: RECOVERY
 lifecycle: exception
-previous_states: [core:EXECUTING, core:VERIFYING]
+previous_states: [core:ANALYZING_TASK, core:CONFIRMING_INTENT, core:BUILDING_TASK_SPECIFICATION, core:GATHERING_CONTEXT, core:VALIDATING_CONTEXT, core:PLANNING, core:EXECUTING, core:VERIFYING]
 next_states: [core:PLANNING, core:NEEDS_CLARIFICATION, core:ABORT]
 input_artifacts: [VERIFICATION_REPORT.md]
 output_artifacts: [RECOVERY_REPORT.md]

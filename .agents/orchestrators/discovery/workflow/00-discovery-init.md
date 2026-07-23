@@ -4,10 +4,10 @@ kind: workflow
 domain: discovery
 state: DISCOVERY_INIT
 lifecycle: discovery
-previous_states: []
+previous_states: [discovery:DISCOVERY_FAILED]
 next_states: [discovery:DISCOVERY_RUNNING, discovery:DISCOVERY_FAILED]
 input_artifacts: []
-output_artifacts: [KB_DISCOVERY_REPORT.md]
+output_artifacts: [discovery_input.json, invalidation_report.json, KB_DISCOVERY_REPORT.md]
 harness: [D00-discovery-init]
 actor: discovery_orchestrator
 profile: init_worker
@@ -51,11 +51,11 @@ The discovery session was initialized and the run may proceed.
 
 ---
 
-### NEEDS_CLARIFICATION
+### NEEDS_CLARIFICATION (core domain)
 
 The discovery request is missing critical information (scope, target, or required inputs).
 
-The agent must request additional information from the user.
+The discovery run cannot enter `core:NEEDS_CLARIFICATION` directly: the Discovery Orchestrator ends the run as `discovery:DISCOVERY_FAILED` and returns control to the core Orchestrator, which decides the `core:NEEDS_CLARIFICATION` transition and requests the information from the user.
 
 ---
 

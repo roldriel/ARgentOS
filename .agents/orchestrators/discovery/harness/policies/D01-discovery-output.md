@@ -1,7 +1,7 @@
 +++
 trigger = "D01"
 transition = "DISCOVERY_VALIDATE → DISCOVERY_READY"
-artifact = "KB_DISCOVERY_REPORT.md"
+artifact = "KB_DISCOVERY_ENTRY.md"
 required_sections = []
 +++
 
@@ -17,7 +17,7 @@ tag: discovery
 state: discovery:DISCOVERY_VALIDATE
 gates:
   - "discovery:DISCOVERY_VALIDATE -> discovery:DISCOVERY_READY"
-artifact_validated: KB_DISCOVERY_REPORT.md
+artifact_validated: KB_DISCOVERY_ENTRY.md
 ---
 
 # Harness Policy D01: Discovery Output
@@ -28,12 +28,21 @@ artifact_validated: KB_DISCOVERY_REPORT.md
 
 ## Purpose
 
-Validate the ground truth of the discovery output: every claim in the
-knowledge base must have a source in the real project or in the real
-execution environment, and the merge performed by the `synthesis_worker` must
-not have introduced inconsistencies. D01 is the anti-hallucination gate of the
-discovery domain; structural validation is the exclusive responsibility of
-`core:H10-kb-discovery-report`.
+Validate the discovery output before publishing it. D01 is responsible for
+BOTH the structural validation and the ground truth of the knowledge base:
+
+- **Structural:** every KB entry and the manifest comply with their contracts
+  (required fields and sections present, provenance fields populated).
+- **Ground truth:** every claim in the knowledge base must have a source in
+  the real project or in the real execution environment, and the merge
+  performed by the `synthesis_worker` must not have introduced
+  inconsistencies.
+
+D01 is the single validation gate of the discovery domain
+(`DISCOVERY_VALIDATE → DISCOVERY_READY`). The core trigger
+`core:H10-kb-discovery-report` does NOT participate in the discovery cycle;
+it only validates the per-task `KB_RECOMMENDATION.md` artifact in
+`core:GATHERING_CONTEXT`.
 
 ## Input
 
@@ -61,6 +70,10 @@ discovery domain; structural validation is the exclusive responsibility of
 7. **Consistent merge:** the `synthesis_worker` did not lose information and
    did not leave conflicts unmarked; every entry carries `source_workers` and
    `source_files` preserving provenance.
+8. **Structural compliance:** every KB entry exists, is non-empty, and
+   contains the required fields and sections of its contract
+   (`.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md` and the
+   per-entry contracts), and the manifest lists every published entry.
 
 ## Rejection of Invented Outputs
 
@@ -73,9 +86,10 @@ If D01 detects a claim without a source:
 
 ## Decision Criteria
 
-- `PASS`: All checklist items are satisfied.
-- `FAIL`: Any entry contains unsourced claims, nonexistent `source_files`,
-  leaked secrets, or provenance lost during the merge.
+- `PASS`: All checklist items are satisfied (structure and ground truth).
+- `FAIL`: Any entry violates its contract, contains unsourced claims,
+  nonexistent `source_files`, leaked secrets, or provenance lost during the
+  merge.
 
 ## On Failure
 

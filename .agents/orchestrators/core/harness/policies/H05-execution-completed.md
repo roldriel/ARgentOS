@@ -16,6 +16,7 @@ required_sections = [
   "Confidence"
 ]
 semantic_validation = true
+semantic_checks = ["execution_summary", "technical_practice_evidence"]
 +++
 
 

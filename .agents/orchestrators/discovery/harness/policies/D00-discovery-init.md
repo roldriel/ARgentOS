@@ -54,4 +54,4 @@ The Discovery Orchestrator must:
 
 1. Record the failure in `HARNESS_REPORT.md`.
 2. Return to `DISCOVERY_INIT` and re-run the initialization, or
-3. Transition to `NEEDS_CLARIFICATION` if the discovery request cannot be initialized without user input.
+3. End the run as `discovery:DISCOVERY_FAILED` and return control to the core Orchestrator if the discovery request cannot be initialized without user input; the core Orchestrator decides the `core:NEEDS_CLARIFICATION` transition.

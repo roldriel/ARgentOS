@@ -29,10 +29,10 @@ This artifact records the analysis of a verification or execution failure, the i
 
 ## Metadata
 
-```yaml
-id: ""
-created_at: ""
-status: ""
+```toml
+id = ""
+created_at = ""
+status = ""
 ```
 
 ---
@@ -41,9 +41,9 @@ status: ""
 
 Reference to the artifact that triggered recovery.
 
-```yaml
-failure_reference:
-  artifact: ""
+```toml
+[failure_reference]
+artifact = ""
 ```
 
 The referenced artifact is typically `VERIFICATION_REPORT.md` or `EXECUTION_SUMMARY.md`.
@@ -54,9 +54,9 @@ The referenced artifact is typically `VERIFICATION_REPORT.md` or `EXECUTION_SUMM
 
 Brief description of what failed and when.
 
-```yaml
-failure_summary:
-  description: ""
+```toml
+[failure_summary]
+description = ""
 ```
 
 ---
@@ -65,10 +65,10 @@ failure_summary:
 
 Classification of the failure cause.
 
-```yaml
-root_cause:
-  classification: ""
-  description: ""
+```toml
+[root_cause]
+classification = ""
+description = ""
 ```
 
 Possible values for `classification`:
@@ -87,9 +87,9 @@ UNKNOWN
 
 Detailed reasoning about why the failure occurred.
 
-```yaml
-analysis:
-  description: ""
+```toml
+[analysis]
+description = ""
 ```
 
 ---
@@ -98,10 +98,10 @@ analysis:
 
 Recommended next state and the reasoning behind it.
 
-```yaml
-corrective_action:
-  recommended_next_state: ""
-  reasoning: ""
+```toml
+[corrective_action]
+recommended_next_state = ""
+reasoning = ""
 ```
 
 Possible values for `recommended_next_state`:
@@ -117,9 +117,8 @@ NEEDS_CLARIFICATION
 
 Artifacts that were created or modified during recovery, if any.
 
-```yaml
-updated_artifacts:
-  - ""
+```toml
+updated_artifacts = [""]
 ```
 
 ---
@@ -128,10 +127,10 @@ updated_artifacts:
 
 Confidence level of the recovery analysis.
 
-```yaml
-confidence:
-  level: ""
-  explanation: ""
+```toml
+[confidence]
+level = ""
+explanation = ""
 ```
 
 Possible values:

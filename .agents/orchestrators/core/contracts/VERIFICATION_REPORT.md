@@ -31,10 +31,10 @@ This artifact does not contain new implementation. It only records the result of
 
 ## Metadata
 
-```yaml
-id: ""
-created_at: ""
-status: ""
+```toml
+id = ""
+created_at = ""
+status = ""
 ```
 
 ---
@@ -43,9 +43,9 @@ status: ""
 
 Reference to the task specification that defines the acceptance criteria.
 
-```yaml
-task_reference:
-  specification: ""
+```toml
+[task_reference]
+specification = ""
 ```
 
 ---
@@ -54,9 +54,9 @@ task_reference:
 
 Reference to the execution plan that was followed.
 
-```yaml
-plan_reference:
-  execution_plan: ""
+```toml
+[plan_reference]
+execution_plan = ""
 ```
 
 ---
@@ -65,9 +65,9 @@ plan_reference:
 
 Describe what was verified.
 
-```yaml
-objective:
-  description: ""
+```toml
+[objective]
+description = ""
 ```
 
 ---
@@ -76,11 +76,11 @@ objective:
 
 Evaluate each acceptance criterion defined in the task specification.
 
-```yaml
-acceptance_criteria:
-  - criterion: ""
-    result: ""
-    evidence: ""
+```toml
+[[acceptance_criteria]]
+criterion = ""
+result = ""
+evidence = ""
 ```
 
 Possible values for `result`:
@@ -97,11 +97,11 @@ PARTIAL
 
 Record the results of the validation strategy defined in the execution plan.
 
-```yaml
-test_results:
-  - test: ""
-    result: ""
-    details: ""
+```toml
+[[test_results]]
+test = ""
+result = ""
+details = ""
 ```
 
 Possible values for `result`:
@@ -118,10 +118,10 @@ SKIPPED
 
 List any failures, gaps, or unexpected behavior identified during verification.
 
-```yaml
-issues:
-  - description: ""
-    severity: ""
+```toml
+[[issues]]
+description = ""
+severity = ""
 ```
 
 Possible values for `severity`:
@@ -139,13 +139,13 @@ CRITICAL
 
 Declare whether the executed work stayed strictly within the assigned task scope.
 
-```yaml
-scope_compliance:
-  scope_respected: true
-  unplanned_changes: []
-  out_of_scope_issues: []
-  user_authorized_extra_work: false
-  notes: ""
+```toml
+[scope_compliance]
+scope_respected = true
+unplanned_changes = []
+out_of_scope_issues = []
+user_authorized_extra_work = false
+notes = ""
 ```
 
 Requirements:
@@ -162,10 +162,10 @@ Requirements:
 
 The final result of the verification.
 
-```yaml
-decision:
-  result: ""
-  reasoning: ""
+```toml
+[decision]
+result = ""
+reasoning = ""
 ```
 
 Possible values for `result`:
@@ -183,10 +183,10 @@ RECOVERY
 
 Confidence level of the verification result.
 
-```yaml
-confidence:
-  level: ""
-  explanation: ""
+```toml
+[confidence]
+level = ""
+explanation = ""
 ```
 
 Possible values:
@@ -203,63 +203,61 @@ HIGH
 
 Defines the allowed workflow transition.
 
-```yaml
-transition:
-  current_state: ""
-  next_state: ""
+```toml
+[transition]
+current_state = ""
+next_state = ""
 ```
 
 Example when successful:
 
-```yaml
-transition:
-  current_state: VERIFYING
-  next_state: COMPLETED
+```toml
+[transition]
+current_state = "VERIFYING"
+next_state = "COMPLETED"
 ```
 
 Example when failed:
 
-```yaml
-transition:
-  current_state: VERIFYING
-  next_state: RECOVERY
+```toml
+[transition]
+current_state = "VERIFYING"
+next_state = "RECOVERY"
 ```
 
 ---
 
-## Machine-readable YAML blocks
+## Machine-readable TOML blocks
 
-The following sections MUST contain a fenced `yaml` code block with the exact structure described below.
+The following sections MUST contain a fenced `toml` code block with the exact structure described below.
 
 ### `## Scope Compliance`
 
-```yaml
-scope_compliance:
-  scope_respected: true | false
-  unplanned_changes:
-    - "path/to/file"
-  out_of_scope_issues:
-    - "description"
-  user_authorized_extra_work: true | false
-  notes: "string"
+```toml
+[scope_compliance]
+scope_respected = true # or false
+unplanned_changes = ["path/to/file"]
+out_of_scope_issues = ["description"]
+user_authorized_extra_work = true # or false
+notes = "string"
 ```
 
 ### `## Final Decision`
 
-```yaml
-decision:
-  result: "COMPLETED" | "RECOVERY"
-  reasoning: "string"
+```toml
+[decision]
+result = "COMPLETED" # or "RECOVERY"
+reasoning = "string"
 ```
 
 ### `## Acceptance Criteria Evaluation`
 
-```yaml
-acceptance_criteria:
-  - criterion: "string"
-    result: "PASS" | "FAIL" | "PARTIAL"
-    evidence: "string"
-    action_plan: "string"  # required only when result is PARTIAL
+```toml
+[[acceptance_criteria]]
+criterion = "string"
+result = "PASS" # or "FAIL" or "PARTIAL"
+evidence = "string"
+action_plan = "string" # required only when result is PARTIAL
 ```
 
 ---

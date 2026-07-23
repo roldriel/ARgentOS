@@ -35,27 +35,24 @@ It must never be written inside `.project/knowledge/`.
 
 ## Structure
 
-```yaml
-metadata:
-  id: ""
-  created_at: ""
-  updated_at: ""
-  session: ""
+```toml
+constraints = [""]
+open_unknowns = [""]
 
-confirmed_intent:
-  summary: ""
-  reflected_in: ""
+[metadata]
+id = ""
+created_at = ""
+updated_at = ""
+session = ""
 
-clarifications:
-  - question: ""
-    answer: ""
-    source: ""
+[confirmed_intent]
+summary = ""
+reflected_in = ""
 
-constraints:
-  - ""
-
-open_unknowns:
-  - ""
+[[clarifications]]
+question = ""
+answer = ""
+source = ""
 ```
 
 ## Sections

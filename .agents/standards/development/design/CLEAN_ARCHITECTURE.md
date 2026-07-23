@@ -37,34 +37,38 @@ Apply this standard when:
 
 When `clean_architecture` is selected in `technical_approach.enabled`, the executor records evidence under `## Technical Practice Evidence` in `EXECUTION_SUMMARY.md`:
 
-```yaml
-technical_practice_evidence:
-  clean_architecture:
-    applied: true
-    layers_touched:
-      - layer: "entities"
-        files:
-          - "app/domain/user.py"
-      - layer: "use_cases"
-        files:
-          - "app/use_cases/register_user.py"
-      - layer: "interface_adapters"
-        files:
-          - "app/adapters/user_repository.py"
-      - layer: "frameworks_and_drivers"
-        files:
-          - "app/web/user_routes.py"
-          - "app/persistence/sqlalchemy_user_repository.py"
-    dependency_rule_violations_found: []
-    dependency_rule_violations_fixed: []
-    abstractions_introduced:
-      - name: "UserRepository"
-        location: "app/adapters/user_repository.py"
-        purpose: "Allow use cases to persist users without depending on SQLAlchemy."
-    rationale: "Isolated business rules so they can be unit-tested without a database."
+```toml
+[technical_practice_evidence]
+
+[technical_practice_evidence.clean_architecture]
+applied = true
+dependency_rule_violations_found = []
+dependency_rule_violations_fixed = []
+rationale = "Isolated business rules so they can be unit-tested without a database."
+
+[[technical_practice_evidence.clean_architecture.layers_touched]]
+layer = "entities"
+files = ["app/domain/user.py"]
+
+[[technical_practice_evidence.clean_architecture.layers_touched]]
+layer = "use_cases"
+files = ["app/use_cases/register_user.py"]
+
+[[technical_practice_evidence.clean_architecture.layers_touched]]
+layer = "interface_adapters"
+files = ["app/adapters/user_repository.py"]
+
+[[technical_practice_evidence.clean_architecture.layers_touched]]
+layer = "frameworks_and_drivers"
+files = ["app/web/user_routes.py", "app/persistence/sqlalchemy_user_repository.py"]
+
+[[technical_practice_evidence.clean_architecture.abstractions_introduced]]
+name = "UserRepository"
+location = "app/adapters/user_repository.py"
+purpose = "Allow use cases to persist users without depending on SQLAlchemy."
 ```
 
-If the practice was not applied, set `applied: false` and provide a `reason`.
+If the practice was not applied, set `applied = false` and provide a `reason`.
 
 ## Guidelines
 

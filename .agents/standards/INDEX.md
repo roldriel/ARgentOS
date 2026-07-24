@@ -56,6 +56,7 @@ Boolean flags default to `true` unless explicitly set otherwise in `.agents/feat
 
 - `quality/RUBRICS.md` — rubric evaluation format and scoring levels.
 - `quality/PREFLIGHT_CHECKLIST.md` — pre-flight self-checklist for workers.
+- `quality/CONFIDENCE.md` — general confidence model (HIGH/MEDIUM/LOW) with falsable level definitions and the anti-inflation rule, applied to verification reports, recovery analyses and KB recommendations.
 
 ## Context
 
@@ -63,6 +64,7 @@ Boolean flags default to `true` unless explicitly set otherwise in `.agents/feat
 - `context/PROJECT_ARTIFACTS.md` — standard for project-level context artifacts `project-map.md` and `technical-analysis.md`.
 - `context/ENVIRONMENT_PROBE.md` — rules for probing the execution environment (OS, shell, tools) before acting.
 - `context/USING_PATTERNS.md` — how workers consume the discovery knowledge base (detected environment and development patterns).
+- `context/KNOWLEDGE_CURATION.md` — anti-noise inclusion rules and `curation_status` lifecycle (`active`/`noisy`/`retired`) for KB entries under `.project/knowledge/entries/`.
 
 ## Testing
 

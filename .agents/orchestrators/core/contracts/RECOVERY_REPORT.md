@@ -125,7 +125,7 @@ updated_artifacts = [""]
 
 ## Confidence
 
-Confidence level of the recovery analysis.
+Confidence level of the recovery analysis, per `.agents/standards/quality/CONFIDENCE.md`. A root cause with `LOW` confidence SHOULD prefer the least invasive corrective action (`RETRY_WORKER` or `NEEDS_CLARIFICATION`) over structural changes.
 
 ```toml
 [confidence]

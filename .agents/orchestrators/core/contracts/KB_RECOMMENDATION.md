@@ -30,9 +30,9 @@ The `KB_RECOMMENDATION.md` artifact records which Knowledge Base entries the `co
 ## Required sections
 
 1. `## Discovery Objective` — what the discoverer was asked to find.
-2. `## Recommended Entries` — list of recommended KB entries with priority, sections to include, and reason.
+2. `## Recommended Entries` — list of recommended KB entries with priority, relevance confidence (`HIGH`/`MEDIUM`/`LOW` per `.agents/standards/quality/CONFIDENCE.md`), sections to include, and reason.
 3. `## Context Budget Recommendation` — recommended KB context budget in characters.
-4. `## Notes` — caveats or reasons to ignore recommendations.
+4. `## Notes` — caveats, reasons to ignore recommendations, curation actions (entries marked `noisy`/`retired` per `.agents/standards/context/KNOWLEDGE_CURATION.md`), and entries recommended with `LOW` relevance confidence.
 
 ## Optional embedded JSON
 
@@ -45,6 +45,7 @@ The report may include a machine-readable JSON block (for example, inside a fenc
     {
       "session_uuid": "string",
       "priority": 1,
+      "confidence": "HIGH",
       "include_sections": ["lessons_learned"],
       "reason": "string"
     }

@@ -181,7 +181,7 @@ RECOVERY
 
 ## Confidence
 
-Confidence level of the verification result.
+Confidence level of the verification result, per `.agents/standards/quality/CONFIDENCE.md`. A criterion marked `PASS` with `LOW` confidence does not close verification: the verifier MUST either gather the missing evidence or recommend `RECOVERY`.
 
 ```toml
 [confidence]

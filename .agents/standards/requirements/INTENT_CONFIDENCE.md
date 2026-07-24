@@ -88,3 +88,5 @@ Score: 0 → LOW.
 ## Relationship to other standards
 
 This standard supports `.agents/standards/requirements/NO_ASSUMPTIONS.md` by providing an objective basis for deciding when the agent's interpretation requires validation.
+
+It is also a specialization of `.agents/standards/quality/CONFIDENCE.md`: the numeric score defined here decides the next state (`CONFIRMING_INTENT` or not), while the resulting `HIGH`/`MEDIUM`/`LOW` label uses the levels and the anti-inflation rule of the general confidence model.

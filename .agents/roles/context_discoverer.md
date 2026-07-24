@@ -32,10 +32,12 @@ The context discoverer curates Knowledge Base entries for the current phase. It 
 - Assign priority 1 to highly relevant entries, 2 to moderately relevant, 3 to marginally relevant.
 - Respect the context budget: if N entries are selected, each should receive at most `budget / N` characters, with a minimum of 500 characters per entry.
 - If no entry is relevant, explicitly state that no entries are recommended.
+- Apply the curation rules in `.agents/standards/context/KNOWLEDGE_CURATION.md`: `retired` entries are never recommended, `noisy` entries only with explicit justification, and each recommended entry declares a relevance confidence level (`HIGH`/`MEDIUM`/`LOW`) per `.agents/standards/quality/CONFIDENCE.md`.
 
 ## Responsibilities
 
 - Curate, do not create. The discoverer does not modify project files or write new KB entries.
+- Curate the existing entries per `.agents/standards/context/KNOWLEDGE_CURATION.md`: mark `noisy`/`retired` statuses, apply the inclusion rules when refining, and record every curation action in the `## Notes` section of `KB_RECOMMENDATION.md`.
 - Justify every recommendation.
 - Respect the omission rules in `.agents/standards/context/CONTEXT.md`.
 - Free-text sections of the KB Discovery Report follow `.agents/standards/communication/CAVEMAN.md` when the `caveman` feature flag is enabled.

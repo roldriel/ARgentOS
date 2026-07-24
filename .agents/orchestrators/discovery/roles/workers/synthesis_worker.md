@@ -8,7 +8,7 @@ state: discovery:DISCOVERY_MERGE
 lifecycle: discovery
 actor: discovery_orchestrator
 input_artifacts: [worker_environment.json, worker_stack.json, worker_framework.json, worker_patterns.json, worker_business.json]
-output_artifacts: [summary.md, .discovery_manifest]
+output_artifacts: [executive_summary.md, .discovery_manifest]
 ---
 
 # Worker: synthesis_worker
@@ -31,7 +31,11 @@ point of the pipeline.
 
 ## Output
 
-- `summary.md`, written to `.project/knowledge/discovery/summary.md`.
+- `executive_summary.md`, written to
+  `.project/knowledge/discovery/executive_summary.md`, following the contract
+  `.agents/orchestrators/discovery/contracts/EXECUTIVE_SUMMARY.md`. It is the
+  canonical read-first entry of the KB: it synthesizes the other entries and
+  must not introduce facts not present in another KB entry.
 - `.discovery_manifest`, written to
   `.project/knowledge/discovery/.discovery_manifest`, following the contract
   `.agents/orchestrators/discovery/contracts/DISCOVERY_MANIFEST.md`.
@@ -44,8 +48,8 @@ point of the pipeline.
 2. Apply the KB merge rules:
    - If a new finding contradicts a previous one:
      - New `confidence: high` vs previous `confidence: low` → replace.
-     - Both `confidence: high` → report the conflict in `summary.md` and in the
-       entry's `## Notes`.
+     - Both `confidence: high` → report the conflict in
+       `executive_summary.md` and in the entry's `## Notes`.
      - Previous entry comes from a recent session → keep the previous one and
        mark the new finding as `confidence: low`.
    - Never delete an entry without leaving a trace in the manifest.
@@ -64,7 +68,7 @@ point of the pipeline.
 - Pure instruction text; model-agnostic; no Python assumptions.
 - Writes only to `.project/knowledge/discovery/`.
 - No unresolved conflicts may remain: every contradiction must be resolved by
-  the merge rules or explicitly reported in `summary.md` (validated by
+  the merge rules or explicitly reported in `executive_summary.md` (validated by
   `D01-discovery-output`).
 
 ## Retries

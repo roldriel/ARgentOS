@@ -67,10 +67,12 @@ def _fake_domain(tmp_path, triggers: list[str], **tree_kwargs) -> list:
     trees.mkdir(parents=True, exist_ok=True)
     for trigger in triggers:
         (policies / f"{trigger}-fake.md").write_text(
-            f"+++\ntrigger = \"{trigger}\"\n+++\n", encoding="utf-8"
+            f'+++\ntrigger = "{trigger}"\n+++\n', encoding="utf-8"
         )
         if tree_kwargs.get("write_trees", True):
-            _write_minimal_tree(trees, trigger, cycle=(trigger in tree_kwargs.get("cycle", ())))
+            _write_minimal_tree(
+                trees, trigger, cycle=(trigger in tree_kwargs.get("cycle", ()))
+            )
     return [("fake", policies, trees)]
 
 
@@ -80,7 +82,9 @@ def test_health_check_fails_on_invalid_toml(clean_env, monkeypatch, tmp_path):
     fake_trees = tmp_path / "decision_trees"
     policies.mkdir(parents=True)
     fake_trees.mkdir(parents=True)
-    (policies / "H01-fake.md").write_text('+++\ntrigger = "H01"\n+++\n', encoding="utf-8")
+    (policies / "H01-fake.md").write_text(
+        '+++\ntrigger = "H01"\n+++\n', encoding="utf-8"
+    )
     bad_toml = fake_trees / "H01_FAIL.toml"
     bad_toml.write_text("this is not valid toml [[", encoding="utf-8")
     monkeypatch.setattr(
@@ -176,7 +180,9 @@ def test_health_check_validates_discovery_trees(clean_env):
     result = health_check.run_health_check()
     assert result.result == "PASS"
     discovery_checks = [
-        c for c in result.checks if c["id"].startswith("decision_tree_structure_valid_D")
+        c
+        for c in result.checks
+        if c["id"].startswith("decision_tree_structure_valid_D")
     ]
     assert {c["id"] for c in discovery_checks} == {
         "decision_tree_structure_valid_D00_FAIL",

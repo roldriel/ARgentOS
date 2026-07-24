@@ -39,7 +39,12 @@ observable in the code.
 2. Detect style conventions, naming, imports, error handling, testing, logging
    and typing.
 3. Document exceptions to the detected conventions.
-4. Every pattern must include category, description, example, `source_files`,
+4. Ensure `development_patterns.md` covers the sections `## Testing`,
+   `## Logging and Errors` and `## Validation` explicitly.
+5. Add a `## Performance Invariants` section with performance budgets or
+   benchmarks that act as functional requirements, only when evidenced
+   (benchmark suites, documented guarantees).
+6. Every pattern must include category, description, example, `source_files`,
    `source_workers`, `source_sessions`, confidence and scope, as required by the
    contract.
 

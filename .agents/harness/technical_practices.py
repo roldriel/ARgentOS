@@ -27,9 +27,15 @@ TECHNICAL_PRACTICES: dict[str, tuple[str, Path]] = {
         "SCREAMING_ARCHITECTURE_RUBRIC",
         _DESIGN / "SCREAMING_ARCHITECTURE.md",
     ),
-    "clean_architecture": ("CLEAN_ARCHITECTURE_RUBRIC", _DESIGN / "CLEAN_ARCHITECTURE.md"),
+    "clean_architecture": (
+        "CLEAN_ARCHITECTURE_RUBRIC",
+        _DESIGN / "CLEAN_ARCHITECTURE.md",
+    ),
     "dry": ("DRY_RUBRIC", _DESIGN / "DRY.md"),
-    "layered_architecture": ("LAYERED_ARCHITECTURE_RUBRIC", _DESIGN / "LAYERED_ARCHITECTURE.md"),
+    "layered_architecture": (
+        "LAYERED_ARCHITECTURE_RUBRIC",
+        _DESIGN / "LAYERED_ARCHITECTURE.md",
+    ),
     "grasp": ("GRASP_RUBRIC", _DESIGN / "GRASP.md"),
     "ddd_tactical": ("DDD_TACTICAL_RUBRIC", _DESIGN / "DDD_TACTICAL.md"),
     "ddd_strategic": ("DDD_STRATEGIC_RUBRIC", _DESIGN / "DDD_STRATEGIC.md"),

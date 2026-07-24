@@ -21,9 +21,9 @@ _HARNESS_DIR = Path(__file__).resolve().parent
 if str(_HARNESS_DIR) not in sys.path:
     sys.path.insert(0, str(_HARNESS_DIR))
 
+import decision_tree_evaluator
 import feature_flags
 import technical_practices
-import decision_tree_evaluator
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 AGENTS_DIR = PROJECT_ROOT / ".agents"
@@ -373,7 +373,9 @@ def check_knowledge_base(checks: list[dict[str, Any]]) -> bool:
     return all_valid
 
 
-TECHNICAL_PRACTICE_STANDARDS: dict[str, Path] = technical_practices.TECHNICAL_PRACTICE_STANDARDS
+TECHNICAL_PRACTICE_STANDARDS: dict[str, Path] = (
+    technical_practices.TECHNICAL_PRACTICE_STANDARDS
+)
 
 
 def check_technical_practice_standards(checks: list[dict[str, Any]]) -> bool:

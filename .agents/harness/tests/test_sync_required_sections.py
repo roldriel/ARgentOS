@@ -24,7 +24,7 @@ def test_check_mode_detects_drift(tmp_path, monkeypatch):
     contracts.mkdir()
 
     (contracts / "WIDGET.md").write_text(
-        "+++\nartifact = \"WIDGET.md\"\n+++\n\n"
+        '+++\nartifact = "WIDGET.md"\n+++\n\n'
         "# Widget Contract\n\n## Purpose\n\nDoc.\n\n"
         "# Widget\n\n## Alpha\n\n## Beta\n",
         encoding="utf-8",
@@ -39,7 +39,9 @@ def test_check_mode_detects_drift(tmp_path, monkeypatch):
     )
 
     monkeypatch.setattr(sync, "POLICIES_DIRS", [policies])
-    monkeypatch.setattr(sync, "load_contract_map", lambda: {"WIDGET.md": contracts / "WIDGET.md"})
+    monkeypatch.setattr(
+        sync, "load_contract_map", lambda: {"WIDGET.md": contracts / "WIDGET.md"}
+    )
 
     assert sync.sync_policies(check=True) == 1
 
@@ -51,7 +53,7 @@ def test_sync_fixes_case_and_order(tmp_path, monkeypatch):
     contracts.mkdir()
 
     (contracts / "WIDGET.md").write_text(
-        "+++\nartifact = \"WIDGET.md\"\n+++\n\n"
+        '+++\nartifact = "WIDGET.md"\n+++\n\n'
         "# Widget Contract\n\n## Purpose\n\nDoc.\n\n"
         "# Widget\n\n## Alpha\n\n## Beta\n",
         encoding="utf-8",
@@ -67,7 +69,9 @@ def test_sync_fixes_case_and_order(tmp_path, monkeypatch):
     )
 
     monkeypatch.setattr(sync, "POLICIES_DIRS", [policies])
-    monkeypatch.setattr(sync, "load_contract_map", lambda: {"WIDGET.md": contracts / "WIDGET.md"})
+    monkeypatch.setattr(
+        sync, "load_contract_map", lambda: {"WIDGET.md": contracts / "WIDGET.md"}
+    )
 
     assert sync.sync_policies(check=False) == 0
     updated = policy.read_text(encoding="utf-8")

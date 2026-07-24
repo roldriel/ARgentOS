@@ -75,6 +75,8 @@ The stack could not be detected and the failure is unrecoverable.
    according to `.agents/orchestrators/discovery/contracts/INTER_WORKER_MESSAGE.md`.
 4. Write the knowledge-base entries `stack.md`, `dependencies.md`,
    `containers.md` and `database.md` under `.project/knowledge/discovery/`.
+   When the `project_shape` is `library` or `cli`, also write
+   `distribution.md`.
 
 ---
 
@@ -86,6 +88,7 @@ The stack could not be detected and the failure is unrecoverable.
 .project/knowledge/discovery/dependencies.md
 .project/knowledge/discovery/containers.md
 .project/knowledge/discovery/database.md
+.project/knowledge/discovery/distribution.md  (only for library/cli shapes)
 ```
 
 ---

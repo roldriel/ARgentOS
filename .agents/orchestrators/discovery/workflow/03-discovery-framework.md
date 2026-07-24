@@ -49,7 +49,9 @@ The Discovery Orchestrator enters this module when the invocation scope is
 .project/<session-uuid>/discovery/worker_stack.json
 ```
 
-plus the project configuration files referenced by the stack output.
+plus the `project_shape` recorded in `discovery_input.json` (it drives the
+content variant of `entrypoint.md` and `api.md`) and the project configuration
+files referenced by the stack output.
 
 ---
 
@@ -73,8 +75,8 @@ The framework could not be detected and the failure is unrecoverable.
 2. Detect the framework, the architecture and the configuration of the project.
 3. Write the intermediate output `.project/<session-uuid>/discovery/worker_framework.json`
    according to `.agents/orchestrators/discovery/contracts/INTER_WORKER_MESSAGE.md`.
-4. Write the knowledge-base entries `architecture.md` and `configuration.md`
-   under `.project/knowledge/discovery/`.
+4. Write the knowledge-base entries `architecture.md`, `configuration.md`,
+   `entrypoint.md` and `api.md` under `.project/knowledge/discovery/`.
 
 ---
 
@@ -84,6 +86,8 @@ The framework could not be detected and the failure is unrecoverable.
 .project/<session-uuid>/discovery/worker_framework.json
 .project/knowledge/discovery/architecture.md
 .project/knowledge/discovery/configuration.md
+.project/knowledge/discovery/entrypoint.md
+.project/knowledge/discovery/api.md
 ```
 
 ---

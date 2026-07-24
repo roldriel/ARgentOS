@@ -8,7 +8,7 @@ state: discovery:DISCOVERY_INIT
 lifecycle: discovery
 actor: discovery_orchestrator
 input_artifacts: []
-output_artifacts: [discovery_input.json, invalidation_report.json, KB_DISCOVERY_REPORT.md]
+output_artifacts: [discovery_input.json, invalidation_report.json, KB_DISCOVERY_REPORT.md, file_map.md]
 ---
 
 # Worker: init_worker
@@ -40,9 +40,14 @@ the remaining workers.
   `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_REPORT.md`. Written to
   the session artifact directory as `<order>-KB_DISCOVERY_REPORT.md`; validated
   by gate `D00-discovery-init`.
+- `file_map.md` — an annotated `path → responsibility` index of the main
+  folders and relevant files of the project, written to
+  `.project/knowledge/discovery/file_map.md` and following the base KB entry
+  contract `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md`.
+  It is NOT a full directory tree: only what an agent needs to navigate.
 
-Both are written to `.project/<session-uuid>/discovery/` following the
-intermediate-working-directory mechanism (Option A).
+The intermediate outputs are written to `.project/<session-uuid>/discovery/`
+following the intermediate-working-directory mechanism (Option A).
 
 ## Tasks
 
@@ -58,12 +63,33 @@ intermediate-working-directory mechanism (Option A).
 5. Prepare `discovery_input.json` for the workers selected by the scope,
    including `context_budget`, `sample_size` and the list of previous KB entries
    each worker must consider.
+6. Classify the project into a `project_shape` — one of `library`, `cli`,
+   `service`, `application`, `monorepo` or `unknown` — using deterministic
+   signals:
+   - Distributable package manifest without run scripts and with an empty
+     entry-point table → `library`.
+   - `console_scripts` entry points or a `bin/` directory → `cli`.
+   - A web framework in the dependencies → `service`.
+   - A `Dockerfile` plus a main entry → `application`.
+   - Multiple package manifests of the shapes above → `monorepo`.
+   Signal priority when several match: `cli` > `service` > `library` >
+   `application`; `monorepo` overrides every other shape when multiple
+   sub-projects exist. If no signal matches, the shape is `unknown`.
+7. Record the `project_shape` in the `discovery_input.json` payload so every
+   downstream worker knows which contract variant to produce, and in the
+   `[knowledge_base]` section of the manifest (via `synthesis_worker`).
+8. Build `file_map.md` during the sampling walk the worker already performs:
+   annotate each main folder and relevant file with its responsibility, so an
+   agent can navigate the project without exploratory search.
+9. Compute the `structure_hash` (hash of the directory tree shape) so the
+   manifest can invalidate `file_map.md` when the tree changes.
 
 ## Guardrails
 
 - Pure instruction text; model-agnostic; no Python assumptions.
 - Read-only with respect to the project: never modify project source files.
-- Writes only to `.project/<session-uuid>/discovery/`.
+- Writes only to `.project/<session-uuid>/discovery/` and to
+  `.project/knowledge/discovery/file_map.md`.
 - Never delete KB entries; invalidations are reported, not applied.
 
 ## Retries

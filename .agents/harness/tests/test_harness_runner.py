@@ -2537,7 +2537,7 @@ def test_h05_fails_missing_screaming_architecture_evidence(session):
         "screaming_architecture", "Group user-related code under app/users/."
     )
     summary = _execution_summary_with_evidence(
-        "[technical_practice_evidence]\n\n[technical_practice_evidence.screaming_architecture]\napplied = false\nreason = \"\"\n"
+        '[technical_practice_evidence]\n\n[technical_practice_evidence.screaming_architecture]\napplied = false\nreason = ""\n'
     )
     write_artifact(artifacts_dir, session_uuid, "TASK_SPECIFICATION.md", spec)
     write_artifact(artifacts_dir, session_uuid, "EXECUTION_SUMMARY.md", summary)
@@ -2635,7 +2635,7 @@ def test_h05_fails_missing_clean_architecture_evidence(session):
         "Introduce UserRepository port and move business rules to use cases.",
     )
     summary = _execution_summary_with_evidence(
-        "[technical_practice_evidence]\n\n[technical_practice_evidence.clean_architecture]\napplied = false\nreason = \"\"\n"
+        '[technical_practice_evidence]\n\n[technical_practice_evidence.clean_architecture]\napplied = false\nreason = ""\n'
     )
     write_artifact(artifacts_dir, session_uuid, "TASK_SPECIFICATION.md", spec)
     write_artifact(artifacts_dir, session_uuid, "EXECUTION_SUMMARY.md", summary)
@@ -2714,7 +2714,7 @@ def test_h05_fails_missing_dry_evidence(session):
     session_uuid, artifacts_dir = session
     spec = _task_spec_with_practice("dry", "Consolidate duplicated email validation.")
     summary = _execution_summary_with_evidence(
-        "[technical_practice_evidence]\n\n[technical_practice_evidence.dry]\napplied = false\nreason = \"\"\n"
+        '[technical_practice_evidence]\n\n[technical_practice_evidence.dry]\napplied = false\nreason = ""\n'
     )
     write_artifact(artifacts_dir, session_uuid, "TASK_SPECIFICATION.md", spec)
     write_artifact(artifacts_dir, session_uuid, "EXECUTION_SUMMARY.md", summary)
@@ -3293,7 +3293,9 @@ Complete.
 def test_update_report_warns_on_corrupt_entries(session):
     """A corrupt ENTRY marker must produce a stderr warning and be counted."""
     session_uuid, artifacts_dir = session
-    write_artifact(artifacts_dir, session_uuid, "TASK_SPECIFICATION.md", VALID_TASK_SPEC)
+    write_artifact(
+        artifacts_dir, session_uuid, "TASK_SPECIFICATION.md", VALID_TASK_SPEC
+    )
 
     report = artifacts_dir / session_uuid / "HARNESS_REPORT.md"
     report.write_text(

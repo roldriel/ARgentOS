@@ -107,13 +107,13 @@ referenced as `discovery:DISCOVERY_*`. The full state machine is defined by
 
 | Worker | Responsibility | Input | Output |
 |--------|----------------|-------|--------|
-| `init_worker` | Read previous KB and session artifacts, compute hash-based invalidations, prepare input. | `project_root`, `scope`, `previous_kb`, `session_artifacts` | `discovery_input.json` + `invalidation_report.json` |
+| `init_worker` | Read previous KB and session artifacts, compute hash-based invalidations, classify the `project_shape`, prepare input. | `project_root`, `scope`, `previous_kb`, `session_artifacts` | `discovery_input.json` + `invalidation_report.json` + `file_map.md` |
 | `environment_worker` | Detect the execution environment. | `discovery_input.json` | `environment.md` |
-| `stack_worker` | Detect languages, dependencies, containers, databases. | `discovery_input.json` | `stack.md`, `dependencies.md`, `containers.md`, `database.md` |
-| `framework_worker` | Detect framework architecture and configuration. | output of `stack_worker` | `architecture.md`, `configuration.md` |
+| `stack_worker` | Detect languages, dependencies, containers, databases. | `discovery_input.json` | `stack.md`, `dependencies.md`, `containers.md`, `database.md`, `distribution.md` (library/cli only) |
+| `framework_worker` | Detect framework architecture and configuration. | output of `stack_worker` | `architecture.md`, `configuration.md`, `entrypoint.md`, `api.md` |
 | `patterns_worker` | Detect code and style patterns. | `discovery_input.json` + code sample | `development_patterns.md` |
-| `business_worker` | Detect business rules, flows, technical debt, known errors. | `discovery_input.json`, README, service code, tests | `business_rules.md`, `project_flow.md`, `technical_debt.md`, `known_errors.md` |
-| `synthesis_worker` | Merge partial outputs, resolve conflicts, write manifest. | partial outputs + previous KB + session artifacts | `summary.md`, `.discovery_manifest` + consolidated KB entries |
+| `business_worker` | Detect business rules, flows, technical debt, known errors. | `discovery_input.json`, README, service code, tests | `business_rules.md`, `project_flow.md`, `technical_debt.md`, `known_errors.md`, `glossary.md` |
+| `synthesis_worker` | Merge partial outputs, resolve conflicts, write manifest. | partial outputs + previous KB + session artifacts | `executive_summary.md`, `.discovery_manifest` + consolidated KB entries |
 
 Worker role files live in `.agents/orchestrators/discovery/roles/workers/`.
 

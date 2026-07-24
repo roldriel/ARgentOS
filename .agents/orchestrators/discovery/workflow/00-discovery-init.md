@@ -7,7 +7,7 @@ lifecycle: discovery
 previous_states: [discovery:DISCOVERY_FAILED]
 next_states: [discovery:DISCOVERY_RUNNING, discovery:DISCOVERY_FAILED]
 input_artifacts: []
-output_artifacts: [discovery_input.json, invalidation_report.json, KB_DISCOVERY_REPORT.md]
+output_artifacts: [discovery_input.json, invalidation_report.json, KB_DISCOVERY_REPORT.md, file_map.md]
 harness: [D00-discovery-init]
 actor: discovery_orchestrator
 profile: init_worker
@@ -62,8 +62,14 @@ The discovery run cannot enter `core:NEEDS_CLARIFICATION` directly: the Discover
 # Procedure
 
 1. Verify the discovery request scope and required inputs.
-2. Produce the discovery report artifact according to `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_REPORT.md`.
-3. Evaluate harness trigger `D00` (`.agents/orchestrators/discovery/harness/policies/D00-discovery-init.md`) before leaving `DISCOVERY_INIT`.
+2. Classify the `project_shape` (`library`, `cli`, `service`, `application`,
+   `monorepo` or `unknown`) and record it in `discovery_input.json` for the
+   downstream workers.
+3. Produce the discovery report artifact according to `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_REPORT.md`.
+4. Produce the annotated project map `file_map.md` under
+   `.project/knowledge/discovery/` and the `structure_hash` for manifest
+   invalidation.
+5. Evaluate harness trigger `D00` (`.agents/orchestrators/discovery/harness/policies/D00-discovery-init.md`) before leaving `DISCOVERY_INIT`.
 
 ---
 

@@ -22,7 +22,6 @@ def parse_front_matter(content: str) -> dict[str, Any]:
     return tomllib.loads(match.group(1))
 
 
-
 def find_section_headings(content: str) -> set[str]:
     """Find all Markdown ## headings in the content."""
     headings: set[str] = set()
@@ -58,4 +57,3 @@ def extract_toml_block(content: str, section_name: str) -> dict[str, Any] | None
         return tomllib.loads(match.group(1))
     except tomllib.TOMLDecodeError:
         return None
-

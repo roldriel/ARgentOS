@@ -13,7 +13,13 @@ import pytest
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 RUNNER_PATH = PROJECT_ROOT / ".agents" / "harness" / "runner.py"
 
-from feature_flags import DEFAULTS, FEATURES_TOML, INT_SETTINGS, get_setting, load_features
+from feature_flags import (
+    DEFAULTS,
+    FEATURES_TOML,
+    INT_SETTINGS,
+    get_setting,
+    load_features,
+)
 
 
 def run_features_cmd(env: dict[str, str] | None = None) -> tuple[int, dict]:
@@ -120,7 +126,7 @@ def test_discovery_settings_invalid_env_override(clean_env, monkeypatch):
 def test_unknown_toml_keys_warn(clean_env, tmp_path):
     """Unknown keys in [features] must produce a warning, not silent ignore."""
     toml = tmp_path / "features.toml"
-    toml.write_text('[features]\nrubrics = false\nmade_up_flag = true\n')
+    toml.write_text("[features]\nrubrics = false\nmade_up_flag = true\n")
     with pytest.warns(UserWarning, match="Unknown feature flag 'made_up_flag'"):
         flags = load_features(toml)
     assert flags["rubrics"] is False
@@ -130,9 +136,9 @@ def test_unknown_toml_keys_warn(clean_env, tmp_path):
 def test_registered_keys_do_not_warn(clean_env, tmp_path, recwarn):
     toml = tmp_path / "features.toml"
     toml.write_text(
-        '[features]\nllm_discovery = true\ndiscovery_orchestrator = false\n'
-        'discovery_sample_size = 5\ndiscovery_environment_ttl_hours = 1\n'
-        'discovery_project_ttl_hours = 2\n'
+        "[features]\nllm_discovery = true\ndiscovery_orchestrator = false\n"
+        "discovery_sample_size = 5\ndiscovery_environment_ttl_hours = 1\n"
+        "discovery_project_ttl_hours = 2\n"
     )
     load_features(toml)
     assert [w for w in recwarn.list if "Unknown feature flag" in str(w.message)] == []

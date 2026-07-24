@@ -80,8 +80,9 @@ The merge could not be completed and the failure is unrecoverable.
    `CONTEXT_ARTIFACT.md`, `EXECUTION_SUMMARY.md`, `RECOVERY_REPORT.md`,
    `VERIFICATION_REPORT.md`).
 4. Mark invalidated entries as `status: stale`; never delete without a trace.
-5. Write `summary.md`, `.discovery_manifest` and the consolidated KB entries
-   under `.project/knowledge/discovery/`, according to
+5. Write `executive_summary.md`, `.discovery_manifest` and the consolidated KB
+   entries under `.project/knowledge/discovery/`, according to
+   `.agents/orchestrators/discovery/contracts/EXECUTIVE_SUMMARY.md` and
    `.agents/orchestrators/discovery/contracts/DISCOVERY_MANIFEST.md`.
 
 ---
@@ -89,7 +90,7 @@ The merge could not be completed and the failure is unrecoverable.
 # Output Artifacts
 
 ```text
-.project/knowledge/discovery/summary.md
+.project/knowledge/discovery/executive_summary.md
 .project/knowledge/discovery/.discovery_manifest
 ```
 

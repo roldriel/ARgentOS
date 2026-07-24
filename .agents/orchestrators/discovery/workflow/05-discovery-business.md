@@ -77,7 +77,7 @@ unrecoverable.
 3. Write the intermediate output `.project/<session-uuid>/discovery/worker_business.json`
    according to `.agents/orchestrators/discovery/contracts/INTER_WORKER_MESSAGE.md`.
 4. Write the knowledge-base entries `business_rules.md`, `project_flow.md`,
-   `technical_debt.md` and `known_errors.md` under
+   `technical_debt.md`, `known_errors.md` and `glossary.md` under
    `.project/knowledge/discovery/`.
 
 ---
@@ -90,6 +90,7 @@ unrecoverable.
 .project/knowledge/discovery/project_flow.md
 .project/knowledge/discovery/technical_debt.md
 .project/knowledge/discovery/known_errors.md
+.project/knowledge/discovery/glossary.md
 ```
 
 ---

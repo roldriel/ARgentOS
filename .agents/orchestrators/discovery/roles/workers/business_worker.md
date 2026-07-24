@@ -8,7 +8,7 @@ state: discovery:DISCOVERY_BUSINESS
 lifecycle: discovery
 actor: discovery_orchestrator
 input_artifacts: [discovery_input.json]
-output_artifacts: [business_rules.md, project_flow.md, technical_debt.md, known_errors.md]
+output_artifacts: [business_rules.md, project_flow.md, technical_debt.md, known_errors.md, glossary.md]
 ---
 
 # Worker: business_worker
@@ -28,8 +28,8 @@ project.
 ## Output
 
 - `business_rules.md`, `project_flow.md`, `technical_debt.md`,
-  `known_errors.md`, written to `.project/knowledge/discovery/`, each following
-  the base KB entry contract
+  `known_errors.md`, `glossary.md`, written to
+  `.project/knowledge/discovery/`, each following the base KB entry contract
   `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md`.
 - A `partial_output` message (`INTER_WORKER_MESSAGE` contract, provenance
   mandatory, compact tag format) written to
@@ -41,7 +41,11 @@ project.
 2. Identify the business flows.
 3. Detect technical debt and known errors (comments, `TODO`, `FIXME`,
    `RECOVERY_REPORT.md`).
-4. Record provenance in every entry.
+4. Write `glossary.md`: domain terms with their definition and the source file
+   evidencing each term.
+5. Ensure `technical_debt.md` includes a `## Top Risks` section: technical debt
+   plus known errors ranked by impact.
+6. Record provenance in every entry.
 
 ## Sampling
 

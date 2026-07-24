@@ -74,6 +74,25 @@ it only validates the per-task `KB_RECOMMENDATION.md` artifact in
    contains the required fields and sections of its contract
    (`.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md` and the
    per-entry contracts), and the manifest lists every published entry.
+9. **New entries present:** `executive_summary.md`, `file_map.md`,
+   `entrypoint.md`, `api.md` and `glossary.md` exist and follow their
+   contracts; `executive_summary.md` declares the `project_shape` in its first
+   line, matching the manifest.
+10. **Distribution rule:** `distribution.md` is present when the declared
+    `project_shape` is `library` or `cli`; it may be legitimately absent for
+    any other shape.
+11. **API surface matches shape:** the content of `api.md` matches the
+    `project_shape` declared in the manifest (variant rules of
+    `.agents/orchestrators/discovery/contracts/API_SURFACE.md`).
+12. **Required sections:** `architecture.md` contains
+    `## Module Responsibilities`, `## Strong Couplings`, `## Security` and
+    `## Extension Points`; `configuration.md` contains
+    `## Run, Build and Release`; `database.md` contains `## Main Models`;
+    `dependencies.md` contains `## Internal Dependencies`; `stack.md` contains
+    `## Compatibility Constraints`; `development_patterns.md` covers
+    `## Testing`, `## Logging and Errors` and `## Validation`;
+    `technical_debt.md` contains `## Top Risks`. `## Performance Invariants`
+    is required only when evidenced.
 
 ## Rejection of Invented Outputs
 

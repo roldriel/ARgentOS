@@ -40,12 +40,14 @@ TOML.
 - `role_version`: string
 - `task_scope`: string
 - `project_root`: string
+- `project_shape`: string; one of `library`, `cli`, `service`, `application`, `monorepo` or `unknown` (classified by `init_worker`)
 
 ### `[hashes]`
 
 - `config_files_hash`: string
 - `sample_files_hash`: string
 - `environment_hash`: string
+- `structure_hash`: string (hash of the directory tree shape; invalidates `file_map.md`)
 
 ### `[entries]`
 
@@ -73,14 +75,22 @@ ttl_hours = 24
 role_version = "discovery_orchestrator:v1"
 task_scope = "full"
 project_root = "/home/user/project"
+project_shape = "library"
 
 [hashes]
 config_files_hash = "sha256:abc123..."
 sample_files_hash = "sha256:def456..."
 environment_hash = "sha256:ghi789..."
+structure_hash = "sha256:jkl012..."
 
 [entries]
 active = [
+  "executive_summary.md",
+  "entrypoint.md",
+  "file_map.md",
+  "glossary.md",
+  "api.md",
+  "distribution.md",
   "stack.md",
   "dependencies.md",
   "environment.md",

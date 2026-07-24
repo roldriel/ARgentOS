@@ -101,6 +101,7 @@ for the workers.
 .project/<session-uuid>/discovery/discovery_input.json
 .project/<session-uuid>/discovery/invalidation_report.json
 .project/<session-uuid>/<iteration>/<order>-KB_DISCOVERY_REPORT.md
+.project/knowledge/discovery/file_map.md
 ```
 
 ### Harness
@@ -234,6 +235,7 @@ Detect the technology stack: languages, dependencies, containers, databases.
 .project/knowledge/discovery/dependencies.md
 .project/knowledge/discovery/containers.md
 .project/knowledge/discovery/database.md
+.project/knowledge/discovery/distribution.md  (only for library/cli project shapes)
 ```
 
 ### Allowed Transitions
@@ -279,6 +281,8 @@ Detect the framework architecture and configuration of the project.
 .project/<session-uuid>/discovery/worker_framework.json
 .project/knowledge/discovery/architecture.md
 .project/knowledge/discovery/configuration.md
+.project/knowledge/discovery/entrypoint.md
+.project/knowledge/discovery/api.md
 ```
 
 ### Allowed Transitions
@@ -374,6 +378,7 @@ plus the README, service code and tests selected by `init_worker`.
 .project/knowledge/discovery/project_flow.md
 .project/knowledge/discovery/technical_debt.md
 .project/knowledge/discovery/known_errors.md
+.project/knowledge/discovery/glossary.md
 ```
 
 ### Allowed Transitions
@@ -426,7 +431,7 @@ plus the previous KB and the session artifacts.
 ### Required Output Artifacts
 
 ```text
-.project/knowledge/discovery/summary.md
+.project/knowledge/discovery/executive_summary.md
 .project/knowledge/discovery/.discovery_manifest
 ```
 

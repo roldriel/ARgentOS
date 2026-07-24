@@ -39,4 +39,3 @@ def load_policy(trigger: str) -> dict[str, Any]:
     meta = runner_markdown.parse_front_matter(content)
     meta["_source"] = str(policy_path)
     return meta
-

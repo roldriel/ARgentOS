@@ -970,6 +970,42 @@ entities:
       - discovery:DISCOVERY_MERGE
     contract: .agents/orchestrators/discovery/contracts/ENVIRONMENT_DISCOVERY.md
 
+  EXECUTIVE_SUMMARY.md:
+    kind: artifact
+    domain: discovery
+    lifecycle: discovery
+    tag: knowledge
+    description: Canonical read-first knowledge-base entry that synthesizes the discovery KB.
+    produced_by:
+      - discovery:DISCOVERY_MERGE
+    consumed_by:
+      - core:GATHERING_CONTEXT
+    contract: .agents/orchestrators/discovery/contracts/EXECUTIVE_SUMMARY.md
+
+  API_SURFACE.md:
+    kind: artifact
+    domain: discovery
+    lifecycle: discovery
+    tag: knowledge
+    description: Knowledge-base entry documenting the contract surface the project exposes, parameterized by project_shape.
+    produced_by:
+      - discovery:DISCOVERY_FRAMEWORK
+    consumed_by:
+      - core:GATHERING_CONTEXT
+    contract: .agents/orchestrators/discovery/contracts/API_SURFACE.md
+
+  file_map.md:
+    kind: artifact
+    domain: discovery
+    lifecycle: discovery
+    tag: knowledge
+    description: Knowledge-base entry mapping main folders and relevant files to their responsibilities.
+    produced_by:
+      - discovery:DISCOVERY_INIT
+    consumed_by:
+      - core:GATHERING_CONTEXT
+    contract: .agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md
+
   INTER_WORKER_MESSAGE.md:
     kind: artifact
     domain: discovery
@@ -1846,6 +1882,7 @@ entities:
       - discovery_input.json
       - invalidation_report.json
       - KB_DISCOVERY_REPORT.md
+      - file_map.md
     harness:
       - D00-discovery-init
     actor: discovery_orchestrator
@@ -2278,6 +2315,28 @@ entities:
     consumed_by:
       - discovery:DISCOVERY_MERGE
     file: .agents/orchestrators/discovery/contracts/ENVIRONMENT_DISCOVERY.md
+
+  contract:EXECUTIVE_SUMMARY.md:
+    kind: contract
+    domain: discovery
+    artifact: EXECUTIVE_SUMMARY.md
+    lifecycle: discovery
+    produced_by:
+      - discovery:DISCOVERY_MERGE
+    consumed_by:
+      - core:GATHERING_CONTEXT
+    file: .agents/orchestrators/discovery/contracts/EXECUTIVE_SUMMARY.md
+
+  contract:API_SURFACE.md:
+    kind: contract
+    domain: discovery
+    artifact: API_SURFACE.md
+    lifecycle: discovery
+    produced_by:
+      - discovery:DISCOVERY_FRAMEWORK
+    consumed_by:
+      - core:GATHERING_CONTEXT
+    file: .agents/orchestrators/discovery/contracts/API_SURFACE.md
 
   contract:INTER_WORKER_MESSAGE.md:
     kind: contract

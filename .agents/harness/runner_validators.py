@@ -16,11 +16,10 @@ from typing import Any
 
 import feature_flags
 import technical_practices
-
 from runner_artifacts import artifact_path, report_path
 from runner_markdown import extract_section, extract_toml_block, find_section_headings
-from runner_policies import load_policy
 from runner_models import CheckResult, HarnessResult
+from runner_policies import load_policy
 
 
 def validate_h07_scope_compliance(content: str) -> list[CheckResult]:
@@ -536,7 +535,9 @@ BASE_RUBRICS: set[str] = {
     "VERIFICATION_REPORT_RUBRIC",
 }
 
-TECHNICAL_PRACTICE_RUBRIC_MAP: dict[str, str] = technical_practices.TECHNICAL_PRACTICE_RUBRIC_MAP
+TECHNICAL_PRACTICE_RUBRIC_MAP: dict[str, str] = (
+    technical_practices.TECHNICAL_PRACTICE_RUBRIC_MAP
+)
 
 
 def expected_rubrics_for_session(session_uuid: str, iteration: str | None) -> set[str]:

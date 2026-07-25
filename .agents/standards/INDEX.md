@@ -95,6 +95,7 @@ Boolean flags default to `true` unless explicitly set otherwise in `.agents/feat
 ## Orchestration
 
 - `orchestration/ORCHESTRATION_GUIDE.md` — decision procedure for selecting worker profiles and delegation payloads.
+- `orchestration/SKILLS.md` — skill mechanism: activation (table + judgment), two-level locations and precedence, validation, authority hierarchy, and coexistence rules. Skill format contract: `.agents/skills/README.md`.
 - `orchestration/README.md` — overview of orchestration standards.
 
 ### Worker profiles

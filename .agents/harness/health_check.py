@@ -23,6 +23,7 @@ if str(_HARNESS_DIR) not in sys.path:
 
 import decision_tree_evaluator
 import feature_flags
+import skill_validation
 import technical_practices
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -373,6 +374,47 @@ def check_knowledge_base(checks: list[dict[str, Any]]) -> bool:
     return all_valid
 
 
+def check_project_skills(checks: list[dict[str, Any]]) -> bool:
+    """Validate .project/skills/ structurally when the folder exists.
+
+    Non-blocking: an invalid project skill produces a WARNING entry in the
+    health report and is excluded from activation for that session, but it
+    never fails the health check. Reuses the same structural validation as
+    the protocol-level test (skill_validation).
+    """
+    skills_dir = PROJECT_DIR / "skills"
+    if not skills_dir.is_dir():
+        _check(
+            checks,
+            "project_skills_dir",
+            True,
+            "No .project/skills/ directory; skipping project skill validation",
+        )
+        return True
+
+    for skill_dir in skill_validation.iter_skill_dirs(skills_dir):
+        problems = skill_validation.validate_skill(skill_dir)
+        if problems:
+            checks.append(
+                {
+                    "id": f"project_skill_{skill_dir.name}",
+                    "result": "WARNING",
+                    "evidence": (
+                        f"Invalid project skill '{skill_dir.name}' excluded for "
+                        f"this session: {'; '.join(problems)}"
+                    ),
+                }
+            )
+        else:
+            _check(
+                checks,
+                f"project_skill_{skill_dir.name}",
+                True,
+                f"Valid project skill: {skill_dir.name}",
+            )
+    return True
+
+
 TECHNICAL_PRACTICE_STANDARDS: dict[str, Path] = (
     technical_practices.TECHNICAL_PRACTICE_STANDARDS
 )
@@ -456,6 +498,7 @@ def run_health_check() -> HealthCheckResult:
         ok_rubrics = check_rubrics(checks)
         ok_kb = check_knowledge_base(checks)
         ok_technical_practices = check_technical_practice_standards(checks)
+        ok_project_skills = check_project_skills(checks)
 
         passed = (
             ok_dirs
@@ -465,6 +508,7 @@ def run_health_check() -> HealthCheckResult:
             and ok_rubrics
             and ok_kb
             and ok_technical_practices
+            and ok_project_skills
         )
         result = HealthCheckResult(
             result="PASS" if passed else "FAIL",

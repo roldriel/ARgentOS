@@ -228,6 +228,69 @@ def test_health_check_ttl_env_override(clean_env, monkeypatch):
     assert feature_flags.health_check_ttl_hours() == 12
 
 
+def _write_project_skill(
+    skills_root: Path, name: str, front_matter: str, body: str = ""
+) -> Path:
+    skill_dir = skills_root / name
+    skill_dir.mkdir(parents=True)
+    (skill_dir / "SKILL.md").write_text(
+        f"---\n{front_matter}---\n{body}", encoding="utf-8"
+    )
+    return skill_dir
+
+
+def test_project_skills_skipped_when_dir_missing(clean_env, monkeypatch, tmp_path):
+    monkeypatch.setattr(health_check, "PROJECT_DIR", tmp_path / ".project")
+    result = health_check.run_health_check()
+    assert result.result == "PASS"
+    skip = [c for c in result.checks if c["id"] == "project_skills_dir"]
+    assert len(skip) == 1 and "skipping" in skip[0]["evidence"]
+
+
+def test_project_skills_valid_skill_passes(clean_env, monkeypatch, tmp_path):
+    project_dir = tmp_path / ".project"
+    monkeypatch.setattr(health_check, "PROJECT_DIR", project_dir)
+    _write_project_skill(
+        project_dir / "skills", "demo", "name: demo\ndescription: Does something.\n"
+    )
+    result = health_check.run_health_check()
+    assert result.result == "PASS"
+    entry = [c for c in result.checks if c["id"] == "project_skill_demo"]
+    assert len(entry) == 1 and entry[0]["result"] == "PASS"
+
+
+def test_project_skills_invalid_skill_warns_without_failing(
+    clean_env, monkeypatch, tmp_path
+):
+    project_dir = tmp_path / ".project"
+    monkeypatch.setattr(health_check, "PROJECT_DIR", project_dir)
+    _write_project_skill(project_dir / "skills", "demo", "name: demo\n")
+    result = health_check.run_health_check()
+    assert result.result == "PASS"
+    entry = [c for c in result.checks if c["id"] == "project_skill_demo"]
+    assert len(entry) == 1
+    assert entry[0]["result"] == "WARNING"
+    assert "excluded" in entry[0]["evidence"]
+    assert "description" in entry[0]["evidence"]
+
+
+def test_project_skills_missing_reference_warns(clean_env, monkeypatch, tmp_path):
+    project_dir = tmp_path / ".project"
+    monkeypatch.setattr(health_check, "PROJECT_DIR", project_dir)
+    _write_project_skill(
+        project_dir / "skills",
+        "demo",
+        "name: demo\ndescription: Does something.\n",
+        "Read references/missing.md for details.\n",
+    )
+    result = health_check.run_health_check()
+    assert result.result == "PASS"
+    entry = [c for c in result.checks if c["id"] == "project_skill_demo"]
+    assert len(entry) == 1
+    assert entry[0]["result"] == "WARNING"
+    assert "references/missing.md" in entry[0]["evidence"]
+
+
 def test_should_run_health_check_uses_configured_ttl(clean_env, monkeypatch):
     """Without an explicit ttl_hours argument, the configured TTL applies."""
     three_hours_ago = datetime.now(timezone.utc) - timedelta(hours=3)

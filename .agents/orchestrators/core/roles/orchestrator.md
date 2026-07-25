@@ -203,6 +203,7 @@ The decision and the received status are recorded in `SESSION_LOG.md`.
   - Relevant harness policy.
   - `technical_approach` from `TASK_SPECIFICATION.md` when any technical-practice feature flag is enabled (see `.agents/standards/INDEX.md` for the catalog).
   - Communication style (`caveman` level: `lite`, `full`, or `ultra`) when the `caveman` feature flag is enabled.
+  - `skills: [...]` when skill selection (section 5.2) activates one or more skills.
 - When the discovery KB exists, delegations to execution workers (phase `06-execute.md`) MUST include references to `.project/knowledge/discovery/environment.md` and `.project/knowledge/discovery/development_patterns.md`, so execution respects the detected environment and development patterns.
 - The worker executes exactly one phase, returns the output artifact, and terminates.
 
@@ -219,6 +220,15 @@ The Orchestrator MUST:
 - Record the selected profile and the rationale in `.project/<session-uuid>/SESSION_LOG.md`.
 
 The delegation payload MUST still comply with `.agents/delegation/WORKER_DELEGATION_CONTRACT.md` in all other fields.
+
+### 5.2 Skill Selection
+
+During `ANALYZING_TASK`/`PLANNING`, the Orchestrator selects which skills (if any) each delegation activates, following `.agents/standards/orchestration/SKILLS.md`:
+
+- Consult the activation table in `.agents/skills/INDEX.md` (workflow phase + selected profile → skills).
+- The Orchestrator MAY activate a skill outside the table when the skill's `description` front-matter field justifies it; every such activation and its reason MUST be recorded in `SESSION_LOG.md`.
+- Pass the selected skills in the optional `skills: [...]` field of the delegation payload.
+- Project skills flagged as invalid by the health check are excluded from activation for that session.
 
 ### 6. Decision Making
 

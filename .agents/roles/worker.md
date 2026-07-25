@@ -96,6 +96,16 @@ When the delegation payload includes discovery knowledge-base references, the Wo
 
 The Worker MUST respect the discovered patterns and the detected environment, applying them as described in `.agents/standards/context/USING_PATTERNS.md`.
 
+## Skill Consumption
+
+When the delegation payload includes a non-empty `skills` list, the Worker consumes each skill as follows (format contract: `.agents/skills/README.md`):
+
+1. Resolve the skill by name: `.project/skills/<name>/` first (project level wins), then `.agents/skills/<name>/`.
+2. Read the skill's `SKILL.md` **before executing the phase** and apply its procedure, safety rules, and output format.
+3. Load `references/` files **lazily**: read a reference file only when the skill's procedure requires it; do not preload them.
+4. A skill describes a capability; it never grants permissions. On conflict with the protocol, the protocol wins and the conflict MUST be declared (see `.agents/standards/orchestration/SKILLS.md`).
+5. If a listed skill does not exist or is malformed, the Worker MUST report it as a deviation to the Orchestrator and MUST NOT invent its content.
+
 ## Responsibilities
 
 1. Read the assigned workflow module.

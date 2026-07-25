@@ -55,6 +55,36 @@ Example:
 
 `.project/` is reserved for the agent protocol's own session artifacts and iteration folders. It MUST NOT be used for user-requested project deliverables (e.g., new endpoints, schemas, models, or business tests). Those files MUST be written to their normal locations within the project structure.
 
+## Persistent project state
+
+Not everything under `.project/` is ephemeral. The Artifact Safety Rule above applies unchanged to **session artifacts**: content generated during a session, which MUST live inside `.project/<session-uuid>/<iteration>/`. Alongside them, `.project/` MAY hold **persistent state**: content that survives across sessions and is not tied to any session UUID.
+
+Persistent state directories:
+
+- `.project/knowledge/` — the knowledge base (entries, discovery reports) accumulated across sessions.
+- `.project/skills/` — project-level skills (see `.agents/standards/orchestration/SKILLS.md`); a skill is not a session artifact.
+
+Rules:
+
+- Session artifacts MUST NOT be written to persistent state directories, and persistent state MUST NOT be placed inside `<session-uuid>/` folders.
+- Persistent state follows its own contracts (knowledge-base contracts, `.agents/skills/README.md`), not the `<order>-ARTIFACT_NAME.md` naming convention.
+- `.project/skills/` carries an in-situ `README.md` so any agent discovering the folder finds the format instructions there.
+
+## Skill coexistence
+
+External user skills (installed in the user's CLI) are injected by the CLI itself; the protocol cannot pause them technically. The rules are therefore normative. Key distinction: **tool vs. rule**.
+
+- External skills function as **tools**: a worker may use them within its phase if their effect stays inside the protocol's boundaries.
+- They NEVER function as **rules**: if an external skill defines format, conduct, or flow that contradicts the protocol, the protocol wins.
+
+Three collision risks and their rules:
+
+1. **Conduct collision** (e.g., a user communication-style skill vs. `.agents/standards/communication/CAVEMAN.md` + flag): the protocol standard wins in everything the protocol produces. Direct user-agent chat outside artifacts follows the user's preferences.
+2. **Effect collision** (a skill that writes outside the allowed paths, e.g., a memory in `~/.agents/`): forbidden during ARgentOS sessions; protocol memory lives in `.project/`.
+3. **Traceability collision** (invisible use of an external skill): the use MUST be recorded in `EXECUTION_SUMMARY.md` or `SESSION_LOG.md`.
+
+No blacklists, no detection: that would fake a control the protocol does not have. `.agents/standards/conduct/ANTI_CIRCUMVENTION.md` already covers abuse at the conduct level. The full authority hierarchy is defined in `.agents/standards/orchestration/SKILLS.md`.
+
 ## Protocol immutability
 
 `.agents/` contains the immutable protocol definition: contracts, workflow phases, state machine definitions, roles, delegation contracts, harness policies, decision trees, standards, and utilities.

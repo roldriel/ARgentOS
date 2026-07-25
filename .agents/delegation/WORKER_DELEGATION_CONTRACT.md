@@ -41,6 +41,9 @@ The invocation is not a function call; it is a structured handoff of context and
       "lessons_learned": "<relevant excerpt within budget>"
     }
   ],
+  skills: [
+    "<skill-name>"
+  ],
   context_budget: 4000,
   communication_style: {
     "enabled": true,
@@ -62,6 +65,17 @@ The invocation is not a function call; it is a structured handoff of context and
 
 `technical_approach` is optional. It is populated by the Orchestrator when any technical-practice feature flag (`tdd`, `srp`, `ocp`, `lsp`, `isp`, `dip`, `screaming_architecture`, `clean_architecture`, `layered_architecture`, `dry`, `grasp`, `ddd_tactical`, `ddd_strategic`) is enabled and the `TASK_SPECIFICATION.md` contains a `## Technical Approach` section. The Worker MUST read and apply the corresponding standards (for example, `.agents/standards/testing/TDD.md`, `.agents/standards/development/design/SOLID/SRP.md`, `.agents/standards/development/design/SCREAMING_ARCHITECTURE.md`, or `.agents/standards/development/design/DDD_TACTICAL.md`) and record compliance evidence in the output artifact.
 
+### `skills`
+
+`skills` is optional. It is populated by the Orchestrator during `ANALYZING_TASK`/`PLANNING` according to `.agents/standards/orchestration/SKILLS.md` (activation table in `.agents/skills/INDEX.md`, or judgment override logged in `SESSION_LOG.md`). Each entry is a skill name resolvable under `.project/skills/` (project level, wins on name collision) or `.agents/skills/` (protocol level).
+
+- When `skills` is present and non-empty, the Worker MUST read each skill's `SKILL.md` before executing the phase and apply its procedure, safety rules, and output format.
+- The Worker MUST load each skill's `references/` files lazily, only when the skill's procedure requires them.
+- If a listed skill does not exist or is malformed, the Worker MUST report it as a deviation in its return report; it MUST NOT invent the skill's content.
+- A skill describes a capability; it never grants permissions. On conflict, the protocol wins (see the authority hierarchy in `.agents/standards/orchestration/SKILLS.md`).
+
+> **Note (contract immutability exception):** contracts are immutable by default (`.agents/standards/runtime/PROTOCOL_BOUNDARIES.md`). The `skills` field is an approved **additive-optional** change: it may be omitted, it does not alter the semantics of existing fields, and it does not break previous payloads. Precedent established by the documented skills-mechanism proposal (`plans/skills-mechanism.md`): additive-optional contract changes are approvable by documented proposal; changes that alter existing fields require contract versioning.
+
 ### `profile`
 
 `profile` is optional. It is populated by the Orchestrator before delegating `orchestrators/core/workflow/06-execute.md` when a specialized worker profile applies, as determined by `.agents/standards/orchestration/ORCHESTRATION_GUIDE.md`.
@@ -78,13 +92,14 @@ Upon receiving the payload, the Worker:
 
 1. Adopts the specified role.
 2. If `profile` is not null, reads `.agents/roles/profiles/<profile>.md` and applies its rules.
-3. Reads the target workflow module.
-4. Reads all input artifacts.
-5. Executes the phase according to the workflow instructions and the active profile rules (if any).
-6. Produces the required output artifact.
-7. Validates that the output complies with the corresponding contract and profile restrictions (if any).
-8. Prepares a return report.
-9. When `communication_style.enabled` is `true`, writes the artifact and the return report according to `.agents/standards/communication/CAVEMAN.md` at the requested level.
+3. If `skills` is present, reads each skill's `SKILL.md` and applies its procedure (loading `references/` lazily).
+4. Reads the target workflow module.
+5. Reads all input artifacts.
+6. Executes the phase according to the workflow instructions and the active profile rules (if any).
+7. Produces the required output artifact.
+8. Validates that the output complies with the corresponding contract and profile restrictions (if any).
+9. Prepares a return report.
+10. When `communication_style.enabled` is `true`, writes the artifact and the return report according to `.agents/standards/communication/CAVEMAN.md` at the requested level.
 
 ## Worker Return Report
 

@@ -9,7 +9,7 @@ Define how the Orchestrator activates skills, where skills live, how the two lev
 - **Profile** = persistent role/conduct during a phase (`backend_engineer`, `qa_engineer`, etc.). It defines *who* the worker is.
 - **Skill** = bounded procedure with input and output (e.g., suggest-conventional-commit, DB migration, SemVer release). It defines *which specific capability* the worker executes.
 
-A worker may carry one profile and zero or more skills; they are orthogonal and never compete.
+A worker may carry one profile and zero or more skills; they are orthogonal and never compete. Within the Execution Context model (`plans/rfc-execution-context-model.md`), the profile belongs to the *Identity Context* and skills belong to the *Capability Context*.
 
 ## Locations and precedence
 
@@ -36,7 +36,7 @@ The skills mechanism is NOT governed by a flag in `features.toml`. Unlike enviro
 - **Protocol skills**: structural test `.agents/harness/tests/test_protocol_skills.py` — every skill in the index exists, has front matter with `name`/`description`, and its cited `references/` files exist on disk.
 - **Project skills**: no `.agents/` test may validate them (they live outside the protocol definition). The health check (`.agents/harness/health_check.py`) validates `.project/skills/` structurally when the folder exists; an invalid skill produces a warning in the health report and is excluded from activation for that session. This is non-blocking. If the Orchestrator delegates a nonexistent or malformed skill, the Worker reports it as a deviation in `SESSION_LOG.md`.
 
-Skills intentionally stay out of `PROTOCOL_TAXONOMY.md`: the taxonomy models the protocol *flow* (states, artifacts, triggers); a malformed skill degrades a phase but does not break the state machine — the same risk level as a poorly written standard, so the same regime applies. The conceptual definition of a skill (a reusable capability, independent of how the runtime incorporates it) lives in `.agents/skills/README.md`; see `plans/rfc-skill-capability-model.md` for the rationale.
+Skills intentionally stay out of `PROTOCOL_TAXONOMY.md`: the taxonomy models the protocol *flow* (states, artifacts, triggers); a malformed skill degrades a phase but does not break the state machine — the same risk level as a poorly written standard, so the same regime applies. The conceptual definition of a skill (a reusable capability, independent of how the runtime incorporates it) lives in `.agents/skills/README.md`; see `plans/rfc-skill-capability-model.md` for the rationale. For the conceptual model that groups skills, profiles and knowledge as categories of a single Execution Context delivered to the worker, see `plans/rfc-execution-context-model.md`.
 
 ## Authority hierarchy
 

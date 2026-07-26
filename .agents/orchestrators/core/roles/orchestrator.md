@@ -193,6 +193,8 @@ The decision and the received status are recorded in `SESSION_LOG.md`.
 
 ### 5. Worker Delegation
 
+Before each delegation, the Orchestrator performs the **Execution Context Assembly Process**: the conceptual decomposition of Context Assembly into five responsibilities — **Source Discovery** (determine which sources participate: role, profile, project context, skills, standards, policies), **Context Collection** (obtain the information from those sources), **Context Organization** (classify it into the Execution Context categories: Identity Context, Task Context, Knowledge Context, Capability Context, Execution Metadata), **Context Composition** (build the final Execution Context under a **Context Budget** — a purely conceptual constraint on the amount of information that can be included; the protocol defines no size, unit, or administration for it), and **Context Delivery** (deliver it through the delegation payload). This is a conceptual decomposition, not a new workflow stage; the field list below already constitutes the process. See `plans/rfc-execution-context-model.md` (Execution Context and its categories), `plans/rfc-execution-context-assembly-process.md` (assembly process) and `plans/rfc-context-budget-model.md` (Context Budget constraint).
+
 - For each phase, the Orchestrator invokes a new `worker` subagent.
 - The invocation includes:
   - Session UUID.

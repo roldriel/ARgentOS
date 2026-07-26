@@ -75,6 +75,8 @@ Available profiles:
 
 ## Input from Orchestrator
 
+The set of information prepared by the Orchestrator and delivered via the delegation payload constitutes the Worker's **Execution Context** (see `plans/rfc-execution-context-model.md`). The Worker consumes this context; it never builds it.
+
 Every Worker invocation must include:
 
 1. **Session UUID** — artifact directory location.
@@ -139,6 +141,7 @@ The Worker MUST follow `.agents/standards/requirements/NO_ASSUMPTIONS.md` and `.
 ## Constraints
 
 - A Worker instance executes exactly one phase.
+- A Worker MUST NOT construct its own context; it executes using the Execution Context received from the Orchestrator.
 - A Worker MUST NOT change state directly.
 - A Worker MUST NOT invoke the harness.
 - A Worker MUST NOT modify files outside its phase scope.

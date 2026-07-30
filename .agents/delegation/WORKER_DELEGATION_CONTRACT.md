@@ -74,7 +74,7 @@ The invocation is not a function call; it is a structured handoff of context and
 - If a listed skill does not exist or is malformed, the Worker MUST report it as a deviation in its return report; it MUST NOT invent the skill's content.
 - A skill describes a capability; it never grants permissions. On conflict, the protocol wins (see the authority hierarchy in `.agents/standards/orchestration/SKILLS.md`).
 
-> **Note (contract immutability exception):** contracts are immutable by default (`.agents/standards/runtime/PROTOCOL_BOUNDARIES.md`). The `skills` field is an approved **additive-optional** change: it may be omitted, it does not alter the semantics of existing fields, and it does not break previous payloads. Precedent established by the documented skills-mechanism proposal (`plans/skills-mechanism.md`): additive-optional contract changes are approvable by documented proposal; changes that alter existing fields require contract versioning.
+> **Note (contract immutability exception):** contracts are immutable by default (`.agents/standards/runtime/PROTOCOL_BOUNDARIES.md`). The `skills` field is an approved **additive-optional** change: it may be omitted, it does not alter the semantics of existing fields, and it does not break previous payloads. Precedent: additive-optional contract changes are approvable by documented proposal; changes that alter existing fields require contract versioning.
 
 ### `profile`
 

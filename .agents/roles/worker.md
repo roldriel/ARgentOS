@@ -75,7 +75,7 @@ Available profiles:
 
 ## Input from Orchestrator
 
-The set of information prepared by the Orchestrator and delivered via the delegation payload constitutes the Worker's **Execution Context** (see `plans/rfc-execution-context-model.md`). The Worker consumes this context; it never builds it.
+The set of information prepared by the Orchestrator and delivered via the delegation payload constitutes the Worker's **Execution Context**. The Worker consumes this context; it never builds it.
 
 Every Worker invocation must include:
 

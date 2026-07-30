@@ -158,7 +158,7 @@ Both TTLs are configured in `.agents/features.toml`.
 **Invocation.** The Orchestrator invokes the Discovery Orchestrator with a scope and the following payload:
 
 | Scope | Workers invoked | Use |
-|-------|-----------------|-----|
+| ------- | ----------------- | ----- |
 | `full` | All | First run or major change. |
 | `env` | `init_worker`, `environment_worker`, `synthesis_worker` | Tooling change. |
 | `stack` | `init_worker`, `stack_worker`, `framework_worker`, `synthesis_worker` | New dependencies. |
@@ -193,7 +193,7 @@ The decision and the received status are recorded in `SESSION_LOG.md`.
 
 ### 5. Worker Delegation
 
-Before each delegation, the Orchestrator performs the **Execution Context Assembly Process**: the conceptual decomposition of Context Assembly into five responsibilities — **Source Discovery** (determine which sources participate: role, profile, project context, skills, standards, policies), **Context Collection** (obtain the information from those sources), **Context Organization** (classify it into the Execution Context categories: Identity Context, Task Context, Knowledge Context, Capability Context, Execution Metadata), **Context Composition** (build the final Execution Context under a **Context Budget** — a purely conceptual constraint on the amount of information that can be included; the protocol defines no size, unit, or administration for it), and **Context Delivery** (deliver it through the delegation payload). This is a conceptual decomposition, not a new workflow stage; the field list below already constitutes the process. See `plans/rfc-execution-context-model.md` (Execution Context and its categories), `plans/rfc-execution-context-assembly-process.md` (assembly process) and `plans/rfc-context-budget-model.md` (Context Budget constraint).
+Before each delegation, the Orchestrator performs the **Execution Context Assembly Process**: the conceptual decomposition of Context Assembly into seven responsibilities — **Source Discovery** (determine which sources participate: role, profile, project context, skills, standards, policies), **Context Collection** (obtain the information from those sources), **Context Organization** (classify it into the Execution Context categories: Identity Context, Task Context, Knowledge Context, Capability Context, Execution Metadata), **Context Candidate Prioritization** (establish a relative priority relation among the available context candidates before composition; the ordering may be partial and may contain equivalent-priority groups, and it implies neither inclusion nor exclusion — ordering without selection), **Context Resolution** (transform the prioritized candidates into a conceptually consistent **Resolved Candidate Set** — one in which no pending conflict remains — before composition; it does not administer the Context Budget, it only observes its constraints as a potential source of conflicts, and it defines no algorithms, policies, or tie-breaking rules), **Context Composition** (build the final Execution Context from the resolved candidate set under a **Context Budget** — a purely conceptual constraint on the amount of information that can be included; the protocol defines no size, unit, or administration for it; Composition operates only on an already-resolved set and does not decide conflicts between candidates), and **Context Delivery** (deliver it through the delegation payload). This is a conceptual decomposition, not a new workflow stage; the field list below already constitutes the process.
 
 - For each phase, the Orchestrator invokes a new `worker` subagent.
 - The invocation includes:
@@ -249,7 +249,7 @@ After receiving a worker result and a passing harness:
 When a harness trigger fails and the `decision_trees` feature flag is enabled, the Orchestrator MUST use the following mapping to choose the correct TOML decision tree. The Orchestrator MUST NOT select a different tree unless the failure is explicitly from another trigger.
 
 | Trigger | TOML file | Typical failure | Recommended target phase |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | H00 | `.agents/orchestrators/core/harness/decision_trees/H00_FAIL.toml` | Task analysis is missing required elements or recommends an invalid next state | `00-analyze-task.md` |
 | H01 | `.agents/orchestrators/core/harness/decision_trees/H01_FAIL.toml` | Task specification is incomplete, out of scope, or contains unconfirmed assumptions | `02-build-task-specification.md` |
 | H02 | `.agents/orchestrators/core/harness/decision_trees/H02_FAIL.toml` | Context artifact is insufficient or missing relevant components | `03-gather-context.md` |

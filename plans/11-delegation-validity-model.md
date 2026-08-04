@@ -2,9 +2,9 @@
 
 **Status:** Aprobado para redacción.
 
-**Depends on:** planes 04–07 (consume los conceptos de Context Budget, candidates y materialización de la serie de Execution Context).
+**Depends on:** nada estructural (el caso concreto se apoya en RFC-00YA, ya existente, y en definiciones inline ya presentes en `orchestrator.md` §"5. Worker Delegation"); se recomienda ejecutar después de 04–07 por terminología. Dependencia blanda del plan 10 (ver A.5 y el gate conceptual).
 
-**Referencia:** análisis de explicitud (gap 2); `.agents/delegation/WORKER_DELEGATION_CONTRACT.md`; `plans/rfc/03-context-budget-model.md` (RFC-00YA).
+**Referencia:** `plans/analisis-explicitud.md` (gap 2); `.agents/orchestrators/core/contracts/WORKER_DELEGATION_CONTRACT.md`; `plans/rfc/03-context-budget-model.md` (RFC-00YA).
 
 ---
 
@@ -24,20 +24,20 @@ Definir conceptualmente qué hace **válida** una delegación más allá del sch
   2. **Resolubilidad de skills:** cada entrada de `skills` debe ser resoluble bajo `.project/skills/` o `.agents/skills/` (precedencia ya definida en SKILLS.md).
   3. **Coherencia de Budget:** el `context_budget` del payload debe ser coherente con el modelo de Context Budget (RFC-00YA). **Caso concreto a resolver:** el contrato hardcodea `context_budget: 4000`, pero RFC-00YA define el Budget sin unidades ni límites — hoy es un huérfano sin modelo. La RFC debe decidir conceptualmente qué es ese número (¿una materialización del Budget por el runtime actual? ¿una policy?) y dejar la relación explícita.
   4. **Existencia de artefactos:** los input artifacts referenciados deben existir en la sesión.
-  5. **Return report:** validez conceptual del reporte de retorno (schema + clases de la taxonomía del plan 10 si ya existe).
-- **Gate conceptual:** definir el punto del flujo donde la validez se evalúa (pre-delegation, pre-execution, post-return) y qué clase de fallo genera cada violación (consume la taxonomía del plan 10 si está disponible; si no, dejar el hook declarado).
+  5. **Return report:** validez conceptual del reporte de retorno (schema + hook a la taxonomía de fallos: la clase de fallo se declara como placeholder `FAILURE_CLASS_TBD`, que el plan 10 —o el 15— reemplaza al cerrarse).
+- **Gate conceptual:** definir el punto del flujo donde la validez se evalúa (pre-delegation, pre-execution, post-return) y qué clase de fallo genera cada violación (mismo hook determinista: placeholder `FAILURE_CLASS_TBD`, sin doble forma del entregable).
 
 ## B. Aplicación
 
 - Enmendar `WORKER_DELEGATION_CONTRACT.md`: reemplazar el `4000` hardcodeado por la referencia conceptual decidida en A.3.
-- Declarar la futura policy de harness (p. ej. H15) como Future Extension; **no** implementarla en este plan.
+- Declarar la futura policy de harness como Future Extension; **no** implementarla en este plan. La próxima policy se numera H15 (asignada al plan 15); H14 queda sin asignar y su omisión debe documentarse en `.agents/harness/INDEX.md` junto a H08/H12 al crear H15.
 
 # Entregables
 
 | # | Entregable | Ubicación |
 | - | ---------- | --------- |
-| 1 | RFC Delegation Validity Model | `plans/rfc/` (número libre) |
-| 2 | Contrato de delegación enmendado (budget) | `.agents/delegation/WORKER_DELEGATION_CONTRACT.md` |
+| 1 | RFC Delegation Validity Model | `plans/rfc/` (a partir de `rfc/16`) |
+| 2 | Contrato de delegación enmendado (budget) | `.agents/orchestrators/core/contracts/WORKER_DELEGATION_CONTRACT.md` |
 
 # Fuera de alcance
 

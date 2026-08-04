@@ -16,7 +16,7 @@ Refinar cómo un Resolved Candidate Set se transforma en un Execution Context **
 
 # RFCs del nivel
 
-Los dos RFCs son independientes entre sí y paralelizables una vez cerrado el Nivel 1:
+Los dos RFCs son paralelizables **en redacción** una vez cerrado el Nivel 1: ninguno necesita el texto del otro para escribirse. No son, en cambio, independientes en contenido — resolución explícita de la contradicción original de este plan (2 ago 2026): 00YJ debe declarar su orden conceptual respecto a Compression (00YI) aunque 00YI no exista aún; la declaración es conceptual (cuál opera primero y por qué) y no requiere el texto de 00YI. La frontera entre ambos modelos se define en cada uno (ver "Riesgo a vigilar").
 
 ## RFC-00YI: Context Compression Model
 
@@ -35,7 +35,7 @@ Los dos RFCs son independientes entre sí y paralelizables una vez cerrado el Ni
 
 # Riesgo a vigilar
 
-La frontera Compression/Optimization es el punto más débil del roadmap: ambos "mejoran la representación bajo el Budget". Cada RFC debe incluir una sección "Relationship with the other model" que los distinga por la pregunta que responden, no por mecanismos. Si en la redacción resulta que responden la misma pregunta, escalar antes de escribir el segundo RFC (posible fusión en uno solo).
+La frontera Compression/Optimization es el punto más débil del roadmap: ambos "mejoran la representación bajo el Budget". Cada RFC debe incluir una sección "Relationship with the other model" que los distinga por la pregunta que responden, no por mecanismos. Si en la redacción resulta que responden la misma pregunta, escalar antes de continuar con ambos (posible fusión en uno solo).
 
 ## Segunda frontera: Optimization (este nivel) ↔ Materialization (Nivel 4)
 
@@ -47,7 +47,7 @@ Optimization define "qué forma conceptual toma el contexto para el Worker"; Mat
 
 1. `feature.md` → Nivel 3: marcar ✔ y actualizar el índice de RFCs.
 2. RFC-00YD: actualizar "Future Extensions" con referencias a 00YI/00YJ.
-3. RFC-00YC: su "Future Extensions" ya menciona ambos modelos; reemplazar descripción por referencia.
+3. RFC-00YC: su "Future Extensions" ya menciona ambos modelos; reemplazar descripción por referencia — SOLO sobre las dos entradas de Composition (00YI/00YJ), y DESPUÉS de que el plan 05 haya editado las cuatro entradas de Resolution (00YE–00YH). Ownership único por entrada (ver `plans/05-resolution-specialization.md` §Actualizaciones transversales al cerrar el nivel): este plan no toca las entradas de Resolution.
 
 # Entregables
 

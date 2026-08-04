@@ -1,8 +1,8 @@
 # RFC-00YC — Context Resolution Model
 
-**Status:** Proposal
+**Status:** Accepted
 
-**Author:** TBD
+**Author:** Rodrigo Roldán
 
 **Impact:** Conceptual
 
@@ -14,11 +14,11 @@
 
 RFC-00XY introdujo el concepto de **Execution Context**.
 
-RFC-00XZ refinó el proceso de **Execution Context Assembly**.
+RFC-00XZ definió el proceso de **Execution Context Assembly**.
 
 RFC-00YA introdujo el concepto de **Context Budget**.
 
-RFC-00YB introdujo **Context Prioritization**, estableciendo cómo el protocolo puede producir una relación de prioridad entre candidatos de contexto antes de su composición.
+RFC-00YB introdujo **Context Prioritization**, estableciendo cómo el protocolo puede producir una relación de prioridad entre candidatos de contexto antes de su composición. (Terminología: en adelante, "Context Prioritization" denota Context Candidate Prioritization definido por RFC-00YB.)
 
 Sin embargo, una prioridad por sí sola no determina necesariamente el conjunto final de candidatos que formará parte del Execution Context.
 
@@ -32,17 +32,9 @@ No define algoritmos, políticas ni mecanismos de resolución.
 
 # Motivation
 
-La existencia de una relación de prioridad no elimina la posibilidad de conflictos.
+La existencia de una relación de prioridad no elimina la posibilidad de conflictos (la lista canónica de ejemplos de conflictos figura en §Terminology, §Context Conflict).
 
-Ejemplos conceptuales:
-
-* dos candidatos mutuamente excluyentes;
-* múltiples candidatos equivalentes bajo una misma prioridad cuando el modelo no puede decidir entre ellos;
-* candidatos redundantes;
-* candidatos incompatibles debido a restricciones del modelo conceptual;
-* restricciones derivadas del Context Budget.
-
-RFC-00YB establece qué candidatos parecen más relevantes.
+RFC-00YB establece qué candidatos parecen más importantes (formulación canónica definida por RFC-00YB).
 
 Todavía falta responder una pregunta distinta:
 
@@ -94,9 +86,11 @@ La serie conceptual queda organizada de la siguiente manera:
 
 Esta RFC **amplía RFC-00YB**.
 
-RFC-00YB atribuía implícitamente a Context Composition la decisión final sobre qué candidatos llegaban al Execution Context.
+La versión original de RFC-00YB atribuía implícitamente a Context Composition la decisión final sobre qué candidatos llegaban al Execution Context.
 
 A partir de esta RFC, dicha responsabilidad conceptual se traslada a **Context Resolution**.
+
+Nota histórica: RFC-00YB ya fue actualizada retrospectivamente para incorporar Context Resolution; el registro de ese cambio está en el Amendment Log de RFC-00YB.
 
 Como consecuencia:
 
@@ -108,9 +102,9 @@ Este cambio constituye una **reasignación conceptual de responsabilidades**, no
 
 ---
 
-# Current Conceptual Model
+# Modelo previo a esta enmienda
 
-Hasta RFC-00YB el modelo conceptual podía resumirse así:
+Antes de esta RFC, el modelo conceptual podía resumirse así:
 
 ```text
 Context Candidates
@@ -127,21 +121,15 @@ Execution Context
 
 La decisión final permanecía implícita dentro de Context Composition.
 
+Nota histórica: esta sección describe el modelo tal como era antes de esta enmienda. RFC-00YB ya fue actualizada retrospectivamente para incorporar Context Resolution, por lo que el texto vigente de RFC-00YB no necesariamente refleja este modelo previo; el registro de esa actualización está en el Amendment Log de RFC-00YB.
+
 ---
 
 # Problem Statement
 
 Priorizar candidatos responde únicamente a una parte del problema.
 
-Puede existir un conjunto priorizado que aún no determine de forma suficiente el conjunto final.
-
-Ejemplos conceptuales:
-
-* incompatibilidades;
-* exclusiones mutuas;
-* redundancias;
-* conflictos derivados de restricciones del Context Budget;
-* múltiples candidatos con igual prioridad cuando el modelo aún no puede decidir entre ellos.
+Puede existir un conjunto priorizado que aún no determine de forma suficiente el conjunto final (la lista canónica de ejemplos de conflictos figura en §Terminology, §Context Conflict).
 
 Mientras estas situaciones permanezcan sin resolver, Context Composition debería recibir información cuya consistencia aún no está garantizada.
 
@@ -198,13 +186,15 @@ Contiene únicamente candidatos conceptualmente consistentes.
 
 ### Consistency Invariant
 
-Todo **Resolved Candidate Set** debe satisfacer la siguiente propiedad conceptual:
+Todo **Resolved Candidate Set** entregado a Context Composition satisface la siguiente propiedad conceptual condicional:
 
-> Ningún conflicto pendiente permanece dentro del conjunto entregado a Context Composition.
+> Ningún conflicto pendiente permanece dentro del conjunto.
+
+Caso degenerado: si existen conflictos no resolubles, **no se produce Resolved Candidate Set**; el comportamiento del pipeline en ese caso pertenece a futuras RFCs de políticas de resolución.
 
 La forma en que dicha consistencia se obtiene pertenece a futuras RFCs.
 
-El comportamiento ante conflictos que una implementación no pueda resolver también pertenece a futuras RFCs de políticas de resolución.
+Este invariante es una propiedad conceptual del modelo, no un requisito verificable del runtime (ver §Design Principles).
 
 ---
 
@@ -339,9 +329,9 @@ Esta RFC no modifica:
 
 Esta RFC requiere actualizar:
 
-* **RFC-00YB**, reemplazando la afirmación de que Context Composition puede decidir el conjunto final de candidatos por una referencia explícita a Context Resolution.
-* **RFC-00XZ**, incorporando Context Resolution como una responsabilidad conceptual adicional dentro del Execution Context Assembly Process.
-* Los diagramas conceptuales de **RFC-00YB** y **RFC-00XZ**, reflejando que las restricciones del **Context Budget** participan conceptualmente tanto en **Context Resolution** (como origen de conflictos) como en **Context Composition** (como restricción durante la representación final).
+* **[aplicado]** **RFC-00YB**, reemplazando la afirmación de que Context Composition puede decidir el conjunto final de candidatos por una referencia explícita a Context Resolution. (Aplicado: RFC-00YB ya refleja Resolution y el borde `originates conflicts` Budget→Resolution; ver su Amendment Log.)
+* **[pendiente]** **RFC-00XZ**, incorporando Context Resolution como una responsabilidad conceptual adicional dentro del Execution Context Assembly Process. (RFC-00XZ sigue declarando cinco responsabilidades; corresponde al plan 04, `plans/04-main-pipeline-closure.md` §B'. El pendiente queda señalado además por el banner de enmienda de RFC-00XZ.)
+* **[pendiente]** Los diagramas conceptuales de **RFC-00XZ**, reflejando que las restricciones del **Context Budget** participan conceptualmente tanto en **Context Resolution** (como origen de conflictos) como en **Context Composition** (como restricción durante la representación final). **[aplicado]** para los diagramas de **RFC-00YB**.
 
 No requiere modificaciones en:
 
@@ -373,3 +363,17 @@ Composition responde:
 > ¿Cómo se construye finalmente el Execution Context a partir de ese conjunto consistente?
 
 Separar estas tres responsabilidades reduce el acoplamiento conceptual del protocolo y permite que futuras RFCs especialicen cada una de ellas de forma independiente, preservando la estabilidad del modelo general.
+
+---
+
+## Amendment Log
+
+| Fecha | Cambio | Origen |
+|---|---|---|
+| 2026-08-02 | Regularización de status: `Proposal` → `Accepted` y `Author: TBD` → `Rodrigo Roldán`. El contenido ya estaba aplicado en `.agents/orchestrators/core/roles/orchestrator.md` (`## Responsibilities`) antes de la aprobación formal; se regulariza el 2 ago 2026 (ver `plans/INDEX.md` §Convenciones). | Corrección transversal de `plans/` (2 ago 2026) |
+| 2026-08-02 | Edición retrospectiva registrada: RFC-00YB fue actualizada para incorporar Context Resolution (flujo Candidates → Prioritization → Resolution → Composition y borde `originates conflicts` Budget→Resolution). La premisa original de esta sección "Current Conceptual Model" describía un RFC-00YB previo a esa edición; la sección se renombró "Modelo previo a esta enmienda" y §Relationship with Previous RFCs aclara que la atribución implícita a Composition pertenece a la versión original de RFC-00YB. | RFC-00YB / Corrección transversal de `plans/` (2 ago 2026) |
+| 2026-08-02 | §Abstract: "RFC-00XZ refinó el proceso" → "definió el proceso" (homogeneización con RFC-00YB). Aclaración terminológica: "Context Prioritization" denota Context Candidate Prioritization definido por RFC-00YB. | Corrección transversal de `plans/` (2 ago 2026) |
+| 2026-08-02 | §Motivation: "qué candidatos parecen más relevantes" alineado a la formulación canónica de RFC-00YB ("¿Qué candidatos parecen más importantes?"). | RFC-00YB |
+| 2026-08-02 | Listas de ejemplos de conflictos deduplicadas: la lista canónica queda en §Terminology §Context Conflict; §Motivation y §Problem Statement remiten a ella. | Corrección transversal de `plans/` (2 ago 2026) |
+| 2026-08-02 | §Consistency Invariant reformulado como propiedad condicional ("todo Resolved Candidate Set entregado a Composition satisface: ningún conflicto pendiente permanece dentro del conjunto") con caso degenerado declarado (conflictos no resolubles → no se produce Resolved Candidate Set; comportamiento diferido a futuras RFCs de políticas de resolución); se declara explícitamente que no es un requisito verificable del runtime. | Corrección transversal de `plans/` (2 ago 2026) |
+| 2026-08-02 | §Documentation Impact: ítems marcados `[aplicado]` (RFC-00YB y sus diagramas) / `[pendiente]` (RFC-00XZ y sus diagramas, corresponde al plan 04 §B'). | plan 04 / Corrección transversal de `plans/` (2 ago 2026) |

@@ -1,8 +1,8 @@
 # RFC-00XY — Execution Context Model
 
-**Status:** Approved
+**Status:** Accepted
 
-**Author:** TBD
+**Author:** Rodrigo Roldán
 
 **Impact:** Conceptual
 
@@ -272,6 +272,26 @@ No modifican los contratos existentes.
 
 ---
 
+## Correspondencia con `feature.md` (Stage 4)
+
+`feature.md` (Stage 4 — Context Organization) ejemplifica la organización de la información con una clasificación distinta: Knowledge, Skills, Standards, Runtime Metadata y User Intent.
+
+Como interpretación normativa de esta RFC, la correspondencia entre ambas clasificaciones es la siguiente:
+
+| Ejemplo de `feature.md` (Stage 4) | Categoría de esta RFC | Criterio |
+|---|---|---|
+| Knowledge | Knowledge Context | Coincide con la definición de conocimiento reutilizable necesario para la tarea. |
+| Skills | Capability Context | Las Skills son el ejemplo declarado de Capability Context. |
+| Standards | Knowledge Context | Los Standards figuran como ejemplo de Knowledge Context (conocimiento reutilizable). |
+| Runtime Metadata | Execution Metadata | La metadata técnica asociada a la ejecución pertenece a Execution Metadata. |
+| User Intent | Task Context | La intención del usuario se expresa mediante User Request y Task Specification, ejemplos de Task Context. |
+
+Esta tabla no agrega categorías ni modifica las definiciones anteriores.
+
+Únicamente explicita cómo se mapean los ejemplos de `feature.md` sobre las cinco categorías ya definidas.
+
+---
+
 # Context Assembly
 
 Conceptualmente, el proceso puede representarse como:
@@ -299,6 +319,8 @@ La presente RFC no define cómo el Orchestrator realiza esta construcción.
 
 La descomposición interna de Context Assembly en responsabilidades conceptuales (Source Discovery, Context Collection, Context Organization, Context Composition, Context Delivery) es definida por la RFC **Execution Context Assembly Process** (`plans/rfc/02-execution-context-assembly-process.md`), que refina esta descripción agregada sin modificar el presente modelo.
 
+> **Nota (2 ago 2026):** la descomposición vigente del proceso es la de `.agents/orchestrators/core/roles/orchestrator.md` §5 («Worker Delegation»), que declara **siete** responsabilidades: RFC-00YB y RFC-00YC agregaron **Context Candidate Prioritization** y **Context Resolution** entre Context Organization y Context Composition. Esta RFC conserva la descripción original de cinco responsabilidades de RFC-00XZ por trazabilidad histórica.
+
 Tampoco establece restricciones respecto del orden interno en que cada categoría es incorporada al Execution Context, dejando abierta la posibilidad de que futuras RFC definan estrategias de ensamblado, priorización u optimización.
 
 ---
@@ -315,6 +337,8 @@ El Orchestrator es responsable de:
 * entregarlo mediante el mecanismo de delegación existente.
 
 Estas actividades se corresponden con las cinco responsabilidades del Execution Context Assembly Process definido en `plans/rfc/02-execution-context-assembly-process.md`: reunir (Source Discovery + Context Collection), organizar (Context Organization), preparar (Context Composition) y entregar (Context Delivery).
+
+> **Nota (2 ago 2026):** la descomposición vigente del proceso es la de `.agents/orchestrators/core/roles/orchestrator.md` §5 («Worker Delegation»), con **siete** responsabilidades: RFC-00YB y RFC-00YC agregaron **Context Candidate Prioritization** y **Context Resolution** entre la organización y la composición. La correspondencia con cinco responsabilidades descripta arriba se conserva por trazabilidad histórica; la preparación del Execution Context incluye hoy también la priorización y la resolución de candidatos.
 
 ---
 
@@ -476,3 +500,11 @@ Lo que falta no es un nuevo mecanismo, sino una abstracción que describa cómo 
 Al introducir el concepto de Execution Context y la responsabilidad de Context Assembly, el protocolo adquiere un modelo conceptual unificado sin alterar el comportamiento existente.
 
 Este modelo proporciona una base estable para futuras RFC relacionadas con resolución de contexto, presupuestos de contexto, optimización de contexto o nuevas capacidades del runtime, manteniendo desacoplados el modelo conceptual y las decisiones de implementación.
+
+---
+
+## Amendment Log
+
+| Fecha | Cambio | Origen |
+|---|---|---|
+| 2026-08-02 | Corrección transversal anti-alucinación: status normalizado a `Accepted` y autor declarado; notas de vigencia en «Context Assembly» y «Responsibilities → Orchestrator» (la descomposición vigente es la de `orchestrator.md` §5, con siete responsabilidades tras RFC-00YB/00YC); tabla de correspondencia entre las cinco categorías y los ejemplos de `feature.md` Stage 4 agregada como interpretación normativa. | Corrección transversal de `plans/` (2 ago 2026) |

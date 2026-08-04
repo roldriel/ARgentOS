@@ -2,13 +2,15 @@
 
 **Status:** Accepted
 
-**Author:** TBD
+**Author:** Rodrigo Roldán
 
 **Impact:** Conceptual
 
 **Breaking Changes:** None
 
 ---
+
+> ⚠ **Enmienda pendiente** — RFC-00YC: el Context Budget deja de restringir exclusivamente a Context Composition y participa también en Context Resolution como origen potencial de conflictos. El modelo vigente es `.agents/orchestrators/core/roles/orchestrator.md` (`## Responsibilities`). Ver [Amendment Log](#amendment-log).
 
 # Abstract
 
@@ -48,12 +50,11 @@ Toda ejecución ocurre bajo restricciones.
 Dependiendo del entorno, dichas restricciones pueden representar:
 
 * capacidad máxima del modelo;
-* tiempo máximo de ejecución;
-* memoria disponible;
-* costo económico;
-* ancho de banda;
-* cantidad máxima de herramientas;
-* cantidad máxima de llamadas externas.
+* cantidad máxima de información incorporable al contexto;
+* cantidad máxima de herramientas declaradas;
+* costo económico.
+
+Esta RFC aplica el concepto únicamente a la construcción del Execution Context; restricciones sobre la ejecución del Worker (por ejemplo, tiempo máximo de ejecución, memoria disponible, ancho de banda o cantidad máxima de llamadas externas) quedan fuera de alcance.
 
 Actualmente estas restricciones permanecen implícitas.
 
@@ -164,6 +165,10 @@ El Context Budget restringe conceptualmente la responsabilidad de Context Compos
 
 No constituye una nueva etapa del proceso.
 
+Nota (RFC-00YC): el Budget participa además como origen potencial de conflictos en **Context Resolution** (borde `originates conflicts`). El diagrama vigente del proceso completo figura en RFC-00YC §Conceptual Model.
+
+Nota (contradicción con `feature.md`): `feature.md` §Stage 5 — Context Budget representa el Budget como una etapa del pipeline; esta RFC lo define como restricción transversal sobre Context Composition (y, vía RFC-00YC, origen potencial de conflictos en Context Resolution). La definición vigente es la de esta RFC; la actualización de `feature.md` corresponde al plan 04 (`plans/04-main-pipeline-closure.md` §C).
+
 ---
 
 # Budget Invariants
@@ -228,6 +233,16 @@ No modifica dicha responsabilidad.
 
 ---
 
+## Context Resolution
+
+A partir de RFC-00YC, el Context Budget participa también en **Context Resolution** como origen potencial de conflictos: algunas restricciones del Budget pueden generar conflictos entre candidatos antes de la composición.
+
+Context Resolution **no administra el Budget**: únicamente observa sus restricciones conceptuales y resuelve los conflictos que ellas generan.
+
+La definición completa de esta relación pertenece a RFC-00YC (`plans/rfc/05-context-resolution-model.md`) §Relationship with Context Budget.
+
+---
+
 ## Runtime
 
 Cada runtime puede implementar el concepto de Context Budget utilizando distintos mecanismos.
@@ -264,9 +279,7 @@ Puede representar cualquier recurso finito.
 
 ## Representation-independent
 
-El protocolo no prescribe la representación interna del Budget.
-
-Diferentes runtimes pueden adoptar modelos distintos sin afectar el protocolo.
+Remite al invariante homónimo definido en §Budget Invariants: el protocolo no prescribe la representación interna del Budget.
 
 ---
 
@@ -278,14 +291,17 @@ El protocolo no prescribe cómo calcular, estimar o administrar un Budget.
 
 # Future Extensions
 
-La presente RFC establece el fundamento conceptual para futuras extensiones.
+La presente RFC establece el fundamento conceptual para extensiones posteriores.
 
-Entre ellas:
+## Ya introducidas
 
-* **Context Prioritization Model**, que define cómo seleccionar información cuando el Budget resulta insuficiente.
-* **Context Resolution Model**, que define cómo resolver conflictos entre elementos que compiten por el mismo Budget.
-* **Context Optimization Model**, que introduce transformaciones destinadas a reducir el consumo del Budget.
+* **Context Candidate Prioritization Model** (RFC-00YB, `plans/rfc/04-context-candidate-prioritization-model.md`), que define cómo establecer prioridad relativa entre candidatos cuando el Budget resulta insuficiente.
+* **Context Resolution Model** (RFC-00YC, `plans/rfc/05-context-resolution-model.md`), que define cómo resolver conflictos entre elementos que compiten por el mismo Budget.
+
+## Futuras
+
 * **Context Compression Model**, que introduce mecanismos para representar la misma información utilizando menos recursos.
+* **Context Optimization Model**, que introduce transformaciones destinadas a reducir el consumo del Budget.
 * **Budget Resource Model**, que define posibles representaciones conceptuales del Budget (escalar, multidimensional u otras) sin alterar su definición.
 * **Budget Estimation Model**, que define cómo un runtime estima el costo de construir un Execution Context.
 * **Adaptive Budget Model**, que permite modificar dinámicamente el Budget según el entorno de ejecución.
@@ -390,3 +406,17 @@ La forma en que un runtime representa internamente dicho presupuesto constituye 
 Esta separación preserva la estabilidad del modelo conceptual, evita incorporar decisiones de implementación al protocolo y mantiene la distinción entre el **modelo conceptual** y la **taxonomía estructural** de ARgentOS.
 
 Asimismo, proporciona una base sólida sobre la cual futuras RFC podrán definir mecanismos de priorización, resolución de conflictos, optimización, compresión y representación del Budget sin necesidad de redefinir el concepto de Context Budget.
+
+---
+
+## Amendment Log
+
+| Fecha | Cambio | Origen |
+|---|---|---|
+| 2026-08-02 | Header: `Author: TBD` → `Rodrigo Roldán`. | Corrección transversal de `plans/` (2 ago 2026) |
+| 2026-08-02 | Banner de enmienda pendiente bajo el header: RFC-00YC amplió el alcance del Budget (participa en Context Resolution como origen potencial de conflictos). | RFC-00YC |
+| 2026-08-02 | §Motivation: ejemplos de restricciones ajustados a la construcción del Execution Context; las restricciones sobre la ejecución del Worker (tiempo, memoria, ancho de banda, llamadas externas) se declaran fuera de alcance. | Corrección transversal de `plans/` (2 ago 2026) |
+| 2026-08-02 | §Conceptual Model: notas sobre el borde `originates conflicts` Budget→Resolution (RFC-00YC) y sobre la contradicción con `feature.md` §Stage 5 (la definición vigente es la de esta RFC; la corrección de `feature.md` corresponde al plan 04 §C). | RFC-00YC / plan 04 |
+| 2026-08-02 | §Relationship with Existing Concepts: subsección nueva "Context Resolution" (el Budget participa como origen potencial de conflictos, sin ser administrado por Resolution). | RFC-00YC |
+| 2026-08-02 | §Design Principles: "Representation-independent" reducido a remisión al invariante homónimo de §Budget Invariants (eliminada la definición duplicada). | Corrección transversal de `plans/` (2 ago 2026) |
+| 2026-08-02 | §Future Extensions: separación entre extensiones ya introducidas (RFC-00YB, RFC-00YC) y futuras (Compression, Optimization, Budget Resource Model, Budget Estimation Model, Adaptive Budget Model). | Corrección transversal de `plans/` (2 ago 2026) |

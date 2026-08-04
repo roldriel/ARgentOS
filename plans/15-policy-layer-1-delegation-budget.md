@@ -1,8 +1,8 @@
 # Plan 15 — Policy Layer I: Delegation Validity + Budget Materialization
 
-**Status:** Aprobado para redacción.
+**Status:** Aprobado para ejecución (sus entregables son implementación: policy, decision tree y tests). Criterio de entrada: plan 11 y plan 07 cerrados.
 
-**Depends on:** plan 11 (Delegation Validity Model) y plan 07 (Materialization). Es el primer plan del protocolo que implementa policies concretas: hasta aquí todo fue conceptual.
+**Depends on:** plan 11 (Delegation Validity Model) y plan 07 (Materialization). Dependencia blanda del plan 10: si no está cerrado, este plan define el marcado machine/agente de H15 inline y declara el hook (ver A.6 y A.7). Es el primer plan del protocolo que implementa policies concretas: hasta aquí todo fue conceptual. Sobre el ID: H12 queda libre por historia (ex-D01); H14 se documenta como omisión intencional en `.agents/harness/INDEX.md` al crear H15.
 
 **Referencia:** `plans/11-delegation-validity-model.md` (Future Extension H15); `plans/rfc/03-context-budget-model.md` (RFC-00YA); `.agents/harness/RUNNER.md`.
 
@@ -18,21 +18,21 @@ Convertir el Delegation Validity Model en una **policy de harness real** (H15) q
 
 ## A. Policy H15 — delegation-validity
 
-Implementar en el harness la validación pre-delegation declarada por el plan 11:
+Implementar en el harness el gate conceptual del plan 11, cuyo punto de flujo este plan fija en dos gates: pre-delegation (ítems 1–4) y post-return (ítem 5):
 
 1. **Resolubilidad de perfil:** el valor de `profile` existe en `.agents/roles/profiles/`.
 2. **Resolubilidad de skills:** cada entrada de `skills` resuelve bajo `.project/skills/` o `.agents/skills/` (precedencia de SKILLS.md).
 3. **Existencia de artefactos:** los input artifacts referenciados existen en `.project/<session-uuid>/<iteration>/`.
 4. **Coherencia de Budget:** el `context_budget` del payload es coherente con la materialización definida en B.
 5. **Return report:** validación estructural del reporte de retorno contra el schema del contrato.
-6. **Clasificación de fallos:** cada violación reporta con la clase de la taxonomía del plan 10 (si el plan 10 está cerrado; si no, con las clases provisionales declaradas por el plan 11).
-7. Policy file con front matter TOML + checklist + decision tree, siguiendo el formato de H01–H13, y marcado machine/agente por ítem (convención del plan 10).
+6. **Clasificación de fallos:** cada violación reporta con la clase de la taxonomía del plan 10 (si el plan 10 está cerrado; si no, con las clases provisionales definidas en este propio plan: `invalid_profile`, `unresolvable_skill`, `missing_artifact`, `budget_incoherent`, `invalid_return_report`).
+7. Policy file con front matter TOML + checklist + decision tree, siguiendo el formato de las policies core H00–H11 existentes (H08/H12 omitidas por diseño, ver `.agents/harness/INDEX.md`) y la cross-cutting H13, y marcado machine/agente por ítem (convención del plan 10 si está cerrado; si no, marcado inline definido en este plan).
 
 ## B. Budget Materialization (runtime prompt)
 
-- RFC o estándar de runtime que define, para el runtime basado en prompts: la **unidad** del Context Budget (tokens estimados), cómo se **estima** el costo de un candidato, y qué significa el `4000` actual del contrato (¿default? ¿techo? ¿por categoría?).
+- Estándar de runtime (en `.agents/standards/context/`, ver Entregable 2) que define, para el runtime basado en prompts: la **unidad** del Context Budget (tokens estimados), cómo se **estima** el costo de un candidato, y qué significa el `4000` actual del contrato (¿default? ¿techo? ¿por categoría?).
 - Debe respetar RFC-00YA: la unidad pertenece al runtime, el concepto no cambia. Documentar la relación explícitamente (este es el primer ejercicio real de la frontera protocolo/runtime del plan 07).
-- Enmendar `WORKER_DELEGATION_CONTRACT.md` si el `4000` cambia de significado.
+- Enmendar `.agents/orchestrators/core/contracts/WORKER_DELEGATION_CONTRACT.md` si el `4000` cambia de significado. División de trabajo con el plan 11: el plan 11 fija el significado conceptual; este plan solo materializa la unidad y enmienda el contrato **si** el plan 11 dejó el valor literal — verificar el estado del contrato antes de editar.
 
 ## C. Verificación
 
@@ -43,9 +43,10 @@ Implementar en el harness la validación pre-delegation declarada por el plan 11
 
 | # | Entregable | Ubicación |
 | - | ---------- | --------- |
-| 1 | Policy H15 + decision tree + tests | `.agents/harness/` |
-| 2 | Budget Materialization del runtime prompt | `plans/rfc/` o estándar de runtime (decidir) |
-| 3 | Contrato de delegación actualizado | `.agents/delegation/WORKER_DELEGATION_CONTRACT.md` |
+| 1 | Policy H15 + decision tree + tests | `.agents/orchestrators/core/harness/policies/` (policy — las policies core H viven ahí; `.agents/harness/policies/` es la excepción cross-cutting con solo H13), `.agents/orchestrators/core/harness/decision_trees/` (tree), `.agents/harness/tests/` (tests) |
+| 2 | Budget Materialization del runtime prompt | `.agents/standards/context/` (estándar nuevo, o sección del propio contrato de delegación: el significado del budget vive en `.agents/` de forma autocontenida porque el contrato lo consume y `.agents/` no puede referenciar `plans/`) |
+| 3 | Contrato de delegación actualizado | `.agents/orchestrators/core/contracts/WORKER_DELEGATION_CONTRACT.md` |
+| 4 | Registro de H15 (sin este registro el health-check queda en rojo: H13 valida una lista explícita de IDs core) | `.agents/standards/runtime/PROTOCOL_TAXONOMY.md`, `.agents/harness/INDEX.md` y la lista explícita de IDs core de `.agents/harness/policies/H13-protocol-taxonomy.md` |
 
 # Fuera de alcance
 

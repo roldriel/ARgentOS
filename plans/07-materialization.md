@@ -20,7 +20,7 @@ Separar completamente el modelo conceptual del protocolo de los mecanismos concr
 
 - **Pregunta:** ¿Cómo se define conceptualmente la transformación de un Execution Context en una representación propia de un runtime?
 - Es el marco general del nivel: introduce el concepto de materialización, la frontera protocolo/runtime, y la regla de que múltiples materializaciones pueden coexistir para el mismo Execution Context sin alterar el modelo conceptual.
-- Debe definir explícitamente la relación entre **Context Delivery** (5ª responsabilidad del Assembly Process, RFC-00XZ: transporte del Execution Context vía Delegation Payload) y **Materialization** (representación propia del runtime). Hoy ningún documento define si Delivery es una forma de materialización, un paso posterior a ella, o un concepto ortogonal. Esta es la principal laguna conceptual que este nivel debe cerrar (ver `feature.md`, que omite Delivery por completo — fix C.7 del Nivel 1).
+- Debe definir explícitamente la relación entre **Context Delivery** (la responsabilidad Context Delivery definida en RFC-00XZ: transporte del Execution Context vía Delegation Payload) y **Materialization** (representación propia del runtime). Hoy ningún documento define si Delivery es una forma de materialización, un paso posterior a ella, o un concepto ortogonal. Esta es la principal laguna conceptual que este nivel debe cerrar (ver `feature.md`, que omite Delivery por completo — fix C.7 del Nivel 1).
 - Los otros dos RFCs del nivel son especializaciones de este (ver la salvedad de RFC-00YM más abajo).
 
 ## RFC-00YL: Prompt Rendering Model
@@ -28,12 +28,13 @@ Separar completamente el modelo conceptual del protocolo de los mecanismos concr
 - **Pregunta:** ¿Cómo materializa un runtime basado en prompts el Execution Context?
 - Es la materialización que el runtime actual ya realiza de facto ("el runtime actual lo materializa como contexto inyectado al prompt" — `feature.md`, Philosophy). El RFC formaliza conceptualmente lo que hoy es implícito.
 - Debe cubrir **todas** las variantes listadas en `feature.md` Stage 10 (prompt tradicional, system prompt, tool calls, MCP, retrieval dinámico, structured context, multi-message, runtime memory) o justificar explícitamente cuáles quedan fuera y por qué.
+- **Declaración de frontera:** `feature.md` §Stage 10 declara que esa etapa "pertenece al runtime. No al protocolo"; por tanto 00YL modela la interfaz conceptual de esas variantes (qué preguntas responde cada una), no su mecanismo. Se preserva Runtime Independence (principio de `feature.md` §Architectural Principles).
 
 ## RFC-00YM: Skill Materialization Model
 
 - **Pregunta:** ¿Cómo se materializa una Skill (capacidad conceptual reutilizable) en un runtime concreto?
-- **Depende de RFC-00XX** (`plans/rfc/00-skill-capability-model.md`, Approved): la definición conceptual de Skill como capacidad reutilizable independiente del mecanismo. Declararla explícitamente en "Relationship with Previous RFCs".
-- **Salvedad sobre la jerarquía:** 00YM no es estrictamente una especialización de 00YK — sujeto distinto: 00YK materializa el Execution Context (resultado del pipeline); 00YM materializa una Skill, que es un *candidate* dentro del pipeline. La relación correcta es lateral: la materialización de una Skill ocurre como parte de la materialización del Execution Context que la contiene (en el runtime actual: inyección de contexto durante Collection/Composition, ver `plans/skills-mechanism.md`). Redactar la relación con 00YK en esos términos, no como herencia.
+- **Depende de RFC-00XX** (`plans/rfc/00-skill-capability-model.md`, Accepted): la definición conceptual de Skill como capacidad reutilizable independiente del mecanismo. Declararla explícitamente en "Relationship with Previous RFCs".
+- **Salvedad sobre la jerarquía:** 00YM no es estrictamente una especialización de 00YK — sujeto distinto: 00YK materializa el Execution Context (resultado del pipeline); 00YM materializa una Skill, que es un *candidate* dentro del pipeline. La relación correcta es lateral: la materialización de una Skill ocurre como parte de la materialización del Execution Context que la contiene (en el runtime actual, las skills entran como fuente en Collection y viajan en el campo `skills: [...]` del delegation payload — ver `.agents/orchestrators/core/roles/orchestrator.md` §5, que describe Collection/Composition y la lista de campos del payload). Redactar la relación con 00YK en esos términos, no como herencia. (Nota 2 ago 2026: la cita original —"inyección de contexto durante Collection/Composition, ver `plans/skills-mechanism.md`"— era parcialmente fabricada: `skills-mechanism.md` no menciona Collection ni Composition (grep = 0); se reemplazó por la fuente real. Queda registrada.)
 
 ---
 
@@ -56,8 +57,9 @@ Este es el único nivel con impacto potencial más allá de "Conceptual": al for
 # Actualizaciones transversales al cerrar el nivel
 
 1. `feature.md` → Nivel 4: marcar ✔; roadmap completo.
-2. Índice de RFCs en `feature.md` actualizado.
-3. Verificar que la línea divisoria protocolo/runtime del diagrama (fix del Nivel 1) queda respaldada por RFC-00YK.
+2. `feature.md` → Nivel 4: reordenar la lista de RFCs — hoy figura Prompt Rendering → Skill Materialization → Execution Context Materialization (`feature.md` §Planned Evolution → Nivel 4); debe quedar 00YK (Execution Context Materialization) → 00YL (Prompt Rendering) → 00YM (Skill Materialization), coherente con el orden y las dependencias de este plan.
+3. Índice de RFCs en `feature.md` actualizado.
+4. Verificar que la línea divisoria protocolo/runtime del diagrama (fix del Nivel 1) queda respaldada por RFC-00YK.
 
 # Entregables
 

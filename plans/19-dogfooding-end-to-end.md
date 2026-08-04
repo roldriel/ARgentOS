@@ -1,6 +1,6 @@
 # Plan 19 — Dogfooding End-to-End
 
-**Status:** Aprobado para ejecución.
+**Status:** Aprobado; ejecutable solo cuando 04–14 estén Executed. Criterio de entrada verificable: los RFCs 06–15 existen en `plans/rfc/` y la policy H15 existe en `.agents/orchestrators/core/harness/policies/`.
 
 **Depends on:** planes 04–14 completos (es la validación de todo el trabajo conceptual). Idealmente también 15 y 17, para dogfood-ear con validez gateada y métricas activas.
 
@@ -18,20 +18,20 @@
 
 ## A. Selección del proyecto de validación
 
-- Un proyecto real, pequeño pero no trivial (criterio: que recorra el ciclo completo — discovery, especificación, ejecución, review, recovery al menos una vez).
-- Puede ser una feature real de un proyecto del usuario o un proyecto de referencia construido ad-hoc. Decidir al arrancar; `example/` (BeaconRBX) queda como material de comparación, no como sujeto (es ajeno y estático).
+- Un proyecto real, pequeño pero no trivial (criterio: que recorra el ciclo completo — discovery, especificación, ejecución, review — y recovery si ocurre; su ausencia también se registra como dato. Alternativamente, seleccionar un proyecto con riesgo deliberado: requisitos ambiguos intencionales).
+- Puede ser una feature real de un proyecto del usuario o un proyecto de referencia construido ad-hoc. Decidir al arrancar; `example/` (BeaconRBX) queda como material de comparación, no como sujeto (es ajeno y estático; además `example/` está en `.gitignore`: material local no versionado, no disponible en otros clones).
 
 ## B. Ejecución instrumentada
 
 - El proyecto se ejecuta **estrictamente por protocolo**: nada de atajos informales; toda desviación se registra como dato, no se corrige sobre la marcha.
-- Bitácora de fricciones: cada fricción se registra con (1) qué pasó, (2) qué decía el protocolo, (3) clase de fallo según la taxonomía del plan 10 (o "sin clase" — que también es dato), (4) costo estimado de la fricción.
+- Bitácora de fricciones: cada fricción se registra con (1) qué pasó, (2) qué decía el protocolo, (3) clase de fallo según la taxonomía de fallos vigente en `.agents/` al momento de ejecutar este plan (o "sin clase" — que también es dato), (4) costo estimado de la fricción.
 - Si el plan 17 está cerrado: métricas de la sesión como insumo cuantitativo complementario.
 
 ## C. Análisis y backlog
 
 - Clasificación de fricciones en: defectos del modelo conceptual (→ enmiendas a RFCs), defectos de policies (→ ajustes de policies), gaps no cubiertos (→ nuevos planes), ruido (→ descartado con justificación).
 - Priorización del backlog resultante por frecuencia × costo observado (no por intuición).
-- Reporte final: estado del protocolo post-dogfooding, con veredicto por subsistema.
+- Reporte final: estado del protocolo post-dogfooding, con veredicto por subsistema (core, discovery, system, harness).
 
 # Entregables
 

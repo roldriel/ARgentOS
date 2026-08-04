@@ -2,7 +2,7 @@
 
 Fecha: 2026-07-24
 Estado: implementada (ver `.agents/skills/`, `.agents/standards/orchestration/SKILLS.md` y RFC-00XX `plans/rfc/00-skill-capability-model.md`)
-Origen: análisis cruzado con `example/` (proyecto BeaconRBX), punto 3.
+Origen: análisis cruzado con `example/` (proyecto BeaconRBX; fuente local no versionada), punto 3.
 
 ## Objetivo
 
@@ -71,7 +71,8 @@ denso se pague solo cuando se usa.
   Índice propio `.agents/skills/INDEX.md` + un test estructural simple en la
   suite existente: todo skill del índice existe, tiene frontmatter con
   `name`/`description`, y sus `references/` citadas existen en disco.
-  (~30 líneas de test; no es un validador nuevo del harness.)
+  (~30 líneas de test estimadas; as-built: 97 líneas de test más un módulo
+  nuevo `skill_validation.py` de 82 líneas — ver §As-built.)
 - **Proyecto**: puramente declarativos. Ningún test de `.agents/` puede
   validarlos (viven fuera del repo del protocolo). La validación es en
   runtime: si el orchestrator delega un skill inexistente o mal formado, el
@@ -109,7 +110,7 @@ depende de `name` + `description`; sin frontmatter el skill es invisible):
 - Proyecto: exigido por convención documentada; skill mal formado = skill
   muerto (el orchestrator no lo activa) + desviación registrada.
 - Documentación en dos lugares, por audiencia:
-  - Norma formal en `PROTOCOL_BOUNDARIES.md` (o el doc de fronteras vigente).
+  - Norma formal en `.agents/standards/runtime/PROTOCOL_BOUNDARIES.md`.
   - `README.md` **in situ** en `.project/skills/`, para que cualquier agente
     LLM que descubra la carpeta explorando encuentre las instrucciones ahí
     mismo (mismo principio que el `AGENTS.md` raíz).
@@ -160,7 +161,7 @@ LLM). La solución es normativa. Distinción clave: **herramienta vs. regla**.
 
 ---
 
-## Cambios concretos (si se aprueba)
+## Cambios concretos (aplicados — desviaciones en §As-built)
 
 ### Nuevos
 
@@ -176,7 +177,7 @@ LLM). La solución es normativa. Distinción clave: **herramienta vs. regla**.
 
 ### Modificados
 
-6. `.agents/delegation/WORKER_DELEGATION_CONTRACT.md` — campo `skills: [...]`
+6. `.agents/orchestrators/core/contracts/WORKER_DELEGATION_CONTRACT.md` — campo `skills: [...]`
    en el payload (D2).
    > **Excepción declarada a la inmutabilidad de contratos**: este cambio
    > modifica un contrato, que es inmutable por defecto según
@@ -198,7 +199,7 @@ LLM). La solución es normativa. Distinción clave: **herramienta vs. regla**.
    seleccionar skills y registrar activaciones fuera de tabla (D2).
 9. `.agents/roles/worker.md` — cómo un worker consume un skill: leer SKILL.md
    al activarse, `references/` solo bajo demanda (D5).
-10. `standards/INDEX.md` — entrada del nuevo estándar de skills.
+10. `.agents/standards/INDEX.md` — entrada del nuevo estándar de skills.
 11. `.agents/harness/health_check.py` — validación estructural de
     `.project/skills/` cuando la carpeta existe: warning + exclusión de la
     sesión para skills inválidos, no bloqueante (D4, cierre del hueco de
@@ -211,6 +212,24 @@ LLM). La solución es normativa. Distinción clave: **herramienta vs. regla**.
   candidato natural para una segunda iteración, como piloto del mecanismo).
 - Entidades `skill` en `PROTOCOL_TAXONOMY.md` (queda como opción futura si el
   mecanismo se vuelve central, ver D4).
+
+## As-built / desviaciones de la propuesta
+
+La propuesta quedó implementada (ver "Estado: implementada" en el header).
+Diferencias verificadas contra el texto original:
+
+- **D4 (validación nivel protocolo):** la estimación era "~30 líneas de test;
+  no es un validador nuevo del harness". As-built: el test estructural
+  `.agents/harness/tests/test_protocol_skills.py` tiene 97 líneas y la lógica
+  de validación vive en un módulo nuevo del harness,
+  `.agents/harness/skill_validation.py` (82 líneas), que el test y el
+  health-check comparten. Es decir: sí hubo un módulo de validación nuevo,
+  aunque reutilizado por ambos consumidores como preveía el "cierre del
+  hueco" de D4.
+- **D4 (health-check de skills de proyecto):** implementado como
+  `check_project_skills` en `.agents/harness/health_check.py`, con el
+  comportamiento no bloqueante previsto (warning + exclusión de la sesión
+  para skills inválidos, solo si `.project/skills/` existe).
 
 ## Esfuerzo estimado
 

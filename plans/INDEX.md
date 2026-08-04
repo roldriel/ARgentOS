@@ -6,12 +6,12 @@ Estado al 2026-07-28. El trabajo activo es el **Execution Context Pipeline** (`f
 
 | RFC | Archivo | Status | Pregunta que responde |
 |---|---|---|---|
-| RFC-00XX | `rfc/00-skill-capability-model.md` | Approved | ¿Qué es una Skill? (capacidad reutilizable, independiente del mecanismo) |
-| RFC-00XY | `rfc/01-execution-context-model.md` | Approved | ¿Qué es un Execution Context? |
-| RFC-00XZ | `rfc/02-execution-context-assembly-process.md` | Approved | ¿Cómo se construye conceptualmente? (pendiente enmiendas 00YB/00YC — ver Nivel 1) |
-| RFC-00YA | `rfc/03-context-budget-model.md` | Accepted | ¿Qué restricciones limitan su composición? |
-| RFC-00YB | `rfc/04-context-candidate-prioritization-model.md` | Proposal ⚠ (regularizar — ver Nivel 1 D) | ¿Qué candidatos parecen más importantes? |
-| RFC-00YC | `rfc/05-context-resolution-model.md` | Proposal ⚠ (regularizar — ver Nivel 1 D) | ¿Qué conjunto consistente puede componerse? |
+| RFC-00XX | `rfc/00-skill-capability-model.md` | Accepted | ¿Qué es una Skill? (capacidad reutilizable, independiente del mecanismo) |
+| RFC-00XY | `rfc/01-execution-context-model.md` | Accepted | ¿Qué es un Execution Context? |
+| RFC-00XZ | `rfc/02-execution-context-assembly-process.md` | Accepted ⚠ (enmiendas 00YB/00YC pendientes — banner en el documento) | ¿Cómo se construye conceptualmente? |
+| RFC-00YA | `rfc/03-context-budget-model.md` | Accepted ⚠ (alcance ampliado por 00YC — banner en el documento) | ¿Qué restricciones limitan su composición? |
+| RFC-00YB | `rfc/04-context-candidate-prioritization-model.md` | Accepted (regularizado 2 ago 2026: ya estaba aplicado en `.agents/`) | ¿Qué candidatos parecen más importantes? |
+| RFC-00YC | `rfc/05-context-resolution-model.md` | Accepted (regularizado 2 ago 2026: ya estaba aplicado en `.agents/`) | ¿Qué conjunto consistente puede componerse? |
 
 ## Roadmap de implementación (planes activos)
 
@@ -78,6 +78,7 @@ Nivel 4  Materialización                 (requiere Nivel 1; conceptualmente Niv
 | Archivo | Estado | Rol |
 |---|---|---|
 | `skills-mechanism.md` | implementada | Diseño del mecanismo de skills (SKILL.md + references/); base de RFC-00XX e input de RFC-00YM. |
+| `analisis-explicitud.md` | vigente | Catálogo de gaps de explicitud (1–9) con evidencia; referencia canónica de los planes 08–14. |
 | `01-execution-context-model.md` | Executed | Cambios documentales de RFC-00XY en `.agents/` (trazabilidad). |
 | `02-execution-context-assembly-process.md` | Executed | Cambios documentales de RFC-00XZ (trazabilidad). |
 | `03-context-budget-model.md` | Executed | Cambios documentales de RFC-00YA (trazabilidad). |
@@ -92,15 +93,23 @@ Anunciadas en RFCs aprobadas pero fuera del roadmap actual (decidir destino):
 ## Convenciones
 
 - **Verificación**: `python .agents/harness/runner.py health-check` + `python -m pytest .agents/harness/tests/`.
-- **Inmutabilidad**: `.agents/` solo se modifica con acuerdo explícito; una RFC aprobada constituye ese acuerdo para sus afectados declarados.
+- **Inmutabilidad**: `.agents/` solo se modifica con acuerdo explícito; una RFC `Accepted` constituye ese acuerdo para sus afectados declarados. Una RFC en `Proposal` NO habilita tocar `.agents/`.
+- **Ciclo de status (RFCs)**: `Proposal` (borrador) → `Accepted` (aprobada) → `Superseded` (reemplazada; el header indica por cuál RFC). No existe `Approved`: los documentos que lo usaban se normalizaron a `Accepted` (2 ago 2026).
+- **Ciclo de status (planes)**: `Aprobado para redacción` (entregables documentales: RFCs, estándares), `Aprobado para ejecución` (entregables de implementación o cambios en el repo), `Executed` (todos los criterios de salida verificados; si alguno quedó incumplido: `Executed (parcial: <qué falta>)`), `Superseded` (reemplazado; indicar por qué plan). Todo plan con dependencias abiertas declara su **criterio de entrada verificable** (qué archivos/estados deben existir antes de ejecutarlo).
+- **Citas verificables**: toda afirmación sobre el estado actual del repo ("hoy X") se ancla a `ruta:sección` (encabezado Markdown) existente al momento de la redacción. Prohibidos: rangos aproximados (p. ej. "H01–H13"), ordinales ("5ª responsabilidad"), números de línea absolutos sobre archivos mutables, y referencias a documentos inexistentes. Criterio de aceptación de todo documento nuevo en `plans/`: cada referencia resuelve contra el repo.
+- **Amendment log**: toda RFC lleva una sección `## Amendment Log` (fecha → qué cambió → origen). Cuando una RFC posterior desfasa a una anterior, la anterior recibe además un banner bajo el header: `> ⚠ Enmienda pendiente: <qué cambió y dónde está el modelo vigente>`. Este log es el único registro de "qué decía antes" para documentos sin historia previa.
+- **Verificación contra el repo**: este INDEX es un índice descriptivo, no una fuente de verdad. Todo plan nuevo verifica sus premisas contra `.agents/` y git como paso 0, nunca contra este INDEX.
+- **Catálogo de gaps**: los "gaps de explicitud" referenciados por los planes 08–14 están definidos en `plans/analisis-explicitud.md`. Se cita el catálogo por ruta; ningún documento referencia IDs de gap que no existan allí.
 - **Numeración de archivos**: hay dos secuencias independientes y cada una es única dentro de su espacio:
-  - `plans/rfc/`: solo RFCs, numeración incremental (`00`–`05` existentes; `06`–`15` reservados por el roadmap). Un implementation plan nunca vive aquí.
+  - `plans/rfc/`: solo RFCs, numeración incremental (`00`–`05` existentes; `06`–`15` reservados por el roadmap EC — RFC-00YD…00YM; los RFCs fuera del roadmap EC numeran a partir de `16`). Un implementation plan nunca vive aquí.
   - `plans/` (raíz): solo planes de ejecución, numerados por **orden cronológico de ejecución** — esa es la prioridad ante cualquier conflicto. `01`–`03` son los implementation plans de los RFCs base (ejecutados 25–26 jul); `04`–`07` primera serie (Execution Context); `08`–`14` segunda serie (explicitud de decisiones); `15`–`20` tercera serie (protocolo operativo), mapeada el 28 jul.
   - Los identificadores internos de la serie (RFC-00XX … RFC-00YM) se mantienen como IDs conceptuales dentro de los documentos; el número de archivo es solo orden físico.
-- **Versionado**: `plans/` está en `.gitignore` — estos documentos no están versionados (riesgo conocido; ya hubo una pérdida y restauración).
-- **Frontera documental**: `.agents/` (versionado, permanente) no referencia `plans/` ni RFCs (efímeros, no versionados). Los conceptos que `.agents/` necesita se definen inline, de forma autocontenida.
+- **Versionado**: `plans/` completo está versionado en git (política adoptada el 2 ago 2026; antes figuraba como ignorado pese a estar trackeado de facto, y hubo una pérdida y restauración). Los planes ejecutados se conservan como traza histórica: no se borran; si quedan desfasados se marcan `Superseded`. Lo efímero del proyecto son los artefactos de sesión (`.project/`), no los documentos de diseño. `plans/archive/` fue eliminado del working tree; su contenido sigue disponible en la historia de git.
+- **Frontera documental**: `.agents/` (versionado, permanente) no referencia `plans/` ni RFCs. Los conceptos que `.agents/` necesita se definen inline, de forma autocontenida. Ningún plan debe instruir referencias `.agents/` → `plans/`; la instrucción correcta es siempre "definir el concepto inline, sin mencionar la RFC".
 
 ## Archivo
+
+Nota (2 ago 2026): `plans/archive/` fue eliminado del working tree; estos archivos viven en la historia de git (`git show HEAD:plans/archive/<archivo>`).
 
 | Archivo | Contenido |
 |---|---|
@@ -112,4 +121,4 @@ Anunciadas en RFCs aprobadas pero fuera del roadmap actual (decidir destino):
 
 ## Documento de visión (fuera de `plans/`)
 
-`feature.md` vive en la raíz del repositorio: es el documento de visión del Execution Context Pipeline — ni un plan de ejecución ni un RFC. Todos los planes `04`–`07` y los RFCs lo referencian. **Está untracked en git**: se recomienda versionarlo (a diferencia de `plans/`, la visión de la feature no es efímera).
+`feature.md` vive en la raíz del repositorio: es el documento de visión del Execution Context Pipeline — ni un plan de ejecución ni un RFC. Todos los planes `04`–`07` y los RFCs lo referencian. Está versionado en git (la nota anterior que lo declaraba untracked estaba desfasada; verificado 2 ago 2026).

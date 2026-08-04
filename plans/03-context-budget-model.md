@@ -64,11 +64,13 @@ Archivo: `.agents/orchestrators/core/roles/orchestrator.md`, sección **5. Worke
 
 Cambios:
 
-1. En el párrafo que describe el Execution Context Assembly Process, extender la descripción de **Context Composition**: indicar que construye el Execution Context final bajo un **Context Budget** (restricción conceptual, sin definir tamaño, unidad ni administración), y agregar la referencia a `plans/rfc/03-context-budget-model.md` junto a las dos referencias existentes.
-2. No agregar ningún MUST nuevo: la RFC es explícitamente no normativa en comportamiento. No tocar la lista de campos de la invocación ni las secciones 5.1 y 5.2.
-3. Verificar que ninguna otra sección del archivo (p. ej. *Constraints*) requiera la mención; si se agrega, debe ser igualmente no normativa.
+1. En el párrafo que describe el Execution Context Assembly Process, extender la descripción inline de **Context Composition**: indicar que construye el Execution Context final bajo un **Context Budget** (restricción conceptual, sin definir tamaño, unidad ni administración), sin agregar referencias a `plans/`; la trazabilidad a RFC-00YA vive solo en las RFCs y en este plan.
 
-**Criterio de salida:** la sección 5 menciona Context Budget como restricción conceptual de Context Composition, con referencia a la RFC y sin alterar obligaciones existentes.
+   Nota (2 ago 2026): la premisa original de este ítem ("agregar la referencia a `plans/rfc/03-context-budget-model.md` junto a las dos referencias existentes") era falsa — nunca existieron tales referencias en `.agents/` y la frontera documental (`plans/INDEX.md` §Convenciones) las prohíbe. Queda registrada.
+2. No agregar ningún MUST nuevo: la RFC es explícitamente no normativa en comportamiento. No tocar la lista de campos de la invocación ni las secciones 5.1 y 5.2.
+3. Regla cerrada (reformulada el 2 ago 2026 — el criterio original, "verificar si otra sección requiere la mención", era vago e inverificable): no agregar Context Budget fuera de orchestrator.md §5. Ninguna otra sección del archivo (p. ej. *Constraints*) recibe la mención.
+
+**Criterio de salida:** la sección 5 menciona Context Budget como restricción conceptual de Context Composition, sin referencias a `plans/` (la trazabilidad vive en las RFCs y en este plan) y sin alterar obligaciones existentes.
 
 ---
 

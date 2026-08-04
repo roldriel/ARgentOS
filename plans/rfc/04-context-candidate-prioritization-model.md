@@ -1,8 +1,8 @@
 # RFC-00YB — Context Candidate Prioritization Model
 
-**Status:** Proposal
+**Status:** Accepted
 
-**Author:** TBD
+**Author:** Rodrigo Roldán
 
 **Impact:** Conceptual
 
@@ -107,11 +107,21 @@ Execution Context Assembly Process
  Context Candidate Prioritization
               │
               ▼
+      Context Resolution
+              │
+              ▼
+   Resolved Candidate Set
+              │
+              ▼
       Context Composition
               │
               ▼
       Execution Context
 ```
+
+(Diagrama actualizado el 2026-08-02 para reflejar RFC-00YC: el flujo vigente es Candidates → Prioritization → Resolution → Composition. La versión original mostraba Prioritization → Composition directamente.)
+
+Nota (origen de los Context Candidates): ninguna responsabilidad definida en RFC-00XZ produce Context Candidates; el plan 04 (`plans/04-main-pipeline-closure.md` §C.6) propone enmendar RFC-00XZ para que Context Organization los produzca. Hasta esa enmienda, se asume conceptualmente que Organization los produce.
 
 La presente RFC no reemplaza Context Composition.
 
@@ -127,7 +137,7 @@ Context Budget responde:
 
 Context Candidate Prioritization responde:
 
-> ¿Qué candidatos deberían considerarse primero?
+> ¿Qué candidatos parecen más importantes?
 
 Ambos conceptos son independientes y complementarios.
 
@@ -147,7 +157,7 @@ Ejemplos conceptuales de candidatos:
 * un Standard específico;
 * una Policy específica;
 * una entrada específica del Project Context;
-* una instrucción específica de ejecución.
+* una entrada específica de Execution Metadata (categoría definida por RFC-00XY).
 
 El protocolo no define una granularidad obligatoria para los candidatos.
 
@@ -180,7 +190,9 @@ Context Candidate Prioritization representa la responsabilidad de establecer una
 
 Responde exclusivamente a:
 
-> ¿Qué candidatos deberían considerarse primero?
+> ¿Qué candidatos parecen más importantes?
+
+Esta es la **formulación canónica** de la pregunta de la etapa; los demás documentos del protocolo deben citar esta formulación.
 
 No responde:
 
@@ -264,7 +276,7 @@ Context Budget
 ¿Cuánto puede entrar?
 
 Context Candidate Prioritization
-¿Qué debería considerarse primero?
+¿Qué candidatos parecen más importantes?
 
 Context Resolution
 ¿Qué conjunto consistente puede componerse?
@@ -287,7 +299,7 @@ La priorización no modifica Project Context ni define cómo se obtiene.
 
 Las Skills pueden representar candidatos dentro del proceso de priorización.
 
-La priorización no modifica el modelo conceptual de Skill definido por RFC anteriores.
+La priorización no modifica el modelo conceptual de Skill definido por RFC-00XX (`plans/rfc/00-skill-capability-model.md`).
 
 ---
 
@@ -485,3 +497,14 @@ Esta separación permite que futuras RFC definan:
 * adaptación dinámica;
 
 sin mezclar decisiones de valor con decisiones de composición.
+
+---
+
+## Amendment Log
+
+| Fecha | Cambio | Origen |
+|---|---|---|
+| 2026-08-02 | Regularización de status: `Proposal` → `Accepted` y `Author: TBD` → `Rodrigo Roldán`. El contenido ya estaba aplicado en `.agents/orchestrators/core/roles/orchestrator.md` (`## Responsibilities`) antes de la aprobación formal; se regulariza el 2 ago 2026 (ver `plans/INDEX.md` §Convenciones). | Corrección transversal de `plans/` (2 ago 2026) |
+| 2026-08-02 | §Relationship with Previous RFCs (RFC-00XZ): diagrama corregido — la versión original mostraba Prioritization → Composition sin Resolution; el flujo vigente es Candidates → Prioritization → Resolution → Composition (RFC-00YC). Nota agregada sobre el origen de los Context Candidates: ninguna responsabilidad de RFC-00XZ los produce; el plan 04 §C.6 propone que Context Organization los produzca. | RFC-00YC / plan 04 |
+| 2026-08-02 | Pregunta de la etapa unificada en la formulación canónica "¿Qué candidatos parecen más importantes?" (antes "¿Qué candidatos deberían considerarse primero?"), por consistencia con `plans/INDEX.md`; declarada explícitamente como canónica en §Proposal. También actualizado el ejemplo conceptual de §Context Budget. | Corrección transversal de `plans/` (2 ago 2026) |
+| 2026-08-02 | §Terminology: ejemplo "una instrucción específica de ejecución" reemplazado por "una entrada específica de Execution Metadata" (mapea a una categoría de RFC-00XY). §Skills: cita genérica "RFC anteriores" reemplazada por RFC-00XX (`plans/rfc/00-skill-capability-model.md`). | Corrección transversal de `plans/` (2 ago 2026) |

@@ -11,8 +11,6 @@ build/
 # Generated session artifacts
 .project/
 
-# Implementation plans
-
 # examples
 example/
 examples/

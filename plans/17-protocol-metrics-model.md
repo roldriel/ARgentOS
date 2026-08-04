@@ -1,10 +1,10 @@
 # Plan 17 — Protocol Metrics Model
 
-**Status:** Aprobado para redacción. Paralelizable con el plan 15.
+**Status:** Aprobado para ejecución; criterio de entrada: planes 09 y 10 Executed. Paralelizable con el plan 15.
 
-**Depends on:** planes 09 y 10 (las métricas cuentan decisiones y fallos; necesitan sus conceptos para no medir texto libre).
+**Depends on:** planes 09 y 10 (las métricas cuentan decisiones y fallos; necesitan sus conceptos para no medir texto libre). Consume opcionalmente los planes 14 y 15 si están cerrados al momento de ejecución; esas métricas se marcan condicionales en el catálogo.
 
-**Referencia:** `.agents/harness/RUNNER.md` (reportes y métricas existentes); `orchestrators/discovery/` (único subsistema con métricas hoy).
+**Referencia:** `.agents/harness/RUNNER.md` §Harness metrics (patrón de métricas existente: `HARNESS_REPORT.md` §Metrics).
 
 ---
 
@@ -21,7 +21,7 @@ Definir e implementar el **modelo de métricas del protocolo**: qué se mide, d�
 Definir las métricas del protocolo agrupadas por lo que miden:
 
 1. **Flujo:** transiciones por tarea, entradas a `RECOVERY`, entradas a `NEEDS_CLARIFICATION`, reintentos de reviewer (consumen los conceptos del plan 09).
-2. **Fallos:** distribución por clase de la taxonomía del plan 10, FAILs por policy (H/D/S), ítems agent-evaluated marcados como fallidos.
+2. **Fallos:** distribución por clase de la taxonomía del plan 10, FAILs por dominio de policy (H=core, D=discovery, S=system, según los prefijos `harness_prefix` de `.agents/standards/runtime/PROTOCOL_TAXONOMY.md`), ítems agent-evaluated marcados como fallidos.
 3. **Delegación:** violaciones de validez (H15, cuando exista), overrides de skill activation loggeados, uso de perfiles.
 4. **Contexto:** consumo de Budget por delegación (una vez materializado en el plan 15), candidatos priorizados vs. resueltos vs. compuestos.
 5. **Sesión:** duración, iteraciones por tarea, artefactos por iteración.
@@ -29,8 +29,8 @@ Definir las métricas del protocolo agrupadas por lo que miden:
 
 ## B. Registro y agregación
 
-- Formato de registro: dónde vive cada data point (extensión de los reportes del harness, entradas estructuradas en `SESSION_LOG.md`, o artefacto nuevo `METRICS.md` por sesión — decidir).
-- Agregación: comando del runner que consolide métricas por sesión y por proyecto (`.project/`), siguiendo el patrón de métricas de discovery.
+- Formato de registro: si el data point ya pasa por un trigger del runner, se extiende `HARNESS_REPORT.md`; si no, artefacto nuevo `METRICS.md` por sesión.
+- Agregación: comando del runner que consolide métricas por sesión y por proyecto (`.project/`), siguiendo el patrón de métricas del runner (`HARNESS_REPORT.md` §Metrics).
 - Privacidad del modelo: las métricas describen el *proceso*, no el contenido de los artefactos.
 
 ## C. Uso
@@ -42,7 +42,7 @@ Definir las métricas del protocolo agrupadas por lo que miden:
 
 | # | Entregable | Ubicación |
 | - | ---------- | --------- |
-| 1 | Protocol Metrics Model | `plans/rfc/` o estándar (decidir) |
+| 1 | Protocol Metrics Model | `.agents/standards/runtime/` (estándar nuevo; mide el protocolo, no el pipeline EC — y los números 06–15 de `plans/rfc/` están reservados) |
 | 2 | Registro de data points en el flujo | harness + contratos afectados |
 | 3 | Comando de agregación + tests | `.agents/harness/` |
 

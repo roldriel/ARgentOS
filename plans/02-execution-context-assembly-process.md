@@ -8,6 +8,8 @@
 
 **Breaking Changes:** None
 
+**Nota (2 ago 2026):** parcialmente superseded por RFC-00YB/00YC: el criterio de salida de Phase 2 exigía cinco responsabilidades en orchestrator.md §5, pero hoy describe siete (ver `plans/04-main-pipeline-closure.md` §B).
+
 ---
 
 # Scope
@@ -68,7 +70,9 @@ Cambios:
    - **Context Composition**: construir el Execution Context final.
    - **Context Delivery**: entregarlo mediante el delegation payload.
 2. Mantener la aclaración de que se trata de una descomposición conceptual, no de una nueva etapa del workflow, y que la lista de campos de la invocación ya constituye el proceso.
-3. Actualizar la referencia: de `plans/rfc/01-execution-context-model.md` a ambas RFC (`rfc-execution-context-model.md` para categorías, `rfc-execution-context-assembly-process.md` para el proceso).
+3. La sección 5 de orchestrator.md NO debe referenciar RFCs (frontera documental, `plans/INDEX.md` §Convenciones); solo se actualiza la descripción inline de las responsabilidades.
+
+   Nota (2 ago 2026): la premisa original de este ítem era falsa — pedía actualizar "la referencia" de `plans/rfc/01-execution-context-model.md` a dos archivos con nombres inexistentes (`rfc-execution-context-model.md`, `rfc-execution-context-assembly-process.md`), pero nunca existió tal referencia (grep confirma 0 referencias a `plans/` en `.agents/`). Queda registrada.
 4. No modificar la lista de campos de la invocación (líneas 198 en adelante) ni las secciones 5.1 y 5.2.
 
 **Criterio de salida:** la sección 5 nombra las cinco responsabilidades del Execution Context Assembly Process, sin alterar ningún MUST existente ni la lista de campos del payload.

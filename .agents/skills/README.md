@@ -6,7 +6,7 @@ This document is the canonical contract for the *skill* format. It applies to pr
 
 A skill is a reusable capability that can assist a Worker during the execution of a task: a bounded unit of capability packaged as a procedure with a defined input and output, so that its dense knowledge is only loaded when the skill is actually used. This definition is independent of how the capability is incorporated during execution.
 
-In the current runtime, a skill participates by being loaded and injected as context during the Worker's prompt assembly. That is the runtime's present implementation, not part of the skill definition.
+In the current runtime, the Orchestrator delivers only the names of the active skills in the Delegation Payload, and the Worker reads each `SKILL.md` itself before executing its phase, loading `references/` lazily on demand. That is the runtime's present implementation, not part of the skill definition.
 
 - A **profile** defines *who* the worker is (role/conduct for the whole phase).
 - A **skill** defines *which specific capability* the worker executes.
@@ -60,4 +60,4 @@ Optional directory with dense material (specs, checklists, long examples). Rules
 - Protocol skills: enforced by the structural test `.agents/harness/tests/test_protocol_skills.py`.
 - Project skills: enforced by the health check extension in `.agents/harness/health_check.py` (non-blocking warning + exclusion for the session) and by the convention documented in `.project/skills/README.md`.
 
-A skill is not a source of authority: it describes a capability and never grants permissions. (The current runtime delivers that capability as injected context — an implementation detail, not part of the skill definition; see "What a skill is" above.) The authority hierarchy and conflict rules are defined in `.agents/standards/orchestration/SKILLS.md`.
+A skill is not a source of authority: it describes a capability and never grants permissions. (The current runtime delivers that capability by having the Worker read the skill's content itself — an implementation detail, not part of the skill definition; see "What a skill is" above.) The authority hierarchy and conflict rules are defined in `.agents/standards/orchestration/SKILLS.md`.

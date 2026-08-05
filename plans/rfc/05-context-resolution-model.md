@@ -263,12 +263,27 @@ El modelo busca que:
 
 Esta RFC habilita futuras extensiones al modelo completo, entre ellas:
 
-* **Context Tie-Breaking Model**, para definir políticas de desempate entre candidatos equivalentes. Extiende Context Resolution.
-* **Context Conflict Classification**, para clasificar los distintos tipos de conflicto. Extiende Context Resolution.
-* **Context Merge Model**, para definir reglas de fusión entre candidatos compatibles. Extiende Context Resolution.
-* **Context Deduplication Model**, para eliminar redundancias conceptuales. Extiende Context Resolution.
-* **Context Compression Model**, que extenderá **Context Composition** para reducir el costo de representación de un conjunto ya resuelto.
-* **Context Optimization Model**, que extenderá **Context Composition** para optimizar la representación final bajo las restricciones del Context Budget.
+* **Context Conflict Classification Model** — **RFC-00YE** (`plans/rfc/07-context-conflict-classification-model.md`, Accepted): clasifica los distintos tipos de conflicto. Extiende Context Resolution.
+* **Context Tie-Breaking Model** — **RFC-00YF** (`plans/rfc/08-context-tie-breaking-model.md`, Accepted): define la responsabilidad conceptual de decidir entre candidatos equivalentes en prioridad (clase Priority Tie de RFC-00YE). Extiende Context Resolution. (Descripción enmendada: el texto original hablaba de "definir políticas de desempate"; las políticas quedan diferidas a futuras RFCs de políticas.)
+* **Context Merge Model** — **RFC-00YG** (`plans/rfc/09-context-merge-model.md`, Accepted): define la responsabilidad conceptual de fusionar candidatos compatibles con solape parcial (clase Mergeable Overlap de RFC-00YE). Extiende Context Resolution.
+* **Context Deduplication Model** — **RFC-00YH** (`plans/rfc/10-context-deduplication-model.md`, Accepted): define la responsabilidad conceptual de eliminar redundancias conceptuales (clase Redundancy de RFC-00YE). Extiende Context Resolution.
+* **Context Compression Model** — **RFC-00YI** (`plans/rfc/11-context-compression-model.md`, Accepted): extiende **Context Composition** para reducir el costo de representación de un conjunto ya resuelto, sin alterar la membresía del Resolved Candidate Set.
+* **Context Optimization Model** — **RFC-00YJ** (`plans/rfc/12-context-optimization-model.md`, Accepted): extiende **Context Composition** para mejorar la adecuación de la representación final del Execution Context al propósito de ejecución, bajo las restricciones del Context Budget.
+
+## Policies de resolución y composición (resolución del deferral)
+
+El comportamiento del pipeline ante conflictos no resolubles (caso degenerado del §Consistency Invariant) y las políticas concretas de desempate, deduplicación, fusión, compresión y optimización —todas diferidas por esta RFC y por RFC-00YE/00YF/00YG/00YH/00YI/00YJ a "futuras RFCs de políticas"— quedaron resueltos como **policies del protocolo** (no como RFCs), por decisión del plan `plans/16-policy-layer-2-resolution-composition.md` (5 ago 2026):
+
+| Política | Ubicación |
+|---|---|
+| Tie-Breaking | `.agents/standards/context/RESOLUTION_TIE_BREAKING.md` |
+| Deduplication | `.agents/standards/context/RESOLUTION_DEDUPLICATION.md` |
+| Merge | `.agents/standards/context/RESOLUTION_MERGE.md` |
+| Conflictos irresolubles (Incompatibility, Mutual Exclusion, Budget Conflict) | `.agents/standards/context/RESOLUTION_UNRESOLVABLE_CONFLICTS.md` |
+| Compression | `.agents/standards/context/COMPOSITION_COMPRESSION.md` |
+| Optimization | `.agents/standards/context/COMPOSITION_OPTIMIZATION.md` |
+
+Las seis son policies agente-evaluadas (`[agent]`); los chequeos máquina-verificables futuros quedan declarados como Future Extensions del harness dentro de cada documento de policy.
 
 ---
 
@@ -377,3 +392,6 @@ Separar estas tres responsabilidades reduce el acoplamiento conceptual del proto
 | 2026-08-02 | Listas de ejemplos de conflictos deduplicadas: la lista canónica queda en §Terminology §Context Conflict; §Motivation y §Problem Statement remiten a ella. | Corrección transversal de `plans/` (2 ago 2026) |
 | 2026-08-02 | §Consistency Invariant reformulado como propiedad condicional ("todo Resolved Candidate Set entregado a Composition satisface: ningún conflicto pendiente permanece dentro del conjunto") con caso degenerado declarado (conflictos no resolubles → no se produce Resolved Candidate Set; comportamiento diferido a futuras RFCs de políticas de resolución); se declara explícitamente que no es un requisito verificable del runtime. | Corrección transversal de `plans/` (2 ago 2026) |
 | 2026-08-02 | §Documentation Impact: ítems marcados `[aplicado]` (RFC-00YB y sus diagramas) / `[pendiente]` (RFC-00XZ y sus diagramas, corresponde al plan 04 §B'). | plan 04 / Corrección transversal de `plans/` (2 ago 2026) |
+| 2026-08-05 | §Future Extensions: las cuatro entradas de modelos de Resolution reemplazadas por referencias a las RFCs concretas del Nivel 2 (RFC-00YE Conflict Classification, RFC-00YF Tie-Breaking, RFC-00YG Merge, RFC-00YH Deduplication), incluida la enmienda de la caracterización de Tie-Breaking como "definir políticas de desempate". Las dos entradas de Composition (Compression, Optimization) quedan intactas; las edita el plan 06. | plan `plans/05-resolution-specialization.md` §Actualizaciones transversales al cerrar el nivel |
+| 2026-08-05 | §Future Extensions: las dos entradas de Composition (Compression, Optimization) reemplazadas por referencias a las RFCs concretas del Nivel 3 (RFC-00YI Compression, RFC-00YJ Optimization). | plan `plans/06-composition-specialization.md` §Actualizaciones transversales al cerrar el nivel |
+| 2026-08-05 | §Future Extensions: nueva subsección «Policies de resolución y composición (resolución del deferral)» registrando dónde quedaron las policies diferidas por esta RFC y por RFC-00YE–00YJ: seis policies agente-evaluadas en `.agents/standards/context/` (Tie-Breaking, Deduplication, Merge, Unresolvable Conflicts, Compression, Optimization). | plan `plans/16-policy-layer-2-resolution-composition.md` |

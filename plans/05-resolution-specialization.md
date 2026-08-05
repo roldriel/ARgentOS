@@ -1,6 +1,6 @@
 # Plan — Nivel 2: Especialización de Context Resolution
 
-**Status:** Plan aprobado para redacción de RFCs
+**Status:** Executed
 
 **Depends on:** RFC-00YC (Context Resolution), ya existente. **No** depende del Nivel 1: ninguna RFC de este nivel (00YE–00YH) toca Composition. Puede ejecutarse en paralelo al Nivel 1. Coordinación necesaria al cerrar el nivel: (a) índice de RFCs y updates a `feature.md`, que el Nivel 1 también toca; (b) `plans/rfc/05-context-resolution-model.md` (RFC-00YC), que ambos niveles editan — el Nivel 1 (§D) regulariza su status y este nivel (Actualizaciones transversales, ítem 2) actualiza su *Future Extensions*; son secciones distintas del mismo archivo y deben aplicarse sin pisarse, en cualquier orden.
 

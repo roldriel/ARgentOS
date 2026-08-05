@@ -49,18 +49,23 @@ Context Collection
         │
         ▼
 Context Organization
+        │ (produce Context Candidates)
+        ▼
+Context Prioritization ◄──── constrains ──── Context Budget
+        │                                     (extensión nueva:
+        ▼                                      ver nota bajo el diagrama)
+Context Resolution ◄──── originates conflicts ──── Context Budget
         │
         ▼
-Context Prioritization
-        │
-        ▼
-Context Resolution
-        │
-        ▼
-Context Composition
+Context Composition ◄──── constrains ──── Context Budget
         │
         ▼
 Execution Context
+        │
+        ▼
+Context Delivery
+        │
+════════╪════════  protocol / runtime boundary  ════════
         │
         ▼
 Prompt Rendering
@@ -74,6 +79,12 @@ Cada etapa responde una pregunta distinta.
 Cada etapa posee una única responsabilidad.
 
 Cada RFC incorpora únicamente una de estas responsabilidades.
+
+El **Context Budget** no es una etapa en línea del pipeline: es una restricción lateral que participa en Prioritization, Resolution y Composition (ver §Stage 5 — Context Budget). Los diagramas de RFC-00YB y RFC-00YC solo muestran Budget → Resolution y Budget → Composition; la arista **Budget → Prioritization** es una **extensión nueva** introducida por este documento (plan `plans/04-main-pipeline-closure.md` §C.1) y no redefine ninguna RFC existente.
+
+La línea `protocol / runtime boundary` marca la frontera: las etapas hasta Execution Context / Context Delivery (Stages 1–9) pertenecen al **protocolo**; Prompt Rendering y Worker Execution (Stages 10–11) pertenecen al **runtime** (ver §Stage 10 — Prompt Rendering).
+
+**Context Delivery** (definido por RFC-00XZ, `plans/rfc/02-execution-context-assembly-process.md` §Responsibilities → 7. Context Delivery) es la responsabilidad de transporte del Execution Context vía Delegation Payload. Su relación con la materialización fue cerrada por RFC-00YK (`plans/rfc/13-execution-context-materialization-model.md` §Relationship with Context Delivery): Delivery es el último acto del protocolo; Materialization, el primero del runtime.
 
 ---
 
@@ -102,6 +113,8 @@ Simplemente constituye el universo disponible.
 ---
 
 # Stage 2 — Source Discovery
+
+> Nota (Stages 2–4): Source Discovery, Context Collection y Context Organization son las responsabilidades ya establecidas por RFC-00XZ (`plans/rfc/02-execution-context-assembly-process.md`, §Responsibilities, Accepted). Ninguna RFC del roadmap las redefine; por eso no poseen una RFC dedicada en la serie.
 
 Pregunta:
 
@@ -143,15 +156,15 @@ Pregunta:
 
 Responsabilidad:
 
-Agrupar la información obtenida en categorías del dominio.
+Agrupar la información obtenida en las categorías canónicas del Execution Context definidas por RFC-00XY (`plans/rfc/01-execution-context-model.md`, §Context Categories):
 
-Ejemplos:
+* Identity Context
+* Task Context
+* Knowledge Context
+* Capability Context
+* Execution Metadata
 
-* Knowledge
-* Skills
-* Standards
-* Runtime Metadata
-* User Intent
+Además, Context Organization **produce los Context Candidates**: cada elemento de información organizado dentro de esas categorías se convierte en la unidad conceptual que participa en Prioritization y Resolution (ver §Cross-Cutting Concepts → Context Candidate). Ninguna RFC previa definía quién transforma información organizada en candidates; esta declaración cierra el encadenamiento Organization → Prioritization (plan `plans/04-main-pipeline-closure.md` §C.6).
 
 Todavía no existe ninguna decisión acerca de qué será utilizado.
 
@@ -166,6 +179,8 @@ Pregunta:
 Responsabilidad:
 
 Definir las limitaciones conceptuales bajo las cuales deberá construirse el Execution Context.
+
+El Budget no es una etapa en línea del pipeline: actúa como **input lateral** de Prioritization, Resolution y Composition (ver §High-Level Pipeline).
 
 El Budget representa recursos finitos.
 
@@ -336,6 +351,8 @@ No define representación.
 
 Unidad conceptual que participa en el proceso de priorización y resolución.
 
+Es **producido por Context Organization** (Stage 4): cada elemento de información organizado dentro de las categorías canónicas se convierte en un candidate.
+
 Puede representar:
 
 * una Skill;
@@ -345,9 +362,46 @@ Puede representar:
 
 ---
 
+## Context Delivery
+
+Responsabilidad de transporte del Execution Context hacia el Worker, definida por RFC-00XZ (`plans/rfc/02-execution-context-assembly-process.md`, §Responsibilities → Context Delivery).
+
+El mecanismo de transporte actual es el **Delegation Payload**; el payload no constituye una fuente de contexto.
+
+Su relación con la materialización del Execution Context fue definida por RFC-00YK (`plans/rfc/13-execution-context-materialization-model.md`, §Relationship with Context Delivery): Context Delivery no es una forma de materialización ni un paso posterior a ella — son conceptos adyacentes a través de la frontera protocolo/runtime. Delivery define *qué* llega al Worker; la Materialization (RFC-00YL para runtimes basados en prompts) define *cómo* el runtime lo representa.
+
+---
+
 ## Resolved Candidate Set
 
 Conjunto consistente de candidatos que puede ser compuesto sin conflictos pendientes.
+
+---
+
+# RFC Index
+
+Las RFCs conceptuales que definen este pipeline (el status de cada una vive únicamente en `plans/INDEX.md`, single-source):
+
+| RFC | Archivo |
+|---|---|
+| RFC-00XX — Skill Capability Model | `plans/rfc/00-skill-capability-model.md` |
+| RFC-00XY — Execution Context Model | `plans/rfc/01-execution-context-model.md` |
+| RFC-00XZ — Execution Context Assembly Process | `plans/rfc/02-execution-context-assembly-process.md` |
+| RFC-00YA — Context Budget Model | `plans/rfc/03-context-budget-model.md` |
+| RFC-00YB — Context Candidate Prioritization Model | `plans/rfc/04-context-candidate-prioritization-model.md` |
+| RFC-00YC — Context Resolution Model | `plans/rfc/05-context-resolution-model.md` |
+| RFC-00YD — Context Composition Model | `plans/rfc/06-context-composition-model.md` |
+| RFC-00YE — Context Conflict Classification Model | `plans/rfc/07-context-conflict-classification-model.md` |
+| RFC-00YF — Context Tie-Breaking Model | `plans/rfc/08-context-tie-breaking-model.md` |
+| RFC-00YG — Context Merge Model | `plans/rfc/09-context-merge-model.md` |
+| RFC-00YH — Context Deduplication Model | `plans/rfc/10-context-deduplication-model.md` |
+| RFC-00YI — Context Compression Model | `plans/rfc/11-context-compression-model.md` |
+| RFC-00YJ — Context Optimization Model | `plans/rfc/12-context-optimization-model.md` |
+| RFC-00YK — Execution Context Materialization Model | `plans/rfc/13-execution-context-materialization-model.md` |
+| RFC-00YL — Prompt Rendering Model | `plans/rfc/14-prompt-rendering-model.md` |
+| RFC-00YM — Skill Materialization Model | `plans/rfc/15-skill-materialization-model.md` |
+
+RFC-00XX antecede a la serie de contexto: define qué es una Skill como capacidad reutilizable, insumo del Capability Context (RFC-00XY, §Context Categories → Capability Context).
 
 ---
 
@@ -362,7 +416,7 @@ La evolución prevista de la feature continúa refinando responsabilidades ya ex
 * ✔ Context Budget Model
 * ✔ Context Prioritization Model
 * ✔ Context Resolution Model
-* ⏳ Context Composition Model
+* ✔ Context Composition Model
 
 Objetivo:
 
@@ -372,10 +426,10 @@ Definir completamente cada etapa del pipeline conceptual.
 
 ## Nivel 2 — Especialización de Resolution
 
-* Context Conflict Classification Model
-* Context Tie-Breaking Model
-* Context Merge Model
-* Context Deduplication Model
+* ✔ Context Conflict Classification Model
+* ✔ Context Tie-Breaking Model
+* ✔ Context Merge Model
+* ✔ Context Deduplication Model
 
 Objetivo:
 
@@ -385,8 +439,8 @@ Especializar los distintos mecanismos conceptuales de resolución de conflictos 
 
 ## Nivel 3 — Especialización de Composition
 
-* Context Compression Model
-* Context Optimization Model
+* ✔ Context Compression Model
+* ✔ Context Optimization Model
 
 Objetivo:
 
@@ -396,9 +450,9 @@ Refinar cómo un conjunto resuelto se transforma en un Execution Context bajo la
 
 ## Nivel 4 — Materialización
 
-* Prompt Rendering Model
-* Skill Materialization Model
-* Execution Context Materialization Model
+* ✔ Execution Context Materialization Model
+* ✔ Prompt Rendering Model
+* ✔ Skill Materialization Model
 
 Objetivo:
 

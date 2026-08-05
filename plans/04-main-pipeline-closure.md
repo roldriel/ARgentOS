@@ -1,6 +1,6 @@
 # Plan — Nivel 1: Cierre del Pipeline Principal
 
-**Status:** Plan aprobado para redacción de RFCs
+**Status:** Executed
 
 **Depends on:** — (ninguno; es la base de los Niveles 2–4)
 

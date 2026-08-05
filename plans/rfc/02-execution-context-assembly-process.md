@@ -10,8 +10,6 @@
 
 ---
 
-> ⚠ **Enmienda pendiente** — RFC-00YB y RFC-00YC: agregan **Context Candidate Prioritization** y **Context Resolution** como responsabilidades del proceso, entre Context Organization y Context Composition. El modelo vigente es `.agents/orchestrators/core/roles/orchestrator.md` §5 («Worker Delegation»), que declara siete responsabilidades. Ver [Amendment Log](#amendment-log).
-
 # Abstract
 
 La RFC-00XY (**Execution Context Model**) introdujo dos conceptos fundamentales:
@@ -151,7 +149,7 @@ Representa únicamente una descomposición conceptual de Context Assembly.
 
 # Responsibilities
 
-El Execution Context Assembly Process se compone de cinco responsabilidades.
+El Execution Context Assembly Process se compone de siete responsabilidades.
 
 ## 1. Source Discovery
 
@@ -214,9 +212,45 @@ No construye todavía el Execution Context.
 
 ---
 
-## 4. Context Composition
+## 4. Context Candidate Prioritization
 
-Construye el Execution Context a partir de las categorías previamente organizadas.
+Establece una relación de prioridad entre los candidatos de contexto disponibles después de Context Organization.
+
+Responde:
+
+> **¿Qué candidatos parecen más importantes?**
+
+No decide inclusión ni exclusión.
+
+No resuelve conflictos.
+
+Produce únicamente una relación conceptual de prioridad.
+
+Su modelo conceptual es definido por RFC-00YB (`plans/rfc/04-context-candidate-prioritization-model.md`).
+
+---
+
+## 5. Context Resolution
+
+Transforma el conjunto de candidatos priorizados en un **Resolved Candidate Set**: un conjunto conceptualmente consistente que puede ser compuesto.
+
+Responde:
+
+> **¿Qué conjunto consistente puede ser finalmente compuesto?**
+
+No determina cómo resolver conflictos.
+
+No define políticas ni algoritmos.
+
+Si el conjunto priorizado no presenta conflictos, actúa como una transformación identidad.
+
+Su modelo conceptual es definido por RFC-00YC (`plans/rfc/05-context-resolution-model.md`).
+
+---
+
+## 6. Context Composition
+
+Construye el Execution Context a partir del Resolved Candidate Set producido por Context Resolution.
 
 Responde:
 
@@ -227,6 +261,8 @@ Esta responsabilidad representa la composición conceptual del resultado final.
 Context Composition opera bajo un **Context Budget**: una restricción conceptual sobre la cantidad de información del Execution Context, cuyas propiedades (Finite, Consumable, Exhaustible) define RFC-00YA (`plans/rfc/03-context-budget-model.md`, sección «Budget Invariants»).
 
 El Budget restringe esta responsabilidad; no constituye una responsabilidad adicional ni modifica su alcance.
+
+El modelo conceptual de Context Composition es definido por RFC-00YD (`plans/rfc/06-context-composition-model.md`).
 
 Esta responsabilidad no define:
 
@@ -240,7 +276,7 @@ Dichos aspectos podrán ser definidos por RFC futuras.
 
 ---
 
-## 5. Context Delivery
+## 7. Context Delivery
 
 Entrega el Execution Context al Worker utilizando el mecanismo de delegación existente.
 
@@ -267,6 +303,12 @@ Context Collection
 Context Organization
         │
         ▼
+Context Candidate Prioritization
+        │
+        ▼
+Context Resolution ◄──── originates conflicts ──── Context Budget
+        │
+        ▼
 Context Composition ◄──── constrains ──── Context Budget
         │
         ▼
@@ -281,7 +323,7 @@ Worker
 
 La presente RFC define únicamente responsabilidades conceptuales.
 
-Context Budget no constituye una responsabilidad adicional del proceso: representa una restricción conceptual sobre Context Composition, definida por RFC-00YA (`plans/rfc/03-context-budget-model.md`).
+Context Budget no constituye una responsabilidad adicional del proceso: representa una restricción conceptual definida por RFC-00YA (`plans/rfc/03-context-budget-model.md`) que participa lateralmente en Context Resolution (como origen potencial de conflictos, según RFC-00YC) y en Context Composition (como restricción sobre la composición).
 
 No impone una implementación.
 
@@ -305,7 +347,7 @@ RFC-00XY continúa siendo la definición canónica de:
 * categorías del Execution Context;
 * la relación entre Context Assembly y Execution Context.
 
-La presente RFC reemplaza la descripción agregada de Context Assembly (tanto textual como gráfica) por una descomposición en cinco responsabilidades conceptuales.
+La presente RFC reemplaza la descripción agregada de Context Assembly (tanto textual como gráfica) por una descomposición en siete responsabilidades conceptuales.
 
 Esta modificación no altera el modelo definido por RFC-00XY.
 
@@ -390,12 +432,15 @@ Las siguientes extensiones, originalmente previstas como futuras, ya fueron intr
 * **Context Budget Model** (RFC-00YA, `plans/rfc/03-context-budget-model.md`): restringe conceptualmente la responsabilidad de **Context Composition**.
 * **Context Candidate Prioritization Model** (RFC-00YB, `plans/rfc/04-context-candidate-prioritization-model.md`): establece una relación de prioridad entre los candidatos disponibles **después de Context Organization y antes de Context Composition**, sin decidir inclusión ni exclusión.
 * **Context Resolution Model** (RFC-00YC, `plans/rfc/05-context-resolution-model.md`): transforma los candidatos priorizados en un **Resolved Candidate Set** consistente, también **antes de Context Composition** (`feature.md`, Stages 6–7).
+* **Context Composition Model** (RFC-00YD, `plans/rfc/06-context-composition-model.md`): define el modelo conceptual de **Context Composition** — la transformación del Resolved Candidate Set en un Execution Context bajo las restricciones del Budget.
+* **Context Compression Model** (RFC-00YI, `plans/rfc/11-context-compression-model.md`) y **Context Optimization Model** (RFC-00YJ, `plans/rfc/12-context-optimization-model.md`): las dos especializaciones de Composition del Nivel 3 — reducción del costo de representación y mejora de la adecuación de la representación final bajo las restricciones del Budget.
+* **Execution Context Materialization Model** (RFC-00YK, `plans/rfc/13-execution-context-materialization-model.md`): define la materialización como la transformación del Execution Context en una representación propia de un runtime, y cierra la relación entre **Context Delivery** y la materialización (adyacentes a través de la frontera protocolo/runtime).
+* **Prompt Rendering Model** (RFC-00YL, `plans/rfc/14-prompt-rendering-model.md`): especialización de RFC-00YK — cómo materializa el Execution Context un runtime basado en prompts, con la interfaz conceptual de las variantes de `feature.md` §Stage 10.
+* **Skill Materialization Model** (RFC-00YM, `plans/rfc/15-skill-materialization-model.md`): cómo se materializa una Skill en un runtime concreto, en relación lateral con RFC-00YK (la Skill se materializa como parte del Execution Context que la contiene).
 
 ## Futuras
 
-* **Context Compression Model** y **Context Optimization Model**: transformaciones destinadas a mejorar cómo un conjunto resuelto se convierte en un Execution Context bajo las restricciones del Budget (`feature.md`, Planned Evolution — Nivel 3).
-* **Prompt Rendering Model**: describe cómo el Execution Context construido es transformado en la representación final consumida por el modelo (`feature.md`, Planned Evolution — Nivel 4).
-* **Skill Materialization Model**: define distintos mecanismos mediante los cuales una Skill puede incorporarse durante la ejecución sin modificar su definición conceptual (`feature.md`, Planned Evolution — Nivel 4).
+Ninguna extensión anunciada por esta RFC permanece pendiente: las siete extensiones previstas (Budget, Prioritization, Resolution, Composition, Compression, Optimization y las del Nivel 4) ya fueron introducidas por las RFCs listadas en «Ya introducidas».
 
 ---
 
@@ -453,7 +498,7 @@ En particular:
 
 * **`.agents/orchestrators/core/roles/orchestrator.md`**
 
-  * Sustituir la descripción agregada de Context Assembly por las cinco responsabilidades definidas en esta RFC.
+  * Sustituir la descripción agregada de Context Assembly por las siete responsabilidades definidas en esta RFC.
 
 No se requieren modificaciones en:
 
@@ -482,3 +527,6 @@ Esta separación mejora la claridad del protocolo, proporciona un punto de exten
 | 2026-08-02 | Status normalizado a `Accepted` y autor declarado; banner de enmienda pendiente agregado bajo el header (RFC-00YB/00YC extienden el proceso a siete responsabilidades; modelo vigente en `orchestrator.md` §5). | Corrección transversal de `plans/` (2 ago 2026) |
 | 2026-08-02 | «Non Goals» reformulado (ya no niega los presupuestos, sino la administración, unidades y políticas del Budget de RFC-00YA); definición inline de los invariantes del Budget en «Responsibilities → 4» reemplazada por remisión a RFC-00YA §Budget Invariants; bullet de «Documentation Impact» corregido (el diagrama agregado de RFC-00XY se mantuvo, por decisión del plan `plans/02-execution-context-assembly-process.md` Phase 1). | Corrección transversal de `plans/` (2 ago 2026) |
 | 2026-08-02 | «Future Extensions» reescrita: Budget, Prioritization y Resolution movidas a «Ya introducidas» (RFC-00YA/00YB/00YC), con Prioritization y Resolution ubicadas entre Organization y Composition según `feature.md` Stages 6–7; quedan como futuras Compression, Optimization y Materialization. | Corrección transversal de `plans/` (2 ago 2026) |
+| 2026-08-05 | Enmiendas RFC-00YB/00YC aplicadas: «Responsibilities» pasa de cinco a siete (Context Candidate Prioritization como §4 y Context Resolution como §5, antes de Context Composition —renumerada §6— y Context Delivery —renumerada §7—); banner de enmienda pendiente eliminado; «Conceptual Model» actualizado a Organization → Prioritization → Resolution → Composition con Context Budget como restricción lateral de Resolution (`originates conflicts`) y de Composition (`constrains`); referencias al conteo de responsabilidades actualizadas («Relationship with RFC-00XY», «Documentation Impact»). Nota: las descripciones stale de «Future Extensions» que el plan §B.2 preveía («Resolution y Prioritization operan *durante* Context Composition») ya habían sido corregidas el 2 ago 2026; no requirieron cambio adicional. | Plan `plans/04-main-pipeline-closure.md` §B |
+| 2026-08-05 | «Future Extensions → Ya introducidas»: agregada RFC-00YD (Context Composition Model), que formaliza el modelo conceptual de Context Composition. | Plan `plans/04-main-pipeline-closure.md` §A / RFC-00YD |
+| 2026-08-05 | «Future Extensions → Ya introducidas»: agregadas RFC-00YI/00YJ (Nivel 3) y RFC-00YK/00YL/00YM (Nivel 4); la sección «Futuras» queda vacía — todas las extensiones anunciadas por esta RFC ya fueron introducidas. | Plan `plans/07-materialization.md` §Actualizaciones transversales al cerrar el nivel |

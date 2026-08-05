@@ -1,6 +1,6 @@
 # Plan 20 — Release & Adoption
 
-**Status:** Aprobado para ejecución; criterio de entrada: plan 19 Executed.
+**Status:** Executed (5 ago 2026; commit y tag 1.0.0 confirmados por el usuario).
 
 **Depends on:** plan 19 (la primera versión etiquetada del protocolo debe ser la validada por dogfooding).
 

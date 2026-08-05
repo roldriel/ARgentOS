@@ -303,6 +303,91 @@ Adopted pattern and key decisions.
 - Migration plan.
 ```
 
+### 9.3 Domain Overview Template
+
+For projects with a business domain of their own, a domain overview gives workers the functional context that `project-map.md` and `technical-analysis.md` do not cover: actors, business rules, valid states, and invariants. It is a domain document, not a technical one — implementation details belong in `technical-analysis.md`.
+
+```markdown
+# Domain Overview: <Domain Name>
+
+> Functional context of the domain. Replace `<Domain Name>`.
+
+## 1. Access Model
+> How the system is accessed: actors, authentication, data isolation.
+
+## 2. Core Concept
+> Definition of the central object or process of the domain.
+
+## 3. Creation / Process Start
+> Required data, validations, and steps to start the process.
+
+## 4. Business Constraints
+> Rules: time-based, monetary, format, volume, etc.
+
+## 5. Valid States
+> List of possible states.
+
+## 6. Allowed Transitions
+> Diagram or list of valid transitions between states.
+
+## 7. Main Processes
+> Happy path, alternative flows, retries, closure.
+
+## 8. External Integrations
+> Providers, services, callbacks, webhooks.
+
+## 9. Global Invariants
+> Attributes or rules that must never be violated.
+
+## 10. Critical Domain Rules
+> Warnings and rules that, if omitted, leave the system logically inconsistent.
+
+## 11. Glossary
+> Domain-specific terms and their definitions.
+
+## 12. Notes
+> Warnings for agents or developers.
+```
+
+### 9.4 Domain Cheatsheet Template
+
+The cheatsheet is the quick-reference companion of the domain overview: a one-screen summary a worker consults while executing, without rereading the full overview. Keep it short and current; extensive documentation belongs in the overview or in functional docs.
+
+```markdown
+# Domain Cheatsheet: <Domain Name>
+
+> Quick reference for workers. Keep it up to date.
+
+## Valid States
+1.
+2.
+3.
+
+## Allowed Transitions
+
+<state> → <state>
+<state> → <state>
+
+## Key Business Rules
+| Rule | Value / Condition |
+|------|-------------------|
+| | |
+
+## Global Invariants
+-
+
+## Anti-patterns
+-
+
+## Frequent Decisions
+| Situation | Standard decision | Exceptions |
+|-----------|-------------------|------------|
+| | | |
+
+## Quick Links
+-
+```
+
 ---
 
 ## 10. Responsibility Summary

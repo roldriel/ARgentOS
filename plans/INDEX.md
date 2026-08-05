@@ -12,6 +12,7 @@ Estado al 2026-07-28. El trabajo activo es el **Execution Context Pipeline** (`f
 | RFC-00YA | `rfc/03-context-budget-model.md` | Accepted ⚠ (alcance ampliado por 00YC — banner en el documento) | ¿Qué restricciones limitan su composición? |
 | RFC-00YB | `rfc/04-context-candidate-prioritization-model.md` | Accepted (regularizado 2 ago 2026: ya estaba aplicado en `.agents/`) | ¿Qué candidatos parecen más importantes? |
 | RFC-00YC | `rfc/05-context-resolution-model.md` | Accepted (regularizado 2 ago 2026: ya estaba aplicado en `.agents/`) | ¿Qué conjunto consistente puede componerse? |
+| RFC-16 | `rfc/16-core-skills-catalog-model.md` | Accepted | ¿Qué Skills forman el núcleo del protocolo, qué función cumple cada una y qué criterios deciden la membresía? |
 
 ## Roadmap de implementación (planes activos)
 
@@ -72,6 +73,13 @@ Nivel 4  Materialización                 (requiere Nivel 1; conceptualmente Niv
 | `18-segunda-materializacion.md` | aprobado | 07 | Prueba de fuego de la tesis runtime-independent: materialización no-prompt del Execution Context. |
 | `19-dogfooding-end-to-end.md` | aprobado | 04–14 (+15, 17) | Proyecto real ejecutado por protocolo; backlog evidenciado de la siguiente generación. |
 | `20-release-adoption.md` | aprobado | 19 | Versionado, changelog, migración, onboarding y tag 1.0.0 del protocolo. |
+
+## Cuarta serie: Core Skills Pack
+
+| Plan | Status | Depende de | Descripción |
+|---|---|---|---|
+| `21-core-skills-pack.md` | Executed | RFC-16 Accepted | Implementación por tandas del Core Skills Pack definido en RFC-16 (`rfc/16-core-skills-catalog-model.md`). |
+| `22-skills-pack-2.md` | Executed | 21 | Segundo pack: 16 Skills complementarias seleccionadas con los criterios C1–C4 de RFC-16 entre las candidatas no excluidas. |
 
 ## Documentos de soporte
 

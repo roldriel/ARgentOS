@@ -51,13 +51,17 @@ Validate that the context validation report justifies whether the gathered conte
 
 ## Checklist
 
-1. The artifact file exists.
-2. The report explicitly states whether the context is sufficient.
-3. The report identifies any missing or ambiguous context.
-4. The report evaluates relevance of the gathered context to the task.
-5. The report evaluates consistency between context and task specification.
-6. If context is insufficient, the report specifies what is missing.
-7. The report does not invent context to cover gaps.
+**Evaluation audience:** each item is marked `[machine]` — validated deterministically by the harness runner (artifact existence, required-section presence, and the EARS/rubric/semantic checks declared in this policy's front matter) or by the policy's test suite — or `[agent]` — evaluated by agent judgment when applying this policy. A `[machine]` failure is gateable without interpretation; an `[agent]` failure is declared judgment.
+
+1. The artifact file exists. `[machine]`
+2. The report explicitly states whether the context is sufficient. `[agent]`
+3. The report identifies any missing or ambiguous context. `[agent]`
+4. The report evaluates relevance of the gathered context to the task. `[agent]`
+5. The report evaluates consistency between context and task specification. `[agent]`
+6. If context is insufficient, the report specifies what is missing. `[agent]`
+7. The report does not invent context to cover gaps. `[agent]`
+
+The presence of the `required_sections` declared in this policy's front matter is `[machine]` even though it is not restated as a numbered item.
 
 ## Decision Criteria
 

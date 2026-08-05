@@ -53,14 +53,18 @@ Validate that `VERIFICATION_REPORT.md` demonstrates the task was completed and v
 
 ## Checklist
 
-1. The artifact file exists.
-2. The report summarizes what was verified.
-3. Each acceptance criterion from `TASK_SPECIFICATION.md` is evaluated.
-4. The report includes test results or equivalent evidence.
-5. The report identifies any issues or failures.
-6. The report explicitly recommends either `COMPLETED` or `RECOVERY`.
-7. If the recommendation is `COMPLETED`, all acceptance criteria are met.
-8. The report does not rely on assumptions to claim success.
+**Evaluation audience:** each item is marked `[machine]` — validated deterministically by the harness runner (artifact existence, required-section presence, and the EARS/rubric/semantic checks declared in this policy's front matter) or by the policy's test suite — or `[agent]` — evaluated by agent judgment when applying this policy. A `[machine]` failure is gateable without interpretation; an `[agent]` failure is declared judgment.
+
+1. The artifact file exists. `[machine]`
+2. The report summarizes what was verified. `[agent]`
+3. Each acceptance criterion from `TASK_SPECIFICATION.md` is evaluated. `[agent]`
+4. The report includes test results or equivalent evidence. `[agent]`
+5. The report identifies any issues or failures. `[agent]`
+6. The report explicitly recommends either `COMPLETED` or `RECOVERY`. `[machine]` (the runner's `final_decision` semantic check enforces the declared value)
+7. If the recommendation is `COMPLETED`, all acceptance criteria are met. `[machine]` (the runner's `acceptance_criteria_evaluation` semantic check enforces that no criterion is `FAIL` and that `PARTIAL` criteria carry `action_plan`)
+8. The report does not rely on assumptions to claim success. `[agent]`
+
+The presence of the `required_sections` declared in this policy's front matter, and the `rubric_validation` declared in the front matter when the `rubrics` feature flag is enabled, are `[machine]` even though they are not restated as numbered items.
 
 ## Decision Criteria
 

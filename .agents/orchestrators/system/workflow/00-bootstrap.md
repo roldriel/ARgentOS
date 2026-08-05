@@ -57,7 +57,7 @@ The core Orchestrator continues from `SYSTEM_READY` as defined in `.agents/orche
 
 The health check failed or the runtime environment could not be initialized.
 
-Report the failing checks to the user and stop. Do not hand control to the core Orchestrator.
+Report the failing checks to the user and stop. The blocking rule for the handoff and its only exception are those defined in `.agents/orchestrators/system/states/SYSTEM_STATE_MACHINE.md` (`BOOTSTRAP_FAILED`, canonical rule).
 
 ---
 
@@ -72,7 +72,7 @@ python .agents/harness/runner.py health-check
 
 3. Evaluate the result through harness trigger `S00` (`.agents/orchestrators/system/harness/policies/S00-system-ready.md`).
 4. On `PASS`, transition to `ENVIRONMENT_READY` and hand control to the core Orchestrator.
-5. On `FAIL`, transition to `BOOTSTRAP_FAILED`, report the failing checks, and stop.
+5. On `FAIL`, transition to `BOOTSTRAP_FAILED` and report the failing checks. The blocking rule and its only exception are those defined in `.agents/orchestrators/system/states/SYSTEM_STATE_MACHINE.md` (`BOOTSTRAP_FAILED`, canonical rule).
 
 ---
 

@@ -45,7 +45,7 @@ One row per protocol skill. The structural test `.agents/harness/tests/test_prot
 
 ## Activation table
 
-Declarative, auditable mapping used by the Orchestrator during `ANALYZING_TASK`/`PLANNING`. Its classification axis reuses decisions the Orchestrator already makes — **workflow phase + selected profile** — so no parallel task taxonomy is introduced. The Orchestrator MAY also activate a skill outside this table when the skill's `description` justifies it, recording the activation and its reason in `SESSION_LOG.md` (see `.agents/standards/orchestration/SKILLS.md`).
+Declarative, auditable mapping used by the Orchestrator during `ANALYZING_TASK`/`PLANNING`. Its classification axis — **workflow phase + selected profile** — is confirmed as the complete structure for declarative candidacy: it reuses decisions the Orchestrator already makes, so no parallel task taxonomy is introduced. The concepts the axis does not express (description sufficiency, justified override in its activation and omission forms) are properties of the activation process, defined in `.agents/standards/orchestration/SKILLS.md` (§"Activation"), not missing columns of this table. The Orchestrator MAY also activate a skill outside this table when the skill's `description` justifies it, recording the activation and its reason in `SESSION_LOG.md` (see `.agents/standards/orchestration/SKILLS.md`).
 
 | Workflow phase | Profile | Skills |
 | --- | --- | --- |

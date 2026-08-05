@@ -52,13 +52,17 @@ Validate that the execution phase completed all planned steps and left the proje
 
 ## Checklist
 
-1. Every step in `EXECUTION_PLAN.md` has been executed or explicitly documented as skipped with justification.
-2. No project files outside the plan scope were modified.
-3. No unplanned requirements or assumptions were introduced.
-4. Intermediate validations defined in the plan were run.
-5. The project is in a verifiable state (tests can run, app can start, etc.).
-6. No step caused an unrecoverable error.
-7. For each practice listed in `technical_approach.enabled`, the `EXECUTION_SUMMARY.md` contains a corresponding entry in `## Technical Practice Evidence` with `applied` and, when applicable, supporting evidence.
+**Evaluation audience:** each item is marked `[machine]` — validated deterministically by the harness runner (artifact existence, required-section presence, and the semantic checks declared in this policy's front matter) or by the policy's test suite — or `[agent]` — evaluated by agent judgment when applying this policy. A `[machine]` failure is gateable without interpretation; an `[agent]` failure is declared judgment.
+
+1. Every step in `EXECUTION_PLAN.md` has been executed or explicitly documented as skipped with justification. `[machine]` (the runner's `execution_summary` semantic check enforces that every step is `COMPLETED` or `SKIPPED` with notes)
+2. No project files outside the plan scope were modified. `[agent]`
+3. No unplanned requirements or assumptions were introduced. `[agent]`
+4. Intermediate validations defined in the plan were run. `[agent]`
+5. The project is in a verifiable state (tests can run, app can start, etc.). `[agent]` (the runner verifies the declared value `final_state.status = VERIFIABLE`; judging that the project is actually verifiable is agent judgment)
+6. No step caused an unrecoverable error. `[agent]`
+7. For each practice listed in `technical_approach.enabled`, the `EXECUTION_SUMMARY.md` contains a corresponding entry in `## Technical Practice Evidence` with `applied` and, when applicable, supporting evidence. `[machine]` (the runner's `technical_practice_evidence` semantic check)
+
+The presence of the `required_sections` declared in this policy's front matter is `[machine]` even though it is not restated as a numbered item.
 
 ## Decision Criteria
 

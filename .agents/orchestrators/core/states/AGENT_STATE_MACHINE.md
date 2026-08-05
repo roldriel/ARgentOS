@@ -72,7 +72,7 @@ No transition may bypass a required state because the task appears small, simple
   - Following the recovery loop back to `PLANNING` or `NEEDS_CLARIFICATION`.
 - If a worker proposes skipping a phase, the Orchestrator MUST record the proposal in `SESSION_LOG.md` and route to `RECOVERY` or `NEEDS_CLARIFICATION`.
 
-A retroactive artifact created after execution to "fill a gap" is a deviation. It must be clearly marked as retroactive in both the artifact and the session log, and the deviation must be justified by a recovery decision, not by convenience.
+A retroactive artifact — one created after execution, outside its phase, to "fill a gap" in the trace — is a retroactive deviation. It is not a valid way to complete an iteration: the artifact must be clearly marked as retroactive in both the artifact itself and the session log, and the deviation must be justified by a recovery decision, not by convenience. An unmarked retroactive artifact is a second violation on top of the first: the production deviation plus the concealment of it.
 
 For the explicit anti-circumvention rule, see `.agents/standards/conduct/ANTI_CIRCUMVENTION.md`.
 

@@ -24,6 +24,12 @@ Each agent session MUST use a unique session identifier (UUID) as the immediate 
 
 If `.project/` does not exist, the ArgentOS System Agent MUST create it before the Orchestrator starts a session. The Orchestrator and Worker MUST NOT create `.project/` themselves.
 
+Conceptual rules for iterations and `<order>`:
+
+- **Iteration boundary:** each user request — one full workflow pass — opens a new sequential iteration folder. Internal loops of the same pass (clarification cycles, recovery loops, bounded retries) continue in the current iteration: an iteration serves one request, and whatever serves the same request stays in its iteration.
+- **Partial iteration:** an iteration that did not reach a terminal state (`COMPLETED`/`ABORT`) before the session ended is a partial iteration. When a session is resumed, continuing the same request resumes the partial iteration from its last intact artifact; a new request opens a new iteration and the partial one remains as historical trace. A partial iteration is never rewritten: artifacts already produced are not regenerated retroactively.
+- **`<order>` rule:** `<order>` is the artifact generation sequence within the iteration. It is monotonic with the flow (an artifact produced later carries a higher order) and is auditable against `SESSION_LOG.md`. An `<order>` that does not reflect the real generation order is a trace-integrity violation, not a style error.
+
 Example:
 
 ```text

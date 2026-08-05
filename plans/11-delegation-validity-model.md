@@ -1,6 +1,6 @@
 # Plan 11 — Delegation Validity Model
 
-**Status:** Aprobado para redacción.
+**Status:** Executed
 
 **Depends on:** nada estructural (el caso concreto se apoya en RFC-00YA, ya existente, y en definiciones inline ya presentes en `orchestrator.md` §"5. Worker Delegation"); se recomienda ejecutar después de 04–07 por terminología. Dependencia blanda del plan 10 (ver A.5 y el gate conceptual).
 

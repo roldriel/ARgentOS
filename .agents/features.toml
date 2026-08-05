@@ -4,10 +4,18 @@
 # individual capabilities via environment variables with the
 # AGENTS_FEATURE_<FLAG> prefix.
 #
-# Consumption: flags marked [code] are read by the harness Python code
-# (feature_flags.py / health_check.py / runner). Flags and settings marked
-# [declarative] are consumed by agents reading this file; the harness only
-# resolves and exposes them via `runner.py features` / feature_flags.all_flags().
+# Consumption: flags are classified by who consumes them. Flags marked
+# [code] are read by the harness Python code (feature_flags.py /
+# health_check.py / runner); their compliance is mechanical. Flags and
+# settings marked [declarative] are consumed by agents reading this file;
+# the harness only resolves and exposes them via `runner.py features` /
+# feature_flags.all_flags(). An enabled [declarative] flag is a behavioral
+# obligation: the consuming agent must read its value before the flow point
+# where it conditions behavior and act on it there; ignoring it is a
+# deviation that must be logged. Compliance is auditable by joining the
+# active-flags entry in SESSION_LOG.md with the consumption declared in the
+# produced artifacts. Dual flags ([code] + declarative) carry both
+# obligations independently.
 
 [features]
 # [code] decision_trees, rubrics, knowledge_base — gate harness validations.

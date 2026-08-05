@@ -53,16 +53,20 @@ Validate that `EXECUTION_PLAN.md` defines an executable, safe, and scope-respect
 
 ## Checklist
 
-1. The artifact file exists.
-2. The plan addresses the task objective.
-3. The plan uses validated context (no invented assumptions).
-4. The plan defines executable, ordered steps.
-5. Each step specifies what, where, and why.
-6. The plan identifies risks and mitigation strategies.
-7. The plan defines a verification strategy.
-8. The plan does not depend on unresolved unknowns.
-9. The plan does not exceed the task scope.
-10. The plan is compatible with the existing architecture and conventions.
+**Evaluation audience:** each item is marked `[machine]` — validated deterministically by the harness runner (artifact existence, required-section presence, and the EARS/rubric/semantic checks declared in this policy's front matter) or by the policy's test suite — or `[agent]` — evaluated by agent judgment when applying this policy. A `[machine]` failure is gateable without interpretation; an `[agent]` failure is declared judgment.
+
+1. The artifact file exists. `[machine]`
+2. The plan addresses the task objective. `[agent]`
+3. The plan uses validated context (no invented assumptions). `[agent]`
+4. The plan defines executable, ordered steps. `[agent]`
+5. Each step specifies what, where, and why. `[agent]`
+6. The plan identifies risks and mitigation strategies. `[agent]`
+7. The plan defines a verification strategy. `[agent]`
+8. The plan does not depend on unresolved unknowns. `[agent]`
+9. The plan does not exceed the task scope. `[agent]`
+10. The plan is compatible with the existing architecture and conventions. `[agent]`
+
+The presence of the `required_sections` declared in this policy's front matter is `[machine]` even though it is not restated as a numbered item.
 
 ## Decision Criteria
 

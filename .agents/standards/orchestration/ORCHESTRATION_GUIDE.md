@@ -55,6 +55,18 @@ The questions are **mutually exclusive in their main action**. If a single task 
 | Functional documentation | `tech_writer`, `backend_engineer` |
 | Generic backend | `database_engineer`, `integration_engineer`, `qa_engineer` |
 
+### Selection model (concepts)
+
+The 7 questions above are the operational procedure; these are the concepts that frame it:
+
+- **Profile candidacy:** a task is a *candidate* for a profile when its content falls within that profile's domain of action. Each of questions 1–6 *is* the candidacy criterion of one profile: an affirmative answer declares the candidacy. A task may be a candidate for zero, one, or several profiles.
+- **Fallback:** the generic worker (`profile: null`) is not a candidate profile; it is the result of a selection with an empty candidate set. Question 7 competes with no other: it applies only when no specialized candidacy exists.
+- **Mutual exclusion:** two profiles are mutually exclusive for a task when delegating the whole task to one of them violates the other's domain. The prohibited-profiles table above is a materialized instance of this concept for the domain pairs where the mistake is frequent — not an independent list.
+- **Tie:** a tie occurs when a task is a candidate for two or more mutually exclusive profiles. A tie is not resolved by choosing; it is resolved by *dividing*.
+- **Divisibility and subtask frontier:** a tied task is divisible when it can be split into subtasks such that each subtask is a candidate for exactly one profile and the subtasks cover the original task. A frontier between subtasks is valid when it satisfies: (1) *coverage* — nothing is left out; (2) *membership* — each subtask falls entirely within one profile's domain; (3) *dependency order* — a subtask that consumes another's result (e.g. documentation consuming `EXECUTION_SUMMARY.md`) is delegated after it. A tied task with no valid frontier is an ambiguity of scope, not a selection problem: transition to `NEEDS_CLARIFICATION`.
+
+Selection produces the `profile` value of the delegation payload; skill activation then applies orthogonally on top of the selected profile (see `.agents/standards/orchestration/SKILLS.md`, §"Activation").
+
 ---
 
 ## 4. Pre-delegation checklist
@@ -154,7 +166,7 @@ The payload must be a concrete instance of `.agents/delegation/WORKER_DELEGATION
   "harness_policy": "orchestrators/core/harness/policies/H05-execution-completed.md",
   "task_summary": "<objective rewritten using the profile prompt template>",
   "knowledge_entries": [],
-  "context_budget": 4000,
+  "context_budget": 1000,
   "communication_style": {"enabled": true, "level": "full"},
   "technical_approach": {"enabled": [], "notes": []}
 }
@@ -173,7 +185,7 @@ The payload must be a concrete instance of `.agents/delegation/WORKER_DELEGATION
 | `harness_policy` | Harness policy that protects the transition (`orchestrators/core/harness/policies/H05-execution-completed.md`). |
 | `task_summary` | Rewritten objective, never the original user prompt. |
 | `knowledge_entries` | Populated by `context_discoverer` when `knowledge_base` is active. |
-| `context_budget` | Recommended by `context_discoverer` or by `.agents/standards/context/CONTEXT.md`. |
+| `context_budget` | Recommended by `context_discoverer` in characters (per `KB_RECOMMENDATION.md`) and converted to estimated tokens per `.agents/standards/context/BUDGET_MATERIALIZATION.md` (`chars / 4`). Default `1000` for a full-KB delegation in planning/execution/verification (the 4000-character KB budget of `.agents/standards/context/CONTEXT.md` §3). |
 | `communication_style` | Mandatory when `caveman` is active. |
 | `technical_approach` | Populated when technical-practice feature flags are enabled and `TASK_SPECIFICATION.md` includes `## Technical Approach`. |
 
@@ -214,7 +226,7 @@ The payload must be a concrete instance of `.agents/delegation/WORKER_DELEGATION
   "harness_policy": "orchestrators/core/harness/policies/H05-execution-completed.md",
   "task_summary": "Fix the typo identified in README.md per acceptance criterion AC-1 of TASK_SPECIFICATION.md. Do not modify any other files.",
   "knowledge_entries": [],
-  "context_budget": 4000,
+  "context_budget": 1000,
   "communication_style": {"enabled": true, "level": "full"},
   "technical_approach": {"enabled": [], "notes": []}
 }
@@ -257,7 +269,7 @@ The payload must be a concrete instance of `.agents/delegation/WORKER_DELEGATION
   "harness_policy": "orchestrators/core/harness/policies/H05-execution-completed.md",
   "task_summary": "Implement the user listing endpoint respecting the View → Service → Model layering defined in ARCHITECTURE_CONTRACT.md. Acceptance criteria: AC-1 (pagination), AC-2 (name ordering), AC-3 (200 response).",
   "knowledge_entries": [],
-  "context_budget": 4000,
+  "context_budget": 1000,
   "communication_style": {"enabled": true, "level": "full"},
   "technical_approach": {"enabled": ["tdd", "srp"], "notes": ["tdd: escribir test del endpoint antes de implementar.", "srp: mantener lógica de negocio en UserListService."]}
 }
@@ -300,7 +312,7 @@ The payload must be a concrete instance of `.agents/delegation/WORKER_DELEGATION
   "harness_policy": "orchestrators/core/harness/policies/H05-execution-completed.md",
   "task_summary": "Add the `email_verified` column (BOOLEAN, NOT NULL DEFAULT false) to the `users` table via a migration. Update the corresponding model without introducing business logic. Criteria: AC-1 (reversible migration), AC-2 (model in sync).",
   "knowledge_entries": [],
-  "context_budget": 4000,
+  "context_budget": 1000,
   "communication_style": {"enabled": true, "level": "full"},
   "technical_approach": {"enabled": [], "notes": []}
 }
@@ -338,7 +350,7 @@ It cannot be solved with a single profile without violating the mutual-exclusion
   "harness_policy": "orchestrators/core/harness/policies/H05-execution-completed.md",
   "task_summary": "Implement the `PaymentProvider` provider adapting the external payments API. Include error handling, timeouts, and response mapping. Criteria: AC-1 (isolated provider), AC-2 (contract tests).",
   "knowledge_entries": [],
-  "context_budget": 4000,
+  "context_budget": 1000,
   "communication_style": {"enabled": true, "level": "full"},
   "technical_approach": {"enabled": ["srp", "dip"], "notes": ["srp: el provider solo adapta, sin lógica de negocio.", "dip: inyectar el provider en PaymentService."]}
 }
@@ -362,7 +374,7 @@ It cannot be solved with a single profile without violating the mutual-exclusion
   "harness_policy": "orchestrators/core/harness/policies/H05-execution-completed.md",
   "task_summary": "Document the functional flow of the integration with the external payments API for business readers. Include user steps, payment states, and possible errors. Criterion: AC-3 (approved functional documentation).",
   "knowledge_entries": [],
-  "context_budget": 4000,
+  "context_budget": 1000,
   "communication_style": {"enabled": true, "level": "full"},
   "technical_approach": {"enabled": [], "notes": []}
 }

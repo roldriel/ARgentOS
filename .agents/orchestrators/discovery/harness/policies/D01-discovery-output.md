@@ -54,36 +54,38 @@ it only validates the per-task `KB_RECOMMENDATION.md` artifact in
 
 ## Checklist
 
+**Evaluation audience:** each item is marked `[machine]` — validated deterministically by the harness runner or by the policy's test suite — or `[agent]` — evaluated by agent judgment when applying this policy. A `[machine]` failure is gateable without interpretation; an `[agent]` failure is declared judgment. Today this policy declares no `required_sections` or semantic checks in its front matter, so every item is `[agent]`; per §"Implementation Note", the items with deterministic structure (entry existence, `source_files` path existence, required fields and sections) are the candidates to become `[machine]` when D01 is implemented in code.
+
 1. **Real stack:** every language/framework listed in `stack.md` comes from a
    real configuration file (e.g., `pyproject.toml`, `package.json`,
-   `Dockerfile`).
+   `Dockerfile`). `[agent]`
 2. **Real dependencies:** every dependency listed in `dependencies.md` appears
-   in a real configuration file.
+   in a real configuration file. `[agent]`
 3. **Observed patterns:** every pattern in `development_patterns.md` has a
-   verifiable example in its `source_files`.
+   verifiable example in its `source_files`. `[agent]`
 4. **Environment without secrets:** `environment.md` contains no sensitive
-   strings and no environment variable values.
+   strings and no environment variable values. `[agent]`
 5. **Real source files:** every `source_files` entry points to an existing
-   path, except `"system_probe"` (valid only for environment entries).
+   path, except `"system_probe"` (valid only for environment entries). `[agent]`
 6. **No unsourced claims:** qualitative claims are backed by `source_files` or
-   by session artifacts.
+   by session artifacts. `[agent]`
 7. **Consistent merge:** the `synthesis_worker` did not lose information and
    did not leave conflicts unmarked; every entry carries `source_workers` and
-   `source_files` preserving provenance.
+   `source_files` preserving provenance. `[agent]`
 8. **Structural compliance:** every KB entry exists, is non-empty, and
    contains the required fields and sections of its contract
    (`.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md` and the
-   per-entry contracts), and the manifest lists every published entry.
+   per-entry contracts), and the manifest lists every published entry. `[agent]`
 9. **New entries present:** `executive_summary.md`, `file_map.md`,
    `entrypoint.md`, `api.md` and `glossary.md` exist and follow their
    contracts; `executive_summary.md` declares the `project_shape` in its first
-   line, matching the manifest.
+   line, matching the manifest. `[agent]`
 10. **Distribution rule:** `distribution.md` is present when the declared
     `project_shape` is `library` or `cli`; it may be legitimately absent for
-    any other shape.
+    any other shape. `[agent]`
 11. **API surface matches shape:** the content of `api.md` matches the
     `project_shape` declared in the manifest (variant rules of
-    `.agents/orchestrators/discovery/contracts/API_SURFACE.md`).
+    `.agents/orchestrators/discovery/contracts/API_SURFACE.md`). `[agent]`
 12. **Required sections:** `architecture.md` contains
     `## Module Responsibilities`, `## Strong Couplings`, `## Security` and
     `## Extension Points`; `configuration.md` contains
@@ -92,7 +94,7 @@ it only validates the per-task `KB_RECOMMENDATION.md` artifact in
     `## Compatibility Constraints`; `development_patterns.md` covers
     `## Testing`, `## Logging and Errors` and `## Validation`;
     `technical_debt.md` contains `## Top Risks`. `## Performance Invariants`
-    is required only when evidenced.
+    is required only when evidenced. `[agent]`
 
 ## Rejection of Invented Outputs
 

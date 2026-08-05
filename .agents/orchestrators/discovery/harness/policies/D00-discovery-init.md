@@ -38,10 +38,12 @@ Validate that the discovery session was initialized correctly and that the disco
 
 ## Checklist
 
-1. The discovery report artifact file exists.
-2. The artifact complies with the contract in `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_REPORT.md`.
-3. Each discovery entry referenced by the report complies with `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md`.
-4. The discovery scope and inputs used for the run are recorded in the artifact.
+**Evaluation audience:** each item is marked `[machine]` — validated deterministically by the harness runner (artifact existence and presence of the `required_sections` declared in this policy's front matter) — or `[agent]` — evaluated by agent judgment when applying this policy. A `[machine]` failure is gateable without interpretation; an `[agent]` failure is declared judgment.
+
+1. The discovery report artifact file exists. `[machine]`
+2. The artifact complies with the contract in `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_REPORT.md`. `[agent]` (this policy declares no `required_sections` or semantic checks; contract compliance is judged by the agent)
+3. Each discovery entry referenced by the report complies with `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md`. `[agent]`
+4. The discovery scope and inputs used for the run are recorded in the artifact. `[agent]`
 
 ## Decision Criteria
 

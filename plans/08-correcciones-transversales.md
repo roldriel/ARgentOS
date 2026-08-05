@@ -1,6 +1,6 @@
 # Plan 08 — Correcciones Transversales de `.agents/`
 
-**Status:** Aprobado para ejecución. Independiente; puede ejecutarse **ya, en paralelo** a los planes 04–07 (no toca ningún documento del roadmap de Execution Context).
+**Status:** Executed.
 
 **Depends on:** — (ninguno).
 

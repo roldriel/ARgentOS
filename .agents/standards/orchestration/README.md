@@ -5,6 +5,7 @@ This category groups the standards that guide the Orchestrator in deciding **whe
 ## Files
 
 - [`ORCHESTRATION_GUIDE.md`](./ORCHESTRATION_GUIDE.md) — decision procedure for selecting worker profiles and building delegation payloads.
+- [`DECISIONS.md`](./DECISIONS.md) — conceptual catalog of the Orchestrator's discretionary decision points and their concepts of authority.
 
 ## Responsibility
 

@@ -43,12 +43,14 @@ Validate that the executed work stayed strictly within the task assigned by the 
 
 ## Checklist
 
-1. The artifact contains a `Scope Compliance` section.
-2. The section declares whether the work respected the assigned scope.
-3. Any project file, dependency, configuration, or test modified outside the execution plan is listed in `unplanned_changes`.
-4. Any error, bug, or inconsistency discovered outside the assigned task scope is listed in `out_of_scope_issues` and was not acted upon without explicit user authorization.
-5. `user_authorized_extra_work` is `true` only if the user explicitly approved additional work in writing during the session.
-6. If `scope_respected` is claimed as `true`, `unplanned_changes` MUST be empty and `user_authorized_extra_work` MUST be `false`.
+**Evaluation audience:** each item is marked `[machine]` — validated deterministically by the harness runner (artifact existence, required-section presence, and the semantic checks declared in this policy's front matter) or by the policy's test suite — or `[agent]` — evaluated by agent judgment when applying this policy. A `[machine]` failure is gateable without interpretation; an `[agent]` failure is declared judgment.
+
+1. The artifact contains a `Scope Compliance` section. `[machine]` (declared in `required_sections`)
+2. The section declares whether the work respected the assigned scope. `[machine]` (the runner's `scope_compliance` semantic check reads the declared `scope_respected` value)
+3. Any project file, dependency, configuration, or test modified outside the execution plan is listed in `unplanned_changes`. `[agent]` (the runner verifies the declared list is empty when `scope_respected` is `true`; judging that nothing was omitted from the list is agent judgment)
+4. Any error, bug, or inconsistency discovered outside the assigned task scope is listed in `out_of_scope_issues` and was not acted upon without explicit user authorization. `[agent]`
+5. `user_authorized_extra_work` is `true` only if the user explicitly approved additional work in writing during the session. `[agent]` (the runner verifies the declared value; judging that the written approval exists is agent judgment)
+6. If `scope_respected` is claimed as `true`, `unplanned_changes` MUST be empty and `user_authorized_extra_work` MUST be `false`. `[machine]` (the runner's `scope_compliance` semantic check)
 
 ## Decision Criteria
 

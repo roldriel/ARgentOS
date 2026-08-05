@@ -25,7 +25,7 @@ States in this file belong to the `system` domain. The final transition **hands 
 # Core Rules
 
 - Every transition must be justified by a verifiable condition of the runtime environment, not by the agent's confidence.
-- If the environment cannot be verified, the System Agent MUST NOT hand control to the core Orchestrator; it reports the failure and stops.
+- If the environment cannot be verified, the System Agent reports the failure and stops. The canonical blocking rule and its only exception are defined under `BOOTSTRAP_FAILED` below.
 - The bootstrap workflow is documented in `.agents/orchestrators/system/workflow/00-bootstrap.md`.
 
 ---
@@ -111,6 +111,8 @@ The protocol health check failed or the runtime environment could not be initial
 
 - Report the failing checks to the user.
 - Do NOT hand control to the core Orchestrator.
+
+**Canonical rule:** a health-check `FAIL` blocks the handoff to the core Orchestrator; the only exception is explicit user authorization, recorded in `SESSION_LOG.md`. Every other protocol document that covers this situation (policy `S00`, the bootstrap workflow, the Orchestrator role) references this rule as stated here, without reformulating it.
 
 ### Allowed Transition
 

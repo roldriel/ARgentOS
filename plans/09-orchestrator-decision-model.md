@@ -1,6 +1,6 @@
 # Plan 09 — Orchestrator Decision Model
 
-**Status:** Aprobado para redacción.
+**Status:** Executed
 
 **Depends on:** plan 08 (elimina la contradicción de bootstrap que este plan modela). Conceptualmente independiente de 04–07, pero se recomienda redactarlo después para reutilizar su terminología.
 

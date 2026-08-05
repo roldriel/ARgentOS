@@ -48,10 +48,14 @@ only:
    - The user requests a refresh.
 2. Invokes the Discovery Orchestrator with a `scope`:
    - `full`: run the whole pipeline.
-   - `env`: only `environment_worker`.
-   - `stack`: only `stack_worker` + `framework_worker`.
-   - `patterns`: only `patterns_worker`.
-   - `business`: only `business_worker`.
+   - `env`: `init_worker`, `environment_worker`, `synthesis_worker`.
+   - `stack`: `init_worker`, `stack_worker`, `framework_worker`, `synthesis_worker`.
+   - `patterns`: `init_worker`, `patterns_worker`, `synthesis_worker`.
+   - `business`: `init_worker`, `business_worker`, `synthesis_worker`.
+
+   The canonical scope table is defined in
+   `.agents/orchestrators/discovery/states/DISCOVERY_STATE_MACHINE.md`
+   (section "Scopes").
 3. Receives the result: `discovery:DISCOVERY_READY` or `discovery:DISCOVERY_FAILED`.
 
 ## Responsibilities

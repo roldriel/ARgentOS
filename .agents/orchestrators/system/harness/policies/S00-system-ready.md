@@ -38,10 +38,12 @@ Validate that the protocol runtime environment is healthy before the System Agen
 
 ## Checklist
 
-1. `python .agents/harness/runner.py health-check` exits with code `0` and reports `"result": "PASS"`.
-2. `.project/.last_health_check` exists and its timestamp is within the configured TTL.
-3. `.project/knowledge/INDEX.md` and `.project/knowledge/entries/` exist.
-4. No required protocol directory reported by the health check is missing.
+**Evaluation audience:** each item is marked `[machine]` — validated deterministically by the health-check command itself (its exit code and JSON output) or by the harness runner — or `[agent]` — evaluated by agent judgment when applying this policy. A `[machine]` failure is gateable without interpretation; an `[agent]` failure is declared judgment.
+
+1. `python .agents/harness/runner.py health-check` exits with code `0` and reports `"result": "PASS"`. `[machine]`
+2. `.project/.last_health_check` exists and its timestamp is within the configured TTL. `[machine]`
+3. `.project/knowledge/INDEX.md` and `.project/knowledge/entries/` exist. `[machine]` (verified by the health check)
+4. No required protocol directory reported by the health check is missing. `[machine]`
 
 ## Decision Criteria
 
@@ -53,4 +55,4 @@ Validate that the protocol runtime environment is healthy before the System Agen
 The System Agent must:
 
 1. Report the failing checks to the user.
-2. Transition to `BOOTSTRAP_FAILED` and stop; control MUST NOT be handed to the core Orchestrator.
+2. Transition to `BOOTSTRAP_FAILED` and stop. The blocking rule and its only exception are those defined in `.agents/orchestrators/system/states/SYSTEM_STATE_MACHINE.md` (`BOOTSTRAP_FAILED`, canonical rule).

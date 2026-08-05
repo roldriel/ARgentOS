@@ -22,8 +22,15 @@ If a project skill and a protocol skill share the same name, the project skill w
 
 The Orchestrator selects skills during `ANALYZING_TASK`/`PLANNING`, the same way it selects `profile` and `knowledge_entries`, and passes them in the optional `skills: [...]` field of the delegation payload (see `.agents/delegation/WORKER_DELEGATION_CONTRACT.md`).
 
-1. **Deterministic (table)**: the activation table in `.agents/skills/INDEX.md` maps *workflow phase + selected profile* to skills. Its axis reuses decisions the Orchestrator already makes, so no parallel task taxonomy is introduced.
-2. **Judgment override**: the Orchestrator MAY activate a skill outside the table when the skill's `description` front-matter field justifies it. Every such activation, with its reason, MUST be recorded in `SESSION_LOG.md`.
+### Activation model (concepts)
+
+- **Skill candidacy:** a skill is a *candidate* for activation when the task falls within the conditions of use the skill declares. There are two candidacy paths, disjoint in origin and equivalent in result:
+  1. **Table candidacy (declarative):** the task's *workflow phase + selected profile* combination matches a row of the activation table in `.agents/skills/INDEX.md` that lists the skill. The axis reuses decisions the Orchestrator already makes, so no parallel task taxonomy is introduced.
+  2. **Judgment candidacy (evaluated in the moment):** the skill's `description` front-matter field declares conditions of use that the task satisfies, with no applicable table row.
+- **Activation** is the selection of the subset of candidates that travels in the payload. Unlike profiles, skills are never mutually exclusive — a worker may carry zero or more, and they never compete — so activation needs no tie-breaking or splitting: the result is a subset, not a single choice.
+- **Description sufficiency:** a `description` is sufficient to activate when it recognizably contains (1) the *capability* — what the skill does — and (2) the *conditions of use* — when it applies ("Use when…"). A description without conditions of use does not enable judgment candidacy: the Orchestrator has nothing to evaluate the task against.
+- **Justified override:** any activation that departs from table candidacy. It has two forms: *activation override* (activating a skill with no applicable table row, via judgment candidacy) and *omission override* (not activating a table-listed skill when the concrete task's conditions make the capability inapplicable). Every override, with its reason, MUST be recorded in `SESSION_LOG.md`; an override without a recorded reason is a deviation.
+- Activation operates on the skill as a conceptual capability (what its `description` declares), not on the mechanism by which the runtime delivers it.
 
 The Worker consumes each activated skill by reading its `SKILL.md` before executing the phase and loading `references/` files lazily, only when the procedure requires them (see `.agents/roles/worker.md`).
 

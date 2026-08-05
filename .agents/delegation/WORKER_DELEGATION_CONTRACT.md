@@ -44,7 +44,7 @@ The invocation is not a function call; it is a structured handoff of context and
   skills: [
     "<skill-name>"
   ],
-  context_budget: 4000,
+  context_budget: <budget>,
   communication_style: {
     "enabled": true,
     "level": "full"
@@ -60,6 +60,10 @@ The invocation is not a function call; it is a structured handoff of context and
 ```
 
 `knowledge_entries` and `context_budget` are optional. They are populated by the Orchestrator when the `knowledge_base` feature flag is enabled and the `context_discoverer` recommends relevant KB entries. The `context_gatherer` still collects technical project context; the KB entries provide historical lessons only.
+
+### `context_budget`
+
+`context_budget` is the Context Budget for this delegation as materialized by the current runtime: the finite share of the Budget available for populating the payload (in particular, the `knowledge_entries` excerpts). The contract defines the concept only; the value, its units, and its limits belong to the runtime, not to this contract. A valid value is always a finite, positive constraint on the resource the runtime uses to represent the Budget. For the prompt-based runtime, the value is denominated in estimated tokens as defined in `.agents/standards/context/BUDGET_MATERIALIZATION.md`.
 
 `communication_style` is optional. It is populated by the Orchestrator when the `caveman` feature flag is enabled. The `enabled` field is a boolean, and `level` is one of `lite`, `full`, or `ultra` (default: `full`). When present, the Worker MUST apply `.agents/standards/communication/CAVEMAN.md` at the specified level to all natural-language output, including the artifact and the return report.
 
@@ -127,6 +131,20 @@ The Worker returns the following to the Orchestrator:
 > **Deprecated:** The `recommended_next_state` field is deprecated and will be removed in a future version of the protocol. Workers should populate `recommendation.next_state` instead. The Orchestrator has never consumed `recommended_next_state`; it only uses `recommendation.next_state`.
 
 Fields `project_changes` and `recommendation` are optional and used only for phases `06` and `07`, respectively. For all other phases they may be omitted or left empty.
+
+### Failure classes in `blockers` and `deviations`
+
+Failure classes are defined by their conceptual origin and their conceptual destination (which protocol path resolves them), never by the phase or trigger that detected them:
+
+- `blocker` — a condition that prevents completing the phase or the task. Destination: recovery; clarification if resolving it requires a user decision; abort if the infeasibility is terminal.
+- `deviation` — a difference between what was specified/planned and what was executed/found, that does not prevent completing the phase. Destination: logged warning.
+- `ambiguity` — a decision ambiguity that proceeding would require assuming. Destination: clarification; the user is the only source of resolution.
+- `inconsistency` — an error, bug, or contradiction discovered outside the task scope or between artifacts, which the agent must not correct autonomously. Destination: logged warning, plus clarification when acting on it would affect scope.
+
+Reporting rules:
+
+- `blockers` reports entries of class `blocker` only.
+- `deviations` reports entries of classes `deviation`, `ambiguity`, and `inconsistency`; each entry MUST be prefixed with its class (e.g., `ambiguity: the target file for the new test is not specified`).
 
 ## Orchestrator Validation
 

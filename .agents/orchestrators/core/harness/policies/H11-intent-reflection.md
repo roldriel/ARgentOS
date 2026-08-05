@@ -47,22 +47,24 @@ Validate that `INTENT_REFLECTION.md` exists, complies with its contract, and rec
 
 ## Checklist
 
-1. The artifact file exists.
-2. The artifact contains a `Metadata` section.
-3. The artifact contains an `Original Request` section.
-4. The artifact contains a `Detected Intent` section.
-5. The artifact contains a `Reflection` section.
-6. The artifact contains a `Confidence` section.
-7. The artifact contains a `Correction Cycle` section.
-8. The artifact contains a `User Response` section.
-9. The artifact contains a `Next State` section.
-10. The `confidence.level` is one of `HIGH`, `MEDIUM`, or `LOW`.
-11. The `user_response.status` is one of `PENDING`, `CONFIRMED`, `CORRECTED`, or `REJECTED`.
-12. If `confidence.level` is `MEDIUM` or `LOW`, `user_response.status` MUST be `CONFIRMED` or `CORRECTED`.
-13. If `user_response.status` is `CORRECTED`, `user_response.correction` is non-empty.
-14. If `correction_cycle >= 2`, `user_response.status` MUST NOT be `CORRECTED`; the transition MUST be to `NEEDS_CLARIFICATION`.
-15. The `next_state` is one of the allowed transitions (`BUILDING_TASK_SPECIFICATION`, `ANALYZING_TASK`, or `NEEDS_CLARIFICATION`).
-16. The reformulated request preserves the original user's intent without introducing assumptions.
+**Evaluation audience:** each item is marked `[machine]` — validated deterministically by the harness runner (artifact existence and presence of the `required_sections` declared in this policy's front matter) or by the policy's test suite — or `[agent]` — evaluated by agent judgment when applying this policy. A `[machine]` failure is gateable without interpretation; an `[agent]` failure is declared judgment.
+
+1. The artifact file exists. `[machine]`
+2. The artifact contains a `Metadata` section. `[machine]`
+3. The artifact contains an `Original Request` section. `[machine]`
+4. The artifact contains a `Detected Intent` section. `[machine]`
+5. The artifact contains a `Reflection` section. `[machine]`
+6. The artifact contains a `Confidence` section. `[machine]`
+7. The artifact contains a `Correction Cycle` section. `[machine]`
+8. The artifact contains a `User Response` section. `[machine]`
+9. The artifact contains a `Next State` section. `[machine]`
+10. The `confidence.level` is one of `HIGH`, `MEDIUM`, or `LOW`. `[agent]` (the agent reads the declared values; this policy declares no semantic checks)
+11. The `user_response.status` is one of `PENDING`, `CONFIRMED`, `CORRECTED`, or `REJECTED`. `[agent]`
+12. If `confidence.level` is `MEDIUM` or `LOW`, `user_response.status` MUST be `CONFIRMED` or `CORRECTED`. `[agent]`
+13. If `user_response.status` is `CORRECTED`, `user_response.correction` is non-empty. `[agent]`
+14. If `correction_cycle >= 2`, `user_response.status` MUST NOT be `CORRECTED`; the transition MUST be to `NEEDS_CLARIFICATION`. `[agent]`
+15. The `next_state` is one of the allowed transitions (`BUILDING_TASK_SPECIFICATION`, `ANALYZING_TASK`, or `NEEDS_CLARIFICATION`). `[agent]`
+16. The reformulated request preserves the original user's intent without introducing assumptions. `[agent]`
 
 ## Decision Criteria
 

@@ -1,6 +1,6 @@
 # Plan 14 — Declarative-Flag Compliance Model
 
-**Status:** Aprobado para redacción. Independiente; paralelizable con el plan 13.
+**Status:** Executed
 
 **Depends on:** — (ninguno).
 

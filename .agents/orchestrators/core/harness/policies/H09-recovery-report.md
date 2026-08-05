@@ -45,8 +45,10 @@ Validate that `RECOVERY_REPORT.md` exists and contains the required sections bef
 
 ## Decision Criteria
 
-- `PASS`: The artifact exists and contains all required sections.
-- `FAIL`: The artifact is missing or incomplete.
+**Evaluation audience:** both criteria are `[machine]` — validated deterministically by the harness runner (artifact existence and presence of the `required_sections` declared in this policy's front matter). A `[machine]` failure is gateable without interpretation; an `[agent]` failure would be declared judgment, and this policy contains no agent-evaluated items.
+
+- `PASS`: The artifact exists and contains all required sections. `[machine]`
+- `FAIL`: The artifact is missing or incomplete. `[machine]`
 
 ## Note
 

@@ -52,25 +52,27 @@ Validate that `TASK_ANALYSIS.md` exists and complies with its contract before al
 
 ## Checklist
 
-1. The artifact file exists.
-2. The artifact contains a `Metadata` section.
-3. The artifact contains a `User Request` section.
-4. The artifact contains an `Interpreted Objective` section.
-5. The artifact contains an `Expected Outcome` section.
-6. The artifact contains `Explicit Requirements`.
-7. The artifact contains `Explicit Restrictions`.
-8. The artifact contains `Detected Ambiguities`.
-9. The artifact contains an `Intent Confidence Assessment`.
-10. The artifact contains a `Sufficiency Assessment`.
-11. The artifact contains a `Recommended Next State`.
-12. The artifact contains a `Confidence` section.
-13. The `Recommended Next State` is one of the allowed transitions (`BUILDING_TASK_SPECIFICATION`, `CONFIRMING_INTENT`, or `NEEDS_CLARIFICATION`).
-14. If `Detected Ambiguities` contains any entry that would require an implementation decision, the `Recommended Next State` MUST be `NEEDS_CLARIFICATION`.
-15. Each ambiguity that would require an implementation decision includes at least two concrete resolution options and an `Other` option.
-16. The `Intent Confidence Assessment` includes a numeric `score`, a list of `applied_criteria`, and a `level` of `HIGH`, `MEDIUM`, or `LOW`.
-17. The `Intent Confidence Assessment.level` is consistent with the score thresholds defined in `.agents/standards/requirements/INTENT_CONFIDENCE.md`.
-18. If the `Recommended Next State` is `BUILDING_TASK_SPECIFICATION`, the `Intent Confidence Assessment.level` MUST be `HIGH` and no ambiguity may require an implementation decision.
-19. If the `Intent Confidence Assessment.level` is `MEDIUM` or `LOW`, the `Recommended Next State` MUST be `CONFIRMING_INTENT` (unless ambiguities force `NEEDS_CLARIFICATION`).
+**Evaluation audience:** each item is marked `[machine]` — validated deterministically by the harness runner (artifact existence, required-section presence, and the EARS/rubric/semantic checks declared in this policy's front matter) or by the policy's test suite — or `[agent]` — evaluated by agent judgment when applying this policy. A `[machine]` failure is gateable without interpretation; an `[agent]` failure is declared judgment.
+
+1. The artifact file exists. `[machine]`
+2. The artifact contains a `Metadata` section. `[machine]`
+3. The artifact contains a `User Request` section. `[machine]`
+4. The artifact contains an `Interpreted Objective` section. `[machine]`
+5. The artifact contains an `Expected Outcome` section. `[machine]`
+6. The artifact contains `Explicit Requirements`. `[machine]`
+7. The artifact contains `Explicit Restrictions`. `[machine]`
+8. The artifact contains `Detected Ambiguities`. `[machine]`
+9. The artifact contains an `Intent Confidence Assessment`. `[machine]`
+10. The artifact contains a `Sufficiency Assessment`. `[machine]`
+11. The artifact contains a `Recommended Next State`. `[machine]`
+12. The artifact contains a `Confidence` section. `[machine]`
+13. The `Recommended Next State` is one of the allowed transitions (`BUILDING_TASK_SPECIFICATION`, `CONFIRMING_INTENT`, or `NEEDS_CLARIFICATION`). `[agent]`
+14. If `Detected Ambiguities` contains any entry that would require an implementation decision, the `Recommended Next State` MUST be `NEEDS_CLARIFICATION`. `[agent]`
+15. Each ambiguity that would require an implementation decision includes at least two concrete resolution options and an `Other` option. `[agent]`
+16. The `Intent Confidence Assessment` includes a numeric `score`, a list of `applied_criteria`, and a `level` of `HIGH`, `MEDIUM`, or `LOW`. `[agent]`
+17. The `Intent Confidence Assessment.level` is consistent with the score thresholds defined in `.agents/standards/requirements/INTENT_CONFIDENCE.md`. `[agent]`
+18. If the `Recommended Next State` is `BUILDING_TASK_SPECIFICATION`, the `Intent Confidence Assessment.level` MUST be `HIGH` and no ambiguity may require an implementation decision. `[agent]`
+19. If the `Intent Confidence Assessment.level` is `MEDIUM` or `LOW`, the `Recommended Next State` MUST be `CONFIRMING_INTENT` (unless ambiguities force `NEEDS_CLARIFICATION`). `[agent]`
 
 ## Decision Criteria
 

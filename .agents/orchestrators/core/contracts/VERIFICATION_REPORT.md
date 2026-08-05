@@ -118,10 +118,30 @@ SKIPPED
 
 List any failures, gaps, or unexpected behavior identified during verification.
 
+Each issue MUST declare its failure `class`. Failure classes are defined by their conceptual origin and their conceptual destination (which protocol path resolves them), never by the phase or trigger that detected them:
+
+```text
+blocker        A condition that prevents completing the phase or the task.
+               Destination: recovery; clarification if resolving it requires a
+               user decision; abort if the infeasibility is terminal.
+deviation      A difference between what was specified/planned and what was
+               executed/found, that does not prevent completing the phase.
+               Destination: logged warning; reclassified as blocker or
+               ambiguity if it is material to acceptance criteria or scope.
+ambiguity      A decision ambiguity that proceeding would require assuming.
+               Destination: clarification; the user is the only source of
+               resolution.
+inconsistency  An error, bug, or contradiction discovered outside the task
+               scope or between artifacts, which the agent must not correct
+               autonomously. Destination: logged warning, plus clarification
+               when acting on it would affect scope.
+```
+
 ```toml
 [[issues]]
 description = ""
 severity = ""
+class = ""
 ```
 
 Possible values for `severity`:
@@ -131,6 +151,15 @@ LOW
 MEDIUM
 HIGH
 CRITICAL
+```
+
+Possible values for `class`:
+
+```text
+blocker
+deviation
+ambiguity
+inconsistency
 ```
 
 ---

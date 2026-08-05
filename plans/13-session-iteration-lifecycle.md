@@ -1,6 +1,6 @@
 # Plan 13 — Session & Iteration Lifecycle Model
 
-**Status:** Aprobado para redacción. Independiente; paralelizable con cualquier otro plan.
+**Status:** Executed (5 ago 2026): RFC-22 (`rfc/22-session-iteration-lifecycle-model.md`) Accepted + updates a BOUNDARIES, state machine y orchestrator.md. Health-check PASS, pytest 278 passed.
 
 **Depends on:** — (ninguno).
 

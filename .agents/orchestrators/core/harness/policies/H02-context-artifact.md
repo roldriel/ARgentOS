@@ -52,13 +52,17 @@ Validate that `CONTEXT_ARTIFACT.md` exists and captures sufficient technical con
 
 ## Checklist
 
-1. The artifact file exists.
-2. The artifact identifies the relevant project files and components.
-3. The artifact describes the current behavior of the system in the task scope.
-4. The artifact lists technical constraints (libraries, frameworks, versions).
-5. The artifact notes dependencies and relationships between components.
-6. The context is relevant to the task specification.
-7. The context does not rely on unstated assumptions.
+**Evaluation audience:** each item is marked `[machine]` — validated deterministically by the harness runner (artifact existence, required-section presence, and the EARS/rubric/semantic checks declared in this policy's front matter) or by the policy's test suite — or `[agent]` — evaluated by agent judgment when applying this policy. A `[machine]` failure is gateable without interpretation; an `[agent]` failure is declared judgment.
+
+1. The artifact file exists. `[machine]`
+2. The artifact identifies the relevant project files and components. `[agent]`
+3. The artifact describes the current behavior of the system in the task scope. `[agent]`
+4. The artifact lists technical constraints (libraries, frameworks, versions). `[agent]`
+5. The artifact notes dependencies and relationships between components. `[agent]`
+6. The context is relevant to the task specification. `[agent]`
+7. The context does not rely on unstated assumptions. `[agent]`
+
+The presence of the `required_sections` declared in this policy's front matter is `[machine]` even though it is not restated as a numbered item.
 
 ## Decision Criteria
 

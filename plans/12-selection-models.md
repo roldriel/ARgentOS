@@ -1,6 +1,6 @@
 # Plan 12 — Selection Models (Profile & Skill)
 
-**Status:** Aprobado para redacción.
+**Status:** Executed
 
 **Depends on:** plan 11 (define la validez de la selección resultante) y planes 04–07 (reutiliza los conceptos de Context Candidate, Prioritization y Resolution de la serie de Execution Context).
 

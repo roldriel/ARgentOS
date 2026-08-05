@@ -40,6 +40,10 @@ score = sum(applicable_positive_weights) + sum(applicable_negative_weights)
 | 2 <= score <= 5 | MEDIUM | `CONFIRMING_INTENT` (confirmation required). |
 | score < 2 | LOW | `CONFIRMING_INTENT` (confirmation required, detailed message). |
 
+## Mapping to the general confidence model
+
+The three score bands above are the **complete and explicit mapping** of this specialization's numeric score onto the `HIGH`/`MEDIUM`/`LOW` levels defined in `.agents/standards/quality/CONFIDENCE.md`: every possible score maps to exactly one general level through this table, and no other interpretation of the score exists. The resulting label is a level of the general confidence model, subject to its level definitions and its anti-inflation rule — the table only fixes *which* band produces *which* level for intent interpretation.
+
 ## Recording
 
 The `task_analyst` must record:
@@ -89,4 +93,4 @@ Score: 0 → LOW.
 
 This standard supports `.agents/standards/requirements/NO_ASSUMPTIONS.md` by providing an objective basis for deciding when the agent's interpretation requires validation.
 
-It is also a specialization of `.agents/standards/quality/CONFIDENCE.md`: the numeric score defined here decides the next state (`CONFIRMING_INTENT` or not), while the resulting `HIGH`/`MEDIUM`/`LOW` label uses the levels and the anti-inflation rule of the general confidence model.
+It is also a specialization of `.agents/standards/quality/CONFIDENCE.md`: the numeric score defined here decides the next state (`CONFIRMING_INTENT` or not), while the resulting `HIGH`/`MEDIUM`/`LOW` label uses the levels and the anti-inflation rule of the general confidence model. The general model defines a second specialization, recommendation confidence, for the Orchestrator's accept-or-override decisions; this standard does not cover recommendations.

@@ -45,12 +45,14 @@ H10 does NOT participate in the discovery cycle (`discovery:DISCOVERY_VALIDATE` 
 
 ## Decision Criteria
 
+**Evaluation audience:** each criterion is marked `[machine]` — validated deterministically by the harness runner (artifact existence and presence of the `required_sections` declared in this policy's front matter) — or `[agent]` — evaluated by agent judgment when applying this policy. A `[machine]` failure is gateable without interpretation; an `[agent]` failure is declared judgment.
+
 `PASS` when all of the following hold; `FAIL` otherwise:
 
-- The artifact exists.
-- All required sections are present: `Discovery Objective`, `Recommended Entries`, `Context Budget Recommendation`, `Notes`.
-- The report does not include full artifacts from previous sessions.
-- The report does not include credentials, tokens, or personal data.
+- The artifact exists. `[machine]`
+- All required sections are present: `Discovery Objective`, `Recommended Entries`, `Context Budget Recommendation`, `Notes`. `[machine]`
+- The report does not include full artifacts from previous sessions. `[agent]`
+- The report does not include credentials, tokens, or personal data. `[agent]`
 
 ## Note
 

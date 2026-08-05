@@ -1,6 +1,6 @@
 # Plan 10 — Failure & Recovery Taxonomy
 
-**Status:** Aprobado para redacción.
+**Status:** Executed
 
 **Depends on:** plan 09 (el routing de decisiones consume esta taxonomía; sin el Decision Model, la clasificación queda huérfana).
 

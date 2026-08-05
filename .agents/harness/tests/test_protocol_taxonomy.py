@@ -19,10 +19,11 @@ PROJECT_ROOT = Path(__file__).resolve().parents[3]
 AGENTS_DIR = PROJECT_ROOT / ".agents"
 TAXONOMY_PATH = AGENTS_DIR / "standards" / "runtime" / "PROTOCOL_TAXONOMY.md"
 
-# H13 validates the explicit core harness list. H08 is intentionally omitted
-# and H12 is free (former H12 became D01); neither is reported as missing.
-EXPECTED_CORE_HARNESS_IDS = [f"H{i:02d}" for i in range(8)] + ["H09", "H10", "H11"]
-INTENTIONALLY_ABSENT_IDS = {"H08", "H12"}
+# H13 validates the explicit core harness list. H08 is intentionally omitted,
+# H12 is free (former H12 became D01) and H14 is intentionally omitted
+# (unassigned); none of them is reported as missing.
+EXPECTED_CORE_HARNESS_IDS = [f"H{i:02d}" for i in range(8)] + ["H09", "H10", "H11", "H15"]
+INTENTIONALLY_ABSENT_IDS = {"H08", "H12", "H14"}
 
 DOMAIN_PREFIX = {"core": "H", "discovery": "D", "system": "S"}
 CROSS_CUTTING_HARNESS_IDS = {"H13"}
@@ -284,8 +285,9 @@ def test_expected_core_harnesses_present(harnesses):
         assert hid in core_ids, f"Core harness '{hid}' missing from taxonomy"
 
 
-def test_h08_and_h12_not_reported_missing(harnesses):
-    """H08 (intentionally omitted) and H12 (freed, renamed to D01) are not errors."""
+def test_h08_h12_h14_not_reported_missing(harnesses):
+    """H08 (intentionally omitted), H12 (freed, renamed to D01) and H14
+    (intentionally omitted, unassigned) are not errors."""
     all_ids = {h["harness_id"] for h in harnesses.values()}
     for hid in INTENTIONALLY_ABSENT_IDS:
         assert hid not in all_ids, f"'{hid}' should not exist in the taxonomy"

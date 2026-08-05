@@ -1,6 +1,6 @@
 # Plan 15 — Policy Layer I: Delegation Validity + Budget Materialization
 
-**Status:** Aprobado para ejecución (sus entregables son implementación: policy, decision tree y tests). Criterio de entrada: plan 11 y plan 07 cerrados.
+**Status:** Executed. Criterio de entrada: plan 11 y plan 07 cerrados.
 
 **Depends on:** plan 11 (Delegation Validity Model) y plan 07 (Materialization). Dependencia blanda del plan 10: si no está cerrado, este plan define el marcado machine/agente de H15 inline y declara el hook (ver A.6 y A.7). Es el primer plan del protocolo que implementa policies concretas: hasta aquí todo fue conceptual. Sobre el ID: H12 queda libre por historia (ex-D01); H14 se documenta como omisión intencional en `.agents/harness/INDEX.md` al crear H15.
 

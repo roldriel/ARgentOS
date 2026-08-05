@@ -32,6 +32,7 @@ from typing import Any
 import decision_tree_evaluator
 import feature_flags
 import health_check
+import runner_metrics
 import runner_paths
 from runner_artifacts import artifact_path, iteration_dirs, report_path
 from runner_markdown import (
@@ -187,6 +188,34 @@ def cmd_decide(args: argparse.Namespace) -> int:
     return 0 if result.result == "DECISION" else 1
 
 
+def cmd_metrics(args: argparse.Namespace) -> int:
+    """Aggregate protocol metrics for one session or the whole project."""
+    artifacts_dir = (
+        Path(args.artifacts_dir).resolve()
+        if args.artifacts_dir
+        else runner_paths.ARTIFACTS_DIR
+    )
+    if args.session:
+        session_dir = artifacts_dir / args.session
+        if not session_dir.is_dir():
+            print(
+                json.dumps(
+                    {
+                        "error": {
+                            "code": "SESSION_NOT_FOUND",
+                            "message": f"Session directory not found: {session_dir}",
+                        }
+                    },
+                    indent=2,
+                )
+            )
+            return 1
+        print(json.dumps(runner_metrics.aggregate_session(session_dir), indent=2))
+        return 0
+    print(json.dumps(runner_metrics.aggregate_project(artifacts_dir), indent=2))
+    return 0
+
+
 def main() -> int:
     # Keep backward compatibility: if the first positional argument is a known
     # subcommand, run it. Otherwise fall back to the legacy trigger runner CLI.
@@ -194,6 +223,20 @@ def main() -> int:
         return cmd_features()
     if len(sys.argv) > 1 and sys.argv[1] == "health-check":
         return cmd_health_check()
+    if len(sys.argv) > 1 and sys.argv[1] == "metrics":
+        parser = argparse.ArgumentParser(
+            description="Aggregate protocol metrics per the protocol metrics standard."
+        )
+        parser.add_argument(
+            "--session",
+            help="Session UUID. If omitted, aggregates every session under the artifacts directory.",
+        )
+        parser.add_argument(
+            "--artifacts-dir",
+            help="Override the default .project directory (used mainly for tests)",
+        )
+        args = parser.parse_args(sys.argv[2:])
+        return cmd_metrics(args)
     if len(sys.argv) > 1 and sys.argv[1] == "decide":
         parser = argparse.ArgumentParser(
             description="Evaluate a recovery decision tree for a harness trigger."

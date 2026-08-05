@@ -15,6 +15,8 @@ The runner is split into focused modules under `.agents/harness/`; `runner.py` i
 - `runner_artifacts.py` — artifact path resolution inside iteration folders.
 - `runner_validators.py` — section, EARS, rubric and semantic validators, plus `run_trigger`.
 - `runner_report.py` — `HARNESS_REPORT.md` generation.
+- `runner_metrics.py` — protocol metrics aggregation (per session and per project) per `.agents/standards/runtime/PROTOCOL_METRICS.md`.
+- `delegation_validity.py` — delegation payload and return-report validity checks (policy H15; machine-evaluated via its test suite, not via the trigger CLI).
 
 ## Artifact validation
 
@@ -42,6 +44,9 @@ python .agents/harness/runner.py features
 
 # Verify global protocol health
 python .agents/harness/runner.py health-check
+
+# Aggregate protocol metrics (one session or the whole project)
+python .agents/harness/runner.py metrics [--session <uuid>]
 ```
 
 ## Health check
@@ -86,6 +91,10 @@ python .agents/harness/runner.py decide \
 ## Harness metrics
 
 Each trigger execution records its duration in `HARNESS_REPORT.md`. The report includes a `## Metrics` section with invocations, `PASS`/`FAIL` results, and average duration per trigger.
+
+## Protocol metrics aggregation
+
+The `metrics` subcommand consolidates the protocol metrics model (`.agents/standards/runtime/PROTOCOL_METRICS.md`): it reads the `ENTRY` comments of `HARNESS_REPORT.md`, the `METRIC` comments of the session-level `METRICS.md` (contract: `.agents/contracts/METRICS.md`) and the iteration filesystem layout, and emits the metric catalog as JSON — per session (`--session <uuid>`) or aggregated across every session under `.project/`, including the protocol health signals (recovery rate, clarification rate, reviewer rework rate). Aggregation is read-only; it never modifies session artifacts.
 
 ## Runner tests
 

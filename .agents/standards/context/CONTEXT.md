@@ -58,6 +58,8 @@ The Orchestrator records every context decision in `.project/<session-uuid>/SESS
 
 The Orchestrator must compress the context before delegating when the KB portion of the payload approaches the budgets defined in §3. The following techniques apply in order of priority.
 
+This section is the operative core of the protocol's Compression Policy, declared in `COMPOSITION_COMPRESSION.md` (which integrates §8.2 and §8.4 as the closed set of permitted techniques and defines the lossless rule and the order with Optimization). The related policies of this directory govern the rest of payload assembly: `RESOLUTION_TIE_BREAKING.md`, `RESOLUTION_DEDUPLICATION.md`, `RESOLUTION_MERGE.md`, `RESOLUTION_UNRESOLVABLE_CONFLICTS.md` (which candidates enter the payload), and `COMPOSITION_OPTIMIZATION.md` (final form of the payload, applied after compression).
+
 ### 8.1 Compact tags
 
 A compact tag is a bracketed token that replaces a prose rule. The worker decompresses the tag by reading the source document cited for that tag. A tag is valid only if it appears in this section and its source document is part of the protocol.

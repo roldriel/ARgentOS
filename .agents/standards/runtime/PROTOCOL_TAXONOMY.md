@@ -17,8 +17,8 @@ Rules:
 - Harness IDs use the domain namespace: `HNN` (core), `DNN` (discovery), `SNN` (system).
   `H13-protocol-taxonomy` is the documented cross-cutting exception (kept in the core
   `H` namespace for historical reasons after the protocol was split into domains).
-  `H08` is intentionally omitted and `H12` is free (former `H12` became `D01`);
-  neither is reported as missing.
+  `H08` is intentionally omitted, `H12` is free (former `H12` became `D01`), and
+  `H14` is intentionally omitted (unassigned); none of them is reported as missing.
 - Protocol files reference this dictionary through a YAML metadata block; they do not
   duplicate the relationships defined here.
 - This dictionary is validated by harness policy `.agents/harness/policies/H13-protocol-taxonomy.md`
@@ -1094,6 +1094,18 @@ entities:
       - discovery:DISCOVERY_READY
     contract: .agents/contracts/HARNESS_REPORT.md
 
+  METRICS.md:
+    kind: artifact
+    domain: cross-cutting
+    lifecycle: null
+    tag: report
+    description: Event data points of the protocol metrics model, recorded by the Orchestrator at the session root.
+    produced_by:
+      - core:TASK_RECEIVED
+    consumed_by:
+      - core:COMPLETED
+    contract: .agents/contracts/METRICS.md
+
   # -------------------------------------------------------------------------
   # Harness policies
   # -------------------------------------------------------------------------
@@ -1241,6 +1253,18 @@ entities:
       - core:GATHERING_CONTEXT -> core:CONTEXT_GATHERED
     artifact_validated: KB_RECOMMENDATION.md
     policy_file: .agents/orchestrators/core/harness/policies/H10-kb-discovery-report.md
+
+  H15-delegation-validity:
+    kind: harness
+    domain: core
+    harness_id: H15
+    name: delegation-validity
+    lifecycle: null
+    tag: delegation
+    state: null
+    gates: []
+    artifact_validated: null
+    policy_file: .agents/orchestrators/core/harness/policies/H15-delegation-validity.md
 
   D00-discovery-init:
     kind: harness
@@ -2247,6 +2271,17 @@ entities:
       - discovery:DISCOVERY_READY
     file: .agents/contracts/HARNESS_REPORT.md
 
+  contract:METRICS.md:
+    kind: contract
+    domain: cross-cutting
+    artifact: METRICS.md
+    lifecycle: null
+    produced_by:
+      - core:TASK_RECEIVED
+    consumed_by:
+      - core:COMPLETED
+    file: .agents/contracts/METRICS.md
+
   contract:KB_DISCOVERY_REPORT.md:
     kind: contract
     domain: discovery
@@ -2386,6 +2421,7 @@ tags:
     - discovery
     - system
     - taxonomy
+    - delegation
   kind:
     - state
     - artifact

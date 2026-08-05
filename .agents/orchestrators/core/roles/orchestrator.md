@@ -65,9 +65,19 @@ EXECUTING → VERIFYING → COMPLETED or RECOVERY
 
 ### 1. Session Management
 
+Conceptual boundaries:
+
+- **Session start:** a session begins when the Orchestrator accepts a user task and generates the session UUID with its initial `SESSION_LOG.md`; the start is recorded in the log's first entry.
+- **Session end:** a session ends when the runtime closes the execution context — normally after a terminal state (`COMPLETED`/`ABORT`), but termination is a runtime fact, not a protocol state: a session may end at any point.
+- **Session resume:** the runtime may resume a closed session (e.g., the CLI's resume command). Resuming is continuity via persisted state: the resumed session keeps its UUID, log, and iterations; the log and `SESSION_BRIEF.md` are the state from which the protocol reconstructs where the work stood. Resuming never creates a new session and never rewrites history — the log keeps appending.
+- **Iteration boundary:** each user request opens a new sequential iteration; internal loops (clarification, recovery, bounded retries) continue in the current one. An iteration that did not reach a terminal state is a partial iteration: on resume, continuing the same request resumes it from its last intact artifact; a new request opens a new iteration.
+
+Duties:
+
 - Generate a unique session UUID for every task.
 - Ensure all phase artifacts are written to `.project/<session-uuid>/<iteration>/<order>-ARTIFACT.md`, where `<order>` reflects the artifact's generation/reading sequence within the iteration.
 - Maintain a `HARNESS_REPORT.md` and a `SESSION_LOG.md` at the session root.
+- Maintain the session `METRICS.md` (contract: `.agents/contracts/METRICS.md`): create it at session start with a `session_start` event naming the active declarative feature flags, and append one event at the moment each observable of the protocol metrics model (`.agents/standards/runtime/PROTOCOL_METRICS.md`) occurs — state transitions, reviewer retries, reported failures, delegations, skill overrides, flag evidence, and context budget/candidate figures.
 - Before starting any work, create `SESSION_LOG.md` using the contract in `.agents/contracts/SESSION_LOG.md`.
 - Write an initial `SESSION_LOG.md` entry at session start recording the active feature flags and health-check status.
 - Append a `SESSION_LOG.md` entry for every state transition, harness invocation, worker delegation, and orchestrator decision.
@@ -75,7 +85,7 @@ EXECUTING → VERIFYING → COMPLETED or RECOVERY
   - Read `.project/.last_health_check`.
   - If the file is missing, or if the last successful run is older than the configured TTL (default 24 hours), delegate to ArgentOS to run `python .agents/harness/runner.py health-check` and initialize `.project/`.
   - Record the health-check outcome in `SESSION_LOG.md`.
-  - A failed health check is logged as a warning; the Orchestrator may proceed only if explicitly authorized by the user.
+  - A failed health check is governed by the canonical rule defined in `.agents/orchestrators/system/states/SYSTEM_STATE_MACHINE.md` (`BOOTSTRAP_FAILED`): a health-check `FAIL` blocks the handoff; the only exception is explicit user authorization, recorded in `SESSION_LOG.md`. The Orchestrator applies that rule as stated there (the authorization is logged as a warning).
 
 ### 2. State Enforcement
 
@@ -120,7 +130,7 @@ The Orchestrator may invoke the reviewer before transitions such as:
 The Orchestrator must:
 
 - On `APPROVE`: proceed with the harness and transition.
-- On `REWORK`: route the artifact to the corresponding worker role for correction (typically one retry), or route to `RECOVERY` if the correction fails. `REWORK` is a recommendation from the reviewer, not a protocol state.
+- On `REWORK`: route the artifact to the corresponding worker role for correction, within the retry bound (a finite, session-visible limit on corrections of the same artifact under the same recommendation; by default one retry), or route to `RECOVERY` once the bound is exhausted. `REWORK` is a recommendation from the reviewer, not a protocol state.
 - On `NEEDS_CLARIFICATION`: transition to `NEEDS_CLARIFICATION` and request user input.
 
 See `.agents/roles/reviewer.md` for the reviewer role details and `.agents/standards/quality/RUBRICS.md` for the rubric definitions.
@@ -184,7 +194,7 @@ This payload is an inter-orchestrator invocation (core → discovery), not an in
 **Response handling.** The Discovery Orchestrator returns a structured result and never responds to the user:
 
 - On `discovery:DISCOVERY_READY`: the KB is updated and valid. The Orchestrator continues its own state machine; the KB is available for `GATHERING_CONTEXT`, `PLANNING` and `EXECUTING`.
-- On `discovery:DISCOVERY_FAILED`: the Orchestrator decides, according to how critical the KB is for the task:
+- On `discovery:DISCOVERY_FAILED`: the Orchestrator decides, according to the KB criticality for the task (indispensable / useful / optional, as defined in `.agents/standards/orchestration/DECISIONS.md`):
   1. **Abort the task** (`ABORT`) if the KB is indispensable and execution cannot continue.
   2. **Route to `RECOVERY`** to replan with a reduced scope or a minimal discovery.
   3. **Continue with a minimal discovery** if applicable: README + stack inferred from file extensions, without qualitative analysis.
@@ -234,6 +244,8 @@ During `ANALYZING_TASK`/`PLANNING`, the Orchestrator selects which skills (if an
 
 ### 6. Decision Making
 
+The Orchestrator's discretionary decision points (transition acceptance, reviewer outcome routing, the `NEEDS_CLARIFICATION` ↔ `RECOVERY` boundary, discovery failure criticality, abort authority, degraded bootstrap) are cataloged conceptually in `.agents/standards/orchestration/DECISIONS.md`, including the concepts of authority over recommendations, retry bound, KB criticality, and founded abort.
+
 After receiving a worker result and a passing harness:
 
 - Transition to the next allowed state.
@@ -244,7 +256,7 @@ After receiving a worker result and a passing harness:
   - When `decision_trees` is disabled, default directly to `RECOVERY_GENERIC` with `target_phase = "08-recovery.md"`. The markdown recovery policies have been removed; the TOML decision trees are the only supported recovery mechanism.
 - If the worker fails to produce a valid artifact, route to `RECOVERY`.
 
-## Recovery decision tree mapping
+#### Recovery decision tree mapping
 
 When a harness trigger fails and the `decision_trees` feature flag is enabled, the Orchestrator MUST use the following mapping to choose the correct TOML decision tree. The Orchestrator MUST NOT select a different tree unless the failure is explicitly from another trigger.
 

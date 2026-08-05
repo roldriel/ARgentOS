@@ -38,6 +38,11 @@ These default to `false` when not provided.
 | `correction_cycle_exceeded` | The maximum number of correction cycles has been reached (H11). |
 | `user_rejected` | The user rejected the proposed correction or artifact (H11). |
 | `user_unclear` | The user's response did not clarify how to proceed (H11). |
+| `profile_unresolvable` | The delegation payload's `profile` does not resolve under `.agents/roles/profiles/` (H15). |
+| `skill_unresolvable` | A `skills` entry does not resolve under `.project/skills/` or `.agents/skills/` (H15; class F2 deviation, logged — it never routes a tree by itself). |
+| `input_artifact_missing` | An `input_artifacts` path does not exist inside the session (H15). |
+| `budget_incoherent` | The payload's `context_budget` is not a finite, positive constraint (H15). |
+| `return_report_invalid` | The Worker return report violates the delegation contract schema or its failure-class rules (H15). |
 
 ## Notes
 

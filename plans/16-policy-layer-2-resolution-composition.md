@@ -1,6 +1,6 @@
 # Plan 16 — Policy Layer II: Resolution & Composition Policies
 
-**Status:** Aprobado para redacción.
+**Status:** Executed
 
 **Depends on:** planes 05 y 06 y plan 15 (marco de policies H15: formato, decision trees, clasificación de fallos). Este plan no cita contenido de 00YE–00YJ (aún inexistentes: `plans/rfc/` solo tiene 00–05); define las policies sobre las clases que 00YE deberá definir. Criterio de entrada verificable: los planes 05 y 06 están Executed y las clases citadas existen en las RFCs resultantes. Dependencia blanda del plan 10: si no está cerrado, la convención máquina/agente se define inline (ver §C).
 

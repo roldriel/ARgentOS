@@ -1,6 +1,6 @@
 # Plan 17 — Protocol Metrics Model
 
-**Status:** Aprobado para ejecución; criterio de entrada: planes 09 y 10 Executed. Paralelizable con el plan 15.
+**Status:** Executed (5 ago 2026). Criterio de entrada: planes 09 y 10 Executed. Paralelizable con el plan 15.
 
 **Depends on:** planes 09 y 10 (las métricas cuentan decisiones y fallos; necesitan sus conceptos para no medir texto libre). Consume opcionalmente los planes 14 y 15 si están cerrados al momento de ejecución; esas métricas se marcan condicionales en el catálogo.
 

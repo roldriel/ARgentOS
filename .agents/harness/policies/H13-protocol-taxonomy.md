@@ -42,6 +42,8 @@ state machines, workflows, harness policies, contracts, roles and workers.
 
 ## Rules
 
+**Evaluation audience:** every rule below is `[machine]` — validated deterministically by the policy's test suite (`.agents/harness/tests/test_protocol_taxonomy.py`; see §"Validation"). A `[machine]` failure is gateable without interpretation; this policy contains no `[agent]` (agent-judgment) items.
+
 1. Every workflow must reference a `state` and a `domain` that exist in the taxonomy.
 2. Every harness policy must respect its domain namespace prefix (`H` = core, `D` = discovery,
    `S` = system; `H13` is the documented cross-cutting exception) and must reference
@@ -52,9 +54,11 @@ state machines, workflows, harness policies, contracts, roles and workers.
    `next` transition, and every state must be reachable from a root state of its domain.
 6. There must be no ID collisions between domains: a harness ID may exist in only one domain,
    and entity keys are unique.
-7. Harness ID exceptions: `H08` is intentionally omitted (see `.agents/harness/INDEX.md`) and
-   `H12` is free (former `H12` became `D01`). H13 validates the explicit core list
-   `H00`–`H07`, `H09`, `H10`, `H11` and MUST NOT report `H08` or `H12` as missing.
+7. Harness ID exceptions: `H08` is intentionally omitted (see `.agents/harness/INDEX.md`),
+   `H12` is free (former `H12` became `D01`) and `H14` is intentionally omitted
+   (unassigned; see `.agents/harness/INDEX.md`). H13 validates the explicit core list
+   `H00`–`H07`, `H09`, `H10`, `H11` and `H15`, and MUST NOT report `H08`, `H12` or
+   `H14` as missing.
 8. Every protocol file in scope must carry a taxonomy metadata block with at least
    `taxonomy`, `kind` and `domain`.
 9. Entities marked `status: planned` (e.g. `D01-discovery-output`, discovery orchestrator role

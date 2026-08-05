@@ -168,7 +168,7 @@ def test_health_check_expected_triggers_derived_from_policies():
     expected = health_check.expected_tree_triggers(
         health_check.CORE_DIR / "harness" / "policies"
     )
-    assert expected == {f"H{i:02d}" for i in range(8)} | {"H11"}
+    assert expected == {f"H{i:02d}" for i in range(8)} | {"H11", "H15"}
     discovery = health_check.expected_tree_triggers(
         health_check.DISCOVERY_DIR_DOMAIN / "harness" / "policies"
     )

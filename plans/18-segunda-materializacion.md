@@ -1,6 +1,6 @@
 # Plan 18 — Segunda Materialización (runtime MCP/tools/memoria)
 
-**Status:** Aprobado para ejecución; criterio de entrada: plan 07 Executed (los RFCs 00YK/00YM existen en `plans/rfc/`).
+**Status:** Executed (5 ago 2026). Entregables: anexo A `plans/18-anexo-a-comparativa-y-decision.md`, implementación de referencia en `runtime/` (tool calls), reporte de verificación de la tesis `plans/18-anexo-b-reporte-verificacion-tesis.md`, enmiendas Compatibility en RFC-00YK y RFC-00YM. Veredicto: la tesis se verifica — el modelo conceptual sobrevivió intacto.
 
 **Depends on:** plan 07 (RFC-00YK Materialization Model, RFC-00YM Skill Materialization). Recomendado también 15 (Budget materializado, para medir la segunda materialización con la misma vara).
 

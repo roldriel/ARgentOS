@@ -85,3 +85,4 @@ The report is rebuilt from a template on every update. It contains, in this orde
 - Every harness invocation in a session must appear exactly once in `## Entries` and `## Summary`.
 - The report must not include credentials, tokens, or personal data.
 - Failures recorded here feed the recovery flow described in `.agents/harness/INDEX.md`.
+- The `ENTRY` comments are the trigger data points of the protocol metrics model (`.agents/standards/runtime/PROTOCOL_METRICS.md`); the runner `metrics` subcommand reads them for aggregation.

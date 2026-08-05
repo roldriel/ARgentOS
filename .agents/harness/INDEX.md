@@ -64,6 +64,8 @@ The report is cumulative. Each entry contains:
 - Final decision: `PASS` or `FAIL`.
 - Orchestrator action after the result.
 
+These entries are the trigger data points of the protocol metrics model (`.agents/standards/runtime/PROTOCOL_METRICS.md`); event data points that do not pass through a trigger are recorded by the Orchestrator in `.project/<session-uuid>/METRICS.md` (contract: `.agents/contracts/METRICS.md`). Both are consolidated by the runner `metrics` subcommand.
+
 ## Failure Handling
 
 If a harness trigger fails:
@@ -90,7 +92,18 @@ The following triggers are defined but not integrated into the state machine. Th
 | H09 | `RECOVERY → PLANNING` | `.agents/orchestrators/core/harness/policies/H09-recovery-report.md` | `RECOVERY_REPORT.md` |
 | H10 | Before using KB recommendations | `.agents/orchestrators/core/harness/policies/H10-kb-discovery-report.md` | `KB_RECOMMENDATION.md` |
 
-H08 for `EXECUTION_SUMMARY.md` is intentionally omitted because H05 already performs semantic validation of that artifact.
+H08 for `EXECUTION_SUMMARY.md` is intentionally omitted because H05 already performs semantic validation of that artifact. H14 is intentionally omitted (unassigned); no trigger was ever designed under that ID.
+
+## Delegation Validity Gate (H15)
+
+H15 (`delegation-validity`) is not a state-transition gate over a session artifact: it gates Worker delegations at two points of the delegation flow, per `.agents/orchestrators/core/harness/policies/H15-delegation-validity.md`:
+
+| Gate | Evaluation point | Policy items |
+| --- | --- | --- |
+| H15 pre-delegation | Before the Orchestrator invokes a Worker | Profile resolvability, skill resolvability, input artifact existence, budget coherence |
+| H15 post-return | When the Orchestrator receives the return report, before applying the transition trigger | Return report schema and failure classes |
+
+Because a delegation payload is not a session artifact, the runner CLI does not execute H15; its machine evaluation lives in `.agents/harness/delegation_validity.py` and in the policy's test suite (`.agents/harness/tests/test_delegation_validity.py`). Its recovery decision tree is `.agents/orchestrators/core/harness/decision_trees/H15_FAIL.toml`.
 
 ## Project Discovery
 

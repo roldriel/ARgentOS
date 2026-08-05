@@ -10,6 +10,18 @@ Priority: environment variables > `.agents/features.toml` > defaults.
 
 Boolean flags default to `true` unless explicitly set otherwise in `.agents/features.toml` (currently only `architecture_contract` defaults to `false`). The discovery flags include two non-boolean tunables (`discovery_sample_size`, `discovery_environment_ttl_hours`, `discovery_project_ttl_hours`). The orchestrator must consult them before enabling any improvement and record active flags in `SESSION_LOG.md`.
 
+### Flag categories and declarative compliance
+
+Flags are classified by who consumes them:
+
+- **`[code]` flags** are read by the harness (`feature_flags.py` / `health_check.py` / runner). Compliance is mechanical: the gated behavior happens or a check fails. No declarative evidence is needed.
+- **`[declarative]` flags** are consumed by agents reading `.agents/features.toml` (directly or via `runner.py features`); the harness only resolves and exposes them. Compliance is behavioral: an enabled declarative flag creates an obligation — the consuming agent MUST read its value before the flow point where it conditions behavior, and MUST act on it at that point.
+- **Dual flags** (the technical-practice flags) are both: read by the harness (standards presence, H01/H05 semantic validators) and consumed declaratively by workers during execution.
+
+Ignoring an enabled declarative flag — not reading it, or reading it without acting — is a **deviation** (class F2: difference between specified and executed behavior): it must be logged as such, and if the omission is material to acceptance criteria or scope it escalates to recovery or clarification per the deviation reclassification rule. Disabling a flag (via `AGENTS_FEATURE_`) is never a deviation; the obligation ends with the flag.
+
+**Compliance evidence** is auditable as a two-part join: (1) the initial `SESSION_LOG.md` entry records the active flags — the session's standing obligations; (2) when a declarative flag conditions an agent's behavior, that condition is declared in the produced artifact or in the corresponding session-log entry, naming the flag and the applied effect (e.g. a delegation declaring the `caveman` level; a Discovery Orchestrator invocation logged as an event; TDD red-green-refactor evidence in `EXECUTION_SUMMARY.md` for dual flags). An active declarative flag with no consumption declaration and no logged deviation is *unevidenced compliance*. Evidence is never rewritten retroactively: a late-discovered omission is logged as a deviation, not patched.
+
 | Flag | Description |
 |------|-------------|
 | `decision_trees` | Enables TOML decision trees for recovery. |
@@ -56,11 +68,18 @@ Boolean flags default to `true` unless explicitly set otherwise in `.agents/feat
 
 - `quality/RUBRICS.md` — rubric evaluation format and scoring levels.
 - `quality/PREFLIGHT_CHECKLIST.md` — pre-flight self-checklist for workers.
-- `quality/CONFIDENCE.md` — general confidence model (HIGH/MEDIUM/LOW) with falsable level definitions and the anti-inflation rule, applied to verification reports, recovery analyses and KB recommendations.
+- `quality/CONFIDENCE.md` — general confidence model (HIGH/MEDIUM/LOW) with falsable level definitions and the anti-inflation rule, applied to verification reports, recovery analyses and KB recommendations; includes the recommendation-confidence specialization for Orchestrator accept-or-override decisions.
 
 ## Context
 
 - `context/CONTEXT.md` — context engineering, knowledge-base budgets, context compression techniques, and compact tags.
+- `context/BUDGET_MATERIALIZATION.md` — materialization of the Context Budget for the prompt-based runtime: unit (estimated tokens), estimation rule, and conversion from the character-denominated KB budgets.
+- `context/RESOLUTION_TIE_BREAKING.md` — Resolution policy: ordered criteria for deciding between equivalent context candidates (explicit directive, source precedence, recency, coverage, first-fit).
+- `context/RESOLUTION_DEDUPLICATION.md` — Resolution policy: detection of fully-contained (redundant) candidates and their lossless removal.
+- `context/RESOLUTION_MERGE.md` — Resolution policy: when partially overlapping compatible candidates are fused, and the form of the merged result.
+- `context/RESOLUTION_UNRESOLVABLE_CONFLICTS.md` — Resolution policy: behavior before incompatibility, mutual exclusion, and budget conflicts (report as F3/F4/F1, never guess).
+- `context/COMPOSITION_COMPRESSION.md` — Composition policy: closed set of compression techniques (integrates `CONTEXT.md` §8.2/§8.4), lossless rule, and order before Optimization.
+- `context/COMPOSITION_OPTIMIZATION.md` — Composition policy: criteria for adapting the payload's final form to the execution purpose, applied after Compression.
 - `context/PROJECT_ARTIFACTS.md` — standard for project-level context artifacts `project-map.md` and `technical-analysis.md`.
 - `context/ENVIRONMENT_PROBE.md` — rules for probing the execution environment (OS, shell, tools) before acting.
 - `context/USING_PATTERNS.md` — how workers consume the discovery knowledge base (detected environment and development patterns).
@@ -95,6 +114,7 @@ Boolean flags default to `true` unless explicitly set otherwise in `.agents/feat
 ## Orchestration
 
 - `orchestration/ORCHESTRATION_GUIDE.md` — decision procedure for selecting worker profiles and delegation payloads.
+- `orchestration/DECISIONS.md` — conceptual catalog of the Orchestrator's discretionary decision points (question, inputs, authority), including the retry bound, KB criticality, and founded abort concepts.
 - `orchestration/SKILLS.md` — skill mechanism: activation (table + judgment), two-level locations and precedence, validation, authority hierarchy, and coexistence rules. Skill format contract: `.agents/skills/README.md`.
 - `orchestration/README.md` — overview of orchestration standards.
 
@@ -113,6 +133,7 @@ Specialized worker profiles live in `.agents/roles/profiles/` and are enabled by
 ## Runtime
 
 - `runtime/PROTOCOL_BOUNDARIES.md` — file-system boundaries, artifact locations, and agent autonomy rules.
-- `runtime/PROTOCOL_TAXONOMY.md` — master dictionary of the protocol: domains, lifecycles, states, artifacts, harness policies, actors, roles and workers, with `<domain>:<state>` references. Every state machine, workflow, harness policy, contract and role carries a YAML metadata block pointing to it (`taxonomy`, `kind`, `domain` as minimum). Files that already start with a TOML front matter block (`+++`) — policies and contracts — carry the YAML block immediately after the TOML block; all other files carry it at the top. Coherence is validated by harness policy `.agents/harness/policies/H13-protocol-taxonomy.md` (cross-cutting; `H08` and `H12` are intentionally absent) and `.agents/harness/tests/test_protocol_taxonomy.py`.
+- `runtime/PROTOCOL_TAXONOMY.md` — master dictionary of the protocol: domains, lifecycles, states, artifacts, harness policies, actors, roles and workers, with `<domain>:<state>` references. Every state machine, workflow, harness policy, contract and role carries a YAML metadata block pointing to it (`taxonomy`, `kind`, `domain` as minimum). Files that already start with a TOML front matter block (`+++`) — policies and contracts — carry the YAML block immediately after the TOML block; all other files carry it at the top. Coherence is validated by harness policy `.agents/harness/policies/H13-protocol-taxonomy.md` (cross-cutting; `H08`, `H12` and `H14` are intentionally absent) and `.agents/harness/tests/test_protocol_taxonomy.py`.
 - `runtime/EXTERNAL_DEPENDENCIES.md` — `.agents/` must not depend on project-specific technologies or third-party runtime dependencies.
 - `runtime/PYTHON_DEPENDENCIES.md` — concrete application of the external-dependencies policy for the current Python runtime.
+- `runtime/PROTOCOL_METRICS.md` — protocol metrics model: metric catalog (flow, failures, delegation, context, session, declarative flags), registration rule (trigger data points in `HARNESS_REPORT.md`, event data points in the session `METRICS.md`), aggregation via `runner.py metrics`, and the protocol health signals (no thresholds).

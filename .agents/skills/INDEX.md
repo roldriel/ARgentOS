@@ -8,16 +8,16 @@ One row per protocol skill. The structural test `.agents/harness/tests/test_prot
 
 | Skill | Description |
 | --- | --- |
-| suggest-commits | Analyze git changes and propose logical Conventional Commits grouped by intent rather than file boundaries. Activated by judgment (its `description` covers the triggers); intentionally not in the activation table below, because commit suggestion is a standalone task rather than a phase+profile combination. |
-| ears-writer | Draft requirements in EARS notation during task specification. |
+| suggest-commits | Analyze git changes and propose logical Conventional Commits grouped by intent rather than file boundaries. Activated by judgment (its `description` covers the triggers); intentionally not in the activation table below, because commit suggestion is a standalone task rather than a workflow-bound combination. |
+| ears-writer | Draft requirements and acceptance criteria in EARS notation. |
 | task-spec-validator | Verify a Task Specification against its contract and the EARS standard. |
 | artifact-validator | Validate a protocol artifact against its contract. |
 | rubric-checker | Evaluate a deliverable against the protocol rubrics. |
 | execution-plan-reviewer | Review an execution plan before approval. |
 | critic | Critique a proposal, identifying weaknesses before execution. Activated by judgment. |
-| ambiguity-detector | Detect ambiguities that must trigger `NEEDS_CLARIFICATION`. |
+| ambiguity-detector | Detect ambiguities that require explicit clarification before proceeding. |
 | consistency-checker | Detect inconsistencies within or between artifacts. Activated by judgment. |
-| completeness-checker | Detect missing information against what a phase requires. Activated by judgment. |
+| completeness-checker | Detect missing information against what the requested deliverable requires. Activated by judgment. |
 | requirement-extractor | Extract functional and non-functional requirements from the user's request. |
 | extractor | Extract relevant facts from extensive material, with citations. Activated by judgment. |
 | summarizer | Summarize extensive material preserving decision-relevant content. Activated by judgment. |

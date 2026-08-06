@@ -1,7 +1,7 @@
 ---
 name: counterargument
-description: Build reasoned objections against a stated position, claim, or recommendation, to test whether it survives honest opposition. Use when a worker must stress-test a position before committing to it. Produces objections with reasoning; never attacks a full proposal end-to-end.
-when_to_activate: The delegated task requires challenging a specific position or claim ("we should do X", "Y is safe", "Z is the best option") with structured objections before acting on it.
+description: Build reasoned objections against a stated position, claim, or recommendation, to test whether it survives honest opposition. Use when asked to stress-test a position before committing to it. Produces objections with reasoning; never attacks a full proposal end-to-end.
+when_to_activate: The task requires challenging a specific position or claim ("we should do X", "Y is safe", "Z is the best option") with structured objections before acting on it.
 when_not: The target is a complete proposal with steps, design, and scope (use critic: counterargument objeta una POSICIÓN, critic ataca una PROPUESTA completa), or no concrete position has been stated to object against.
 ---
 
@@ -23,7 +23,7 @@ Optimize for:
 
 # Protocol Boundary
 
-This skill assists the Worker inside the phase that delegated it. Its output is embedded as a section inside the artifact that governs that phase; the phase contract defines the envelope. On any conflict between this skill and the protocol, the protocol wins. This skill describes a capability; it grants no authority or permissions.
+This skill describes a capability; it grants no authority or permissions. It defers to any instruction from the invoker, and delivers its output in the format and structure requested by the invoker.
 
 ---
 
@@ -32,8 +32,8 @@ This skill assists the Worker inside the phase that delegated it. Its output is 
 * Object to the position, not to a caricature: state the position in its strongest form first; if the objection only works against a weak reading, discard it.
 * Every objection MUST carry its reasoning (premise challenged + why) and, where possible, evidence or a concrete scenario.
 * No fabricated objections: if you cannot articulate why the position fails, it is not an objection.
-* Do not argue both sides at once: this skill builds the case *against*. The synthesis and final judgment belong to the delegating role.
-* Do not modify any artifact; hand the objections to the delegating worker.
+* Do not argue both sides at once: this skill builds the case *against*. The synthesis and final judgment belong to the invoker.
+* Do not modify any artifact; hand the objections back to the invoker.
 * If the position survives all honest objections, say so explicitly — that is a valid and useful result.
 
 ---
@@ -52,7 +52,7 @@ This skill assists the Worker inside the phase that delegated it. Its output is 
 
 # Output Format
 
-Embedded as a section inside the phase artifact:
+Embedded as a section inside the deliverable requested by the invoker:
 
 ```markdown
 ## Counterargument

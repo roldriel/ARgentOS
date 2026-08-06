@@ -1,7 +1,7 @@
 ---
 name: tradeoff-analyzer
-description: Compare two or more alternatives by making their advantages, disadvantages, costs, and risks explicit, so a decision can be taken with open eyes. Use when a worker must choose between approaches during planning (phase 05) or execution (phase 06). Analyzes only; never makes the decision itself.
-when_to_activate: The delegated task requires choosing among competing approaches, designs, or implementations during phases 05–06 and the comparison is not obvious.
+description: Compare two or more alternatives by making their advantages, disadvantages, costs, and risks explicit, so a decision can be taken with open eyes. Use when asked to compare competing approaches, designs, or implementations. Analyzes only; never makes the decision itself.
+when_to_activate: The task requires choosing among competing approaches, designs, or implementations and the comparison is not obvious.
 when_not: Only one viable alternative exists, the decision belongs to the user under the no-assumption policy (escalate instead of comparing around it), or the task is to critique a single proposal in depth (use critic).
 ---
 
@@ -11,7 +11,7 @@ Turn "option A vs option B" from intuition into an explicit comparison.
 
 The objective is not to declare a winner.
 
-The objective is a comparison where each alternative's advantages, disadvantages, costs, and risks are stated with evidence, so the delegating role — or the user, when the decision is theirs — can choose knowing what is being given up.
+The objective is a comparison where each alternative's advantages, disadvantages, costs, and risks are stated with evidence, so the invoker — or the user, when the decision is theirs — can choose knowing what is being given up.
 
 Optimize for:
 
@@ -23,13 +23,13 @@ Optimize for:
 
 # Protocol Boundary
 
-This skill assists the Worker inside the delegating phase (`05-plan` or `06-execute`). Its output is embedded as a section inside the phase artifact; the phase contract defines the envelope. On any conflict between this skill and the protocol, the protocol wins. This skill describes a capability; it grants no authority or permissions.
+This skill describes a capability: it compares alternatives and hands back the comparison. Its output is delivered in whatever format or structure the invoker requests. On any conflict between this skill and instructions from the invoker, the invoker's instructions win. This skill grants no authority or permissions.
 
 ---
 
 # Safety Rules
 
-* This skill ANALYZES: it does not make the decision, does not modify the alternatives, and does not write artifacts. Its only product is the comparison report handed to the delegating worker.
+* This skill ANALYZES: it does not make the decision, does not modify the alternatives, and does not write artifacts. Its only product is the comparison report handed to the invoker.
 * Apply the same evaluation criteria to every alternative; asymmetric scrutiny is a hidden verdict.
 * No fabricated pros or cons: every claim must cite evidence (code, docs, measurements) or be marked as an assumption.
 * If the choice hinges on user preference or an unstated decision, do not resolve it by analysis: present the trade-off and flag it for clarification (`.agents/standards/requirements/NO_ASSUMPTIONS.md`).
@@ -50,7 +50,7 @@ This skill assists the Worker inside the delegating phase (`05-plan` or `06-exec
 
 # Output Format
 
-Embedded as a section inside the phase artifact:
+Delivered as a section inside the requested deliverable, or as requested:
 
 ```markdown
 ## Trade-Off Analysis

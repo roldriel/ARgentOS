@@ -1,8 +1,8 @@
 ---
 name: normalizer
-description: Normalize terminology and formatting across heterogeneous sources (code, docs, configs, external notes) into a single consistent vocabulary and style for context artifacts. Use during phase 03-gather-context when collected information arrives with conflicting names, units, or formats. Never invents terms and never resolves semantic contradictions — those are reported as unknowns.
-when_to_activate: The delegated task in phase 03-gather-context involves consolidating context from multiple sources with inconsistent terminology, naming, or formats before building the CONTEXT_ARTIFACT.md.
-when_not: Sources already share a consistent vocabulary, or the inconsistency is a semantic contradiction that requires user clarification (route to NEEDS_CLARIFICATION instead).
+description: Normalize terminology and formatting across heterogeneous sources (code, docs, configs, external notes) into a single consistent vocabulary and style for a context deliverable. Use when asked to consolidate collected information that arrives with conflicting names, units, or formats. Never invents terms and never resolves semantic contradictions — those are reported as unknowns.
+when_to_activate: The task involves consolidating context from multiple sources with inconsistent terminology, naming, or formats before assembling a context deliverable (e.g., a context document).
+when_not: Sources already share a consistent vocabulary, or the inconsistency is a semantic contradiction that must be escalated for clarification rather than normalized.
 ---
 
 # Mission
@@ -17,7 +17,7 @@ Normalization is mechanical alignment, not interpretation: when two sources genu
 
 ## 1. Collect the raw variants
 
-From the gathered sources (repository files, documentation, configuration, tests — the sources listed in `.agents/orchestrators/core/workflow/03-gather-context.md`), extract every distinct term or format used for the same concept: component names, module paths, versions, units, date/number formats.
+From the gathered sources (repository files, documentation, configuration, tests — whatever sources the invoker supplied or pointed to), extract every distinct term or format used for the same concept: component names, module paths, versions, units, date/number formats.
 
 ## 2. Choose the canonical form
 
@@ -36,7 +36,7 @@ Rewrite the collected context using canonical forms consistently: one name per c
 
 ## 4. Report unresolved conflicts
 
-When sources contradict each other semantically (different values, incompatible behaviors), do not normalize. Record them in the artifact's `Unknowns` section (see the contract in `.agents/orchestrators/core/contracts/CONTEXT_ARTIFACT.md`) so the Orchestrator can route to NEEDS_CLARIFICATION.
+When sources contradict each other semantically (different values, incompatible behaviors), do not normalize. Record them in the deliverable's `Unknowns` section (or the equivalent structure the invoker requests) so the invoker can escalate them for clarification.
 
 ---
 
@@ -46,13 +46,13 @@ When sources contradict each other semantically (different values, incompatible 
 - Every substitution must be traceable to its variant and source in the mapping table.
 - Never silently pick a side in a factual contradiction; report it.
 - Do not alter quoted code or external citations to force terminological consistency; normalize prose around them and note the divergence.
-- Output stays within the delegating phase: this skill feeds the context artifact, it does not edit the source documents.
+- Output stays within the requested deliverable: this skill feeds the deliverable; it does not edit the source documents.
 
 ---
 
 # Output Format
 
-A normalized-context section to embed in the delegating phase's artifact, containing:
+A normalized-context section to embed in the requested deliverable, containing:
 
 ```markdown
 ## Normalized Terminology
@@ -73,4 +73,4 @@ A normalized-context section to embed in the delegating phase's artifact, contai
 
 # Protocol Boundary
 
-This skill assists the Worker within the phase that delegates it (typically 03-gather-context); its output is embedded as a section inside the artifact of that phase (CONTEXT_ARTIFACT.md), whose contract defines the surrounding envelope. On any conflict between this skill and the protocol, the protocol wins. This skill describes a capability; it does not grant authority or permissions.
+This skill describes a capability: it performs the normalization task it is given and delivers its output in the format and structure the invoker requests. On any conflict between this skill and instructions from the invoker, the invoker's instructions win. This skill does not grant authority or permissions.

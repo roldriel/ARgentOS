@@ -1,7 +1,7 @@
 ---
 name: reflection
-description: Reevaluate work in progress before declaring it finished — check whether the current approach still serves the objective, whether drift has crept in, and whether to continue, adjust, or stop. Use during execution (phase 06) or verification (phase 07) while the result is still in course.
-when_to_activate: The delegated task requires a mid-course reassessment of an ongoing solution during phases 06–07, e.g. after a failed step, a scope question, or before a point of no return.
+description: Reevaluate work in progress before declaring it finished — check whether the current approach still serves the objective, whether drift has crept in, and whether to continue, adjust, or stop. Use when asked to reassess an ongoing solution while the result is still in course.
+when_to_activate: The task requires a mid-course reassessment of an ongoing solution, e.g. after a failed step, a scope question, or before a point of no return.
 when_not: The result is already finished and must be audited before reporting (use self-review: reflection reevalúa el resultado EN CURSO, self-review audita el resultado TERMINADO), or the task is to generate new content.
 ---
 
@@ -23,16 +23,16 @@ Optimize for:
 
 # Protocol Boundary
 
-This skill assists the Worker inside the delegating phase (`06-execute` or `07-verify`). Its output is embedded as a section inside the phase artifact (`EXECUTION_SUMMARY.md` or `VERIFICATION_REPORT.md`); the phase contract defines the envelope. On any conflict between this skill and the protocol, the protocol wins. This skill describes a capability; it grants no authority or permissions.
+This skill describes a capability: given a reassessment task, it performs it and delivers its output. Its output is embedded wherever the invoker requires it (e.g., as a section inside a summary or report document); the invoker defines the envelope. On any conflict between this skill and instructions from the invoker, the invoker's instructions win. This skill grants no authority or permissions.
 
 ---
 
 # Safety Rules
 
-* This skill REEVALUATES: it does not rewrite the work, does not modify artifacts, and does not audit the finished deliverable (that is self-review). Its product is a reflection report handed to the delegating worker.
+* This skill REEVALUATES: it does not rewrite the work, does not modify artifacts, and does not audit the finished deliverable (that is self-review). Its product is a reflection report handed to the invoker.
 * Check premises, not just progress: if a starting assumption turned out false, say so even when execution is "on track".
 * Sunk cost is not evidence: work already invested does not justify continuing a wrong approach.
-* No silent pivots: if the recommendation is to change direction, state what changes and why; the decision to replan belongs to the Orchestrator.
+* No silent pivots: if the recommendation is to change direction, state what changes and why; the decision to replan belongs to the invoker.
 * If reassessment reveals an unstated user decision, escalate per `.agents/standards/requirements/NO_ASSUMPTIONS.md` instead of resolving it.
 
 ---
@@ -51,7 +51,7 @@ This skill assists the Worker inside the delegating phase (`06-execute` or `07-v
 
 # Output Format
 
-Embedded as a section inside the phase artifact:
+Delivered in the format requested by the invoker; by default, as a section to embed in a report:
 
 ```markdown
 ## Reflection
@@ -67,5 +67,5 @@ Embedded as a section inside the phase artifact:
 - <drift, convergence signals, or confirmation of alignment>
 
 ### Rationale
-- <why this recommendation; if adjust/stop: what changes and what decision the Orchestrator or user must take>
+- <why this recommendation; if adjust/stop: what changes and what decision the invoker or user must take>
 ```

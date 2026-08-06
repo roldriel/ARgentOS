@@ -6,9 +6,9 @@ This document is the canonical contract for the *skill* format. It applies to pr
 
 A skill is a reusable capability that can assist a Worker during the execution of a task: a bounded unit of capability packaged as a procedure with a defined input and output, so that its dense knowledge is only loaded when the skill is actually used. This definition is independent of how the capability is incorporated during execution.
 
-In the current runtime, the Orchestrator delivers only the names of the active skills in the Delegation Payload, and the Worker reads each `SKILL.md` itself before executing its phase, loading `references/` lazily on demand. That is the runtime's present implementation, not part of the skill definition.
+In the current runtime, the Orchestrator delivers only the names of the active skills in the Delegation Payload, and the Worker reads each `SKILL.md` itself before executing its task, loading `references/` lazily on demand. That is the runtime's present implementation, not part of the skill definition.
 
-- A **profile** defines *who* the worker is (role/conduct for the whole phase).
+- A **profile** defines *who* the worker is (role/conduct for the whole task).
 - A **skill** defines *which specific capability* the worker executes.
 
 A worker may have one profile and zero or more active skills; the two are orthogonal.
@@ -29,7 +29,7 @@ The file MUST start with a YAML front matter block. `name` and `description` are
 ---
 name: suggest-conventional-commit
 description: Analyze git changes and propose logical Conventional Commits grouped by intent. Use when the user asks for commit suggestions or help organizing staged changes. Never execute git mutations.
-when_to_activate: Delegated to a worker that must propose a commit history during phase 06 or a documentation phase.
+when_to_activate: The task asks the worker to propose a commit history for existing repository changes.
 when_not: The task requires executing git mutations, or no repository changes exist.
 ---
 ```

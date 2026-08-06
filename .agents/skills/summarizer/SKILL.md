@@ -1,7 +1,7 @@
 ---
 name: summarizer
-description: Condense extensive information into a short summary that preserves every decision-relevant point, with a declared compression ratio and no new content. Use when a worker must shrink large material for downstream consumption during context gathering (phase 03, core:GATHERING_CONTEXT).
-when_to_activate: The delegated task requires condensing long documents, discussions, or collected context into a brief that preserves what decisions depend on, during phase 03.
+description: Condense extensive information into a short summary that preserves every decision-relevant point, with a declared compression ratio and no new content. Use when asked to shrink large material into a brief for downstream consumption.
+when_to_activate: The task requires condensing long documents, discussions, or collected context into a brief that preserves what decisions depend on.
 when_not: The task needs citable individual facts (use extractor), quality evaluation, or the source is already short enough to include verbatim.
 ---
 
@@ -23,7 +23,7 @@ Optimize for:
 
 # Protocol Boundary
 
-This skill assists the Worker inside the delegating phase (`03-gather-context`). Its output is embedded as a section inside the phase artifact (`CONTEXT_ARTIFACT.md`): the phase contract defines the envelope, this skill defines the content of the summary section. On any conflict between this skill and the protocol, the protocol wins. This skill describes a capability; it grants no authority or permissions.
+This skill describes a capability: it is given a summarization task, performs it, and delivers the result. Its output is delivered in the format and structure requested by the invoker — for example as a section inside a larger deliverable, where the invoker defines the envelope and this skill defines the content of the summary section. On any conflict between this skill and the invoker's instructions, the invoker wins. This skill grants no authority or permissions.
 
 ---
 
@@ -49,7 +49,7 @@ This skill assists the Worker inside the delegating phase (`03-gather-context`).
 
 # Output Format
 
-Embedded as a section inside `CONTEXT_ARTIFACT.md`:
+Delivered in the format requested by the invoker, e.g. as a section inside a larger document:
 
 ```markdown
 ## Summary: <source title>

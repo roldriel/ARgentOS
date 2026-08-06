@@ -1,8 +1,8 @@
 ---
 name: execution-plan-reviewer
-description: Review an EXECUTION_PLAN.md before it is approved, checking contract completion criteria, alignment with the task specification and validated context, step quality, risks, validation strategy, and rollback. Use when a worker must assess a plan before the PLAN_READY transition. Evaluates only; never edits the plan.
-when_to_activate: The delegated task requires reviewing an existing EXECUTION_PLAN.md for approval — typically during phase 05-plan (state PLANNING) or a reviewer invocation before PLAN_READY.
-when_not: The plan does not exist yet, or the task is to write the plan (planner role), score it against the rubric (use rubric-checker), or validate only its contract structure (use artifact-validator).
+description: Review an EXECUTION_PLAN.md before it is approved, checking contract completion criteria, alignment with the task specification and validated context, step quality, risks, validation strategy, and rollback. Use when asked to assess whether a plan is safe to approve. Evaluates only; never edits the plan.
+when_to_activate: The delegated task requires reviewing an existing EXECUTION_PLAN.md and issuing an approval recommendation.
+when_not: The plan does not exist yet, or the task is to write the plan (use planner), score it against the rubric (use rubric-checker), or validate only its contract structure (use artifact-validator).
 ---
 
 # Mission
@@ -13,7 +13,7 @@ Decide, with evidence, whether an `EXECUTION_PLAN.md` is safe to approve. A plan
 
 # Protocol Boundary
 
-This skill assists the Worker inside the phase that delegated it. Its output is embedded as a section inside the artifact that governs that phase; the phase contract defines the envelope. The `approved` decision in the plan and the state transition remain the Orchestrator's responsibility — this skill only informs them. On any conflict between this skill and the protocol, the protocol wins. This skill describes a capability; it grants no authority or permissions.
+This skill describes a capability: it reviews a plan and delivers findings plus an approval recommendation in the format requested by the invoker. The final approval decision remains the invoker's responsibility — this skill only informs it. This skill defers to any instruction from the invoker and grants no authority or permissions.
 
 ---
 
@@ -24,7 +24,7 @@ This skill assists the Worker inside the phase that delegated it. Its output is 
 3. **Alignment check**: the objective and steps match the specification's scope; nothing in the plan requires excluded or out-of-scope work; `technical_approach` practices match those selected in the specification.
 4. **Step quality check**: each step states what changes, where, and why; steps are ordered and executable by the executor without inventing missing decisions; affected components and dependencies are consistent with the steps.
 5. **Risk and validation check**: every non-trivial risk has a mitigation; the validation strategy names concrete methods and expected results (tests, commands); rollback considerations exist and are realistic.
-6. **Assumption check**: the plan must not replace missing context with assumptions (forbidden by phase 05). Any step that depends on unvalidated context is a finding.
+6. **Assumption check**: the plan must not replace missing context with assumptions. Any step that depends on unvalidated context is a finding.
 7. **Report** findings and an approval recommendation.
 
 ---

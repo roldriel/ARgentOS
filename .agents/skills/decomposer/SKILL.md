@@ -1,7 +1,7 @@
 ---
 name: decomposer
-description: Break a complex problem into independent, self-contained subproblems that can be analyzed or solved separately. Use when a worker faces a problem too large or tangled to address as a single unit, typically during planning (phase 05, core:PLANNING) supporting the planner role.
-when_to_activate: The delegated task requires splitting a complex objective or problem into independent subproblems during phase 05, supporting the planner role (.agents/roles/planner.md).
+description: Break a complex problem into independent, self-contained subproblems that can be analyzed or solved separately. Use when asked to tackle a problem too large or tangled to address as a single unit.
+when_to_activate: The task requires splitting a complex objective or problem into independent subproblems before it can be planned or solved.
 when_not: The task is to order the steps of an already-defined solution (use planner: decomposer divides the PROBLEM, planner orders the PASOS of the solution), or the problem is already small enough to plan directly.
 ---
 
@@ -23,7 +23,7 @@ Optimize for:
 
 # Protocol Boundary
 
-This skill assists the Worker inside the delegating phase (commonly `05-plan`, `.agents/orchestrators/core/workflow/05-plan.md`). Its output is embedded as a section inside the phase artifact (e.g. `EXECUTION_PLAN.md`, contract `.agents/orchestrators/core/contracts/EXECUTION_PLAN.md`); the phase contract defines the envelope, this skill defines the decomposition content. On any conflict between this skill and the protocol, the protocol wins. This skill describes a capability; it grants no authority or permissions.
+This skill describes a capability: it receives a problem and returns a decomposition. Its output is delivered in whatever format or structure the invoker requests (e.g., as a section inside a larger document); the invoker defines the envelope, this skill defines the decomposition content. On any conflict between this skill and the invoker's instructions, the invoker's instructions win. This skill grants no authority or permissions.
 
 ---
 
@@ -32,7 +32,7 @@ This skill assists the Worker inside the delegating phase (commonly `05-plan`, `
 * Never decompose around an unknown: if part of the problem depends on an unstated decision, flag it for clarification instead of guessing (`.agents/standards/requirements/NO_ASSUMPTIONS.md`).
 * Independence over convenience: if two candidate subproblems share state or order, either merge them or declare the interface between them explicitly.
 * Do not sequence the subproblems into steps: ordering, dependencies, and verification criteria per step belong to the planner skill; this skill only partitions the problem.
-* Do not modify project files or write artifacts directly; hand the decomposition to the delegating worker.
+* Do not modify project files or write artifacts directly; hand the decomposition to the invoker.
 
 ---
 
@@ -50,7 +50,7 @@ This skill assists the Worker inside the delegating phase (commonly `05-plan`, `
 
 # Output Format
 
-Embedded as a section inside the phase artifact:
+Delivered in the structure requested by the invoker; by default, as a self-contained section:
 
 ```markdown
 ## Problem Decomposition

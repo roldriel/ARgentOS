@@ -1,7 +1,7 @@
 ---
 name: consistency-checker
-description: Detect contradictions within a single artifact or between related artifacts (e.g. task specification vs. context artifact vs. execution plan vs. execution summary). Use when a worker must confirm that artifacts tell one coherent story — typically during phase 04-validate-context or phase 07-verify. Evaluates only; never edits artifacts.
-when_to_activate: The delegated task requires checking that two or more protocol artifacts (or sections of one artifact) do not contradict each other — typically the context validator in phase 04 or the verifier in phase 07.
+description: Detect contradictions within a single artifact or between related artifacts (e.g. task specification vs. context artifact vs. execution plan vs. execution summary). Use when asked to confirm that artifacts tell one coherent story. Evaluates only; never edits artifacts.
+when_to_activate: The task requires checking that two or more artifacts (or sections of one artifact) do not contradict each other.
 when_not: The task is structural contract validation (use artifact-validator), rubric scoring (use rubric-checker), or detecting missing information rather than contradictory information (use completeness-checker).
 ---
 
@@ -13,13 +13,13 @@ Find statements that cannot all be true: contradictions inside one artifact (int
 
 # Protocol Boundary
 
-This skill assists the Worker inside the phase that delegated it. Its output is embedded as a section inside that phase's artifact (e.g. `CONTEXT_VALIDATION_REPORT.md` or `VERIFICATION_REPORT.md`); the phase contract defines the envelope. On any conflict between this skill and the protocol, the protocol wins. This skill describes a capability; it grants no authority or permissions.
+This skill assists whoever invoked it. Its output is delivered in the format and structure the invoker requests (e.g. as a section of a validation or verification report); the invoker defines the envelope. On any conflict between this skill and the invoker's instructions, the invoker's instructions win. This skill describes a capability; it grants no authority or permissions.
 
 ---
 
 # Workflow
 
-1. **Collect the artifact set**: the artifact under evaluation plus its upstream references — typically `TASK_SPECIFICATION.md`, `CONTEXT_ARTIFACT.md`, and (in phase 07) `EXECUTION_PLAN.md` and `EXECUTION_SUMMARY.md`.
+1. **Collect the artifact set**: the artifact under evaluation plus its upstream references — e.g. `TASK_SPECIFICATION.md`, `CONTEXT_ARTIFACT.md`, and, when relevant, `EXECUTION_PLAN.md` and `EXECUTION_SUMMARY.md`.
 2. **Extract comparable claims**: normalize each artifact into a list of checkable statements — objective, scope inclusions/exclusions, constraints, declared behaviors of components, planned changes, reported changes, validation results.
 3. **Check internal consistency**: within each artifact, look for sections that conflict (e.g. a constraint violated by the technical approach; a step contradicting the stated objective).
 4. **Check cross-artifact consistency**, pairwise:
@@ -36,7 +36,7 @@ This skill assists the Worker inside the phase that delegated it. Its output is 
 
 - A finding must quote both conflicting statements with their locations; never report a contradiction from memory or paraphrase.
 - Different levels of detail are not inconsistencies — only incompatible claims are.
-- Do not resolve contradictions and do not decide which side is right; that belongs to the delegating role and the Orchestrator.
+- Do not resolve contradictions and do not decide which side is right; that belongs to the invoker.
 - Do not modify any artifact.
 - Absence of findings must reflect checks actually performed; list the pairs compared.
 

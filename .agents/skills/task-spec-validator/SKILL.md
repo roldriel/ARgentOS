@@ -1,19 +1,19 @@
 ---
 name: task-spec-validator
-description: Verify a TASK_SPECIFICATION.md artifact against its contract (.agents/orchestrators/core/contracts/TASK_SPECIFICATION.md) and the EARS standard (.agents/standards/requirements/EARS.md). Use when a worker must check that a task specification is complete and conformant before the workflow advances. Evaluates only; never edits the specification.
-when_to_activate: The delegated task requires checking an existing TASK_SPECIFICATION.md for contract conformance, EARS compliance, or completeness — typically before the TASK_READY transition or during phase 07-verify.
+description: Verify a TASK_SPECIFICATION.md artifact against its contract (.agents/orchestrators/core/contracts/TASK_SPECIFICATION.md) and the EARS standard (.agents/standards/requirements/EARS.md). Use when asked to check that a task specification is complete and conformant before it is accepted. Evaluates only; never edits the specification.
+when_to_activate: The task requires checking an existing TASK_SPECIFICATION.md for contract conformance, EARS compliance, or completeness before relying on it.
 when_not: The specification does not exist yet, or the task is to write/rewrite criteria (use ears-writer) or to score the spec against the quality rubric (use rubric-checker).
 ---
 
 # Mission
 
-Determine, with evidence, whether a given `TASK_SPECIFICATION.md` satisfies its contract and the EARS standard. Output is a findings report, not a verdict of approval — the Orchestrator decides transitions.
+Determine, with evidence, whether a given `TASK_SPECIFICATION.md` satisfies its contract and the EARS standard. Output is a findings report, not a verdict of approval — the invoker decides what to do with it.
 
 ---
 
 # Protocol Boundary
 
-This skill assists the Worker inside the phase that delegated it. Its output is embedded as a section inside the artifact that governs that phase (e.g. a validation or review report; the phase contract defines the envelope). On any conflict between this skill and the protocol, the protocol wins. This skill describes a capability; it grants no authority or permissions.
+This skill describes a capability: it is given a specification to check, it checks it, and it delivers a findings report. It does not know who invoked it or what governs the destination of its output; it delivers its report in whatever format or structure the invoker requests. On any conflict between this skill and instructions from the invoker, the invoker wins. This skill grants no authority or permissions.
 
 ---
 
@@ -21,7 +21,7 @@ This skill assists the Worker inside the phase that delegated it. Its output is 
 
 1. **Locate the artifact**: read the `TASK_SPECIFICATION.md` at the path given in the delegation.
 2. **Structural check** against `.agents/orchestrators/core/contracts/TASK_SPECIFICATION.md`: every contract section must be present and non-empty where required — Metadata, User Request, Objective, Expected Outcome, Scope (included/excluded), Constraints, Technical Approach (only protocol-enabled practices), Acceptance Criteria, Assumptions, Unknowns, Validation, State.
-3. **EARS check** per `.agents/standards/requirements/EARS.md`: each acceptance criterion must match one of the five patterns, use "shall", be atomic (no "and"/"or" joins), avoid negations, be specific, and be verifiable. Note: harness policy H01 also checks this; this skill is the human-readable audit.
+3. **EARS check** per `.agents/standards/requirements/EARS.md`: each acceptance criterion must match one of the five patterns, use "shall", be atomic (no "and"/"or" joins), avoid negations, be specific, and be verifiable. Note: automated harness policy also checks this; this skill is the human-readable audit.
 4. **Consistency check**: objective matches the original request; scope exclusions do not contradict constraints; acceptance criteria are derivable from the objective and expected outcome.
 5. **Assumption audit**: every `[[assumptions]]` entry with `user_confirmed = false` that resolves an unstated decision is a finding (see `.agents/standards/requirements/NO_ASSUMPTIONS.md`). Unknowns that block execution must be listed, not silently assumed.
 6. **Report** findings with severity and evidence.
@@ -59,4 +59,4 @@ This skill assists the Worker inside the phase that delegated it. Its output is 
 - Result: CONFORMANT | NON-CONFORMANT (with blocking findings listed)
 ```
 
-Severities: CRITICAL (blocks the transition: missing required section, non-EARS criterion), MAJOR (weakens the spec: unconfirmed assumption treated as settled), MINOR (style or traceability improvements).
+Severities: CRITICAL (blocks acceptance: missing required section, non-EARS criterion), MAJOR (weakens the spec: unconfirmed assumption treated as settled), MINOR (style or traceability improvements).

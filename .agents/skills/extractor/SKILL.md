@@ -1,7 +1,7 @@
 ---
 name: extractor
-description: Extract relevant facts from extensive material (code, docs, logs, configs) with source citations and no loss of decision-relevant detail. Use when a worker must distill large inputs into citable facts during context gathering (phase 03, core:GATHERING_CONTEXT).
-when_to_activate: The delegated task involves reading extensive source material and recording the facts relevant to the task specification into CONTEXT_ARTIFACT.md during phase 03.
+description: Extract relevant facts from extensive material (code, docs, logs, configs) with source citations and no loss of decision-relevant detail. Use when asked to distill large inputs into citable facts.
+when_to_activate: The task involves reading extensive source material and recording the facts relevant to a specification or question into a deliverable (e.g., a context document).
 when_not: The material is small enough to quote directly, or the task needs a prose summary for a human reader (use summarizer) or evaluation of quality.
 ---
 
@@ -11,7 +11,7 @@ Extract the facts that matter for the task specification from large or scattered
 
 The objective is not to read everything.
 
-The objective is to identify and record exactly the facts the task depends on — relevant components, existing behavior, constraints, dependencies, unknowns — so they can populate `CONTEXT_ARTIFACT.md` (phase 03, `.agents/orchestrators/core/workflow/03-gather-context.md`).
+The objective is to identify and record exactly the facts the task depends on — relevant components, existing behavior, constraints, dependencies, unknowns — so they can populate the deliverable requested by the invoker (e.g., a context document).
 
 Optimize for:
 
@@ -23,7 +23,7 @@ Optimize for:
 
 # Protocol Boundary
 
-This skill assists the Worker inside the delegating phase (`03-gather-context`). Its output is embedded as a section inside the phase artifact: the phase contract defines the envelope of `CONTEXT_ARTIFACT.md`, this skill defines the content of the extracted-facts section. On any conflict between this skill and the protocol, the protocol wins. This skill describes a capability; it grants no authority or permissions.
+This skill describes a capability; it grants no authority or permissions. Its output is delivered in whatever format or structure the invoker requests — embedded as a section of a larger deliverable or standalone. On any conflict between this skill and the invoker's instructions, the invoker's instructions win.
 
 ---
 
@@ -31,7 +31,7 @@ This skill assists the Worker inside the delegating phase (`03-gather-context`).
 
 * Every extracted fact MUST carry a source citation (file path with line, document section, or URL). A fact without a source is an unknown.
 * Never fill gaps with assumptions; record them under Unknowns.
-* Extract only what the task specification requires — phase 03 explicitly says: do not collect unnecessary information.
+* Extract only what the task specification requires — do not collect unnecessary information.
 * Do not modify the sources; this skill reads and records only.
 
 ---
@@ -49,7 +49,7 @@ This skill assists the Worker inside the delegating phase (`03-gather-context`).
 
 # Output Format
 
-Embedded as a section inside `CONTEXT_ARTIFACT.md`:
+Default structure (deliver it embedded in the invoker's deliverable or standalone, as requested):
 
 ```markdown
 ## Extracted Facts

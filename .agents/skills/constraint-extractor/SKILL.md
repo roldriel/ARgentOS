@@ -1,13 +1,13 @@
 ---
 name: constraint-extractor
-description: Detect technical, scope, and business constraints that bound how a task may be executed — stated restrictions plus constraints implied by the request context. Use when a worker must populate the restrictions section of TASK_ANALYSIS.md or audit what limits a plan must respect. Analyzes only; never writes artifacts and never relaxes a constraint by assumption.
-when_to_activate: The delegated phase is 00-analyze-task (state core:ANALYZING_TASK) and explicit restrictions must be identified, or a later phase must re-check which constraints a plan or change must respect.
+description: Detect technical, scope, and business constraints that bound how a task may be executed — stated restrictions plus constraints implied by the request context. Use when asked to inventory the restrictions of a task or to audit what limits a plan must respect. Analyzes only; never writes artifacts and never relaxes a constraint by assumption.
+when_to_activate: The task asks to identify explicit restrictions of a request or change, or to re-check which constraints a plan or change must respect.
 when_not: The task is to extract functional requirements (use requirement-extractor), to identify goals (use goal-extractor), to score intent confidence (use intent-detector), or to evaluate risks of a proposal (use risk-detector).
 ---
 
 # Mission
 
-Build an evidence-backed inventory of every constraint that bounds the task: what must not change, which technology or pattern is mandated, what scope limit applies, and which business rule restricts the solution. The output feeds the `restrictions` array of `TASK_ANALYSIS.md` (contract: `.agents/orchestrators/core/contracts/TASK_ANALYSIS.md`).
+Build an evidence-backed inventory of every constraint that bounds the task: what must not change, which technology or pattern is mandated, what scope limit applies, and which business rule restricts the solution. The output is a constraint inventory delivered in the format the invoker requests (e.g., the restrictions section of a task analysis document).
 
 A constraint missed in analysis becomes a violation discovered in verification. Prefer over-reporting with evidence over silent omission.
 
@@ -15,7 +15,7 @@ A constraint missed in analysis becomes a violation discovered in verification. 
 
 # Protocol Boundary
 
-This skill assists the Worker inside the delegating phase (commonly `00-analyze-task`). Its output is embedded as a section inside the phase artifact; the phase contract (`TASK_ANALYSIS.md`) defines the envelope. On any conflict between this skill and the protocol, the protocol wins. This skill describes a capability; it grants no authority or permissions.
+This skill describes a capability: it is asked to do a job, does it, and delivers the result. It yields to any instruction from the invoker, grants no authority or permissions, and delivers its output in whatever format or structure the invoker requests.
 
 ---
 
@@ -25,7 +25,7 @@ This skill assists the Worker inside the delegating phase (commonly `00-analyze-
 - Separate stated constraints from derived ones; never present a derivation as something the user said.
 - Never relax, reinterpret, or drop a constraint to make the task easier (see `.agents/standards/requirements/NO_ASSUMPTIONS.md`); conflicting constraints are reported as conflicts, not resolved.
 - Do not propose how to satisfy the constraints; that belongs to planning.
-- Do not modify any artifact; hand the inventory to the delegating worker.
+- Do not modify any artifact; hand the inventory to the invoker.
 
 ---
 
@@ -59,4 +59,4 @@ This skill assists the Worker inside the delegating phase (commonly `00-analyze-
 - CC-1: <constraint A> vs <constraint B> — evidence for both — requires user resolution
 ```
 
-Empty sections are omitted. The delegating worker embeds stated constraints into the `restrictions` array of `TASK_ANALYSIS.md` and routes conflicts into `[[ambiguities]]` with at least two resolution options.
+Empty sections are omitted. When the deliverable is a task analysis document, stated constraints typically map to its restrictions array and conflicts are surfaced as open questions with at least two resolution options each.

@@ -1,19 +1,19 @@
 ---
 name: hallucination-checker
-description: Confront the factual claims of an artifact against the evidence actually available in the repository or the session (files, prior artifacts, verified outputs). Use when a worker must detect invented facts, phantom paths, or unverified assertions before an artifact is trusted — typically in phase 04-validate-context or 07-verify. Evaluates only; never edits the artifact and never supplies missing facts.
-when_to_activate: The delegated phase is 04-validate-context or 07-verify, or the task asks to check an artifact for fabricated or unsupported claims, per `.agents/standards/conduct/ANTI_CIRCUMVENTION.md`.
+description: Confront the factual claims of an artifact against the evidence actually available in the repository or the session (files, prior artifacts, verified outputs). Use when asked to detect invented facts, phantom paths, or unverified assertions before an artifact is trusted. Evaluates only; never edits the artifact and never supplies missing facts.
+when_to_activate: The task asks to check an artifact for fabricated or unsupported claims, per `.agents/standards/conduct/ANTI_CIRCUMVENTION.md`.
 when_not: The task is to validate an artifact's structure against its contract (use artifact-validator — hallucination-checker verifies CLAIMS against evidence, artifact-validator verifies STRUCTURE against contract), to critique a proposal's approach (use critic), or no artifact with factual claims exists.
 ---
 
 # Mission
 
-Inventing project facts, user intent, or implementation details is a protocol violation (`.agents/standards/conduct/ANTI_CIRCUMVENTION.md`, "What counts as circumvention"). This skill confronts every load-bearing claim of an artifact with the evidence on disk or in the session and reports which claims are supported, unsupported, or contradicted. It does not fix the artifact — it produces the finding report that lets the delegating phase decide.
+Inventing project facts, user intent, or implementation details is a protocol violation (`.agents/standards/conduct/ANTI_CIRCUMVENTION.md`, "What counts as circumvention"). This skill confronts every load-bearing claim of an artifact with the evidence on disk or in the session and reports which claims are supported, unsupported, or contradicted. It does not fix the artifact — it produces the finding report that lets the invoker decide.
 
 ---
 
 # Protocol Boundary
 
-This skill assists the Worker inside the phase that delegated it (commonly 04-validate-context or 07-verify). Its output is embedded as a section inside the artifact that governs that phase; the phase contract defines the envelope. On any conflict between this skill and the protocol, the protocol wins. This skill describes a capability; it grants no authority or permissions.
+This skill assists whoever invoked it. Its output is a finding report delivered in the format and structure the invoker requests; any instruction from the invoker overrides this skill's defaults. This skill describes a capability; it grants no authority or permissions.
 
 ---
 
@@ -64,4 +64,4 @@ This skill assists the Worker inside the phase that delegated it (commonly 04-va
 - <claim or area checked>
 ```
 
-Severities: CRITICAL (decision or phase transition depends on a false/unsupported claim), MAJOR (claim misleads but is not load-bearing), MINOR (imprecision worth correcting).
+Severities: CRITICAL (a decision depends on a false/unsupported claim), MAJOR (claim misleads but is not load-bearing), MINOR (imprecision worth correcting).

@@ -1,13 +1,13 @@
 ---
 name: reference-resolver
-description: Resolve references between project and protocol documents (file paths, artifact names, contract citations, section anchors) into verified concrete targets. Use during phases 03-gather-context and 06-execute when a document cites other documents and the Worker must confirm each citation resolves. Never guesses a target; unresolved references are reported, not fabricated.
-when_to_activate: The delegated task requires following or validating cross-document references — e.g. contracts citing `consumed_by`/`produced_by` states, workflow files citing harness policies, or artifacts citing project files — during context gathering or execution.
+description: Resolve references between project and protocol documents (file paths, artifact names, contract citations, section anchors) into verified concrete targets. Use when a document cites other documents and each citation must be confirmed to resolve. Never guesses a target; unresolved references are reported, not fabricated.
+when_to_activate: The task requires following or validating cross-document references — e.g. contracts citing `consumed_by`/`produced_by` states, workflow files citing harness policies, or documents citing project files.
 when_not: The task has no cross-document references to resolve, or a reference is ambiguous in a way that requires a user decision (route to NEEDS_CLARIFICATION instead).
 ---
 
 # Mission
 
-Turn every reference encountered during the phase into a verified, concrete target — or an explicit, reported failure.
+Turn every reference in the given documents into a verified, concrete target — or an explicit, reported failure.
 
 A resolved reference names an exact file that exists on disk (and a section or anchor when cited). A reference that cannot be verified is a finding, never an assumption.
 
@@ -19,9 +19,9 @@ A resolved reference names an exact file that exists on disk (and a section or a
 
 Scan the input documents for references:
 
-- Protocol documents: contract cross-references (e.g. `produced_by` / `consumed_by` fields in `.agents/orchestrators/core/contracts/*.md`), workflow citations of policies and standards (e.g. `.agents/orchestrators/core/workflow/03-gather-context.md` citing harness trigger policies), and taxonomy paths (`.agents/standards/runtime/PROTOCOL_TAXONOMY.md`).
+- Protocol documents: contract cross-references (e.g. `produced_by` / `consumed_by` fields in `.agents/orchestrators/core/contracts/*.md`), workflow citations of policies and standards, and taxonomy paths (`.agents/standards/runtime/PROTOCOL_TAXONOMY.md`).
 - Session artifacts: artifact file names under `.project/<session-uuid>/<iteration>/` cited by other artifacts.
-- Project documents: file paths, modules, and docs cited by the task specification or context artifact.
+- Project documents: file paths, modules, and docs cited by other project documents.
 
 ## 2. Resolve each reference
 
@@ -39,7 +39,7 @@ For each reference, locate the target:
 
 ## 4. Report
 
-During 06-execute, unresolved or ambiguous references in plan inputs are blockers to report per the phase rules in `.agents/orchestrators/core/workflow/06-execute.md` (document, do not act autonomously). During 03-gather-context, feed them into the artifact's `Unknowns` section.
+Report unresolved or ambiguous references explicitly — document them in the deliverable (e.g., an `Unknowns` or notes section) and do not act on them autonomously.
 
 ---
 
@@ -47,14 +47,14 @@ During 06-execute, unresolved or ambiguous references in plan inputs are blocker
 
 - Never fabricate a path or section; every resolved reference must have been verified on disk.
 - Never treat a probable-looking path as resolved without checking it exists.
-- Never fix broken references by editing the citing document; that decision belongs to the Orchestrator and the user.
+- Never fix broken references by editing the citing document; that decision belongs to the invoker and the user.
 - Keep the search bounded to the repository; do not resolve references against external systems unless the task explicitly allows it.
 
 ---
 
 # Output Format
 
-A reference-resolution section to embed in the delegating phase's artifact:
+A reference-resolution section to embed in the deliverable requested by the invoker:
 
 ```markdown
 ## Reference Resolution
@@ -72,4 +72,4 @@ A reference-resolution section to embed in the delegating phase's artifact:
 
 # Protocol Boundary
 
-This skill assists the Worker within the phase that delegates it (typically 03-gather-context or 06-execute); its output is embedded as a section inside the artifact of that phase, whose contract defines the surrounding envelope. On any conflict between this skill and the protocol, the protocol wins. This skill describes a capability; it does not grant authority or permissions.
+This skill describes a capability; it does not grant authority or permissions. Its output is delivered in the format and structure requested by the invoker, embedded as a section in the deliverable the invoker specifies. On any conflict between this skill and the invoker's instructions, the invoker's instructions win.

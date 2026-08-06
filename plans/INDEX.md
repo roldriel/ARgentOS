@@ -30,6 +30,11 @@ Estado al 2026-07-28. El trabajo activo es el **Execution Context Pipeline** (`f
 | RFC-21 | `rfc/21-skill-activation-model.md` | Accepted (plan 12, 5 ago 2026) | ¿Qué hace a una skill candidata a activarse para una tarea? |
 | RFC-22 | `rfc/22-session-iteration-lifecycle-model.md` | Accepted (plan 13, 5 ago 2026) | ¿Qué es una sesión, qué es una iteración, y qué reglas conceptuales gobiernan su ciclo de vida? |
 | RFC-23 | `rfc/23-declarative-flag-compliance-model.md` | Accepted (plan 14, 5 ago 2026) | ¿Qué obliga conceptualmente un flag que el harness no puede forzar, y cómo se evidencia su cumplimiento? |
+| RFC-24 | `rfc/24-skill-lifecycle-model.md` | Proposal (plan 23, 5 ago 2026) | ¿Qué es una skill integrada y qué destino tienen las skills sin consumidor (cable-or-kill)? |
+| RFC-25 | `rfc/25-single-source-required-sections.md` | Proposal (plan 24, 5 ago 2026) | ¿De dónde debe resolver el runner las `required_sections` para que no existan copias desincronizables? |
+| RFC-26 | `rfc/26-task-profile-model.md` | Proposal (plan 25, 5 ago 2026) | ¿Cómo se clasifica una tarea por peso (trivial/standard/complex) y qué subconjunto del ciclo obliga cada perfil? |
+| RFC-27 | `rfc/27-hook-enforcement-model.md` | Proposal (plan 26, 5 ago 2026) | ¿Cómo pasa el enforcement de voluntario (prompt) a obligatorio (estado persistido + hooks bloqueantes)? |
+| RFC-28 | `rfc/28-harness-coverage-closure-model.md` | Proposal (plan 27, 5 ago 2026) | ¿Cómo se declara el nivel de enforcement de cada contrato y qué validación semántica mecánica mínima gana el harness? |
 
 ## Roadmap de implementación (planes activos)
 
@@ -97,6 +102,28 @@ Nivel 4  Materialización                 (requiere Nivel 1; conceptualmente Niv
 |---|---|---|---|
 | `21-core-skills-pack.md` | Executed | RFC-16 Accepted | Implementación por tandas del Core Skills Pack definido en RFC-16 (`rfc/16-core-skills-catalog-model.md`). |
 | `22-skills-pack-2.md` | Executed | 21 | Segundo pack: 16 Skills complementarias seleccionadas con los criterios C1–C4 de RFC-16 entre las candidatas no excluidas. |
+
+## Quinta serie: de protocolo declarativo a protocolo enforced (5 ago 2026)
+
+Serie derivada del análisis crítico de adopción (5 ago 2026): enforcement voluntario, validación solo estructural, coste operativo uniforme, skills huérfanas y duplicación policy↔contrato. Cada plan implementa su RFC homóloga (24–28, todas Proposal).
+
+```text
+23  Skill Lifecycle (cable-or-kill) ──── independiente, paralelizable
+24  Single-Source Required-Sections ──── independiente, paralelizable
+25  Task Profile Model ───────────────── recomienda 24
+26  Hook-Based Enforcement ───────────── recomienda 25
+27  Harness Coverage Closure ─────────── depende de 24
+```
+
+| Plan | Status | Depende de | Descripción |
+|---|---|---|---|
+| `23-skill-lifecycle.md` | Proposed | — | Cable-or-kill de skills: ~30 skills huérfanas se cablean a fases/policies o se eliminan del catálogo activo (RFC-24). |
+| `24-single-source-required-sections.md` | Proposed | — | El runner resuelve `required_sections` del contrato por referencia; se elimina la copia TOML en 15 policies y `sync_required_sections.py` (RFC-25). |
+| `25-task-profile-model.md` | Proposed | recomienda 24 | Perfiles `trivial`/`standard`/`complex` con bifurcación de artefactos y gates; meta: tarea trivial ≤ 5 archivos, ≤ 3 gates (RFC-26). |
+| `26-hook-enforcement.md` | Proposed | recomienda 25 | `state.json` escrito solo por el runner + hooks bloqueantes `PreToolUse`/`Stop` compartidos entre CLIs, con defensa en capas (RFC-27). |
+| `27-harness-coverage-closure.md` | Proposed | 24 | Declaración `enforcement` en los 25 contratos + checks semánticos mecánicos (citas existentes, evidencia de tests) en el runner (RFC-28). |
+
+Nota de status: los planes 23–27 usan `Proposed` como estado previo al ciclo vigente (el ciclo de planes definido en §Convenciones no contempla borradores; al aprobarse pasan a `Aprobado para ejecución` o `Aprobado para redacción` según entregable).
 
 ## Backlog evidenciado - plan 19
 

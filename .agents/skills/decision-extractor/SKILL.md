@@ -1,8 +1,8 @@
 ---
 name: decision-extractor
-description: Identify decisions already taken during the session or iteration — confirmed user choices, resolved ambiguities, accepted approaches — recorded in session artifacts, so workers never re-ask settled questions or contradict prior decisions. Use when gathering context or planning must build on what was already decided. Analyzes only; never writes artifacts and never treats a proposal as a decision.
-when_to_activate: The delegated phase is 03-gather-context (state core:GATHERING_CONTEXT) or 05-plan (state core:PLANNING) and the worker must know which decisions are settled before proceeding, or any phase that must audit consistency with prior decisions.
-when_not: The task is to detect unresolved ambiguities in the raw request (use requirement-extractor or ambiguity-detector), to assess risks of a plan (use risk-detector), or no prior session artifacts exist to extract from.
+description: Identify decisions already taken during the session or iteration — confirmed user choices, resolved ambiguities, accepted approaches — recorded in prior artifacts, so nobody re-asks settled questions or contradicts prior decisions. Use when asked to gather or plan on top of what was already decided. Analyzes only; never writes artifacts and never treats a proposal as a decision.
+when_to_activate: The task requires knowing which decisions are settled before proceeding with gathering, planning, or any work that must audit consistency with prior decisions.
+when_not: The task is to detect unresolved ambiguities in the raw request (use requirement-extractor or ambiguity-detector), to assess risks of a plan (use risk-detector), or no prior artifacts exist to extract from.
 ---
 
 # Mission
@@ -15,7 +15,7 @@ The register prevents two failure modes: re-asking the user something already an
 
 # Protocol Boundary
 
-This skill assists the Worker inside the delegating phase (`03-gather-context`, `05-plan`). Its output is embedded as a section inside the artifact that governs that phase; the phase contract defines the envelope. On any conflict between this skill and the protocol, the protocol wins. This skill describes a capability; it grants no authority or permissions.
+This skill describes a capability; it grants no authority or permissions. It analyzes the material it is given and delivers its output in the format and structure requested by the invoker. On any conflict between this skill and instructions from the invoker, the invoker's instructions win.
 
 ---
 
@@ -25,13 +25,13 @@ This skill assists the Worker inside the delegating phase (`03-gather-context`, 
 - Distinguish status explicitly: confirmed by user, resolved in an artifact, or merely proposed (proposed items are listed separately, never as decisions).
 - Never upgrade an assumption to a decision; unrecorded choices stay unrecorded (see `.agents/standards/requirements/NO_ASSUMPTIONS.md`).
 - Report contradictions between two recorded decisions instead of picking a winner.
-- Do not modify any artifact; hand the register to the delegating worker.
+- Do not modify any artifact; hand the register back to the invoker.
 
 ---
 
 # Workflow
 
-1. **Enumerate the sources**: `SESSION_BRIEF.md` and the artifacts of the current iteration under `.project/<session-uuid>/<iteration>/` (e.g. `TASK_ANALYSIS.md`, `INTENT_REFLECTION.md`, `TASK_SPECIFICATION.md`, `CONTEXT_ARTIFACT.md`).
+1. **Enumerate the sources**: the prior artifacts available for the session (e.g. a session brief, task analysis, intent reflection, task specification, or context document).
 2. **Extract user-confirmed decisions**: answers to clarifications, confirmed intent reflections, chosen ambiguity options.
 3. **Extract artifact-resolved decisions**: approaches or choices an artifact records as settled (e.g. a restriction the user accepted).
 4. **List open items separately**: proposed options and unresolved ambiguities that look decided but lack confirmation.
@@ -55,4 +55,4 @@ This skill assists the Worker inside the delegating phase (`03-gather-context`, 
 - X-1: <decision A> (<source A>) vs <decision B> (<source B>) — requires resolution
 ```
 
-Empty sections are omitted. The delegating worker uses the register to respect settled decisions, avoid re-asking, and route contradictions to `NEEDS_CLARIFICATION` when they block progress.
+Empty sections are omitted. The invoker uses the register to respect settled decisions, avoid re-asking, and route contradictions back for clarification when they block progress.

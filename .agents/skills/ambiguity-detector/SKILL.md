@@ -1,7 +1,7 @@
 ---
 name: ambiguity-detector
-description: Detect ambiguities in a user request or draft artifact that, under the no-assumption policy (.agents/standards/requirements/NO_ASSUMPTIONS.md), require a NEEDS_CLARIFICATION transition with at least two resolution options. Use during task analysis or intent confirmation. Detects and formulates; never resolves an ambiguity by assuming.
-when_to_activate: The delegated phase interprets user intent — typically phase 00-analyze-task (TASK_ANALYSIS.md) or phase 01-confirm-intent (INTENT_REFLECTION.md) — or any task that must decide whether a request is unambiguous enough to proceed.
+description: Detect ambiguities in a user request or draft artifact that, under the no-assumption policy (.agents/standards/requirements/NO_ASSUMPTIONS.md), must be raised as clarification requests with at least two resolution options. Use when asked to decide whether a request is unambiguous enough to proceed. Detects and formulates; never resolves an ambiguity by assuming.
+when_to_activate: The task involves interpreting user intent or deciding whether a request is unambiguous enough to proceed.
 when_not: The request is already fully specified, the user has confirmed the interpretation, or the task is to evaluate artifacts for contract/quality issues rather than intent ambiguity.
 ---
 
@@ -13,13 +13,13 @@ Find every point where the request admits two or more reasonable implementations
 
 # Protocol Boundary
 
-This skill assists the Worker inside the phase that delegated it. Its output is embedded as a section inside that phase's artifact (e.g. the ambiguities section of `TASK_ANALYSIS.md` or `INTENT_REFLECTION.md`); the phase contract defines the envelope. The `NEEDS_CLARIFICATION` transition itself belongs to the Orchestrator. On any conflict between this skill and the protocol, the protocol wins. This skill describes a capability; it grants no authority or permissions.
+This skill describes a capability: it detects and formulates ambiguities and hands the findings to its invoker. Its output is delivered in whatever format or structure the invoker requests (e.g. an ambiguities section of the invoker's deliverable). On any conflict between this skill and the invoker's instructions, the invoker wins. This skill grants no authority or permissions.
 
 ---
 
 # Workflow
 
-1. **Read the request** (and `TASK_ANALYSIS.md` if it exists) sentence by sentence.
+1. **Read the request** (and any draft artifact provided by the invoker) sentence by sentence.
 2. **Apply the no-assumption checklist** from NO_ASSUMPTIONS.md — flag anything unstated about:
    - technology choices beyond those specified
    - behavioral details of endpoints, functions, or UIs
@@ -40,7 +40,7 @@ This skill assists the Worker inside the phase that delegated it. Its output is 
 - Never resolve an ambiguity by picking an option yourself, not even a "sensible default" — that is exactly what the policy forbids.
 - Options must be concrete and mutually distinguishable, not "do it well / do it differently".
 - Do not flag ambiguities that have no impact on the implementation outcome.
-- Do not modify any artifact; hand the findings to the delegating worker.
+- Do not modify any artifact; hand the findings to the invoker.
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: suggest-commits
 description: Analyze git changes and propose logical Conventional Commits grouped by intent rather than file boundaries. Use when the task asks for commit suggestions, commit titles, or help organizing staged and unstaged changes. Generate ready-to-copy git staging commands and commit messages. Never execute git mutations.
-when_to_activate: The delegated task asks for commit suggestions, commit titles, or organizing staged/unstaged repository changes into a coherent commit history.
+when_to_activate: The task asks for commit suggestions, commit titles, or organizing staged/unstaged repository changes into a coherent commit history.
 when_not: The task requires executing git mutations (commit, push, add, reset, rebase, etc.), or no repository changes exist to analyze.
 ---
 
@@ -43,7 +43,7 @@ When rules conflict, follow this order:
 
 # Protocol Boundary
 
-This skill only inspects and suggests; it never mutates repository state. Its output is embedded as a section inside the artifact that governs the delegating phase (e.g. the phase's contract artifact): the phase contract defines the envelope, this skill defines the content of the commit-proposal section. On any conflict between this skill and the protocol, the protocol wins.
+This skill only inspects and suggests; it never mutates repository state. Its output is delivered in the format and structure requested by the invoker (e.g., embedded as a section inside a larger document): the invoker defines the envelope, this skill defines the content of the commit-proposal section. On any conflict between this skill and the invoker's instructions, the invoker's instructions win. This skill grants no authority and no permissions.
 
 ---
 
@@ -359,7 +359,7 @@ Every proposal should survive validation before presentation.
 
 # Output Format
 
-Always produce the commit-proposal content using the following structure. Per the Protocol Boundary section, this structure is embedded as a section inside the artifact that governs the delegating phase; the phase contract defines the surrounding envelope.
+Always produce the commit-proposal content using the following structure. Per the Protocol Boundary section, this structure is embedded as a section inside the deliverable requested by the invoker; the invoker defines the surrounding envelope.
 
 ```markdown
 ## Observations

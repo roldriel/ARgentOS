@@ -99,24 +99,24 @@ Conteo de referencias por skill fuera de `.agents/skills/<nombre>/` y `skills/IN
 | reflection | ya integrada | sin cambios (roles/profiles, H11, decision trees) |
 | decomposer | eliminada | sin punto de consumo real; solapaba con `planner` |
 | counterargument | eliminada | sin punto de consumo real; solapaba con `critic` |
-| suggest-commits | eliminada | tarea standalone, sin fase del workflow que la consuma |
+| suggest-commits | **conservada (corrección post-ejecución)** | Es una skill de utilidad para el proyecto adoptante (invocada por el usuario sobre su repo git), no una fase del workflow: el criterio "¿qué fase la consume?" no aplicaba. Restaurada el 2026-08-05 por decisión del usuario; queda fuera de la activation table por diseño. |
 
-Catálogo resultante: 31 skills (34 − 3 eliminadas).
+Catálogo resultante: 32 skills (34 − 2 eliminadas: `decomposer`, `counterargument`).
 
 ## Archivos modificados
 
 - `.agents/roles/task_analyst.md`, `context_gatherer.md`, `context_validator.md`, `task_specification_writer.md`, `planner.md`, `reviewer.md`, `executor.md`, `verifier.md`, `recovery_analyst.md`, `worker.md` — sección `## Skills` (o nota en §"Skill Consumption") con las skills activadas por rol.
 - `.agents/orchestrators/core/harness/policies/H07-scope-compliance.md` — referencia a `decision-extractor`.
 - `.agents/harness/policies/H13-protocol-taxonomy.md` — §"Agent-side enforcement" con `terminology-enforcer`.
-- `.agents/skills/INDEX.md` — inventario depurado (31 filas) y activation table extendida a las fases 00–08.
+- `.agents/skills/INDEX.md` — inventario depurado (32 filas; `suggest-commits` restaurada como skill de utilidad) y activation table extendida a las fases 00–08.
 
 ## Archivos eliminados
 
-- `.agents/skills/decomposer/`, `.agents/skills/counterargument/`, `.agents/skills/suggest-commits/` (directorios completos).
+- `.agents/skills/decomposer/`, `.agents/skills/counterargument/` (directorios completos). `.agents/skills/suggest-commits/` fue eliminado en la ejecución y restaurado tras la revisión del usuario.
 
 ## Verificación (D)
 
-- Grep de cierre: las 31 skills restantes tienen ≥1 referencia desde `roles/`, `orchestrators/`, `harness/`, `standards/`, `delegation/` o `contracts/` fuera de `.agents/skills/`. OK.
+- Grep de cierre: las 32 skills resultantes tienen (31 cableadas + suggest-commits como utilidad) ≥1 referencia desde `roles/`, `orchestrators/`, `harness/`, `standards/`, `delegation/` o `contracts/` fuera de `.agents/skills/`. OK.
 - `python .agents/harness/runner.py health-check` → 81 PASS, 0 FAIL, exit 0.
 - `python -m pytest .agents/harness/tests/ runtime/tests/ tools/tests/` → 354 passed, 2 skipped.
 

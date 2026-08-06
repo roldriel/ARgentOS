@@ -1,14 +1,14 @@
-# publish-dist — regenera la rama `dist` desde `lts`.
+# publish-dist — regenera la rama `dist` desde `master`.
 #
 # La rama `dist` es el unico punto de consumo de ARgentOS para proyectos
 # adoptantes: contiene SOLO `.agents/` y `AGENTS.md` en su raiz.
 # Nunca se edita a mano: este workflow la reemplaza con el contenido
-# publicable de `lts` en cada push que toque esos paths.
+# publicable de `master` en cada push que toque esos paths.
 name: publish-dist
 
 on:
   push:
-    branches: [lts]
+    branches: [master]
     paths:
       - ".agents/**"
       - "AGENTS.md"
@@ -33,7 +33,7 @@ jobs:
 
           SOURCE_SHA="$(git rev-parse --short HEAD)"
 
-          # Contenido publicable desde lts
+          # Contenido publicable desde master
           TMP="$(mktemp -d)"
           cp -r .agents AGENTS.md "$TMP/"
 
@@ -47,10 +47,10 @@ jobs:
           git add -A
 
           if git diff --cached --quiet; then
-            echo "dist ya esta al dia con lts @ $SOURCE_SHA; nada que publicar."
+            echo "dist ya esta al dia con master @ $SOURCE_SHA; nada que publicar."
             exit 0
           fi
 
-          git commit -q -m "dist: publish from lts @ $SOURCE_SHA"
+          git commit -q -m "dist: publish from master @ $SOURCE_SHA"
           git push origin dist
-          echo "dist publicada desde lts @ $SOURCE_SHA"
+          echo "dist publicada desde master @ $SOURCE_SHA"

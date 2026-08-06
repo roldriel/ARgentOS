@@ -1,0 +1,49 @@
+[metadata]
+trigger = "H02"
+description = "Decision tree for context artifact validation failures"
+version = "1.0"
+
+[nodes.start]
+condition = "artifact_exists == false"
+
+[nodes.start.true]
+action = "RETRY_WORKER"
+target_phase = "03-gather-context.md"
+role = "context_gatherer"
+reason = "CONTEXT_ARTIFACT.md is missing or incomplete; retry context gatherer."
+
+[nodes.start.false]
+next = "check_user_specific"
+
+[nodes.check_user_specific]
+condition = "context_user_specific == true"
+
+[nodes.check_user_specific.true]
+action = "NEEDS_CLARIFICATION"
+reason = "Context depends on user-specific knowledge."
+
+[nodes.check_user_specific.false]
+next = "check_retry"
+
+[nodes.check_retry]
+condition = "retry_count >= 1"
+
+[nodes.check_retry.true]
+action = "RECOVERY_GENERIC"
+target_phase = "08-recovery.md"
+reason = "Repeated failure after retry; route to generic recovery."
+
+[nodes.check_retry.false]
+next = "fallback"
+
+[nodes.fallback]
+condition = "true"
+
+[nodes.fallback.true]
+action = "RECOVERY_GENERIC"
+target_phase = "08-recovery.md"
+reason = "Context artifact validation failed; falling back to generic recovery."
+[nodes.fallback.false]
+action = "RECOVERY_GENERIC"
+target_phase = "08-recovery.md"
+reason = "Fallback false branch; route to generic recovery."

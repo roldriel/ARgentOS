@@ -1,0 +1,250 @@
++++
+artifact = "EXECUTION_SUMMARY.md"
+phase = "06"
+produced_by = "executor"
++++
+
+
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: contract
+domain: core
+artifact: EXECUTION_SUMMARY.md
+lifecycle: execution
+produced_by: [core:EXECUTING]
+consumed_by: [core:VERIFYING]
+---
+
+# Execution Summary Contract
+
+## Purpose
+
+Define the structure and requirements of the execution summary artifact produced during the execution phase.
+
+This artifact records what was changed, how it aligns with the execution plan, which validations were run, and whether the project was left in a verifiable state.
+
+---
+
+# Execution Summary
+
+## Metadata
+
+```toml
+id = ""
+created_at = ""
+status = ""
+```
+
+---
+
+## Task Reference
+
+Reference to the task specification that originated this execution.
+
+```toml
+[task_reference]
+specification = ""
+```
+
+---
+
+## Execution Plan Reference
+
+Reference to the execution plan that was followed.
+
+```toml
+[plan_reference]
+execution_plan = ""
+```
+
+---
+
+## Summary of Changes
+
+High-level description of the changes applied to the project.
+
+```toml
+[summary]
+description = ""
+```
+
+---
+
+## Steps Executed
+
+Ordered list of implementation steps and their execution status.
+
+```toml
+[[steps]]
+order = 1
+action = ""
+status = ""
+notes = ""
+```
+
+Possible values for `status`:
+
+```text
+COMPLETED
+SKIPPED
+BLOCKED
+```
+
+---
+
+## Project Files Modified
+
+List of project files that were created, updated, or deleted.
+
+```toml
+[[project_files_modified]]
+file = ""
+change = ""
+```
+
+---
+
+## Intermediate Validations
+
+Results of validations defined in the execution plan and run during execution.
+
+```toml
+[[validations]]
+validation = ""
+result = ""
+details = ""
+```
+
+Possible values for `result`:
+
+```text
+PASS
+FAIL
+SKIPPED
+```
+
+---
+
+## Technical Practice Evidence
+
+Evidence that enabled technical practices (for example, TDD) were followed.
+
+```toml
+[technical_practice_evidence.tdd]
+applied = true
+final_test_result = ""
+reason = ""
+
+[[technical_practice_evidence.tdd.failing_tests]]
+file = ""
+description = ""
+
+[[technical_practice_evidence.tdd.production_changes]]
+file = ""
+description = ""
+
+[technical_practice_evidence.srp]
+applied = true
+responsibilities_identified = []
+extraction = []
+reason = ""
+```
+
+---
+
+## Issues or Deviations
+
+Any unexpected issues, blockers, or deviations from the execution plan.
+
+```toml
+[[issues]]
+description = ""
+severity = ""
+```
+
+Possible values for `severity`:
+
+```text
+LOW
+MEDIUM
+HIGH
+CRITICAL
+```
+
+---
+
+## Final Project State
+
+Indication of whether the project is ready for verification.
+
+```toml
+[final_state]
+status = ""
+reasoning = ""
+```
+
+Possible values for `status`:
+
+```text
+VERIFIABLE
+BLOCKED
+```
+
+The project must be `VERIFIABLE` for H05 to pass. `BLOCKED` indicates that execution could not reach a verifiable state.
+
+---
+
+## Confidence
+
+Confidence level of the execution summary.
+
+```toml
+[confidence]
+level = ""
+explanation = ""
+```
+
+Possible values:
+
+```text
+LOW
+MEDIUM
+HIGH
+```
+
+---
+
+## Machine-readable TOML blocks
+
+The following sections MUST contain a fenced `toml` code block with the exact structure described below.
+
+### `## Final Project State`
+
+```toml
+[final_state]
+status = "VERIFIABLE" # or "BLOCKED"
+reasoning = "string"
+```
+
+### `## Steps Executed`
+
+```toml
+[[steps_executed]]
+order = 1
+action = "string"
+status = "COMPLETED" # or "SKIPPED" or "BLOCKED"
+notes = "string" # required when status is SKIPPED or BLOCKED
+```
+
+---
+
+# Completion Criteria
+
+The execution summary is valid when:
+
+* The execution plan is referenced.
+* The steps executed are listed and aligned with the plan.
+* The project files modified are identified.
+* Intermediate validations are recorded.
+* The final project state is explicit.
+* A confidence level is provided.

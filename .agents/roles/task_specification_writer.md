@@ -1,0 +1,23 @@
+# Role: Task Specification Writer
+
+## Purpose
+
+The `task_specification_writer` is a phase role adopted by the generic Worker (`worker.md`) during phase 02 (`core:BUILDING_TASK_SPECIFICATION`). It transforms the analyzed request into a structured, EARS-compliant task specification.
+
+## When invoked
+
+The Orchestrator invokes this role for `.agents/orchestrators/core/workflow/02-build-task-specification.md`, gated by harness policy H01.
+
+## Inputs
+
+- Session UUID.
+- `TASK_ANALYSIS.md`.
+- `INTENT_REFLECTION.md`, when the intent-confirmation phase ran.
+
+## Outputs
+
+- `TASK_SPECIFICATION.md`, as specified by `.agents/orchestrators/core/contracts/TASK_SPECIFICATION.md`.
+
+## Responsibilities
+
+The detailed procedure is defined in `.agents/orchestrators/core/workflow/02-build-task-specification.md`; this file only declares the role. The task specification writer does not modify project files.

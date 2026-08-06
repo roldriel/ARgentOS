@@ -1,0 +1,61 @@
+[metadata]
+trigger = "D01"
+description = "Decision tree for discovery output ground-truth validation failures"
+version = "1.0"
+
+[nodes.start]
+condition = "unsourced_claims_found == true"
+
+[nodes.start.true]
+next = "check_retry"
+
+[nodes.start.false]
+next = "check_secrets"
+
+[nodes.check_secrets]
+condition = "secrets_leaked == true"
+
+[nodes.check_secrets.true]
+action = "RETRY_WORKER"
+target_phase = "01-discovery-env.md"
+role = "environment_worker"
+reason = "environment.md contains sensitive strings or environment variable values; retry environment_worker with the secret-filtering policy."
+
+[nodes.check_secrets.false]
+next = "check_merge"
+
+[nodes.check_merge]
+condition = "merge_inconsistent == true"
+
+[nodes.check_merge.true]
+action = "RETRY_WORKER"
+target_phase = "06-discovery-merge.md"
+role = "synthesis_worker"
+reason = "The merge lost provenance or left conflicts unmarked; retry synthesis_worker."
+
+[nodes.check_merge.false]
+next = "check_retry"
+
+[nodes.check_retry]
+condition = "retry_count >= 3"
+
+[nodes.check_retry.true]
+action = "RECOVERY_GENERIC"
+target_phase = "07-discovery-validate.md"
+reason = "D01 failed 3 consecutive times; transition to discovery:DISCOVERY_FAILED and report to the core Orchestrator (abort criterion)."
+
+[nodes.check_retry.false]
+next = "fallback"
+
+[nodes.fallback]
+condition = "true"
+
+[nodes.fallback.true]
+action = "RETRY_WORKER"
+target_phase = "07-discovery-validate.md"
+reason = "Mark the invalid file and re-invoke the worker that produced the unsourced or unverifiable entry."
+
+[nodes.fallback.false]
+action = "RECOVERY_GENERIC"
+target_phase = "07-discovery-validate.md"
+reason = "Fallback false branch; transition to discovery:DISCOVERY_FAILED and report to the core Orchestrator."

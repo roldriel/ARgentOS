@@ -16,6 +16,8 @@ The runner is split into focused modules under `.agents/harness/`; `runner.py` i
 - `runner_validators.py` — section, EARS, rubric and semantic validators, plus `run_trigger`.
 - `runner_report.py` — `HARNESS_REPORT.md` generation.
 - `runner_metrics.py` — protocol metrics aggregation (per session and per project) per `.agents/standards/runtime/PROTOCOL_METRICS.md`.
+- `runner_state.py` — transactional `state.json` persistence (single source of truth of the iteration protocol state) and post-hoc bypass detection.
+- `hook_gate.py` — standalone CLI lifecycle hook (stdlib only, run as a script): allows/denies `PreToolUse` writes to deliverables and `Stop` events against `state.json`. See `.agents/harness/INDEX.md` §Protocol State and Hook Enforcement.
 - `delegation_validity.py` — delegation payload and return-report validity checks (policy H15; machine-evaluated via its test suite, not via the trigger CLI).
 
 ## Artifact validation

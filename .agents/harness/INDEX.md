@@ -119,6 +119,39 @@ Its output is validated by the gate `D01-discovery-output` (structure and ground
 
 For details on the entry format, see `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md`.
 
+## Protocol State and Hook Enforcement
+
+The runner persists the protocol state of each iteration in
+`.project/<session-uuid>/<iteration>/state.json` (module
+`.agents/harness/runner_state.py`): session, iteration, task profile, gates
+passed with timestamps, and last gate. Invariants:
+
+1. Only the runner writes it, transactionally (temp file + rename), after a
+   gate `PASS`. `FAIL` and `SKIP` never touch it.
+2. Hooks and the Orchestrator read it; nobody else writes it. A missing or
+   corrupt `state.json` means *no gate has passed* (fail-closed for
+   consumers).
+
+`state.json` enables optional **hook enforcement** at the CLI level
+(enforced mode): `.agents/harness/hook_gate.py` (stdlib only) reads a CLI
+hook event from stdin and denies (exit 2) `PreToolUse` on `Write`/`Edit`
+targeting project deliverables without an H04 `PASS` (approved
+EXECUTION_PLAN) for the current iteration, and `Stop` without iteration
+closure (H06 `PASS`, `NEEDS_CLARIFICATION` recorded, or no task started).
+Every deny includes the exact `runner.py` command that resolves it. Without
+hooks installed the protocol runs in **declarative mode** (the default):
+gates remain orchestrator-invoked and compliance is audited post-hoc. The
+adoption guide (`ADOPTION.md`) documents both modes and the per-CLI hook
+configuration.
+
+Honest limit: hook systems are **fail-open** — a hook crash or timeout lets
+the tool call through. Mitigations are layered: the hook script is stdlib
+with a short timeout, the health check verifies `state.json` write/read,
+and the runner performs post-hoc detection: when the plan gate (H04)
+passes, it scans for project files modified after the session started but
+before the PASS, and records suspects as an alert in the HARNESS_REPORT
+entry (contract: `.agents/contracts/HARNESS_REPORT.md`).
+
 ## Constraints
 
 - The harness MUST NOT modify project source files. Environment preparation performed by the health check (creating `.project/knowledge/` and its `INDEX.md`, writing `.project/.last_health_check`) is part of the bootstrap role and is exempt from this rule.

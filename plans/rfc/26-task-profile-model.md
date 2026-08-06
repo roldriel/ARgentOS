@@ -54,7 +54,7 @@ Esta RFC no propone:
 
 | Perfil | Criterio de asignación | Artefactos obligatorios | Gates |
 |---|---|---|---|
-| `trivial` | Cambio acotado: ≤ 3 archivos, sin decisiones de diseño, sin ambigüedad de requisitos, sin impacto en interfaces públicas | TASK_ANALYSIS, EXECUTION_PLAN, VERIFICATION_REPORT | H00, H05, H10 |
+| `trivial` | Cambio acotado: ≤ 3 archivos, sin decisiones de diseño, sin ambigüedad de requisitos, sin impacto en interfaces públicas | TASK_ANALYSIS, EXECUTION_PLAN, VERIFICATION_REPORT | H00, H04, H06 |
 | `standard` | El default. Cualquier tarea que no cumpla trivial ni complex | Ciclo vigente completo (01–11) | H00–H15 según transiciones |
 | `complex` | Múltiples subsistemas, decisiones de arquitectura, o riesgo alto declarado | Ciclo completo + REVIEW_REPORT + discovery si aplica | Ciclo completo + gate de revisión |
 
@@ -108,3 +108,4 @@ Se eligió peso de tarea (y no tipo) como dimensión de perfil porque el problem
 | Fecha | Cambio | Origen |
 |---|---|---|
 | 2026-08-05 | Versión inicial (Proposal). Tres perfiles, criterios objetivos, regla de escalado ascendente, registro de gates omitidos como `skipped: profile`. | Análisis crítico de adopción (2026-08-05): ~23 archivos / ~52 min por tarea en dogfooding |
+| 2026-08-05 | Corrección de numeración de gates del perfil trivial: `H00, H05, H10` → `H00, H04, H06` (H04 = execution-plan, H06 = verification-report; H05 es execution-completed y H10 es el gate opcional de KB). El conjunto anterior saltearía la validación del plan y exigiría un gate opcional. | Detectado al ejecutar el plan 26 (hook enforcement requiere H04 PASS para escribir deliverables) |

@@ -458,6 +458,41 @@ def check_technical_practice_standards(checks: list[dict[str, Any]]) -> bool:
     return all_valid
 
 
+def check_state_json_storage(checks: list[dict[str, Any]]) -> bool:
+    """Verify that session state (state.json) can be written and read.
+
+    `state.json` is the single source of truth for hook enforcement; this
+    check performs a write/read/delete round-trip of a probe file inside
+    `.project/` so a read-only or broken artifacts directory fails the
+    health check before any session starts.
+    """
+    probe = PROJECT_DIR / ".state_check_probe"
+    payload = '{"probe": true}\n'
+    try:
+        PROJECT_DIR.mkdir(parents=True, exist_ok=True)
+        probe.write_text(payload, encoding="utf-8")
+        read_back = probe.read_text(encoding="utf-8")
+        probe.unlink()
+    except OSError as exc:
+        _check(
+            checks,
+            "state_json_writable",
+            False,
+            f"Cannot write/read state.json probe in {PROJECT_DIR}: {exc}",
+        )
+        return False
+    ok = read_back == payload
+    _check(
+        checks,
+        "state_json_writable",
+        ok,
+        "state.json write/read probe succeeded"
+        if ok
+        else "state.json probe read-back mismatch",
+    )
+    return ok
+
+
 def run_health_check() -> HealthCheckResult:
     """Run the full protocol health check and return a structured result."""
     # Timestamp is taken from datetime.now(timezone.utc) on the system running the runner.
@@ -499,6 +534,7 @@ def run_health_check() -> HealthCheckResult:
         ok_kb = check_knowledge_base(checks)
         ok_technical_practices = check_technical_practice_standards(checks)
         ok_project_skills = check_project_skills(checks)
+        ok_state = check_state_json_storage(checks)
 
         passed = (
             ok_dirs
@@ -509,6 +545,7 @@ def run_health_check() -> HealthCheckResult:
             and ok_kb
             and ok_technical_practices
             and ok_project_skills
+            and ok_state
         )
         result = HealthCheckResult(
             result="PASS" if passed else "FAIL",

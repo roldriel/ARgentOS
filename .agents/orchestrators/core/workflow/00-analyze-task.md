@@ -193,7 +193,7 @@ The artifact must comply with the `TASK_ANALYSIS.md` contract and contain:
 
 Classify the task by weight and record it in the `Task Profile` section of `TASK_ANALYSIS.md`:
 
-* `trivial`: bounded change — at most 3 files estimated, no design decisions, no requirements ambiguity, no impact on public interfaces. The cycle reduces to `TASK_ANALYSIS.md`, `EXECUTION_PLAN.md`, and `VERIFICATION_REPORT.md`, gated by H00, H05, and H10.
+* `trivial`: bounded change — at most 3 files estimated, no design decisions, no requirements ambiguity, no impact on public interfaces. The cycle reduces to `TASK_ANALYSIS.md`, `EXECUTION_PLAN.md`, and `VERIFICATION_REPORT.md`, gated by H00, H04, and H06.
 * `standard`: the default; the full cycle applies unchanged.
 * `complex`: multiple subsystems, architecture decisions, or declared high risk; the full cycle plus `REVIEW_REPORT.md`, and discovery when it applies.
 

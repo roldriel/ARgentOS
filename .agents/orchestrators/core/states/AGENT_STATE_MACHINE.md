@@ -82,7 +82,7 @@ Every task is classified exactly once, during `ANALYZING_TASK`, into a task prof
 
 | Profile | Assignment criteria | Mandatory artifacts | Mandatory gates |
 | --- | --- | --- | --- |
-| `trivial` | Bounded change: at most 3 files estimated, no design decisions, no requirements ambiguity, no impact on public interfaces | `TASK_ANALYSIS.md`, `EXECUTION_PLAN.md`, `VERIFICATION_REPORT.md` (plus the session-level artifacts) | H00, H05, H10 |
+| `trivial` | Bounded change: at most 3 files estimated, no design decisions, no requirements ambiguity, no impact on public interfaces | `TASK_ANALYSIS.md`, `EXECUTION_PLAN.md`, `VERIFICATION_REPORT.md` (plus the session-level artifacts) | H00, H04, H06 |
 | `standard` | The default. Any task that meets neither the `trivial` nor the `complex` criteria | The full cycle documented in this machine | All gates, per transition |
 | `complex` | Multiple subsystems, architecture decisions, or declared high risk | The full cycle plus `REVIEW_REPORT.md`, and the discovery cycle when it applies | The full cycle plus the review gate |
 

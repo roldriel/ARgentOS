@@ -54,12 +54,15 @@ The report is rebuilt from a template on every update. It contains, in this orde
    - `Timestamp`: ISO-8601 timestamp of the invocation.
    - `Artifact checked`: present only when the trigger validates an artifact.
    - `Checks`: one bullet per check, formatted as `` `<check-id>`: <result> — <evidence> ``. A skipped gate records a single check `gate_required_for_profile` with result `SKIP` and evidence `skipped: profile — …`.
+   - `Alert` (optional): one `- Alert: <message>` line per post-hoc audit alert (for example, a suspected enforcement-hook bypass detected by the runner when files were modified before the plan gate PASS). Alerts never change the gate result.
 
    Each entry ends with a machine-readable HTML comment so the runner can preserve history across updates:
 
    ```markdown
-   <!-- ENTRY: {"timestamp": "...", "trigger": "...", "transition": "...", "result": "...", "checks": [{"id": "...", "result": "...", "evidence": "..."}], "artifact": "...", "duration_ms": 0, "rubric_scores": {...}} -->
+   <!-- ENTRY: {"timestamp": "...", "trigger": "...", "transition": "...", "result": "...", "checks": [{"id": "...", "result": "...", "evidence": "..."}], "artifact": "...", "duration_ms": 0, "rubric_scores": {...}, "alerts": [...]} -->
    ```
+
+   The `alerts` array is optional (absent or empty when no alert was raised).
 
    These `ENTRY` comments are part of the contract: they must remain valid JSON and must not be removed or edited.
 

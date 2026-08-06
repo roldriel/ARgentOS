@@ -59,6 +59,7 @@ def update_report(session_uuid: str, result: HarnessResult) -> None:
         "artifact": result.artifact,
         "duration_ms": result.duration_ms,
         "rubric_scores": result.rubric_scores,
+        "alerts": result.alerts,
     }
     existing_entries.append(entry)
 
@@ -107,6 +108,8 @@ def update_report(session_uuid: str, result: HarnessResult) -> None:
             lines.append(
                 f"  - `{check['id']}`: {check['result']} — {check['evidence']}"
             )
+        for alert in e.get("alerts") or []:
+            lines.append(f"- Alert: {alert}")
         lines.append("")
         # Embed machine-readable entry for future updates.
         lines.append(f"<!-- ENTRY: {json.dumps(e)} -->")

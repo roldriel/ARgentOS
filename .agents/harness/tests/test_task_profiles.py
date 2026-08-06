@@ -243,8 +243,9 @@ def test_trivial_profile_still_enforces_mandatory_gates(session):
     session_uuid, artifacts_dir = session
     write_task_analysis(artifacts_dir, session_uuid, TRIVIAL_PROFILE_SECTION)
 
-    # H05 is mandatory for every profile; without EXECUTION_SUMMARY it fails.
-    code, output = run_runner(artifacts_dir, session_uuid, "H05")
+    # H04 (execution plan) is mandatory for every profile; without
+    # EXECUTION_PLAN.md it fails.
+    code, output = run_runner(artifacts_dir, session_uuid, "H04")
 
     assert code == 1
     assert output["result"] == "FAIL"

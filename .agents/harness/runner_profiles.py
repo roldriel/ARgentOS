@@ -22,11 +22,12 @@ from runner_artifacts import artifact_path
 
 VALID_PROFILES = ("trivial", "standard", "complex")
 
-# Gates mandatory for the `trivial` profile. `standard` and `complex` require
-# every gate, so they have no entry: a profile absent from this mapping
-# requires the full cycle.
+# Gates mandatory for the `trivial` profile: H00 (task analysis), H04
+# (execution plan) and H06 (verification report) — one gate per mandatory
+# artifact. `standard` and `complex` require every gate, so they have no
+# entry: a profile absent from this mapping requires the full cycle.
 PROFILE_REQUIRED_TRIGGERS = {
-    "trivial": {"H00", "H05", "H10"},
+    "trivial": {"H00", "H04", "H06"},
 }
 
 _PROFILE_VALUE_RE = re.compile(r'^\s*value\s*=\s*"([^"]+)"', re.MULTILINE)

@@ -32,6 +32,9 @@ class HarnessResult:
     error: str | None = None
     duration_ms: int = 0
     rubric_scores: dict[str, str] = field(default_factory=dict)
+    # Post-hoc audit alerts (e.g. suspected enforcement-hook bypass). Alerts
+    # never change the gate result; they surface in HARNESS_REPORT.md.
+    alerts: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -48,4 +51,5 @@ class HarnessResult:
             "error": self.error,
             "duration_ms": self.duration_ms,
             "rubric_scores": self.rubric_scores,
+            "alerts": self.alerts,
         }

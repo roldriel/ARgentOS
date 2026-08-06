@@ -24,7 +24,7 @@ Introducir los perfiles de tarea `trivial` / `standard` / `complex` con asignaci
 ## B. Matriz perfil → ciclo
 
 - Definir en la máquina de estados (`AGENT_STATE_MACHINE.md`) y en `.agents/orchestrators/core/workflow/` el subconjunto obligatorio por perfil, según RFC-26 §Definitions:
-  - `trivial`: TASK_ANALYSIS, EXECUTION_PLAN, VERIFICATION_REPORT; gates H00, H05, H10; sin discovery, sin workers de contexto.
+  - `trivial`: TASK_ANALYSIS, EXECUTION_PLAN, VERIFICATION_REPORT; gates H00, H04, H06; sin discovery, sin workers de contexto.
   - `standard`: ciclo vigente sin cambios.
   - `complex`: ciclo completo + REVIEW_REPORT + discovery si aplica.
 - Regla de escalado solo ascendente + reclasificación ante NEEDS_CLARIFICATION, documentada inline en la máquina de estados (frontera documental: sin mencionar la RFC).
@@ -33,7 +33,7 @@ Introducir los perfiles de tarea `trivial` / `standard` / `complex` con asignaci
 
 - `run_trigger` lee el perfil desde el TASK_ANALYSIS validado (o desde `state.json` si el plan 26 ya existe; si no, del artefacto).
 - Gates no obligatorios para el perfil: se registran en `HARNESS_REPORT.md` como `skipped: profile` (cambio pequeño en el reporte del runner + contrato de HARNESS_REPORT).
-- Decision trees TOML: agregar la rama de perfil donde corresponda (H00 principalmente; H05/H10 permanecen en todos los perfiles).
+- Decision trees TOML: agregar la rama de perfil donde corresponda (H00 principalmente; H04/H06 permanecen en todos los perfiles).
 
 ## D. Verificación
 
@@ -52,6 +52,8 @@ Introducir los perfiles de tarea `trivial` / `standard` / `complex` con asignaci
 # Status de ejecución
 
 Ejecutado el 2026-08-06 (rama `dev`): entregables 1–3 completos; tests nuevos en `.agents/harness/tests/test_task_profiles.py` (suite 357 passed, 2 skipped; health-check PASS).
+
+**Corrección transversal (2026-08-06, tras ejecutar el plan 26):** el conjunto de gates del perfil trivial era `H00, H05, H10` (tomado literal de la numeración original) y se corrigió a `H00, H04, H06` — H04 valida EXECUTION_PLAN y H06 VERIFICATION_REPORT, los artefactos obligatorios del perfil; con el set anterior el trivial salteaba la validación del plan, exigía el gate opcional de KB (H10) y rompía el hook enforcement del plan 26 (`hook_gate.py` requiere H04 PASS para escribir deliverables).
 
 **Pendiente:** el dogfooding medido de una tarea trivial (§D, entregable 4 en `.project/<sesión>/`). No se ejecutó en esta pasada porque requiere una sesión de protocolo real con el usuario; queda como verificación diferida con el criterio de éxito de §D (≤ 5 archivos, ≤ 3 gates, tiempo notablemente menor al baseline de ~52 min).
 

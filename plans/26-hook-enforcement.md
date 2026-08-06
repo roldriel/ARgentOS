@@ -1,6 +1,6 @@
 # Plan 26 — Hook-Based Enforcement
 
-**Status:** Proposed
+**Status:** Executed (dogfooding enforced pendiente)
 
 **Depends on:** Plan 25 recomendado (los hooks validan el conjunto de gates del perfil; menos estados que gatear = hook más simple), no obligatorio.
 
@@ -64,3 +64,14 @@ Convertir los gates críticos del protocolo de voluntarios a obligatorios: estad
 - Hooks sobre cada tool call o transiciones intermedias (Future Extension de RFC-27).
 - Verificación semántica en hooks (Future Extension de RFC-27 / RFC-28).
 - Enforcement en CLIs sin hooks bloqueantes (modo declarativo documentado).
+
+# Cierre
+
+Ejecutado 2026-08-05. Implementado:
+- `runner_state.py`: `state.json` transaccional (temp+rename) por sesión/iteración; gates PASS con timestamps, `task_profile` vía runner_profiles, fail-closed ante ausencia/corrupción; integrado en `run_trigger` (FAIL/SKIP no tocan). Check `state_json_writable` en health-check.
+- `hook_gate.py` (stdlib): regla 1 allow (no Write/Edit o path en `.project/`/`.agents/`), regla 2 deny PreToolUse sin gate de plan, regla 3 deny Stop sin cierre; JSON malformado → allow (fail-open fijado por test).
+- **Desviación justificada de gate IDs:** el spec decía H05/H10, pero H04=execution-plan, H05=execution-completed, H06=verification-report, H10=kb-discovery (opcional). Implementado PLAN_GATE=H04 y CLOSE_GATE=H06. Esta detección disparó la corrección transversal del perfil trivial (plan 25/RFC-26: {H00,H05,H10} → {H00,H04,H06}, amendment log de RFC-26).
+- Detección post-hoc (`detect_bypass`): heurística de mtime al pasar H04 → `alerts` en HarnessResult + línea `- Alert:` en HARNESS_REPORT (contrato actualizado). Alerta, no FAIL (falsos positivos posibles).
+- ADOPTION.md §6: modos enforced/declarativo + snippets Kimi Code (TOML) y Claude Code (settings.json); fail-open documentado aquí y en harness/INDEX.md.
+- Tests: 19 nuevos (runner_state 8, hook_gate 11). Suite: 376 passed, 2 skipped. Health-check PASS.
+- Pendiente: dogfooding enforced real (instalar snippets y verificar deny visible + alerta post-hoc).

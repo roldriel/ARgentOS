@@ -122,3 +122,81 @@ Para entender el protocolo adoptado, en este orden:
 - No se adopta `example/` ni `runtime/`: son bancos de prueba del desarrollo.
 - No hay soporte de múltiples versiones en paralelo: se adopta una versión y se
   migra siguiendo `MIGRATION.md`.
+
+## 6. Modos de enforcement: declarativo (default) y enforced
+
+El protocolo funciona en dos modos explícitos, sin zona gris:
+
+- **Declarativo (default):** los gates del harness los invoca el orquestador
+  por disciplina de prompt. Nada bloquea al agente si se los salta; el
+  cumplimiento se audita post-hoc en `HARNESS_REPORT.md`. Es el modo activo
+  cuando no hay hooks instalados (o el CLI no soporta hooks bloqueantes). El
+  runner escribe igualmente `.project/<sesión>/<iteración>/state.json` en cada
+  gate PASS: es inofensivo en este modo y habilita la auditoría post-hoc y el
+  paso a enforced sin cambios de protocolo.
+- **Enforced:** los gates críticos los impone el entorno. Un hook compartido
+  (`python .agents/harness/hook_gate.py`, stdlib pura) lee el evento del CLI
+  por stdin y bloquea (exit 2) dos situaciones: `PreToolUse` sobre
+  `Write`/`Edit` a un deliverable del proyecto sin gate H04 (plan aprobado)
+  PASS en `state.json`, y `Stop` sin cierre de iteración (sin H06 PASS ni
+  `NEEDS_CLARIFICATION` registrado). El deny incluye la instrucción exacta de
+  recuperación (el comando `runner.py` del gate faltante).
+
+### 6.1. Configuración enforced — Kimi Code
+
+En `~/.kimi-code/config.toml` (o el config del proyecto):
+
+```toml
+[[hooks]]
+event = "PreToolUse"
+matcher = "Write|Edit"
+command = "python .agents/harness/hook_gate.py"
+timeout = 5
+
+[[hooks]]
+event = "Stop"
+command = "python .agents/harness/hook_gate.py"
+timeout = 5
+```
+
+### 6.2. Configuración enforced — Claude Code
+
+En `.claude/settings.json` del proyecto (commiteable):
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          { "type": "command", "command": "python .agents/harness/hook_gate.py", "timeout": 5 }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "python .agents/harness/hook_gate.py", "timeout": 5 }
+        ]
+      }
+    ]
+  }
+}
+```
+
+La opción fuerte en Claude Code son las *managed settings*
+(`allowManagedHooksOnly` y deny sobre `.agents/` y las configs de hooks),
+gestionadas fuera del repo: impiden que el propio agente desactive el hook.
+
+### 6.3. Límite honesto: los hooks son fail-open
+
+Todo CLI evaluado es **fail-open** ante crash o timeout del hook: si
+`hook_gate.py` falla, la tool call pasa libre. El modelo protege contra
+*omisión del agente*, no contra el hook fallando ni contra un usuario que
+edite configs fuera de sesión. Mitigaciones en capas: script stdlib sin
+dependencias con timeout corto, health-check que verifica escritura/lectura de
+`state.json`, y detección post-hoc del runner (alerta en `HARNESS_REPORT.md`
+cuando aparecen archivos modificados antes del PASS del gate de plan). Si el
+entorno no tolera ese límite, quedarse en modo declarativo es igual de válido
+— pero debe declararse como tal.

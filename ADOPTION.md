@@ -1,24 +1,55 @@
 # Guía de adopción — Protocolo ARgentOS
 
 Cómo adoptar el protocolo ARgentOS en otro proyecto. ARgentOS es un protocolo
-**documental**: no se instala como paquete; adoptarlo es copiar el directorio del
-protocolo y configurar lo mínimo (fuera de alcance declarado:
+**documental**: no se instala como paquete; adoptarlo es vendorizar el directorio
+del protocolo y configurar lo mínimo (fuera de alcance declarado:
 `plans/20-release-adoption.md` §Fuera de alcance). Origen de esta guía:
 `plans/20-release-adoption.md` §B.
 
 La versión adoptada queda declarada en `.agents/VERSION`. Para actualizaciones
-posteriores, seguir [`MIGRATION.md`](MIGRATION.md).
+posteriores, seguir §1.2 y [`MIGRATION.md`](MIGRATION.md).
 
 ---
 
-## 1. Qué copiar
+## 1. Instalación
 
-Del repositorio de origen al proyecto adoptante:
+El repositorio publica la rama **`dist`**, que contiene únicamente `.agents/` y
+`AGENTS.md` en su raíz — nada más del repo de desarrollo. Es el único punto de
+consumo soportado. Hay dos métodos:
+
+### 1.1. Git subtree (recomendado)
+
+Vendoriza `dist` dentro del proyecto adoptante, con sincronización posterior por
+`pull`:
+
+```bash
+# Instalación (una vez, desde la raíz del proyecto adoptante)
+git subtree add --prefix=. https://github.com/roldriel/ARgentOS.git dist --squash
+
+# Actualización a la última versión publicada
+git subtree pull --prefix=. https://github.com/roldriel/ARgentOS.git dist --squash
+```
+
+- `--prefix=.` coloca `.agents/` y `AGENTS.md` en la raíz del proyecto (la
+  estructura de `dist` ya viene así).
+- El repo es privado: el `pull` usa las credenciales git habituales.
+- **`.agents/` es read-only en el adoptante**: los cambios se hacen en el repo
+  fuente (rama `dev` → `master` → CI publica en `dist`); el próximo
+  `subtree pull` pisa cualquier edición local.
+- Para pinearse a una versión en vez de seguir `dist`, usar el tag publicado:
+  `git subtree pull --prefix=. <url> v1.0.0 --squash`.
+
+### 1.2. Copia manual (alternativa sin git)
+
+Copiar desde la rama `dist` del repositorio de origen al proyecto adoptante:
 
 | Copiar | Destino | Obligatorio |
 |---|---|---|
 | `.agents/` (completo) | `<proyecto>/.agents/` | Sí |
 | `AGENTS.md` (raíz) | `<proyecto>/AGENTS.md` | Sí |
+
+Sin subtree no hay mecanismo de actualización: cada upgrade es una copia nueva
+(seguir `MIGRATION.md` entre versiones).
 
 No hace falta copiar nada más: `.agents/` es autocontenido y no referencia
 `plans/` ni RFCs (frontera documental, `plans/INDEX.md` §Convenciones). Los

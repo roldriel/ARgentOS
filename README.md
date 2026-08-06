@@ -1,6 +1,6 @@
 # ARgentOS
 
-ARgentOS is a state-based agent orchestration protocol governed by the `.agents/` directory. It is a **documental protocol**: there is nothing to install — adopting it means copying `.agents/` + `AGENTS.md` into your project.
+ARgentOS is a state-based agent orchestration protocol governed by the `.agents/` directory. It is a **documental protocol**: there is nothing to install — adopting it means vendoring `.agents/` + `AGENTS.md` into your project from the `dist` branch (see [`ADOPTION.md`](ADOPTION.md) §1).
 
 Current protocol version: see [`.agents/VERSION`](.agents/VERSION).
 

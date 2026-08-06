@@ -1,6 +1,6 @@
 # Plan 23 — Skill Lifecycle (Cable-or-Kill)
 
-**Status:** Proposed
+**Status:** Executed
 
 **Depends on:** — (ninguno).
 
@@ -51,3 +51,79 @@ Aplicar la regla cable-or-kill de RFC-24: cada skill del catálogo queda integra
 - Reescritura de contenido de skills supervivientes.
 - Detección mecánica permanente de skills huérfanas (Future Extension de RFC-24).
 - Skills de scope user (fuera de `.agents/`).
+
+---
+
+# Cierre
+
+Ejecutado el 2026-08-06 (rama `dev`, working tree limpio al inicio).
+
+## Baseline (A)
+
+Conteo de referencias por skill fuera de `.agents/skills/<nombre>/` y `skills/INDEX.md` (grep en `.agents/` sobre `*.md`, `*.toml`, `*.py`): solo `reflection` y `planner` tenían referencias invoker-side reales (roles, workflow, policies, decision trees, tests). El resto de las coincidencias externas eran falsos positivos de subcadena (`critic`→"critical", `formatter`→"formatters", `extractor`→nombres de otras skills) o autodescripción del catálogo. Las demás 32 skills solo se nombraban entre sí (front matter) y en `skills/INDEX.md`.
+
+## Tabla de decisión por skill (B/C)
+
+| Skill | Decisión | Punto de cableado |
+| --- | --- | --- |
+| requirement-extractor | cableada | `.agents/roles/task_analyst.md` §Skills |
+| goal-extractor | cableada | `.agents/roles/task_analyst.md` §Skills |
+| constraint-extractor | cableada | `.agents/roles/task_analyst.md` §Skills |
+| ambiguity-detector | cableada | `.agents/roles/task_analyst.md` §Skills |
+| intent-detector | cableada | `.agents/roles/task_analyst.md` §Skills |
+| extractor | cableada | `.agents/roles/context_gatherer.md` §Skills |
+| deduplicator | cableada | `.agents/roles/context_gatherer.md` §Skills |
+| normalizer | cableada | `.agents/roles/context_gatherer.md` §Skills |
+| summarizer | cableada | `.agents/roles/context_gatherer.md` §Skills |
+| context-validator | cableada | `.agents/roles/context_validator.md` §Skills |
+| completeness-checker | cableada | `.agents/roles/context_validator.md` §Skills |
+| ears-writer | cableada | `.agents/roles/task_specification_writer.md` §Skills |
+| task-spec-validator | cableada | `.agents/roles/task_specification_writer.md` §Skills |
+| planner | cableada (ya integrada) | `.agents/roles/planner.md` §Skills (refuerzo) |
+| risk-detector | cableada | `.agents/roles/planner.md` §Skills |
+| tradeoff-analyzer | cableada | `.agents/roles/planner.md` §Skills |
+| critic | cableada | `.agents/roles/planner.md` §Skills |
+| execution-plan-reviewer | cableada | `.agents/roles/reviewer.md` §Skills |
+| self-review | cableada | `.agents/roles/executor.md` §Skills |
+| tdd-reviewer | cableada | `.agents/roles/executor.md` §Skills |
+| rubric-checker | cableada | `.agents/roles/verifier.md` §Skills |
+| artifact-validator | cableada | `.agents/roles/verifier.md` §Skills |
+| consistency-checker | cableada | `.agents/roles/verifier.md` §Skills |
+| hallucination-checker | cableada | `.agents/roles/verifier.md` §Skills |
+| reference-resolver | cableada | `.agents/roles/verifier.md` §Skills |
+| hypothesis-generator | cableada | `.agents/roles/recovery_analyst.md` §Skills |
+| decision-extractor | cableada | policy `.agents/orchestrators/core/harness/policies/H07-scope-compliance.md` (ítem 5 del checklist) |
+| terminology-enforcer | cableada | policy `.agents/harness/policies/H13-protocol-taxonomy.md` §"Agent-side enforcement" |
+| formatter | cableada | `.agents/roles/worker.md` §"Skill Consumption" (delegaciones que producen artefactos) |
+| markdown-formatter | cableada | `.agents/roles/worker.md` §"Skill Consumption" |
+| reflection | ya integrada | sin cambios (roles/profiles, H11, decision trees) |
+| decomposer | eliminada | sin punto de consumo real; solapaba con `planner` |
+| counterargument | eliminada | sin punto de consumo real; solapaba con `critic` |
+| suggest-commits | eliminada | tarea standalone, sin fase del workflow que la consuma |
+
+Catálogo resultante: 31 skills (34 − 3 eliminadas).
+
+## Archivos modificados
+
+- `.agents/roles/task_analyst.md`, `context_gatherer.md`, `context_validator.md`, `task_specification_writer.md`, `planner.md`, `reviewer.md`, `executor.md`, `verifier.md`, `recovery_analyst.md`, `worker.md` — sección `## Skills` (o nota en §"Skill Consumption") con las skills activadas por rol.
+- `.agents/orchestrators/core/harness/policies/H07-scope-compliance.md` — referencia a `decision-extractor`.
+- `.agents/harness/policies/H13-protocol-taxonomy.md` — §"Agent-side enforcement" con `terminology-enforcer`.
+- `.agents/skills/INDEX.md` — inventario depurado (31 filas) y activation table extendida a las fases 00–08.
+
+## Archivos eliminados
+
+- `.agents/skills/decomposer/`, `.agents/skills/counterargument/`, `.agents/skills/suggest-commits/` (directorios completos).
+
+## Verificación (D)
+
+- Grep de cierre: las 31 skills restantes tienen ≥1 referencia desde `roles/`, `orchestrators/`, `harness/`, `standards/`, `delegation/` o `contracts/` fuera de `.agents/skills/`. OK.
+- `python .agents/harness/runner.py health-check` → 81 PASS, 0 FAIL, exit 0.
+- `python -m pytest .agents/harness/tests/ runtime/tests/ tools/tests/` → 354 passed, 2 skipped.
+
+## Desviaciones del plan
+
+- **Mecanismo de cableado:** ni `reflection` ni `planner` tenían una "sintaxis de declaración de skills" propia en archivos invoker-side (sus referencias eran nombres de rol/artefacto); el único mecanismo declarativo existente es la activation table + `skills: [...]` del payload. Se cableó con una sección `## Skills` declarativa en cada archivo de rol (`.agents/roles/*.md` — "rol o perfil de worker" según la definición de skill integrada de RFC-24), sin introducir mecanismo nuevo: la activación sigue pasando por la activation table y SKILLS.md §Activation. La activation table quedó consistente con el cableado.
+- **PROTOCOL_TAXONOMY.md no se tocó:** no lista skills por diseño (`standards/orchestration/SKILLS.md` §"Validation": "Skills intentionally stay out of PROTOCOL_TAXONOMY.md").
+- **`execution-plan-reviewer` cableada en `reviewer.md`** (rol que revisa `EXECUTION_PLAN.md` antes de `PLAN_READY`) en lugar de `planner.md`: el consumidor real del review es el reviewer, no el planner.
+- **RFC-24 menciona policy H10 para el verifier;** la policy de verificación es H06 (H10 es kb-discovery-report). Se cableó en el rol `verifier.md`, que es el punto de consumo real.
+- No se hizo commit: cambios en working tree para revisión.

@@ -117,7 +117,7 @@ Serie derivada del análisis crítico de adopción (5 ago 2026): enforcement vol
 
 | Plan | Status | Depende de | Descripción |
 |---|---|---|---|
-| `23-skill-lifecycle.md` | Proposed | — | Cable-or-kill de skills: ~30 skills huérfanas se cablean a fases/policies o se eliminan del catálogo activo (RFC-24). |
+| `23-skill-lifecycle.md` | Executed | — | Cable-or-kill de skills: ~30 skills huérfanas se cablean a fases/policies o se eliminan del catálogo activo (RFC-24). |
 | `24-single-source-required-sections.md` | Proposed | — | El runner resuelve `required_sections` del contrato por referencia; se elimina la copia TOML en 15 policies y `sync_required_sections.py` (RFC-25). |
 | `25-task-profile-model.md` | Proposed | recomienda 24 | Perfiles `trivial`/`standard`/`complex` con bifurcación de artefactos y gates; meta: tarea trivial ≤ 5 archivos, ≤ 3 gates (RFC-26). |
 | `26-hook-enforcement.md` | Proposed | recomienda 25 | `state.json` escrito solo por el runner + hooks bloqueantes `PreToolUse`/`Stop` compartidos entre CLIs, con defensa en capas (RFC-27). |

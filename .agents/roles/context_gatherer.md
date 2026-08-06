@@ -23,3 +23,12 @@ The Orchestrator invokes this role for `.agents/orchestrators/core/workflow/03-g
 ## Responsibilities
 
 The detailed procedure is defined in `.agents/orchestrators/core/workflow/03-gather-context.md`; this file only declares the role. The context gatherer does not modify project files.
+
+## Skills
+
+Delegations for this role activate the following protocol skills (activation table in `.agents/skills/INDEX.md`; mechanics in `.agents/standards/orchestration/SKILLS.md`):
+
+- `extractor` — distill large inputs into citable facts for `CONTEXT_ARTIFACT.md`.
+- `deduplicator` — remove redundancy across gathered sources before building the artifact.
+- `normalizer` — unify terminology and format across heterogeneous sources.
+- `summarizer` — shrink large material for downstream consumption.

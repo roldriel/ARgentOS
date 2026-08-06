@@ -38,3 +38,7 @@ The possible recommendations are exactly `APPROVE`, `REWORK`, and `NEEDS_CLARIFI
 - Never approve an artifact with a critical `INSUFFICIENT` criterion.
 - Keep the report concise and actionable.
 - Free-text sections of the Review Report follow `.agents/standards/communication/CAVEMAN.md` when the `caveman` feature flag is enabled.
+
+## Skills
+
+When the artifact under review is `EXECUTION_PLAN.md`, the delegation activates the `execution-plan-reviewer` protocol skill (mechanics in `.agents/standards/orchestration/SKILLS.md`).

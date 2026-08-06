@@ -1,0 +1,56 @@
+# publish-dist — regenera la rama `dist` desde `lts`.
+#
+# La rama `dist` es el unico punto de consumo de ARgentOS para proyectos
+# adoptantes: contiene SOLO `.agents/` y `AGENTS.md` en su raiz.
+# Nunca se edita a mano: este workflow la reemplaza con el contenido
+# publicable de `lts` en cada push que toque esos paths.
+name: publish-dist
+
+on:
+  push:
+    branches: [lts]
+    paths:
+      - ".agents/**"
+      - "AGENTS.md"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Publish .agents + AGENTS.md to dist
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          SOURCE_SHA="$(git rev-parse --short HEAD)"
+
+          # Contenido publicable desde lts
+          TMP="$(mktemp -d)"
+          cp -r .agents AGENTS.md "$TMP/"
+
+          # Traer dist (debe existir; se crea una sola vez en el repo)
+          git fetch origin dist:dist
+          git checkout -q dist
+          git rm -rf . -q
+
+          cp -r "$TMP/.agents" "$TMP/AGENTS.md" .
+          rm -rf "$TMP"
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "dist ya esta al dia con lts @ $SOURCE_SHA; nada que publicar."
+            exit 0
+          fi
+
+          git commit -q -m "dist: publish from lts @ $SOURCE_SHA"
+          git push origin dist
+          echo "dist publicada desde lts @ $SOURCE_SHA"

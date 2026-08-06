@@ -24,6 +24,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          # PAT fine-grained (repo ARgentOS, Contents: read/write) guardado
+          # como secreto DIST_PUSH_TOKEN. Si no existe, cae al GITHUB_TOKEN
+          # por defecto (alcanza mientras el repo no tenga rulesets activos).
+          token: ${{ secrets.DIST_PUSH_TOKEN || github.token }}
 
       - name: Publish .agents + AGENTS.md to dist
         run: |

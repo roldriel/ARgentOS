@@ -2,6 +2,8 @@
 trigger = "H02"
 transition = "GATHERING_CONTEXT → CONTEXT_GATHERED"
 artifact = "CONTEXT_ARTIFACT.md"
+semantic_validation = true
+semantic_checks = ["citation_resolution"]
 +++
 
 
@@ -47,6 +49,7 @@ Validate that `CONTEXT_ARTIFACT.md` exists and captures sufficient technical con
 5. The artifact notes dependencies and relationships between components. `[agent]`
 6. The context is relevant to the task specification. `[agent]`
 7. The context does not rely on unstated assumptions. `[agent]`
+8. Every citation in the artifact (`` `path:section` ``, `` `path` §section ``, and TOML citation fields) resolves against the filesystem. `[machine]` (the runner's `citation_resolution` semantic check enforces this)
 
 The presence of the `required_sections` resolved by the runner from the artifact contract is `[machine]` even though it is not restated as a numbered item.
 

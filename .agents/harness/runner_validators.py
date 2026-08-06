@@ -15,6 +15,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 import feature_flags
+import runner_citations
 import runner_profiles
 import runner_state
 import technical_practices
@@ -899,6 +900,16 @@ SEMANTIC_VALIDATORS = {
     ),
     "scope_compliance": lambda session_uuid, iteration, content: (
         validate_h07_scope_compliance(content) if content is not None else []
+    ),
+    "citation_resolution": lambda session_uuid, iteration, content: (
+        runner_citations.validate_citation_resolution(session_uuid, content)
+        if content is not None
+        else []
+    ),
+    "test_evidence": lambda session_uuid, iteration, content: (
+        runner_citations.validate_test_evidence(session_uuid, content)
+        if content is not None
+        else []
     ),
 }
 

@@ -2,6 +2,8 @@
 trigger = "H00"
 transition = "ANALYZING_TASK → BUILDING_TASK_SPECIFICATION, CONFIRMING_INTENT, or NEEDS_CLARIFICATION"
 artifact = "TASK_ANALYSIS.md"
+semantic_validation = true
+semantic_checks = ["citation_resolution"]
 +++
 
 
@@ -63,6 +65,7 @@ Validate that `TASK_ANALYSIS.md` exists and complies with its contract before al
 20. If the `Intent Confidence Assessment.level` is `MEDIUM` or `LOW`, the `Recommended Next State` MUST be `CONFIRMING_INTENT` (unless ambiguities force `NEEDS_CLARIFICATION`). `[agent]`
 21. The `Task Profile` value is one of `trivial`, `standard`, or `complex`. `[agent]`
 22. The `Task Profile` justification is coherent with the assignment criteria in the contract (estimated file count, ambiguity, design decisions, interface impact). `[agent]`
+23. Every citation in the artifact (`` `path:section` ``, `` `path` §section ``, and TOML citation fields) resolves against the filesystem. `[machine]` (the runner's `citation_resolution` semantic check enforces this)
 
 ## Decision Criteria
 

@@ -2,6 +2,8 @@
 artifact = "TASK_ANALYSIS.md"
 phase = "00"
 produced_by = "task_analyst"
+enforcement = "gated"
+gated_by = ["H00"]
 +++
 
 

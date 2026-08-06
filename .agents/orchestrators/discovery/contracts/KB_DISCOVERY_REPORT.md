@@ -2,6 +2,8 @@
 artifact = "KB_DISCOVERY_REPORT.md"
 phase = "00-discovery-init"
 produced_by = "init_worker"
+enforcement = "gated"
+gated_by = ["D00"]
 +++
 
 

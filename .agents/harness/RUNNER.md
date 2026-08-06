@@ -14,6 +14,7 @@ The runner is split into focused modules under `.agents/harness/`; `runner.py` i
 - `runner_policies.py` — policy loading across domains (core `H*`, discovery `D*`, system `S*`, cross-cutting).
 - `runner_artifacts.py` — artifact path resolution inside iteration folders.
 - `runner_validators.py` — section, EARS, rubric and semantic validators, plus `run_trigger`.
+- `runner_citations.py` — mechanical semantic checks: citation resolution (`path:section`, `path` §section and TOML citation fields must resolve against the filesystem) and test evidence (every executed `[[test_results]]` command needs an existing evidence file or a `SESSION_LOG.md` entry).
 - `runner_report.py` — `HARNESS_REPORT.md` generation.
 - `runner_metrics.py` — protocol metrics aggregation (per session and per project) per `.agents/standards/runtime/PROTOCOL_METRICS.md`.
 - `runner_state.py` — transactional `state.json` persistence (single source of truth of the iteration protocol state) and post-hoc bypass detection.

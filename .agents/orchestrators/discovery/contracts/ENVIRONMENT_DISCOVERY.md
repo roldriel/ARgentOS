@@ -2,6 +2,7 @@
 artifact = "ENVIRONMENT_DISCOVERY.md"
 phase = "n/a"
 produced_by = "environment_worker"
+enforcement = "informational"
 +++
 
 

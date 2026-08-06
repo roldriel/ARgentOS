@@ -2,6 +2,8 @@
 trigger = "H04"
 transition = "PLANNING → PLAN_READY"
 artifact = "EXECUTION_PLAN.md"
+semantic_validation = true
+semantic_checks = ["citation_resolution"]
 +++
 
 
@@ -50,6 +52,7 @@ Validate that `EXECUTION_PLAN.md` defines an executable, safe, and scope-respect
 8. The plan does not depend on unresolved unknowns. `[agent]`
 9. The plan does not exceed the task scope. `[agent]`
 10. The plan is compatible with the existing architecture and conventions. `[agent]`
+11. Every citation in the artifact (`` `path:section` ``, `` `path` §section ``, and TOML citation fields) resolves against the filesystem. `[machine]` (the runner's `citation_resolution` semantic check enforces this; paths naming files to be created are not citations and are not checked)
 
 The presence of the `required_sections` resolved by the runner from the artifact contract is `[machine]` even though it is not restated as a numbered item.
 

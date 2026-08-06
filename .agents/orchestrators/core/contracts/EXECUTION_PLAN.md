@@ -2,6 +2,8 @@
 artifact = "EXECUTION_PLAN.md"
 phase = "05"
 produced_by = "planner"
+enforcement = "gated"
+gated_by = ["H04"]
 +++
 
 

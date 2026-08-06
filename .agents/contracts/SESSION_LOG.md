@@ -2,6 +2,7 @@
 artifact = "SESSION_LOG.md"
 phase = "all"
 produced_by = "orchestrator"
+enforcement = "informational"
 +++
 
 

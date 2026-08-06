@@ -2,6 +2,8 @@
 artifact = "EXECUTION_SUMMARY.md"
 phase = "06"
 produced_by = "executor"
+enforcement = "gated"
+gated_by = ["H05"]
 +++
 
 

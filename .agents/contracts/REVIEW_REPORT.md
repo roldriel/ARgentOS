@@ -2,6 +2,7 @@
 artifact = "REVIEW_REPORT.md"
 phase = "n/a"
 produced_by = "reviewer"
+enforcement = "informational"
 +++
 
 

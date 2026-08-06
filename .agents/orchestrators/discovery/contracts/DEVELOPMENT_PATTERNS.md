@@ -2,6 +2,7 @@
 artifact = "DEVELOPMENT_PATTERNS.md"
 phase = "n/a"
 produced_by = "patterns_worker"
+enforcement = "informational"
 +++
 
 

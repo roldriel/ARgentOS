@@ -2,6 +2,7 @@
 artifact = "HARNESS_REPORT.md"
 phase = "all"
 produced_by = "harness"
+enforcement = "informational"
 +++
 
 

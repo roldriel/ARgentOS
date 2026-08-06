@@ -65,7 +65,7 @@ The agent must not skip workflow stages. Deliberate circumvention of the state m
 
 No transition may bypass a required state because the task appears small, simple, or urgent. The agent MUST NOT deliberately skip phases, violate allowed transitions, or invent context to avoid required work. In particular:
 
-- `GATHERING_CONTEXT` and `VALIDATING_CONTEXT` are mandatory for every task that reaches `TASK_READY`.
+- `GATHERING_CONTEXT` and `VALIDATING_CONTEXT` are mandatory for every task that reaches `TASK_READY`, unless the task profile assigned in `TASK_ANALYSIS.md` reduces the mandatory cycle (see Task Profiles below).
 - The only valid paths to reduce work are:
   - Transitioning from `ANALYZING_TASK` to `NEEDS_CLARIFICATION` when information is missing.
   - Transitioning from `ANALYZING_TASK` to `CONFIRMING_INTENT` when confidence is not HIGH.
@@ -75,6 +75,24 @@ No transition may bypass a required state because the task appears small, simple
 A retroactive artifact — one created after execution, outside its phase, to "fill a gap" in the trace — is a retroactive deviation. It is not a valid way to complete an iteration: the artifact must be clearly marked as retroactive in both the artifact itself and the session log, and the deviation must be justified by a recovery decision, not by convenience. An unmarked retroactive artifact is a second violation on top of the first: the production deviation plus the concealment of it.
 
 For the explicit anti-circumvention rule, see `.agents/standards/conduct/ANTI_CIRCUMVENTION.md`.
+
+## Task Profiles
+
+Every task is classified exactly once, during `ANALYZING_TASK`, into a task profile recorded in `TASK_ANALYSIS.md` (`Task Profile` section) with an objective justification. The profile determines which artifacts and harness gates are mandatory for the task; the states and transitions of this machine do not change.
+
+| Profile | Assignment criteria | Mandatory artifacts | Mandatory gates |
+| --- | --- | --- | --- |
+| `trivial` | Bounded change: at most 3 files estimated, no design decisions, no requirements ambiguity, no impact on public interfaces | `TASK_ANALYSIS.md`, `EXECUTION_PLAN.md`, `VERIFICATION_REPORT.md` (plus the session-level artifacts) | H00, H04, H06 |
+| `standard` | The default. Any task that meets neither the `trivial` nor the `complex` criteria | The full cycle documented in this machine | All gates, per transition |
+| `complex` | Multiple subsystems, architecture decisions, or declared high risk | The full cycle plus `REVIEW_REPORT.md`, and the discovery cycle when it applies | The full cycle plus the review gate |
+
+Rules:
+
+1. **The profile is assigned once**, in `ANALYZING_TASK`, and is validated by gate H00 (presence of the field and coherence of the justification).
+2. **Escalation is upward-only.** If execution reveals complexity not seen during analysis (ambiguity, scope creep, interface impact), the Orchestrator reclassifies the task to `standard` or `complex`, records the reclassification in `SESSION_LOG.md`, and completes the artifacts the new profile requires. A task is never reclassified downward.
+3. **Gates omitted by profile are recorded, not absent.** When the harness runner is invoked for a gate the profile does not require, it records the gate in `HARNESS_REPORT.md` as `skipped: profile`. The omission is a system decision, not an oversight, and does not violate the No-Skip Rule.
+4. **`NEEDS_CLARIFICATION` and `RECOVERY` apply to every profile.** A trivial task that turns ambiguous is reclassified upward; it is never forced through the reduced cycle.
+5. For a `trivial` task the path is `ANALYZING_TASK → PLANNING → EXECUTING → VERIFYING`: the specification, context, and intent-confirmation states do not apply, and no discovery or context workers are delegated. Every other transition rule of this machine applies unchanged.
 
 ---
 

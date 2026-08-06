@@ -2,6 +2,8 @@
 artifact = "TASK_ANALYSIS.md"
 phase = "00"
 produced_by = "task_analyst"
+enforcement = "gated"
+gated_by = ["H00"]
 +++
 
 
@@ -182,6 +184,34 @@ HIGH
 
 ---
 
+## Task Profile
+
+Classification of the task by weight, assigned once during this phase. The profile determines which artifacts and harness gates are mandatory for the task, as defined in `.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md` (Task Profiles).
+
+```toml
+[task_profile]
+value = ""  # trivial, standard, complex
+justification = ""
+```
+
+Possible values:
+
+```text
+trivial
+standard
+complex
+```
+
+Assignment criteria:
+
+* `trivial`: bounded change — at most 3 files estimated, no design decisions, no requirements ambiguity, no impact on public interfaces.
+* `standard`: the default. Any task that meets neither the `trivial` nor the `complex` criteria.
+* `complex`: multiple subsystems involved, architecture decisions required, or declared high risk.
+
+The justification must state the estimated number of files, the ambiguity assessment, the design decisions involved, and the interface impact that support the assigned value. When in doubt, assign the higher profile.
+
+---
+
 # Completion Criteria
 
 The task analysis is valid when:
@@ -193,3 +223,4 @@ The task analysis is valid when:
 * A sufficiency assessment is provided.
 * A valid recommended next state is defined.
 * A confidence level is provided.
+* A task profile is assigned with an objective justification.

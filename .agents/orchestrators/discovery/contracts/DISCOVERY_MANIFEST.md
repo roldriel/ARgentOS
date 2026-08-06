@@ -2,6 +2,7 @@
 artifact = "DISCOVERY_MANIFEST.md"
 phase = "n/a"
 produced_by = "synthesis_worker"
+enforcement = "informational"
 +++
 
 

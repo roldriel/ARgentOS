@@ -16,7 +16,7 @@ from typing import Any
 @dataclass
 class CheckResult:
     id: str
-    result: str  # PASS or FAIL
+    result: str  # PASS, FAIL, or SKIP (skipped: profile)
     evidence: str
 
 
@@ -24,7 +24,7 @@ class CheckResult:
 class HarnessResult:
     trigger: str
     transition: str
-    result: str  # PASS or FAIL
+    result: str  # PASS, FAIL, or SKIP (gate not required by the task profile)
     checks: list[CheckResult] = field(default_factory=list)
     artifact: str | None = None
     report: str | None = None
@@ -32,6 +32,9 @@ class HarnessResult:
     error: str | None = None
     duration_ms: int = 0
     rubric_scores: dict[str, str] = field(default_factory=dict)
+    # Post-hoc audit alerts (e.g. suspected enforcement-hook bypass). Alerts
+    # never change the gate result; they surface in HARNESS_REPORT.md.
+    alerts: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -48,4 +51,5 @@ class HarnessResult:
             "error": self.error,
             "duration_ms": self.duration_ms,
             "rubric_scores": self.rubric_scores,
+            "alerts": self.alerts,
         }

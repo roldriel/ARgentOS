@@ -2,6 +2,7 @@
 artifact = "API_SURFACE.md"
 phase = "n/a"
 produced_by = "framework_worker"
+enforcement = "informational"
 +++
 
 

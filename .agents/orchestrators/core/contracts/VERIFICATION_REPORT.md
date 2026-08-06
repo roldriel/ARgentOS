@@ -2,6 +2,8 @@
 artifact = "VERIFICATION_REPORT.md"
 phase = "07"
 produced_by = "verifier"
+enforcement = "gated"
+gated_by = ["H06", "H07"]
 +++
 
 

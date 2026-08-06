@@ -2,6 +2,7 @@
 artifact = "HARNESS_REPORT.md"
 phase = "all"
 produced_by = "harness"
+enforcement = "informational"
 +++
 
 
@@ -50,20 +51,23 @@ The report is rebuilt from a template on every update. It contains, in this orde
 3. **`## Entries`** — one subsection per invocation, headed `### <trigger>`, with the fields:
 
    - `Transition`: the gated transition (for example `EXECUTING → VERIFYING`).
-   - `Result`: `PASS` or `FAIL`.
+   - `Result`: `PASS`, `FAIL`, or `SKIP`. `SKIP` means `skipped: profile`: the gate is not mandatory for the task profile assigned in the session's `TASK_ANALYSIS.md`; the omission is a system decision, not an oversight.
    - `Timestamp`: ISO-8601 timestamp of the invocation.
    - `Artifact checked`: present only when the trigger validates an artifact.
-   - `Checks`: one bullet per check, formatted as `` `<check-id>`: <result> — <evidence> ``.
+   - `Checks`: one bullet per check, formatted as `` `<check-id>`: <result> — <evidence> ``. A skipped gate records a single check `gate_required_for_profile` with result `SKIP` and evidence `skipped: profile — …`.
+   - `Alert` (optional): one `- Alert: <message>` line per post-hoc audit alert (for example, a suspected enforcement-hook bypass detected by the runner when files were modified before the plan gate PASS). Alerts never change the gate result.
 
    Each entry ends with a machine-readable HTML comment so the runner can preserve history across updates:
 
    ```markdown
-   <!-- ENTRY: {"timestamp": "...", "trigger": "...", "transition": "...", "result": "...", "checks": [{"id": "...", "result": "...", "evidence": "..."}], "artifact": "...", "duration_ms": 0, "rubric_scores": {...}} -->
+   <!-- ENTRY: {"timestamp": "...", "trigger": "...", "transition": "...", "result": "...", "checks": [{"id": "...", "result": "...", "evidence": "..."}], "artifact": "...", "duration_ms": 0, "rubric_scores": {...}, "alerts": [...]} -->
    ```
+
+   The `alerts` array is optional (absent or empty when no alert was raised).
 
    These `ENTRY` comments are part of the contract: they must remain valid JSON and must not be removed or edited.
 
-4. **`## Metrics`** — aggregated per trigger across all entries:
+4. **`## Metrics`** — aggregated per trigger across all entries. `SKIP` entries count toward `Invocations` but toward neither `PASS` nor `FAIL`:
 
    ```markdown
    | Trigger | Invocations | PASS | FAIL | Avg Duration (ms) |
@@ -75,7 +79,7 @@ The report is rebuilt from a template on every update. It contains, in this orde
 6. **`## Final Decision`** — the result and trigger of the most recent invocation:
 
    ```markdown
-   - Last result: `<PASS|FAIL>`
+   - Last result: `<PASS|FAIL|SKIP>`
    - Last trigger: `<trigger-id>`
    ```
 

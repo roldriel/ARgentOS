@@ -2,6 +2,8 @@
 artifact = "INTENT_REFLECTION.md"
 phase = "01"
 produced_by = "intent_reflector"
+enforcement = "gated"
+gated_by = ["H11"]
 +++
 
 

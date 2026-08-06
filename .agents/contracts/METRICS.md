@@ -2,6 +2,7 @@
 artifact = "METRICS.md"
 phase = "all"
 produced_by = "orchestrator"
+enforcement = "informational"
 +++
 
 

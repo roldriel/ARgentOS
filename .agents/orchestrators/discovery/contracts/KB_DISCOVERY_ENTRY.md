@@ -2,6 +2,8 @@
 artifact = "KB_DISCOVERY_ENTRY.md"
 phase = "n/a"
 produced_by = "discovery_orchestrator"
+enforcement = "gated"
+gated_by = ["D01"]
 +++
 
 

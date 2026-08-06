@@ -2,6 +2,8 @@
 artifact = "CONTEXT_VALIDATION_REPORT.md"
 phase = "04"
 produced_by = "context_validator"
+enforcement = "gated"
+gated_by = ["H03"]
 +++
 
 

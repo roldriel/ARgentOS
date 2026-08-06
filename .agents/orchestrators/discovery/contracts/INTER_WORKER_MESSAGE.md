@@ -2,6 +2,7 @@
 artifact = "INTER_WORKER_MESSAGE.md"
 phase = "n/a"
 produced_by = "discovery_workers"
+enforcement = "informational"
 +++
 
 

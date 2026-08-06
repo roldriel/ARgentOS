@@ -61,7 +61,7 @@ The report is cumulative. Each entry contains:
 - Transition being protected.
 - Policy file used.
 - Checklist results.
-- Final decision: `PASS` or `FAIL`.
+- Final decision: `PASS`, `FAIL`, or `SKIP` (`skipped: profile` when the gate is not mandatory for the session's task profile; see the Task Profiles rules in `.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md`).
 - Orchestrator action after the result.
 
 These entries are the trigger data points of the protocol metrics model (`.agents/standards/runtime/PROTOCOL_METRICS.md`); event data points that do not pass through a trigger are recorded by the Orchestrator in `.project/<session-uuid>/METRICS.md` (contract: `.agents/contracts/METRICS.md`). Both are consolidated by the runner `metrics` subcommand.
@@ -118,6 +118,39 @@ The Discovery Orchestrator:
 Its output is validated by the gate `D01-discovery-output` (structure and ground truth; see `.agents/orchestrators/discovery/harness/policies/D01-discovery-output.md`). Separately, the optional core gate `H10-kb-discovery-report` validates the per-task `KB_RECOMMENDATION.md` artifact produced by the `context_discoverer`.
 
 For details on the entry format, see `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md`.
+
+## Protocol State and Hook Enforcement
+
+The runner persists the protocol state of each iteration in
+`.project/<session-uuid>/<iteration>/state.json` (module
+`.agents/harness/runner_state.py`): session, iteration, task profile, gates
+passed with timestamps, and last gate. Invariants:
+
+1. Only the runner writes it, transactionally (temp file + rename), after a
+   gate `PASS`. `FAIL` and `SKIP` never touch it.
+2. Hooks and the Orchestrator read it; nobody else writes it. A missing or
+   corrupt `state.json` means *no gate has passed* (fail-closed for
+   consumers).
+
+`state.json` enables optional **hook enforcement** at the CLI level
+(enforced mode): `.agents/harness/hook_gate.py` (stdlib only) reads a CLI
+hook event from stdin and denies (exit 2) `PreToolUse` on `Write`/`Edit`
+targeting project deliverables without an H04 `PASS` (approved
+EXECUTION_PLAN) for the current iteration, and `Stop` without iteration
+closure (H06 `PASS`, `NEEDS_CLARIFICATION` recorded, or no task started).
+Every deny includes the exact `runner.py` command that resolves it. Without
+hooks installed the protocol runs in **declarative mode** (the default):
+gates remain orchestrator-invoked and compliance is audited post-hoc. The
+adoption guide (`ADOPTION.md`) documents both modes and the per-CLI hook
+configuration.
+
+Honest limit: hook systems are **fail-open** — a hook crash or timeout lets
+the tool call through. Mitigations are layered: the hook script is stdlib
+with a short timeout, the health check verifies `state.json` write/read,
+and the runner performs post-hoc detection: when the plan gate (H04)
+passes, it scans for project files modified after the session started but
+before the PASS, and records suspects as an alert in the HARNESS_REPORT
+entry (contract: `.agents/contracts/HARNESS_REPORT.md`).
 
 ## Constraints
 

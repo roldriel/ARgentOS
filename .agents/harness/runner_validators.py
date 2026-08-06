@@ -15,6 +15,9 @@ from datetime import datetime, timezone
 from typing import Any
 
 import feature_flags
+import runner_citations
+import runner_profiles
+import runner_state
 import technical_practices
 from runner_artifacts import artifact_path, report_path
 from runner_markdown import extract_section, extract_toml_block, find_section_headings
@@ -898,6 +901,16 @@ SEMANTIC_VALIDATORS = {
     "scope_compliance": lambda session_uuid, iteration, content: (
         validate_h07_scope_compliance(content) if content is not None else []
     ),
+    "citation_resolution": lambda session_uuid, iteration, content: (
+        runner_citations.validate_citation_resolution(session_uuid, content)
+        if content is not None
+        else []
+    ),
+    "test_evidence": lambda session_uuid, iteration, content: (
+        runner_citations.validate_test_evidence(session_uuid, content)
+        if content is not None
+        else []
+    ),
 }
 
 
@@ -942,6 +955,33 @@ def run_trigger(
     artifact_name = policy.get("artifact")
     validation_type = policy.get("validation_type", "artifact")
     required_sections = policy.get("required_sections", [])
+
+    # Task profile branching: gates the session's profile does not require are
+    # recorded as `skipped: profile` instead of validated. The omission is a
+    # system decision (the profile assigned in TASK_ANALYSIS.md), not an
+    # absence. H00 itself is required by every profile, so the profile read
+    # below never skips the gate that validates TASK_ANALYSIS.md.
+    profile = runner_profiles.read_task_profile(session_uuid)
+    if not runner_profiles.is_gate_required(trigger, profile):
+        return _finish(
+            HarnessResult(
+                trigger=trigger,
+                transition=transition,
+                result="SKIP",
+                checks=[
+                    CheckResult(
+                        id="gate_required_for_profile",
+                        result="SKIP",
+                        evidence=(
+                            f"skipped: profile — gate '{trigger}' is not "
+                            f"required for task profile '{profile}'"
+                        ),
+                    )
+                ],
+                report=str(report_path(session_uuid)),
+                timestamp=timestamp,
+            )
+        )
 
     result = HarnessResult(
         trigger=trigger,
@@ -1046,5 +1086,27 @@ def run_trigger(
             result.checks.extend(semantic_checks)
             if any(c.result == "FAIL" for c in semantic_checks):
                 result.result = "FAIL"
+
+    # Persist protocol state: every PASS is recorded in state.json (the single
+    # source of truth for hook enforcement and the Orchestrator). FAIL and
+    # SKIP never touch it. A state-write failure is reported as an error but
+    # does not retroactively fail a gate that already passed.
+    if result.result == "PASS":
+        try:
+            iter_name = iteration or runner_state.latest_iteration(session_uuid)
+            runner_state.record_gate_pass(
+                session_uuid, iter_name, trigger, timestamp
+            )
+            if trigger == "H04":
+                suspects = runner_state.detect_bypass(
+                    session_uuid, iter_name, timestamp
+                )
+                if suspects:
+                    result.alerts.append(
+                        "possible hook bypass: files modified before the H04 "
+                        f"(plan) PASS of this iteration: {', '.join(suspects)}"
+                    )
+        except OSError as exc:
+            result.error = f"Gate passed but failed to update state.json: {exc}"
 
     return _finish(result)

@@ -2,6 +2,7 @@
 artifact = "EXECUTIVE_SUMMARY.md"
 phase = "n/a"
 produced_by = "synthesis_worker"
+enforcement = "informational"
 +++
 
 

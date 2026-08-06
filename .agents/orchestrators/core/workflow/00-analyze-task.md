@@ -187,6 +187,17 @@ The artifact must comply with the `TASK_ANALYSIS.md` contract and contain:
 * Sufficiency assessment.
 * Recommended next state.
 * Confidence level.
+* Task profile with justification.
+
+## 7a. Assign the Task Profile
+
+Classify the task by weight and record it in the `Task Profile` section of `TASK_ANALYSIS.md`:
+
+* `trivial`: bounded change — at most 3 files estimated, no design decisions, no requirements ambiguity, no impact on public interfaces. The cycle reduces to `TASK_ANALYSIS.md`, `EXECUTION_PLAN.md`, and `VERIFICATION_REPORT.md`, gated by H00, H04, and H06.
+* `standard`: the default; the full cycle applies unchanged.
+* `complex`: multiple subsystems, architecture decisions, or declared high risk; the full cycle plus `REVIEW_REPORT.md`, and discovery when it applies.
+
+The justification must state the estimated file count, the ambiguity assessment, the design decisions involved, and the interface impact. When in doubt, assign the higher profile: escalation is upward-only, so an underestimated profile can be corrected during execution, never the reverse. The full matrix and rules are defined in `.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md` (Task Profiles).
 
 Free-text sections of this artifact follow `.agents/standards/communication/CAVEMAN.md` when the `caveman` feature flag is enabled.
 
@@ -286,6 +297,7 @@ This module is complete when:
 2. The user's objective, expected result, requirements, and restrictions have been identified.
 3. Ambiguities have been evaluated.
 4. A clear next state is selected and recorded in the artifact.
-5. The current state transition is valid.
+5. A task profile is assigned with an objective justification.
+6. The current state transition is valid.
 
 The agent must not continue to the next workflow stage without a valid transition.

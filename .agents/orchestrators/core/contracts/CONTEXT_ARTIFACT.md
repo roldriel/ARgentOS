@@ -2,6 +2,8 @@
 artifact = "CONTEXT_ARTIFACT.md"
 phase = "03"
 produced_by = "context_gatherer"
+enforcement = "gated"
+gated_by = ["H02"]
 +++
 
 

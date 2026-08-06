@@ -17,7 +17,7 @@ required_sections = [
 ]
 rubric_validation = true
 semantic_validation = true
-semantic_checks = ["final_decision", "acceptance_criteria_evaluation"]
+semantic_checks = ["final_decision", "acceptance_criteria_evaluation", "citation_resolution", "test_evidence"]
 +++
 
 
@@ -64,6 +64,8 @@ Validate that `VERIFICATION_REPORT.md` demonstrates the task was completed and v
 6. The report explicitly recommends either `COMPLETED` or `RECOVERY`. `[machine]` (the runner's `final_decision` semantic check enforces the declared value)
 7. If the recommendation is `COMPLETED`, all acceptance criteria are met. `[machine]` (the runner's `acceptance_criteria_evaluation` semantic check enforces that no criterion is `FAIL` and that `PARTIAL` criteria carry `action_plan`)
 8. The report does not rely on assumptions to claim success. `[agent]`
+9. Every citation in the artifact (`` `path:section` ``, `` `path` §section ``, and the TOML citation fields `task_reference.specification` and `plan_reference.execution_plan`) resolves against the filesystem. `[machine]` (the runner's `citation_resolution` semantic check enforces this)
+10. Every command declared in `## Test Results` with a result other than `SKIPPED` has existing evidence: an `evidence` field referencing an existing file, or a matching entry in `SESSION_LOG.md`. `[machine]` (the runner's `test_evidence` semantic check enforces this)
 
 The presence of the `required_sections` declared in this policy's front matter, and the `rubric_validation` declared in the front matter when the `rubrics` feature flag is enabled, are `[machine]` even though they are not restated as numbered items.
 
@@ -84,3 +86,5 @@ The Orchestrator must:
 
 The runner enforces the following semantic checks in addition to section presence:
 - For H06: `decision.result` is `COMPLETED` and no acceptance criterion has `result: FAIL`; `PARTIAL` criteria must have `action_plan`. The only other valid decision value is `RECOVERY`.
+- `citation_resolution`: every citation in the report resolves against the filesystem (broken citations are listed as the FAIL reason).
+- `test_evidence`: every `[[test_results]]` command whose result is not `SKIPPED` has existing evidence (`evidence` file or `SESSION_LOG.md` entry); commands without evidence are listed as the FAIL reason.

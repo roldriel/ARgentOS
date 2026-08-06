@@ -2,6 +2,8 @@
 trigger = "H00"
 transition = "ANALYZING_TASK → BUILDING_TASK_SPECIFICATION, CONFIRMING_INTENT, or NEEDS_CLARIFICATION"
 artifact = "TASK_ANALYSIS.md"
+semantic_validation = true
+semantic_checks = ["citation_resolution"]
 +++
 
 
@@ -53,13 +55,17 @@ Validate that `TASK_ANALYSIS.md` exists and complies with its contract before al
 10. The artifact contains a `Sufficiency Assessment`. `[machine]`
 11. The artifact contains a `Recommended Next State`. `[machine]`
 12. The artifact contains a `Confidence` section. `[machine]`
-13. The `Recommended Next State` is one of the allowed transitions (`BUILDING_TASK_SPECIFICATION`, `CONFIRMING_INTENT`, or `NEEDS_CLARIFICATION`). `[agent]`
-14. If `Detected Ambiguities` contains any entry that would require an implementation decision, the `Recommended Next State` MUST be `NEEDS_CLARIFICATION`. `[agent]`
-15. Each ambiguity that would require an implementation decision includes at least two concrete resolution options and an `Other` option. `[agent]`
-16. The `Intent Confidence Assessment` includes a numeric `score`, a list of `applied_criteria`, and a `level` of `HIGH`, `MEDIUM`, or `LOW`. `[agent]`
-17. The `Intent Confidence Assessment.level` is consistent with the score thresholds defined in `.agents/standards/requirements/INTENT_CONFIDENCE.md`. `[agent]`
-18. If the `Recommended Next State` is `BUILDING_TASK_SPECIFICATION`, the `Intent Confidence Assessment.level` MUST be `HIGH` and no ambiguity may require an implementation decision. `[agent]`
-19. If the `Intent Confidence Assessment.level` is `MEDIUM` or `LOW`, the `Recommended Next State` MUST be `CONFIRMING_INTENT` (unless ambiguities force `NEEDS_CLARIFICATION`). `[agent]`
+13. The artifact contains a `Task Profile` section. `[machine]`
+14. The `Recommended Next State` is one of the allowed transitions (`BUILDING_TASK_SPECIFICATION`, `CONFIRMING_INTENT`, or `NEEDS_CLARIFICATION`). `[agent]`
+15. If `Detected Ambiguities` contains any entry that would require an implementation decision, the `Recommended Next State` MUST be `NEEDS_CLARIFICATION`. `[agent]`
+16. Each ambiguity that would require an implementation decision includes at least two concrete resolution options and an `Other` option. `[agent]`
+17. The `Intent Confidence Assessment` includes a numeric `score`, a list of `applied_criteria`, and a `level` of `HIGH`, `MEDIUM`, or `LOW`. `[agent]`
+18. The `Intent Confidence Assessment.level` is consistent with the score thresholds defined in `.agents/standards/requirements/INTENT_CONFIDENCE.md`. `[agent]`
+19. If the `Recommended Next State` is `BUILDING_TASK_SPECIFICATION`, the `Intent Confidence Assessment.level` MUST be `HIGH` and no ambiguity may require an implementation decision. `[agent]`
+20. If the `Intent Confidence Assessment.level` is `MEDIUM` or `LOW`, the `Recommended Next State` MUST be `CONFIRMING_INTENT` (unless ambiguities force `NEEDS_CLARIFICATION`). `[agent]`
+21. The `Task Profile` value is one of `trivial`, `standard`, or `complex`. `[agent]`
+22. The `Task Profile` justification is coherent with the assignment criteria in the contract (estimated file count, ambiguity, design decisions, interface impact). `[agent]`
+23. Every citation in the artifact (`` `path:section` ``, `` `path` §section ``, and TOML citation fields) resolves against the filesystem. `[machine]` (the runner's `citation_resolution` semantic check enforces this)
 
 ## Decision Criteria
 

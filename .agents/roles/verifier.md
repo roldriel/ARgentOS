@@ -37,3 +37,13 @@ An updated or finalized `VERIFICATION_REPORT.md`. The artifact structure, includ
 - Ensure the `## Rubric Evaluation` section is parseable by the H06 harness policy.
 - Make a clear final decision: `COMPLETED` or `RECOVERY`.
 - Free-text sections of the Verification Report follow `.agents/standards/communication/CAVEMAN.md` when the `caveman` feature flag is enabled.
+
+## Skills
+
+Delegations for this role activate the following protocol skills (activation table in `.agents/skills/INDEX.md`; mechanics in `.agents/standards/orchestration/SKILLS.md`):
+
+- `rubric-checker` — score each deliverable against the applicable rubric with evidence.
+- `artifact-validator` — validate each artifact against its contract.
+- `consistency-checker` — confirm the artifacts tell one coherent story.
+- `hallucination-checker` — confront factual claims with the available evidence.
+- `reference-resolver` — resolve references between artifacts into verified targets.

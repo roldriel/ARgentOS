@@ -2,6 +2,7 @@
 trigger = "H06"
 transition = "VERIFYING → COMPLETED"
 artifact = "VERIFICATION_REPORT.md"
+# Explicit subset of the contract sections (Scope Compliance is gated by H07).
 required_sections = [
   "Metadata",
   "Task Reference",

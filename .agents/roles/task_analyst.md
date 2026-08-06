@@ -21,3 +21,13 @@ The Orchestrator invokes this role for `.agents/orchestrators/core/workflow/00-a
 ## Responsibilities
 
 The detailed procedure is defined in `.agents/orchestrators/core/workflow/00-analyze-task.md`; this file only declares the role. The task analyst does not modify project files.
+
+## Skills
+
+Delegations for this role activate the following protocol skills (activation table in `.agents/skills/INDEX.md`; mechanics in `.agents/standards/orchestration/SKILLS.md`):
+
+- `requirement-extractor` — populate the requirements section of `TASK_ANALYSIS.md`.
+- `goal-extractor` — populate the objective and expected-outcome sections.
+- `constraint-extractor` — populate the restrictions section.
+- `ambiguity-detector` — detect ambiguities that require a `NEEDS_CLARIFICATION` transition.
+- `intent-detector` — assess interpretation confidence (also feeds the `intent_reflector` delegation of phase 01, gated by H11).

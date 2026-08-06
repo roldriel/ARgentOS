@@ -24,3 +24,10 @@ The Orchestrator invokes this role for `.agents/orchestrators/core/workflow/06-e
 ## Responsibilities
 
 The detailed procedure is defined in `.agents/orchestrators/core/workflow/06-execute.md`; this file only declares the role.
+
+## Skills
+
+Delegations for this role activate the following protocol skills (activation table in `.agents/skills/INDEX.md`; mechanics in `.agents/standards/orchestration/SKILLS.md`):
+
+- `self-review` — self-check the result against its acceptance criteria before reporting it.
+- `tdd-reviewer` — check TDD-cycle compatibility when `tdd` is selected in `technical_approach`.

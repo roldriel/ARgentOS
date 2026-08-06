@@ -2,19 +2,6 @@
 trigger = "H03"
 transition = "VALIDATING_CONTEXT → CONTEXT_READY"
 artifact = "CONTEXT_VALIDATION_REPORT.md"
-required_sections = [
-  "Metadata",
-  "Context Reference",
-  "Validation Objective",
-  "Completeness Evaluation",
-  "Relevance Evaluation",
-  "Consistency Evaluation",
-  "Risk Evaluation",
-  "Validation Decision",
-  "Required Actions",
-  "Confidence",
-  "State Transition"
-]
 +++
 
 
@@ -61,7 +48,7 @@ Validate that the context validation report justifies whether the gathered conte
 6. If context is insufficient, the report specifies what is missing. `[agent]`
 7. The report does not invent context to cover gaps. `[agent]`
 
-The presence of the `required_sections` declared in this policy's front matter is `[machine]` even though it is not restated as a numbered item.
+The presence of the `required_sections` resolved by the runner from the artifact contract is `[machine]` even though it is not restated as a numbered item.
 
 ## Decision Criteria
 

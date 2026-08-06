@@ -79,6 +79,13 @@ contracts, parsed by `.agents/harness/runner.py` and `.agents/harness/health_che
 the YAML taxonomy block **immediately after** the TOML block. All other files carry it at the
 very top of the file. This keeps the existing TOML parsers untouched.
 
+## Agent-side enforcement
+
+H13 validates structure mechanically; canonical vocabulary in artifact prose is agent judgment.
+Workers writing or rewriting protocol artifacts may activate the `terminology-enforcer` skill
+to detect non-canonical terms against the master dictionary
+(`.agents/standards/runtime/PROTOCOL_TAXONOMY.md`) before the artifact is reported.
+
 ## Validation
 
 ```bash

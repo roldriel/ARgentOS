@@ -2,16 +2,6 @@
 trigger = "H11"
 transition = "CONFIRMING_INTENT → BUILDING_TASK_SPECIFICATION"
 artifact = "INTENT_REFLECTION.md"
-required_sections = [
-  "Metadata",
-  "Original Request",
-  "Detected Intent",
-  "Reflection",
-  "Confidence",
-  "Correction Cycle",
-  "User Response",
-  "Next State"
-]
 +++
 
 
@@ -47,7 +37,7 @@ Validate that `INTENT_REFLECTION.md` exists, complies with its contract, and rec
 
 ## Checklist
 
-**Evaluation audience:** each item is marked `[machine]` — validated deterministically by the harness runner (artifact existence and presence of the `required_sections` declared in this policy's front matter) or by the policy's test suite — or `[agent]` — evaluated by agent judgment when applying this policy. A `[machine]` failure is gateable without interpretation; an `[agent]` failure is declared judgment.
+**Evaluation audience:** each item is marked `[machine]` — validated deterministically by the harness runner (artifact existence and presence of the `required_sections` resolved by the runner from the artifact contract) or by the policy's test suite — or `[agent]` — evaluated by agent judgment when applying this policy. A `[machine]` failure is gateable without interpretation; an `[agent]` failure is declared judgment.
 
 1. The artifact file exists. `[machine]`
 2. The artifact contains a `Metadata` section. `[machine]`

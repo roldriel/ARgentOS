@@ -20,3 +20,7 @@ The Orchestrator invokes this role for `.agents/orchestrators/core/workflow/08-r
 ## Responsibilities
 
 The detailed procedure is defined in `.agents/orchestrators/core/workflow/08-recovery.md`; this file only declares the role. The recovery analyst does not modify project files.
+
+## Skills
+
+Delegations for this role activate the `hypothesis-generator` protocol skill (activation table in `.agents/skills/INDEX.md`; mechanics in `.agents/standards/orchestration/SKILLS.md`) to generate ranked, falsifiable hypotheses for the cause of the failure.

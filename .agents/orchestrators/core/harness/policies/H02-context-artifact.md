@@ -2,20 +2,6 @@
 trigger = "H02"
 transition = "GATHERING_CONTEXT → CONTEXT_GATHERED"
 artifact = "CONTEXT_ARTIFACT.md"
-required_sections = [
-  "Metadata",
-  "Task Reference",
-  "Context Objective",
-  "Project Context",
-  "Relevant Components",
-  "Existing Behavior",
-  "Dependencies",
-  "Constraints Discovered",
-  "Available Evidence",
-  "Unknowns",
-  "Context Validation",
-  "State"
-]
 +++
 
 
@@ -62,7 +48,7 @@ Validate that `CONTEXT_ARTIFACT.md` exists and captures sufficient technical con
 6. The context is relevant to the task specification. `[agent]`
 7. The context does not rely on unstated assumptions. `[agent]`
 
-The presence of the `required_sections` declared in this policy's front matter is `[machine]` even though it is not restated as a numbered item.
+The presence of the `required_sections` resolved by the runner from the artifact contract is `[machine]` even though it is not restated as a numbered item.
 
 ## Decision Criteria
 

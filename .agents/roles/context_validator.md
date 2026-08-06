@@ -21,3 +21,10 @@ The Orchestrator invokes this role for `.agents/orchestrators/core/workflow/04-v
 ## Responsibilities
 
 The detailed procedure is defined in `.agents/orchestrators/core/workflow/04-validate-context.md`; this file only declares the role. The context validator does not modify project files.
+
+## Skills
+
+Delegations for this role activate the following protocol skills (activation table in `.agents/skills/INDEX.md`; mechanics in `.agents/standards/orchestration/SKILLS.md`):
+
+- `context-validator` — evaluate completeness, relevance, consistency, and risk of the gathered context.
+- `completeness-checker` — detect missing information against what the phase requires.

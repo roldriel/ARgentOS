@@ -2,16 +2,6 @@
 trigger = "H09"
 transition = "RECOVERY → PLANNING (optional)"
 artifact = "RECOVERY_REPORT.md"
-required_sections = [
-  "Metadata",
-  "Failure Reference",
-  "Failure Summary",
-  "Root Cause Classification",
-  "Analysis Summary",
-  "Corrective Action Recommendation",
-  "Updated Artifacts",
-  "Confidence"
-]
 +++
 
 
@@ -45,7 +35,7 @@ Validate that `RECOVERY_REPORT.md` exists and contains the required sections bef
 
 ## Decision Criteria
 
-**Evaluation audience:** both criteria are `[machine]` — validated deterministically by the harness runner (artifact existence and presence of the `required_sections` declared in this policy's front matter). A `[machine]` failure is gateable without interpretation; an `[agent]` failure would be declared judgment, and this policy contains no agent-evaluated items.
+**Evaluation audience:** both criteria are `[machine]` — validated deterministically by the harness runner (artifact existence and presence of the `required_sections` resolved by the runner from the artifact contract). A `[machine]` failure is gateable without interpretation; an `[agent]` failure would be declared judgment, and this policy contains no agent-evaluated items.
 
 - `PASS`: The artifact exists and contains all required sections. `[machine]`
 - `FAIL`: The artifact is missing or incomplete. `[machine]`

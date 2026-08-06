@@ -21,3 +21,10 @@ The Orchestrator invokes this role for `.agents/orchestrators/core/workflow/02-b
 ## Responsibilities
 
 The detailed procedure is defined in `.agents/orchestrators/core/workflow/02-build-task-specification.md`; this file only declares the role. The task specification writer does not modify project files.
+
+## Skills
+
+Delegations for this role activate the following protocol skills (activation table in `.agents/skills/INDEX.md`; mechanics in `.agents/standards/orchestration/SKILLS.md`):
+
+- `ears-writer` — draft acceptance criteria in EARS syntax.
+- `task-spec-validator` — verify `TASK_SPECIFICATION.md` against its contract before reporting it.

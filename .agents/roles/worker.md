@@ -108,6 +108,8 @@ When the delegation payload includes a non-empty `skills` list, the Worker consu
 4. A skill describes a capability; it never grants permissions. On conflict with the protocol, the protocol wins and the conflict MUST be declared (see `.agents/standards/orchestration/SKILLS.md`).
 5. If a listed skill does not exist or is malformed, the Worker MUST report it as a deviation to the Orchestrator and MUST NOT invent its content.
 
+Artifact-producing delegations may also activate, by judgment candidacy, the `formatter` skill (when the delegation declares a specific output structure — JSON, YAML, CSV, table, Markdown) and the `markdown-formatter` skill (when the deliverable is a Markdown protocol artifact that must match the artifact conventions of `.agents/contracts/` and `.agents/orchestrators/core/contracts/`).
+
 ## Responsibilities
 
 1. Read the assigned workflow module.

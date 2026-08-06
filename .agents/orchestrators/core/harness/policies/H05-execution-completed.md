@@ -2,19 +2,6 @@
 trigger = "H05"
 transition = "EXECUTING → VERIFYING"
 artifact = "EXECUTION_SUMMARY.md"
-required_sections = [
-  "Metadata",
-  "Task Reference",
-  "Execution Plan Reference",
-  "Summary of Changes",
-  "Steps Executed",
-  "Project Files Modified",
-  "Intermediate Validations",
-  "Technical Practice Evidence",
-  "Issues or Deviations",
-  "Final Project State",
-  "Confidence"
-]
 semantic_validation = true
 semantic_checks = ["execution_summary", "technical_practice_evidence"]
 +++
@@ -62,7 +49,7 @@ Validate that the execution phase completed all planned steps and left the proje
 6. No step caused an unrecoverable error. `[agent]`
 7. For each practice listed in `technical_approach.enabled`, the `EXECUTION_SUMMARY.md` contains a corresponding entry in `## Technical Practice Evidence` with `applied` and, when applicable, supporting evidence. `[machine]` (the runner's `technical_practice_evidence` semantic check)
 
-The presence of the `required_sections` declared in this policy's front matter is `[machine]` even though it is not restated as a numbered item.
+The presence of the `required_sections` resolved by the runner from the artifact contract is `[machine]` even though it is not restated as a numbered item.
 
 ## Decision Criteria
 

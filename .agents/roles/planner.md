@@ -21,3 +21,12 @@ The Orchestrator invokes this role for `.agents/orchestrators/core/workflow/05-p
 ## Responsibilities
 
 The detailed procedure is defined in `.agents/orchestrators/core/workflow/05-plan.md`; this file only declares the role. The planner MUST NOT modify project files — project changes belong to phase 06 (`executor`).
+
+## Skills
+
+Delegations for this role activate the following protocol skills (activation table in `.agents/skills/INDEX.md`; mechanics in `.agents/standards/orchestration/SKILLS.md`):
+
+- `planner` — decompose the validated objective into ordered, verifiable steps.
+- `risk-detector` — populate the risks section of `EXECUTION_PLAN.md`.
+- `tradeoff-analyzer` — compare alternatives when choosing an approach.
+- `critic` — stress-test the proposed plan before reporting it.

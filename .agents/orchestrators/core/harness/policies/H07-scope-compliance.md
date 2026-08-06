@@ -2,6 +2,7 @@
 trigger = "H07"
 transition = "VERIFYING → COMPLETED"
 artifact = "VERIFICATION_REPORT.md"
+# Explicit subset of the contract sections (this gate checks Scope Compliance only).
 required_sections = [
   "Scope Compliance"
 ]
@@ -49,7 +50,7 @@ Validate that the executed work stayed strictly within the task assigned by the 
 2. The section declares whether the work respected the assigned scope. `[machine]` (the runner's `scope_compliance` semantic check reads the declared `scope_respected` value)
 3. Any project file, dependency, configuration, or test modified outside the execution plan is listed in `unplanned_changes`. `[agent]` (the runner verifies the declared list is empty when `scope_respected` is `true`; judging that nothing was omitted from the list is agent judgment)
 4. Any error, bug, or inconsistency discovered outside the assigned task scope is listed in `out_of_scope_issues` and was not acted upon without explicit user authorization. `[agent]`
-5. `user_authorized_extra_work` is `true` only if the user explicitly approved additional work in writing during the session. `[agent]` (the runner verifies the declared value; judging that the written approval exists is agent judgment)
+5. `user_authorized_extra_work` is `true` only if the user explicitly approved additional work in writing during the session. `[agent]` (the runner verifies the declared value; judging that the written approval exists is agent judgment — the verifier may activate the `decision-extractor` skill to recover confirmed user decisions from `SESSION_LOG.md` and the session artifacts before judging)
 6. If `scope_respected` is claimed as `true`, `unplanned_changes` MUST be empty and `user_authorized_extra_work` MUST be `false`. `[machine]` (the runner's `scope_compliance` semantic check)
 
 ## Decision Criteria

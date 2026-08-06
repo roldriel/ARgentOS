@@ -2,6 +2,7 @@
 trigger = "H01"
 transition = "BUILDING_TASK_SPECIFICATION → TASK_READY"
 artifact = "TASK_SPECIFICATION.md"
+# Explicit subset of the contract sections (not derivable by reference).
 required_sections = [
   "Objective",
   "Expected Outcome",

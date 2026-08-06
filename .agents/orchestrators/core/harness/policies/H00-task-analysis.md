@@ -2,19 +2,6 @@
 trigger = "H00"
 transition = "ANALYZING_TASK → BUILDING_TASK_SPECIFICATION, CONFIRMING_INTENT, or NEEDS_CLARIFICATION"
 artifact = "TASK_ANALYSIS.md"
-required_sections = [
-  "Metadata",
-  "User Request",
-  "Interpreted Objective",
-  "Expected Outcome",
-  "Explicit Requirements",
-  "Explicit Restrictions",
-  "Detected Ambiguities",
-  "Intent Confidence Assessment",
-  "Sufficiency Assessment",
-  "Recommended Next State",
-  "Confidence"
-]
 +++
 
 

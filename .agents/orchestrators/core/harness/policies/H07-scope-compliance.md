@@ -2,6 +2,7 @@
 trigger = "H07"
 transition = "VERIFYING → COMPLETED"
 artifact = "VERIFICATION_REPORT.md"
+# Explicit subset of the contract sections (this gate checks Scope Compliance only).
 required_sections = [
   "Scope Compliance"
 ]

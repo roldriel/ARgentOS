@@ -2,21 +2,6 @@
 trigger = "H04"
 transition = "PLANNING → PLAN_READY"
 artifact = "EXECUTION_PLAN.md"
-required_sections = [
-  "Metadata",
-  "Task Reference",
-  "Context Reference",
-  "Objective",
-  "Approach Summary",
-  "Implementation Steps",
-  "Affected Components",
-  "Dependencies",
-  "Risks",
-  "Validation Strategy",
-  "Rollback Considerations",
-  "Plan Decision",
-  "State Transition"
-]
 +++
 
 
@@ -66,7 +51,7 @@ Validate that `EXECUTION_PLAN.md` defines an executable, safe, and scope-respect
 9. The plan does not exceed the task scope. `[agent]`
 10. The plan is compatible with the existing architecture and conventions. `[agent]`
 
-The presence of the `required_sections` declared in this policy's front matter is `[machine]` even though it is not restated as a numbered item.
+The presence of the `required_sections` resolved by the runner from the artifact contract is `[machine]` even though it is not restated as a numbered item.
 
 ## Decision Criteria
 

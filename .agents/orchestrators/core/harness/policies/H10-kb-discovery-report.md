@@ -2,12 +2,6 @@
 trigger = "H10"
 transition = "Before using KB recommendations (optional)"
 artifact = "KB_RECOMMENDATION.md"
-required_sections = [
-  "Discovery Objective",
-  "Recommended Entries",
-  "Context Budget Recommendation",
-  "Notes"
-]
 +++
 
 
@@ -45,7 +39,7 @@ H10 does NOT participate in the discovery cycle (`discovery:DISCOVERY_VALIDATE` 
 
 ## Decision Criteria
 
-**Evaluation audience:** each criterion is marked `[machine]` — validated deterministically by the harness runner (artifact existence and presence of the `required_sections` declared in this policy's front matter) — or `[agent]` — evaluated by agent judgment when applying this policy. A `[machine]` failure is gateable without interpretation; an `[agent]` failure is declared judgment.
+**Evaluation audience:** each criterion is marked `[machine]` — validated deterministically by the harness runner (artifact existence and presence of the `required_sections` resolved by the runner from the artifact contract) — or `[agent]` — evaluated by agent judgment when applying this policy. A `[machine]` failure is gateable without interpretation; an `[agent]` failure is declared judgment.
 
 `PASS` when all of the following hold; `FAIL` otherwise:
 

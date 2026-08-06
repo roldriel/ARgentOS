@@ -1,6 +1,6 @@
 # Plan 24 — Single-Source Required-Sections
 
-**Status:** Proposed
+**Status:** Executed
 
 **Depends on:** — (ninguno). Convive con cualquier orden respecto de los planes 23/25/26/27.
 
@@ -53,3 +53,13 @@ Hacer que el runner derive `required_sections` del contrato citado por la policy
 - Cambios en el contenido o lista de secciones de los contratos.
 - Derivación por referencia de otras claves TOML (scope, decision trees).
 - Validación semántica de secciones (plan 27 / RFC-28).
+
+# Cierre
+
+Ejecutado 2026-08-05. Resolución por referencia implementada en `runner_policies.py` (`resolve_required_sections` + `_contract_map` cacheado; inyección en `load_policy`, sin cambios en `runner_validators.py`). `sync_required_sections.py` y su test eliminados.
+
+**Hallazgo clave:** la premisa "15 policies duplican verbatim" era falsa — solo 5 coincidían exactamente; el sync permitía subconjuntos. Resultado real:
+- **8 policies derivadas por referencia** (clave eliminada): H00, H02, H03, H04, H05, H09, H10, H11.
+- **7 conservan `required_sections` como override explícito** (quitarla cambiaría el gate): H01, H06, H07 (subconjuntos deliberados, con comentario TOML), D00/D01/S00/H15 (listas vacías deliberadas).
+
+**Verificación:** test nuevo `test_resolve_required_sections.py` (paridad permanente con snapshot pre-migración, override H07, fail-closed). Suite: 329 passed, 2 skipped; tools: 19 passed; health-check PASS. `--check` pre-migración: drift cero.

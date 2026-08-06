@@ -63,19 +63,9 @@ The `health-check` subcommand verifies that critical directories exist, index fi
 
 Decision-tree validation covers every domain that provides a `decision_trees/` directory (core `H*`, discovery `D*`, system `S*`): the expected triggers are derived from that domain's policy files (minus the documented exemptions H09/H10), and every tree is structurally validated (start node, branches, node references, cycles) via `decision_tree_evaluator._validate_tree`.
 
-## Policy/contract section sync
+## Policy/contract section resolution
 
-Policy `required_sections` are derived from the artifact contracts (source of truth for section names and order). To regenerate them or detect drift:
-
-```bash
-# Rewrite policies in place when out of sync
-python .agents/harness/sync_required_sections.py
-
-# Fail (exit 1) if any policy is out of sync with its contract
-python .agents/harness/sync_required_sections.py --check
-```
-
-The test suite runs the `--check` mode, so a contract change that renames or reorders sections fails the tests until the policies are re-synced.
+Policy `required_sections` are resolved by reference from the artifact contracts (source of truth for section names and order): `runner_policies.resolve_required_sections()` parses the `##` headings of the contract cited by the policy's `artifact` key, excluding the non-normative headings listed in `runner_policies.NON_NORMATIVE_SECTIONS`. A policy that needs a deliberate subset of (or an opt-out from) the contract sections may still declare `required_sections` explicitly in its front matter; that declaration takes precedence. A policy whose contract cannot be resolved fails closed, as a malformed policy.
 
 ## Recovery decision trees
 

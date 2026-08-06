@@ -15,6 +15,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 import feature_flags
+import runner_profiles
 import technical_practices
 from runner_artifacts import artifact_path, report_path
 from runner_markdown import extract_section, extract_toml_block, find_section_headings
@@ -942,6 +943,33 @@ def run_trigger(
     artifact_name = policy.get("artifact")
     validation_type = policy.get("validation_type", "artifact")
     required_sections = policy.get("required_sections", [])
+
+    # Task profile branching: gates the session's profile does not require are
+    # recorded as `skipped: profile` instead of validated. The omission is a
+    # system decision (the profile assigned in TASK_ANALYSIS.md), not an
+    # absence. H00 itself is required by every profile, so the profile read
+    # below never skips the gate that validates TASK_ANALYSIS.md.
+    profile = runner_profiles.read_task_profile(session_uuid)
+    if not runner_profiles.is_gate_required(trigger, profile):
+        return _finish(
+            HarnessResult(
+                trigger=trigger,
+                transition=transition,
+                result="SKIP",
+                checks=[
+                    CheckResult(
+                        id="gate_required_for_profile",
+                        result="SKIP",
+                        evidence=(
+                            f"skipped: profile — gate '{trigger}' is not "
+                            f"required for task profile '{profile}'"
+                        ),
+                    )
+                ],
+                report=str(report_path(session_uuid)),
+                timestamp=timestamp,
+            )
+        )
 
     result = HarnessResult(
         trigger=trigger,

@@ -1,6 +1,6 @@
 # Plan 25 — Task Profile Model
 
-**Status:** Proposed
+**Status:** Executed (dogfooding medido pendiente, ver §Status de ejecución)
 
 **Depends on:** Plan 24 recomendado (los decision trees y policies se tocan aquí; conviene hacerlo sobre la fuente única de `required_sections`), no obligatorio.
 
@@ -48,6 +48,12 @@ Introducir los perfiles de tarea `trivial` / `standard` / `complex` con asignaci
 | 2 | Matriz perfil → artefactos/gates | `AGENT_STATE_MACHINE.md`, workflow |
 | 3 | Bifurcación + registro `skipped: profile` | `runner_validators.py`, contrato HARNESS_REPORT |
 | 4 | Tests + dogfooding trivial medido | `.agents/harness/tests/`, `.project/<sesión>/` |
+
+# Status de ejecución
+
+Ejecutado el 2026-08-06 (rama `dev`): entregables 1–3 completos; tests nuevos en `.agents/harness/tests/test_task_profiles.py` (suite 357 passed, 2 skipped; health-check PASS).
+
+**Pendiente:** el dogfooding medido de una tarea trivial (§D, entregable 4 en `.project/<sesión>/`). No se ejecutó en esta pasada porque requiere una sesión de protocolo real con el usuario; queda como verificación diferida con el criterio de éxito de §D (≤ 5 archivos, ≤ 3 gates, tiempo notablemente menor al baseline de ~52 min).
 
 # Fuera de alcance
 

@@ -27,6 +27,7 @@ EXPECTED = {
         "Sufficiency Assessment",
         "Recommended Next State",
         "Confidence",
+        "Task Profile",
     ],
     "H02": [
         "Metadata",

@@ -291,7 +291,7 @@ def main() -> int:
             result.error = f"Failed to update report: {exc}"
 
     print(json.dumps(result.to_dict(), indent=2))
-    return 0 if result.result == "PASS" else 1
+    return 0 if result.result in ("PASS", "SKIP") else 1
 
 
 if __name__ == "__main__":

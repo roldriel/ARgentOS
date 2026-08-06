@@ -122,6 +122,10 @@ def update_report(session_uuid: str, result: HarnessResult) -> None:
         bucket["invocations"] += 1
         if e.get("result") == "PASS":
             bucket["pass"] += 1
+        elif e.get("result") == "SKIP":
+            # Gates skipped by task profile count as invocations but are
+            # neither passes nor failures.
+            pass
         else:
             bucket["fail"] += 1
         bucket["duration_ms"] += e.get("duration_ms", 0)

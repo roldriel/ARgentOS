@@ -16,7 +16,7 @@ from typing import Any
 @dataclass
 class CheckResult:
     id: str
-    result: str  # PASS or FAIL
+    result: str  # PASS, FAIL, or SKIP (skipped: profile)
     evidence: str
 
 
@@ -24,7 +24,7 @@ class CheckResult:
 class HarnessResult:
     trigger: str
     transition: str
-    result: str  # PASS or FAIL
+    result: str  # PASS, FAIL, or SKIP (gate not required by the task profile)
     checks: list[CheckResult] = field(default_factory=list)
     artifact: str | None = None
     report: str | None = None

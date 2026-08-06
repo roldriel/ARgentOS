@@ -94,6 +94,9 @@ def aggregate_session(session_dir: Path) -> dict[str, Any]:
         bucket["invocations"] += 1
         if entry.get("result") == "PASS":
             bucket["pass"] += 1
+        elif entry.get("result") == "SKIP":
+            # Gates skipped by task profile are not failures.
+            pass
         else:
             bucket["fail"] += 1
         bucket["duration_ms"] += entry.get("duration_ms", 0) or 0
@@ -102,7 +105,7 @@ def aggregate_session(session_dir: Path) -> dict[str, Any]:
             _domain_of_trigger(trigger), {"invocations": 0, "fail": 0}
         )
         domain["invocations"] += 1
-        if entry.get("result") != "PASS":
+        if entry.get("result") not in ("PASS", "SKIP"):
             domain["fail"] += 1
     for bucket in per_trigger.values():
         bucket["avg_duration_ms"] = (

@@ -61,7 +61,7 @@ The report is cumulative. Each entry contains:
 - Transition being protected.
 - Policy file used.
 - Checklist results.
-- Final decision: `PASS` or `FAIL`.
+- Final decision: `PASS`, `FAIL`, or `SKIP` (`skipped: profile` when the gate is not mandatory for the session's task profile; see the Task Profiles rules in `.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md`).
 - Orchestrator action after the result.
 
 These entries are the trigger data points of the protocol metrics model (`.agents/standards/runtime/PROTOCOL_METRICS.md`); event data points that do not pass through a trigger are recorded by the Orchestrator in `.project/<session-uuid>/METRICS.md` (contract: `.agents/contracts/METRICS.md`). Both are consolidated by the runner `metrics` subcommand.

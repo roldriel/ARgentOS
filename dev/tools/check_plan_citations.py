@@ -11,9 +11,11 @@ two forms used by the repository convention (plans/INDEX.md §Convenciones):
 For each citation it verifies that the cited file exists (resolved relative
 to the repository root) and that the cited section exists as an ATX heading
 in that file, comparing both sides normalized (trimmed, case-insensitive,
-leading '#' removed, trailing punctuation removed). Numeric-only anchors
-(line numbers, subsection numbers) are not headings and are reported as
-broken with reason "non-heading anchor".
+leading '#' removed, trailing punctuation removed). A citation that is a
+prefix of a real heading followed by '.', '—', '-', ')' or whitespace also
+resolves (labelled anchors such as §B or §Stage 10, and numbered anchors
+such as §5 → "5. Worker Delegation"). Numeric anchors with no matching
+heading (line numbers, line ranges) are reported as "non-heading anchor".
 
 Usage: python dev/tools/check_plan_citations.py [--root REPO_ROOT]
 
@@ -43,7 +45,11 @@ _SECTION_SIGN_RE = re.compile(
 
 _HEADING_RE = re.compile(r"^#{1,6}\s+(.*?)\s*#*\s*$")
 
-_NUMERIC_ONLY_RE = re.compile(r"^[\d.,\s]+$")
+_NUMERIC_ONLY_RE = re.compile(r"^[\d.,\s-]+$")
+
+# Characters allowed right after a prefix citation inside the real heading
+# (e.g. "B" in "B. Actualizar…", "Stage 10" in "Stage 10 — Prompt Rendering").
+_PREFIX_NEXT_CHARS = " \t.—-)"
 
 _TRAILING_PUNCT = string.punctuation.replace("#", "")
 
@@ -98,9 +104,43 @@ def find_headings(markdown_text: str) -> set[str]:
     return headings
 
 
+def _heading_matches(candidate: str, headings: set[str]) -> bool:
+    """True when the normalized candidate is a heading or a valid anchor of one.
+
+    A candidate that is a strict prefix of a heading is valid when the
+    heading continues with '.', '—', '-', ')' or whitespace — this covers
+    numbered and labelled anchors ("5" → "5. Worker Delegation", "D3" →
+    "D3. Dos niveles", "Stage 10" → "Stage 10 — Prompt Rendering") while
+    still rejecting bare line numbers with no such heading.
+    """
+    if not candidate:
+        return False
+    if candidate in headings:
+        return True
+    return any(
+        len(heading) > len(candidate)
+        and heading.startswith(candidate)
+        and heading[len(candidate)] in _PREFIX_NEXT_CHARS
+        for heading in headings
+    )
+
+
 def section_exists(section: str, markdown_text: str) -> bool:
-    """True when the cited section matches an ATX heading (normalized)."""
-    return normalize_heading(section) in find_headings(markdown_text)
+    """True when the cited section resolves against an ATX heading.
+
+    The §-form capture is greedy and may swallow prose after the section
+    name, so the citation is tried verbatim first and then trimmed from the
+    right, one word at a time, until a prefix resolves against a heading.
+    """
+    headings = find_headings(markdown_text)
+    candidate = normalize_heading(section)
+    while candidate:
+        if _heading_matches(candidate, headings):
+            return True
+        if " " not in candidate:
+            break
+        candidate = candidate.rsplit(" ", 1)[0].rstrip(_TRAILING_PUNCT).strip()
+    return False
 
 
 def scan_plan_documents(root: Path) -> list[Citation]:
@@ -119,13 +159,13 @@ def scan_plan_documents(root: Path) -> list[Citation]:
 
 def verify_citation(citation: Citation, root: Path) -> BrokenCitation | None:
     """Verify one citation; return a BrokenCitation when it fails."""
-    if _NUMERIC_ONLY_RE.match(citation.section):
-        return BrokenCitation(citation, "non-heading anchor")
     target = root / citation.path
     if not target.is_file():
         return BrokenCitation(citation, "file not found")
     text = target.read_text(encoding="utf-8", errors="replace")
     if not section_exists(citation.section, text):
+        if _NUMERIC_ONLY_RE.match(citation.section.strip()):
+            return BrokenCitation(citation, "non-heading anchor")
         return BrokenCitation(citation, "section not found")
     return None
 

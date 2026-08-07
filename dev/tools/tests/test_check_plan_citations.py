@@ -120,6 +120,79 @@ def test_numeric_anchor_reported_as_non_heading(tmp_path, anchor):
     assert broken[0].reason == "non-heading anchor"
 
 
+# --- Prefix heading match -----------------------------------------------------
+
+@pytest.mark.parametrize("cited,heading", [
+    ("B", "## B. Actualizar RFC-00XZ"),
+    ("B.", "## B. Actualizar RFC-00XZ"),
+    ("Stage 10", "# Stage 10 — Prompt Rendering"),
+    ("Paso 1", "## Paso 1 — RFC-00YE"),
+    ("4.2", "### 4.2 Context Discoverer Invocation"),
+    ("D3", "### D3. Dos niveles de ubicación"),
+])
+def test_prefix_section_match(cited, heading):
+    assert cpc.section_exists(cited, heading + "\n\ntexto\n")
+
+
+@pytest.mark.parametrize("cited,heading", [
+    ("5", "### 52 semanas"),          # prefix not followed by allowed char
+    ("B", "## Budget overview"),       # next char is a letter
+])
+def test_prefix_section_rejected_when_not_an_anchor(cited, heading):
+    assert not cpc.section_exists(cited, heading + "\n")
+
+
+# --- Numeric anchors -----------------------------------------------------------
+
+def test_numeric_anchor_valid_when_heading_starts_with_number(tmp_path):
+    make_repo(tmp_path, {
+        "plans/a.md": "`plans/b.md:5`\n",
+        "plans/b.md": "### 5. Worker Delegation\n",
+    })
+    assert cpc.verify_all(tmp_path) == []
+
+
+def test_line_range_rejected_even_with_numeric_headings(tmp_path):
+    make_repo(tmp_path, {
+        "plans/a.md": "`plans/b.md:904-979`\n",
+        "plans/b.md": "### 904. Algo\n",
+    })
+    broken = cpc.verify_all(tmp_path)
+    assert len(broken) == 1
+    assert broken[0].reason == "non-heading anchor"
+
+
+# --- Greedy § capture trimming --------------------------------------------------
+
+@pytest.mark.parametrize("cited,heading", [
+    ("Input from Orchestrator y", "## Input from Orchestrator"),
+    ("Skill vs. profile y", "## Skill vs. profile"),
+    ("Stage 10 declara que esa etapa", "# Stage 10 — Prompt Rendering"),
+    ("Stage 10 o justificar explícitamente las exclusiones",
+     "# Stage 10 — Prompt Rendering"),
+])
+def test_greedy_capture_trimmed_until_heading_match(cited, heading):
+    assert cpc.section_exists(cited, heading + "\n")
+
+
+def test_greedy_capture_trims_to_numeric_anchor(tmp_path):
+    make_repo(tmp_path, {
+        "plans/a.md": "`plans/b.md` §9 y su plantilla de IDE era específica\n",
+        "plans/b.md": "## 9. Example Templates\n",
+    })
+    assert cpc.verify_all(tmp_path) == []
+
+
+def test_greedy_capture_still_rejects_unknown_section(tmp_path):
+    make_repo(tmp_path, {
+        "plans/a.md": "`plans/b.md` §Fantasma total y absoluto\n",
+        "plans/b.md": "# Real\n",
+    })
+    broken = cpc.verify_all(tmp_path)
+    assert len(broken) == 1
+    assert broken[0].reason == "section not found"
+
+
 # --- AC-5 / AC-6: exit codes and messages -------------------------------------
 
 def run_tool(root: Path, cwd: Path | None = None) -> subprocess.CompletedProcess:

@@ -12,7 +12,7 @@
 
 # Abstract
 
-Esta RFC define el **modelo de fuente única para `required_sections`**: la lista de secciones requeridas de un artefacto se define una sola vez — en su contrato — y el harness la resuelve por referencia, no por copia. Hoy 15 de 16 policies duplican verbatim en su front matter TOML las secciones del contrato correspondiente (p. ej. `H00-task-analysis.md` copia las 11 secciones de `TASK_ANALYSIS.md`), y la consistencia entre ambas copias depende de ejecutar a mano `harness/sync_required_sections.py`. El runner nunca abre el contrato: lee la copia (`runner_validators.py` líneas 904-979 vía `runner_policies.py:18`).
+Esta RFC define el **modelo de fuente única para `required_sections`**: la lista de secciones requeridas de un artefacto se define una sola vez — en su contrato — y el harness la resuelve por referencia, no por copia. Hoy 15 de 16 policies duplican verbatim en su front matter TOML las secciones del contrato correspondiente (p. ej. `H00-task-analysis.md` copia las 11 secciones de `TASK_ANALYSIS.md`), y la consistencia entre ambas copias depende de ejecutar a mano `harness/sync_required_sections.py`. El runner nunca abre el contrato: lee la copia (`.agents/harness/runner_validators.py`, cadena `run_trigger` → `load_policy` → `validate_sections`, vía `.agents/harness/runner_policies.py` `load_policy`).
 
 El modelo elimina la duplicación haciendo que `load_policy()` resuelva `required_sections` del contrato citado por la policy, y elimina el script de sincronización junto con la clase de fallos que gestiona.
 

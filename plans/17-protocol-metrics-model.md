@@ -4,7 +4,7 @@
 
 **Depends on:** planes 09 y 10 (las métricas cuentan decisiones y fallos; necesitan sus conceptos para no medir texto libre). Consume opcionalmente los planes 14 y 15 si están cerrados al momento de ejecución; esas métricas se marcan condicionales en el catálogo.
 
-**Referencia:** `.agents/harness/RUNNER.md` §Harness metrics (patrón de métricas existente: `HARNESS_REPORT.md` §Metrics).
+**Referencia:** `.agents/harness/RUNNER.md` §Harness metrics (patrón de métricas existente: `.agents/contracts/HARNESS_REPORT.md` §Required structure).
 
 ---
 
@@ -30,7 +30,7 @@ Definir las métricas del protocolo agrupadas por lo que miden:
 ## B. Registro y agregación
 
 - Formato de registro: si el data point ya pasa por un trigger del runner, se extiende `HARNESS_REPORT.md`; si no, artefacto nuevo `METRICS.md` por sesión.
-- Agregación: comando del runner que consolide métricas por sesión y por proyecto (`.project/`), siguiendo el patrón de métricas del runner (`HARNESS_REPORT.md` §Metrics).
+- Agregación: comando del runner que consolide métricas por sesión y por proyecto (`.project/`), siguiendo el patrón de métricas del runner (`.agents/contracts/HARNESS_REPORT.md` §Required structure).
 - Privacidad del modelo: las métricas describen el *proceso*, no el contenido de los artefactos.
 
 ## C. Uso

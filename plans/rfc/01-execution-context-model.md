@@ -274,7 +274,7 @@ No modifican los contratos existentes.
 
 ## Correspondencia con `feature.md` (Stage 4)
 
-> Nota (5 ago 2026): esta sección quedó **superseded**. `feature.md` (Stage 4 — Context Organization) ya no ejemplifica con la clasificación Knowledge/Skills/Standards/Runtime Metadata/User Intent: adoptó directamente las cinco categorías canónicas de esta RFC (plan `plans/04-main-pipeline-closure.md` §C.5). La tabla siguiente se conserva únicamente como traza histórica del mapeo original.
+> Nota (5 ago 2026): esta sección quedó **superseded**. `feature.md` (Stage 4 — Context Organization) ya no ejemplifica con la clasificación Knowledge/Skills/Standards/Runtime Metadata/User Intent: adoptó directamente las cinco categorías canónicas de esta RFC (plan `plans/04-main-pipeline-closure.md` §C, ítem 5). La tabla siguiente se conserva únicamente como traza histórica del mapeo original.
 
 `feature.md` (Stage 4 — Context Organization) ejemplifica la organización de la información con una clasificación distinta: Knowledge, Skills, Standards, Runtime Metadata y User Intent.
 
@@ -509,5 +509,5 @@ Este modelo proporciona una base estable para futuras RFC relacionadas con resol
 
 | Fecha | Cambio | Origen |
 |---|---|---|
-| 2026-08-02 | Corrección transversal anti-alucinación: status normalizado a `Accepted` y autor declarado; notas de vigencia en «Context Assembly» y «Responsibilities → Orchestrator» (la descomposición vigente es la de `orchestrator.md` §5, con siete responsabilidades tras RFC-00YB/00YC); tabla de correspondencia entre las cinco categorías y los ejemplos de `feature.md` Stage 4 agregada como interpretación normativa. | Corrección transversal de `plans/` (2 ago 2026) |
-| 2026-08-05 | §Correspondencia con `feature.md` (Stage 4) marcada como superseded: `feature.md` adoptó las cinco categorías canónicas de esta RFC, por lo que el mapeo con la clasificación de ejemplos anterior quedó sin objeto y se conserva solo como traza histórica. | Plan `plans/04-main-pipeline-closure.md` §C.5 |
+| 2026-08-02 | Corrección transversal anti-alucinación: status normalizado a `Accepted` y autor declarado; notas de vigencia en «Context Assembly» y «Responsibilities → Orchestrator» (la descomposición vigente es la de `.agents/orchestrators/core/roles/orchestrator.md` §5, con siete responsabilidades tras RFC-00YB/00YC); tabla de correspondencia entre las cinco categorías y los ejemplos de `feature.md` Stage 4 agregada como interpretación normativa. | Corrección transversal de `plans/` (2 ago 2026) |
+| 2026-08-05 | §Correspondencia con `feature.md` (Stage 4) marcada como superseded: `feature.md` adoptó las cinco categorías canónicas de esta RFC, por lo que el mapeo con la clasificación de ejemplos anterior quedó sin objeto y se conserva solo como traza histórica. | Plan `plans/04-main-pipeline-closure.md` §C, ítem 5 |

@@ -121,7 +121,7 @@ Execution Context Assembly Process
 
 (Diagrama actualizado el 2026-08-02 para reflejar RFC-00YC: el flujo vigente es Candidates → Prioritization → Resolution → Composition. La versión original mostraba Prioritization → Composition directamente.)
 
-Nota (origen de los Context Candidates): ninguna responsabilidad definida en RFC-00XZ produce Context Candidates; el plan 04 (`plans/04-main-pipeline-closure.md` §C.6) propone enmendar RFC-00XZ para que Context Organization los produzca. Hasta esa enmienda, se asume conceptualmente que Organization los produce.
+Nota (origen de los Context Candidates): ninguna responsabilidad definida en RFC-00XZ produce Context Candidates; el plan 04 (`plans/04-main-pipeline-closure.md` §C, ítem 6) propone enmendar RFC-00XZ para que Context Organization los produzca. Hasta esa enmienda, se asume conceptualmente que Organization los produce.
 
 La presente RFC no reemplaza Context Composition.
 

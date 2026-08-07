@@ -83,6 +83,6 @@ RFC-00XZ quedó desactualizado respecto de 00YB/00YC y su propio *Documentation 
 
 Sección B original del plan, sin efecto — reemplazada por la sección B vigente (antes "B'"). Se preserva como traza histórica.
 
-Texto original: "Los RFCs 00XX/00XY/00XZ/00YA existen en `plans/` con status Approved/Accepted, y las referencias desde `.agents/` (`orchestrator.md:196`, `worker.md:78`, `SKILLS.md:12,39`) ya resuelven. Esta sección queda sin efecto."
+Texto original: "Los RFCs 00XX/00XY/00XZ/00YA existen en `plans/` con status Approved/Accepted, y las referencias desde `.agents/` (`.agents/orchestrators/core/roles/orchestrator.md` §4.3, `.agents/roles/worker.md` §Input from Orchestrator, `.agents/standards/orchestration/SKILLS.md` §Skill vs. profile y §No feature flag) ya resuelven. Esta sección queda sin efecto."
 
 Nota (2 ago 2026): la formulación original era incorrecta en dos puntos — (1) citaba números de línea absolutos sobre archivos mutables (prohibido por `plans/INDEX.md` §Convenciones → Citas verificables); (2) hablaba de "referencias desde `.agents/`" que nunca existieron: grep confirma 0 referencias a `plans/` en `.agents/`. La formulación correcta es: los conceptos ya están definidos inline en `.agents/` (orchestrator.md §5, worker.md §Input from Orchestrator y §Constraints, SKILLS.md §Skill vs. profile y §Validation), conforme a la frontera documental (`plans/INDEX.md` §Convenciones).

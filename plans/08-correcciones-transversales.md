@@ -26,7 +26,7 @@ Eliminar las contradicciones y elementos stale detectados en `.agents/` que no r
 
 ## B. Fixes stale
 
-1. `orchestrators/core/workflow/INDEX.md` fase 03: la nota de rol ("`context_gatherer` (o `context_discoverer` si `knowledge_base` está habilitado)") contradice `orchestrator.md` §4.2, donde el discoverer es un worker *pre-delegation* y el `context_gatherer` sigue ejecutando la fase. Alinear la nota con §4.2.
+1. `orchestrators/core/workflow/INDEX.md` fase 03: la nota de rol ("`context_gatherer` (o `context_discoverer` si `knowledge_base` está habilitado)") contradice `.agents/orchestrators/core/roles/orchestrator.md` §4.2, donde el discoverer es un worker *pre-delegation* y el `context_gatherer` sigue ejecutando la fase. Alinear la nota con §4.2.
 2. `orchestrators/core/roles/orchestrator.md`: la sección "### 7. Scope and Autonomy Enforcement" queda separada de las secciones 1–6 por el H2 "## Recovery decision tree mapping" intercalado. Reubicar ese H2 (p. ej. como subsección de "### 6. Decision Making", cuyo contenido complementa) para que la numeración de responsabilidades sea continua.
 3. `orchestrators/discovery/roles/`: la lista de scopes del rol omite `init_worker`/`synthesis_worker` que sí figuran en `DISCOVERY_STATE_MACHINE.md`. La state machine es canónica; corregir el rol.
 4. `roles/profiles/README.md`: el catálogo ya lista los ocho perfiles, pero no distingue conceptualmente los perfiles de ingeniería (seleccionables vía ORCHESTRATION_GUIDE) de los de fase fija. Agregar una columna o nota que marque `intent_reflector` e `intent_reflection_reviewer` como perfiles de fase fija (fase 01), no seleccionables por ORCHESTRATION_GUIDE.

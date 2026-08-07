@@ -59,18 +59,20 @@ conviene conservarlos como referencia de versionado, pero no son requeridos por
 el runtime.
 
 Requisito de entorno: Python 3.11+ disponible como `python` (el harness usa
-`tomllib`, de la stdlib). No hay dependencias externas para el health-check;
-`pytest` solo se necesita para correr la suite de tests del harness.
+`tomllib`, de la stdlib). No hay dependencias externas para la verificación de
+salud del protocolo; `pytest` solo se necesita para correr la suite de tests
+del harness.
 
 ## 2. Qué configurar
 
 1. **`.gitignore` del proyecto**: agregar `.project/` (artefactos de sesión
-   efímeros; el health-check los crea solo). `.agents/` se versiona completo.
+   efímeros; el agente de sistema los crea solo). `.agents/` se versiona completo.
 2. **`.agents/features.toml`**: revisar los flags. Defaults seguros: los flags
-   `[code]` (`decision_trees`, `rubrics`, `knowledge_base`, prácticas técnicas)
-   vienen habilitados y el health-check los valida; `architecture_contract`
-   viene deshabilitado. Cada flag puede apagarse por variable de entorno
-   `AGENTS_FEATURE_<FLAG>` sin editar el archivo.
+   (`rubrics`, `knowledge_base`, prácticas técnicas, flags declarativos)
+   vienen habilitados y la checklist de salud del protocolo
+   (`.agents/standards/runtime/PROTOCOL_HEALTH.md`) valida sus estándares;
+   `architecture_contract` viene deshabilitado. Cada flag puede apagarse por
+   variable de entorno `AGENTS_FEATURE_<FLAG>` sin editar el archivo.
 3. **Artefactos de contexto del proyecto**: crear en la raíz del proyecto
    `project-map.md` y `technical-analysis.md` siguiendo el estándar
    `.agents/standards/context/PROJECT_ARTIFACTS.md` (plantillas en su §9). Si el
@@ -85,14 +87,16 @@ Requisito de entorno: Python 3.11+ disponible como `python` (el harness usa
 En este orden, desde la raíz del proyecto:
 
 ```bash
-python .agents/harness/runner.py health-check
+python .agents/harness/health_check.py
 python -m pytest .agents/harness/tests/
 ```
 
-- El **health-check** es la primera verificación: confirma que la estructura del
+- La **verificación de salud** es la primera comprobación: la checklist de
+  `.agents/standards/runtime/PROTOCOL_HEALTH.md` confirma que la estructura del
   protocolo quedó íntegra (directorios requeridos, archivos índice, front matter
-  de contratos, decision trees, rubrics, KB, estándares de prácticas técnicas).
-  Debe terminar en `PASS`.
+  de contratos, rubrics, KB, estándares de prácticas técnicas) y la sonda de
+  `health_check.py` confirma que `.project/` es escribible. Debe terminar en
+  `PASS`.
 - La **suite de tests** valida el harness completo. Debe terminar en verde.
 
 Si ambas pasan, el protocolo está operativo. La primera sesión real arranca
@@ -112,8 +116,8 @@ Para entender el protocolo adoptado, en este orden:
 5. `.agents/orchestrators/core/roles/orchestrator.md` — el rol que gobierna.
 6. `.agents/standards/INDEX.md` — mapa de estándares (flags, EARS, rubrics,
    contexto, TDD).
-7. `.agents/harness/INDEX.md` — triggers del harness, runner, health-check,
-   recovery.
+7. `.agents/harness/INDEX.md` — triggers del harness, runner, verificación de
+   salud, recovery.
 
 ## 5. Qué NO forma parte de la adopción
 
@@ -196,7 +200,7 @@ Todo CLI evaluado es **fail-open** ante crash o timeout del hook: si
 `hook_gate.py` falla, la tool call pasa libre. El modelo protege contra
 *omisión del agente*, no contra el hook fallando ni contra un usuario que
 edite configs fuera de sesión. Mitigaciones en capas: script stdlib sin
-dependencias con timeout corto, health-check que verifica escritura/lectura de
+dependencias con timeout corto, sonda que verifica escritura/lectura de
 `state.json`, y detección post-hoc del runner (alerta en `HARNESS_REPORT.md`
 cuando aparecen archivos modificados antes del PASS del gate de plan). Si el
 entorno no tolera ese límite, quedarse en modo declarativo es igual de válido

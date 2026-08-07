@@ -30,6 +30,53 @@ La política de migración entre versiones vive en [`MIGRATION.md`](MIGRATION.md
 
 ---
 
+## [Unreleased]
+
+### Changed
+
+- **Refactor "menos Python, más texto" del protocolo**: la lógica con forma de
+  juicio sale del código Python y pasa a texto de protocolo; el Python restante
+  solo verifica afirmaciones contra el filesystem. Criterio acordado: *Python
+  verifies claims against the filesystem; the LLM verifies documents against
+  documents*.
+- **Recovery por tablas de decisión en Markdown**: los árboles de decisión TOML
+  (H00–H07, H11, H15, D00, D01) se convierten en secciones
+  «Recovery Decision Table» dentro de cada policy del harness
+  (`.agents/orchestrators/*/harness/policies/`). El orquestador evalúa la tabla
+  por juicio (primera regla que coincide); H09/H10 mantienen el fallback
+  `RECOVERY_GENERIC`.
+- **Verificación de salud del protocolo como checklist en prosa**: nuevo
+  estándar `.agents/standards/runtime/PROTOCOL_HEALTH.md` aplicado por el
+  system agent ArgentOS en el bootstrap. Solo la sonda de escritura/lectura de
+  `state.json` queda mecánica (`health_check.py`, reducido a `probe()`). La
+  regla TTL de `.project/.last_health_check` pasa a ser una regla en prosa
+  (timestamp + `ttl_hours` de `features.toml`, default 24, override
+  `AGENTS_HEALTH_CHECK_TTL_HOURS`).
+- **Feature flags declarativos**: la resolución de flags se documenta en
+  `.agents/standards/INDEX.md` (§"Feature flags"); el harness solo resuelve
+  mecánicamente los flags de prácticas técnicas
+  (`runner_validators.is_feature_enabled`). Se elimina el flag
+  `decision_trees` (las tablas de recovery son siempre la policy). Los agentes
+  leen `.agents/features.toml` directamente.
+- **Métricas del protocolo por procedimiento en prosa**: la agregación pasa a
+  `PROTOCOL_METRICS.md` §"Aggregation" como procedimiento aplicado por el
+  agente bajo demanda (las métricas son advisory, nada las gatea).
+
+### Removed
+
+- `.agents/harness/decision_tree_evaluator.py` y los árboles TOML
+  `.agents/orchestrators/*/harness/decision_trees/`; subcomandos `decide`,
+  `features`, `health-check` y `metrics` de `runner.py`.
+- `.agents/harness/feature_flags.py` (reemplazado por la documentación
+  declarativa y `runner_validators.is_feature_enabled`).
+- `.agents/harness/runner_metrics.py` (reemplazado por el procedimiento de
+  agregación de `PROTOCOL_METRICS.md`).
+- `.agents/harness/skill_validation.py` (su chequeo esencial queda plegado en
+  `PROTOCOL_HEALTH.md`, ítem 7).
+- `.agents/task.py` (utilidad de desarrollo sin referencias en el protocolo).
+- Tests de los módulos eliminados; se agregan `test_health_probe.py` (sonda) y
+  `test_recovery_tables.py` (invariante de cobertura de las tablas).
+
 ## [1.0.0] — 2026-08-05
 
 Primera versión etiquetada del protocolo. Punto de corte validado por dogfooding

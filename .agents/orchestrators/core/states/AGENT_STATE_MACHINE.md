@@ -649,7 +649,7 @@ RECOVERY
 
 The agent analyzes failures and determines corrective actions.
 
-`RECOVERY` may be entered from any non-terminal state when a harness gate fails after the allowed retries, when a recovery decision tree returns `RECOVERY_GENERIC`, or when a worker reports an unrecoverable blocker. This includes gate failures in early phases (H00–H04, H10, H11), not only execution and verification failures.
+`RECOVERY` may be entered from any non-terminal state when a harness gate fails after the allowed retries, when a policy's recovery decision table yields `RECOVERY_GENERIC`, or when a worker reports an unrecoverable blocker. This includes gate failures in early phases (H00–H04, H10, H11), not only execution and verification failures.
 
 ### Required Artifact
 
@@ -679,7 +679,7 @@ RECOVERY
 NEEDS_CLARIFICATION
 ```
 
-If the failure is unrecoverable or a recovery decision tree returns `ABORT`:
+If the failure is unrecoverable or a policy's recovery decision table yields `ABORT`:
 
 ```text
 RECOVERY
@@ -712,7 +712,7 @@ No further transition is required.
 
 ### Description
 
-The session has been terminated by an explicit abort action from a recovery decision tree or orchestrator decision.
+The session has been terminated by an explicit abort action from a recovery decision table or orchestrator decision.
 
 This is a terminal state. No further work is performed.
 

@@ -88,3 +88,14 @@ The runner enforces the following semantic checks in addition to section presenc
 - For H06: `decision.result` is `COMPLETED` and no acceptance criterion has `result: FAIL`; `PARTIAL` criteria must have `action_plan`. The only other valid decision value is `RECOVERY`.
 - `citation_resolution`: every citation in the report resolves against the filesystem (broken citations are listed as the FAIL reason).
 - `test_evidence`: every `[[test_results]]` command whose result is not `SKIPPED` has existing evidence (`evidence` file or `SESSION_LOG.md` entry); commands without evidence are listed as the FAIL reason.
+
+## Recovery Decision Table
+
+When H06 fails, the Orchestrator populates the context variables from the session (`task_fundamentally_unachievable`, `failures_require_user`, `failures_fixable`) and applies the first rule that matches, top to bottom:
+
+| # | Condition | Action | Target phase | Role | Reason |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `task_fundamentally_unachievable == true` | `ABORT` | — | — | Task is fundamentally unachievable; abort session. |
+| 2 | `failures_require_user == true` | `NEEDS_CLARIFICATION` | — | — | Failures require user decision to proceed. |
+| 3 | `failures_fixable == true` | `RECOVERY_GENERIC` | `08-recovery.md` | — | Verification failures can be corrected by replanning. |
+| 4 | otherwise | `RECOVERY_GENERIC` | `08-recovery.md` | — | Verification failed; falling back to generic recovery. |

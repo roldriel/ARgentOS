@@ -119,8 +119,8 @@ The Discovery Orchestrator must:
 1. Record the failure in `HARNESS_REPORT.md`.
 2. Re-invoke the worker that produced the invalid entry (once), or
 3. Transition to `discovery:DISCOVERY_FAILED` if the failure repeats, and
-   report to the core Orchestrator (see
-   `.agents/orchestrators/discovery/harness/decision_trees/D01_FAIL.toml`).
+   report to the core Orchestrator (see the §"Recovery Decision Table" of
+   this policy).
 
 ## Implementation Note
 
@@ -128,3 +128,14 @@ D01 may be implemented in Python as part of the harness. The harness is the
 guardian of the protocol and may contain code; this does not violate the
 principle that `.agents/` are instructions, because the harness is not an
 instruction for the agent.
+
+## Recovery Decision Table
+
+When D01 fails, the Discovery Orchestrator populates the context variables from the run (`unsourced_claims_found`, `secrets_leaked`, `merge_inconsistent`, `retry_count` = retries already attempted for this failure) and applies the first rule that matches, top to bottom:
+
+| # | Condition | Action | Target phase | Role | Reason |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `unsourced_claims_found == false` and `secrets_leaked == true` | `RETRY_WORKER` | `01-discovery-env.md` | `environment_worker` | environment.md contains sensitive strings or environment variable values; retry environment_worker with the secret-filtering policy. |
+| 2 | `unsourced_claims_found == false` and `secrets_leaked == false` and `merge_inconsistent == true` | `RETRY_WORKER` | `06-discovery-merge.md` | `synthesis_worker` | The merge lost provenance or left conflicts unmarked; retry synthesis_worker. |
+| 3 | `retry_count >= 3` | `RECOVERY_GENERIC` | `07-discovery-validate.md` | — | D01 failed 3 consecutive times; transition to discovery:DISCOVERY_FAILED and report to the core Orchestrator (abort criterion). |
+| 4 | otherwise | `RETRY_WORKER` | `07-discovery-validate.md` | — | Mark the invalid file and re-invoke the worker that produced the unsourced or unverifiable entry. |

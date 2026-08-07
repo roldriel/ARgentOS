@@ -85,17 +85,14 @@ Metrics are grouped by what they measure. The `Source` column states where the d
 
 ## Aggregation
 
-Aggregation is mechanical and lives in the harness runner:
+Aggregation is performed by the agent on demand (metrics are advisory; nothing gates on them):
 
-```bash
-# Aggregate one session
-python .agents/harness/runner.py metrics --session <uuid>
+1. Choose the scope: one session (`.project/<session-uuid>/`) or the whole project (every session under `.project/`).
+2. Parse the `ENTRY` comments of each session's `HARNESS_REPORT.md` and the `METRIC` comments of its `METRICS.md`; count the iteration folders and their artifacts from the filesystem layout. Unparseable comments are counted separately as corrupt data points, never silently discarded.
+3. Compute every metric of the catalog from those data points: flow metrics from the trigger entries, failure/delegation/context/session metrics from the events, and the computed ratios.
+4. Emit the aggregated report (JSON or a summary table) with one value per catalog metric.
 
-# Aggregate every session under .project/
-python .agents/harness/runner.py metrics
-```
-
-The command consolidates the data points of one session or of the whole project (`.project/`) and emits a JSON report with every metric of the catalog, following the runner metrics pattern (`.agents/harness/RUNNER.md`, §"Harness metrics"). It never modifies session artifacts.
+The aggregation consolidates the data points of one session or of the whole project (`.project/`), following the runner metrics pattern (`.agents/harness/RUNNER.md`, §"Harness metrics"). It never modifies session artifacts.
 
 ## Health signals
 

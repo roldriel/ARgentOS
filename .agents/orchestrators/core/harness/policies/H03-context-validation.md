@@ -88,3 +88,14 @@ The Orchestrator must:
 1. Is every context item used in the plan or execution?
 2. Are there explicit contradictions between context and task specification?
 3. Was irrelevant context explicitly discarded or justified?
+
+## Recovery Decision Table
+
+When H03 fails, the Orchestrator populates the context variables from the session (`context_contradictory`, `gaps_actionable`, `context_user_specific`) and applies the first rule that matches, top to bottom:
+
+| # | Condition | Action | Target phase | Role | Reason |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `context_contradictory == true` | `RECOVERY_GENERIC` | `08-recovery.md` | — | Context is contradictory or unresolvable. |
+| 2 | `gaps_actionable == true` | `RETRY_WORKER` | `03-gather-context.md` | `context_gatherer` | Actionable context gaps found; retry context gatherer. |
+| 3 | `context_user_specific == true` | `NEEDS_CLARIFICATION` | — | — | Gaps require user-specific information. |
+| 4 | otherwise | `RECOVERY_GENERIC` | `08-recovery.md` | — | Context validation failed; falling back to generic recovery. |

@@ -85,3 +85,14 @@ The Orchestrator must:
 1. Does the context name at least one relevant file?
 2. Does the context contain no unstated assumptions?
 3. Can every section be linked to a task requirement?
+
+## Recovery Decision Table
+
+When H02 fails, the Orchestrator populates the context variables from the session (`artifact_exists`, `context_user_specific`, `retry_count` = retries already attempted for this failure) and applies the first rule that matches, top to bottom:
+
+| # | Condition | Action | Target phase | Role | Reason |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `artifact_exists == false` | `RETRY_WORKER` | `03-gather-context.md` | `context_gatherer` | CONTEXT_ARTIFACT.md is missing or incomplete; retry context gatherer. |
+| 2 | `context_user_specific == true` | `NEEDS_CLARIFICATION` | — | — | Context depends on user-specific knowledge. |
+| 3 | `retry_count >= 1` | `RECOVERY_GENERIC` | `08-recovery.md` | — | Repeated failure after retry; route to generic recovery. |
+| 4 | otherwise | `RECOVERY_GENERIC` | `08-recovery.md` | — | Context artifact validation failed; falling back to generic recovery. |

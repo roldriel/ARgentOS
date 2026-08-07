@@ -84,3 +84,14 @@ The Orchestrator must:
 1. Record the failure in `HARNESS_REPORT.md`.
 2. Return to `BUILDING_TASK_SPECIFICATION` and re-invoke the Worker as `task_specification_writer`, or
 3. Transition to `NEEDS_CLARIFICATION` if the specification cannot be completed without user input.
+
+## Recovery Decision Table
+
+When H01 fails, the Orchestrator populates the context variables from the session (`artifact_exists`, `objective_is_ambiguous`, `scope_is_clear`, `retry_count` = retries already attempted for this failure) and applies the first rule that matches, top to bottom:
+
+| # | Condition | Action | Target phase | Role | Reason |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `artifact_exists == false` | `RETRY_WORKER` | `02-build-task-specification.md` | `task_specification_writer` | TASK_SPECIFICATION.md is missing or incomplete; retry writer. |
+| 2 | `objective_is_ambiguous == true` or `scope_is_clear == false` | `NEEDS_CLARIFICATION` | — | — | Objective or scope is ambiguous; request clarification. |
+| 3 | `retry_count >= 1` | `RECOVERY_GENERIC` | `08-recovery.md` | — | Repeated failure after retry; route to generic recovery. |
+| 4 | otherwise | `RECOVERY_GENERIC` | `08-recovery.md` | — | Task specification validation failed; falling back to generic recovery. |

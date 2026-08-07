@@ -79,3 +79,15 @@ The Orchestrator must:
 1. Record the failure in `HARNESS_REPORT.md`.
 2. Return to `ANALYZING_TASK` and re-invoke the Worker as `task_analyst`, or
 3. Transition to `NEEDS_CLARIFICATION` if the analysis cannot be completed without user input.
+
+## Recovery Decision Table
+
+When H00 fails, the Orchestrator populates the context variables from the session (`artifact_exists`, `profile_valid`, `request_is_ambiguous`, `retry_count` = retries already attempted for this failure) and applies the first rule that matches, top to bottom:
+
+| # | Condition | Action | Target phase | Role | Reason |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `artifact_exists == false` | `RETRY_WORKER` | `00-analyze-task.md` | `task_analyst` | TASK_ANALYSIS.md is missing or incomplete; retry task analyst. |
+| 2 | `profile_valid == false` | `RETRY_WORKER` | `00-analyze-task.md` | `task_analyst` | TASK_ANALYSIS.md lacks a valid task profile (trivial\|standard\|complex) or its justification is incoherent; retry task analyst. |
+| 3 | `request_is_ambiguous == true` | `NEEDS_CLARIFICATION` | — | — | Request is ambiguous or lacks critical information. |
+| 4 | `retry_count >= 1` | `RECOVERY_GENERIC` | `08-recovery.md` | — | Repeated failure after retry; route to generic recovery. |
+| 5 | otherwise | `RECOVERY_GENERIC` | `08-recovery.md` | — | Task analysis validation failed; falling back to generic recovery. |

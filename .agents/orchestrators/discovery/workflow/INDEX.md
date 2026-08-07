@@ -20,6 +20,6 @@ The Discovery Orchestrator role is defined in `.agents/orchestrators/discovery/r
 
 - Phases 01–05 run according to the invocation scope (`full`, `env`, `stack`, `patterns`, `business`); `environment_worker`, `stack_worker`, `patterns_worker` and `business_worker` may run in parallel, and `framework_worker` depends on `stack_worker`.
 - Phases are ordered and must not be skipped without justification; partial scopes enter at the phase that owns the scope and rejoin at phase 06.
-- The `D00` trigger is documented in `.agents/orchestrators/discovery/harness/policies/D00-discovery-init.md`; its decision tree lives in `.agents/orchestrators/discovery/harness/decision_trees/D00_FAIL.toml`.
+- The `D00` trigger is documented in `.agents/orchestrators/discovery/harness/policies/D00-discovery-init.md`; its recovery routing lives in that policy's §"Recovery Decision Table".
 - `D01-discovery-output` validates the KB structure and ground truth at phase 07.
 - Discovery artifacts comply with the contracts in `.agents/orchestrators/discovery/contracts/`.

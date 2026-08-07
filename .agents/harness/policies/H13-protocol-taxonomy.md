@@ -75,7 +75,7 @@ state machines, workflows, harness policies, contracts, roles and workers.
 ## Metadata block placement
 
 Files that already start with a TOML front matter block (`+++ ... +++`) — harness policies and
-contracts, parsed by `.agents/harness/runner.py` and `.agents/harness/health_check.py` — carry
+contracts, parsed by `.agents/harness/runner.py` — carry
 the YAML taxonomy block **immediately after** the TOML block. All other files carry it at the
 very top of the file. This keeps the existing TOML parsers untouched.
 

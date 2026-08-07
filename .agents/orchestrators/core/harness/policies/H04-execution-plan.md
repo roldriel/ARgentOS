@@ -88,3 +88,14 @@ The Orchestrator must:
 1. Does the plan reference every section defined in the `EXECUTION_PLAN.md` contract?
 2. Does every step have a verification criterion?
 3. Are there any steps that depend on undeclared information?
+
+## Recovery Decision Table
+
+When H04 fails, the Orchestrator populates the context variables from the session (`plan_out_of_scope`, `plan_depends_on_user`, `retry_count` = retries already attempted for this failure) and applies the first rule that matches, top to bottom:
+
+| # | Condition | Action | Target phase | Role | Reason |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `plan_out_of_scope == true` | `RECOVERY_GENERIC` | `08-recovery.md` | — | Plan is unsafe or out of scope. |
+| 2 | `plan_depends_on_user == true` | `NEEDS_CLARIFICATION` | — | — | Plan depends on unresolved user decisions. |
+| 3 | `retry_count >= 1` | `RECOVERY_GENERIC` | `08-recovery.md` | — | Repeated failure after retry; route to generic recovery. |
+| 4 | otherwise | `RETRY_WORKER` | `05-plan.md` | `planner` | Plan is incomplete but correctable; retry planner. |

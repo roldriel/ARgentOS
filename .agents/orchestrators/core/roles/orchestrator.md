@@ -43,7 +43,7 @@ Accept user task
 Generate session UUID and SESSION_LOG.md
     |
     v
-Run/reuse health-check → log outcome
+Reuse protocol health result (checklist + probe) → log outcome
     |
     v
 TASK_RECEIVED
@@ -79,13 +79,13 @@ Duties:
 - Maintain a `HARNESS_REPORT.md` and a `SESSION_LOG.md` at the session root.
 - Maintain the session `METRICS.md` (contract: `.agents/contracts/METRICS.md`): create it at session start with a `session_start` event naming the active declarative feature flags, and append one event at the moment each observable of the protocol metrics model (`.agents/standards/runtime/PROTOCOL_METRICS.md`) occurs — state transitions, reviewer retries, reported failures, delegations, skill overrides, flag evidence, and context budget/candidate figures.
 - Before starting any work, create `SESSION_LOG.md` using the contract in `.agents/contracts/SESSION_LOG.md`.
-- Write an initial `SESSION_LOG.md` entry at session start recording the active feature flags and health-check status.
+- Write an initial `SESSION_LOG.md` entry at session start recording the active feature flags and the protocol health status.
 - Append a `SESSION_LOG.md` entry for every state transition, harness invocation, worker delegation, and orchestrator decision.
 - Before starting a session, verify that the ArgentOS System Agent has already run:
   - Read `.project/.last_health_check`.
-  - If the file is missing, or if the last successful run is older than the configured TTL (default 24 hours), delegate to ArgentOS to run `python .agents/harness/runner.py health-check` and initialize `.project/`.
-  - Record the health-check outcome in `SESSION_LOG.md`.
-  - A failed health check is governed by the canonical rule defined in `.agents/orchestrators/system/states/SYSTEM_STATE_MACHINE.md` (`BOOTSTRAP_FAILED`): a health-check `FAIL` blocks the handoff; the only exception is explicit user authorization, recorded in `SESSION_LOG.md`. The Orchestrator applies that rule as stated there (the authorization is logged as a warning).
+  - If the file is missing, or if the last successful verification is older than the configured TTL (default 24 hours), delegate to ArgentOS to apply the protocol health checklist (`.agents/standards/runtime/PROTOCOL_HEALTH.md`) and the state-storage probe, and to initialize `.project/`.
+  - Record the protocol health outcome in `SESSION_LOG.md`.
+  - A failed protocol health verification is governed by the canonical rule defined in `.agents/orchestrators/system/states/SYSTEM_STATE_MACHINE.md` (`BOOTSTRAP_FAILED`): a protocol health `FAIL` blocks the handoff; the only exception is explicit user authorization, recorded in `SESSION_LOG.md`. The Orchestrator applies that rule as stated there (the authorization is logged as a warning).
 
 ### 2. State Enforcement
 
@@ -105,11 +105,7 @@ Duties:
 
 ### 4. Feature Flag Awareness
 
-Before activating any protocol enhancement, the Orchestrator reads the resolved feature flags from `.agents/features.toml` (overridable via `AGENTS_FEATURE_*` environment variables) by invoking:
-
-```bash
-python .agents/harness/runner.py features
-```
+Before activating any protocol enhancement, the Orchestrator reads the feature flags directly from `.agents/features.toml` (overridable via `AGENTS_FEATURE_*` environment variables; environment variables take priority).
 
 The Orchestrator must only invoke optional capabilities when their corresponding flag is enabled. The complete flag catalog and override rules are in `.agents/standards/INDEX.md`.
 
@@ -240,7 +236,7 @@ During `ANALYZING_TASK`/`PLANNING`, the Orchestrator selects which skills (if an
 - Consult the activation table in `.agents/skills/INDEX.md` (workflow phase + selected profile → skills).
 - The Orchestrator MAY activate a skill outside the table when the skill's `description` front-matter field justifies it; every such activation and its reason MUST be recorded in `SESSION_LOG.md`.
 - Pass the selected skills in the optional `skills: [...]` field of the delegation payload.
-- Project skills flagged as invalid by the health check are excluded from activation for that session.
+- Project skills flagged as invalid by the protocol health checklist (`.agents/standards/runtime/PROTOCOL_HEALTH.md`, item 7) are excluded from activation for that session.
 
 ### 6. Decision Making
 
@@ -250,31 +246,31 @@ After receiving a worker result and a passing harness:
 
 - Transition to the next allowed state.
 - If the harness fails:
-  - When `decision_trees` is enabled, populate the context variables and invoke `python .agents/harness/runner.py decide --session <uuid> --trigger <HXX> --vars '<json>'`.
-  - Apply the action returned by the decision tree (`RETRY_WORKER`, `NEEDS_CLARIFICATION`, `RECOVERY_GENERIC`, or `ABORT`).
-  - If the decision tree returns `ERROR` or `INCONCLUSIVE`, default to `RECOVERY_GENERIC` with `target_phase = "08-recovery.md"`.
-  - When `decision_trees` is disabled, default directly to `RECOVERY_GENERIC` with `target_phase = "08-recovery.md"`. The markdown recovery policies have been removed; the TOML decision trees are the only supported recovery mechanism.
+  - Populate the context variables of the failed trigger's policy and apply its §"Recovery Decision Table" (first matching rule, top to bottom).
+  - Apply the action of the matching rule (`RETRY_WORKER`, `NEEDS_CLARIFICATION`, `RECOVERY_GENERIC`, or `ABORT`).
+  - If no rule applies or the situation does not match the table's variables, default to `RECOVERY_GENERIC` with `target_phase = "08-recovery.md"`.
 - If the worker fails to produce a valid artifact, route to `RECOVERY`.
 
-#### Recovery decision tree mapping
+#### Recovery decision table mapping
 
-When a harness trigger fails and the `decision_trees` feature flag is enabled, the Orchestrator MUST use the following mapping to choose the correct TOML decision tree. The Orchestrator MUST NOT select a different tree unless the failure is explicitly from another trigger.
+When a harness trigger fails, the Orchestrator MUST apply the §"Recovery Decision Table" of the failed trigger's policy, per the following mapping. The Orchestrator MUST NOT apply the table of a different policy unless the failure is explicitly from another trigger.
 
-| Trigger | TOML file | Typical failure | Recommended target phase |
+| Trigger | Policy (recovery decision table) | Typical failure | Recommended target phase |
 | --- | --- | --- | --- |
-| H00 | `.agents/orchestrators/core/harness/decision_trees/H00_FAIL.toml` | Task analysis is missing required elements or recommends an invalid next state | `00-analyze-task.md` |
-| H01 | `.agents/orchestrators/core/harness/decision_trees/H01_FAIL.toml` | Task specification is incomplete, out of scope, or contains unconfirmed assumptions | `02-build-task-specification.md` |
-| H02 | `.agents/orchestrators/core/harness/decision_trees/H02_FAIL.toml` | Context artifact is insufficient or missing relevant components | `03-gather-context.md` |
-| H03 | `.agents/orchestrators/core/harness/decision_trees/H03_FAIL.toml` | Context validation fails or context is inconsistent with the task specification | `03-gather-context.md` |
-| H04 | `.agents/orchestrators/core/harness/decision_trees/H04_FAIL.toml` | Execution plan is unsafe, incomplete, or out of scope | `08-recovery.md` |
-| H05 | `.agents/orchestrators/core/harness/decision_trees/H05_FAIL.toml` | Execution did not complete or the project is not verifiable | `08-recovery.md` |
-| H06 | `.agents/orchestrators/core/harness/decision_trees/H06_FAIL.toml` | Verification report is invalid or the task is not verified | `08-recovery.md` |
-| H07 | `.agents/orchestrators/core/harness/decision_trees/H07_FAIL.toml` | Scope was exceeded or unauthorized work was performed | `08-recovery.md` |
-| H11 | `.agents/orchestrators/core/harness/decision_trees/H11_FAIL.toml` | Intent reflection is invalid or confidence is inconsistent | `01-confirm-intent.md` |
+| H00 | `.agents/orchestrators/core/harness/policies/H00-task-analysis.md` | Task analysis is missing required elements or recommends an invalid next state | `00-analyze-task.md` |
+| H01 | `.agents/orchestrators/core/harness/policies/H01-task-specification.md` | Task specification is incomplete, out of scope, or contains unconfirmed assumptions | `02-build-task-specification.md` |
+| H02 | `.agents/orchestrators/core/harness/policies/H02-context-artifact.md` | Context artifact is insufficient or missing relevant components | `03-gather-context.md` |
+| H03 | `.agents/orchestrators/core/harness/policies/H03-context-validation.md` | Context validation fails or context is inconsistent with the task specification | `03-gather-context.md` |
+| H04 | `.agents/orchestrators/core/harness/policies/H04-execution-plan.md` | Execution plan is unsafe, incomplete, or out of scope | `08-recovery.md` |
+| H05 | `.agents/orchestrators/core/harness/policies/H05-execution-completed.md` | Execution did not complete or the project is not verifiable | `08-recovery.md` |
+| H06 | `.agents/orchestrators/core/harness/policies/H06-verification-report.md` | Verification report is invalid or the task is not verified | `08-recovery.md` |
+| H07 | `.agents/orchestrators/core/harness/policies/H07-scope-compliance.md` | Scope was exceeded or unauthorized work was performed | `08-recovery.md` |
+| H11 | `.agents/orchestrators/core/harness/policies/H11-intent-reflection.md` | Intent reflection is invalid or confidence is inconsistent | `01-confirm-intent.md` |
+| H15 | `.agents/orchestrators/core/harness/policies/H15-delegation-validity.md` | Delegation payload or return report is invalid | `08-recovery.md` |
 
-The decision tree may refine the target phase based on additional context variables; the Orchestrator must populate those variables and invoke the tree as described in section 6.
+The table may refine the target phase based on additional context variables; the Orchestrator must populate those variables and apply the table as described in section 6.
 
-H09 and H10 have no dedicated decision trees and are intentionally absent from this mapping: when either fails, the Orchestrator defaults to `RECOVERY_GENERIC` with `target_phase = "08-recovery.md"` (whether or not `decision_trees` is enabled).
+H09 and H10 have no recovery decision tables and are intentionally absent from this mapping: when either fails, the Orchestrator defaults to `RECOVERY_GENERIC` with `target_phase = "08-recovery.md"`.
 
 ### 7. Scope and Autonomy Enforcement
 

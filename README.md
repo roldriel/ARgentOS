@@ -12,7 +12,7 @@ The full protocol entry point is [`AGENTS.md`](AGENTS.md). An agent that reads i
 
 Start here:
 
-- **[`ADOPTION.md`](ADOPTION.md)** — what to copy, what to configure, how to validate (health-check first), and the recommended reading order.
+- **[`ADOPTION.md`](ADOPTION.md)** — what to copy, what to configure, how to validate (protocol health verification first), and the recommended reading order.
 - **[`CHANGELOG.md`](CHANGELOG.md)** — versioned history of the protocol.
 - **[`MIGRATION.md`](MIGRATION.md)** — how to move an adopting project between protocol versions.
 
@@ -23,9 +23,11 @@ To validate the `.agents/` workflow, a Flask ABM-style microservice with endpoin
 ## Verifying the protocol
 
 ```bash
-python .agents/harness/runner.py health-check
+python .agents/harness/health_check.py
 python -m pytest .agents/harness/tests/ dev/runtime/tests/
 ```
+
+The first command is the state-storage probe; the document-level health checklist (`.agents/standards/runtime/PROTOCOL_HEALTH.md`) is applied by the ArgentOS System Agent at bootstrap.
 
 The `dev/` directory holds development tooling and reference implementations; it is not part of the distributed protocol (adopters get only `.agents/` + `AGENTS.md` from the `dist` branch).
 

@@ -20,8 +20,4 @@ POLICIES_DIRS = [
     AGENTS_DIR / "orchestrators" / "system" / "harness" / "policies",
     HARNESS_DIR / "policies",
 ]
-DECISION_TREE_DIRS = [
-    AGENTS_DIR / "orchestrators" / "core" / "harness" / "decision_trees",
-    AGENTS_DIR / "orchestrators" / "discovery" / "harness" / "decision_trees",
-]
 ARTIFACTS_DIR: Path = PROJECT_ROOT / ".project"

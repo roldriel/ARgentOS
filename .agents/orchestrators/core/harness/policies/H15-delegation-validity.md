@@ -76,7 +76,7 @@ Each violation is reported with its failure class, as defined inline in the dele
 The Orchestrator must:
 
 1. Record the failure in `HARNESS_REPORT.md` with the failure class of each violation.
-2. Apply the recovery decision tree `.agents/orchestrators/core/harness/decision_trees/H15_FAIL.toml` when the `decision_trees` feature flag is enabled; otherwise apply the contract's retry rules directly.
+2. Apply the §"Recovery Decision Table" of this policy (which encodes the contract's retry rules).
 3. Correct the delegation and re-delegate once (per the contract's §"Retry Rules"); if the second attempt fails, transition to `RECOVERY`.
 
 ## Validation
@@ -84,3 +84,15 @@ The Orchestrator must:
 ```bash
 python -m pytest .agents/harness/tests/test_delegation_validity.py
 ```
+
+## Recovery Decision Table
+
+When H15 fails, the Orchestrator populates the context variables from the delegation (`profile_unresolvable`, `input_artifact_missing`, `budget_incoherent`, `return_report_invalid`, `retry_count` = correction attempts already made for this failure) and applies the first rule that matches, top to bottom:
+
+| # | Condition | Action | Target phase | Role | Reason |
+| --- | --- | --- | --- | --- | --- |
+| 1 | (`profile_unresolvable == true` or `input_artifact_missing == true` or `budget_incoherent == true`) and `retry_count >= 1` | `RECOVERY_GENERIC` | `08-recovery.md` | — | Delegation payload still invalid after one correction (unresolvable profile, missing input artifact, or incoherent budget); route to generic recovery. |
+| 2 | `profile_unresolvable == true` or `input_artifact_missing == true` or `budget_incoherent == true` | `RETRY_WORKER` | `06-execute.md` | `worker` | Delegation payload is invalid (F1 blocker); the Orchestrator corrects the profile, input artifact paths, or context_budget and re-delegates once. target_phase/role name the primary delegation point; apply to the phase actually delegated. |
+| 3 | `return_report_invalid == true` and `retry_count >= 1` | `RECOVERY_GENERIC` | `08-recovery.md` | — | Return report still invalid after one corrective re-invocation; route to generic recovery per the delegation contract retry rules. |
+| 4 | `return_report_invalid == true` | `RETRY_WORKER` | `06-execute.md` | `worker` | Return report invalid (F1 blocker over the protected transition); re-invoke the Worker once with corrective instructions. target_phase/role name the primary delegation point; apply to the phase actually delegated. |
+| 5 | otherwise | `RECOVERY_GENERIC` | `08-recovery.md` | — | Delegation validity failure without a specific route; falling back to generic recovery. |

@@ -1,9 +1,11 @@
 """Canonical catalog of technical practices (single source of truth).
 
 Every technical-practice feature flag is declared here exactly once, together
-with its rubric and its standard document. `runner.py`, `health_check.py` and
-`feature_flags.py` derive their views from this catalog; adding a practice
-requires editing only this file (plus its standard, rubric and flag default).
+with its rubric and its standard document. `runner_validators.py` derives its
+views from this catalog, and the protocol health checklist
+(`.agents/standards/runtime/PROTOCOL_HEALTH.md`) uses it as the flag →
+standard mapping; adding a practice requires editing only this file (plus its
+standard, rubric and flag default).
 """
 
 from __future__ import annotations

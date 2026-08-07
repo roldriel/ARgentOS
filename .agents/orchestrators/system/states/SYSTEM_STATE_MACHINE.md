@@ -57,12 +57,12 @@ VERIFYING_PROTOCOL_HEALTH
 
 ### Description
 
-The System Agent runs the protocol health check and prepares the runtime environment.
+The System Agent verifies protocol health and prepares the runtime environment.
 
 ### Required Action
 
 - Initialize `.project/` and `.project/knowledge/` if missing.
-- Run `python .agents/harness/runner.py health-check` and evaluate the result.
+- Apply the protocol health checklist (`.agents/standards/runtime/PROTOCOL_HEALTH.md`) and run the state-storage probe (`python .agents/harness/health_check.py`); evaluate the combined result.
 
 ### Allowed Transitions
 
@@ -70,12 +70,12 @@ The System Agent runs the protocol health check and prepares the runtime environ
 VERIFYING_PROTOCOL_HEALTH
         |
         v
-ENVIRONMENT_READY            (health check PASS)
+ENVIRONMENT_READY            (protocol health PASS)
 
 VERIFYING_PROTOCOL_HEALTH
         |
         v
-BOOTSTRAP_FAILED             (health check FAIL)
+BOOTSTRAP_FAILED             (protocol health FAIL)
 ```
 
 The `VERIFYING_PROTOCOL_HEALTH → ENVIRONMENT_READY` transition is gated by harness trigger `S00` (`.agents/orchestrators/system/harness/policies/S00-system-ready.md`).
@@ -86,7 +86,7 @@ The `VERIFYING_PROTOCOL_HEALTH → ENVIRONMENT_READY` transition is gated by har
 
 ### Description
 
-The protocol health check passed and the runtime environment is initialized.
+The protocol health verification passed and the runtime environment is initialized.
 
 ### Allowed Transition
 
@@ -105,14 +105,14 @@ On this transition the System Agent hands control to the core Orchestrator, whic
 
 ### Description
 
-The protocol health check failed or the runtime environment could not be initialized.
+The protocol health verification failed or the runtime environment could not be initialized.
 
 ### Required Action
 
 - Report the failing checks to the user.
 - Do NOT hand control to the core Orchestrator.
 
-**Canonical rule:** a health-check `FAIL` blocks the handoff to the core Orchestrator; the only exception is explicit user authorization, recorded in `SESSION_LOG.md`. Every other protocol document that covers this situation (policy `S00`, the bootstrap workflow, the Orchestrator role) references this rule as stated here, without reformulating it.
+**Canonical rule:** a protocol health `FAIL` blocks the handoff to the core Orchestrator; the only exception is explicit user authorization, recorded in `SESSION_LOG.md`. Every other protocol document that covers this situation (policy `S00`, the bootstrap workflow, the Orchestrator role) references this rule as stated here, without reformulating it.
 
 ### Allowed Transition
 

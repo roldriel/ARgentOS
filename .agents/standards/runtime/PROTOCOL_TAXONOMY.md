@@ -485,7 +485,7 @@ entities:
     domain: system
     lifecycle: system
     name: Verifying Protocol Health
-    description: Run the protocol health check and prepare the runtime environment.
+    description: Apply the protocol health checklist and state-storage probe, and prepare the runtime environment.
     previous:
       - system:SYSTEM_INIT
       - system:BOOTSTRAP_FAILED

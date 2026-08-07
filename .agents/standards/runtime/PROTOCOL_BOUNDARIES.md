@@ -93,7 +93,7 @@ No blacklists, no detection: that would fake a control the protocol does not hav
 
 ## Protocol immutability
 
-`.agents/` contains the immutable protocol definition: contracts, workflow phases, state machine definitions, roles, delegation contracts, harness policies, decision trees, standards, and utilities.
+`.agents/` contains the immutable protocol definition: contracts, workflow phases, state machine definitions, roles, delegation contracts, harness policies, standards, and utilities.
 
 - No file generated during a session may be written inside `.agents/`.
 - No protocol file may be modified during normal session execution.

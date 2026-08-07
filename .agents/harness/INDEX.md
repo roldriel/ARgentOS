@@ -11,9 +11,9 @@ It ensures that:
 3. Workflow phases were executed in order without skipped steps.
 4. The process remains auditable and reproducible.
 
-The harness is implemented as a set of policies and an executable runner (`runner.py`, split into `runner_*.py` modules — see `.agents/harness/RUNNER.md` for the layout). The runner validates artifacts against policies, runs health checks, and evaluates recovery decision trees when enabled.
+The harness is implemented as a set of policies and an executable runner (`runner.py`, split into `runner_*.py` modules — see `.agents/harness/RUNNER.md` for the layout). The runner validates artifacts against policies. Recovery routing lives in each policy's §"Recovery Decision Table" and protocol health verification in `.agents/standards/runtime/PROTOCOL_HEALTH.md`.
 
-For runner usage (CLI, health-check, metrics, tests), see `.agents/harness/RUNNER.md`.
+For runner usage (CLI, tests), see `.agents/harness/RUNNER.md`.
 
 ## Who Invokes the Harness
 
@@ -64,7 +64,7 @@ The report is cumulative. Each entry contains:
 - Final decision: `PASS`, `FAIL`, or `SKIP` (`skipped: profile` when the gate is not mandatory for the session's task profile; see the Task Profiles rules in `.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md`).
 - Orchestrator action after the result.
 
-These entries are the trigger data points of the protocol metrics model (`.agents/standards/runtime/PROTOCOL_METRICS.md`); event data points that do not pass through a trigger are recorded by the Orchestrator in `.project/<session-uuid>/METRICS.md` (contract: `.agents/contracts/METRICS.md`). Both are consolidated by the runner `metrics` subcommand.
+These entries are the trigger data points of the protocol metrics model (`.agents/standards/runtime/PROTOCOL_METRICS.md`); event data points that do not pass through a trigger are recorded by the Orchestrator in `.project/<session-uuid>/METRICS.md` (contract: `.agents/contracts/METRICS.md`). Both are consolidated by the agent-driven aggregation procedure of the metrics standard.
 
 ## Failure Handling
 
@@ -77,11 +77,11 @@ If a harness trigger fails:
 
 ## Recovery Mechanism
 
-When a harness trigger fails, the Orchestrator routes to recovery. The recovery logic is implemented as TOML decision trees under `.agents/orchestrators/core/harness/decision_trees/H*_FAIL.toml` (core domain) and `.agents/orchestrators/discovery/harness/decision_trees/D*_FAIL.toml` (discovery domain), and is evaluated via the runner. See `.agents/harness/RUNNER.md` for the `decide` subcommand.
+When a harness trigger fails, the Orchestrator routes to recovery. The recovery logic is declared as a **recovery decision table** inside each policy file (§"Recovery Decision Table"): an ordered list of rules (conditions over context variables such as `artifact_exists` or `retry_count` → recommended action and target phase) that the Orchestrator evaluates by judgment, applying the first matching rule. Co-locating the table with the policy keeps the recovery rule next to the gate that fails.
 
-The runner resolves policies and decision trees across domains: core (`H*`), discovery (`D*`), system (`S*`) and cross-cutting (`.agents/harness/policies/`). The health check validates the trees of every domain that provides them: expected triggers are derived from the domain's policy files, and each tree is structurally validated (references and cycles).
+The runner resolves policies across domains: core (`H*`), discovery (`D*`), system (`S*`) and cross-cutting (`.agents/harness/policies/`).
 
-H09 and H10 have no dedicated decision trees. When either fails and the `decision_trees` feature flag is enabled, the Orchestrator applies the generic recovery fallback (`RECOVERY_GENERIC` → `08-recovery.md`).
+H09 and H10 have no recovery decision tables. When either fails, the Orchestrator applies the generic recovery fallback (`RECOVERY_GENERIC` → `08-recovery.md`).
 
 ## Optional Triggers
 
@@ -103,7 +103,7 @@ H15 (`delegation-validity`) is not a state-transition gate over a session artifa
 | H15 pre-delegation | Before the Orchestrator invokes a Worker | Profile resolvability, skill resolvability, input artifact existence, budget coherence |
 | H15 post-return | When the Orchestrator receives the return report, before applying the transition trigger | Return report schema and failure classes |
 
-Because a delegation payload is not a session artifact, the runner CLI does not execute H15; its machine evaluation lives in `.agents/harness/delegation_validity.py` and in the policy's test suite (`.agents/harness/tests/test_delegation_validity.py`). Its recovery decision tree is `.agents/orchestrators/core/harness/decision_trees/H15_FAIL.toml`.
+Because a delegation payload is not a session artifact, the runner CLI does not execute H15; its machine evaluation lives in `.agents/harness/delegation_validity.py` and in the policy's test suite (`.agents/harness/tests/test_delegation_validity.py`). Its recovery routing is the §"Recovery Decision Table" of `.agents/orchestrators/core/harness/policies/H15-delegation-validity.md`.
 
 ## Project Discovery
 
@@ -146,7 +146,7 @@ configuration.
 
 Honest limit: hook systems are **fail-open** — a hook crash or timeout lets
 the tool call through. Mitigations are layered: the hook script is stdlib
-with a short timeout, the health check verifies `state.json` write/read,
+with a short timeout, the state-storage probe (`health_check.py`) verifies `state.json` write/read,
 and the runner performs post-hoc detection: when the plan gate (H04)
 passes, it scans for project files modified after the session started but
 before the PASS, and records suspects as an alert in the HARNESS_REPORT
@@ -154,7 +154,7 @@ entry (contract: `.agents/contracts/HARNESS_REPORT.md`).
 
 ## Constraints
 
-- The harness MUST NOT modify project source files. Environment preparation performed by the health check (creating `.project/knowledge/` and its `INDEX.md`, writing `.project/.last_health_check`) is part of the bootstrap role and is exempt from this rule.
+- The harness MUST NOT modify project source files. Environment preparation performed by the ArgentOS System Agent during bootstrap (creating `.project/knowledge/` and its `INDEX.md`, writing `.project/.last_health_check`) is part of the bootstrap role and is exempt from this rule.
 - The harness MUST NOT write phase artifacts.
 - The harness MUST NOT skip any check in the policy.
 - The harness MUST leave an audit trail in `HARNESS_REPORT.md`.

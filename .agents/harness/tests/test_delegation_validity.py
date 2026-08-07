@@ -4,7 +4,7 @@ Covers the pre-delegation gate (V1 profile resolvability, V2 skill
 resolvability, V3 budget coherence, V4 input artifact existence), the
 post-return gate (V5 return report schema and failure classes), the
 registration of the policy in the runner, and the H15 recovery decision
-tree.
+table declared in the policy.
 
 See `.agents/orchestrators/core/harness/policies/H15-delegation-validity.md`.
 """
@@ -21,21 +21,18 @@ import pytest
 
 import delegation_validity
 import runner_policies
-from decision_tree_evaluator import evaluate_tree
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 RUNNER_PATH = PROJECT_ROOT / ".agents" / "harness" / "runner.py"
-TREE_PATH = (
+POLICY_PATH = (
     PROJECT_ROOT
     / ".agents"
     / "orchestrators"
     / "core"
     / "harness"
-    / "decision_trees"
-    / "H15_FAIL.toml"
+    / "policies"
+    / "H15-delegation-validity.md"
 )
-
-import tomllib
 
 
 @pytest.fixture
@@ -236,7 +233,7 @@ def test_blocker_with_deviation_class_prefix_fails():
 
 
 # ---------------------------------------------------------------------------
-# Runner registration and decision tree
+# Runner registration and recovery decision table
 # ---------------------------------------------------------------------------
 
 
@@ -273,32 +270,30 @@ def test_runner_cli_accepts_h15(tmp_path):
     assert output["transition"] == "pre-delegation and post-return delegation gate"
 
 
-def _evaluate_h15(vars_):
-    tree = tomllib.loads(TREE_PATH.read_text(encoding="utf-8"))
-    return evaluate_tree(tree, {"trigger": "H15", "artifact_exists": True, **vars_})
+def _recovery_table() -> str:
+    content = POLICY_PATH.read_text(encoding="utf-8")
+    assert "## Recovery Decision Table" in content
+    return content.split("## Recovery Decision Table", 1)[1]
 
 
-def test_tree_invalid_payload_retries_then_recovers():
-    result = _evaluate_h15({"profile_unresolvable": True, "retry_count": 0})
-    assert result.result == "DECISION"
-    assert result.action == "RETRY_WORKER"
-
-    result = _evaluate_h15({"input_artifact_missing": True, "retry_count": 1})
-    assert result.result == "DECISION"
-    assert result.action == "RECOVERY_GENERIC"
-
-
-def test_tree_invalid_return_report_retries_then_recovers():
-    result = _evaluate_h15({"return_report_invalid": True, "retry_count": 0})
-    assert result.result == "DECISION"
-    assert result.action == "RETRY_WORKER"
-
-    result = _evaluate_h15({"return_report_invalid": True, "retry_count": 1})
-    assert result.result == "DECISION"
-    assert result.action == "RECOVERY_GENERIC"
+def test_recovery_table_payload_rules_retry_then_recover():
+    """Invalid payload: one corrective re-delegation, then generic recovery."""
+    table = _recovery_table()
+    assert "profile_unresolvable" in table
+    assert "input_artifact_missing" in table
+    assert "budget_incoherent" in table
+    assert "RETRY_WORKER" in table
+    assert "RECOVERY_GENERIC" in table
 
 
-def test_tree_unknown_failure_falls_back_to_generic_recovery():
-    result = _evaluate_h15({"retry_count": 0})
-    assert result.result == "DECISION"
-    assert result.action == "RECOVERY_GENERIC"
+def test_recovery_table_return_report_rules_retry_then_recover():
+    """Invalid return report: one corrective re-invocation, then recovery."""
+    table = _recovery_table()
+    assert "return_report_invalid" in table
+    assert table.count("retry_count") >= 2
+
+
+def test_recovery_table_has_generic_fallback():
+    table = _recovery_table()
+    assert "otherwise" in table
+    assert "08-recovery.md" in table

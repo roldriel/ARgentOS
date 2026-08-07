@@ -68,3 +68,15 @@ The Orchestrator must:
 1. Record the failure in `HARNESS_REPORT.md`.
 2. Return to `CONFIRMING_INTENT` and re-invoke the Worker as `intent_reflector`, or
 3. Transition to `NEEDS_CLARIFICATION` if the intent cannot be confirmed without user input.
+
+## Recovery Decision Table
+
+When H11 fails, the Orchestrator populates the context variables from the session (`artifact_exists`, `correction_cycle_exceeded`, `user_rejected`, `user_unclear`, `retry_count` = retries already attempted for this failure) and applies the first rule that matches, top to bottom:
+
+| # | Condition | Action | Target phase | Role | Reason |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `artifact_exists == false` | `RETRY_WORKER` | `01-confirm-intent.md` | `intent_reflector` | INTENT_REFLECTION.md is missing or incomplete; retry intent reflector. |
+| 2 | `correction_cycle_exceeded == true` | `NEEDS_CLARIFICATION` | — | — | Maximum correction cycles reached; ask the user to reformulate the task from scratch. |
+| 3 | `user_rejected == true` or `user_unclear == true` | `NEEDS_CLARIFICATION` | — | — | User rejected the reflected intent or the intent remains unclear; request clarification. |
+| 4 | `retry_count >= 1` | `RECOVERY_GENERIC` | `08-recovery.md` | — | Repeated failure after retry; route to generic recovery. |
+| 5 | otherwise | `RECOVERY_GENERIC` | `08-recovery.md` | — | Intent reflection validation failed; falling back to generic recovery. |

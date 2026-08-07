@@ -9,12 +9,13 @@ _HARNESS_DIR = Path(__file__).resolve().parent
 if str(_HARNESS_DIR) not in sys.path:
     sys.path.insert(0, str(_HARNESS_DIR))
 
+import os
 import re
 import time
+import tomllib
 from datetime import datetime, timezone
 from typing import Any
 
-import feature_flags
 import runner_citations
 import runner_profiles
 import runner_state
@@ -332,10 +333,49 @@ def validate_h05_execution_summary(
 
 TECHNICAL_PRACTICE_FLAGS: set[str] = technical_practices.TECHNICAL_PRACTICE_FLAGS
 
+_FEATURES_TOML = Path(__file__).resolve().parents[2] / ".agents" / "features.toml"
+
+_TRUE_VALUES = {"true", "1", "yes", "on"}
+_FALSE_VALUES = {"false", "0", "no", "off"}
+
+
+def is_feature_enabled(flag: str) -> bool:
+    """Resolve a boolean feature flag.
+
+    Priority: AGENTS_FEATURE_<FLAG> environment variable, then
+    `.agents/features.toml` [features], then default True. This is the only
+    flag resolution the harness performs mechanically; every other flag is
+    consumed declaratively by agents (see `.agents/standards/INDEX.md`,
+    §"Feature flags").
+    """
+    env_value = os.environ.get(f"AGENTS_FEATURE_{flag.upper()}")
+    if env_value is not None:
+        normalized = env_value.strip().lower()
+        if normalized in _TRUE_VALUES:
+            return True
+        if normalized in _FALSE_VALUES:
+            return False
+        raise ValueError(
+            f"Environment variable AGENTS_FEATURE_{flag.upper()}={env_value!r} "
+            "is not a valid boolean"
+        )
+    if _FEATURES_TOML.exists():
+        data = tomllib.loads(_FEATURES_TOML.read_text(encoding="utf-8"))
+        value = data.get("features", {}).get(flag)
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, str):
+            normalized = value.strip().lower()
+            if normalized in _TRUE_VALUES:
+                return True
+            if normalized in _FALSE_VALUES:
+                return False
+    return True
+
 
 def _any_technical_practice_enabled() -> bool:
     """Return True if at least one technical-practice feature flag is enabled."""
-    return any(feature_flags.is_enabled(flag) for flag in TECHNICAL_PRACTICE_FLAGS)
+    return any(is_feature_enabled(flag) for flag in TECHNICAL_PRACTICE_FLAGS)
 
 
 def validate_h01_technical_approach(
@@ -443,7 +483,7 @@ def validate_h01_technical_approach(
             )
         )
         if known:
-            enabled_at_protocol_level = feature_flags.is_enabled(practice)
+            enabled_at_protocol_level = is_feature_enabled(practice)
             checks.append(
                 CheckResult(
                     id=f"{practice}_flag_enabled",
@@ -560,7 +600,7 @@ def expected_rubrics_for_session(session_uuid: str, iteration: str | None) -> se
 
     for practice in enabled:
         rubric_name = TECHNICAL_PRACTICE_RUBRIC_MAP.get(practice)
-        if rubric_name and feature_flags.is_enabled(practice):
+        if rubric_name and is_feature_enabled(practice):
             rubrics.add(rubric_name)
 
     return rubrics

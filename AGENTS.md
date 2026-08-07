@@ -22,7 +22,7 @@ Once ArgentOS confirms a healthy environment, the orchestrator takes control.
 | Topic | Source |
 | --- | --- |
 | Entry point, components, artifact layout, project boundary | `.agents/standards/runtime/PROTOCOL_BOUNDARIES.md` |
-| Harness triggers, runner, health-check, recovery | `.agents/harness/INDEX.md` |
+| Harness triggers, runner, protocol health, recovery | `.agents/harness/INDEX.md` |
 | Feature flags, EARS, rubrics, context, TDD, design standards | `.agents/standards/INDEX.md` |
 | Protocol bootstrap sequence | `.agents/INDEX.md` |
 | State machine | `.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md` |

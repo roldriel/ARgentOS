@@ -46,8 +46,8 @@ Para pasar un proyecto adoptante de la versión `X` a la versión `Y`:
 6. **Sincronizar el directorio**: reemplazar `.agents/` y `AGENTS.md` por los de
    la versión `Y`. `.agents/` es autocontenido: no referencia `plans/` ni RFCs, así
    que no hace falta copiar nada más del repo de origen.
-7. **Validar**: ejecutar el health-check como primera verificación
-   (`python .agents/harness/runner.py health-check` → PASS) y luego la suite del
+7. **Validar**: ejecutar la sonda de almacenamiento de estado como primera
+   verificación (`python .agents/harness/health_check.py` → PASS) y luego la suite del
    harness (`python -m pytest .agents/harness/tests/`). Ambas deben pasar antes de
    operar sesiones reales con la versión nueva.
 8. **Actualizar la versión adoptada**: registrar en el proyecto qué versión de

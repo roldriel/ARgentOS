@@ -57,3 +57,14 @@ The Discovery Orchestrator must:
 1. Record the failure in `HARNESS_REPORT.md`.
 2. Return to `DISCOVERY_INIT` and re-run the initialization, or
 3. End the run as `discovery:DISCOVERY_FAILED` and return control to the core Orchestrator if the discovery request cannot be initialized without user input; the core Orchestrator decides the `core:NEEDS_CLARIFICATION` transition.
+
+## Recovery Decision Table
+
+When D00 fails, the Discovery Orchestrator populates the context variables from the run (`artifact_exists`, `request_is_ambiguous`, `retry_count` = retries already attempted for this failure) and applies the first rule that matches, top to bottom:
+
+| # | Condition | Action | Target phase | Role | Reason |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `artifact_exists == false` | `RETRY_WORKER` | `00-discovery-init.md` | `init_worker` | KB_DISCOVERY_REPORT.md is missing or incomplete; retry init_worker. |
+| 2 | `request_is_ambiguous == true` | `NEEDS_CLARIFICATION` | — | — | Discovery request is missing critical information (scope, target, or required inputs). |
+| 3 | `retry_count >= 3` | `RECOVERY_GENERIC` | `00-discovery-init.md` | — | Repeated failure after retry; transition to discovery:DISCOVERY_FAILED and report to the core Orchestrator. |
+| 4 | otherwise | `RECOVERY_GENERIC` | `00-discovery-init.md` | — | Discovery init validation failed; transition to discovery:DISCOVERY_FAILED and report to the core Orchestrator. |

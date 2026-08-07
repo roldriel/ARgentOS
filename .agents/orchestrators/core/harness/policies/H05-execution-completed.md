@@ -68,3 +68,14 @@ The Orchestrator must:
 
 The runner enforces the following semantic checks in addition to section presence:
 - For H05: `EXECUTION_SUMMARY.md` exists, `final_state.status` is `VERIFIABLE`, and every step is `COMPLETED` or `SKIPPED` with notes.
+
+## Recovery Decision Table
+
+When H05 fails, the Orchestrator populates the context variables from the session (`project_unrecoverable`, `execution_blocked`, `execution_complete`) and applies the first rule that matches, top to bottom:
+
+| # | Condition | Action | Target phase | Role | Reason |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `project_unrecoverable == true` | `ABORT` | — | — | Project state is unrecoverable; abort session. |
+| 2 | `execution_blocked == true` | `RECOVERY_GENERIC` | `08-recovery.md` | — | Execution blocked by unexpected issue. |
+| 3 | `execution_complete == false` | `RETRY_WORKER` | `06-execute.md` | `executor` | Some steps remain pending; retry executor. |
+| 4 | otherwise | `RECOVERY_GENERIC` | `08-recovery.md` | — | Execution validation failed; falling back to generic recovery. |

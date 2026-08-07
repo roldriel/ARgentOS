@@ -70,3 +70,14 @@ The Orchestrator must:
 
 The runner enforces the following semantic checks in addition to section presence:
 - For H07: `scope_respected` is `true`, `unplanned_changes` is empty, and `user_authorized_extra_work` is `false`.
+
+## Recovery Decision Table
+
+When H07 fails, the Orchestrator populates the context variables from the session (`scope_violation_severe`, `scope_expansion_requested`, `scope_compliant`) and applies the first rule that matches, top to bottom:
+
+| # | Condition | Action | Target phase | Role | Reason |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `scope_violation_severe == true` | `RECOVERY_GENERIC` | `08-recovery.md` | — | Scope violation is severe or repeated. |
+| 2 | `scope_expansion_requested == true` | `NEEDS_CLARIFICATION` | — | — | User needs to approve scope expansion. |
+| 3 | `scope_compliant == false` | `RETRY_WORKER` | `06-execute.md` | `executor` | Scope reported as not compliant; retry executor once with corrected scope. If the retry also fails, generic recovery will be used. |
+| 4 | otherwise | `RECOVERY_GENERIC` | `08-recovery.md` | — | Scope compliance check failed; falling back to generic recovery. |

@@ -24,8 +24,10 @@ To validate the `.agents/` workflow, a Flask ABM-style microservice with endpoin
 
 ```bash
 python .agents/harness/runner.py health-check
-python -m pytest .agents/harness/tests/ runtime/tests/
+python -m pytest .agents/harness/tests/ dev/runtime/tests/
 ```
+
+The `dev/` directory holds development tooling and reference implementations; it is not part of the distributed protocol (adopters get only `.agents/` + `AGENTS.md` from the `dist` branch).
 
 ## Implementation plans
 

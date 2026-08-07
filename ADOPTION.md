@@ -119,7 +119,8 @@ Para entender el protocolo adoptado, en este orden:
 
 - No se adopta `plans/` ni las RFCs: son el proceso de diseño del protocolo, no
   el protocolo.
-- No se adopta `example/` ni `runtime/`: son bancos de prueba del desarrollo.
+- No se adopta `example/` ni `dev/` (`dev/tools/`, `dev/runtime/`): son bancos
+  de prueba y herramientas del desarrollo.
 - No hay soporte de múltiples versiones en paralelo: se adopta una versión y se
   migra siguiendo `MIGRATION.md`.
 

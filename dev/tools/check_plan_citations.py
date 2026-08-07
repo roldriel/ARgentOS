@@ -15,7 +15,7 @@ leading '#' removed, trailing punctuation removed). Numeric-only anchors
 (line numbers, subsection numbers) are not headings and are reported as
 broken with reason "non-heading anchor".
 
-Usage: python tools/check_plan_citations.py [--root REPO_ROOT]
+Usage: python dev/tools/check_plan_citations.py [--root REPO_ROOT]
 
 Exit code: 0 when no broken citation is found, 1 otherwise.
 Standard library only.
@@ -159,7 +159,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--root",
         type=Path,
-        default=Path(__file__).resolve().parents[1],
+        default=Path(__file__).resolve().parents[2],
         help="Repository root (default: parent of this script's directory).",
     )
     args = parser.parse_args(argv)

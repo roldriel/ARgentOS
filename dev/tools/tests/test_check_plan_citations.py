@@ -1,4 +1,4 @@
-"""Tests for tools/check_plan_citations.py (TDD: written before the module).
+"""Tests for dev/tools/check_plan_citations.py (TDD: written before the module).
 
 Covers acceptance criteria AC-1..AC-8 of the task specification
 (.project/d4ab6a93-8e75-4880-baf3-676fce992936/00/04-TASK_SPECIFICATION.md).
@@ -13,10 +13,10 @@ from pathlib import Path
 
 import pytest
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-TOOL = REPO_ROOT / "tools" / "check_plan_citations.py"
+REPO_ROOT = Path(__file__).resolve().parents[3]
+TOOL = REPO_ROOT / "dev" / "tools" / "check_plan_citations.py"
 
-sys.path.insert(0, str(REPO_ROOT / "tools"))
+sys.path.insert(0, str(REPO_ROOT / "dev" / "tools"))
 
 import check_plan_citations as cpc  # noqa: E402
 

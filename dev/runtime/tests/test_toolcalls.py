@@ -1,22 +1,25 @@
 """Tests for the reference runtime materializations.
 
-These tests validate the runtime implementations in `runtime/toolcalls/`,
-including the conformance criteria declared in `runtime/README.md`. They are
+These tests validate the runtime implementations in `dev/runtime/toolcalls/`,
+including the conformance criteria declared in `dev/runtime/README.md`. They are
 independent of `.agents/harness/tests/`, which validates the protocol.
 """
 
 from __future__ import annotations
 
 import math
+import sys
 from pathlib import Path
 
 import pytest
 
-from runtime.toolcalls import prompt_rendering, toolcalls_rendering
-from runtime.toolcalls.budget import MaterializationCost, estimate_tokens
-from runtime.toolcalls.context import ExecutionContext, SkillSource, resolve_skills
+REPO_ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(REPO_ROOT / "dev"))
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+from runtime.toolcalls import prompt_rendering, toolcalls_rendering  # noqa: E402
+from runtime.toolcalls.budget import MaterializationCost, estimate_tokens  # noqa: E402
+from runtime.toolcalls.context import ExecutionContext, SkillSource, resolve_skills  # noqa: E402
+
 SKILLS_ROOT = REPO_ROOT / ".agents" / "skills"
 SAMPLE_SKILLS = ["planner", "extractor", "summarizer"]
 

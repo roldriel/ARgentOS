@@ -1,3 +1,13 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: worker
+domain: core
+worker_id: context_gatherer
+state: core:GATHERING_CONTEXT
+lifecycle: context
+actor: orchestrator
+---
+
 # Role: Context Gatherer
 
 ## Purpose

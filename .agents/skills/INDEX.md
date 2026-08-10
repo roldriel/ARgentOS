@@ -2,7 +2,7 @@
 
 Protocol skills live under `.agents/skills/<name>/`. They are general, generic capabilities, immutable like the rest of `.agents/`. The format contract is defined in `.agents/skills/README.md`; activation mechanics in `.agents/standards/orchestration/SKILLS.md`.
 
-Every skill in this index is *integrated*: it is referenced by name from a worker role, workflow phase, or harness policy outside `.agents/skills/` (see `plans/rfc/24-skill-lifecycle-model.md`). Skills without such a consumer are removed from the catalog.
+Every skill in this index is *integrated*: it is referenced by name from a worker role, workflow phase, or harness policy outside `.agents/skills/`. Skills without such a consumer are removed from the catalog.
 
 ## Skill inventory
 

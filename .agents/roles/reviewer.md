@@ -1,3 +1,11 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: role
+domain: cross-cutting
+role_id: reviewer
+actor: orchestrator
+---
+
 # Role: Reviewer
 
 ## Purpose

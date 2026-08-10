@@ -1,3 +1,13 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: worker
+domain: core
+worker_id: planner
+state: core:PLANNING
+lifecycle: planning
+actor: orchestrator
+---
+
 # Role: Planner
 
 ## Purpose

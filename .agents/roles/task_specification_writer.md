@@ -1,3 +1,13 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: worker
+domain: core
+worker_id: task_specification_writer
+state: core:BUILDING_TASK_SPECIFICATION
+lifecycle: task
+actor: orchestrator
+---
+
 # Role: Task Specification Writer
 
 ## Purpose

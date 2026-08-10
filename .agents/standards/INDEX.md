@@ -49,7 +49,7 @@ Ignoring an enabled declarative flag — not reading it, or reading it without a
 
 ### Technical-practice catalog
 
-The technical-practice flags map each flag to the rubric that scores it and the standard document that defines it. This table is the canonical flag → (rubric, standard) mapping (previously `.agents/harness/technical_practices.py`, now removed); the protocol health checklist (`.agents/standards/runtime/PROTOCOL_HEALTH.md`) uses it to verify that every enabled practice has its standard on disk.
+The technical-practice flags map each flag to the rubric that scores it and the standard document that defines it. This table is the canonical flag → (rubric, standard) mapping (previously `technical_practices.py`, now removed); the protocol health checklist (`.agents/standards/runtime/PROTOCOL_HEALTH.md`) uses it to verify that every enabled practice has its standard on disk.
 
 | Flag | Rubric | Standard |
 |------|--------|----------|

@@ -1,3 +1,13 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: worker
+domain: core
+worker_id: task_analyst
+state: core:ANALYZING_TASK
+lifecycle: task
+actor: orchestrator
+---
+
 # Role: Task Analyst
 
 ## Purpose

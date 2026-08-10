@@ -41,7 +41,7 @@ The agent must enter this module at the start of every session, before loading t
 
 ### ENVIRONMENT_READY
 
-The health check passed and the runtime environment is initialized.
+The protocol health verification (checklist + probe) passed and the runtime environment is initialized.
 
 Hand control to the core Orchestrator:
 
@@ -55,7 +55,7 @@ The core Orchestrator continues from `SYSTEM_READY` as defined in `.agents/orche
 
 ### BOOTSTRAP_FAILED
 
-The health check failed or the runtime environment could not be initialized.
+The protocol health verification failed or the runtime environment could not be initialized.
 
 Report the failing checks to the user and stop. The blocking rule for the handoff and its only exception are those defined in `.agents/orchestrators/system/states/SYSTEM_STATE_MACHINE.md` (`BOOTSTRAP_FAILED`, canonical rule).
 
@@ -64,10 +64,10 @@ Report the failing checks to the user and stop. The blocking rule for the handof
 # Procedure
 
 1. Initialize `.project/` and `.project/knowledge/` (including `INDEX.md` and `entries/`) if missing.
-2. Run the protocol health check:
+2. Apply the protocol health checklist of `.agents/standards/runtime/PROTOCOL_HEALTH.md` and run the state-storage probe:
 
 ```bash
-python .agents/harness/runner.py health-check
+python .agents/harness/health_check.py
 ```
 
 3. Evaluate the result through harness trigger `S00` (`.agents/orchestrators/system/harness/policies/S00-system-ready.md`).

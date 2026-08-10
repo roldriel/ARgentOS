@@ -24,7 +24,8 @@ It is not a task worker. It does not produce phase artifacts, change task state,
 
 ### 1. Protocol health verification
 
-- Run `python .agents/harness/runner.py health-check`.
+- Apply the protocol health checklist of `.agents/standards/runtime/PROTOCOL_HEALTH.md` (documents verified against documents by agent judgment).
+- Run the state-storage probe: `python .agents/harness/health_check.py` (the only mechanical item; it verifies that `.project/` is writable for `state.json`).
 - Report failures and abort if the protocol is not healthy.
 
 ### 2. Project directory initialization
@@ -42,7 +43,7 @@ The ArgentOS System Agent MUST verify that `.project/README.md` exists and is no
 
 ### 3. Health-check timestamp
 
-- Create/update `.project/.last_health_check` when the health-check passes.
+- Create/update `.project/.last_health_check` with the current UTC timestamp (ISO-8601) when the health checklist and the probe pass.
 
 ## Lifecycle
 
@@ -52,7 +53,7 @@ The full state machine for this lifecycle (domain `system`) is defined in `.agen
 BOOTSTRAP
     |
     v
-Run health-check
+Apply health checklist + state-storage probe
     |
     v
 If healthy:
@@ -72,7 +73,7 @@ DELEGATE to Orchestrator
 - MUST NOT write phase artifacts.
 - MUST NOT execute user tasks.
 - MUST NOT change task state.
-- MUST NOT skip the health-check.
+- MUST NOT skip the protocol health verification (checklist + probe).
 
 ## Output
 

@@ -21,8 +21,8 @@ Rules:
   `H14` is intentionally omitted (unassigned); none of them is reported as missing.
 - Protocol files reference this dictionary through a YAML metadata block; they do not
   duplicate the relationships defined here.
-- This dictionary is validated by harness policy `.agents/harness/policies/H13-protocol-taxonomy.md`
-  and `.agents/harness/tests/test_protocol_taxonomy.py`.
+- This dictionary is validated by the Orchestrator's judgment against harness
+  policy `.agents/harness/policies/H13-protocol-taxonomy.md`.
 
 ```yaml
 domains:
@@ -485,7 +485,7 @@ entities:
     domain: system
     lifecycle: system
     name: Verifying Protocol Health
-    description: Run the protocol health check and prepare the runtime environment.
+    description: Apply the protocol health checklist and state-storage probe, and prepare the runtime environment.
     previous:
       - system:SYSTEM_INIT
       - system:BOOTSTRAP_FAILED
@@ -1085,7 +1085,7 @@ entities:
     domain: cross-cutting
     lifecycle: null
     tag: report
-    description: Audit trail of harness trigger invocations, written by the harness runner at the session root.
+    description: Audit trail of harness trigger invocations, written by the Orchestrator at the session root.
     produced_by:
       - core:TASK_RECEIVED
     consumed_by:

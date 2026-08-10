@@ -1,10 +1,12 @@
-"""Protocol state persistence for the harness runner.
+"""Protocol state persistence for the harness.
 
-`state.json` (`.project/<session-uuid>/<iteration>/state.json`) is the single
-source of truth for the protocol state of an iteration. Only the runner writes
-it, transactionally (temp file + rename), after each gate PASS. Consumers (the
-`hook_gate.py` lifecycle hook, the Orchestrator) read it; a missing or corrupt
-`state.json` means *no gate has passed* (fail-closed for consumers).
+There is no validation runner anymore: the Orchestrator judges each gate in
+prose and this script only RECORDS the outcome. It is the single writer of
+`state.json` (`.project/<session-uuid>/<iteration>/state.json`), the source
+of truth for the protocol state of an iteration. Writes are transactional
+(temp file + atomic rename) after each gate PASS. Consumers (the
+`hook_gate.py` lifecycle hook, the Orchestrator) read it; a missing or
+corrupt `state.json` means *no gate has passed* (fail-closed for consumers).
 
 Layout:
 
@@ -19,26 +21,34 @@ Layout:
   "updated": "<ISO-8601>"
 }
 ```
+
+CLI (state recording only):
+
+    python .agents/harness/runner_state.py \
+        --session <uuid> --trigger <HXX> [--iteration <N>] pass
+
+Records the PASS for the trigger in state.json. `--iteration` defaults to
+the session's latest iteration folder. For trigger H04 it additionally runs
+the post-hoc bypass scan and prints any alert to stderr without blocking.
+Exit 0 on success; exit 2 with a clear message on stderr on error.
+
+Self-contained: stdlib only, no other harness module imports.
 """
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
-_HARNESS_DIR = Path(__file__).resolve().parent
-if str(_HARNESS_DIR) not in sys.path:
-    sys.path.insert(0, str(_HARNESS_DIR))
-
+import argparse
 import json
 import os
+import re
+import sys
 import tempfile
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 
-import runner_paths
-import runner_profiles
-from runner_artifacts import iteration_dirs
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+ARTIFACTS_DIR = PROJECT_ROOT / ".project"
 
 # Directories that never count as project deliverables for the post-hoc
 # bypass scan (protocol internals, VCS, caches, dependency folders).
@@ -53,10 +63,55 @@ _BYPASS_SCAN_EXCLUDED_DIRS = {
 
 _BYPASS_SCAN_MAX_FILES = 20
 
+# Valid task profiles; anything else resolves to "standard" (full cycle).
+_VALID_PROFILES = ("trivial", "standard", "complex")
+
+_PROFILE_SECTION_RE = re.compile(
+    r"^##\s+Task Profile\s*\n(.*?)(?=^##\s|\Z)", re.MULTILINE | re.DOTALL
+)
+_PROFILE_VALUE_RE = re.compile(r'^\s*value\s*=\s*"([^"]+)"', re.MULTILINE)
+
+
+def iteration_dirs(session_uuid: str) -> list[Path]:
+    """Return sorted list of numeric iteration directories for a session."""
+    session_dir = ARTIFACTS_DIR / session_uuid
+    if not session_dir.is_dir():
+        return []
+    dirs = [
+        p for p in session_dir.iterdir() if p.is_dir() and re.fullmatch(r"\d+", p.name)
+    ]
+    return sorted(dirs, key=lambda p: int(p.name))
+
+
+def read_task_profile(session_uuid: str) -> str:
+    """Return the task profile from the session's latest TASK_ANALYSIS.md.
+
+    Searches files ending in `TASK_ANALYSIS.md` across the session's
+    iteration folders (highest iteration wins) and reads the `value` key of
+    the `Task Profile` section. Missing artifact, missing field, or
+    unrecognized value resolves to `standard`. Advisory metadata only.
+    """
+    for iter_dir in reversed(iteration_dirs(session_uuid)):
+        candidates = sorted(iter_dir.glob("*TASK_ANALYSIS.md"))
+        if not candidates:
+            continue
+        try:
+            content = candidates[-1].read_text(encoding="utf-8")
+        except OSError:
+            return "standard"
+        section = _PROFILE_SECTION_RE.search(content)
+        if not section:
+            return "standard"
+        match = _PROFILE_VALUE_RE.search(section.group(1))
+        if match and match.group(1) in _VALID_PROFILES:
+            return match.group(1)
+        return "standard"
+    return "standard"
+
 
 def state_path(session_uuid: str, iteration: str) -> Path:
     """Return the state.json path for a session iteration."""
-    return runner_paths.ARTIFACTS_DIR / session_uuid / iteration / "state.json"
+    return ARTIFACTS_DIR / session_uuid / iteration / "state.json"
 
 
 def empty_state(session_uuid: str, iteration: str) -> dict[str, Any]:
@@ -108,7 +163,7 @@ def record_gate_pass(
     state["session"] = session_uuid
     state["iteration"] = iteration
     try:
-        state["task_profile"] = runner_profiles.read_task_profile(session_uuid)
+        state["task_profile"] = read_task_profile(session_uuid)
     except Exception:
         # The profile is advisory metadata in state.json; never let its
         # resolution break the state update of a gate that already passed.
@@ -153,13 +208,13 @@ def detect_bypass(
         gate_dt = datetime.fromisoformat(gate_timestamp)
     except ValueError:
         return []
-    session_dir = runner_paths.ARTIFACTS_DIR / session_uuid
+    session_dir = ARTIFACTS_DIR / session_uuid
     try:
         window_start = session_dir.stat().st_mtime
     except OSError:
         return []
     suspects: list[str] = []
-    root = runner_paths.PROJECT_ROOT
+    root = PROJECT_ROOT
     for dirpath, dirnames, filenames in os.walk(root):
         dirnames[:] = [
             d for d in dirnames if d not in _BYPASS_SCAN_EXCLUDED_DIRS
@@ -181,3 +236,82 @@ def latest_iteration(session_uuid: str) -> str:
     """Return the latest iteration folder name for a session (default 00)."""
     dirs = iteration_dirs(session_uuid)
     return dirs[-1].name if dirs else "00"
+
+
+def _cli_error(message: str) -> int:
+    print(f"runner_state: error: {message}", file=sys.stderr)
+    return 2
+
+
+def main(argv: list[str] | None = None) -> int:
+    """CLI entry point: record a gate PASS judged in prose by the Orchestrator."""
+    parser = argparse.ArgumentParser(
+        description=(
+            "Record a gate PASS (judged by the Orchestrator) into the "
+            "iteration state.json. This script only registers results."
+        )
+    )
+    parser.add_argument("--session", required=True, help="session uuid")
+    parser.add_argument("--trigger", required=True, help="gate trigger id (e.g. H04)")
+    parser.add_argument(
+        "--iteration",
+        default=None,
+        help="iteration folder (default: session's latest iteration)",
+    )
+    parser.add_argument(
+        "action",
+        choices=["pass"],
+        help="outcome to record (only 'pass' is supported)",
+    )
+    args = parser.parse_args(argv)
+
+    session_dir = ARTIFACTS_DIR / args.session
+    if not session_dir.is_dir():
+        return _cli_error(
+            f"session not found: {session_dir} "
+            "(start the task through the Orchestrator first)"
+        )
+
+    iteration = args.iteration
+    if iteration is None:
+        iteration = latest_iteration(args.session)
+    elif not re.fullmatch(r"\d+", iteration):
+        return _cli_error(f"invalid iteration: {iteration!r} (must be numeric)")
+    elif not (session_dir / iteration).is_dir():
+        return _cli_error(
+            f"iteration folder not found: {session_dir / iteration}"
+        )
+
+    try:
+        path = record_gate_pass(args.session, iteration, args.trigger)
+    except OSError as exc:
+        return _cli_error(f"could not write state.json: {exc}")
+
+    if args.trigger == "H04":
+        state = load_state(args.session, iteration)
+        timestamp = state.get("gates", {}).get(args.trigger, {}).get("timestamp")
+        if isinstance(timestamp, str):
+            try:
+                suspects = detect_bypass(args.session, iteration, timestamp)
+            except Exception as exc:  # noqa: BLE001 - audit scan never blocks
+                print(
+                    f"runner_state: bypass scan failed (non-blocking): {exc}",
+                    file=sys.stderr,
+                )
+            else:
+                if suspects:
+                    print(
+                        "runner_state: BYPASS ALERT - files modified between "
+                        "session start and the H04 PASS (no approved plan in "
+                        "that window):",
+                        file=sys.stderr,
+                    )
+                    for suspect in suspects:
+                        print(f"  - {suspect}", file=sys.stderr)
+
+    print(f"PASS recorded: {args.trigger} -> {path}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -14,9 +14,9 @@ Boolean flags default to `true` unless explicitly set otherwise in `.agents/feat
 
 Flags are classified by who consumes them:
 
-- **`[code]` flags** are read by the harness (`feature_flags.py` / `health_check.py` / runner). Compliance is mechanical: the gated behavior happens or a check fails. No declarative evidence is needed.
-- **`[declarative]` flags** are consumed by agents reading `.agents/features.toml` (directly or via `runner.py features`); the harness only resolves and exposes them. Compliance is behavioral: an enabled declarative flag creates an obligation — the consuming agent MUST read its value before the flow point where it conditions behavior, and MUST act on it at that point.
-- **Dual flags** (the technical-practice flags) are both: read by the harness (standards presence, H01/H05 semantic validators) and consumed declaratively by workers during execution.
+- **`[code]` flags** are resolved by the Orchestrator when evaluating the «Gate Checklist» of the H01 policy (resolution order: `AGENTS_FEATURE_*` environment variable > `.agents/features.toml` > default enabled). Compliance is mechanical: the gated behavior happens or a check fails. No declarative evidence is needed.
+- **`[declarative]` flags** are consumed by agents reading `.agents/features.toml` directly. Compliance is behavioral: an enabled declarative flag creates an obligation — the consuming agent MUST read its value before the flow point where it conditions behavior, and MUST act on it at that point.
+- **Dual flags** (the technical-practice flags) are both: checked by the Orchestrator at gate evaluation (standards presence in the health checklist, H01/H05 gate items) and consumed declaratively by workers during execution.
 
 Ignoring an enabled declarative flag — not reading it, or reading it without acting — is a **deviation** (class F2: difference between specified and executed behavior): it must be logged as such, and if the omission is material to acceptance criteria or scope it escalates to recovery or clarification per the deviation reclassification rule. Disabling a flag (via `AGENTS_FEATURE_`) is never a deviation; the obligation ends with the flag.
 
@@ -24,7 +24,6 @@ Ignoring an enabled declarative flag — not reading it, or reading it without a
 
 | Flag | Description |
 |------|-------------|
-| `decision_trees` | Enables TOML decision trees for recovery. |
 | `rubrics` | Enables the `reviewer` role and the `## Rubric Evaluation` section in verification. |
 | `knowledge_base` | Enables the `context_discoverer` role and enrichment with KB entries. |
 | `caveman` | Applies `.agents/standards/communication/CAVEMAN.md` to all protocol communication. |
@@ -47,6 +46,26 @@ Ignoring an enabled declarative flag — not reading it, or reading it without a
 | `ddd_tactical` | Enables `.agents/standards/development/design/DDD_TACTICAL.md`. |
 | `ddd_strategic` | Enables `.agents/standards/development/design/DDD_STRATEGIC.md`. |
 | `architecture_contract` | Enables `.agents/standards/development/design/ARCHITECTURE_CONTRACT.md` as the operational architecture ruleset. |
+
+### Technical-practice catalog
+
+The technical-practice flags map each flag to the rubric that scores it and the standard document that defines it. This table is the canonical flag → (rubric, standard) mapping (previously `.agents/harness/technical_practices.py`, now removed); the protocol health checklist (`.agents/standards/runtime/PROTOCOL_HEALTH.md`) uses it to verify that every enabled practice has its standard on disk.
+
+| Flag | Rubric | Standard |
+|------|--------|----------|
+| `tdd` | `TDD_RUBRIC` | `.agents/standards/testing/TDD.md` |
+| `srp` | `SRP_RUBRIC` | `.agents/standards/development/design/SOLID/SRP.md` |
+| `ocp` | `OCP_RUBRIC` | `.agents/standards/development/design/SOLID/OCP.md` |
+| `lsp` | `LSP_RUBRIC` | `.agents/standards/development/design/SOLID/LSP.md` |
+| `isp` | `ISP_RUBRIC` | `.agents/standards/development/design/SOLID/ISP.md` |
+| `dip` | `DIP_RUBRIC` | `.agents/standards/development/design/SOLID/DIP.md` |
+| `screaming_architecture` | `SCREAMING_ARCHITECTURE_RUBRIC` | `.agents/standards/development/design/SCREAMING_ARCHITECTURE.md` |
+| `clean_architecture` | `CLEAN_ARCHITECTURE_RUBRIC` | `.agents/standards/development/design/CLEAN_ARCHITECTURE.md` |
+| `dry` | `DRY_RUBRIC` | `.agents/standards/development/design/DRY.md` |
+| `layered_architecture` | `LAYERED_ARCHITECTURE_RUBRIC` | `.agents/standards/development/design/LAYERED_ARCHITECTURE.md` |
+| `grasp` | `GRASP_RUBRIC` | `.agents/standards/development/design/GRASP.md` |
+| `ddd_tactical` | `DDD_TACTICAL_RUBRIC` | `.agents/standards/development/design/DDD_TACTICAL.md` |
+| `ddd_strategic` | `DDD_STRATEGIC_RUBRIC` | `.agents/standards/development/design/DDD_STRATEGIC.md` |
 
 ## Communication
 
@@ -133,7 +152,8 @@ Specialized worker profiles live in `.agents/roles/profiles/` and are enabled by
 ## Runtime
 
 - `runtime/PROTOCOL_BOUNDARIES.md` — file-system boundaries, artifact locations, and agent autonomy rules.
-- `runtime/PROTOCOL_TAXONOMY.md` — master dictionary of the protocol: domains, lifecycles, states, artifacts, harness policies, actors, roles and workers, with `<domain>:<state>` references. Every state machine, workflow, harness policy, contract and role carries a YAML metadata block pointing to it (`taxonomy`, `kind`, `domain` as minimum). Files that already start with a TOML front matter block (`+++`) — policies and contracts — carry the YAML block immediately after the TOML block; all other files carry it at the top. Coherence is validated by harness policy `.agents/harness/policies/H13-protocol-taxonomy.md` (cross-cutting; `H08`, `H12` and `H14` are intentionally absent) and `.agents/harness/tests/test_protocol_taxonomy.py`.
+- `runtime/PROTOCOL_TAXONOMY.md` — master dictionary of the protocol: domains, lifecycles, states, artifacts, harness policies, actors, roles and workers, with `<domain>:<state>` references. Every state machine, workflow, harness policy, contract and role carries a YAML metadata block pointing to it (`taxonomy`, `kind`, `domain` as minimum). Files that already start with a TOML front matter block (`+++`) — policies and contracts — carry the YAML block immediately after the TOML block; all other files carry it at the top. Coherence is validated by the Orchestrator's judgment against harness policy `.agents/harness/policies/H13-protocol-taxonomy.md` (cross-cutting; `H08`, `H12` and `H14` are intentionally absent).
 - `runtime/EXTERNAL_DEPENDENCIES.md` — `.agents/` must not depend on project-specific technologies or third-party runtime dependencies.
 - `runtime/PYTHON_DEPENDENCIES.md` — concrete application of the external-dependencies policy for the current Python runtime.
-- `runtime/PROTOCOL_METRICS.md` — protocol metrics model: metric catalog (flow, failures, delegation, context, session, declarative flags), registration rule (trigger data points in `HARNESS_REPORT.md`, event data points in the session `METRICS.md`), aggregation via `runner.py metrics`, and the protocol health signals (no thresholds).
+- `runtime/PROTOCOL_METRICS.md` — protocol metrics model: metric catalog (flow, failures, delegation, context, session, declarative flags), registration rule (trigger data points in `HARNESS_REPORT.md`, event data points in the session `METRICS.md`), agent-driven aggregation procedure, and the protocol health signals (no thresholds).
+- `runtime/PROTOCOL_HEALTH.md` — protocol health checklist applied by the ArgentOS System Agent at bootstrap (required structure, contract front matter, flag-gated standards, project skills, state-storage probe, `.last_health_check` TTL rule).

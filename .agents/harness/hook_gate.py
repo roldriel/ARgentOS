@@ -3,8 +3,8 @@
 
 Reads one hook event as JSON from stdin (Kimi Code / Claude Code format:
 `session_id`, `cwd`, `hook_event_name`, `tool_name`, `tool_input`) and
-decides allow/deny against the iteration state written by the harness
-runner (`.project/<session-uuid>/<iteration>/state.json`).
+decides allow/deny against the iteration state written by runner_state
+(`.project/<session-uuid>/<iteration>/state.json`).
 
 Decision (in order):
 
@@ -21,8 +21,9 @@ Decision (in order):
 Fail-open honesty: malformed stdin, missing event fields, or any internal
 error resolve to allow (exit 0). A crash or a CLI-side timeout of this
 script also means allow — hook enforcement protects against agent
-omission, not against the hook itself failing. The runner compensates with
-post-hoc detection (see runner_state.detect_bypass).
+omission, not against the hook itself failing. Post-hoc detection
+compensates: runner_state.detect_bypass runs when the runner_state CLI
+records the H04 gate.
 
 Usage (CLI hook configuration): ``python .agents/harness/hook_gate.py``
 """
@@ -182,8 +183,11 @@ def _needs_clarification_recorded(session_dir: Path) -> bool:
 def _runner_hint(session_dir: Path, iter_dir: Path | None, trigger: str) -> str:
     iteration = iter_dir.name if iter_dir is not None else "00"
     return (
-        f"python .agents/harness/runner.py --session {session_dir.name} "
-        f"--trigger {trigger} --iteration {iteration}"
+        f"Complete the Gate Checklist of the {trigger} policy in "
+        f".agents/orchestrators/core/harness/policies/, then record the PASS "
+        f"with: python .agents/harness/runner_state.py "
+        f"--session {session_dir.name} --trigger {trigger} "
+        f"--iteration {iteration} pass"
     )
 
 
@@ -197,8 +201,8 @@ def decide(event: dict) -> int:
             return _allow()
         target = _target_path(event)
         if target is None:
-            # Cannot identify the target: fail-open (documented), the runner
-            # compensates with post-hoc detection.
+            # Cannot identify the target: fail-open (documented),
+            # runner_state.py compensates with post-hoc detection.
             return _allow()
         if _is_protocol_path(target):
             return _allow()

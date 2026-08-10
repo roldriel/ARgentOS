@@ -2,21 +2,6 @@
 trigger = "H01"
 transition = "BUILDING_TASK_SPECIFICATION → TASK_READY"
 artifact = "TASK_SPECIFICATION.md"
-# Explicit subset of the contract sections (not derivable by reference).
-required_sections = [
-  "Objective",
-  "Expected Outcome",
-  "Scope",
-  "Constraints",
-  "Acceptance Criteria",
-  "Assumptions",
-  "Unknowns",
-  "Validation"
-]
-ears_validation = true
-ears_section = "Acceptance Criteria"
-semantic_validation = true
-semantic_checks = ["technical_approach"]
 +++
 
 
@@ -52,25 +37,35 @@ Validate that `TASK_SPECIFICATION.md` exists and complies with its contract befo
 
 ## Checklist
 
-**Evaluation audience:** each item is marked `[machine]` — validated deterministically by the harness runner (artifact existence, required-section presence, and the EARS/rubric/semantic checks declared in this policy's front matter) or by the policy's test suite — or `[agent]` — evaluated by agent judgment when applying this policy. A `[machine]` failure is gateable without interpretation; an `[agent]` failure is declared judgment.
+**Evaluation audience:** the harness runner no longer exists; every item in this policy is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` have objectively verifiable structure and are restated as numbered instructions in §"Gate Checklist", where the Orchestrator MUST cite evidence per item. Items marked `[agent]` are declared judgment.
 
-1. The artifact file exists. `[machine]`
-2. The artifact contains an `Objective` section. `[machine]`
-3. The artifact contains an `Expected outcome` section. `[machine]`
-4. The artifact contains a `Scope` section. `[machine]`
-5. The artifact contains a `Constraints` section. `[machine]`
-6. The artifact contains `Acceptance Criteria`. `[machine]`
-7. The artifact contains `Assumptions`. `[machine]`
-8. The artifact contains `Unknowns`. `[machine]`
-9. The artifact contains a `Validation` section. `[machine]`
+1. The artifact file exists. `[gate]`
+2. The artifact contains an `Objective` section. `[gate]`
+3. The artifact contains an `Expected outcome` section. `[gate]`
+4. The artifact contains a `Scope` section. `[gate]`
+5. The artifact contains a `Constraints` section. `[gate]`
+6. The artifact contains `Acceptance Criteria`. `[gate]`
+7. The artifact contains `Assumptions`. `[gate]`
+8. The artifact contains `Unknowns`. `[gate]`
+9. The artifact contains a `Validation` section. `[gate]`
 10. The acceptance criteria are specific and verifiable. `[agent]`
-11. Each acceptance criterion follows one of the EARS patterns defined in `.agents/standards/requirements/EARS.md`. `[machine]`
+11. Each acceptance criterion follows one of the EARS patterns defined in `.agents/standards/requirements/EARS.md`. `[gate]`
 12. No acceptance criterion is compound: it must describe a single action or condition. A criterion is compound when "and" or "or" separate independent actions or conditions (for example, "create X and send Y", "validate A or B"). A criterion is not compound when "and" or "or" enumerate values within the same domain (for example, "return HTTP 200 or 201", "accept JSON and XML"). `[agent]`
 13. The scope is bounded and does not introduce unplanned work. `[agent]`
-14. Every practice listed in `technical_approach.enabled` corresponds to an enabled technical-practice feature flag (for example, `tdd`, `srp`, `ocp`, `lsp`, `isp`, `dip`). `[machine]`
-15. If `technical_approach.enabled` is non-empty, `technical_approach.notes` explains why each listed practice applies to this task. `[machine]` (notes present and non-empty) / `[agent]` (the explanation actually justifies each practice).
+14. Every practice listed in `technical_approach.enabled` corresponds to an enabled technical-practice feature flag (for example, `tdd`, `srp`, `ocp`, `lsp`, `isp`, `dip`). `[gate]`
+15. If `technical_approach.enabled` is non-empty, `technical_approach.notes` explains why each listed practice applies to this task. `[gate]` (notes present and non-empty) / `[agent]` (the explanation actually justifies each practice).
 16. No acceptance criterion is derived from an unconfirmed assumption. `[agent]`
 17. Every entry under `Assumptions` is an object with `assumption` text and an accessible `user_confirmed` field, or resolved through a prior clarification exchange. `[agent]`
+
+## Gate Checklist
+
+The Orchestrator evaluates each item below by judgment when the gate fires and MUST cite evidence per item (artifact path, section name, declared value, or offending bullet) in `HARNESS_REPORT.md`.
+
+1. Verify that `TASK_SPECIFICATION.md` exists in the current iteration directory (`.project/<session-uuid>/<iteration>/`). Cite the resolved artifact path as evidence.
+2. Verify that the artifact contains each of the following sections (heading comparison is case-insensitive): `Objective`, `Expected Outcome`, `Scope`, `Constraints`, `Acceptance Criteria`, `Assumptions`, `Unknowns`, `Validation`. Cite any missing section as failure evidence.
+3. Verify that `## Acceptance Criteria` contains at least one bullet (`-` or `*`) and that each bullet matches one of the EARS patterns defined in `.agents/standards/requirements/EARS.md`: ubiquitous (`The <system> shall <response>`), event-driven (`When <trigger>, the <system> shall <response>`), state-driven (`While <state>, the <system> shall <response>`), unwanted-behavior (`If <undesired condition>, then the <system> shall <response>`), optional-feature (`Where <feature is included>, the <system> shall <response>`). Cite each non-conforming bullet.
+4. Verify that no acceptance criterion is compound: each criterion describes a single action or condition. A criterion is compound when "and"/"or" separate independent actions or conditions ("create X and send Y"); it is not compound when they enumerate values within the same domain ("return HTTP 200 or 201", "accept JSON and XML"). Cite each compound criterion.
+5. Verify the technical approach declaration. First resolve each technical-practice feature flag: the environment variable `AGENTS_FEATURE_<FLAG>` wins over `.agents/features.toml` (`[features]` table), which wins over the default (enabled). If no technical-practice flag is enabled, this item passes trivially — record the flag resolution as evidence. Otherwise, if a `## Technical Approach` section with a TOML block is present, verify that: `technical_approach.enabled` is a list; when the list is non-empty, `technical_approach.notes` is a list with at least one non-empty entry; and every practice in `enabled` is a known technical-practice flag (see `technical_practices` in the protocol standards) and is enabled at protocol level per the flag resolution above. An absent `## Technical Approach` section means no practices were selected and passes. Cite the flag resolution, the declared `enabled` list, and each violation.
 
 ## Decision Criteria
 
@@ -84,3 +79,14 @@ The Orchestrator must:
 1. Record the failure in `HARNESS_REPORT.md`.
 2. Return to `BUILDING_TASK_SPECIFICATION` and re-invoke the Worker as `task_specification_writer`, or
 3. Transition to `NEEDS_CLARIFICATION` if the specification cannot be completed without user input.
+
+## Recovery Decision Table
+
+When H01 fails, the Orchestrator populates the context variables from the session (`artifact_exists`, `objective_is_ambiguous`, `scope_is_clear`, `retry_count` = retries already attempted for this failure) and applies the first rule that matches, top to bottom:
+
+| # | Condition | Action | Target phase | Role | Reason |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `artifact_exists == false` | `RETRY_WORKER` | `02-build-task-specification.md` | `task_specification_writer` | TASK_SPECIFICATION.md is missing or incomplete; retry writer. |
+| 2 | `objective_is_ambiguous == true` or `scope_is_clear == false` | `NEEDS_CLARIFICATION` | — | — | Objective or scope is ambiguous; request clarification. |
+| 3 | `retry_count >= 1` | `RECOVERY_GENERIC` | `08-recovery.md` | — | Repeated failure after retry; route to generic recovery. |
+| 4 | otherwise | `RECOVERY_GENERIC` | `08-recovery.md` | — | Task specification validation failed; falling back to generic recovery. |

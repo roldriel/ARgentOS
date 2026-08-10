@@ -1,7 +1,7 @@
 """Tests for hook_gate.py (shared CLI lifecycle hook).
 
 The hook decides allow (exit 0) / deny (exit 2) from a JSON event, reading
-only the iteration state.json written by the runner. Malformed input is
+only the iteration state.json written by runner_state. Malformed input is
 fail-open allow — a documented property, verified here via a real subprocess.
 """
 
@@ -97,7 +97,8 @@ def test_deliverable_write_without_h04_is_denied(project, capsys):
     assert code == 2
     err = capsys.readouterr().err
     assert "H04" in err
-    assert "python .agents/harness/runner.py" in err
+    assert "Gate Checklist" in err
+    assert "python .agents/harness/runner_state.py" in err
 
 
 def test_deliverable_write_without_any_session_is_denied(project, capsys):
@@ -145,7 +146,8 @@ def test_stop_without_h06_is_denied(project, capsys):
     assert code == 2
     err = capsys.readouterr().err
     assert "H06" in err
-    assert "python .agents/harness/runner.py" in err
+    assert "Gate Checklist" in err
+    assert "python .agents/harness/runner_state.py" in err
 
 
 def test_stop_with_h06_pass_is_allowed(project):

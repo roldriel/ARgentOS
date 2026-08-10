@@ -130,7 +130,7 @@ If the generic worker is used, apply the minimum payload template from the deleg
 | `05-plan.md` | No | Generic worker. |
 | `06-execute.md` | **Yes** | Choose profile using the 7 questions. |
 | `07-verify.md` | Partially | If `rubrics` is active, invoke `reviewer`. |
-| `08-recovery.md` | Partially | Generic worker; if `decision_trees` is active, follow the decision tree. |
+| `08-recovery.md` | Partially | Generic worker; follow the recovery decision table of the failed trigger's policy. |
 
 ---
 
@@ -140,7 +140,6 @@ Only feature flags that exist in `.agents/features.toml` may be mentioned:
 
 - `rubrics`: if active, invoke `reviewer` before critical transitions.
 - `knowledge_base`: if active, attach relevant KB entries (via `context_discoverer`).
-- `decision_trees`: if active, follow the decision tree in recovery.
 - `caveman`: if active, apply the compressed communication style in the payload according to `.agents/standards/communication/CAVEMAN.md`.
 
 > **Note:** `context_engineering` **is not a feature flag**. Context compression is applied according to `.agents/standards/context/CONTEXT.md` when the context exceeds the defined threshold.

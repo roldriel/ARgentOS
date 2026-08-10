@@ -1,8 +1,9 @@
 """Tests for runner_state.py (protocol state persistence).
 
 `state.json` is the single source of truth for hook enforcement: written
-transactionally by the runner after each gate PASS, and fail-closed for
-consumers (missing or corrupt means no gate has passed).
+transactionally by runner_state (the only writer) after the Orchestrator
+judges a gate PASS in prose, and fail-closed for consumers (missing or
+corrupt means no gate has passed).
 """
 
 import json
@@ -13,9 +14,7 @@ from pathlib import Path
 
 import pytest
 
-import runner_paths
 import runner_state
-from runner_validators import run_trigger
 
 
 @pytest.fixture
@@ -24,8 +23,8 @@ def session(tmp_path, monkeypatch):
     session_uuid = f"test-{uuid.uuid4()}"
     artifacts_dir = tmp_path / ".project"
     (artifacts_dir / session_uuid / "00").mkdir(parents=True)
-    monkeypatch.setattr(runner_paths, "ARTIFACTS_DIR", artifacts_dir)
-    monkeypatch.setattr(runner_paths, "PROJECT_ROOT", tmp_path)
+    monkeypatch.setattr(runner_state, "ARTIFACTS_DIR", artifacts_dir)
+    monkeypatch.setattr(runner_state, "PROJECT_ROOT", tmp_path)
     return session_uuid, artifacts_dir, tmp_path
 
 
@@ -61,6 +60,34 @@ def test_record_gate_pass_is_transactional_and_cumulative(session):
     assert state["last_gate"] == "H04"
 
 
+def test_read_task_profile_from_latest_iteration(session):
+    session_uuid, artifacts_dir, _ = session
+    iter00 = artifacts_dir / session_uuid / "00"
+    (iter00 / "01-TASK_ANALYSIS.md").write_text(
+        "## Task Profile\n\n```toml\n[task_profile]\nvalue = \"trivial\"\n```\n",
+        encoding="utf-8",
+    )
+    iter01 = artifacts_dir / session_uuid / "01"
+    iter01.mkdir()
+    (iter01 / "TASK_ANALYSIS.md").write_text(
+        "## Task Profile\n\n```toml\n[task_profile]\nvalue = \"complex\"\n```\n",
+        encoding="utf-8",
+    )
+
+    assert runner_state.read_task_profile(session_uuid) == "complex"
+
+
+def test_read_task_profile_defaults_to_standard(session):
+    session_uuid, artifacts_dir, _ = session
+    iter00 = artifacts_dir / session_uuid / "00"
+    (iter00 / "TASK_ANALYSIS.md").write_text(
+        "## Task Profile\n\n```toml\n[task_profile]\nvalue = \"bogus\"\n```\n",
+        encoding="utf-8",
+    )
+
+    assert runner_state.read_task_profile(session_uuid) == "standard"
+
+
 def test_missing_state_is_fail_closed(session):
     session_uuid, _, _ = session
 
@@ -83,46 +110,6 @@ def test_corrupt_state_is_fail_closed(session):
     path.write_text('{"gates": "not-a-dict"}', encoding="utf-8")
     state = runner_state.load_state(session_uuid, "00")
     assert state["gates"] == {}
-
-
-def test_run_trigger_pass_updates_state_json(session):
-    session_uuid, artifacts_dir, _ = session
-    # H10 is optional and has no required artifact sections; a PASS without a
-    # real artifact flow keeps this test focused on the state integration.
-    # Instead, use H00 with a minimal valid TASK_ANALYSIS.md.
-    iter_dir = artifacts_dir / session_uuid / "00"
-    (iter_dir / "01-TASK_ANALYSIS.md").write_text(
-        "# Task Analysis\n\n"
-        "## Metadata\n\n```toml\nid = \"TA-1\"\n```\n\n"
-        "## User Request\n\n```toml\noriginal_request = \"x\"\n```\n\n"
-        "## Interpreted Objective\n\n```toml\n[objective]\ndescription = \"x\"\n```\n\n"
-        "## Expected Outcome\n\n```toml\n[expected_outcome]\ndescription = \"x\"\n```\n\n"
-        "## Explicit Requirements\n\n```toml\nrequirements = []\n```\n\n"
-        "## Explicit Restrictions\n\n```toml\nrestrictions = []\n```\n\n"
-        "## Detected Ambiguities\n\nNone.\n\n"
-        "## Intent Confidence Assessment\n\n```toml\n[intent_confidence]\nlevel = \"HIGH\"\n```\n\n"
-        "## Sufficiency Assessment\n\n```toml\n[sufficiency]\nready_for_specification = true\n```\n\n"
-        "## Recommended Next State\n\n```toml\nrecommended_next_state = \"BUILDING_TASK_SPECIFICATION\"\n```\n\n"
-        "## Confidence\n\n```toml\n[confidence]\nlevel = \"HIGH\"\n```\n\n"
-        "## Task Profile\n\n```toml\n[task_profile]\nvalue = \"standard\"\n```\n",
-        encoding="utf-8",
-    )
-
-    result = run_trigger(session_uuid, "H00", "00")
-
-    assert result.result == "PASS"
-    state = runner_state.load_state(session_uuid, "00")
-    assert runner_state.gate_passed(state, "H00")
-    assert state["task_profile"] == "standard"
-
-
-def test_run_trigger_fail_does_not_touch_state_json(session):
-    session_uuid, artifacts_dir, _ = session
-
-    result = run_trigger(session_uuid, "H01", "00")  # artifact missing -> FAIL
-
-    assert result.result == "FAIL"
-    assert not (artifacts_dir / session_uuid / "00" / "state.json").exists()
 
 
 def test_detect_bypass_flags_files_modified_before_plan_pass(session):
@@ -149,3 +136,91 @@ def test_detect_bypass_flags_files_modified_before_plan_pass(session):
     assert "deliverable.py" in suspects
     assert "after.py" not in suspects
     assert not any("notes.md" in s for s in suspects)
+
+
+def test_cli_pass_records_state(session, capsys):
+    session_uuid, artifacts_dir, _ = session
+
+    exit_code = runner_state.main(
+        ["--session", session_uuid, "--trigger", "H04", "pass"]
+    )
+
+    assert exit_code == 0
+    out = capsys.readouterr().out
+    state_path = artifacts_dir / session_uuid / "00" / "state.json"
+    assert str(state_path) in out
+    state = json.loads(state_path.read_text(encoding="utf-8"))
+    assert state["gates"]["H04"]["result"] == "PASS"
+
+
+def test_cli_pass_with_explicit_iteration(session, capsys):
+    session_uuid, artifacts_dir, _ = session
+    (artifacts_dir / session_uuid / "01").mkdir()
+
+    exit_code = runner_state.main(
+        ["--session", session_uuid, "--trigger", "H00",
+         "--iteration", "01", "pass"]
+    )
+
+    assert exit_code == 0
+    state = runner_state.load_state(session_uuid, "01")
+    assert runner_state.gate_passed(state, "H00")
+
+
+def test_cli_h04_bypass_alert_does_not_block(session, capsys):
+    session_uuid, artifacts_dir, project_root = session
+    now = time.time()
+    session_dir = artifacts_dir / session_uuid
+    old = now - 120
+    for path in (session_dir, session_dir / "00"):
+        os.utime(path, (old, old))
+    suspect = project_root / "deliverable.py"
+    suspect.write_text("x = 1\n", encoding="utf-8")
+    os.utime(suspect, (now - 10, now - 10))
+
+    exit_code = runner_state.main(
+        ["--session", session_uuid, "--trigger", "H04", "pass"]
+    )
+
+    # The CLI used "now" as the gate timestamp; the suspect file sits inside
+    # the [session start, gate PASS] window, so the alert fires on stderr
+    # while the exit code stays 0 (non-blocking).
+    assert exit_code == 0
+    captured = capsys.readouterr()
+    assert "BYPASS ALERT" in captured.err
+    assert "deliverable.py" in captured.err
+
+
+def test_cli_missing_session_exits_2(session, capsys):
+    _, artifacts_dir, _ = session
+
+    exit_code = runner_state.main(
+        ["--session", "no-such-session", "--trigger", "H04", "pass"]
+    )
+
+    assert exit_code == 2
+    assert "session not found" in capsys.readouterr().err
+
+
+def test_cli_missing_iteration_exits_2(session, capsys):
+    session_uuid, _, _ = session
+
+    exit_code = runner_state.main(
+        ["--session", session_uuid, "--trigger", "H04",
+         "--iteration", "07", "pass"]
+    )
+
+    assert exit_code == 2
+    assert "iteration folder not found" in capsys.readouterr().err
+
+
+def test_cli_invalid_iteration_exits_2(session, capsys):
+    session_uuid, _, _ = session
+
+    exit_code = runner_state.main(
+        ["--session", session_uuid, "--trigger", "H04",
+         "--iteration", "abc", "pass"]
+    )
+
+    assert exit_code == 2
+    assert "invalid iteration" in capsys.readouterr().err

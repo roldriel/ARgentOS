@@ -2,11 +2,11 @@
 
 Protocol skills live under `.agents/skills/<name>/`. They are general, generic capabilities, immutable like the rest of `.agents/`. The format contract is defined in `.agents/skills/README.md`; activation mechanics in `.agents/standards/orchestration/SKILLS.md`.
 
-Every skill in this index is *integrated*: it is referenced by name from a worker role, workflow phase, harness policy, or decision tree outside `.agents/skills/` (see `plans/rfc/24-skill-lifecycle-model.md`). Skills without such a consumer are removed from the catalog.
+Every skill in this index is *integrated*: it is referenced by name from a worker role, workflow phase, or harness policy outside `.agents/skills/` (see `plans/rfc/24-skill-lifecycle-model.md`). Skills without such a consumer are removed from the catalog.
 
 ## Skill inventory
 
-One row per protocol skill. The structural test `.agents/harness/tests/test_protocol_skills.py` validates that every row exists on disk with valid front matter, and that every skill directory is listed here.
+One row per protocol skill. There is no executable structural test anymore: the Orchestrator verifies by judgment (protocol health checklist, item 7, for project skills; H13 coherence for protocol files) that every row exists on disk with valid front matter and that every skill directory is listed here.
 
 | Skill | Description |
 | --- | --- |

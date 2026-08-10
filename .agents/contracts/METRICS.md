@@ -26,7 +26,7 @@ consumed_by: [core:COMPLETED]
 
 - Path: `.project/<session-uuid>/METRICS.md` (session root, not inside an iteration folder).
 - Producer: the Orchestrator, who appends one machine-readable entry at the moment each event occurs.
-- Consumers: the harness runner `metrics` subcommand (aggregation) and any audit of the session.
+- Consumers: the agent-driven aggregation procedure of the metrics standard (`.agents/standards/runtime/PROTOCOL_METRICS.md`, §"Aggregation") and any audit of the session.
 
 ## Required structure
 

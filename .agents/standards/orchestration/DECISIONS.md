@@ -56,9 +56,9 @@ Every transition to `ABORT` requires a cause recorded in `SESSION_LOG.md`: a use
 
 ### D6 — Degraded bootstrap
 
-- **Question:** given a health-check `FAIL`, may the session start or continue?
-- **Inputs:** the health-check result; the existence of explicit user authorization.
-- **Authority and rule:** a health-check `FAIL` blocks the handoff to the core Orchestrator; the only exception is explicit user authorization, recorded in `SESSION_LOG.md`. The canonical statement of this rule lives in `.agents/orchestrators/system/states/SYSTEM_STATE_MACHINE.md` (`BOOTSTRAP_FAILED`); this point models it conceptually without reformulating it. Only the user may degrade the verified environment, and that degradation is always logged as a warning.
+- **Question:** given a protocol health `FAIL`, may the session start or continue?
+- **Inputs:** the protocol health result; the existence of explicit user authorization.
+- **Authority and rule:** a protocol health `FAIL` blocks the handoff to the core Orchestrator; the only exception is explicit user authorization, recorded in `SESSION_LOG.md`. The canonical statement of this rule lives in `.agents/orchestrators/system/states/SYSTEM_STATE_MACHINE.md` (`BOOTSTRAP_FAILED`); this point models it conceptually without reformulating it. Only the user may degrade the verified environment, and that degradation is always logged as a warning.
 
 ## Relationship to other standards
 

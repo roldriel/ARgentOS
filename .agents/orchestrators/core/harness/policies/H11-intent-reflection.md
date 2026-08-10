@@ -37,18 +37,18 @@ Validate that `INTENT_REFLECTION.md` exists, complies with its contract, and rec
 
 ## Checklist
 
-**Evaluation audience:** each item is marked `[machine]` — validated deterministically by the harness runner (artifact existence and presence of the `required_sections` resolved by the runner from the artifact contract) or by the policy's test suite — or `[agent]` — evaluated by agent judgment when applying this policy. A `[machine]` failure is gateable without interpretation; an `[agent]` failure is declared judgment.
+**Evaluation audience:** the harness runner no longer exists; every item in this policy is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` have objectively verifiable structure (artifact existence, required-section presence); items marked `[agent]` are declared judgment.
 
-1. The artifact file exists. `[machine]`
-2. The artifact contains a `Metadata` section. `[machine]`
-3. The artifact contains an `Original Request` section. `[machine]`
-4. The artifact contains a `Detected Intent` section. `[machine]`
-5. The artifact contains a `Reflection` section. `[machine]`
-6. The artifact contains a `Confidence` section. `[machine]`
-7. The artifact contains a `Correction Cycle` section. `[machine]`
-8. The artifact contains a `User Response` section. `[machine]`
-9. The artifact contains a `Next State` section. `[machine]`
-10. The `confidence.level` is one of `HIGH`, `MEDIUM`, or `LOW`. `[agent]` (the agent reads the declared values; this policy declares no semantic checks)
+1. The artifact file exists. `[gate]`
+2. The artifact contains a `Metadata` section. `[gate]`
+3. The artifact contains an `Original Request` section. `[gate]`
+4. The artifact contains a `Detected Intent` section. `[gate]`
+5. The artifact contains a `Reflection` section. `[gate]`
+6. The artifact contains a `Confidence` section. `[gate]`
+7. The artifact contains a `Correction Cycle` section. `[gate]`
+8. The artifact contains a `User Response` section. `[gate]`
+9. The artifact contains a `Next State` section. `[gate]`
+10. The `confidence.level` is one of `HIGH`, `MEDIUM`, or `LOW`. `[agent]` (the Orchestrator reads the declared values; this policy defines no structured gate checks)
 11. The `user_response.status` is one of `PENDING`, `CONFIRMED`, `CORRECTED`, or `REJECTED`. `[agent]`
 12. If `confidence.level` is `MEDIUM` or `LOW`, `user_response.status` MUST be `CONFIRMED` or `CORRECTED`. `[agent]`
 13. If `user_response.status` is `CORRECTED`, `user_response.correction` is non-empty. `[agent]`
@@ -68,3 +68,15 @@ The Orchestrator must:
 1. Record the failure in `HARNESS_REPORT.md`.
 2. Return to `CONFIRMING_INTENT` and re-invoke the Worker as `intent_reflector`, or
 3. Transition to `NEEDS_CLARIFICATION` if the intent cannot be confirmed without user input.
+
+## Recovery Decision Table
+
+When H11 fails, the Orchestrator populates the context variables from the session (`artifact_exists`, `correction_cycle_exceeded`, `user_rejected`, `user_unclear`, `retry_count` = retries already attempted for this failure) and applies the first rule that matches, top to bottom:
+
+| # | Condition | Action | Target phase | Role | Reason |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `artifact_exists == false` | `RETRY_WORKER` | `01-confirm-intent.md` | `intent_reflector` | INTENT_REFLECTION.md is missing or incomplete; retry intent reflector. |
+| 2 | `correction_cycle_exceeded == true` | `NEEDS_CLARIFICATION` | — | — | Maximum correction cycles reached; ask the user to reformulate the task from scratch. |
+| 3 | `user_rejected == true` or `user_unclear == true` | `NEEDS_CLARIFICATION` | — | — | User rejected the reflected intent or the intent remains unclear; request clarification. |
+| 4 | `retry_count >= 1` | `RECOVERY_GENERIC` | `08-recovery.md` | — | Repeated failure after retry; route to generic recovery. |
+| 5 | otherwise | `RECOVERY_GENERIC` | `08-recovery.md` | — | Intent reflection validation failed; falling back to generic recovery. |

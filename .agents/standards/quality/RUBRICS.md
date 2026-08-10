@@ -4,7 +4,7 @@ This document defines the quality rubrics used by the `.agents` protocol to eval
 
 ## Purpose
 
-Rubrics provide observable, repeatable criteria for assessing artifacts. They are applied by LLM-based workers (`reviewer` before critical transitions, `verifier` during phase 07). The harness runner only validates that the `## Rubric Evaluation` section exists and is structurally correct; it does **not** judge quality.
+Rubrics provide observable, repeatable criteria for assessing artifacts. They are applied by LLM-based workers (`reviewer` before critical transitions, `verifier` during phase 07). The H06 gate only validates that the `## Rubric Evaluation` section exists and is structurally correct; it does **not** judge quality.
 
 ## Scale
 

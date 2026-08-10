@@ -46,6 +46,6 @@ Cross-cutting rules are organized in `standards/`. See the full map at:
 
 ## Harness
 
-Validation triggers, runner usage, and recovery are documented in:
+Validation triggers, protocol state and hooks, and recovery are documented in:
 
 → `harness/INDEX.md`

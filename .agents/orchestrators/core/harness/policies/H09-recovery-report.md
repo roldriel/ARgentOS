@@ -35,10 +35,10 @@ Validate that `RECOVERY_REPORT.md` exists and contains the required sections bef
 
 ## Decision Criteria
 
-**Evaluation audience:** both criteria are `[machine]` — validated deterministically by the harness runner (artifact existence and presence of the `required_sections` resolved by the runner from the artifact contract). A `[machine]` failure is gateable without interpretation; an `[agent]` failure would be declared judgment, and this policy contains no agent-evaluated items.
+**Evaluation audience:** the harness runner no longer exists; both criteria are evaluated by the Orchestrator's judgment when the gate fires (artifact existence and presence of the sections required by the artifact contract). A structural failure is gateable without interpretation; this policy contains no purely agent-judgment items.
 
-- `PASS`: The artifact exists and contains all required sections. `[machine]`
-- `FAIL`: The artifact is missing or incomplete. `[machine]`
+- `PASS`: The artifact exists and contains all required sections (verified by the Orchestrator against the contract cited in §"Input").
+- `FAIL`: The artifact is missing or incomplete.
 
 ## Note
 

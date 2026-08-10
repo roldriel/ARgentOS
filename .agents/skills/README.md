@@ -57,7 +57,7 @@ Optional directory with dense material (specs, checklists, long examples). Rules
 
 ## Enforcement
 
-- Protocol skills: enforced by the structural test `.agents/harness/tests/test_protocol_skills.py`.
-- Project skills: enforced by the health check extension in `.agents/harness/health_check.py` (non-blocking warning + exclusion for the session) and by the convention documented in `.project/skills/README.md`.
+- Protocol skills: verified structurally by the agent whenever the skills index or a skill changes (every indexed skill exists, front matter complete, cited `references/` files on disk).
+- Project skills: enforced by the protocol health checklist (`.agents/standards/runtime/PROTOCOL_HEALTH.md`, item 7: non-blocking warning + exclusion for the session) and by the convention documented in `.project/skills/README.md`.
 
 A skill is not a source of authority: it describes a capability and never grants permissions. (The current runtime delivers that capability by having the Worker read the skill's content itself — an implementation detail, not part of the skill definition; see "What a skill is" above.) The authority hierarchy and conflict rules are defined in `.agents/standards/orchestration/SKILLS.md`.

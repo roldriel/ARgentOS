@@ -90,7 +90,7 @@ Rules:
 
 1. **The profile is assigned once**, in `ANALYZING_TASK`, and is validated by gate H00 (presence of the field and coherence of the justification).
 2. **Escalation is upward-only.** If execution reveals complexity not seen during analysis (ambiguity, scope creep, interface impact), the Orchestrator reclassifies the task to `standard` or `complex`, records the reclassification in `SESSION_LOG.md`, and completes the artifacts the new profile requires. A task is never reclassified downward.
-3. **Gates omitted by profile are recorded, not absent.** When the harness runner is invoked for a gate the profile does not require, it records the gate in `HARNESS_REPORT.md` as `skipped: profile`. The omission is a system decision, not an oversight, and does not violate the No-Skip Rule.
+3. **Gates omitted by profile are recorded, not absent.** When the Orchestrator evaluates a gate the profile does not require, it records the gate in `HARNESS_REPORT.md` as `skipped: profile`. The omission is a system decision, not an oversight, and does not violate the No-Skip Rule.
 4. **`NEEDS_CLARIFICATION` and `RECOVERY` apply to every profile.** A trivial task that turns ambiguous is reclassified upward; it is never forced through the reduced cycle.
 5. For a `trivial` task the path is `ANALYZING_TASK → PLANNING → EXECUTING → VERIFYING`: the specification, context, and intent-confirmation states do not apply, and no discovery or context workers are delegated. Every other transition rule of this machine applies unchanged.
 
@@ -649,7 +649,7 @@ RECOVERY
 
 The agent analyzes failures and determines corrective actions.
 
-`RECOVERY` may be entered from any non-terminal state when a harness gate fails after the allowed retries, when a recovery decision tree returns `RECOVERY_GENERIC`, or when a worker reports an unrecoverable blocker. This includes gate failures in early phases (H00–H04, H10, H11), not only execution and verification failures.
+`RECOVERY` may be entered from any non-terminal state when a harness gate fails after the allowed retries, when a policy's recovery decision table yields `RECOVERY_GENERIC`, or when a worker reports an unrecoverable blocker. This includes gate failures in early phases (H00–H04, H10, H11), not only execution and verification failures.
 
 ### Required Artifact
 
@@ -679,7 +679,7 @@ RECOVERY
 NEEDS_CLARIFICATION
 ```
 
-If the failure is unrecoverable or a recovery decision tree returns `ABORT`:
+If the failure is unrecoverable or a policy's recovery decision table yields `ABORT`:
 
 ```text
 RECOVERY
@@ -712,7 +712,7 @@ No further transition is required.
 
 ### Description
 
-The session has been terminated by an explicit abort action from a recovery decision tree or orchestrator decision.
+The session has been terminated by an explicit abort action from a recovery decision table or orchestrator decision.
 
 This is a terminal state. No further work is performed.
 

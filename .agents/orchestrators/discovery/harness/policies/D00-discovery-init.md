@@ -38,9 +38,9 @@ Validate that the discovery session was initialized correctly and that the disco
 
 ## Checklist
 
-**Evaluation audience:** each item is marked `[machine]` — validated deterministically by the harness runner (artifact existence and presence of the `required_sections` declared in this policy's front matter) — or `[agent]` — evaluated by agent judgment when applying this policy. A `[machine]` failure is gateable without interpretation; an `[agent]` failure is declared judgment.
+**Evaluation audience:** the harness runner no longer exists; each item is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` have objectively verifiable structure (artifact existence); items marked `[agent]` are declared judgment.
 
-1. The discovery report artifact file exists. `[machine]`
+1. The discovery report artifact file exists. `[gate]`
 2. The artifact complies with the contract in `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_REPORT.md`. `[agent]` (this policy declares no `required_sections` or semantic checks; contract compliance is judged by the agent)
 3. Each discovery entry referenced by the report complies with `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md`. `[agent]`
 4. The discovery scope and inputs used for the run are recorded in the artifact. `[agent]`
@@ -57,3 +57,14 @@ The Discovery Orchestrator must:
 1. Record the failure in `HARNESS_REPORT.md`.
 2. Return to `DISCOVERY_INIT` and re-run the initialization, or
 3. End the run as `discovery:DISCOVERY_FAILED` and return control to the core Orchestrator if the discovery request cannot be initialized without user input; the core Orchestrator decides the `core:NEEDS_CLARIFICATION` transition.
+
+## Recovery Decision Table
+
+When D00 fails, the Discovery Orchestrator populates the context variables from the run (`artifact_exists`, `request_is_ambiguous`, `retry_count` = retries already attempted for this failure) and applies the first rule that matches, top to bottom:
+
+| # | Condition | Action | Target phase | Role | Reason |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `artifact_exists == false` | `RETRY_WORKER` | `00-discovery-init.md` | `init_worker` | KB_DISCOVERY_REPORT.md is missing or incomplete; retry init_worker. |
+| 2 | `request_is_ambiguous == true` | `NEEDS_CLARIFICATION` | — | — | Discovery request is missing critical information (scope, target, or required inputs). |
+| 3 | `retry_count >= 3` | `RECOVERY_GENERIC` | `00-discovery-init.md` | — | Repeated failure after retry; transition to discovery:DISCOVERY_FAILED and report to the core Orchestrator. |
+| 4 | otherwise | `RECOVERY_GENERIC` | `00-discovery-init.md` | — | Discovery init validation failed; transition to discovery:DISCOVERY_FAILED and report to the core Orchestrator. |

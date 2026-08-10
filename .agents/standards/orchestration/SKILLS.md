@@ -40,8 +40,8 @@ The skills mechanism is NOT governed by a flag in `features.toml`. Unlike enviro
 
 ## Validation
 
-- **Protocol skills**: structural test `.agents/harness/tests/test_protocol_skills.py` — every skill in the index exists, has front matter with `name`/`description`, and its cited `references/` files exist on disk.
-- **Project skills**: no `.agents/` test may validate them (they live outside the protocol definition). The health check (`.agents/harness/health_check.py`) validates `.project/skills/` structurally when the folder exists; an invalid skill produces a warning in the health report and is excluded from activation for that session. This is non-blocking. If the Orchestrator delegates a nonexistent or malformed skill, the Worker reports it as a deviation in `SESSION_LOG.md`.
+- **Protocol skills**: structural review when the skills index or a skill changes — every skill in the index exists, has front matter with `name`/`description`, and its cited `references/` files exist on disk (the same contract the agent applies; see `.agents/skills/README.md`).
+- **Project skills**: no `.agents/` test may validate them (they live outside the protocol definition). The protocol health checklist (`.agents/standards/runtime/PROTOCOL_HEALTH.md`, item 7) validates `.project/skills/` structurally when the folder exists; an invalid skill produces a warning and is excluded from activation for that session. This is non-blocking. If the Orchestrator delegates a nonexistent or malformed skill, the Worker reports it as a deviation in `SESSION_LOG.md`.
 
 Skills intentionally stay out of `PROTOCOL_TAXONOMY.md`: the taxonomy models the protocol *flow* (states, artifacts, triggers); a malformed skill degrades a phase but does not break the state machine — the same risk level as a poorly written standard, so the same regime applies. The conceptual definition of a skill (a reusable capability, independent of how the runtime incorporates it) lives in `.agents/skills/README.md`. Skills, profiles and knowledge are categories of the single Execution Context delivered to the worker.
 

@@ -30,7 +30,15 @@ La política de migración entre versiones vive en [`MIGRATION.md`](MIGRATION.md
 
 ---
 
-## [Unreleased]
+## [2.0.0] — 2026-08-10
+
+Segunda versión etiquetada del protocolo. Cierre de la migración "menos Python,
+más texto": el runner de validación desaparece por completo y los gates del
+harness se evalúan por juicio del orquestador contra checklists en prosa. El
+Python sobreviviente son tres scripts stdlib (`hook_gate.py`, `runner_state.py`,
+`health_check.py`); el modo declarativo no requiere Python. Origen:
+`plans/26-hook-enforcement.md`, `plans/27-harness-coverage-closure.md` y los
+commits `0fa9ce4` / `adb5b68`.
 
 ### Changed
 
@@ -53,11 +61,10 @@ La política de migración entre versiones vive en [`MIGRATION.md`](MIGRATION.md
   (timestamp + `ttl_hours` de `features.toml`, default 24, override
   `AGENTS_HEALTH_CHECK_TTL_HOURS`).
 - **Feature flags declarativos**: la resolución de flags se documenta en
-  `.agents/standards/INDEX.md` (§"Feature flags"); el harness solo resuelve
-  mecánicamente los flags de prácticas técnicas
-  (`runner_validators.is_feature_enabled`). Se elimina el flag
-  `decision_trees` (las tablas de recovery son siempre la policy). Los agentes
-  leen `.agents/features.toml` directamente.
+  `.agents/standards/INDEX.md` (§"Feature flags") y la aplica el orquestador al
+  evaluar la checklist de H01 (env `AGENTS_FEATURE_*` > `features.toml` >
+  default). Se elimina el flag `decision_trees` (las tablas de recovery son
+  siempre la policy). Los agentes leen `.agents/features.toml` directamente.
 - **Métricas del protocolo por procedimiento en prosa**: la agregación pasa a
   `PROTOCOL_METRICS.md` §"Aggregation" como procedimiento aplicado por el
   agente bajo demanda (las métricas son advisory, nada las gatea).
@@ -101,14 +108,31 @@ La política de migración entre versiones vive en [`MIGRATION.md`](MIGRATION.md
   `.agents/orchestrators/*/harness/decision_trees/`; subcomandos `decide`,
   `features`, `health-check` y `metrics` de `runner.py`.
 - `.agents/harness/feature_flags.py` (reemplazado por la documentación
-  declarativa y `runner_validators.is_feature_enabled`).
+  declarativa de `.agents/standards/INDEX.md`; los flags los resuelve el
+  orquestador al evaluar H01).
 - `.agents/harness/runner_metrics.py` (reemplazado por el procedimiento de
   agregación de `PROTOCOL_METRICS.md`).
 - `.agents/harness/skill_validation.py` (su chequeo esencial queda plegado en
   `PROTOCOL_HEALTH.md`, ítem 7).
 - `.agents/task.py` (utilidad de desarrollo sin referencias en el protocolo).
-- Tests de los módulos eliminados; se agregan `test_health_probe.py` (sonda) y
-  `test_recovery_tables.py` (invariante de cobertura de las tablas).
+- Tests de los módulos eliminados (incluida la suite `test_recovery_tables.py`);
+  los invariantes pasan a las checklists en prosa y a la suite reducida del
+  trío sobreviviente.
+
+### Fixed
+
+- **Referencias residuales al runner eliminadas**: citas a
+  `runner.py`/`runner_validators`/`delegation_validity.py` y suites de test
+  inexistentes en H13, H15, S00, D00, D01, `PROTOCOL_TAXONOMY`,
+  `PYTHON_DEPENDENCIES`, `standards/INDEX`, `skills/INDEX`,
+  `terminology-enforcer` y `features.toml`, alineadas con la evaluación por
+  juicio (auditoría de referencias, 10 ago 2026).
+
+---
+
+Nota: el tag git `2.0.0` que fija esta versión se crea como entregable del
+release; la rama `dist` se regenera desde `master` por el workflow
+`publish-dist`.
 
 ## [1.0.0] — 2026-08-05
 

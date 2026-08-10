@@ -2,22 +2,6 @@
 trigger = "H06"
 transition = "VERIFYING → COMPLETED"
 artifact = "VERIFICATION_REPORT.md"
-# Explicit subset of the contract sections (Scope Compliance is gated by H07).
-required_sections = [
-  "Metadata",
-  "Task Reference",
-  "Execution Plan Reference",
-  "Verification Objective",
-  "Acceptance Criteria Evaluation",
-  "Test Results",
-  "Issues Found",
-  "Final Decision",
-  "Confidence",
-  "State Transition"
-]
-rubric_validation = true
-semantic_validation = true
-semantic_checks = ["final_decision", "acceptance_criteria_evaluation", "citation_resolution", "test_evidence"]
 +++
 
 
@@ -54,20 +38,20 @@ Validate that `VERIFICATION_REPORT.md` demonstrates the task was completed and v
 
 ## Checklist
 
-**Evaluation audience:** each item is marked `[machine]` — validated deterministically by the harness runner (artifact existence, required-section presence, and the EARS/rubric/semantic checks declared in this policy's front matter) or by the policy's test suite — or `[agent]` — evaluated by agent judgment when applying this policy. A `[machine]` failure is gateable without interpretation; an `[agent]` failure is declared judgment.
+**Evaluation audience:** the harness runner no longer exists; every item in this policy is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` have objectively verifiable structure and are restated as numbered instructions in §"Gate Checklist", where the Orchestrator MUST cite evidence per item. Items marked `[agent]` are declared judgment.
 
-1. The artifact file exists. `[machine]`
+1. The artifact file exists. `[gate]`
 2. The report summarizes what was verified. `[agent]`
 3. Each acceptance criterion from `TASK_SPECIFICATION.md` is evaluated. `[agent]`
 4. The report includes test results or equivalent evidence. `[agent]`
 5. The report identifies any issues or failures. `[agent]`
-6. The report explicitly recommends either `COMPLETED` or `RECOVERY`. `[machine]` (the runner's `final_decision` semantic check enforces the declared value)
-7. If the recommendation is `COMPLETED`, all acceptance criteria are met. `[machine]` (the runner's `acceptance_criteria_evaluation` semantic check enforces that no criterion is `FAIL` and that `PARTIAL` criteria carry `action_plan`)
+6. The report explicitly recommends either `COMPLETED` or `RECOVERY`. `[gate]` (see §"Gate Checklist", item 4, which verifies the declared `decision.result`)
+7. If the recommendation is `COMPLETED`, all acceptance criteria are met. `[gate]` (see §"Gate Checklist", item 5: no criterion is `FAIL` and every `PARTIAL` criterion carries `action_plan`)
 8. The report does not rely on assumptions to claim success. `[agent]`
-9. Every citation in the artifact (`` `path:section` ``, `` `path` §section ``, and the TOML citation fields `task_reference.specification` and `plan_reference.execution_plan`) resolves against the filesystem. `[machine]` (the runner's `citation_resolution` semantic check enforces this)
-10. Every command declared in `## Test Results` with a result other than `SKIPPED` has existing evidence: an `evidence` field referencing an existing file, or a matching entry in `SESSION_LOG.md`. `[machine]` (the runner's `test_evidence` semantic check enforces this)
+9. Every citation in the artifact (`` `path:section` ``, `` `path` §section ``, and the TOML citation fields `task_reference.specification` and `plan_reference.execution_plan`) resolves against the filesystem. `[gate]` (see §"Gate Checklist", item 6)
+10. Every command declared in `## Test Results` with a result other than `SKIPPED` has existing evidence: an `evidence` field referencing an existing file, or a matching entry in `SESSION_LOG.md`. `[gate]` (see §"Gate Checklist", item 7)
 
-The presence of the `required_sections` declared in this policy's front matter, and the `rubric_validation` declared in the front matter when the `rubrics` feature flag is enabled, are `[machine]` even though they are not restated as numbered items.
+The presence of the required sections listed in §"Gate Checklist" item 2, and the rubric evaluation of item 3 (when the `rubrics` feature flag is enabled), are `[gate]` even though they are not restated as numbered items in the checklist above.
 
 ## Decision Criteria
 
@@ -82,12 +66,17 @@ The Orchestrator must:
 2. Transition to `RECOVERY`.
 3. In recovery, decide whether to replan, request clarification, or abort.
 
-## Semantic Validation Performed by Runner
+## Gate Checklist
 
-The runner enforces the following semantic checks in addition to section presence:
-- For H06: `decision.result` is `COMPLETED` and no acceptance criterion has `result: FAIL`; `PARTIAL` criteria must have `action_plan`. The only other valid decision value is `RECOVERY`.
-- `citation_resolution`: every citation in the report resolves against the filesystem (broken citations are listed as the FAIL reason).
-- `test_evidence`: every `[[test_results]]` command whose result is not `SKIPPED` has existing evidence (`evidence` file or `SESSION_LOG.md` entry); commands without evidence are listed as the FAIL reason.
+The Orchestrator evaluates each item below by judgment when the gate fires and MUST cite evidence per item (artifact path, section name, declared value, or broken reference) in `HARNESS_REPORT.md`.
+
+1. Verify that `VERIFICATION_REPORT.md` exists in the current iteration directory (`.project/<session-uuid>/<iteration>/`). Cite the resolved artifact path as evidence.
+2. Verify that the artifact contains each of the following sections (heading comparison is case-insensitive): `Metadata`, `Task Reference`, `Execution Plan Reference`, `Verification Objective`, `Acceptance Criteria Evaluation`, `Test Results`, `Issues Found`, `Final Decision`, `Confidence`, `State Transition`. Cite any missing section as failure evidence.
+3. Verify that `## Rubric Evaluation` exists and contains one `### <NAME>_RUBRIC` subsection per expected rubric: the six base rubrics defined in `.agents/standards/quality/RUBRICS.md` (`TASK_SPECIFICATION_RUBRIC`, `CONTEXT_ARTIFACT_RUBRIC`, `CONTEXT_VALIDATION_REPORT_RUBRIC`, `EXECUTION_PLAN_RUBRIC`, `EXECUTION_SUMMARY_RUBRIC`, `VERIFICATION_REPORT_RUBRIC`) plus the rubric of each technical practice listed in `technical_approach.enabled` of `TASK_SPECIFICATION.md` that is enabled at protocol level. Each subsection MUST declare a `Level:` line with a value in {`INSUFFICIENT`, `MEETS`, `EXCEEDS`} and a non-empty `Evidence:` line. Cite missing rubrics and subsections without level or evidence.
+4. Verify that `## Final Decision` contains a parseable TOML block and that `decision.result` is `COMPLETED` for the gate to PASS. Cite the declared value.
+5. Verify that `## Acceptance Criteria Evaluation` contains a parseable TOML block whose `acceptance_criteria` is a list, that no entry has `result = "FAIL"`, and that every entry with `result = "PARTIAL"` declares a non-empty `action_plan`. Cite each offending criterion.
+6. Verify that every citation in the artifact resolves against the filesystem. Recognized citation forms: backtick-quoted `` `path:section` ``, backtick-quoted path followed by `§section`, and the string values of the TOML keys `specification` and `execution_plan` inside ` ```toml ` blocks. A citation resolves when its path exists relative to the project root, the session directory, or any of the session's iteration directories; when the target is a `.md` file and the anchor is not numeric-only, the cited section MUST exist as an ATX heading in the target (normalized, case-insensitive comparison). Paths containing `<`/`>` placeholders are skipped. On failure, cite each broken citation (line, path, reason); on success, cite the number of citations verified.
+7. Verify the test evidence: for every `[[test_results]]` entry in `## Test Results` whose `result` is not `SKIPPED`, verify that its `evidence` field references an existing file, or that the command string appears in the session's `SESSION_LOG.md`. Cite each command without evidence.
 
 ## Recovery Decision Table
 

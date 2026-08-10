@@ -61,8 +61,41 @@ La política de migración entre versiones vive en [`MIGRATION.md`](MIGRATION.md
 - **Métricas del protocolo por procedimiento en prosa**: la agregación pasa a
   `PROTOCOL_METRICS.md` §"Aggregation" como procedimiento aplicado por el
   agente bajo demanda (las métricas son advisory, nada las gatea).
+- **Gates del harness evaluados en prosa; fin del runner de validación**:
+  cada policy del harness declara ahora una sección «Gate Checklist» en prosa
+  que el orquestador evalúa por juicio (secciones requeridas, EARS, citas,
+  evidencia de tests, rúbricas, scope compliance, delegación H15). El estado
+  del protocolo sigue siendo mecánico: tras un PASS juzgado por el orquestador,
+  `python .agents/harness/runner_state.py --session <uuid> --trigger <HXX>
+  --iteration <N> pass` registra el gate en `state.json` (escritura
+  transaccional, único escritor, detección de bypass post-H04 incluida).
+  `HARNESS_REPORT.md` pasa a escribirlo el orquestador (resuelve la
+  contradicción latente entre el contrato y `harness/INDEX.md`). Requisitos de
+  entorno por modo, documentados en `ADOPTION.md`: modo declarativo sin
+  requisitos; modo enforced con Python 3.x stdlib pura (solo `hook_gate.py` +
+  `runner_state.py` + `health_check.py`), sin `pip`.
+- **Catálogo de prácticas técnicas en prosa**: la tabla flag → (rúbrica,
+  estándar) pasa de `technical_practices.py` a `.agents/standards/INDEX.md`;
+  la resolución de flags (env `AGENTS_FEATURE_*` > `features.toml` > default)
+  la aplica el orquestador al evaluar H01.
 
 ### Removed
+
+- `.agents/harness/runner.py` y los módulos `runner_models.py`,
+  `runner_markdown.py`, `runner_policies.py`, `runner_artifacts.py`,
+  `runner_validators.py`, `runner_citations.py`, `runner_profiles.py`,
+  `runner_report.py`, `runner_paths.py` (sus validadores pasan a las
+  checklists en prosa de las policies; `runner_state.py` sobrevive, reescrito
+  autocontenido con un CLI mínimo de registro de estado).
+- `.agents/harness/technical_practices.py` (catálogo movido a
+  `.agents/standards/INDEX.md`).
+- `.agents/harness/delegation_validity.py` (chequeos V1–V5 convertidos en la
+  «Gate Checklist» de la policy H15).
+- `.agents/harness/RUNNER.md` (documento del runner eliminado).
+- Suite de tests reducida al trío sobreviviente (`test_hook_gate.py`,
+  `test_runner_state.py`, `test_health_probe.py`); los tests de los módulos
+  eliminados y los invariantes documentales basados en ellos se eliminan — sus
+  invariantes pasan a las checklists en prosa.
 
 - `.agents/harness/decision_tree_evaluator.py` y los árboles TOML
   `.agents/orchestrators/*/harness/decision_trees/`; subcomandos `decide`,

@@ -46,10 +46,13 @@ Para pasar un proyecto adoptante de la versión `X` a la versión `Y`:
 6. **Sincronizar el directorio**: reemplazar `.agents/` y `AGENTS.md` por los de
    la versión `Y`. `.agents/` es autocontenido: no referencia `plans/` ni RFCs, así
    que no hace falta copiar nada más del repo de origen.
-7. **Validar**: ejecutar la sonda de almacenamiento de estado como primera
-   verificación (`python .agents/harness/health_check.py` → PASS) y luego la suite del
-   harness (`python -m pytest .agents/harness/tests/`). Ambas deben pasar antes de
-   operar sesiones reales con la versión nueva.
+7. **Validar**: la checklist documental de
+   `.agents/standards/runtime/PROTOCOL_HEALTH.md` (la aplica el system agent en
+   el bootstrap) debe terminar en `PASS`. Si el proyecto opera en modo
+   enforced, ejecutar además la sonda de almacenamiento de estado
+   (`python .agents/harness/health_check.py` → PASS). La suite de tests
+   (`python -m pytest .agents/harness/tests/`) es solo para desarrollo del
+   protocolo, no un requisito del adoptante.
 8. **Actualizar la versión adoptada**: registrar en el proyecto qué versión de
    `.agents/VERSION` quedó adoptada.
 

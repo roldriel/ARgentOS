@@ -16,7 +16,8 @@ artifact_validated: .agents/standards/runtime/PROTOCOL_TAXONOMY.md
 ## Trigger
 
 Manual / structural. H13 is **not** a state-transition gate: it is a structural validator of the
-protocol itself. It runs on demand (via its test suite) whenever the protocol structure changes.
+protocol itself. It is applied by the Orchestrator (or the System Agent during bootstrap) by
+judgment whenever the protocol structure changes.
 
 ## Domain exception
 
@@ -42,7 +43,7 @@ state machines, workflows, harness policies, contracts, roles and workers.
 
 ## Rules
 
-**Evaluation audience:** every rule below is `[machine]` — validated deterministically by the policy's test suite (`.agents/harness/tests/test_protocol_taxonomy.py`; see §"Validation"). A `[machine]` failure is gateable without interpretation; this policy contains no `[agent]` (agent-judgment) items.
+**Evaluation audience:** the harness runner no longer exists; every rule below is evaluated by the Orchestrator's judgment when the policy is applied. All rules are `[gate]` items — objectively verifiable structure (file existence, metadata blocks, taxonomy references) — so a failure is gateable without interpretation; this policy contains no `[agent]` (agent-judgment) items.
 
 1. Every workflow must reference a `state` and a `domain` that exist in the taxonomy.
 2. Every harness policy must respect its domain namespace prefix (`H` = core, `D` = discovery,
@@ -75,22 +76,21 @@ state machines, workflows, harness policies, contracts, roles and workers.
 ## Metadata block placement
 
 Files that already start with a TOML front matter block (`+++ ... +++`) — harness policies and
-contracts, parsed by `.agents/harness/runner.py` — carry
-the YAML taxonomy block **immediately after** the TOML block. All other files carry it at the
-very top of the file. This keeps the existing TOML parsers untouched.
+contracts — carry the YAML taxonomy block **immediately after** the TOML block. All other
+files carry it at the very top of the file.
 
 ## Agent-side enforcement
 
-H13 validates structure mechanically; canonical vocabulary in artifact prose is agent judgment.
+H13 validates structure by judgment; canonical vocabulary in artifact prose is agent judgment.
 Workers writing or rewriting protocol artifacts may activate the `terminology-enforcer` skill
 to detect non-canonical terms against the master dictionary
 (`.agents/standards/runtime/PROTOCOL_TAXONOMY.md`) before the artifact is reported.
 
 ## Validation
 
-```bash
-python -m pytest .agents/harness/tests/test_protocol_taxonomy.py
-```
+There is no executable test suite: the former `test_protocol_taxonomy.py` invariants live in
+the rules above. The Orchestrator (or the System Agent during bootstrap) applies them by
+judgment whenever the protocol structure changes.
 
 ## Decision Criteria
 

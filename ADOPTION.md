@@ -58,10 +58,18 @@ protocolo, no parte del producto adoptado. `CHANGELOG.md` y `MIGRATION.md`
 conviene conservarlos como referencia de versionado, pero no son requeridos por
 el runtime.
 
-Requisito de entorno: Python 3.11+ disponible como `python` (el harness usa
-`tomllib`, de la stdlib). No hay dependencias externas para la verificación de
-salud del protocolo; `pytest` solo se necesita para correr la suite de tests
-del harness.
+Requisitos de entorno, por modo de adopción (§6):
+
+- **Modo declarativo (default): ninguno.** El protocolo es puro Markdown; los
+  gates del harness los evalúa el orquestador por juicio contra las checklists
+  de cada policy. No se necesita Python ni ninguna herramienta externa.
+- **Modo enforced: Python 3.x disponible como `python`, stdlib pura** (sin
+  `pip` ni dependencias externas). Solo tres scripts lo usan: `hook_gate.py`
+  (hook del CLI), `runner_state.py` (registro transaccional de `state.json`)
+  y `health_check.py` (sonda de almacenamiento de estado).
+- `pytest` solo se necesita para **desarrollar el protocolo** (suite reducida
+  de tests del harness en `.agents/harness/tests/`); no es un requisito de
+  adopción.
 
 ## 2. Qué configurar
 
@@ -79,28 +87,36 @@ del harness.
    proyecto tiene un dominio de negocio propio, usar además las plantillas de
    dominio del mismo §9 (overview + cheatsheet) para dar a los workers contexto
    funcional.
-4. **Nada de IDE**: el protocolo no requiere configuración de IDE ni de
-   herramientas externas; cualquier agente que lea `AGENTS.md` puede operarlo.
+4. **Nada de IDE ni de runtime**: el protocolo no requiere configuración de
+   IDE ni de herramientas externas; cualquier agente que lea `AGENTS.md` puede
+   operarlo. En modo declarativo (§6) tampoco requiere Python.
 
 ## 3. Validación inicial
 
-En este orden, desde la raíz del proyecto:
+**Modo declarativo (sin Python):** la verificación es la checklist documental
+de `.agents/standards/runtime/PROTOCOL_HEALTH.md`, que aplica el system agent
+en el bootstrap de la primera sesión. Confirma que la estructura del protocolo
+quedó íntegra (directorios requeridos, archivos índice, front matter de
+contratos, rubrics, KB, estándares de prácticas técnicas). Debe terminar en
+`PASS`.
+
+**Modo enforced (con Python):** además de la checklist documental, la sonda
+mecánica confirma que `.project/` es escribible:
 
 ```bash
 python .agents/harness/health_check.py
+```
+
+**Solo para desarrollo del protocolo** (no hace falta en un proyecto
+adoptante): la suite reducida de tests del harness —
+
+```bash
 python -m pytest .agents/harness/tests/
 ```
 
-- La **verificación de salud** es la primera comprobación: la checklist de
-  `.agents/standards/runtime/PROTOCOL_HEALTH.md` confirma que la estructura del
-  protocolo quedó íntegra (directorios requeridos, archivos índice, front matter
-  de contratos, rubrics, KB, estándares de prácticas técnicas) y la sonda de
-  `health_check.py` confirma que `.project/` es escribible. Debe terminar en
-  `PASS`.
-- La **suite de tests** valida el harness completo. Debe terminar en verde.
-
-Si ambas pasan, el protocolo está operativo. La primera sesión real arranca
-dándole al agente la instrucción de leer `AGENTS.md`.
+Si la verificación correspondiente a tu modo pasa, el protocolo está
+operativo. La primera sesión real arranca dándole al agente la instrucción de
+leer `AGENTS.md`.
 
 ## 4. Orden de lectura recomendado
 
@@ -116,8 +132,8 @@ Para entender el protocolo adoptado, en este orden:
 5. `.agents/orchestrators/core/roles/orchestrator.md` — el rol que gobierna.
 6. `.agents/standards/INDEX.md` — mapa de estándares (flags, EARS, rubrics,
    contexto, TDD).
-7. `.agents/harness/INDEX.md` — triggers del harness, runner, verificación de
-   salud, recovery.
+7. `.agents/harness/INDEX.md` — triggers del harness, estado de protocolo y
+   hooks, verificación de salud, recovery.
 
 ## 5. Qué NO forma parte de la adopción
 
@@ -132,20 +148,23 @@ Para entender el protocolo adoptado, en este orden:
 
 El protocolo funciona en dos modos explícitos, sin zona gris:
 
-- **Declarativo (default):** los gates del harness los invoca el orquestador
-  por disciplina de prompt. Nada bloquea al agente si se los salta; el
-  cumplimiento se audita post-hoc en `HARNESS_REPORT.md`. Es el modo activo
-  cuando no hay hooks instalados (o el CLI no soporta hooks bloqueantes). El
-  runner escribe igualmente `.project/<sesión>/<iteración>/state.json` en cada
-  gate PASS: es inofensivo en este modo y habilita la auditoría post-hoc y el
-  paso a enforced sin cambios de protocolo.
+- **Declarativo (default):** los gates del harness los evalúa el orquestador
+  por juicio, contra la checklist en prosa de cada policy. Nada bloquea al
+  agente si se los salta; el cumplimiento se audita post-hoc en
+  `HARNESS_REPORT.md` (que escribe el propio orquestador). Es el modo activo
+  cuando no hay hooks instalados (o el CLI no soporta hooks bloqueantes). Sin
+  requisitos de entorno: no se necesita Python.
 - **Enforced:** los gates críticos los impone el entorno. Un hook compartido
   (`python .agents/harness/hook_gate.py`, stdlib pura) lee el evento del CLI
   por stdin y bloquea (exit 2) dos situaciones: `PreToolUse` sobre
   `Write`/`Edit` a un deliverable del proyecto sin gate H04 (plan aprobado)
   PASS en `state.json`, y `Stop` sin cierre de iteración (sin H06 PASS ni
-  `NEEDS_CLARIFICATION` registrado). El deny incluye la instrucción exacta de
-  recuperación (el comando `runner.py` del gate faltante).
+  `NEEDS_CLARIFICATION` registrado). El orquestador sigue evaluando cada gate
+  en prosa; cuando el gate da PASS, registra el resultado con
+  `python .agents/harness/runner_state.py --session <uuid> --trigger <HXX>
+  --iteration <N> pass`, que es el único escritor de `state.json` (escritura
+  transaccional, fail-closed). El deny del hook incluye la instrucción exacta
+  de recuperación. Requisito: Python 3.x stdlib, sin `pip`.
 
 ### 6.1. Configuración enforced — Kimi Code
 
@@ -199,9 +218,10 @@ gestionadas fuera del repo: impiden que el propio agente desactive el hook.
 Todo CLI evaluado es **fail-open** ante crash o timeout del hook: si
 `hook_gate.py` falla, la tool call pasa libre. El modelo protege contra
 *omisión del agente*, no contra el hook fallando ni contra un usuario que
-edite configs fuera de sesión. Mitigaciones en capas: script stdlib sin
+edite configs fuera de sesión. Mitigaciones en capas: scripts stdlib sin
 dependencias con timeout corto, sonda que verifica escritura/lectura de
-`state.json`, y detección post-hoc del runner (alerta en `HARNESS_REPORT.md`
-cuando aparecen archivos modificados antes del PASS del gate de plan). Si el
+`state.json`, y detección post-hoc de bypass (`runner_state.py` alerta al
+registrar el PASS de H04 si aparecen archivos modificados antes de ese PASS).
+Si el
 entorno no tolera ese límite, quedarse en modo declarativo es igual de válido
 — pero debe declararse como tal.

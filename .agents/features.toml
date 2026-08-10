@@ -4,16 +4,17 @@
 # individual capabilities via environment variables with the
 # AGENTS_FEATURE_<FLAG> prefix (environment overrides this file).
 #
-# Consumption: flags are classified by who consumes them. Flags marked
-# [code] are read mechanically by the harness runner
-# (`runner_validators.is_feature_enabled`); their compliance is mechanical.
+# Consumption: flags are classified by who consumes them. There is no
+# executable runner: flags are resolved by the Orchestrator at gate
+# evaluation (H01 checklist) in the order AGENTS_FEATURE_<FLAG> environment
+# variable > this file > default enabled.
 # Flags and settings marked [declarative] are consumed by agents reading
 # this file. An enabled [declarative] flag is a behavioral obligation: the
 # consuming agent must read its value before the flow point where it
 # conditions behavior and act on it there; ignoring it is a deviation that
 # must be logged. Compliance is auditable by joining the active-flags entry
 # in SESSION_LOG.md with the consumption declared in the produced artifacts.
-# Dual flags ([code] + declarative) carry both obligations independently.
+# Dual flags (technical-practice flags) carry both obligations independently.
 
 [features]
 # [declarative] rubrics, knowledge_base — gate agent behavior (reviewer role,
@@ -34,8 +35,8 @@ discovery_environment_ttl_hours = 6
 discovery_project_ttl_hours = 24
 
 # Technical practices
-# [code] read by the H01/H05 semantic validators; also consumed declaratively
-# by workers and by the protocol health checklist (standards presence).
+# [declarative] resolved by the Orchestrator at H01/H05 gate evaluation; also
+# consumed by workers and by the protocol health checklist (standards presence).
 tdd = true
 srp = true
 ocp = true

@@ -2,8 +2,6 @@
 trigger = "H05"
 transition = "EXECUTING → VERIFYING"
 artifact = "EXECUTION_SUMMARY.md"
-semantic_validation = true
-semantic_checks = ["execution_summary", "technical_practice_evidence"]
 +++
 
 
@@ -39,17 +37,17 @@ Validate that the execution phase completed all planned steps and left the proje
 
 ## Checklist
 
-**Evaluation audience:** each item is marked `[machine]` — validated deterministically by the harness runner (artifact existence, required-section presence, and the semantic checks declared in this policy's front matter) or by the policy's test suite — or `[agent]` — evaluated by agent judgment when applying this policy. A `[machine]` failure is gateable without interpretation; an `[agent]` failure is declared judgment.
+**Evaluation audience:** the harness runner no longer exists; every item in this policy is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` have objectively verifiable structure and are restated as numbered instructions in §"Gate Checklist", where the Orchestrator MUST cite evidence per item. Items marked `[agent]` are declared judgment.
 
-1. Every step in `EXECUTION_PLAN.md` has been executed or explicitly documented as skipped with justification. `[machine]` (the runner's `execution_summary` semantic check enforces that every step is `COMPLETED` or `SKIPPED` with notes)
+1. Every step in `EXECUTION_PLAN.md` has been executed or explicitly documented as skipped with justification. `[gate]` (see §"Gate Checklist", item 3: every step is `COMPLETED` or `SKIPPED` with notes)
 2. No project files outside the plan scope were modified. `[agent]`
 3. No unplanned requirements or assumptions were introduced. `[agent]`
 4. Intermediate validations defined in the plan were run. `[agent]`
-5. The project is in a verifiable state (tests can run, app can start, etc.). `[agent]` (the runner verifies the declared value `final_state.status = VERIFIABLE`; judging that the project is actually verifiable is agent judgment)
+5. The project is in a verifiable state (tests can run, app can start, etc.). `[agent]` (item 2 of the §"Gate Checklist" verifies the declared value `final_state.status = VERIFIABLE`; judging that the project is actually verifiable is agent judgment)
 6. No step caused an unrecoverable error. `[agent]`
-7. For each practice listed in `technical_approach.enabled`, the `EXECUTION_SUMMARY.md` contains a corresponding entry in `## Technical Practice Evidence` with `applied` and, when applicable, supporting evidence. `[machine]` (the runner's `technical_practice_evidence` semantic check)
+7. For each practice listed in `technical_approach.enabled`, the `EXECUTION_SUMMARY.md` contains a corresponding entry in `## Technical Practice Evidence` with `applied` and, when applicable, supporting evidence. `[gate]` (see §"Gate Checklist", item 4)
 
-The presence of the `required_sections` resolved by the runner from the artifact contract is `[machine]` even though it is not restated as a numbered item.
+The presence of the sections required by the artifact contract is `[gate]` even though it is not restated as a numbered item; the Orchestrator verifies it against the contract cited in §"Input".
 
 ## Decision Criteria
 
@@ -64,10 +62,14 @@ The Orchestrator must:
 2. Transition to `RECOVERY`.
 3. In recovery, decide whether to replan or request clarification.
 
-## Semantic Validation Performed by Runner
+## Gate Checklist
 
-The runner enforces the following semantic checks in addition to section presence:
-- For H05: `EXECUTION_SUMMARY.md` exists, `final_state.status` is `VERIFIABLE`, and every step is `COMPLETED` or `SKIPPED` with notes.
+The Orchestrator evaluates each item below by judgment when the gate fires and MUST cite evidence per item (artifact path, declared value, or offending entry) in `HARNESS_REPORT.md`.
+
+1. Verify that `EXECUTION_SUMMARY.md` exists in the current iteration directory (`.project/<session-uuid>/<iteration>/`). Cite the resolved artifact path as evidence.
+2. Verify that `## Final Project State` contains a parseable TOML block and that `final_state.status` is one of `VERIFIABLE` or `BLOCKED`. The gate FAILS unless the declared status is `VERIFIABLE`. Cite the declared value.
+3. Verify that `## Steps Executed` contains a parseable TOML block whose `steps_executed` is a list, that every step has a `status` in {`COMPLETED`, `SKIPPED`, `BLOCKED`}, that no step is `BLOCKED`, and that every `SKIPPED` step carries non-empty `notes`. Cite each offending step.
+4. Verify the technical practice evidence. Read `technical_approach.enabled` from the `## Technical Approach` TOML block of `TASK_SPECIFICATION.md` in the same iteration. If either input is missing, or the `enabled` list is empty, record that this item is skipped. Otherwise verify, in the `## Technical Practice Evidence` TOML block of the summary, that each enabled practice has an entry with an `applied` field: when `applied = false`, a non-empty `reason` is required; when `applied = true`, at least one additional non-empty evidence field is required. Cite each practice entry and each violation.
 
 ## Recovery Decision Table
 

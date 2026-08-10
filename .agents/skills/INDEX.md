@@ -6,7 +6,7 @@ Every skill in this index is *integrated*: it is referenced by name from a worke
 
 ## Skill inventory
 
-One row per protocol skill. The structural test `.agents/harness/tests/test_protocol_skills.py` validates that every row exists on disk with valid front matter, and that every skill directory is listed here.
+One row per protocol skill. There is no executable structural test anymore: the Orchestrator verifies by judgment (protocol health checklist, item 7, for project skills; H13 coherence for protocol files) that every row exists on disk with valid front matter and that every skill directory is listed here.
 
 | Skill | Description |
 | --- | --- |

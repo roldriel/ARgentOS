@@ -11,9 +11,7 @@ It ensures that:
 3. Workflow phases were executed in order without skipped steps.
 4. The process remains auditable and reproducible.
 
-The harness is implemented as a set of policies and an executable runner (`runner.py`, split into `runner_*.py` modules — see `.agents/harness/RUNNER.md` for the layout). The runner validates artifacts against policies. Recovery routing lives in each policy's §"Recovery Decision Table" and protocol health verification in `.agents/standards/runtime/PROTOCOL_HEALTH.md`.
-
-For runner usage (CLI, tests), see `.agents/harness/RUNNER.md`.
+The harness is implemented as a set of policies, each carrying a «Gate Checklist» in prose that the Orchestrator evaluates by judgment when the gate fires. There is no executable validation runner. Three pure-stdlib Python scripts survive: `hook_gate.py` (the CLI enforcement hook), `runner_state.py` (the only writer of `state.json`, via its CLI), and `health_check.py` (the state-storage probe). Recovery routing lives in each policy's §"Recovery Decision Table" and protocol health verification in `.agents/standards/runtime/PROTOCOL_HEALTH.md`.
 
 ## Who Invokes the Harness
 
@@ -79,7 +77,7 @@ If a harness trigger fails:
 
 When a harness trigger fails, the Orchestrator routes to recovery. The recovery logic is declared as a **recovery decision table** inside each policy file (§"Recovery Decision Table"): an ordered list of rules (conditions over context variables such as `artifact_exists` or `retry_count` → recommended action and target phase) that the Orchestrator evaluates by judgment, applying the first matching rule. Co-locating the table with the policy keeps the recovery rule next to the gate that fails.
 
-The runner resolves policies across domains: core (`H*`), discovery (`D*`), system (`S*`) and cross-cutting (`.agents/harness/policies/`).
+The Orchestrator resolves and reads the policy of its own domain: core (`H*`), discovery (`D*`), system (`S*`) and cross-cutting (`.agents/harness/policies/`).
 
 H09 and H10 have no recovery decision tables. When either fails, the Orchestrator applies the generic recovery fallback (`RECOVERY_GENERIC` → `08-recovery.md`).
 
@@ -103,7 +101,7 @@ H15 (`delegation-validity`) is not a state-transition gate over a session artifa
 | H15 pre-delegation | Before the Orchestrator invokes a Worker | Profile resolvability, skill resolvability, input artifact existence, budget coherence |
 | H15 post-return | When the Orchestrator receives the return report, before applying the transition trigger | Return report schema and failure classes |
 
-Because a delegation payload is not a session artifact, the runner CLI does not execute H15; its machine evaluation lives in `.agents/harness/delegation_validity.py` and in the policy's test suite (`.agents/harness/tests/test_delegation_validity.py`). Its recovery routing is the §"Recovery Decision Table" of `.agents/orchestrators/core/harness/policies/H15-delegation-validity.md`.
+H15 is evaluated by the Orchestrator's judgment against the «Gate Checklist» in prose of its policy; its recovery routing is the §"Recovery Decision Table" of `.agents/orchestrators/core/harness/policies/H15-delegation-validity.md`.
 
 ## Project Discovery
 
@@ -121,35 +119,42 @@ For details on the entry format, see `.agents/orchestrators/discovery/contracts/
 
 ## Protocol State and Hook Enforcement
 
-The runner persists the protocol state of each iteration in
-`.project/<session-uuid>/<iteration>/state.json` (module
-`.agents/harness/runner_state.py`): session, iteration, task profile, gates
-passed with timestamps, and last gate. Invariants:
+The protocol state of each iteration lives in
+`.project/<session-uuid>/<iteration>/state.json`: session, iteration, task
+profile, gates passed with timestamps, and last gate. This section is the
+canonical source for how that state is written and consumed. Invariants:
 
-1. Only the runner writes it, transactionally (temp file + rename), after a
-   gate `PASS`. `FAIL` and `SKIP` never touch it.
+1. Only `.agents/harness/runner_state.py` writes it, transactionally (temp
+   file + rename), via its CLI:
+   `python .agents/harness/runner_state.py --session <uuid> --trigger <HXX> --iteration <N> pass`.
+   The Orchestrator invokes it **only after judging `PASS`** against the
+   policy's «Gate Checklist». `FAIL` and `SKIP` never touch it.
 2. Hooks and the Orchestrator read it; nobody else writes it. A missing or
    corrupt `state.json` means *no gate has passed* (fail-closed for
    consumers).
 
 `state.json` enables optional **hook enforcement** at the CLI level
-(enforced mode): `.agents/harness/hook_gate.py` (stdlib only) reads a CLI
-hook event from stdin and denies (exit 2) `PreToolUse` on `Write`/`Edit`
-targeting project deliverables without an H04 `PASS` (approved
-EXECUTION_PLAN) for the current iteration, and `Stop` without iteration
-closure (H06 `PASS`, `NEEDS_CLARIFICATION` recorded, or no task started).
-Every deny includes the exact `runner.py` command that resolves it. Without
-hooks installed the protocol runs in **declarative mode** (the default):
-gates remain orchestrator-invoked and compliance is audited post-hoc. The
-adoption guide (`ADOPTION.md`) documents both modes and the per-CLI hook
+(enforced mode), which requires only Python 3 standard library — no pip
+installs — and consists of three scripts: `.agents/harness/hook_gate.py`
+reads a CLI hook event from stdin and denies (exit 2) `PreToolUse` on
+`Write`/`Edit` targeting project deliverables without an H04 `PASS`
+(approved EXECUTION_PLAN) for the current iteration, and `Stop` without
+iteration closure (H06 `PASS`, `NEEDS_CLARIFICATION` recorded, or no task
+started); `runner_state.py` persists the gate results the hook consults;
+`health_check.py` probes that `state.json` can be written and read.
+Without hooks installed the protocol runs in **declarative mode** (the
+default), which has no Python requirement: gates remain
+orchestrator-invoked and compliance is audited post-hoc. The adoption
+guide (`ADOPTION.md`) documents both modes and the per-CLI hook
 configuration.
 
 Honest limit: hook systems are **fail-open** — a hook crash or timeout lets
 the tool call through. Mitigations are layered: the hook script is stdlib
 with a short timeout, the state-storage probe (`health_check.py`) verifies `state.json` write/read,
-and the runner performs post-hoc detection: when the plan gate (H04)
-passes, it scans for project files modified after the session started but
-before the PASS, and records suspects as an alert in the HARNESS_REPORT
+and `runner_state.py` performs non-blocking post-hoc bypass detection:
+when the plan gate (H04) `PASS` is recorded, it scans for project files
+modified after the session started but before the PASS, and the
+Orchestrator records suspects as an alert in the HARNESS_REPORT
 entry (contract: `.agents/contracts/HARNESS_REPORT.md`).
 
 ## Constraints

@@ -9,7 +9,7 @@ when_not: The vocabulary to align is project-level terminology across gathered s
 
 Keep protocol artifacts speaking the protocol's own language: every state, artifact, actor, lifecycle, and harness ID named in an artifact must match the master dictionary exactly, so references stay unambiguous across sessions and domains.
 
-The dictionary of record is `.agents/standards/runtime/PROTOCOL_TAXONOMY.md`, validated by the policy test `test_protocol_taxonomy.py`. This skill detects deviations from it; it does not extend or reinterpret it.
+The dictionary of record is `.agents/standards/runtime/PROTOCOL_TAXONOMY.md`, whose coherence is validated by the Orchestrator against harness policy `.agents/harness/policies/H13-protocol-taxonomy.md`. This skill detects deviations from it; it does not extend or reinterpret it.
 
 ---
 

@@ -1,7 +1,7 @@
 +++
 artifact = "HARNESS_REPORT.md"
 phase = "all"
-produced_by = "harness"
+produced_by = "orchestrator"
 enforcement = "informational"
 +++
 
@@ -20,17 +20,17 @@ consumed_by: [core:RECOVERY, core:COMPLETED, discovery:DISCOVERY_READY]
 
 ## Purpose
 
-`HARNESS_REPORT.md` is the audit trail of the validation harness. It lives at the root of every session (`.project/<session-uuid>/HARNESS_REPORT.md`) and records every harness trigger invocation with its result, evidence, and aggregated metrics. It is written exclusively by the harness runner (`update_report` in `.agents/harness/runner.py`); agents must not edit it by hand.
+`HARNESS_REPORT.md` is the audit trail of the validation harness. It lives at the root of every session (`.project/<session-uuid>/HARNESS_REPORT.md`) and records every harness trigger invocation with its result, evidence, and aggregated metrics. It is written by the Orchestrator after every gate evaluation; no other agent edits it.
 
 ## Location and ownership
 
 - Path: `.project/<session-uuid>/HARNESS_REPORT.md` (session root, not inside an iteration folder).
-- Producer: the harness runner, after every trigger evaluation (`PASS` or `FAIL`).
+- Producer: the Orchestrator, after every trigger evaluation (`PASS` or `FAIL`).
 - Consumers: the Orchestrator (recovery and completion decisions), the Discovery Orchestrator (its result payload points to this file), and any audit of the session.
 
 ## Required structure
 
-The report is rebuilt from a template on every update. It contains, in this order:
+The report follows a fixed declarative structure that the Orchestrator must respect. It contains, in this order:
 
 1. **Header**:
 
@@ -55,9 +55,9 @@ The report is rebuilt from a template on every update. It contains, in this orde
    - `Timestamp`: ISO-8601 timestamp of the invocation.
    - `Artifact checked`: present only when the trigger validates an artifact.
    - `Checks`: one bullet per check, formatted as `` `<check-id>`: <result> — <evidence> ``. A skipped gate records a single check `gate_required_for_profile` with result `SKIP` and evidence `skipped: profile — …`.
-   - `Alert` (optional): one `- Alert: <message>` line per post-hoc audit alert (for example, a suspected enforcement-hook bypass detected by the runner when files were modified before the plan gate PASS). Alerts never change the gate result.
+   - `Alert` (optional): one `- Alert: <message>` line per post-hoc audit alert (for example, a suspected enforcement-hook bypass detected by `.agents/harness/runner_state.py` when files were modified before the plan gate PASS). Alerts never change the gate result.
 
-   Each entry ends with a machine-readable HTML comment so the runner can preserve history across updates:
+   Each entry ends with a machine-readable HTML comment so history is preserved across updates:
 
    ```markdown
    <!-- ENTRY: {"timestamp": "...", "trigger": "...", "transition": "...", "result": "...", "checks": [{"id": "...", "result": "...", "evidence": "..."}], "artifact": "...", "duration_ms": 0, "rubric_scores": {...}, "alerts": [...]} -->
@@ -85,8 +85,8 @@ The report is rebuilt from a template on every update. It contains, in this orde
 
 ## Constraints
 
-- Only the harness runner may write or rewrite this file; entries are append-only in effect (the runner rebuilds the report preserving previous `ENTRY` comments).
+- Only the Orchestrator may write or rewrite this file; entries are append-only in effect (every update preserves the previous `ENTRY` comments).
 - Every harness invocation in a session must appear exactly once in `## Entries` and `## Summary`.
 - The report must not include credentials, tokens, or personal data.
 - Failures recorded here feed the recovery flow described in `.agents/harness/INDEX.md`.
-- The `ENTRY` comments are the trigger data points of the protocol metrics model (`.agents/standards/runtime/PROTOCOL_METRICS.md`); the runner `metrics` subcommand reads them for aggregation.
+- The `ENTRY` comments are the trigger data points of the protocol metrics model (`.agents/standards/runtime/PROTOCOL_METRICS.md`); the agent-driven aggregation procedure of that standard reads them.

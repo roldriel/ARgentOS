@@ -22,12 +22,19 @@ To validate the `.agents/` workflow, a Flask ABM-style microservice with endpoin
 
 ## Verifying the protocol
 
+In declarative mode (no Python required), the document-level health checklist (`.agents/standards/runtime/PROTOCOL_HEALTH.md`) is applied by the ArgentOS System Agent at bootstrap — that is the whole verification.
+
+In enforced mode, the state-storage probe also applies:
+
 ```bash
 python .agents/harness/health_check.py
-python -m pytest .agents/harness/tests/ dev/runtime/tests/
 ```
 
-The first command is the state-storage probe; the document-level health checklist (`.agents/standards/runtime/PROTOCOL_HEALTH.md`) is applied by the ArgentOS System Agent at bootstrap.
+Protocol development only (not needed by adopters):
+
+```bash
+python -m pytest .agents/harness/tests/ dev/runtime/tests/
+```
 
 The `dev/` directory holds development tooling and reference implementations; it is not part of the distributed protocol (adopters get only `.agents/` + `AGENTS.md` from the `dist` branch).
 

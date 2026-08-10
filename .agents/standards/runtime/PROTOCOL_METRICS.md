@@ -12,8 +12,8 @@ This standard measures the **protocol process**, never the content of artifacts 
 
 A single recorded observation of the protocol process. Every data point is one of two kinds:
 
-- **Trigger data point** — produced by a harness trigger execution. It is recorded by the runner in `HARNESS_REPORT.md` (`.agents/contracts/HARNESS_REPORT.md`, §"Required structure": the `ENTRY` comments and the `## Metrics` section). No agent records these by hand.
-- **Event data point** — produced by an agent decision or observation that does not pass through a runner trigger. It is recorded by the Orchestrator as a machine-readable `METRIC` entry in the session-level artifact `METRICS.md` (contract: `.agents/contracts/METRICS.md`).
+- **Trigger data point** — produced by a harness trigger evaluation. It is recorded by the Orchestrator in `HARNESS_REPORT.md` (`.agents/contracts/HARNESS_REPORT.md`, §"Required structure": the `ENTRY` comments and the `## Metrics` section) as part of the gate evaluation entry.
+- **Event data point** — produced by an agent decision or observation that does not pass through a harness trigger. It is recorded by the Orchestrator as a machine-readable `METRIC` entry in the session-level artifact `METRICS.md` (contract: `.agents/contracts/METRICS.md`).
 
 ### Metric
 
@@ -78,7 +78,7 @@ Metrics are grouped by what they measure. The `Source` column states where the d
 
 ## Registration rules
 
-- If a data point already passes through a runner trigger, it is recorded in `HARNESS_REPORT.md` by the runner; no duplicate event is recorded.
+- If a data point already passes through a harness trigger, it is recorded in `HARNESS_REPORT.md` by the Orchestrator as part of the gate evaluation; no duplicate event is recorded.
 - Every other data point is recorded by the Orchestrator as a `METRIC` comment in `METRICS.md` at the moment the event occurs (not retroactively at session end).
 - Events are append-only: a wrong event is corrected by a later event, never by editing or deleting the recorded one.
 - The event catalog (types and required fields) is defined by `.agents/contracts/METRICS.md`; this standard defines what the events mean.
@@ -92,7 +92,7 @@ Aggregation is performed by the agent on demand (metrics are advisory; nothing g
 3. Compute every metric of the catalog from those data points: flow metrics from the trigger entries, failure/delegation/context/session metrics from the events, and the computed ratios.
 4. Emit the aggregated report (JSON or a summary table) with one value per catalog metric.
 
-The aggregation consolidates the data points of one session or of the whole project (`.project/`), following the runner metrics pattern (`.agents/harness/RUNNER.md`, §"Harness metrics"). It never modifies session artifacts.
+The aggregation consolidates the data points of one session or of the whole project (`.project/`). It never modifies session artifacts.
 
 ## Health signals
 

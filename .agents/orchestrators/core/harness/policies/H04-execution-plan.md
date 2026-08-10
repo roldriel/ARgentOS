@@ -2,8 +2,6 @@
 trigger = "H04"
 transition = "PLANNING → PLAN_READY"
 artifact = "EXECUTION_PLAN.md"
-semantic_validation = true
-semantic_checks = ["citation_resolution"]
 +++
 
 
@@ -40,9 +38,9 @@ Validate that `EXECUTION_PLAN.md` defines an executable, safe, and scope-respect
 
 ## Checklist
 
-**Evaluation audience:** each item is marked `[machine]` — validated deterministically by the harness runner (artifact existence, required-section presence, and the EARS/rubric/semantic checks declared in this policy's front matter) or by the policy's test suite — or `[agent]` — evaluated by agent judgment when applying this policy. A `[machine]` failure is gateable without interpretation; an `[agent]` failure is declared judgment.
+**Evaluation audience:** the harness runner no longer exists; every item in this policy is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` have objectively verifiable structure and are restated as numbered instructions in §"Gate Checklist", where the Orchestrator MUST cite evidence per item. Items marked `[agent]` are declared judgment.
 
-1. The artifact file exists. `[machine]`
+1. The artifact file exists. `[gate]`
 2. The plan addresses the task objective. `[agent]`
 3. The plan uses validated context (no invented assumptions). `[agent]`
 4. The plan defines executable, ordered steps. `[agent]`
@@ -52,9 +50,16 @@ Validate that `EXECUTION_PLAN.md` defines an executable, safe, and scope-respect
 8. The plan does not depend on unresolved unknowns. `[agent]`
 9. The plan does not exceed the task scope. `[agent]`
 10. The plan is compatible with the existing architecture and conventions. `[agent]`
-11. Every citation in the artifact (`` `path:section` ``, `` `path` §section ``, and TOML citation fields) resolves against the filesystem. `[machine]` (the runner's `citation_resolution` semantic check enforces this; paths naming files to be created are not citations and are not checked)
+11. Every citation in the artifact (`` `path:section` ``, `` `path` §section ``, and TOML citation fields) resolves against the filesystem. `[gate]` (see §"Gate Checklist", item 2; paths naming files to be created are not citations and are not checked)
 
-The presence of the `required_sections` resolved by the runner from the artifact contract is `[machine]` even though it is not restated as a numbered item.
+The presence of the sections required by the artifact contract is `[gate]` even though it is not restated as a numbered item; the Orchestrator verifies it against the contract cited in §"Input".
+
+## Gate Checklist
+
+The Orchestrator evaluates each item below by judgment when the gate fires and MUST cite evidence per item (artifact path, declared value, or broken reference) in `HARNESS_REPORT.md`.
+
+1. Verify that `EXECUTION_PLAN.md` exists in the current iteration directory (`.project/<session-uuid>/<iteration>/`). Cite the resolved artifact path as evidence.
+2. Verify that every citation in the artifact resolves against the filesystem. Recognized citation forms: backtick-quoted `` `path:section` ``, backtick-quoted path followed by `§section`, and the string values of the TOML keys `specification` and `execution_plan` inside ` ```toml ` blocks. A citation resolves when its path exists relative to the project root, the session directory, or any of the session's iteration directories; when the target is a `.md` file and the anchor is not numeric-only, the cited section MUST exist as an ATX heading in the target (normalized, case-insensitive comparison). Paths containing `<`/`>` placeholders are skipped. On failure, cite each broken citation (line, path, reason); on success, cite the number of citations verified.
 
 ## Decision Criteria
 

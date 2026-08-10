@@ -163,7 +163,7 @@ Anunciadas en RFCs aprobadas pero fuera del roadmap actual (decidir destino):
 
 ## Convenciones
 
-- **Verificación**: `python .agents/harness/health_check.py` + `python -m pytest .agents/harness/tests/`.
+- **Verificación**: `python dev/tools/check_protocol_invariants.py .` + `python .agents/harness/health_check.py` + `python -m pytest .agents/harness/tests/ dev/runtime/tests/ dev/tools/tests/`.
 - **Inmutabilidad**: `.agents/` solo se modifica con acuerdo explícito; una RFC `Accepted` constituye ese acuerdo para sus afectados declarados. Una RFC en `Proposal` NO habilita tocar `.agents/`.
 - **Ciclo de status (RFCs)**: `Proposal` (borrador) → `Accepted` (aprobada) → `Superseded` (reemplazada; el header indica por cuál RFC). No existe `Approved`: los documentos que lo usaban se normalizaron a `Accepted` (2 ago 2026).
 - **Ciclo de status (planes)**: `Aprobado para redacción` (entregables documentales: RFCs, estándares), `Aprobado para ejecución` (entregables de implementación o cambios en el repo), `Executed` (todos los criterios de salida verificados; si alguno quedó incumplido: `Executed (parcial: <qué falta>)`), `Superseded` (reemplazado; indicar por qué plan). Todo plan con dependencias abiertas declara su **criterio de entrada verificable** (qué archivos/estados deben existir antes de ejecutarlo).

@@ -1,0 +1,381 @@
+#!/usr/bin/env python3
+"""Verify documentation invariants of the distributed .agents/ protocol.
+
+Scans every .md file under .agents/ plus AGENTS.md at the repository root
+and checks three invariants that protect the distributed protocol package:
+
+1. REFERENCE RESOLUTION — every path-like reference to a protocol file
+   resolves to an existing file (resolved relative to the citing file,
+   then to .agents/, then to the repository root).
+
+2. BOUNDARY — every reference must point inside .agents/ or to AGENTS.md
+   at the root. References to plans/, rfc/, dev/, runtime/ or other root
+   documents break the self-contained promise of MIGRATION.md and would be
+   broken links in the distributed copy.
+
+3. TAXONOMY METADATA — every protocol file in scope (state machines,
+   workflows, harness policies, contracts and roles, per harness policy
+   H13) carries a taxonomy metadata block declaring taxonomy, kind and
+   domain near the top of the file.
+
+False-positive control: bare artifact names (TASK_SPECIFICATION.md),
+session-artifact placeholders (.project/<session-uuid>/...), URLs and
+example project paths (app/..., payment_*.py) are not treated as protocol
+references.
+
+Usage: python dev/tools/check_protocol_invariants.py [--root REPO_ROOT]
+
+Exit code: 0 when all invariants hold, 1 otherwise.
+Standard library only.
+"""
+
+from __future__ import annotations
+
+import argparse
+import re
+import sys
+from dataclasses import dataclass
+from pathlib import Path
+
+_EXT_RE = re.compile(
+    r"\.(?:md|py|json|ya?ml|toml|sh|ps1|txt|csv|js|ts|html|css|png|jpe?g|"
+    r"gif|svg|pdf|docx|xlsx|pptx)$",
+    re.IGNORECASE,
+)
+
+# Relative references whose first segment is a protocol directory are
+# verified against disk; anything else (app/, services/, ...) is treated as
+# an example path and ignored.
+_PROTOCOL_SEGMENTS = {
+    "orchestrators",
+    "standards",
+    "contracts",
+    "harness",
+    "skills",
+    "roles",
+    "delegation",
+}
+
+# First segments that are never part of the distributed package; references
+# to them are boundary violations (even when the target exists in the repo).
+_BOUNDARY_SEGMENTS = {
+    "plans",
+    "rfc",
+    "dev",
+    "tools",
+    "runtime",
+    "example",
+    "examples",
+    "templates",
+}
+
+_REF_LINK_RE = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
+_REF_DEF_RE = re.compile(r"^\s*\[[^\]]+\]:\s*(\S+)\s*$")
+_BACKTICK_RE = re.compile(r"`([^`]+)`")
+_BARE_RE = re.compile(
+    r"((?:[A-Za-z0-9_.\-]+[\\/])+[A-Za-z0-9_.\-]+"
+    r"\.(?:md|py|json|ya?ml|toml|sh|ps1|txt|csv|js|ts|html|css|png|jpe?g|"
+    r"gif|svg|pdf|docx|xlsx|pptx))"
+)
+
+_SKIP_PREFIXES = (
+    "http://",
+    "https://",
+    "www.",
+    "mailto:",
+    "ftp://",
+    "file://",
+    "data:",
+    "javascript:",
+)
+
+
+@dataclass
+class Reference:
+    """One extracted path-like reference."""
+
+    source: Path
+    line: int
+    raw: str
+    kind: str
+
+
+@dataclass
+class Violation:
+    """One failed invariant."""
+
+    code: str  # MISSING | BOUNDARY | METADATA
+    source: Path
+    line: int
+    message: str
+
+
+def extract_references(text: str) -> list[Reference]:
+    """Extract candidate references from a Markdown document."""
+    refs: list[Reference] = []
+    in_fence = False
+    fence = ""
+    for lineno, line in enumerate(text.splitlines(), start=1):
+        stripped = line.strip()
+        if stripped.startswith("```") or stripped.startswith("~~~"):
+            marker = stripped[:3]
+            if in_fence and marker == fence:
+                in_fence = False
+                fence = ""
+            elif not in_fence:
+                in_fence = True
+                fence = marker
+            continue
+        if in_fence:
+            continue
+        for m in _REF_LINK_RE.finditer(line):
+            refs.append(Reference(Path(), lineno, m.group(1), "md-link"))
+        for m in _REF_DEF_RE.finditer(line):
+            refs.append(Reference(Path(), lineno, m.group(1), "md-refdef"))
+        for m in _BACKTICK_RE.finditer(line):
+            for tok in m.group(1).split():
+                tok = tok.strip("()[]{}'\"")
+                if tok:
+                    refs.append(Reference(Path(), lineno, tok, "backtick"))
+        for m in _BARE_RE.finditer(line):
+            refs.append(Reference(Path(), lineno, m.group(1), "bare"))
+    return refs
+
+
+def clean_target(raw: str) -> str:
+    """Normalize a raw reference target."""
+    t = raw.strip()
+    if t.startswith("<") and t.endswith(">"):
+        t = t[1:-1]
+    t = re.sub(r'\s+["\'][^"\']*["\']\s*$', "", t)
+    # Only trailing punctuation is removed: a leading '.' is part of
+    # protocol paths (e.g. .agents/...).
+    return t.strip().rstrip(".,;:!?()[]{}'\"").strip()
+
+
+def is_candidate(token: str) -> bool:
+    """True when the token is a protocol reference worth verifying."""
+    if not token:
+        return False
+    if token.startswith(_SKIP_PREFIXES) or token.startswith(
+        ("#", "@", "$", "%", "-", "HEAD:", "origin/", ".git/")
+    ):
+        return False
+    if any(ch in token for ch in "<>*?{}|→–—"):
+        return False
+    if re.fullmatch(r"\d+[–-]\d+", token):
+        return False
+    if token == "AGENTS.md":
+        return True
+    if token.startswith((".agents/", ".project/")):
+        return True
+    if "/" not in token and "\\" not in token:
+        return False
+    return bool(_EXT_RE.search(token))
+
+
+def first_segment(token: str) -> str:
+    """Return the first path segment, with a leading dot stripped."""
+    return token.split("/", 1)[0].split("\\", 1)[0].lstrip(".")
+
+
+def resolve_target(token: str, citing: Path, root: Path) -> Path | None:
+    """Resolve a reference; returns the existing file or None."""
+    fp = token.replace("\\", "/")
+    if re.match(r"^[A-Za-z]:", fp):
+        p = Path(fp)
+        return p if p.exists() else None
+    if fp.startswith("/"):
+        p = root / fp.lstrip("/")
+        return p if p.exists() else None
+    candidates = [citing.parent / fp]
+    agents = root / ".agents"
+    if agents in citing.parents:
+        candidates.append(agents / fp)
+    candidates.append(root / fp)
+    for p in candidates:
+        if p.exists():
+            return p
+    return None
+
+
+def is_distributed(target: Path, root: Path) -> bool:
+    """True when the target ships with the protocol (.agents/ or AGENTS.md)."""
+    try:
+        rel = target.relative_to(root)
+    except ValueError:
+        return False
+    return rel.parts[0] == ".agents" or rel == Path("AGENTS.md")
+
+
+def classify(token: str, resolved: Path | None, root: Path) -> str:
+    """Classify a reference: ok | missing | boundary | skip."""
+    if token.startswith(".project/"):
+        return "ok"
+    if resolved is not None and is_distributed(resolved, root):
+        return "ok"
+    if token.startswith(".agents/"):
+        return "missing" if resolved is None else "boundary"
+    first = first_segment(token)
+    if first in _PROTOCOL_SEGMENTS:
+        return "missing" if resolved is None else "boundary"
+    if first in _BOUNDARY_SEGMENTS:
+        return "boundary"
+    if resolved is not None:
+        return "boundary"
+    return "skip"
+
+
+def verify_reference(ref: Reference, root: Path) -> Violation | None:
+    """Verify one reference; return a Violation when it fails."""
+    token = clean_target(ref.raw)
+    if not token or not is_candidate(token):
+        return None
+    if token.startswith(("#",) + _SKIP_PREFIXES):
+        return None
+    filepart = token.split("#", 1)[0].strip()
+    if not filepart or not is_candidate(filepart):
+        return None
+    resolved = resolve_target(filepart, root / ref.source, root)
+    status = classify(filepart, resolved, root)
+    if status == "ok" or status == "skip":
+        return None
+    if status == "missing":
+        return Violation(
+            "MISSING",
+            ref.source,
+            ref.line,
+            f"reference `{token}` not found "
+            "(relative, .agents-relative, repo-root)",
+        )
+    return Violation(
+        "BOUNDARY",
+        ref.source,
+        ref.line,
+        f"reference `{token}` points outside the distributed package "
+        "(only .agents/ + AGENTS.md ship)",
+    )
+
+
+def in_metadata_scope(rel: str) -> bool:
+    """True when the file is a H13 metadata-scope protocol file."""
+    if Path(rel).name in ("INDEX.md", "README.md"):
+        return False
+    parts = rel.split("/")
+    if len(parts) < 3 or parts[0] != ".agents":
+        return False
+    if parts[1] == "harness" and parts[2] == "policies":
+        return True
+    if parts[1] in ("contracts", "roles"):
+        return True
+    if parts[1] == "orchestrators" and len(parts) >= 4:
+        if parts[3] in ("states", "workflow", "contracts", "roles"):
+            return True
+        if parts[3] == "harness" and len(parts) >= 5 and parts[4] == "policies":
+            return True
+    return False
+
+
+def check_taxonomy_block(text: str) -> str | None:
+    """Return None when the taxonomy block is valid, or a reason string."""
+    head = "\n".join(text.splitlines()[:40])
+    found: dict[str, str] = {}
+    for line in head.splitlines():
+        m = re.match(r"^\s*(taxonomy|kind|domain)\s*:\s*(.*)$", line)
+        if m:
+            found[m.group(1)] = m.group(2).strip().strip('"').strip("'")
+    missing = [k for k in ("taxonomy", "kind", "domain") if k not in found]
+    if missing:
+        return "missing taxonomy metadata key(s): " + ", ".join(missing)
+    if not found["taxonomy"].endswith("PROTOCOL_TAXONOMY.md"):
+        return (
+            "taxonomy key does not point to PROTOCOL_TAXONOMY.md: "
+            + found["taxonomy"]
+        )
+    return None
+
+
+def scan_references(root: Path) -> list[Reference]:
+    """Extract references from every .agents/ doc and AGENTS.md."""
+    refs: list[Reference] = []
+    docs = sorted((root / ".agents").rglob("*.md"))
+    agents_md = root / "AGENTS.md"
+    if agents_md.is_file():
+        docs.append(agents_md)
+    for doc in docs:
+        text = doc.read_text(encoding="utf-8", errors="replace")
+        for ref in extract_references(text):
+            ref.source = doc.relative_to(root)
+            refs.append(ref)
+    return refs
+
+
+def verify(root: Path) -> list[Violation]:
+    """Run all three invariant checks; return the list of violations."""
+    violations: list[Violation] = []
+    agents = root / ".agents"
+    for doc in sorted(agents.rglob("*.md")):
+        rel = doc.relative_to(root).as_posix()
+        if in_metadata_scope(rel):
+            reason = check_taxonomy_block(
+                doc.read_text(encoding="utf-8", errors="replace")
+            )
+            if reason:
+                violations.append(Violation("METADATA", Path(rel), 1, reason))
+    seen: set[tuple[Path, int, str]] = set()
+    for ref in scan_references(root):
+        key = (ref.source, ref.line, ref.raw)
+        if key in seen:
+            continue
+        seen.add(key)
+        violation = verify_reference(ref, root)
+        if violation is not None:
+            violations.append(violation)
+    return violations
+
+
+def format_report(
+    violations: list[Violation], files: int, references: int
+) -> str:
+    """Human-readable report."""
+    if not violations:
+        return (
+            f"Protocol invariants OK: {files} files checked, "
+            f"{references} references verified."
+        )
+    lines = [f"Protocol invariants: {len(violations)} violation(s)"]
+    for v in sorted(violations, key=lambda v: (v.code, str(v.source), v.line)):
+        lines.append(f"- {v.code} {v.source.as_posix()}:{v.line} {v.message}")
+    return "\n".join(lines)
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument(
+        "--root",
+        type=Path,
+        default=None,
+        help="Repository root (default: parent of this script's directory).",
+    )
+    parser.add_argument(
+        "root_positional",
+        nargs="?",
+        type=Path,
+        default=None,
+        help="Repository root as a positional argument (alternative to --root).",
+    )
+    args = parser.parse_args(argv)
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    root = (args.root or args.root_positional or Path(__file__).resolve().parents[2]).resolve()
+    violations = verify(root)
+    agents = root / ".agents"
+    files = len(list(agents.rglob("*.md")))
+    if (root / "AGENTS.md").is_file():
+        files += 1
+    print(format_report(violations, files, len(scan_references(root))))
+    return 1 if violations else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

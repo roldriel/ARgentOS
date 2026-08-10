@@ -33,7 +33,8 @@ python .agents/harness/health_check.py
 Protocol development only (not needed by adopters):
 
 ```bash
-python -m pytest .agents/harness/tests/ dev/runtime/tests/
+python dev/tools/check_protocol_invariants.py .
+python -m pytest .agents/harness/tests/ dev/runtime/tests/ dev/tools/tests/
 ```
 
 The `dev/` directory holds development tooling and reference implementations; it is not part of the distributed protocol (adopters get only `.agents/` + `AGENTS.md` from the `dist` branch).

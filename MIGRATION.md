@@ -84,8 +84,8 @@ versión:
   `state.json.status` es `ABORT`/`COMPLETED`, además de las condiciones
   anteriores (H06 PASS o `NEEDS_CLARIFICATION` registrado).
 
-El bump de versión (`Unreleased` → próxima release) queda pendiente de la
-decisión de release; esta sección es la guía de migración del cambio.
+Este cambio se publica como versión `3.0.0` (2026-08-11); esta sección es la
+guía de migración del cambio.
 
 ## 4. Qué NO migra
 

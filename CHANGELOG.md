@@ -30,7 +30,11 @@ La política de migración entre versiones vive en [`MIGRATION.md`](MIGRATION.md
 
 ---
 
-## [Unreleased]
+## [3.0.0] — 2026-08-11
+
+Release MAJOR de la remediación de la auditoría 2.0.1 (planes 28-30, RFC-29…31):
+H07 con dos ramas de scope compliance, recovery a fases tempranas con retry
+acotado, y soporte de cierre por `ABORT` en artefacto, estado y hook.
 
 ### Changed
 
@@ -50,6 +54,19 @@ La política de migración entre versiones vive en [`MIGRATION.md`](MIGRATION.md
   (`terminal --state ABORT|COMPLETED`); `hook_gate.py` permite el cierre por
   `Stop` con estado terminal; `DECISIONS.md` D5 y `harness/INDEX.md` alineados.
   Cambio MAJOR de contrato.
+
+### Modelo conceptual
+
+RFCs aceptadas que gobiernan esta versión: RFC-29 (H07, trabajo extra autorizado
+por el usuario), RFC-30 (recovery a fases tempranas) y RFC-31 (ABORT en el flujo
+de artefacto y de cierre). Índice completo con status: `plans/INDEX.md` §Serie de
+RFCs.
+
+---
+
+Nota: el tag git `3.0.0` que fija esta versión se crea como entregable del
+release; la rama `dist` se regenera desde `master` por el workflow
+`publish-dist`.
 
 ---
 

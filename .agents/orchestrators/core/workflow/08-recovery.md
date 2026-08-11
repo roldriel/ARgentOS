@@ -111,6 +111,10 @@ orchestrators/core/workflow/04-validate-context.md
 
 When a failed gate's recovery decision table yields `RETRY_WORKER` with the current phase as `target_phase` (for example, an H01 format failure on `02-build-task-specification.md`), the Orchestrator re-invokes the worker in the same state; no state transition occurs and no `RECOVERY_REPORT.md` is produced for that retry. A transition to `RECOVERY` is required only when the corrective action targets an earlier phase or the table yields `RECOVERY_GENERIC`.
 
+### ABORT
+
+The failure is unrecoverable, a policy's recovery decision table yields `ABORT`, or the user aborted the task. The transition is a founded abort: `RECOVERY_REPORT.md` recommends `ABORT` in `corrective_action.recommended_next_state` and the cause is recorded in `SESSION_LOG.md`. No further work is performed after `ABORT`.
+
 ---
 
 # Input Artifacts
@@ -213,7 +217,7 @@ The artifact must comply with the `RECOVERY_REPORT.md` contract and contain:
 * Failure summary.
 * Root cause classification and description.
 * Analysis summary.
-* Corrective action recommendation (`PLANNING` or `NEEDS_CLARIFICATION`).
+* Corrective action recommendation (`PLANNING`, `NEEDS_CLARIFICATION` or `ABORT`).
 * Updated artifacts (if any).
 * Confidence level.
 
@@ -237,6 +241,12 @@ or, when an artifact of an early phase must be corrected:
 
 ```text
 RECOVERY → ANALYZING_TASK | BUILDING_TASK_SPECIFICATION | GATHERING_CONTEXT | VALIDATING_CONTEXT
+```
+
+or, when the failure is unrecoverable, a policy's recovery decision table yields `ABORT`, or the user aborted the task:
+
+```text
+RECOVERY → ABORT
 ```
 
 ---
@@ -314,6 +324,19 @@ ANALYZING_TASK | BUILDING_TASK_SPECIFICATION | GATHERING_CONTEXT | VALIDATING_CO
 ```
 
 Continue with the workflow module of the destination phase (`00-analyze-task.md`, `02-build-task-specification.md`, `03-gather-context.md`, `04-validate-context.md`). The destination is selected by the artifact to correct; the corrective action and its evidence are recorded in `SESSION_LOG.md`.
+
+## Recovery via Abort
+
+If the failure is unrecoverable, a policy's recovery decision table yields `ABORT`, or the user aborted the task:
+
+```text
+RECOVERY
+    |
+    v
+ABORT
+```
+
+The abort must be founded: `RECOVERY_REPORT.md` recommends `ABORT` and the cause is recorded in `SESSION_LOG.md`. No further work is performed after `ABORT`.
 
 ---
 

@@ -111,7 +111,10 @@ Possible values for `recommended_next_state`:
 ```text
 PLANNING
 NEEDS_CLARIFICATION
+ABORT
 ```
+
+`ABORT` is valid only as a founded abort: the cause is recorded in `SESSION_LOG.md` (a user decision, a recovery decision-table action, or an infeasibility judgment), per `DECISIONS.md` (`D5 — Abort authority`). No further work is performed after `ABORT`.
 
 ---
 

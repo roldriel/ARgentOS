@@ -37,7 +37,7 @@ Estado al 2026-08-11. El trabajo activo es el **Execution Context Pipeline** (`f
 | RFC-28 | `rfc/28-harness-coverage-closure-model.md` | Accepted (retroactiva 11 ago 2026; plan 27 Executed) | ¿Cómo se declara el nivel de enforcement de cada contrato y qué validación semántica mecánica mínima gana el harness? |
 | RFC-29 | `rfc/29-h07-user-authorized-extra-work.md` | Accepted (plan 28 Executed, 11 ago 2026) | ¿Cómo expresa el protocolo el trabajo extra autorizado por el usuario sin que H07 lo convierta en fallo? |
 | RFC-30 | `rfc/30-recovery-to-early-phases.md` | Accepted (plan 29 Executed, 11 ago 2026) | ¿Qué transiciones legales corrigen artefactos de fases tempranas desde RECOVERY? |
-| RFC-31 | `rfc/31-abort-artifact-flow.md` | Proposal (plan 30, 11 ago 2026) | ¿Cómo se registra y cierra una sesión que termina en ABORT? |
+| RFC-31 | `rfc/31-abort-artifact-flow.md` | Accepted (plan 30 Executed, 11 ago 2026) | ¿Cómo se registra y cierra una sesión que termina en ABORT? |
 | RFC-32 | `rfc/32-phase-02-profile-unification.md` | Proposal (plan 31, 11 ago 2026) | ¿Quién redacta la TASK_SPECIFICATION y qué skills activa? |
 | RFC-33 | `rfc/33-execution-summary-steps-schema.md` | Proposal (plan 32, 11 ago 2026) | ¿Cuál es el nombre canónico de la lista de pasos de EXECUTION_SUMMARY? |
 | RFC-34 | `rfc/34-ears-criteria-canonical-form.md` | Proposal (plan 33, 11 ago 2026) | ¿Cuál es la forma canónica de los criterios de aceptación EARS? |
@@ -169,6 +169,10 @@ detectados en más de una sección se cubren una sola vez (mapeo en la columna
 redacción`; según la regla de gobernanza (RFC-42), ningún cambio de `.agents/`
 se ejecuta antes de que la RFC esté `Accepted` o el plan esté `Aprobado para
 ejecución` con justificación.
+
+Estado al cierre del 11 ago 2026: RFC-29…31 `Accepted` y planes 28–30 `Executed`
+por implementación autorizada explícitamente por el usuario; el resto de la serie
+sigue en `Proposal` / `Aprobado para redacción`.
 
 | Plan | RFC | Origen (auditoría 2.0.1) | Descripción |
 |---|---|---|---|

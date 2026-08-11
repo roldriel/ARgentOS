@@ -17,7 +17,7 @@ Layout:
   "task_profile": "standard",
   "gates": {"H04": {"result": "PASS", "timestamp": "..."}},
   "last_gate": "H04",
-  "status": "in_progress",
+  "status": "in_progress",   # or ABORT / COMPLETED (terminal)
   "updated": "<ISO-8601>"
 }
 ```
@@ -31,6 +31,12 @@ Records the PASS for the trigger in state.json. `--iteration` defaults to
 the session's latest iteration folder. For trigger H04 it additionally runs
 the post-hoc bypass scan and prints any alert to stderr without blocking.
 Exit 0 on success; exit 2 with a clear message on stderr on error.
+
+    python .agents/harness/runner_state.py \
+        --session <uuid> --state ABORT terminal
+
+Records a terminal state (`ABORT` or `COMPLETED`) in state.json, preserving
+the recorded gate passes. Same transactional write and exit conventions.
 
 Self-contained: stdlib only, no other harness module imports.
 """
@@ -65,6 +71,7 @@ _BYPASS_SCAN_MAX_FILES = 20
 
 # Valid task profiles; anything else resolves to "standard" (full cycle).
 _VALID_PROFILES = ("trivial", "standard", "complex")
+TERMINAL_STATES = ("ABORT", "COMPLETED")
 
 _PROFILE_SECTION_RE = re.compile(
     r"^##\s+Task Profile\s*\n(.*?)(?=^##\s|\Z)", re.MULTILINE | re.DOTALL
@@ -112,6 +119,27 @@ def read_task_profile(session_uuid: str) -> str:
 def state_path(session_uuid: str, iteration: str) -> Path:
     """Return the state.json path for a session iteration."""
     return ARTIFACTS_DIR / session_uuid / iteration / "state.json"
+
+
+def _persist(session_uuid: str, iteration: str, data: dict[str, Any]) -> Path:
+    """Write state.json transactionally (temp file + atomic rename)."""
+    path = state_path(session_uuid, iteration)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp_name = tempfile.mkstemp(
+        dir=str(path.parent), prefix=".state.json.", suffix=".tmp"
+    )
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            json.dump(data, handle, indent=2)
+            handle.write("\n")
+        os.replace(tmp_name, path)
+    except BaseException:
+        try:
+            os.unlink(tmp_name)
+        except OSError:
+            pass
+        raise
+    return path
 
 
 def empty_state(session_uuid: str, iteration: str) -> dict[str, Any]:
@@ -173,23 +201,26 @@ def record_gate_pass(
     state["status"] = "in_progress"
     state["updated"] = now
 
-    path = state_path(session_uuid, iteration)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    fd, tmp_name = tempfile.mkstemp(
-        dir=str(path.parent), prefix=".state.json.", suffix=".tmp"
-    )
-    try:
-        with os.fdopen(fd, "w", encoding="utf-8") as handle:
-            json.dump(state, handle, indent=2)
-            handle.write("\n")
-        os.replace(tmp_name, path)
-    except BaseException:
-        try:
-            os.unlink(tmp_name)
-        except OSError:
-            pass
-        raise
-    return path
+    return _persist(session_uuid, iteration, state)
+
+
+def record_terminal_state(
+    session_uuid: str, iteration: str, state: str, timestamp: str | None = None
+) -> Path:
+    """Record a terminal protocol state (ABORT or COMPLETED) in state.json.
+
+    Preserves the recorded gate passes and marks the iteration terminal via
+    `status`; the write is transactional like every other state update.
+    """
+    if state not in TERMINAL_STATES:
+        raise ValueError(f"invalid terminal state: {state!r}")
+    data = load_state(session_uuid, iteration)
+    now = timestamp or datetime.now(timezone.utc).isoformat()
+    data["session"] = session_uuid
+    data["iteration"] = iteration
+    data["status"] = state
+    data["updated"] = now
+    return _persist(session_uuid, iteration, data)
 
 
 def detect_bypass(
@@ -247,21 +278,31 @@ def main(argv: list[str] | None = None) -> int:
     """CLI entry point: record a gate PASS judged in prose by the Orchestrator."""
     parser = argparse.ArgumentParser(
         description=(
-            "Record a gate PASS (judged by the Orchestrator) into the "
-            "iteration state.json. This script only registers results."
+            "Record a gate PASS or a terminal state (judged by the "
+            "Orchestrator) into the iteration state.json. This script only "
+            "registers results."
         )
     )
     parser.add_argument("--session", required=True, help="session uuid")
-    parser.add_argument("--trigger", required=True, help="gate trigger id (e.g. H04)")
+    parser.add_argument(
+        "--trigger",
+        default=None,
+        help="gate trigger id (e.g. H04); required for the 'pass' action",
+    )
     parser.add_argument(
         "--iteration",
         default=None,
         help="iteration folder (default: session's latest iteration)",
     )
     parser.add_argument(
+        "--state",
+        default=None,
+        help="terminal state for the 'terminal' action (ABORT or COMPLETED)",
+    )
+    parser.add_argument(
         "action",
-        choices=["pass"],
-        help="outcome to record (only 'pass' is supported)",
+        choices=["pass", "terminal"],
+        help="outcome to record ('pass' for a gate PASS, 'terminal' for ABORT/COMPLETED)",
     )
     args = parser.parse_args(argv)
 
@@ -281,6 +322,21 @@ def main(argv: list[str] | None = None) -> int:
         return _cli_error(
             f"iteration folder not found: {session_dir / iteration}"
         )
+
+    if args.action == "pass" and not args.trigger:
+        return _cli_error("the 'pass' action requires --trigger")
+
+    if args.action == "terminal":
+        if args.state not in TERMINAL_STATES:
+            return _cli_error(
+                f"invalid terminal state {args.state!r}; use ABORT or COMPLETED"
+            )
+        try:
+            path = record_terminal_state(args.session, iteration, args.state)
+        except OSError as exc:
+            return _cli_error(f"could not write state.json: {exc}")
+        print(f"Terminal state recorded: {args.state} -> {path}")
+        return 0
 
     try:
         path = record_gate_pass(args.session, iteration, args.trigger)

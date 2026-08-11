@@ -168,7 +168,10 @@ inconsistency
 
 ## Scope Compliance
 
-Declare whether the executed work stayed strictly within the assigned task scope.
+Declare whether the executed work stayed within the assigned task scope, applying one of two branches:
+
+- **Branch A (no extra work)**: the agent only performed work explicitly requested or covered by the execution plan.
+- **Branch B (user-authorized extra work)**: the agent performed work outside the approved plan that the user explicitly approved in writing during the session, and the report cites the written authorization (`SESSION_LOG.md` entry or session artifact).
 
 ```toml
 [scope_compliance]
@@ -181,11 +184,12 @@ notes = ""
 
 Requirements:
 
-* `scope_respected` MUST be `true` if the agent only performed work explicitly requested or covered by the execution plan.
-* `unplanned_changes` MUST list any project file, dependency, configuration, or test modified that was not part of the execution plan. If none, it MUST be an empty list.
+* `scope_respected` MUST be `true` when the executed work is within the assigned task, including any expansion the user explicitly authorized in writing during the session. `scope_respected = false` is a scope failure under both branches.
+* `unplanned_changes` MUST list any project file, dependency, configuration, or test modified that was not part of the approved execution plan (whether authorized or not). If none, it MUST be an empty list.
 * `out_of_scope_issues` MUST list any error, bug, or inconsistency discovered that is outside the assigned task scope and was not acted upon. If none, it MUST be an empty list.
-* `user_authorized_extra_work` MUST be `true` only if the user explicitly approved additional work in writing during the session. Otherwise it MUST be `false`.
+* `user_authorized_extra_work` MUST be `true` only if there is work outside the approved plan that the user explicitly approved in writing during the session and the evidence is cited in the report. Otherwise it MUST be `false`.
 * `notes` MAY contain any clarification about scope boundaries or user decisions.
+* Branch validity: `scope_respected = true` with a non-empty `unplanned_changes` is valid only in Branch B (`user_authorized_extra_work = true` with cited evidence). `scope_respected = true` with `user_authorized_extra_work = false` requires `unplanned_changes` to be an empty list (Branch A).
 
 ---
 
@@ -266,11 +270,13 @@ The following sections MUST contain a fenced `toml` code block with the exact st
 
 ```toml
 [scope_compliance]
-scope_respected = true # or false
-unplanned_changes = ["path/to/file"]
+scope_respected = true # or false; false is a scope failure in both branches
+unplanned_changes = ["path/to/file"] # empty in Branch A; lists changes in Branch B
 out_of_scope_issues = ["description"]
-user_authorized_extra_work = true # or false
+user_authorized_extra_work = true # or false; true requires Branch B evidence cited
 notes = "string"
+# Branch validity: scope_respected=true with non-empty unplanned_changes requires
+# user_authorized_extra_work=true with cited written authorization (Branch B).
 ```
 
 ### `## Final Decision`

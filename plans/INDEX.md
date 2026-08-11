@@ -1,6 +1,6 @@
 # Índice de planes — ARgentOS
 
-Estado al 2026-07-28. El trabajo activo es el **Execution Context Pipeline** (`feature.md`) y su roadmap de RFCs conceptuales. Los planes de construcción del protocolo (dominios, taxonomía, discovery) están implementados; sus versiones históricas viven en `archive/`.
+Estado al 2026-08-11. El trabajo activo es el **Execution Context Pipeline** (`feature.md`) y su roadmap de RFCs conceptuales, más la **serie de remediación de la auditoría 2.0.1** (RFC-29…54, planes 28…53). Los planes de construcción del protocolo (dominios, taxonomía, discovery) están implementados; sus versiones históricas viven en `archive/`.
 
 ## Serie de RFCs (documentos canónicos)
 
@@ -30,11 +30,37 @@ Estado al 2026-07-28. El trabajo activo es el **Execution Context Pipeline** (`f
 | RFC-21 | `rfc/21-skill-activation-model.md` | Accepted (plan 12, 5 ago 2026) | ¿Qué hace a una skill candidata a activarse para una tarea? |
 | RFC-22 | `rfc/22-session-iteration-lifecycle-model.md` | Accepted (plan 13, 5 ago 2026) | ¿Qué es una sesión, qué es una iteración, y qué reglas conceptuales gobiernan su ciclo de vida? |
 | RFC-23 | `rfc/23-declarative-flag-compliance-model.md` | Accepted (plan 14, 5 ago 2026) | ¿Qué obliga conceptualmente un flag que el harness no puede forzar, y cómo se evidencia su cumplimiento? |
-| RFC-24 | `rfc/24-skill-lifecycle-model.md` | Proposal (plan 23, 5 ago 2026) | ¿Qué es una skill integrada y qué destino tienen las skills sin consumidor (cable-or-kill)? |
-| RFC-25 | `rfc/25-single-source-required-sections.md` | Proposal (plan 24, 5 ago 2026) | ¿De dónde debe resolver el runner las `required_sections` para que no existan copias desincronizables? |
-| RFC-26 | `rfc/26-task-profile-model.md` | Proposal (plan 25, 5 ago 2026) | ¿Cómo se clasifica una tarea por peso (trivial/standard/complex) y qué subconjunto del ciclo obliga cada perfil? |
-| RFC-27 | `rfc/27-hook-enforcement-model.md` | Proposal (plan 26, 5 ago 2026) | ¿Cómo pasa el enforcement de voluntario (prompt) a obligatorio (estado persistido + hooks bloqueantes)? |
-| RFC-28 | `rfc/28-harness-coverage-closure-model.md` | Proposal (plan 27, 5 ago 2026) | ¿Cómo se declara el nivel de enforcement de cada contrato y qué validación semántica mecánica mínima gana el harness? |
+| RFC-24 | `rfc/24-skill-lifecycle-model.md` | Accepted (retroactiva 11 ago 2026; plan 23 Executed) | ¿Qué es una skill integrada y qué destino tienen las skills sin consumidor (cable-or-kill)? |
+| RFC-25 | `rfc/25-single-source-required-sections.md` | Accepted (retroactiva 11 ago 2026; plan 24 Executed) | ¿De dónde debe resolver el runner las `required_sections` para que no existan copias desincronizables? |
+| RFC-26 | `rfc/26-task-profile-model.md` | Accepted (retroactiva 11 ago 2026; plan 25 Executed) | ¿Cómo se clasifica una tarea por peso (trivial/standard/complex) y qué subconjunto del ciclo obliga cada perfil? |
+| RFC-27 | `rfc/27-hook-enforcement-model.md` | Accepted (retroactiva 11 ago 2026; plan 26 Executed) | ¿Cómo pasa el enforcement de voluntario (prompt) a obligatorio (estado persistido + hooks bloqueantes)? |
+| RFC-28 | `rfc/28-harness-coverage-closure-model.md` | Accepted (retroactiva 11 ago 2026; plan 27 Executed) | ¿Cómo se declara el nivel de enforcement de cada contrato y qué validación semántica mecánica mínima gana el harness? |
+| RFC-29 | `rfc/29-h07-user-authorized-extra-work.md` | Accepted (plan 28 Executed, 11 ago 2026) | ¿Cómo expresa el protocolo el trabajo extra autorizado por el usuario sin que H07 lo convierta en fallo? |
+| RFC-30 | `rfc/30-recovery-to-early-phases.md` | Proposal (plan 29, 11 ago 2026) | ¿Qué transiciones legales corrigen artefactos de fases tempranas desde RECOVERY? |
+| RFC-31 | `rfc/31-abort-artifact-flow.md` | Proposal (plan 30, 11 ago 2026) | ¿Cómo se registra y cierra una sesión que termina en ABORT? |
+| RFC-32 | `rfc/32-phase-02-profile-unification.md` | Proposal (plan 31, 11 ago 2026) | ¿Quién redacta la TASK_SPECIFICATION y qué skills activa? |
+| RFC-33 | `rfc/33-execution-summary-steps-schema.md` | Proposal (plan 32, 11 ago 2026) | ¿Cuál es el nombre canónico de la lista de pasos de EXECUTION_SUMMARY? |
+| RFC-34 | `rfc/34-ears-criteria-canonical-form.md` | Proposal (plan 33, 11 ago 2026) | ¿Cuál es la forma canónica de los criterios de aceptación EARS? |
+| RFC-35 | `rfc/35-verify-workflow-inputs.md` | Proposal (plan 34, 11 ago 2026) | ¿Qué inputs consume la fase 07 y con qué valores decide? |
+| RFC-36 | `rfc/36-plan-workflow-inputs.md` | Proposal (plan 35, 11 ago 2026) | ¿Qué inputs recibe el worker de planificación? |
+| RFC-37 | `rfc/37-gather-context-h10-declaration.md` | Proposal (plan 36, 11 ago 2026) | ¿Qué transición protege H10 y cómo se declara en la fase 03? |
+| RFC-38 | `rfc/38-task-analysis-confidence-blocks.md` | Proposal (plan 37, 11 ago 2026) | ¿Qué significa cada bloque de confianza del TASK_ANALYSIS? |
+| RFC-39 | `rfc/39-discovery-context-budget.md` | Proposal (plan 38, 11 ago 2026) | ¿Dónde se configuran los límites de muestreo y presupuesto de discovery? |
+| RFC-40 | `rfc/40-kb-discovery-entry-produced-by.md` | Proposal (plan 39, 11 ago 2026) | ¿Qué estados producen las entradas de la KB de discovery? |
+| RFC-41 | `rfc/41-discovery-artifact-boundaries.md` | Proposal (plan 40, 11 ago 2026) | ¿Dónde viven los intermedios de discovery y cómo se numeran sus artefactos? |
+| RFC-42 | `rfc/42-rfc-plan-status-governance.md` | Proposal (plan 41, 11 ago 2026) | ¿Qué relación de status habilita a un plan a modificar `.agents/`? |
+| RFC-43 | `rfc/43-h13-planned-cleanup.md` | Proposal (plan 42, 11 ago 2026) | ¿Qué tratamiento reciben las entidades `planned` inexistentes en H13? |
+| RFC-44 | `rfc/44-intent-reflection-auto-confirm.md` | Proposal (plan 43, 11 ago 2026) | ¿En qué estado se produce la INTENT_REFLECTION con confianza HIGH? |
+| RFC-45 | `rfc/45-unattended-clarification.md` | Proposal (plan 44, 11 ago 2026) | ¿Cómo resuelve el protocolo la clarificación sin usuario en línea? |
+| RFC-46 | `rfc/46-historical-trace-policy.md` | Proposal (plan 45, 11 ago 2026) | ¿Cómo se interpretan trazas producidas por un harness que ya no existe? |
+| RFC-47 | `rfc/47-enforced-mode-dogfooding.md` | Proposal (plan 46, 11 ago 2026) | ¿Cómo se valida empíricamente el modo enforced? |
+| RFC-48 | `rfc/48-discovery-per-entry-contracts.md` | Proposal (plan 47, 11 ago 2026) | ¿Dónde se definen las secciones requeridas de cada entrada de discovery? |
+| RFC-49 | `rfc/49-protocol-skill-mechanical-validation.md` | Proposal (plan 48, 11 ago 2026) | ¿Cómo se garantiza estructuralmente la validez de las skills del protocolo? |
+| RFC-50 | `rfc/50-delegation-single-instance-model.md` | Proposal (plan 49, 11 ago 2026) | ¿Cómo se mantiene la separación de roles en una sola instancia? |
+| RFC-51 | `rfc/51-discovery-kb-freshness.md` | Proposal (plan 50, 11 ago 2026) | ¿Cómo se evita consumir entradas de KB vencidas o revalidadas fuera del pipeline? |
+| RFC-52 | `rfc/52-worker-role-phase-catalog.md` | Proposal (plan 51, 11 ago 2026) | ¿Coincide el catálogo de roles de fase y sus skills con la tabla de activación? |
+| RFC-53 | `rfc/53-tooling-profile-candidacy.md` | Proposal (plan 52, 11 ago 2026) | ¿Cómo clasifican las 7 preguntas las tareas de tooling/CLI? |
+| RFC-54 | `rfc/54-discovery-contract-wording.md` | Proposal (plan 53, 11 ago 2026) | ¿Cómo se redactan sin ambigüedad el project_shape y el cálculo de hashes? |
 
 ## Roadmap de implementación (planes activos)
 
@@ -125,6 +151,54 @@ Serie derivada del análisis crítico de adopción (5 ago 2026): enforcement vol
 
 Nota de status: los planes 23–27 usan `Proposed` como estado previo al ciclo vigente (el ciclo de planes definido en §Convenciones no contempla borradores; al aprobarse pasan a `Aprobado para ejecución` o `Aprobado para redacción` según entregable).
 
+**Regularización de gobernanza (11 ago 2026, RFC-42/plan 41):** las RFC-24…28
+pasan a `Accepted` retroactivamente, con evidencia en sus Amendment Logs (planes
+23–27 `Executed` + `CHANGELOG.md` 2.0.0); el status `Proposal` era un desfase
+documental, no una falta de aprobación. Regla vigente para el futuro: una
+modificación de `.agents/` requiere **vía RFC Accepted** o **vía plan Aprobado
+para ejecución** con justificación documentada; la referencia en
+`ANTI_CIRCUMVENTION.md` queda pendiente de la aceptación de RFC-42 (plan 41
+`Executed (parcial: ...)`).
+
+## Sexta serie: remediación de la auditoría 2.0.1 (11 ago 2026)
+
+Serie derivada de la auditoría de estado del protocolo 2.0.1 (2026-08-11). Cada
+par RFC + plan corresponde a un subpunto de la auditoría; los defectos idénticos
+detectados en más de una sección se cubren una sola vez (mapeo en la columna
+"Origen"). Las RFCs están en `Proposal` y los planes en `Aprobado para
+redacción`; según la regla de gobernanza (RFC-42), ningún cambio de `.agents/`
+se ejecuta antes de que la RFC esté `Accepted` o el plan esté `Aprobado para
+ejecución` con justificación.
+
+| Plan | RFC | Origen (auditoría 2.0.1) | Descripción |
+|---|---|---|---|
+| `28-h07-user-authorized-extra-work.md` | RFC-29 | 1.1 | H07: dos ramas de scope compliance (extra autorizado con evidencia). |
+| `29-recovery-to-early-phases.md` | RFC-30 | 1.2 / 3.1 | Aristas de RECOVERY a fases tempranas + retry sin transición (F-02/F-03). |
+| `30-abort-artifact-flow.md` | RFC-31 | 1.3 / 3.4 | ABORT en RECOVERY_REPORT, workflow 08 y hook de cierre. |
+| `31-phase-02-profile-unification.md` | RFC-32 | 1.4 | Rol único `task_specification_writer` para la fase 02. |
+| `32-execution-summary-steps-schema.md` | RFC-33 | 1.5 | Unificar la lista de pasos en `steps_executed`. |
+| `33-ears-criteria-canonical-form.md` | RFC-34 | 2.1 | Bullets EARS como forma canónica (F-01). |
+| `34-verify-workflow-inputs.md` | RFC-35 | 2.2 | Inputs y decisión del workflow 07. |
+| `35-plan-workflow-inputs.md` | RFC-36 | 2.3 | Inputs del workflow 05. |
+| `36-gather-context-h10-declaration.md` | RFC-37 | 2.4 | H10 como gate opcional de uso, no de transición. |
+| `37-task-analysis-confidence-blocks.md` | RFC-38 | 2.5 | Semántica de los bloques de confianza del análisis. |
+| `38-discovery-context-budget.md` | RFC-39 | 2.6 | Config de `context_budget` y muestreo (F-13). |
+| `39-kb-discovery-entry-produced-by.md` | RFC-40 | 2.7 | Procedencia real de las entradas de KB. |
+| `40-discovery-artifact-boundaries.md` | RFC-41 | 2.8 / 5.2 | Fronteras de intermedios + namespacing `<order>` (F-11/F-20). |
+| `41-rfc-plan-status-governance.md` | RFC-42 | 2.9 | Gobernanza RFC Proposal vs planes Executed (23-28). **Regularización aplicada el 11 ago 2026** (RFC-24…28 → Accepted retroactivo); pendiente la referencia en `ANTI_CIRCUMVENTION.md`. |
+| `42-h13-planned-cleanup.md` | RFC-43 | 2.10 | Limpieza de la regla de entidades `planned`. |
+| `43-intent-reflection-auto-confirm.md` | RFC-44 | 3.2 | Estado productor de la reflexión HIGH (F-04). |
+| `44-unattended-clarification.md` | RFC-45 | 3.3 | Modo desatendido de clarificación (F-05). |
+| `45-historical-trace-policy.md` | RFC-46 | 4.1 | Versión de protocolo en trazas e interpretación histórica. |
+| `46-enforced-mode-dogfooding.md` | RFC-47 | 4.2 | Dogfooding del modo enforced (state.json + hooks). |
+| `47-discovery-per-entry-contracts.md` | RFC-48 | 4.3 / 6.3 | Contratos por entrada de discovery; single-source en D01. |
+| `48-protocol-skill-mechanical-validation.md` | RFC-49 | 4.4 | Verificación mecánica dev-only de skills. |
+| `49-delegation-single-instance-model.md` | RFC-50 | 5.1 | Modos de ejecución de delegaciones (F-09). |
+| `50-discovery-kb-freshness.md` | RFC-51 | 5.3 / 5.4 | Frescura de KB, marcador único y revalidación por pipeline (F-12). |
+| `51-worker-role-phase-catalog.md` | RFC-52 | 6.1 | Catálogo de fases y skills de los roles de worker. |
+| `52-tooling-profile-candidacy.md` | RFC-53 | 6.2 | Candidatura tooling/CLI (F-06). |
+| `53-discovery-contract-wording.md` | RFC-54 | 6.4 | Redacción de EXECUTIVE_SUMMARY y hash calculation (F-15/F-19). |
+
 ## Backlog evidenciado - plan 19
 
 (5 ago 2026.)
@@ -143,6 +217,12 @@ Nota de status: los planes 23–27 usan `Proposed` como estado previo al ciclo v
 | B-8 | Modelo de ejecución de delegaciones en runtimes de contexto único + distinción "flag no aplica" vs "obligación ignorada" en métricas | gap → estudio/plan | Baja — dato registrado, sin costo observado | F-09, Anexo B §Métricas |
 
 Descartados como ruido (con justificación en el anexo A): F-10 (deriva de reloj autor-reportado), F-21 (merge de KB legada funcionó según diseño).
+
+Resolución: los ítems B-1…B-8 se redactan como pares RFC + plan en la **Sexta
+serie** (tabla arriba); cada plan referencia su fricción F-xx. B-1 → plan 40
+(y 47), B-2 → planes 29 y 33, B-3 → plan 50, B-4 → planes 37-43 y 53, B-5 →
+plan 44, B-6 → plan 46 (cobertura H15 vía tests del flujo enforced), B-7 →
+planes 29, 43 y 52, B-8 → plan 49.
 
 ## Documentos de soporte
 

@@ -13,8 +13,7 @@ harness_id: H10
 name: kb-discovery-report
 state: core:GATHERING_CONTEXT
 lifecycle: context
-gates:
-  - "core:GATHERING_CONTEXT -> core:CONTEXT_GATHERED"
+gates: []
 artifact_validated: KB_RECOMMENDATION.md
 ---
 
@@ -22,7 +21,7 @@ artifact_validated: KB_RECOMMENDATION.md
 
 ## Trigger
 
-Before using KB recommendations (optional gate)
+Before using KB recommendations (optional usage gate). H10 does NOT protect any state transition: the `GATHERING_CONTEXT → CONTEXT_GATHERED` transition is gated only by H02.
 
 ## Purpose
 

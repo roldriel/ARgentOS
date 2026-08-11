@@ -1,11 +1,12 @@
 # Plan 36 — Declaración del gate H10 en la fase 03
 
-**Status:** Aprobado para ejecución
+**Status:** Executed
 **Fecha:** 2026-08-11
 **RFC:** RFC-37 (`plans/rfc/37-gather-context-h10-declaration.md`)
 **Depende de:** —
 **Origen:** Auditoría de estado ARgentOS 2.0.1 (2026-08-11), punto 2.4
 **Vía de autorización:** Vía plan (RFC-42): plan `Aprobado para ejecución` con justificación documentada — el usuario autorizó el 2026-08-11 corregir y dejar implementables los planes 34–36 tras la auditoría (RFC-37 sigue en `Proposal`; la vía plan habilita el cambio de `.agents/`).
+**Nota de ejecución (2026-08-11):** implementado por decisión del usuario; criterios de salida verificados (`check_protocol_invariants.py` y `check_plan_citations.py` en verde); registro en `CHANGELOG.md` 3.0.4.
 
 ## Objetivo
 

@@ -30,6 +30,36 @@ La política de migración entre versiones vive en [`MIGRATION.md`](MIGRATION.md
 
 ---
 
+## [3.0.4] — 2026-08-11
+
+Release PATCH de la remediación de la auditoría 2.0.1 (plan 36, RFC-37):
+declaración de H10 como gate opcional de uso en la fase 03. Cambio documental;
+sin cambios en el modelo conceptual ni en el comportamiento opcional.
+
+### Fixed
+
+- **H10 como gate opcional de uso** (plan 36, RFC-37): el front matter de
+  `03-gather-context.md` declara solo `H02-context-artifact` como gate de
+  transición y el cuerpo documenta cuándo se evalúa H10 (recomendaciones de KB
+  con `knowledge_base` habilitado); la policy H10 pasa a `gates: []` y su
+  `Trigger` aclara que no protege transiciones; los entries `H10-kb-discovery-report`,
+  `core:GATHERING_CONTEXT` y `workflow:03-gather-context` de
+  `PROTOCOL_TAXONOMY.md` quedan alineados. Ejecutado por vía plan (RFC-42) con
+  autorización explícita del usuario.
+
+### Modelo conceptual
+
+RFC-37 permanece en `Proposal` (regularización de gobernanza pendiente); el
+plan 36 quedó `Executed`.
+
+---
+
+Nota: el tag git `3.0.4` que fija esta versión se crea como entregable del
+release; la rama `dist` se regenera desde `master` por el workflow
+`publish-dist`.
+
+---
+
 ## [3.0.3] — 2026-08-11
 
 Release PATCH de la remediación de la auditoría 2.0.1 (plan 35, RFC-36):

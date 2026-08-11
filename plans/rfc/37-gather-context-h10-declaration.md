@@ -41,3 +41,4 @@ Consecuencia: un orquestador no sabe si H10 es obligatorio en la fase 03 ni qué
 | Fecha | Cambio | Origen |
 |---|---|---|
 | 2026-08-11 | Creación (Proposal) | Auditoría 2.0.1, punto 2.4 |
+| 2026-08-11 | Implementación aplicada por el plan 36 (vía plan RFC-42, autorización explícita del usuario); status `Proposal` se mantiene pendiente de regularización de gobernanza | Decisión del usuario (2026-08-11) |

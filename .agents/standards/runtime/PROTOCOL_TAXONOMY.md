@@ -247,7 +247,6 @@ entities:
     workflow: .agents/orchestrators/core/workflow/03-gather-context.md
     harness:
       - H02-context-artifact
-      - H10-kb-discovery-report
     actor: orchestrator
     profile: context_gatherer
 
@@ -1253,8 +1252,7 @@ entities:
     lifecycle: context
     tag: context
     state: core:GATHERING_CONTEXT
-    gates:
-      - core:GATHERING_CONTEXT -> core:CONTEXT_GATHERED
+    gates: []
     artifact_validated: KB_RECOMMENDATION.md
     policy_file: .agents/orchestrators/core/harness/policies/H10-kb-discovery-report.md
 
@@ -1777,7 +1775,6 @@ entities:
       - CONTEXT_ARTIFACT.md
     harness:
       - H02-context-artifact
-      - H10-kb-discovery-report
     actor: orchestrator
     profile: context_gatherer
     file: .agents/orchestrators/core/workflow/03-gather-context.md

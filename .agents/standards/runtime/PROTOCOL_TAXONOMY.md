@@ -1856,6 +1856,8 @@ entities:
       - core:COMPLETED
       - core:RECOVERY
     input_artifacts:
+      - TASK_SPECIFICATION.md
+      - EXECUTION_PLAN.md
       - EXECUTION_SUMMARY.md
     output_artifacts:
       - VERIFICATION_REPORT.md

@@ -30,6 +30,36 @@ La política de migración entre versiones vive en [`MIGRATION.md`](MIGRATION.md
 
 ---
 
+## [3.0.2] — 2026-08-11
+
+Release PATCH de la remediación de la auditoría 2.0.1 (plan 34, RFC-35):
+inputs y decisión coherentes del workflow 07. Cambio documental; sin cambios
+en el modelo conceptual.
+
+### Fixed
+
+- **Workflow 07 — inputs y decisión coherentes** (plan 34, RFC-35): el front
+  matter de `07-verify.md` declara los tres inputs reales
+  (`TASK_SPECIFICATION.md`, `EXECUTION_PLAN.md`, `EXECUTION_SUMMARY.md`); el
+  cuerpo gana la subsección `## Execution Summary`; la decisión final del
+  reporte pasa de `FAILED` a `RECOVERY`, alineada con el contrato
+  `VERIFICATION_REPORT.md` y el gate H06; el entry `workflow:07-verify` de
+  `PROTOCOL_TAXONOMY.md` queda alineado. Ejecutado por vía plan (RFC-42) con
+  autorización explícita del usuario.
+
+### Modelo conceptual
+
+RFC-35 permanece en `Proposal` (regularización de gobernanza pendiente); el
+plan 34 quedó `Executed`.
+
+---
+
+Nota: el tag git `3.0.2` que fija esta versión se crea como entregable del
+release; la rama `dist` se regenera desde `master` por el workflow
+`publish-dist`.
+
+---
+
 ## [3.0.1] — 2026-08-11
 
 Release PATCH de la remediación de la auditoría 2.0.1 (planes 31-33, RFC-32…34):

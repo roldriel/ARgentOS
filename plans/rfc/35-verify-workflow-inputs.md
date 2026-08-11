@@ -42,3 +42,4 @@ Consecuencia: un orquestador que confía en el front matter delegaría la verifi
 | Fecha | Cambio | Origen |
 |---|---|---|
 | 2026-08-11 | Creación (Proposal) | Auditoría 2.0.1, punto 2.2 |
+| 2026-08-11 | Implementación aplicada por el plan 34 (vía plan RFC-42, autorización explícita del usuario); status `Proposal` se mantiene pendiente de regularización de gobernanza | Decisión del usuario (2026-08-11) |

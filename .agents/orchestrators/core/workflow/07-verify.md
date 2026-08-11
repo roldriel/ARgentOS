@@ -6,7 +6,7 @@ state: VERIFYING
 lifecycle: execution
 previous_states: [core:EXECUTING]
 next_states: [core:COMPLETED, core:RECOVERY]
-input_artifacts: [EXECUTION_SUMMARY.md]
+input_artifacts: [TASK_SPECIFICATION.md, EXECUTION_PLAN.md, EXECUTION_SUMMARY.md]
 output_artifacts: [VERIFICATION_REPORT.md]
 harness: [H06-verification-report, H07-scope-compliance]
 actor: orchestrator
@@ -101,6 +101,19 @@ Used to verify:
 * The validation strategy defined in the plan was followed.
 * The expected results were obtained.
 
+## Execution Summary
+
+Source:
+
+```text
+.project/<session-uuid>/<iteration>/<order>-EXECUTION_SUMMARY.md
+```
+
+Used to verify:
+
+* All planned steps were executed.
+* The declared results match the executed changes and the acceptance criteria.
+
 ## Project State
 
 Source:
@@ -161,7 +174,7 @@ The report must contain:
 * Acceptance criteria evaluation.
 * Test results.
 * Identified issues or failures.
-* Final decision: `COMPLETED` or `FAILED`.
+* Final decision: `COMPLETED` or `RECOVERY`.
 * Recommended next step.
 
 Free-text sections of this artifact follow `.agents/standards/communication/CAVEMAN.md` when the `caveman` feature flag is enabled.

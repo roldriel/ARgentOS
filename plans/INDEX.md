@@ -243,6 +243,7 @@ planes 29, 43 y 52, B-8 → plan 49.
 | `01-execution-context-model.md` | Executed | Cambios documentales de RFC-00XY en `.agents/` (trazabilidad). |
 | `02-execution-context-assembly-process.md` | Executed | Cambios documentales de RFC-00XZ (trazabilidad). |
 | `03-context-budget-model.md` | Executed | Cambios documentales de RFC-00YA (trazabilidad). |
+| `VERSIONING.md` (raíz) | vigente | Política de versionado, changelog, tags y estados de planes. |
 
 ## Future Extensions sin nivel asignado
 
@@ -267,6 +268,7 @@ Anunciadas en RFCs aprobadas pero fuera del roadmap actual (decidir destino):
   - `plans/` (raíz): solo planes de ejecución, numerados por **orden cronológico de ejecución** — esa es la prioridad ante cualquier conflicto. `01`–`03` son los implementation plans de los RFCs base (ejecutados 25–26 jul); `04`–`07` primera serie (Execution Context); `08`–`14` segunda serie (explicitud de decisiones); `15`–`20` tercera serie (protocolo operativo), mapeada el 28 jul.
   - Los identificadores internos de la serie (RFC-00XX … RFC-00YM) se mantienen como IDs conceptuales dentro de los documentos; el número de archivo es solo orden físico.
 - **Versionado**: `plans/` completo está versionado en git (política adoptada el 2 ago 2026; antes figuraba como ignorado pese a estar trackeado de facto, y hubo una pérdida y restauración). Los planes ejecutados se conservan como traza histórica: no se borran; si quedan desfasados se marcan `Superseded`. Lo efímero del proyecto son los artefactos de sesión (`.project/`), no los documentos de diseño. `plans/archive/` fue eliminado del working tree; su contenido sigue disponible en la historia de git.
+- **Política de versionado, changelog, tags y estados**: definida en `VERSIONING.md` (raíz del repo). Resumen: trabajo e integración en `dev` con detalle por plan; releases estables solo en `master` vía tags; modelo por plan (cada plan ejecutado = una versión, atada a su RFC); invariante versión ↔ changelog ↔ tag; los estados de planes y RFCs cambian en el commit del plan y se reflejan en este INDEX.
 - **Frontera documental**: `.agents/` (versionado, permanente) no referencia `plans/` ni RFCs. Los conceptos que `.agents/` necesita se definen inline, de forma autocontenida. Ningún plan debe instruir referencias `.agents/` → `plans/`; la instrucción correcta es siempre "definir el concepto inline, sin mencionar la RFC".
 
 ## Archivo

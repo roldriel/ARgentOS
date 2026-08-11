@@ -168,11 +168,14 @@ detectados en más de una sección se cubren una sola vez (mapeo en la columna
 "Origen"). Las RFCs están en `Proposal` y los planes en `Aprobado para
 redacción`; según la regla de gobernanza (RFC-42), ningún cambio de `.agents/`
 se ejecuta antes de que la RFC esté `Accepted` o el plan esté `Aprobado para
-ejecución` con justificación.
+ejecución` con justificación. Excepción aplicada el 11 ago 2026: los planes
+34–36 pasan a `Aprobado para ejecución` por vía plan (RFC-42) tras la auditoría
+de planes, con justificación documentada en cada plan.
 
 Estado al cierre del 11 ago 2026: RFC-29…31 `Accepted` y planes 28–30 `Executed`
 por implementación autorizada explícitamente por el usuario; el resto de la serie
-sigue en `Proposal` / `Aprobado para redacción`.
+sigue en `Proposal` / `Aprobado para redacción` salvo los planes 34–36, que
+pasan a `Aprobado para ejecución` el 11 ago 2026 tras la auditoría de planes.
 
 | Plan | RFC | Origen (auditoría 2.0.1) | Descripción |
 |---|---|---|---|
@@ -212,7 +215,7 @@ sigue en `Proposal` / `Aprobado para redacción`.
 | # | Ítem | Destino | Prioridad | Evidencia |
 |---|---|---|---|---|
 | B-1 | Gate D01 superable: especial-casing del runner para `KB_DISCOVERY_ENTRY.md` fuera de la iteración, o artefacto de sesión definido por el workflow de discovery | policy | Alta — se repite en cada discovery; hoy exige artefacto-puente | F-11 |
-| B-2 | Recovery económico para fallos de formato: rama `RETRY_WORKER` en tablas de recovery (H01 primero) — implementada por el plan 29 (2026-08-11); pendiente la alineación contrato↔validador EARS (bullets canónicos, plan 33) | policy | Alta — un fallo de formato cuesta una fase RECOVERY completa | F-01, F-02 |
+| B-2 | Recovery económico para fallos de formato: rama `RETRY_WORKER` en tablas de recovery (H01 primero) — implementada por el plan 29 (2026-08-11); alineación contrato↔validador EARS (bullets canónicos) cubierta por el plan 33 (2026-08-11) | policy | Alta — un fallo de formato cuesta una fase RECOVERY completa | F-01, F-02 |
 | B-3 | Marcador `.last_discovery` único y canónico (ruta `.project/.last_discovery`, JSON de spec) + validación en health-check | policy | Media — dispara full discoveries evitables | F-12 |
 | B-4 | Tanda de inconsistencias de contratos/policies: `discovery_context_budget` en features.toml, campos legacy en DISCOVERY_MANIFEST, "primera línea" de EXECUTIVE_SUMMARY, procedencia "observado por scan" en KB_DISCOVERY_ENTRY, delimitador de front matter, actor único de hash calculation, INTENT_REFLECTION auto-confirmada en la máquina de estados, mandato de KB en delegaciones condicionado a disponibilidad, namespacing de `<order>` por dominio | policy | Media — costo unitario bajo, recurrente | F-04, F-07, F-13, F-14, F-15, F-17, F-18, F-19, F-20 |
 | B-5 | Política de clarificación desatendida/asíncrona (defaults declarados + confirmación diferida) para sesiones sin usuario en línea | gap → plan nuevo | Media — toda ejecución automatizada choca con esto | F-05 |

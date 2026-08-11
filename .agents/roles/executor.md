@@ -1,3 +1,13 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: worker
+domain: core
+worker_id: executor
+state: core:EXECUTING
+lifecycle: execution
+actor: orchestrator
+---
+
 # Role: Executor
 
 ## Purpose

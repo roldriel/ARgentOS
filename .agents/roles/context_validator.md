@@ -1,3 +1,13 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: worker
+domain: core
+worker_id: context_validator
+state: core:VALIDATING_CONTEXT
+lifecycle: context
+actor: orchestrator
+---
+
 # Role: Context Validator
 
 ## Purpose

@@ -1,3 +1,11 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: role
+domain: cross-cutting
+role_id: context_discoverer
+actor: orchestrator
+---
+
 # Role: Context Discoverer
 
 ## Purpose

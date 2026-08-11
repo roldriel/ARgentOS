@@ -1,3 +1,13 @@
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: worker
+domain: core
+worker_id: recovery_analyst
+state: core:RECOVERY
+lifecycle: exception
+actor: orchestrator
+---
+
 # Role: Recovery Analyst
 
 ## Purpose

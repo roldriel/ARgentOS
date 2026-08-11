@@ -30,6 +30,34 @@ La política de migración entre versiones vive en [`MIGRATION.md`](MIGRATION.md
 
 ---
 
+## [3.0.3] — 2026-08-11
+
+Release PATCH de la remediación de la auditoría 2.0.1 (plan 35, RFC-36):
+inputs completos del workflow 05. Cambio documental; sin cambios en el modelo
+conceptual.
+
+### Fixed
+
+- **Workflow 05 — inputs completos** (plan 35, RFC-36): el front matter de
+  `05-plan.md` declara `CONTEXT_ARTIFACT.md` como input junto con
+  `TASK_SPECIFICATION.md` y `CONTEXT_VALIDATION_REPORT.md`; el rol `planner`
+  y los entries `workflow:05-plan`, `core:PLANNING` y el worker `planner` de
+  `PROTOCOL_TAXONOMY.md` quedan alineados. Ejecutado por vía plan (RFC-42) con
+  autorización explícita del usuario.
+
+### Modelo conceptual
+
+RFC-36 permanece en `Proposal` (regularización de gobernanza pendiente); el
+plan 35 quedó `Executed`.
+
+---
+
+Nota: el tag git `3.0.3` que fija esta versión se crea como entregable del
+release; la rama `dist` se regenera desde `master` por el workflow
+`publish-dist`.
+
+---
+
 ## [3.0.2] — 2026-08-11
 
 Release PATCH de la remediación de la auditoría 2.0.1 (plan 34, RFC-35):

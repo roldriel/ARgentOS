@@ -42,7 +42,7 @@ Estado al 2026-08-11. El trabajo activo es el **Execution Context Pipeline** (`f
 | RFC-33 | `rfc/33-execution-summary-steps-schema.md` | Proposal (plan 32, 11 ago 2026) | ¿Cuál es el nombre canónico de la lista de pasos de EXECUTION_SUMMARY? |
 | RFC-34 | `rfc/34-ears-criteria-canonical-form.md` | Proposal (plan 33, 11 ago 2026) | ¿Cuál es la forma canónica de los criterios de aceptación EARS? |
 | RFC-35 | `rfc/35-verify-workflow-inputs.md` | Proposal (plan 34 Executed, 11 ago 2026) | ¿Qué inputs consume la fase 07 y con qué valores decide? |
-| RFC-36 | `rfc/36-plan-workflow-inputs.md` | Proposal (plan 35, 11 ago 2026) | ¿Qué inputs recibe el worker de planificación? |
+| RFC-36 | `rfc/36-plan-workflow-inputs.md` | Proposal (plan 35 Executed, 11 ago 2026) | ¿Qué inputs recibe el worker de planificación? |
 | RFC-37 | `rfc/37-gather-context-h10-declaration.md` | Proposal (plan 36, 11 ago 2026) | ¿Qué transición protege H10 y cómo se declara en la fase 03? |
 | RFC-38 | `rfc/38-task-analysis-confidence-blocks.md` | Proposal (plan 37, 11 ago 2026) | ¿Qué significa cada bloque de confianza del TASK_ANALYSIS? |
 | RFC-39 | `rfc/39-discovery-context-budget.md` | Proposal (plan 38, 11 ago 2026) | ¿Dónde se configuran los límites de muestreo y presupuesto de discovery? |
@@ -176,9 +176,9 @@ Estado al cierre del 11 ago 2026: RFC-29…31 `Accepted` y planes 28–30 `Execu
 por implementación autorizada explícitamente por el usuario; el resto de la serie
 sigue en `Proposal` / `Aprobado para redacción` salvo los planes 34–36, que
 pasan a `Aprobado para ejecución` el 11 ago 2026 tras la auditoría de planes;
-el plan 34 quedó `Executed` el 11 ago 2026 (RFC-35 permanece en `Proposal`,
-pendiente de regularización de gobernanza; los planes 35–36 siguen `Aprobado
-para ejecución`).
+los planes 34–35 quedaron `Executed` el 11 ago 2026 (RFC-35…36 permanecen en
+`Proposal`, pendientes de regularización de gobernanza; el plan 36 sigue
+`Aprobado para ejecución`).
 
 | Plan | RFC | Origen (auditoría 2.0.1) | Descripción |
 |---|---|---|---|

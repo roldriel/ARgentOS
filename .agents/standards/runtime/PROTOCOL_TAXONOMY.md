@@ -327,6 +327,7 @@ entities:
       - core:RECOVERY
     artifacts_input:
       - TASK_SPECIFICATION.md
+      - CONTEXT_ARTIFACT.md
       - CONTEXT_VALIDATION_REPORT.md
     artifacts_output:
       - EXECUTION_PLAN.md
@@ -1477,6 +1478,7 @@ entities:
     actor: orchestrator
     input_artifacts:
       - TASK_SPECIFICATION.md
+      - CONTEXT_ARTIFACT.md
       - CONTEXT_VALIDATION_REPORT.md
     output_artifacts:
       - EXECUTION_PLAN.md
@@ -1814,6 +1816,7 @@ entities:
       - core:NEEDS_CLARIFICATION
     input_artifacts:
       - TASK_SPECIFICATION.md
+      - CONTEXT_ARTIFACT.md
       - CONTEXT_VALIDATION_REPORT.md
     output_artifacts:
       - EXECUTION_PLAN.md

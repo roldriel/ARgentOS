@@ -22,6 +22,7 @@ The Orchestrator invokes this role for `.agents/orchestrators/core/workflow/05-p
 
 - Session UUID.
 - `TASK_SPECIFICATION.md`.
+- `CONTEXT_ARTIFACT.md`.
 - `CONTEXT_VALIDATION_REPORT.md`.
 
 ## Outputs

@@ -10,6 +10,9 @@ version: "1.0.0"
 Master dictionary of the ARgentOS protocol. It is the single source of truth that relates
 domains, lifecycles, states, artifacts, workflows, harness policies, actors, roles and workers.
 
+The `version` field in the front matter is the format version of this dictionary,
+independent of the protocol version declared in `.agents/VERSION`.
+
 Rules:
 
 - Every entity carries a `domain` (`core`, `discovery`, `system`, `cross-cutting`).

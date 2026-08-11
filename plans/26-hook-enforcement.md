@@ -4,7 +4,7 @@
 
 **Depends on:** Plan 25 recomendado (los hooks validan el conjunto de gates del perfil; menos estados que gatear = hook más simple), no obligatorio.
 
-**Referencia:** `plans/rfc/27-hook-enforcement-model.md` (Proposal); investigación de hooks: Kimi Code (20 eventos, bloqueo en `PreToolUse`/`Stop`/`UserPromptSubmit`, exit 2 / JSON deny, fail-open por diseño), Claude Code (managed hooks, `ConfigChange` bloqueable, hooks heredados por subagentes).
+**Referencia:** `plans/rfc/27-hook-enforcement-model.md` (Accepted, retroactivo 2026-08-11); investigación de hooks: Kimi Code (20 eventos, bloqueo en `PreToolUse`/`Stop`/`UserPromptSubmit`, exit 2 / JSON deny, fail-open por diseño), Claude Code (managed hooks, `ConfigChange` bloqueable, hooks heredados por subagentes).
 
 ---
 

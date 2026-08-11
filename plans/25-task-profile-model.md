@@ -4,7 +4,7 @@
 
 **Depends on:** Plan 24 recomendado (los decision trees y policies se tocan aquí; conviene hacerlo sobre la fuente única de `required_sections`), no obligatorio.
 
-**Referencia:** `plans/rfc/26-task-profile-model.md` (Proposal); evidencia: sesión de dogfooding `.project/d4ab6a93…/00/` con ~23 archivos, 10 gates, ~52 min para una tarea.
+**Referencia:** `plans/rfc/26-task-profile-model.md` (Accepted, retroactivo 2026-08-11); evidencia: sesión de dogfooding `.project/d4ab6a93…/00/` con ~23 archivos, 10 gates, ~52 min para una tarea.
 
 ---
 

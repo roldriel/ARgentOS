@@ -1,6 +1,8 @@
 # RFC-26 — Task Profile Model
 
-**Status:** Proposal
+**Status:** Accepted
+
+**Aceptación retroactiva:** 2026-08-11 — regularización de auditoría 2.0.1 (RFC-42, plan 41). El modelo ya estaba implementado por el plan 25 (`plans/25-task-profile-model.md`, `Executed`); el status `Proposal` era un desfase documental. Evidencia: plan 25 y `CHANGELOG.md` (2.0.0).
 
 **Author:** Rodrigo Roldán
 
@@ -109,3 +111,4 @@ Se eligió peso de tarea (y no tipo) como dimensión de perfil porque el problem
 |---|---|---|
 | 2026-08-05 | Versión inicial (Proposal). Tres perfiles, criterios objetivos, regla de escalado ascendente, registro de gates omitidos como `skipped: profile`. | Análisis crítico de adopción (2026-08-05): ~23 archivos / ~52 min por tarea en dogfooding |
 | 2026-08-05 | Corrección de numeración de gates del perfil trivial: `H00, H05, H10` → `H00, H04, H06` (H04 = execution-plan, H06 = verification-report; H05 es execution-completed y H10 es el gate opcional de KB). El conjunto anterior saltearía la validación del plan y exigiría un gate opcional. | Detectado al ejecutar el plan 26 (hook enforcement requiere H04 PASS para escribir deliverables) |
+| 2026-08-11 | Aceptación retroactiva (`Proposal` → `Accepted`): regularización del desfase de gobernanza; el plan 25 ya ejecutó el modelo. | Regularización de auditoría 2.0.1 (decisión del usuario, 2026-08-11) |

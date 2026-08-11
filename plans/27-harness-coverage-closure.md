@@ -4,7 +4,7 @@
 
 **Depends on:** Plan 24 (el runner ya parsea contratos para `required_sections`; leer `enforcement` del mismo parseo es incremental).
 
-**Referencia:** `plans/rfc/28-harness-coverage-closure-model.md` (Proposal); evidencia: 13 de 25 contratos sin policy; precedente semántico: `tools/check_plan_citations.py`.
+**Referencia:** `plans/rfc/28-harness-coverage-closure-model.md` (Accepted, retroactivo 2026-08-11); evidencia: 13 de 25 contratos sin policy; precedente semántico: `tools/check_plan_citations.py`.
 
 ---
 

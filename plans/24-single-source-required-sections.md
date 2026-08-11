@@ -4,7 +4,7 @@
 
 **Depends on:** — (ninguno). Convive con cualquier orden respecto de los planes 23/25/26/27.
 
-**Referencia:** `plans/rfc/25-single-source-required-sections.md` (Proposal); mecanismo actual verificado: `.agents/harness/runner_policies.py` (`load_policy`, parseo de front matter), `.agents/harness/runner_validators.py` (`run_trigger` → `load_policy` → `validate_sections`); duplicación verbatim en 15 de 16 policies.
+**Referencia:** `plans/rfc/25-single-source-required-sections.md` (Accepted, retroactivo 2026-08-11); mecanismo actual verificado en su momento: `.agents/harness/runner_policies.py` (`load_policy`, parseo de front matter), `.agents/harness/runner_validators.py` (`run_trigger` → `load_policy` → `validate_sections`); duplicación verbatim en 15 de 16 policies. (Nota histórica: ambos módulos fueron eliminados en la migración 2.0.0.)
 
 ---
 

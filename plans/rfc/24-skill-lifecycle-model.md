@@ -1,6 +1,8 @@
 # RFC-24 — Skill Lifecycle Model (Cable-or-Kill)
 
-**Status:** Proposal
+**Status:** Accepted
+
+**Aceptación retroactiva:** 2026-08-11 — regularización de auditoría 2.0.1 (RFC-42, plan 41). El modelo ya estaba implementado por el plan 23 (`plans/23-skill-lifecycle.md`, `Executed`); el status `Proposal` era un desfase documental, no una falta de aprobación. Evidencia: plan 23 y `CHANGELOG.md` (2.0.0/2.0.1).
 
 **Author:** Rodrigo Roldán
 
@@ -143,3 +145,4 @@ Se eligió la regla binaria cable-or-kill sobre graduaciones (deprecar, marcar e
 | Fecha | Cambio | Origen |
 |---|---|---|
 | 2026-08-05 | Versión inicial (Proposal). Definición de skill integrada, regla cable-or-kill, inventario con tabla de cableado por fase. | Análisis crítico de adopción (2026-08-05): solo 2 de 34 skills integradas |
+| 2026-08-11 | Aceptación retroactiva (`Proposal` → `Accepted`): regularización del desfase de gobernanza; el plan 23 ya ejecutó el modelo. | Regularización de auditoría 2.0.1 (decisión del usuario, 2026-08-11) |

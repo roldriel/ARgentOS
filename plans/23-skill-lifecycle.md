@@ -4,7 +4,7 @@
 
 **Depends on:** — (ninguno).
 
-**Referencia:** `plans/rfc/24-skill-lifecycle-model.md` (Proposal); inventario de uso real: solo 2 de 34 skills (`reflection`, `planner`) referenciadas fuera de `.agents/skills/`.
+**Referencia:** `plans/rfc/24-skill-lifecycle-model.md` (Accepted, retroactivo 2026-08-11); inventario de uso real: solo 2 de 34 skills (`reflection`, `planner`) referenciadas fuera de `.agents/skills/`.
 
 ---
 

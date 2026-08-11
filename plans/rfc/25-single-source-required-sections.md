@@ -1,6 +1,8 @@
 # RFC-25 — Single-Source Required-Sections Model
 
-**Status:** Proposal
+**Status:** Accepted
+
+**Aceptación retroactiva:** 2026-08-11 — regularización de auditoría 2.0.1 (RFC-42, plan 41). El modelo ya estaba implementado por el plan 24 (`plans/24-single-source-required-sections.md`, `Executed`); el status `Proposal` era un desfase documental. Evidencia: plan 24 y `CHANGELOG.md` (2.0.0).
 
 **Author:** Rodrigo Roldán
 
@@ -124,3 +126,4 @@ Se eligió resolución por referencia en runtime sobre las alternativas (mantene
 | Fecha | Cambio | Origen |
 |---|---|---|
 | 2026-08-05 | Versión inicial (Proposal). Resolución por referencia de `required_sections`, eliminación de la clave en 15 policies y de `sync_required_sections.py`, fallo cerrado ante contrato irresoluble. | Análisis crítico de adopción (2026-08-05): duplicación verbatim policy↔contrato confirmada en `runner_validators.py` |
+| 2026-08-11 | Aceptación retroactiva (`Proposal` → `Accepted`): regularización del desfase de gobernanza; el plan 24 ya ejecutó el modelo. | Regularización de auditoría 2.0.1 (decisión del usuario, 2026-08-11) |

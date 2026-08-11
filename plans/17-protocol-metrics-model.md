@@ -4,7 +4,7 @@
 
 **Depends on:** planes 09 y 10 (las métricas cuentan decisiones y fallos; necesitan sus conceptos para no medir texto libre). Consume opcionalmente los planes 14 y 15 si están cerrados al momento de ejecución; esas métricas se marcan condicionales en el catálogo.
 
-**Referencia:** `.agents/harness/RUNNER.md` §Harness metrics (patrón de métricas existente: `.agents/contracts/HARNESS_REPORT.md` §Required structure).
+**Referencia:** `.agents/standards/runtime/PROTOCOL_METRICS.md:Metric catalog` (patrón de métricas existente: `.agents/contracts/HARNESS_REPORT.md:Required structure`).
 
 ---
 

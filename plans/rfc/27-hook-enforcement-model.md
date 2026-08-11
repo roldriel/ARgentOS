@@ -1,6 +1,8 @@
 # RFC-27 — Hook-Based Enforcement Model
 
-**Status:** Proposal
+**Status:** Accepted
+
+**Aceptación retroactiva:** 2026-08-11 — regularización de auditoría 2.0.1 (RFC-42, plan 41). El modelo ya estaba implementado por el plan 26 (`plans/26-hook-enforcement.md`, `Executed`); el status `Proposal` era un desfase documental. Evidencia: plan 26 y `CHANGELOG.md` (2.0.0).
 
 **Author:** Rodrigo Roldán
 
@@ -125,3 +127,4 @@ Se eligió persistir el estado en JSON escrito solo por el runner (en lugar de i
 | Fecha | Cambio | Origen |
 |---|---|---|
 | 2026-08-05 | Versión inicial (Proposal). `state.json` como fuente de verdad, hooks `PreToolUse`/`Stop`, defensa en capas, honestidad fail-open. | Análisis crítico de adopción (2026-08-05) + investigación de hooks Kimi Code / Claude Code / Gemini CLI |
+| 2026-08-11 | Aceptación retroactiva (`Proposal` → `Accepted`): regularización del desfase de gobernanza; el plan 26 ya ejecutó el modelo. | Regularización de auditoría 2.0.1 (decisión del usuario, 2026-08-11) |

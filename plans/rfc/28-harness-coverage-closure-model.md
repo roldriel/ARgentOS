@@ -1,6 +1,8 @@
 # RFC-28 — Harness Coverage Closure Model
 
-**Status:** Proposal
+**Status:** Accepted
+
+**Aceptación retroactiva:** 2026-08-11 — regularización de auditoría 2.0.1 (RFC-42, plan 41). El modelo ya estaba implementado por el plan 27 (`plans/27-harness-coverage-closure.md`, `Executed`); el status `Proposal` era un desfase documental. Evidencia: plan 27 y `CHANGELOG.md` (2.0.0).
 
 **Author:** Rodrigo Roldán
 
@@ -109,3 +111,4 @@ Se eligió declaración binaria `gated`/`informational` sobre niveles graduados 
 | Fecha | Cambio | Origen |
 |---|---|---|
 | 2026-08-05 | Versión inicial (Proposal). Declaración `enforcement` obligatoria por contrato, decisión explícita para los 13 sin policy, checks mecánicos de citas y evidencia de tests, invariante de cobertura en la suite. | Análisis crítico de adopción (2026-08-05): 13 de 25 contratos sin policy; validación solo estructural |
+| 2026-08-11 | Aceptación retroactiva (`Proposal` → `Accepted`): regularización del desfase de gobernanza; el plan 27 ya ejecutó el modelo. | Regularización de auditoría 2.0.1 (decisión del usuario, 2026-08-11) |

@@ -15,8 +15,9 @@ Decision (in order):
    current H04 (plan) PASS in state.json -> deny (exit 2) with a recovery
    instruction on stderr.
 3. ``Stop`` without iteration closure (H06 PASS, NEEDS_CLARIFICATION
-   recorded in TASK_ANALYSIS.md, or no task started in the session) ->
-   deny (exit 2) with a recovery instruction on stderr.
+   recorded in TASK_ANALYSIS.md, a terminal status (ABORT/COMPLETED)
+   recorded in state.json, or no task started in the session) -> deny
+   (exit 2) with a recovery instruction on stderr.
 
 Fail-open honesty: malformed stdin, missing event fields, or any internal
 error resolve to allow (exit 0). A crash or a CLI-side timeout of this
@@ -234,10 +235,12 @@ def decide(event: dict) -> int:
             return _allow()
         if _needs_clarification_recorded(session_dir):
             return _allow()
+        if state.get("status") in ("ABORT", "COMPLETED"):
+            return _allow()
         return _deny(
             f"Enforcement hook: the iteration is not closed (no {CLOSE_GATE} "
-            "verification PASS, no NEEDS_CLARIFICATION recorded). Close the "
-            f"iteration before stopping. Run: "
+            "verification PASS, no NEEDS_CLARIFICATION recorded, no terminal "
+            "status recorded). Close the iteration before stopping. Run: "
             f"{_runner_hint(session_dir, iter_dir, CLOSE_GATE)}"
         )
 

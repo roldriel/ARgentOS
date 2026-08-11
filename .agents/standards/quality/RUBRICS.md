@@ -73,7 +73,7 @@ Critical criteria (marked with ✅) that are scored `INSUFFICIENT` force a `REWO
 | **Criteria evaluation** | ✅ | Does not evaluate each acceptance criterion. | Each EARS criterion has explicit evaluation. | Evaluation with evidence and traceability to tests. |
 | **Test evidence** | | Does not include test results. | Includes test and validation results. | Automated + manual tests, logs, screenshots, or metrics. |
 | **Issue transparency** | | Does not document issues found. | Documents issues with severity and proposed action. | Issues linked to criteria and resolution plan. |
-| **Scope compliance** | ✅ | Does not verify whether scope was respected. | Confirms there are no out-of-scope changes. | Verifies explicit authorization for any extra work. |
+| **Scope compliance** | ✅ | Does not verify whether scope was respected. | Confirms scope was respected under Branch A (no out-of-scope changes, no authorized extra work claimed). | Verifies the two branches coherently and checks explicit written authorization with cited evidence for any extra work (Branch B). |
 | **Final decision clarity** | ✅ | Final decision is missing or ambiguous. | Clear decision: `COMPLETED` or `RECOVERY`. | Decision with justification, residual risks, and next steps. |
 
 ## Critical criteria summary

@@ -5,7 +5,7 @@ domain: core
 state: RECOVERY
 lifecycle: exception
 previous_states: [core:ANALYZING_TASK, core:CONFIRMING_INTENT, core:BUILDING_TASK_SPECIFICATION, core:GATHERING_CONTEXT, core:VALIDATING_CONTEXT, core:PLANNING, core:EXECUTING, core:VERIFYING]
-next_states: [core:PLANNING, core:NEEDS_CLARIFICATION, core:ABORT]
+next_states: [core:ANALYZING_TASK, core:BUILDING_TASK_SPECIFICATION, core:GATHERING_CONTEXT, core:VALIDATING_CONTEXT, core:PLANNING, core:NEEDS_CLARIFICATION, core:ABORT]
 input_artifacts: [VERIFICATION_REPORT.md]
 output_artifacts: [RECOVERY_REPORT.md]
 harness: [H09-recovery-report]
@@ -67,6 +67,54 @@ After receiving new information, return to:
 TASK_RECEIVED
 ```
 
+### ANALYZING_TASK
+
+An artifact of the analysis phase (`TASK_ANALYSIS.md`) must be corrected after a failed gate that was routed to recovery.
+
+Next module:
+
+```text
+orchestrators/core/workflow/00-analyze-task.md
+```
+
+### BUILDING_TASK_SPECIFICATION
+
+`TASK_SPECIFICATION.md` must be corrected after a failed H01 gate routed to recovery (as opposed to the same-state `RETRY_WORKER` used for format failures).
+
+Next module:
+
+```text
+orchestrators/core/workflow/02-build-task-specification.md
+```
+
+### GATHERING_CONTEXT
+
+`CONTEXT_ARTIFACT.md` must be corrected or re-gathered (for example, the H03 "On Failure"/"Decision mapping" return).
+
+Next module:
+
+```text
+orchestrators/core/workflow/03-gather-context.md
+```
+
+### VALIDATING_CONTEXT
+
+`CONTEXT_VALIDATION_REPORT.md` must be rewritten.
+
+Next module:
+
+```text
+orchestrators/core/workflow/04-validate-context.md
+```
+
+### Retry without transition (no state change)
+
+When a failed gate's recovery decision table yields `RETRY_WORKER` with the current phase as `target_phase` (for example, an H01 format failure on `02-build-task-specification.md`), the Orchestrator re-invokes the worker in the same state; no state transition occurs and no `RECOVERY_REPORT.md` is produced for that retry. A transition to `RECOVERY` is required only when the corrective action targets an earlier phase or the table yields `RECOVERY_GENERIC`.
+
+### ABORT
+
+The failure is unrecoverable, a policy's recovery decision table yields `ABORT`, or the user aborted the task. The transition is a founded abort: `RECOVERY_REPORT.md` recommends `ABORT` in `corrective_action.recommended_next_state` and the cause is recorded in `SESSION_LOG.md`. No further work is performed after `ABORT`.
+
 ---
 
 # Input Artifacts
@@ -112,6 +160,8 @@ Used to evaluate:
 
 * Whether the original requirements were misunderstood.
 * Whether the scope was exceeded or missed.
+
+When the corrective action targets an early phase, the relevant input is the failed artifact of that phase (`TASK_ANALYSIS.md`, `TASK_SPECIFICATION.md`, `CONTEXT_ARTIFACT.md` or `CONTEXT_VALIDATION_REPORT.md`) instead of the execution artifacts listed above.
 
 ---
 
@@ -167,7 +217,7 @@ The artifact must comply with the `RECOVERY_REPORT.md` contract and contain:
 * Failure summary.
 * Root cause classification and description.
 * Analysis summary.
-* Corrective action recommendation (`PLANNING` or `NEEDS_CLARIFICATION`).
+* Corrective action recommendation (`PLANNING`, `NEEDS_CLARIFICATION` or `ABORT`).
 * Updated artifacts (if any).
 * Confidence level.
 
@@ -185,6 +235,18 @@ or
 
 ```text
 RECOVERY → NEEDS_CLARIFICATION
+```
+
+or, when an artifact of an early phase must be corrected:
+
+```text
+RECOVERY → ANALYZING_TASK | BUILDING_TASK_SPECIFICATION | GATHERING_CONTEXT | VALIDATING_CONTEXT
+```
+
+or, when the failure is unrecoverable, a policy's recovery decision table yields `ABORT`, or the user aborted the task:
+
+```text
+RECOVERY → ABORT
 ```
 
 ---
@@ -249,6 +311,32 @@ After receiving clarification, return to:
 ```text
 TASK_RECEIVED
 ```
+
+## Recovery via Early-Phase Correction
+
+If an artifact of an early phase must be corrected:
+
+```text
+RECOVERY
+    |
+    v
+ANALYZING_TASK | BUILDING_TASK_SPECIFICATION | GATHERING_CONTEXT | VALIDATING_CONTEXT
+```
+
+Continue with the workflow module of the destination phase (`00-analyze-task.md`, `02-build-task-specification.md`, `03-gather-context.md`, `04-validate-context.md`). The destination is selected by the artifact to correct; the corrective action and its evidence are recorded in `SESSION_LOG.md`.
+
+## Recovery via Abort
+
+If the failure is unrecoverable, a policy's recovery decision table yields `ABORT`, or the user aborted the task:
+
+```text
+RECOVERY
+    |
+    v
+ABORT
+```
+
+The abort must be founded: `RECOVERY_REPORT.md` recommends `ABORT` and the cause is recorded in `SESSION_LOG.md`. No further work is performed after `ABORT`.
 
 ---
 

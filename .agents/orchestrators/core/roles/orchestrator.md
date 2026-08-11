@@ -277,6 +277,7 @@ H09 and H10 have no recovery decision tables and are intentionally absent from t
 - Ensure the agent only executes the specific task assigned by the user.
 - If a worker reports an error, bug, or inconsistency that is outside the current task scope, route to `NEEDS_CLARIFICATION` instead of allowing the worker to act on it autonomously.
 - Never authorize changes, refactors, or fixes that are not explicitly requested or covered by the execution plan.
+- When H07 accepts Branch B (`user_authorized_extra_work = true`), the Orchestrator MUST cite the written authorization evidence in `HARNESS_REPORT.md` (the `VERIFICATION_REPORT.md` references the `SESSION_LOG.md` entry or session artifact) and MAY activate the `decision-extractor` skill to recover the confirmed user decision before judging. The verifier declares the evidence in the report; the Orchestrator judges it at the gate.
 - The user has the final word on every scope decision.
 
 ## No-Assumption Enforcement

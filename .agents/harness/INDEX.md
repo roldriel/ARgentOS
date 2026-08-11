@@ -121,14 +121,18 @@ For details on the entry format, see `.agents/orchestrators/discovery/contracts/
 
 The protocol state of each iteration lives in
 `.project/<session-uuid>/<iteration>/state.json`: session, iteration, task
-profile, gates passed with timestamps, and last gate. This section is the
-canonical source for how that state is written and consumed. Invariants:
+profile, gates passed with timestamps, last gate, and `status` (in progress
+or terminal `ABORT`/`COMPLETED`). This section is the canonical source for
+how that state is written and consumed. Invariants:
 
 1. Only `.agents/harness/runner_state.py` writes it, transactionally (temp
    file + rename), via its CLI:
    `python .agents/harness/runner_state.py --session <uuid> --trigger <HXX> --iteration <N> pass`.
    The Orchestrator invokes it **only after judging `PASS`** against the
-   policy's «Gate Checklist». `FAIL` and `SKIP` never touch it.
+   policy's «Gate Checklist». `FAIL` and `SKIP` never touch it. Terminal
+   states are recorded the same way:
+   `python .agents/harness/runner_state.py --session <uuid> --state ABORT|COMPLETED terminal`,
+   preserving the recorded gates.
 2. Hooks and the Orchestrator read it; nobody else writes it. A missing or
    corrupt `state.json` means *no gate has passed* (fail-closed for
    consumers).
@@ -139,8 +143,10 @@ installs — and consists of three scripts: `.agents/harness/hook_gate.py`
 reads a CLI hook event from stdin and denies (exit 2) `PreToolUse` on
 `Write`/`Edit` targeting project deliverables without an H04 `PASS`
 (approved EXECUTION_PLAN) for the current iteration, and `Stop` without
-iteration closure (H06 `PASS`, `NEEDS_CLARIFICATION` recorded, or no task
-started); `runner_state.py` persists the gate results the hook consults;
+iteration closure (H06 `PASS`, `NEEDS_CLARIFICATION` recorded, a terminal
+`status` (`ABORT`/`COMPLETED`) recorded by `runner_state.py`, or no task
+started); `runner_state.py` persists the gate results and terminal states
+the hook consults;
 `health_check.py` probes that `state.json` can be written and read.
 Without hooks installed the protocol runs in **declarative mode** (the
 default), which has no Python requirement: gates remain

@@ -77,16 +77,16 @@ The Orchestrator evaluates each item below by judgment when the gate fires and M
 The Orchestrator must:
 
 1. Record the failure in `HARNESS_REPORT.md`.
-2. Return to `BUILDING_TASK_SPECIFICATION` and re-invoke the Worker as `task_specification_writer`, or
-3. Transition to `NEEDS_CLARIFICATION` if the specification cannot be completed without user input.
+2. Apply the §"Recovery Decision Table" (first matching rule, top to bottom). A `RETRY_WORKER` result re-invokes the `task_specification_writer` on `02-build-task-specification.md` without a state transition (bounded by `retry_count`); `NEEDS_CLARIFICATION` requests user input; `RECOVERY_GENERIC` routes to `08-recovery.md`.
 
 ## Recovery Decision Table
 
-When H01 fails, the Orchestrator populates the context variables from the session (`artifact_exists`, `objective_is_ambiguous`, `scope_is_clear`, `retry_count` = retries already attempted for this failure) and applies the first rule that matches, top to bottom:
+When H01 fails, the Orchestrator populates the context variables from the session (`artifact_exists`, `objective_is_ambiguous`, `scope_is_clear`, `retry_count` = retries already attempted for this failure) and applies the first rule that matches, top to bottom. `artifact_exists` means: `false` — the artifact is missing or must be regenerated; `true` — the artifact exists but fails validation (for example, a format failure).
 
 | # | Condition | Action | Target phase | Role | Reason |
 | --- | --- | --- | --- | --- | --- |
 | 1 | `artifact_exists == false` | `RETRY_WORKER` | `02-build-task-specification.md` | `task_specification_writer` | TASK_SPECIFICATION.md is missing or incomplete; retry writer. |
 | 2 | `objective_is_ambiguous == true` or `scope_is_clear == false` | `NEEDS_CLARIFICATION` | — | — | Objective or scope is ambiguous; request clarification. |
-| 3 | `retry_count >= 1` | `RECOVERY_GENERIC` | `08-recovery.md` | — | Repeated failure after retry; route to generic recovery. |
-| 4 | otherwise | `RECOVERY_GENERIC` | `08-recovery.md` | — | Task specification validation failed; falling back to generic recovery. |
+| 3 | `artifact_exists == true` and `objective_is_ambiguous == false` and `scope_is_clear == true` and `retry_count == 0` | `RETRY_WORKER` | `02-build-task-specification.md` | `task_specification_writer` | TASK_SPECIFICATION.md exists but fails structural/format checks; retry writer once without a state transition. |
+| 4 | `retry_count >= 1` | `RECOVERY_GENERIC` | `08-recovery.md` | — | Repeated failure after retry; route to generic recovery. |
+| 5 | otherwise | `RECOVERY_GENERIC` | `08-recovery.md` | — | Task specification validation failed; falling back to generic recovery. |

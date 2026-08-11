@@ -60,6 +60,52 @@ def test_record_gate_pass_is_transactional_and_cumulative(session):
     assert state["last_gate"] == "H04"
 
 
+def test_record_terminal_state_preserves_gates(session):
+    session_uuid, artifacts_dir, _ = session
+    runner_state.record_gate_pass(session_uuid, "00", "H04")
+
+    path = runner_state.record_terminal_state(session_uuid, "00", "ABORT")
+
+    state = json.loads(path.read_text(encoding="utf-8"))
+    assert state["status"] == "ABORT"
+    assert state["gates"]["H04"]["result"] == "PASS"
+    assert state["updated"]
+
+
+def test_record_terminal_state_rejects_unknown_state(session):
+    session_uuid, _, _ = session
+
+    with pytest.raises(ValueError):
+        runner_state.record_terminal_state(session_uuid, "00", "BOGUS")
+
+
+def test_cli_terminal_records_state(session, capsys):
+    session_uuid, artifacts_dir, _ = session
+    runner_state.record_gate_pass(session_uuid, "00", "H04")
+
+    exit_code = runner_state.main(
+        ["--session", session_uuid, "--state", "ABORT", "terminal"]
+    )
+
+    assert exit_code == 0
+    out = capsys.readouterr().out
+    assert "ABORT" in out
+    state = runner_state.load_state(session_uuid, "00")
+    assert state["status"] == "ABORT"
+    assert runner_state.gate_passed(state, "H04")
+
+
+def test_cli_terminal_rejects_invalid_state(session, capsys):
+    session_uuid, _, _ = session
+
+    exit_code = runner_state.main(
+        ["--session", session_uuid, "--state", "BOGUS", "terminal"]
+    )
+
+    assert exit_code == 2
+    assert "ABORT" in capsys.readouterr().err
+
+
 def test_read_task_profile_from_latest_iteration(session):
     session_uuid, artifacts_dir, _ = session
     iter00 = artifacts_dir / session_uuid / "00"

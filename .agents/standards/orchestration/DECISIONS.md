@@ -52,7 +52,7 @@ Every transition to `ABORT` requires a cause recorded in `SESSION_LOG.md`: a use
 
 - **Question:** who may abort a task, and under what concept?
 - **Inputs:** the source of the abort (user decision, decision-tree `ABORT` action, indispensable criticality in D4, infeasibility detected in `RECOVERY`).
-- **Authority:** the user may abort at any time and their word is final. The Orchestrator is the only role that may take the state machine to `ABORT`, always as a founded abort. Workers never abort.
+- **Authority:** the user may abort at any time and their word is final. The Orchestrator is the only role that may take the state machine to `ABORT`, always as a founded abort. Workers never abort. The `RECOVERY_REPORT.md` artifact is the carrier of the abort cause: when the state machine takes `RECOVERY → ABORT`, the report's `corrective_action.recommended_next_state` is `ABORT` and `SESSION_LOG.md` records the cause.
 
 ### D6 — Degraded bootstrap
 

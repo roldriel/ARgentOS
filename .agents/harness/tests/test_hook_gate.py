@@ -32,7 +32,7 @@ def project(tmp_path, monkeypatch):
     return session_uuid, project_dir, tmp_path
 
 
-def write_state(project_dir, session_uuid, gates):
+def write_state(project_dir, session_uuid, gates, status="in_progress"):
     state = {
         "session": session_uuid,
         "iteration": "00",
@@ -42,7 +42,7 @@ def write_state(project_dir, session_uuid, gates):
             for gate in gates
         },
         "last_gate": gates[-1] if gates else None,
-        "status": "in_progress",
+        "status": status,
         "updated": "2026-08-06T00:00:00+00:00",
     }
     (project_dir / session_uuid / "00" / "state.json").write_text(
@@ -168,6 +168,32 @@ def test_stop_with_needs_clarification_recorded_is_allowed(project):
     )
 
     assert hook_gate.decide(stop_event(session_uuid)) == 0
+
+
+def test_stop_with_abort_terminal_status_is_allowed(project):
+    session_uuid, project_dir, _ = project
+    write_state(project_dir, session_uuid, ["H00", "H04"], status="ABORT")
+
+    assert hook_gate.decide(stop_event(session_uuid)) == 0
+
+
+def test_stop_with_completed_terminal_status_is_allowed(project):
+    session_uuid, project_dir, _ = project
+    write_state(project_dir, session_uuid, ["H04", "H06"], status="COMPLETED")
+
+    assert hook_gate.decide(stop_event(session_uuid)) == 0
+
+
+def test_stop_with_abort_only_as_gate_name_is_denied(project, capsys):
+    session_uuid, project_dir, _ = project
+    # A gate named H09 does not close the iteration; only a terminal status
+    # in state.json does.
+    write_state(project_dir, session_uuid, ["H00", "H04", "H09"])
+
+    code = hook_gate.decide(stop_event(session_uuid))
+
+    assert code == 2
+    assert "H06" in capsys.readouterr().err
 
 
 # --- Fail-open on malformed input (documented property) ---------------------

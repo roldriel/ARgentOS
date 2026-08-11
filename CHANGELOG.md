@@ -30,6 +30,47 @@ La política de migración entre versiones vive en [`MIGRATION.md`](MIGRATION.md
 
 ---
 
+## [3.0.1] — 2026-08-11
+
+Release PATCH de la remediación de la auditoría 2.0.1 (planes 31-33, RFC-32…34):
+unificación del perfil de la fase 02, canonicalización de la lista de pasos de
+`EXECUTION_SUMMARY.md` y forma canónica de los criterios de aceptación EARS.
+Cambios documentales y de redacción de contratos/policies; sin cambios en el
+modelo conceptual.
+
+### Fixed
+
+- **Perfil unificado de la fase 02** (plan 31, RFC-32): la tabla de activación
+  de skills (`.agents/skills/INDEX.md`) y la guía de orquestación
+  (`ORCHESTRATION_GUIDE.md` §7) ahora nombran el rol de fase
+  `task_specification_writer` para `02-build-task-specification.md`, eliminando
+  la contradicción con el front matter del workflow 02 y el uso de
+  `functional_writer` fuera de su dominio (documentación funcional de fase 06).
+- **Schema único de pasos en `EXECUTION_SUMMARY.md`** (plan 32, RFC-33):
+  `[[steps_executed]]` es el único nombre de la lista de pasos (template del
+  cuerpo y sección machine-readable); `[[steps]]` desaparece del contrato y los
+  artefactos históricos que lo usen son no conformes (nota de migración en el
+  contrato).
+- **Forma canónica de Acceptance Criteria (EARS)** (plan 33, RFC-34): los
+  bullets Markdown son la forma canónica de `## Acceptance Criteria` en
+  `TASK_SPECIFICATION.md`; el bloque TOML `acceptance_criteria` queda como
+  representación machine-readable opcional y derivada; H01 declara que los
+  criterios presentes solo en TOML constituyen una violación de forma.
+
+### Modelo conceptual
+
+RFC-32…34 permanecen en `Proposal` (regularización de gobernanza pendiente,
+mismo tratamiento que RFC-24…28); los planes 31-33 quedaron `Executed` con
+autorización explícita del usuario.
+
+---
+
+Nota: el tag git `3.0.1` que fija esta versión se crea como entregable del
+release; la rama `dist` se regenera desde `master` por el workflow
+`publish-dist`.
+
+---
+
 ## [3.0.0] — 2026-08-11
 
 Release MAJOR de la remediación de la auditoría 2.0.1 (planes 28-30, RFC-29…31):

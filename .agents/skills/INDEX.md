@@ -51,7 +51,7 @@ Declarative, auditable mapping used by the Orchestrator during `ANALYZING_TASK`/
 | --- | --- | --- |
 | 00-analyze-task | task_analyst | requirement-extractor, goal-extractor, constraint-extractor, ambiguity-detector, intent-detector |
 | 01-confirm-intent | intent_reflector | ambiguity-detector |
-| 02-build-task-specification | functional_writer | ears-writer, task-spec-validator |
+| 02-build-task-specification | task_specification_writer | ears-writer, task-spec-validator |
 | 03-gather-context | context_gatherer | extractor, deduplicator, normalizer, summarizer |
 | 04-validate-context | context_validator | context-validator, completeness-checker |
 | 05-plan | planner | planner, risk-detector, tradeoff-analyzer, critic |

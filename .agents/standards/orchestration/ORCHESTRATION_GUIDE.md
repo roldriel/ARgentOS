@@ -124,13 +124,15 @@ If the generic worker is used, apply the minimum payload template from the deleg
 |---|---|---|
 | `00-analyze-task.md` | No | Fixed profile according to `orchestrator.md`. |
 | `01-confirm-intent.md` | No | Fixed profile `intent_reflector`. |
-| `02-build-task-specification.md` | No | Generic worker. |
+| `02-build-task-specification.md` | No | Fixed phase role `task_specification_writer` (see `worker.md` §Phase roles). |
 | `03-gather-context.md` | No | Generic worker (or `context_discoverer` if `knowledge_base` is active). |
 | `04-validate-context.md` | No | Generic worker. |
 | `05-plan.md` | No | Generic worker. |
 | `06-execute.md` | **Yes** | Choose profile using the 7 questions. |
 | `07-verify.md` | Partially | If `rubrics` is active, invoke `reviewer`. |
 | `08-recovery.md` | Partially | Generic worker; follow the recovery decision table of the failed trigger's policy. |
+
+> **Note:** the 7-question guide applies only to `06-execute.md`. Phases 00–05 use fixed roles assigned by their workflow (phase roles, or fixed-phase profiles such as `intent_reflector` in 01); the Decision column for 00–05 is not resolved with the 7 questions.
 
 ---
 

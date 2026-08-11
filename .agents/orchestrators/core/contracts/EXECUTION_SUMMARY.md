@@ -77,12 +77,14 @@ description = ""
 Ordered list of implementation steps and their execution status.
 
 ```toml
-[[steps]]
+[[steps_executed]]
 order = 1
 action = ""
 status = ""
 notes = ""
 ```
+
+Historical artifacts using `[[steps]]` are non-conforming and must migrate to `[[steps_executed]]`.
 
 Possible values for `status`:
 

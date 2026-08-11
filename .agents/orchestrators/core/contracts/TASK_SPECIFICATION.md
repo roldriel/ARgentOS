@@ -114,18 +114,22 @@ notes = [
 
 Conditions that determine whether the task is considered correctly completed.
 
-Each acceptance criterion must be written using the EARS syntax defined in `.agents/standards/requirements/EARS.md`. Criteria must be atomic, unambiguous, and verifiable.
+The canonical form is one Markdown bullet per criterion. Each criterion must be written using the EARS syntax defined in `.agents/standards/requirements/EARS.md`; criteria must be atomic, unambiguous, and verifiable.
 
-```toml
-acceptance_criteria = [""]
-```
-
-Example:
+Example (canonical form):
 
 ```text
 - The API shall reject a POST /users request with an empty name.
 - When the email is already registered, the API shall return HTTP 409.
 ```
+
+The TOML block below is an optional machine-readable representation derived from the bullets. When included, it must be consistent with the bullets and does not replace them: an artifact whose criteria appear only in the TOML block does not satisfy the canonical form.
+
+```toml
+acceptance_criteria = [""]
+```
+
+> **Migration:** historical specs with criteria only in the TOML block must migrate the criteria to Markdown bullets.
 
 ---
 

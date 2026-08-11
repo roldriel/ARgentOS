@@ -36,7 +36,7 @@ Estado al 2026-08-11. El trabajo activo es el **Execution Context Pipeline** (`f
 | RFC-27 | `rfc/27-hook-enforcement-model.md` | Accepted (retroactiva 11 ago 2026; plan 26 Executed) | ¿Cómo pasa el enforcement de voluntario (prompt) a obligatorio (estado persistido + hooks bloqueantes)? |
 | RFC-28 | `rfc/28-harness-coverage-closure-model.md` | Accepted (retroactiva 11 ago 2026; plan 27 Executed) | ¿Cómo se declara el nivel de enforcement de cada contrato y qué validación semántica mecánica mínima gana el harness? |
 | RFC-29 | `rfc/29-h07-user-authorized-extra-work.md` | Accepted (plan 28 Executed, 11 ago 2026) | ¿Cómo expresa el protocolo el trabajo extra autorizado por el usuario sin que H07 lo convierta en fallo? |
-| RFC-30 | `rfc/30-recovery-to-early-phases.md` | Proposal (plan 29, 11 ago 2026) | ¿Qué transiciones legales corrigen artefactos de fases tempranas desde RECOVERY? |
+| RFC-30 | `rfc/30-recovery-to-early-phases.md` | Accepted (plan 29 Executed, 11 ago 2026) | ¿Qué transiciones legales corrigen artefactos de fases tempranas desde RECOVERY? |
 | RFC-31 | `rfc/31-abort-artifact-flow.md` | Proposal (plan 30, 11 ago 2026) | ¿Cómo se registra y cierra una sesión que termina en ABORT? |
 | RFC-32 | `rfc/32-phase-02-profile-unification.md` | Proposal (plan 31, 11 ago 2026) | ¿Quién redacta la TASK_SPECIFICATION y qué skills activa? |
 | RFC-33 | `rfc/33-execution-summary-steps-schema.md` | Proposal (plan 32, 11 ago 2026) | ¿Cuál es el nombre canónico de la lista de pasos de EXECUTION_SUMMARY? |
@@ -208,7 +208,7 @@ ejecución` con justificación.
 | # | Ítem | Destino | Prioridad | Evidencia |
 |---|---|---|---|---|
 | B-1 | Gate D01 superable: especial-casing del runner para `KB_DISCOVERY_ENTRY.md` fuera de la iteración, o artefacto de sesión definido por el workflow de discovery | policy | Alta — se repite en cada discovery; hoy exige artefacto-puente | F-11 |
-| B-2 | Recovery económico para fallos de formato: variable/rama `RETRY_WORKER` en árboles (H01 primero), alineación contrato↔validador EARS (bullets canónicos) | policy | Alta — un fallo de formato cuesta una fase RECOVERY completa | F-01, F-02 |
+| B-2 | Recovery económico para fallos de formato: rama `RETRY_WORKER` en tablas de recovery (H01 primero) — implementada por el plan 29 (2026-08-11); pendiente la alineación contrato↔validador EARS (bullets canónicos, plan 33) | policy | Alta — un fallo de formato cuesta una fase RECOVERY completa | F-01, F-02 |
 | B-3 | Marcador `.last_discovery` único y canónico (ruta `.project/.last_discovery`, JSON de spec) + validación en health-check | policy | Media — dispara full discoveries evitables | F-12 |
 | B-4 | Tanda de inconsistencias de contratos/policies: `discovery_context_budget` en features.toml, campos legacy en DISCOVERY_MANIFEST, "primera línea" de EXECUTIVE_SUMMARY, procedencia "observado por scan" en KB_DISCOVERY_ENTRY, delimitador de front matter, actor único de hash calculation, INTENT_REFLECTION auto-confirmada en la máquina de estados, mandato de KB en delegaciones condicionado a disponibilidad, namespacing de `<order>` por dominio | policy | Media — costo unitario bajo, recurrente | F-04, F-07, F-13, F-14, F-15, F-17, F-18, F-19, F-20 |
 | B-5 | Política de clarificación desatendida/asíncrona (defaults declarados + confirmación diferida) para sesiones sin usuario en línea | gap → plan nuevo | Media — toda ejecución automatizada choca con esto | F-05 |

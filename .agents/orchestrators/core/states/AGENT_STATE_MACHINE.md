@@ -69,7 +69,7 @@ No transition may bypass a required state because the task appears small, simple
 - The only valid paths to reduce work are:
   - Transitioning from `ANALYZING_TASK` to `NEEDS_CLARIFICATION` when information is missing.
   - Transitioning from `ANALYZING_TASK` to `CONFIRMING_INTENT` when confidence is not HIGH.
-  - Following the recovery loop back to `PLANNING` or `NEEDS_CLARIFICATION`.
+  - Following the recovery loop back to `PLANNING`, `NEEDS_CLARIFICATION`, or an early phase (`ANALYZING_TASK`, `BUILDING_TASK_SPECIFICATION`, `GATHERING_CONTEXT`, `VALIDATING_CONTEXT`) through the transitions defined in the `RECOVERY` section.
 - If a worker proposes skipping a phase, the Orchestrator MUST record the proposal in `SESSION_LOG.md` and route to `RECOVERY` or `NEEDS_CLARIFICATION`.
 
 A retroactive artifact — one created after execution, outside its phase, to "fill a gap" in the trace — is a retroactive deviation. It is not a valid way to complete an iteration: the artifact must be clearly marked as retroactive in both the artifact itself and the session log, and the deviation must be justified by a recovery decision, not by convenience. An unmarked retroactive artifact is a second violation on top of the first: the production deviation plus the concealment of it.
@@ -659,6 +659,10 @@ The agent analyzes failures and determines corrective actions.
 
 This artifact records the failure analysis, root cause classification, and recommended corrective action.
 
+### Corrective Actions
+
+`RETRY_WORKER` is a corrective action, not a state transition. When the recovery decision table of a failed gate yields `RETRY_WORKER` with the current phase as `target_phase`, the Orchestrator re-invokes the worker in the same state: no transition occurs and no recovery report is required for that retry. When the table yields `RETRY_WORKER` with an earlier phase as `target_phase`, the failure routes to `RECOVERY` and the task uses one of the early-phase transitions below.
+
 ### Allowed Transitions
 
 If the failure can be corrected by replanning:
@@ -668,6 +672,36 @@ RECOVERY
         |
         v
 PLANNING
+```
+
+If an artifact of an early phase must be corrected, the following transitions are allowed; the destination is selected by the artifact to correct (`TASK_ANALYSIS.md` → `ANALYZING_TASK`, `TASK_SPECIFICATION.md` → `BUILDING_TASK_SPECIFICATION`, `CONTEXT_ARTIFACT.md` → `GATHERING_CONTEXT`, `CONTEXT_VALIDATION_REPORT.md` → `VALIDATING_CONTEXT`):
+
+```text
+RECOVERY
+        |
+        v
+ANALYZING_TASK
+```
+
+```text
+RECOVERY
+        |
+        v
+BUILDING_TASK_SPECIFICATION
+```
+
+```text
+RECOVERY
+        |
+        v
+GATHERING_CONTEXT
+```
+
+```text
+RECOVERY
+        |
+        v
+VALIDATING_CONTEXT
 ```
 
 If the failure requires clarification:

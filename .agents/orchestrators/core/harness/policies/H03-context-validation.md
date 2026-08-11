@@ -65,7 +65,7 @@ The Orchestrator evaluates each item below by judgment when the gate fires and M
 ### Decision mapping
 
 - `VALIDATED` → transition to `CONTEXT_READY`.
-- `NEEDS_MORE_CONTEXT` → return to `GATHERING_CONTEXT` if the gaps can be filled automatically, or `NEEDS_CLARIFICATION` if user input is required.
+- `NEEDS_MORE_CONTEXT` → return to `GATHERING_CONTEXT` if the gaps can be filled automatically (modeled as an earlier-phase transition: when the gate fails, the task routes to `RECOVERY` and uses the `RECOVERY → GATHERING_CONTEXT` edge), or `NEEDS_CLARIFICATION` if user input is required.
 - `REJECTED` → transition to `NEEDS_CLARIFICATION`.
 
 ## On Failure
@@ -73,8 +73,9 @@ The Orchestrator evaluates each item below by judgment when the gate fires and M
 The Orchestrator must:
 
 1. Record the failure in `HARNESS_REPORT.md`.
-2. If gaps can be filled by the Worker, return to `GATHERING_CONTEXT`.
-3. If gaps require user input, transition to `NEEDS_CLARIFICATION`.
+2. Apply the §"Recovery Decision Table" (first matching rule, top to bottom). A `RETRY_WORKER` result targeting `03-gather-context.md` is an earlier-phase correction: the task routes to `RECOVERY` and uses the `RECOVERY → GATHERING_CONTEXT` edge of the state machine.
+3. If the failure requires rewriting `CONTEXT_VALIDATION_REPORT.md` itself, the task routes to `RECOVERY` and uses the `RECOVERY → VALIDATING_CONTEXT` edge.
+4. If gaps require user input, transition to `NEEDS_CLARIFICATION`.
 
 ## Examples
 
@@ -106,3 +107,5 @@ When H03 fails, the Orchestrator populates the context variables from the sessio
 | 2 | `gaps_actionable == true` | `RETRY_WORKER` | `03-gather-context.md` | `context_gatherer` | Actionable context gaps found; retry context gatherer. |
 | 3 | `context_user_specific == true` | `NEEDS_CLARIFICATION` | — | — | Gaps require user-specific information. |
 | 4 | otherwise | `RECOVERY_GENERIC` | `08-recovery.md` | — | Context validation failed; falling back to generic recovery. |
+
+Note: the `RETRY_WORKER` row targeting `03-gather-context.md` is an earlier-phase target; it requires the `RECOVERY → GATHERING_CONTEXT` edge of the state machine, so the task routes to `RECOVERY` before re-invoking the `context_gatherer`.

@@ -87,6 +87,25 @@ versión:
 Este cambio se publica como versión `3.0.0` (2026-08-11); esta sección es la
 guía de migración del cambio.
 
+## 3.1 Cambios de forma y nomenclatura — planes 31-33 (2026-08-11)
+
+Release 3.0.1 (PATCH): correcciones documentales sin cambios de modelo.
+
+- **`TASK_SPECIFICATION.md` — criterios de aceptación**: la forma canónica de
+  `## Acceptance Criteria` son los bullets Markdown EARS. Las specs históricas
+  con criterios solo en el bloque TOML `acceptance_criteria` deben migrar los
+  criterios a bullets; el bloque TOML queda como representación opcional y
+  derivada (no reemplaza los bullets).
+- **`EXECUTION_SUMMARY.md` — lista de pasos**: el nombre canónico de la lista es
+  `[[steps_executed]]`. Los resúmenes históricos con `[[steps]]` son no
+  conformes y deben migrar la clave a `[[steps_executed]]`.
+- **Fase 02 — rol**: la tabla de activación y la guía de orquestación usan el
+  rol de fase `task_specification_writer`; `functional_writer` queda limitado a
+  la documentación funcional de la fase 06.
+
+Este cambio se publica como versión `3.0.1` (2026-08-11); esta sección es la
+guía de migración del cambio.
+
 ## 4. Qué NO migra
 
 - **Artefactos de sesión** (`.project/`): son efímeros y específicos del proyecto;

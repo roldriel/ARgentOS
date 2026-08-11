@@ -30,6 +30,29 @@ La política de migración entre versiones vive en [`MIGRATION.md`](MIGRATION.md
 
 ---
 
+## [Unreleased]
+
+### Changed
+
+- **H07 — dos ramas de scope compliance** (plan 28, RFC-29): `VERIFICATION_REPORT.md`
+  define la Rama A (sin extra) y la Rama B (trabajo extra autorizado por escrito
+  con evidencia citada); H07 pasa con la Rama B solo si la evidencia existe y la
+  juzga el Orchestrator; `RUBRICS.md` y `orchestrator.md` alineados. Cambio MAJOR
+  de semántica.
+- **Recovery a fases tempranas** (plan 29, RFC-30): `AGENT_STATE_MACHINE.md`
+  agrega las aristas `RECOVERY → ANALYZING_TASK | BUILDING_TASK_SPECIFICATION |
+  GATHERING_CONTEXT | VALIDATING_CONTEXT` y define `RETRY_WORKER` como acción
+  correctiva sin transición; H01 gana una rama de retry acotado para fallos de
+  formato; workflow 08 y H03 alineados. Cambio MAJOR del modelo de estados.
+- **ABORT en el flujo de artefacto y de cierre** (plan 30, RFC-31):
+  `RECOVERY_REPORT.md` admite `ABORT` en `corrective_action.recommended_next_state`
+  (abort fundado); `runner_state.py` registra estado terminal
+  (`terminal --state ABORT|COMPLETED`); `hook_gate.py` permite el cierre por
+  `Stop` con estado terminal; `DECISIONS.md` D5 y `harness/INDEX.md` alineados.
+  Cambio MAJOR de contrato.
+
+---
+
 ## [2.0.1] — 2026-08-11
 
 Release de mantenimiento documental tras la migración 2.0.0: restaura los

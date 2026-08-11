@@ -56,7 +56,38 @@ Para pasar un proyecto adoptante de la versión `X` a la versión `Y`:
 8. **Actualizar la versión adoptada**: registrar en el proyecto qué versión de
    `.agents/VERSION` quedó adoptada.
 
-## 3. Qué NO migra
+## 3. Cambios de modelo y contratos — planes 28-30 (2026-08-11)
+
+Implementación autorizada explícitamente por el usuario (RFC-29…31 `Accepted`,
+planes 28–30 `Executed`). Puntos que un adoptante debe revisar al adoptar esta
+versión:
+
+- **`VERIFICATION_REPORT.md` — Scope Compliance con dos ramas**: los reportes
+  existentes que cumplen la Rama A (sin extra, `unplanned_changes = []`,
+  `user_authorized_extra_work = false`) siguen siendo válidos. La Rama B
+  (`user_authorized_extra_work = true` con cambios fuera del plan) solo pasa H07
+  con autorización escrita del usuario citada en el reporte (`SESSION_LOG.md` o
+  artefacto de sesión). `scope_respected = false` es fallo en ambas ramas.
+- **`RECOVERY_REPORT.md` — `ABORT` en la recomendación**: el enum de
+  `corrective_action.recommended_next_state` ahora admite `ABORT`, válido solo
+  como abort fundado (causa registrada en `SESSION_LOG.md`, per `DECISIONS.md`
+  D5).
+- **Máquina de estados — aristas de recovery a fases tempranas**:
+  `RECOVERY → ANALYZING_TASK | BUILDING_TASK_SPECIFICATION | GATHERING_CONTEXT |
+  VALIDATING_CONTEXT` son transiciones legales para corregir artefactos de fases
+  tempranas; `RETRY_WORKER` sobre la fase actual es una acción correctiva sin
+  transición de estado. H01 incorpora una rama de retry acotado
+  (`retry_count == 0`) para fallos de formato.
+- **Modo enforced — cierre terminal**: `runner_state.py` registra estados
+  terminales (`python .agents/harness/runner_state.py --session <uuid> --state
+  ABORT|COMPLETED terminal`); el hook deja cerrar la sesión por `Stop` cuando
+  `state.json.status` es `ABORT`/`COMPLETED`, además de las condiciones
+  anteriores (H06 PASS o `NEEDS_CLARIFICATION` registrado).
+
+El bump de versión (`Unreleased` → próxima release) queda pendiente de la
+decisión de release; esta sección es la guía de migración del cambio.
+
+## 4. Qué NO migra
 
 - **Artefactos de sesión** (`.project/`): son efímeros y específicos del proyecto;
   no se migran ni se versionan con el protocolo.
@@ -66,7 +97,7 @@ Para pasar un proyecto adoptante de la versión `X` a la versión `Y`:
   conservan; revalidarlas contra el estándar de skills si la sección
   correspondiente del changelog indica cambios estructurales.
 
-## 4. Soporte de versiones
+## 5. Soporte de versiones
 
 Se soporta una sola línea de versión: la vigente. No hay ramas de mantenimiento
 de versiones anteriores (fuera de alcance declarado en

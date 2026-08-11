@@ -18,7 +18,10 @@ Start here:
 
 ## Testing the protocol
 
-To validate the `.agents/` workflow, a Flask ABM-style microservice with endpoints, validations, persistence, and tests is used as a model. This microservice is only a test model and may not be available depending on the tests executed at any given time.
+The `.agents/` workflow is exercised by the dev-only test suites and the
+protocol invariant checker listed under "Verifying the protocol" below. There
+is no separate sample application in this repository: `dev/` holds the test
+tooling and reference implementations, none of which ships to adopters.
 
 ## Verifying the protocol
 

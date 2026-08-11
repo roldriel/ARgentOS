@@ -30,6 +30,43 @@ La política de migración entre versiones vive en [`MIGRATION.md`](MIGRATION.md
 
 ---
 
+## [2.0.1] — 2026-08-11
+
+Release de mantenimiento documental tras la migración 2.0.0: restaura los
+invariantes del protocolo en el propio repo y agrega verificación mecánica
+dev-only para que no vuelvan a romperse. Origen: auditoría de referencias y
+revisión de documentación (10–11 ago 2026).
+
+### Added
+
+- **Verificación mecánica de invariantes (dev-only)**: checker
+  `dev/tools/check_protocol_invariants.py` (resolución de referencias, frontera
+  `.agents/` autocontenido, metadata H13) con 50 tests, y workflow CI
+  `check-protocol` que lo ejecuta en push/PR. No forma parte de lo distribuido
+  a adoptantes (`dist`).
+
+### Fixed
+
+- **Metadata de taxonomía restaurada en los roles de fase**: `executor`,
+  `planner`, `reviewer`, `verifier`, `task_analyst`, `task_specification_writer`,
+  `recovery_analyst`, `context_discoverer`, `context_gatherer` y
+  `context_validator` ahora llevan el bloque `taxonomy`/`kind`/`domain` que exige
+  la policy H13, con campos alineados a sus entidades en
+  `PROTOCOL_TAXONOMY.md`.
+- **Frontera documental `.agents/` restaurada**: eliminada la referencia a
+  `plans/rfc/24-...` en `.agents/skills/INDEX.md`; `.agents/` vuelve a ser
+  autocontenido (solo `.agents/` + `AGENTS.md`).
+- **Mención histórica corregida**: la nota sobre `technical_practices.py` en
+  `.agents/standards/INDEX.md` ya no se escribe como una ruta inexistente.
+- **`.project/README.md` creado** desde la plantilla del contrato, cumpliendo el
+  rol del system agent en el bootstrap.
+
+---
+
+Nota: el tag git `2.0.1` que fija esta versión se crea como entregable del
+release; la rama `dist` se regenera desde `master` por el workflow
+`publish-dist`.
+
 ## [2.0.0] — 2026-08-10
 
 Segunda versión etiquetada del protocolo. Cierre de la migración "menos Python,

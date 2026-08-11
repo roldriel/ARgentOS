@@ -37,7 +37,7 @@ git subtree pull --prefix=. https://github.com/roldriel/ARgentOS.git dist --squa
   fuente (rama `dev` → `master` → CI publica en `dist`); el próximo
   `subtree pull` pisa cualquier edición local.
 - Para pinearse a una versión en vez de seguir `dist`, usar el tag publicado:
-  `git subtree pull --prefix=. <url> v2.0.0 --squash`.
+  `git subtree pull --prefix=. <url> v2.0.1 --squash`.
 
 ### 1.2. Copia manual (alternativa sin git)
 

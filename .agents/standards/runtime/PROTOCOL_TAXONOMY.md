@@ -247,7 +247,6 @@ entities:
     workflow: .agents/orchestrators/core/workflow/03-gather-context.md
     harness:
       - H02-context-artifact
-      - H10-kb-discovery-report
     actor: orchestrator
     profile: context_gatherer
 
@@ -327,6 +326,7 @@ entities:
       - core:RECOVERY
     artifacts_input:
       - TASK_SPECIFICATION.md
+      - CONTEXT_ARTIFACT.md
       - CONTEXT_VALIDATION_REPORT.md
     artifacts_output:
       - EXECUTION_PLAN.md
@@ -1252,8 +1252,7 @@ entities:
     lifecycle: context
     tag: context
     state: core:GATHERING_CONTEXT
-    gates:
-      - core:GATHERING_CONTEXT -> core:CONTEXT_GATHERED
+    gates: []
     artifact_validated: KB_RECOMMENDATION.md
     policy_file: .agents/orchestrators/core/harness/policies/H10-kb-discovery-report.md
 
@@ -1477,6 +1476,7 @@ entities:
     actor: orchestrator
     input_artifacts:
       - TASK_SPECIFICATION.md
+      - CONTEXT_ARTIFACT.md
       - CONTEXT_VALIDATION_REPORT.md
     output_artifacts:
       - EXECUTION_PLAN.md
@@ -1775,7 +1775,6 @@ entities:
       - CONTEXT_ARTIFACT.md
     harness:
       - H02-context-artifact
-      - H10-kb-discovery-report
     actor: orchestrator
     profile: context_gatherer
     file: .agents/orchestrators/core/workflow/03-gather-context.md
@@ -1814,6 +1813,7 @@ entities:
       - core:NEEDS_CLARIFICATION
     input_artifacts:
       - TASK_SPECIFICATION.md
+      - CONTEXT_ARTIFACT.md
       - CONTEXT_VALIDATION_REPORT.md
     output_artifacts:
       - EXECUTION_PLAN.md
@@ -1856,6 +1856,8 @@ entities:
       - core:COMPLETED
       - core:RECOVERY
     input_artifacts:
+      - TASK_SPECIFICATION.md
+      - EXECUTION_PLAN.md
       - EXECUTION_SUMMARY.md
     output_artifacts:
       - VERIFICATION_REPORT.md

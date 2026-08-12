@@ -8,7 +8,7 @@ previous_states: [core:TASK_READY]
 next_states: [core:CONTEXT_GATHERED, core:NEEDS_CLARIFICATION]
 input_artifacts: [TASK_SPECIFICATION.md]
 output_artifacts: [CONTEXT_ARTIFACT.md]
-harness: [H02-context-artifact, H10-kb-discovery-report]
+harness: [H02-context-artifact]
 actor: orchestrator
 profile: context_gatherer
 ---
@@ -127,6 +127,12 @@ The artifact must contain:
 * Validation status.
 
 Free-text sections of this artifact follow `.agents/standards/communication/CAVEMAN.md` when the `caveman` feature flag is enabled.
+
+---
+
+## Knowledge Base Recommendations (optional gate H10)
+
+Cuando `knowledge_base` está habilitado y se incorporan recomendaciones de KB, el Orchestrator evalúa H10 (`orchestrators/core/harness/policies/H10-kb-discovery-report.md`) antes de usarlas. H10 es un gate opcional de uso: no protege la transición `GATHERING_CONTEXT → CONTEXT_GATHERED` (esa transición está gated solo por H02).
 
 ---
 

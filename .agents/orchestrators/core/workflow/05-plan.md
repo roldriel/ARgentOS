@@ -6,7 +6,7 @@ state: PLANNING
 lifecycle: planning
 previous_states: [core:CONTEXT_READY, core:RECOVERY]
 next_states: [core:PLAN_READY, core:NEEDS_CLARIFICATION]
-input_artifacts: [TASK_SPECIFICATION.md, CONTEXT_VALIDATION_REPORT.md]
+input_artifacts: [TASK_SPECIFICATION.md, CONTEXT_ARTIFACT.md, CONTEXT_VALIDATION_REPORT.md]
 output_artifacts: [EXECUTION_PLAN.md]
 harness: [H04-execution-plan]
 actor: orchestrator

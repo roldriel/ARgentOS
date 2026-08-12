@@ -126,20 +126,22 @@ RFCs:
   tocar `VERSION`/changelog, o los ítems se acumulan en `[Unreleased]` y la
   numeración se asigna en la promoción.
 
-## 9. Estado actual y regularización (2026-08-11)
+## 9. Estado actual y regularización (2026-08-12)
 
 Estado:
 
-- `master` = `3.0.1` (tag existente).
-- `dev` = planes 34–36 ejecutados (versiones 3.0.2, 3.0.3, 3.0.4) **sin
-  promoción ni tags** — son trabajo verificado en curso, no releases publicadas.
+- `master` = `3.0.5` (tags `3.0.2`–`3.0.5` creados el 12 ago 2026).
+- `dev` = `3.0.5` (plan 54, RFC-55) promovido y taggeado; sin trabajo sin
+  publicar al cierre del release.
 
-Pasos de regularización (pendientes de autorización del usuario, porque crean
-tags y disparan `publish-dist`):
+Regularización ejecutada (12 ago 2026):
 
-1. Merge `dev` → `master`.
-2. Crear tags anotados `3.0.2`, `3.0.3` y `3.0.4` en `master`.
-3. Verificar que `publish-dist` regenere `dist` por cada tag.
+1. Merge `dev` → `master` (fast-forward) con los planes 34–36 (3.0.2–3.0.4) y
+   el plan 54 (3.0.5).
+2. Tags anotados `3.0.2`, `3.0.3`, `3.0.4` y `3.0.5` en `master`.
+3. `publish-dist` regeneró `dist` desde `master` (verificado: layout `.agents/`
+   + `AGENTS.md`, entry file == `protocol/_AGENTS.md` del payload fuente,
+   VERSION 3.0.5).
 
 ## 10. Definition of Done
 

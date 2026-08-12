@@ -220,6 +220,44 @@ def test_broken_repo_exits_1_and_lists_citation(tmp_path):
     assert "plans/a.md" in res.stdout
 
 
+# --- Legacy payload citations (RFC-55 source containment) --------------------
+
+
+def test_legacy_agents_path_resolves_to_protocol(tmp_path):
+    make_repo(tmp_path, {
+        "plans/a.md": (
+            "`protocol/.agents/standards/runtime/PROTOCOL_BOUNDARIES.md:Project Boundary`\n"
+        ),
+        "protocol/.agents/standards/runtime/PROTOCOL_BOUNDARIES.md": (
+            "# Project Boundary\n"
+        ),
+    })
+    assert cpc.verify_all(tmp_path) == []
+
+
+def test_legacy_agents_md_resolves_to_payload_entry(tmp_path):
+    make_repo(tmp_path, {
+        "plans/a.md": "`AGENTS.md:Repository layout`\n",
+        "protocol/_AGENTS.md": "# Development Workspace\n\n## Repository layout\n",
+    })
+    assert cpc.verify_all(tmp_path) == []
+
+
+def test_legacy_mapping_does_not_hide_missing_file(tmp_path):
+    make_repo(tmp_path, {"plans/a.md": "`.agents/does-not-exist.md:Sec`\n"})
+    broken = cpc.verify_all(tmp_path)
+    assert len(broken) == 1
+    assert broken[0].reason == "file not found"
+
+
+def test_project_session_citations_are_exempt(tmp_path):
+    """Citations to ephemeral .project/ artifacts are not verified."""
+    make_repo(tmp_path, {
+        "plans/a.md": "`.project/d4ab6a93/SESSION_LOG.md:Session Log`\n",
+    })
+    assert cpc.verify_all(tmp_path) == []
+
+
 def test_runs_from_other_cwd(tmp_path):
     make_repo(tmp_path, {
         "plans/a.md": "`plans/b.md:Real`\n",

@@ -2,11 +2,19 @@
 
 ARgentOS is a state-based agent orchestration protocol governed by the `.agents/` directory. It is a **documental protocol**: there is nothing to install — adopting it means vendoring `.agents/` + `AGENTS.md` into your project from the `dist` branch (see [`ADOPTION.md`](ADOPTION.md) §1).
 
-Current protocol version: see [`.agents/VERSION`](.agents/VERSION).
+In this repository the protocol payload lives in [`protocol/`](protocol/) as
+**data**: development sessions are governed by the root [`AGENTS.md`](AGENTS.md),
+not by the protocol itself (see `dev/source-layout.md`).
 
-## Using the protocol in this repository
+Current protocol version: see [`protocol/.agents/VERSION`](protocol/.agents/VERSION).
 
-The full protocol entry point is [`AGENTS.md`](AGENTS.md). An agent that reads it bootstraps the system agent, the state machine, and the orchestrator, which then governs the task lifecycle.
+## Developing in this repository
+
+The development entry point is the root [`AGENTS.md`](AGENTS.md): it explains
+the repository layout and the rule that the protocol payload in `protocol/` is
+data, not instructions. The product entry point is `protocol/_AGENTS.md`
+(renamed so it is not auto-discovered here); `dist` publishes it as
+`AGENTS.md` at the adopting project root.
 
 ## Adopting ARgentOS in your project
 
@@ -18,29 +26,35 @@ Start here:
 
 ## Testing the protocol
 
-The `.agents/` workflow is exercised by the dev-only test suites and the
+The `protocol/.agents/` workflow is exercised by the dev-only test suites and the
 protocol invariant checker listed under "Verifying the protocol" below. There
 is no separate sample application in this repository: `dev/` holds the test
 tooling and reference implementations, none of which ships to adopters.
 
 ## Verifying the protocol
 
-In declarative mode (no Python required), the document-level health checklist (`.agents/standards/runtime/PROTOCOL_HEALTH.md`) is applied by the ArgentOS System Agent at bootstrap — that is the whole verification.
+In declarative mode (no Python required), the document-level health checklist (`protocol/.agents/standards/runtime/PROTOCOL_HEALTH.md`) is applied by the ArgentOS System Agent at bootstrap in an adopting project — that is the whole verification.
 
 In enforced mode, the state-storage probe also applies:
 
 ```bash
-python .agents/harness/health_check.py
+python protocol/.agents/harness/health_check.py
 ```
+
+Running the probe from this repository targets `protocol/.project/` (the probe
+derives its project root from its own location); prefer a scratch adoption
+project for real protocol sessions.
 
 Protocol development only (not needed by adopters):
 
 ```bash
-python dev/tools/check_protocol_invariants.py .
-python -m pytest .agents/harness/tests/ dev/runtime/tests/ dev/tools/tests/
+python dev/tools/check_protocol_invariants.py --payload protocol .
+python -m pytest protocol/.agents/harness/tests/ dev/runtime/tests/ dev/tools/tests/
 ```
 
-The `dev/` directory holds development tooling and reference implementations; it is not part of the distributed protocol (adopters get only `.agents/` + `AGENTS.md` from the `dist` branch).
+The `dev/` directory holds development tooling and reference implementations;
+see `dev/README.md` and `dev/ROADMAP.md`. It is not part of the distributed
+protocol (adopters get only `.agents/` + `AGENTS.md` from the `dist` branch).
 
 ## Implementation plans
 

@@ -22,14 +22,14 @@ Reglas de rama:
 
 ## 2. Invariantes
 
-1. **Versión ↔ changelog ↔ tag:** toda versión en `.agents/VERSION` tiene su
+1. **Versión ↔ changelog ↔ tag:** toda versión en `protocol/.agents/VERSION` tiene su
    sección en `CHANGELOG.md` y su tag en `master`; todo tag corresponde a una
    versión publicada. Ninguna de las tres sin las otras dos.
 2. **Nada en `master` sin release:** ningún commit de `master` queda sin tag de
    versión; si un commit llega a `master`, es porque es un release.
-3. **Todo cambio de `.agents/` trazable:** cada cambio se ata a un plan y su
-   RFC, tiene ítem en el changelog y commit atómico. Prohibido modificar
-   `.agents/` sin vía de autorización (RFC-42: RFC `Accepted` o plan
+3. **Todo cambio de `protocol/.agents/` trazable:** cada cambio se ata a un plan
+   y su RFC, tiene ítem en el changelog y commit atómico. Prohibido modificar
+   `protocol/.agents/` sin vía de autorización (RFC-42: RFC `Accepted` o plan
    `Aprobado para ejecución` con justificación).
 4. **Trazabilidad plan → RFC → versión → tag:** cada ítem del changelog cita
    `(plan N, RFC-N)` y la versión que lo publicó; el tag permite reconstruir el
@@ -47,8 +47,9 @@ SemVer conceptual (plan 20 §A):
 
 Reglas:
 
-- **Modelo por plan:** cada plan ejecutado que toca `.agents/` produce una
-  versión propia, clasificada según su impacto. Un plan = una versión = un tag.
+- **Modelo por plan:** cada plan ejecutado que toca `protocol/.agents/` (o el
+  layout del payload fuente) produce una versión propia, clasificada según su
+  impacto. Un plan = una versión = un tag.
 - La versión se asigna en el commit del plan (en `dev`); se oficializa cuando la
   promoción la taggea en `master`.
 - La versión siguiente se calcula siempre desde la **última versión publicada en
@@ -62,17 +63,17 @@ Reglas:
 1. **Autorización:** verificar la vía (RFC `Accepted` o plan `Aprobado para
    ejecución` con justificación documentada en el plan) y los criterios de
    entrada (checkers en verde).
-2. **Ejecución en `dev`:** aplicar los pasos del plan sobre `.agents/`.
-3. **Verificación:** `python dev/tools/check_protocol_invariants.py .`,
+2. **Ejecución en `dev`:** aplicar los pasos del plan sobre `protocol/.agents/`.
+3. **Verificación:** `python dev/tools/check_protocol_invariants.py --payload protocol .`,
    `python dev/tools/check_plan_citations.py`, H13 por juicio, y tests si el
    plan los exige. Si algo falla, no se versiona ni se promueve.
 4. **Estados:** plan → `Executed` (con `Nota de ejecución`), Amendment Log de la
    RFC, `plans/INDEX.md` como espejo.
 5. **Changelog + versión:** nueva sección `## [X.Y.Z] — fecha` con el ítem
-   `(plan N, RFC-N)`, bump de `.agents/VERSION` y la nota de tag.
+   `(plan N, RFC-N)`, bump de `protocol/.agents/VERSION` y la nota de tag.
 6. **Commit del plan en `dev`:** atómico, Conventional Commit en inglés
    (ej. `fix(protocol): ... (plan 34, RFC-35)`). Incluye plan, RFC, cambios de
-   `.agents/`, INDEX, changelog y `VERSION`.
+   `protocol/.agents/`, INDEX, changelog y `VERSION`.
 7. **Promoción a `master`:** cuando el plan está verificado y el usuario lo
    autoriza, merge `dev` → `master` y creación del **tag anotado** `X.Y.Z`
    (mensaje que cite la sección del changelog). `publish-dist` corre con el tag.
@@ -102,8 +103,8 @@ Reglas:
 
 Planes:
 
-- `Aprobado para redacción` → entregables documentales que no tocan `.agents/`.
-- `Aprobado para ejecución` → cambios de `.agents/` o repo; requiere
+- `Aprobado para redacción` → entregables documentales que no tocan `protocol/.agents/`.
+- `Aprobado para ejecución` → cambios de `protocol/.agents/` o repo; requiere
   justificación documentada (vía plan RFC-42) o RFC `Accepted`.
 - `Executed` → todos los criterios de salida verificados, con `Nota de
   ejecución` (fecha + verificación). Parcial → `Executed (parcial: <qué falta>)`.
@@ -145,7 +146,7 @@ tags y disparan `publish-dist`):
 Un plan está terminado cuando:
 
 - [ ] Vía de autorización verificada y criterios de entrada cumplidos.
-- [ ] Cambios de `.agents/` aplicados según los pasos del plan.
+- [ ] Cambios de `protocol/.agents/` aplicados según los pasos del plan.
 - [ ] Checkers en verde y H13 aplicado por juicio.
 - [ ] Plan `Executed`, RFC con Amendment Log, INDEX actualizado.
 - [ ] Sección del changelog `[X.Y.Z]` con ítem `(plan N, RFC-N)` y `VERSION`

@@ -3,15 +3,16 @@
 # La rama `dist` es el unico punto de consumo de ARgentOS para proyectos
 # adoptantes: contiene SOLO `.agents/` y `AGENTS.md` en su raiz.
 # Nunca se edita a mano: este workflow la reemplaza con el contenido
-# publicable de `master` en cada push que toque esos paths.
+# publicable de `master` en cada push que toque el payload fuente
+# (`protocol/`). El payload fuente usa `_AGENTS.md` (entry file inerte en el
+# repo de desarrollo); al publicar se renombra a `AGENTS.md`.
 name: publish-dist
 
 on:
   push:
     branches: [master]
     paths:
-      - ".agents/**"
-      - "AGENTS.md"
+      - "protocol/**"
   workflow_dispatch:
 
 permissions:
@@ -29,7 +30,7 @@ jobs:
           # por defecto (alcanza mientras el repo no tenga rulesets activos).
           token: ${{ secrets.DIST_PUSH_TOKEN || github.token }}
 
-      - name: Publish .agents + AGENTS.md to dist
+      - name: Publish protocol payload (.agents + AGENTS.md) to dist
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
@@ -37,9 +38,10 @@ jobs:
 
           SOURCE_SHA="$(git rev-parse --short HEAD)"
 
-          # Contenido publicable desde master
+          # Contenido publicable desde el payload fuente (protocol/)
           TMP="$(mktemp -d)"
-          cp -r .agents AGENTS.md "$TMP/"
+          cp -r protocol/.agents protocol/_AGENTS.md "$TMP/"
+          mv "$TMP/_AGENTS.md" "$TMP/AGENTS.md"
 
           # Traer dist (debe existir; se crea una sola vez en el repo)
           git fetch origin dist:dist

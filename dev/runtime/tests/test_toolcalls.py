@@ -20,7 +20,7 @@ from runtime.toolcalls import prompt_rendering, toolcalls_rendering  # noqa: E40
 from runtime.toolcalls.budget import MaterializationCost, estimate_tokens  # noqa: E402
 from runtime.toolcalls.context import ExecutionContext, SkillSource, resolve_skills  # noqa: E402
 
-SKILLS_ROOT = REPO_ROOT / ".agents" / "skills"
+SKILLS_ROOT = REPO_ROOT / "protocol" / ".agents" / "skills"
 SAMPLE_SKILLS = ["planner", "extractor", "summarizer"]
 
 

@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 """Verify documentation invariants of the distributed .agents/ protocol.
 
-Scans every .md file under .agents/ plus AGENTS.md at the repository root
-and checks three invariants that protect the distributed protocol package:
+Scans every .md file under <payload>/.agents/ plus the payload entry file
+(<payload>/_AGENTS.md by default) and checks three invariants that protect the
+distributed protocol package:
 
 1. REFERENCE RESOLUTION — every path-like reference to a protocol file
    resolves to an existing file (resolved relative to the citing file,
-   then to .agents/, then to the repository root).
+   then to .agents/, then to the payload root).
 
-2. BOUNDARY — every reference must point inside .agents/ or to AGENTS.md
-   at the root. References to plans/, rfc/, dev/, runtime/ or other root
+2. BOUNDARY — every reference must point inside .agents/ or to the payload
+   entry file. References to plans/, rfc/, dev/, runtime/ or other root
    documents break the self-contained promise of MIGRATION.md and would be
    broken links in the distributed copy.
 
@@ -18,12 +19,20 @@ and checks three invariants that protect the distributed protocol package:
    H13) carries a taxonomy metadata block declaring taxonomy, kind and
    domain near the top of the file.
 
+Source-containment rules: the dev root AGENTS.md is NOT scanned (it is the
+development entry point, not a protocol document), and references whose final
+path component is ``AGENTS.md`` map to the payload entry file
+(``_AGENTS.md`` in the source tree; ``AGENTS.md`` in the published dist).
+
 False-positive control: bare artifact names (TASK_SPECIFICATION.md),
 session-artifact placeholders (.project/<session-uuid>/...), URLs and
 example project paths (app/..., payment_*.py) are not treated as protocol
 references.
 
-Usage: python dev/tools/check_protocol_invariants.py [--root REPO_ROOT]
+Usage:
+  python dev/tools/check_protocol_invariants.py [--root REPO_ROOT]
+                                               [--payload PROTOCOL]
+                                               [--entry-file _AGENTS.md]
 
 Exit code: 0 when all invariants hold, 1 otherwise.
 Standard library only.
@@ -77,6 +86,9 @@ _BARE_RE = re.compile(
     r"\.(?:md|py|json|ya?ml|toml|sh|ps1|txt|csv|js|ts|html|css|png|jpe?g|"
     r"gif|svg|pdf|docx|xlsx|pptx))"
 )
+
+_DEFAULT_PAYLOAD = "protocol"
+_DEFAULT_ENTRY_FILE = "_AGENTS.md"
 
 _SKIP_PREFIXES = (
     "http://",
@@ -179,40 +191,56 @@ def first_segment(token: str) -> str:
     return token.split("/", 1)[0].split("\\", 1)[0].lstrip(".")
 
 
-def resolve_target(token: str, citing: Path, root: Path) -> Path | None:
+def resolve_target(
+    token: str,
+    citing: Path,
+    payload: Path,
+    entry_file: str,
+) -> Path | None:
     """Resolve a reference; returns the existing file or None."""
     fp = token.replace("\\", "/")
     if re.match(r"^[A-Za-z]:", fp):
         p = Path(fp)
         return p if p.exists() else None
     if fp.startswith("/"):
-        p = root / fp.lstrip("/")
+        p = payload / fp.lstrip("/")
         return p if p.exists() else None
     candidates = [citing.parent / fp]
-    agents = root / ".agents"
+    agents = payload / ".agents"
     if agents in citing.parents:
         candidates.append(agents / fp)
-    candidates.append(root / fp)
+    candidates.append(payload / fp)
+    # References to the product entry file (AGENTS.md) map to the payload
+    # entry file; in the source tree it is renamed (_AGENTS.md). This is the
+    # mechanism that keeps the intentionally broken source links valid: they
+    # are correct in the published dist layout.
+    if Path(fp).name == "AGENTS.md":
+        candidates.append(payload / entry_file)
     for p in candidates:
         if p.exists():
             return p
     return None
 
 
-def is_distributed(target: Path, root: Path) -> bool:
-    """True when the target ships with the protocol (.agents/ or AGENTS.md)."""
+def is_distributed(target: Path, payload: Path, entry_file: str) -> bool:
+    """True when the target ships with the protocol (.agents/ or entry file)."""
     try:
-        rel = target.relative_to(root)
+        rel = target.relative_to(payload)
     except ValueError:
         return False
-    return rel.parts[0] == ".agents" or rel == Path("AGENTS.md")
+    return rel.parts[0] == ".agents" or rel == Path(entry_file)
 
 
-def classify(token: str, resolved: Path | None, root: Path) -> str:
+def classify(
+    token: str,
+    resolved: Path | None,
+    payload: Path,
+    entry_file: str,
+) -> str:
     """Classify a reference: ok | missing | boundary | skip."""
     if token.startswith(".project/"):
         return "ok"
-    if resolved is not None and is_distributed(resolved, root):
+    if resolved is not None and is_distributed(resolved, payload, entry_file):
         return "ok"
     if token.startswith(".agents/"):
         return "missing" if resolved is None else "boundary"
@@ -226,7 +254,12 @@ def classify(token: str, resolved: Path | None, root: Path) -> str:
     return "skip"
 
 
-def verify_reference(ref: Reference, root: Path) -> Violation | None:
+def verify_reference(
+    ref: Reference,
+    root: Path,
+    payload: Path,
+    entry_file: str,
+) -> Violation | None:
     """Verify one reference; return a Violation when it fails."""
     token = clean_target(ref.raw)
     if not token or not is_candidate(token):
@@ -236,8 +269,8 @@ def verify_reference(ref: Reference, root: Path) -> Violation | None:
     filepart = token.split("#", 1)[0].strip()
     if not filepart or not is_candidate(filepart):
         return None
-    resolved = resolve_target(filepart, root / ref.source, root)
-    status = classify(filepart, resolved, root)
+    resolved = resolve_target(filepart, root / ref.source, payload, entry_file)
+    status = classify(filepart, resolved, payload, entry_file)
     if status == "ok" or status == "skip":
         return None
     if status == "missing":
@@ -246,14 +279,14 @@ def verify_reference(ref: Reference, root: Path) -> Violation | None:
             ref.source,
             ref.line,
             f"reference `{token}` not found "
-            "(relative, .agents-relative, repo-root)",
+            "(relative, .agents-relative, payload root)",
         )
     return Violation(
         "BOUNDARY",
         ref.source,
         ref.line,
         f"reference `{token}` points outside the distributed package "
-        "(only .agents/ + AGENTS.md ship)",
+        "(only .agents/ + entry file ship)",
     )
 
 
@@ -295,13 +328,17 @@ def check_taxonomy_block(text: str) -> str | None:
     return None
 
 
-def scan_references(root: Path) -> list[Reference]:
-    """Extract references from every .agents/ doc and AGENTS.md."""
+def scan_references(
+    root: Path,
+    payload: Path,
+    entry_file: str,
+) -> list[Reference]:
+    """Extract references from every .agents/ doc and the payload entry file."""
     refs: list[Reference] = []
-    docs = sorted((root / ".agents").rglob("*.md"))
-    agents_md = root / "AGENTS.md"
-    if agents_md.is_file():
-        docs.append(agents_md)
+    docs = sorted((payload / ".agents").rglob("*.md"))
+    entry = payload / entry_file
+    if entry.is_file():
+        docs.append(entry)
     for doc in docs:
         text = doc.read_text(encoding="utf-8", errors="replace")
         for ref in extract_references(text):
@@ -310,12 +347,17 @@ def scan_references(root: Path) -> list[Reference]:
     return refs
 
 
-def verify(root: Path) -> list[Violation]:
+def verify(
+    root: Path,
+    payload: Path | None = None,
+    entry_file: str = _DEFAULT_ENTRY_FILE,
+) -> list[Violation]:
     """Run all three invariant checks; return the list of violations."""
+    payload = payload or (root / _DEFAULT_PAYLOAD)
     violations: list[Violation] = []
-    agents = root / ".agents"
+    agents = payload / ".agents"
     for doc in sorted(agents.rglob("*.md")):
-        rel = doc.relative_to(root).as_posix()
+        rel = doc.relative_to(payload).as_posix()
         if in_metadata_scope(rel):
             reason = check_taxonomy_block(
                 doc.read_text(encoding="utf-8", errors="replace")
@@ -323,12 +365,12 @@ def verify(root: Path) -> list[Violation]:
             if reason:
                 violations.append(Violation("METADATA", Path(rel), 1, reason))
     seen: set[tuple[Path, int, str]] = set()
-    for ref in scan_references(root):
+    for ref in scan_references(root, payload, entry_file):
         key = (ref.source, ref.line, ref.raw)
         if key in seen:
             continue
         seen.add(key)
-        violation = verify_reference(ref, root)
+        violation = verify_reference(ref, root, payload, entry_file)
         if violation is not None:
             violations.append(violation)
     return violations
@@ -358,6 +400,18 @@ def main(argv: list[str] | None = None) -> int:
         help="Repository root (default: parent of this script's directory).",
     )
     parser.add_argument(
+        "--payload",
+        type=Path,
+        default=None,
+        help="Payload directory relative to the repository root "
+        "(default: protocol).",
+    )
+    parser.add_argument(
+        "--entry-file",
+        default=_DEFAULT_ENTRY_FILE,
+        help="Entry file name inside the payload (default: _AGENTS.md).",
+    )
+    parser.add_argument(
         "root_positional",
         nargs="?",
         type=Path,
@@ -368,12 +422,25 @@ def main(argv: list[str] | None = None) -> int:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     root = (args.root or args.root_positional or Path(__file__).resolve().parents[2]).resolve()
-    violations = verify(root)
-    agents = root / ".agents"
+    payload_rel = args.payload or Path(_DEFAULT_PAYLOAD)
+    payload = (root / payload_rel).resolve()
+    agents = payload / ".agents"
+    if not agents.is_dir():
+        print(
+            f"error: payload not found at {payload} "
+            f"(expected {payload_rel / '.agents'})",
+            file=sys.stderr,
+        )
+        return 1
+    violations = verify(root, payload, args.entry_file)
     files = len(list(agents.rglob("*.md")))
-    if (root / "AGENTS.md").is_file():
+    if (payload / args.entry_file).is_file():
         files += 1
-    print(format_report(violations, files, len(scan_references(root))))
+    print(
+        format_report(
+            violations, files, len(scan_references(root, payload, args.entry_file))
+        )
+    )
     return 1 if violations else 0
 
 

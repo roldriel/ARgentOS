@@ -9,13 +9,19 @@ two forms used by the repository convention (plans/INDEX.md §Convenciones):
    (e.g. `` `plans/INDEX.md` §Convenciones ``).
 
 For each citation it verifies that the cited file exists (resolved relative
-to the repository root) and that the cited section exists as an ATX heading
+to the repository root, with a legacy mapping for pre-containment citations:
+``.agents/...`` → ``protocol/.agents/...`` and ``AGENTS.md`` →
+``protocol/_AGENTS.md``) and that the cited section exists as an ATX heading
 in that file, comparing both sides normalized (trimmed, case-insensitive,
 leading '#' removed, trailing punctuation removed). A citation that is a
 prefix of a real heading followed by '.', '—', '-', ')' or whitespace also
 resolves (labelled anchors such as §B or §Stage 10, and numbered anchors
 such as §5 → "5. Worker Delegation"). Numeric anchors with no matching
 heading (line numbers, line ranges) are reported as "non-heading anchor".
+
+Citations under ``.project/`` are exempt: session artifacts and knowledge-base
+state are ephemeral (MIGRATION.md §4) and are not part of the repository, so
+historical plans may cite them without a persistent target.
 
 Usage: python dev/tools/check_plan_citations.py [--root REPO_ROOT]
 
@@ -159,14 +165,34 @@ def scan_plan_documents(root: Path) -> list[Citation]:
 
 def verify_citation(citation: Citation, root: Path) -> BrokenCitation | None:
     """Verify one citation; return a BrokenCitation when it fails."""
+    if citation.path.startswith(".project/"):
+        return None
     target = root / citation.path
     if not target.is_file():
-        return BrokenCitation(citation, "file not found")
+        mapped = legacy_target(citation.path, root)
+        if mapped is None or not mapped.is_file():
+            return BrokenCitation(citation, "file not found")
+        target = mapped
     text = target.read_text(encoding="utf-8", errors="replace")
     if not section_exists(citation.section, text):
         if _NUMERIC_ONLY_RE.match(citation.section.strip()):
             return BrokenCitation(citation, "non-heading anchor")
         return BrokenCitation(citation, "section not found")
+    return None
+
+
+def legacy_target(path: str, root: Path) -> Path | None:
+    """Map a legacy citation path to the source-containment layout.
+
+    Historical plans/ documents cite the product payload at the old root
+    layout (``.agents/...`` and ``AGENTS.md``). Since the payload now lives
+    under ``protocol/`` (RFC-55), those citations resolve via this mapping.
+    Returns None when the path is not a legacy payload citation.
+    """
+    if path == "AGENTS.md":
+        return root / "protocol" / "_AGENTS.md"
+    if path.startswith(".agents/"):
+        return root / "protocol" / path
     return None
 
 

@@ -3,7 +3,7 @@
 The current runtime materializes the Execution Context as prompt text: the
 skill names travel in the Delegation Payload and the Worker reads each
 `SKILL.md` before executing the phase
-(`.agents/delegation/WORKER_DELEGATION_CONTRACT.md`, `skills` field: "the
+(`protocol/.agents/delegation/WORKER_DELEGATION_CONTRACT.md`, `skills` field: "the
 Worker MUST read each skill's SKILL.md before executing the phase").
 
 This module formalizes that practice as a materialization function so it can

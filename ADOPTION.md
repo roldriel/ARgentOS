@@ -15,7 +15,9 @@ posteriores, seguir §1.2 y [`MIGRATION.md`](MIGRATION.md).
 
 El repositorio publica la rama **`dist`**, que contiene únicamente `.agents/` y
 `AGENTS.md` en su raíz — nada más del repo de desarrollo. Es el único punto de
-consumo soportado. Hay dos métodos:
+consumo soportado. (En el repo fuente el payload vive en `protocol/` con el
+entry file renombrado a `_AGENTS.md`; la adopción siempre se hace desde
+`dist`.) Hay dos métodos:
 
 ### 1.1. Git subtree (recomendado)
 

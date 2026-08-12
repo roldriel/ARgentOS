@@ -4,15 +4,13 @@ on:
   push:
     branches: [dev, master]
     paths:
-      - ".agents/**"
-      - "AGENTS.md"
-      - "dev/tools/**"
+      - "protocol/**"
+      - "dev/**"
       - ".github/workflows/check-protocol.yml"
   pull_request:
     paths:
-      - ".agents/**"
-      - "AGENTS.md"
-      - "dev/tools/**"
+      - "protocol/**"
+      - "dev/**"
       - ".github/workflows/check-protocol.yml"
 
 jobs:
@@ -24,8 +22,8 @@ jobs:
         with:
           python-version: "3.12"
       - name: Protocol documentation invariants
-        run: python dev/tools/check_protocol_invariants.py .
+        run: python dev/tools/check_protocol_invariants.py --payload protocol .
       - name: Protocol and tooling tests
         run: |
           python -m pip install --quiet pytest
-          python -m pytest .agents/harness/tests/ dev/runtime/tests/ dev/tools/tests/ -q
+          python -m pytest protocol/.agents/harness/tests/ dev/runtime/tests/ dev/tools/tests/ -q

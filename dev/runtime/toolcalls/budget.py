@@ -1,7 +1,7 @@
 """Context Budget estimation for the reference runtime.
 
 The prompt runtime materializes the Context Budget in estimated tokens with
-the rule `ceil(chars / 4)` (`.agents/standards/context/BUDGET_MATERIALIZATION.md`,
+the rule `ceil(chars / 4)` (`protocol/.agents/standards/context/BUDGET_MATERIALIZATION.md`,
 sections 1-2). That standard explicitly allows other runtimes to declare
 their own unit and estimation rule (same document, section 6); the tool-call
 runtime declares a dual unit: estimated tokens for the textual portion plus

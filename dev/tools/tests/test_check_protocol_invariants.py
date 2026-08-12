@@ -23,12 +23,24 @@ import check_protocol_invariants as cpi  # noqa: E402
 
 
 def make_repo(tmp_path: Path, files: dict[str, str]) -> Path:
-    """Create a fake repo with the given files."""
+    """Create a fake repo with the given files under the protocol/ payload.
+
+    Keys use the legacy root layout (".agents/...", "AGENTS.md") and are
+    translated to the source-containment layout ("protocol/.agents/...",
+    "protocol/_AGENTS.md").
+    """
     for rel, content in files.items():
+        if rel == "AGENTS.md":
+            rel = "protocol/_AGENTS.md"
+        elif rel.startswith(".agents/"):
+            rel = "protocol/" + rel
         p = tmp_path / rel
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(content, encoding="utf-8")
-    taxonomy = tmp_path / ".agents" / "standards" / "runtime" / "PROTOCOL_TAXONOMY.md"
+    taxonomy = (
+        tmp_path / "protocol" / ".agents" / "standards" / "runtime"
+        / "PROTOCOL_TAXONOMY.md"
+    )
     if not taxonomy.exists():
         taxonomy.parent.mkdir(parents=True, exist_ok=True)
         taxonomy.write_text("# Protocol Taxonomy\n", encoding="utf-8")
@@ -105,6 +117,30 @@ def test_agents_md_reference_ok(tmp_path):
         ".agents/roles/sample.md": ROLE_OK + "\nSee `AGENTS.md`.\n",
         "AGENTS.md": "# AGENTS\n",
     })
+    assert cpi.verify(tmp_path) == []
+
+
+def test_entry_file_relative_link_ok(tmp_path):
+    """The intentionally broken source links (../../../AGENTS.md) map to the
+    payload entry file and are valid — they are correct in the dist layout."""
+    make_repo(tmp_path, {
+        ".agents/roles/sample.md": ROLE_OK,
+        ".agents/standards/conduct/OPERATIONAL_RULES.md": (
+            "See [AGENTS.md](../../../AGENTS.md).\n"
+        ),
+    })
+    assert cpi.verify(tmp_path) == []
+
+
+def test_dev_root_agents_md_not_scanned(tmp_path):
+    """The dev root AGENTS.md is not a protocol document; its content must
+    not be scanned or used as a reference target."""
+    make_repo(tmp_path, {
+        ".agents/roles/sample.md": ROLE_OK,
+    })
+    (tmp_path / "AGENTS.md").write_text(
+        "Development entry: see `dev/README.md`.\n", encoding="utf-8"
+    )
     assert cpi.verify(tmp_path) == []
 
 
@@ -224,3 +260,21 @@ def test_tool_uses_only_stdlib():
             imported.add(node.module.split(".")[0])
     third_party = imported - _STDLIB - {"check_protocol_invariants"}
     assert third_party == set(), f"third-party imports: {third_party}"
+
+
+# --- Source-layout inventory cross-check --------------------------------------
+
+
+def test_source_layout_documents_intentionally_broken_links():
+    """dev/source-layout.md must document the two intentionally broken source
+    links so an agent knows not to fix them (allowlist == inventory)."""
+    doc = (REPO_ROOT / "dev" / "source-layout.md").read_text(
+        encoding="utf-8"
+    )
+    assert (
+        "protocol/.agents/standards/conduct/OPERATIONAL_RULES.md" in doc
+    )
+    assert (
+        "protocol/.agents/standards/quality/PREFLIGHT_CHECKLIST.md" in doc
+    )
+    assert "../../../AGENTS.md" in doc

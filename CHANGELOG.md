@@ -32,6 +32,25 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [3.0.5] — 2026-08-12
+
+**Source containment: protocol payload in `protocol/`** (plan 54, RFC-55):
+el payload del protocolo se mueve a `protocol/` (`protocol/.agents/` +
+`protocol/_AGENTS.md`) y el repo fuente pasa a ser un workspace de desarrollo
+con `AGENTS.md` propio (dev). `dist` no cambia: sigue publicando `.agents/` +
+`AGENTS.md` en la raíz del adoptante; el workflow renombra `_AGENTS.md` a
+`AGENTS.md` al publicar. Incluye: nuevo AGENTS.md raíz (dev), tooling dev con
+`--payload protocol` y mapeo legacy de citas, consolidación de `dev/`
+(`README.md`, `ROADMAP.md`, `source-layout.md`), y actualización de CI y
+documentación raíz. El contenido distribuido es semánticamente idéntico; el
+entry file se renombra solo en el árbol fuente.
+
+### Modelo conceptual
+
+- RFC-55 (`plans/rfc/55-protocol-source-containment.md`) — `Accepted`.
+
+---
+
 ## [3.0.4] — 2026-08-11
 
 Release PATCH de la remediación de la auditoría 2.0.1 (plan 36, RFC-37):

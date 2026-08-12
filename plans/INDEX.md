@@ -61,6 +61,7 @@ Estado al 2026-08-11. El trabajo activo es el **Execution Context Pipeline** (`f
 | RFC-52 | `rfc/52-worker-role-phase-catalog.md` | Proposal (plan 51, 11 ago 2026) | ¿Coincide el catálogo de roles de fase y sus skills con la tabla de activación? |
 | RFC-53 | `rfc/53-tooling-profile-candidacy.md` | Proposal (plan 52, 11 ago 2026) | ¿Cómo clasifican las 7 preguntas las tareas de tooling/CLI? |
 | RFC-54 | `rfc/54-discovery-contract-wording.md` | Proposal (plan 53, 11 ago 2026) | ¿Cómo se redactan sin ambigüedad el project_shape y el cálculo de hashes? |
+| RFC-55 | `rfc/55-protocol-source-containment.md` | Accepted (12 ago 2026) | ¿Cómo se desarrolla ARgentOS sin que el protocolo gobierne el repo fuente? |
 
 ## Roadmap de implementación (planes activos)
 
@@ -209,6 +210,12 @@ los planes 34–36 quedaron `Executed` el 11 ago 2026 (RFC-35…37 permanecen en
 | `52-tooling-profile-candidacy.md` | RFC-53 | 6.2 | Candidatura tooling/CLI (F-06). |
 | `53-discovery-contract-wording.md` | RFC-54 | 6.4 | Redacción de EXECUTIVE_SUMMARY y hash calculation (F-15/F-19). |
 
+## Séptima serie: source containment del repo fuente (12 ago 2026)
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `54-protocol-source-containment.md` | RFC-55 | Executed (12 ago 2026) | Payload del producto en `protocol/` (`protocol/.agents/` + `protocol/_AGENTS.md`), AGENTS.md raíz de desarrollo, tooling/CI con `--payload protocol`, y consolidación de `dev/` (README, ROADMAP, source-layout). `dist` no cambia. |
+
 ## Backlog evidenciado - plan 19
 
 (5 ago 2026.)
@@ -254,8 +261,8 @@ Anunciadas en RFCs aprobadas pero fuera del roadmap actual (decidir destino):
 
 ## Convenciones
 
-- **Verificación**: `python dev/tools/check_protocol_invariants.py .` + `python .agents/harness/health_check.py` + `python -m pytest .agents/harness/tests/ dev/runtime/tests/ dev/tools/tests/`.
-- **Idioma**: inglés en el protocolo (`.agents/`) y en `AGENTS.md` (es lo que leen los agentes), en el código y en los commits (Conventional Commits en inglés); español en la documentación de adopción (`ADOPTION.md`, `MIGRATION.md`, `CHANGELOG.md`), en `plans/` y en los documentos de `dev/` (el código de `dev/` en inglés); `README.md` en inglés (público). Los documentos nuevos siguen esta regla; los existentes se alinean de forma incremental.
+- **Verificación**: `python dev/tools/check_protocol_invariants.py --payload protocol .` + `python protocol/.agents/harness/health_check.py` + `python -m pytest protocol/.agents/harness/tests/ dev/runtime/tests/ dev/tools/tests/`.
+- **Idioma**: inglés en el protocolo (`protocol/.agents/`), en su entry file (`protocol/_AGENTS.md`) y en el `AGENTS.md` raíz de desarrollo (es lo que leen los agentes), en el código y en los commits (Conventional Commits en inglés); español en la documentación de adopción (`ADOPTION.md`, `MIGRATION.md`, `CHANGELOG.md`), en `plans/` y en los documentos de `dev/` (el código de `dev/` en inglés); `README.md` en inglés (público). Los documentos nuevos siguen esta regla; los existentes se alinean de forma incremental.
 - **Inmutabilidad**: `.agents/` solo se modifica con acuerdo explícito; una RFC `Accepted` constituye ese acuerdo para sus afectados declarados. Una RFC en `Proposal` NO habilita tocar `.agents/`.
 - **Ciclo de status (RFCs)**: `Proposal` (borrador) → `Accepted` (aprobada) → `Superseded` (reemplazada; el header indica por cuál RFC). No existe `Approved`: los documentos que lo usaban se normalizaron a `Accepted` (2 ago 2026).
 - **Ciclo de status (planes)**: `Aprobado para redacción` (entregables documentales: RFCs, estándares), `Aprobado para ejecución` (entregables de implementación o cambios en el repo), `Executed` (todos los criterios de salida verificados; si alguno quedó incumplido: `Executed (parcial: <qué falta>)`), `Superseded` (reemplazado; indicar por qué plan). Todo plan con dependencias abiertas declara su **criterio de entrada verificable** (qué archivos/estados deben existir antes de ejecutarlo).
@@ -270,6 +277,7 @@ Anunciadas en RFCs aprobadas pero fuera del roadmap actual (decidir destino):
 - **Versionado**: `plans/` completo está versionado en git (política adoptada el 2 ago 2026; antes figuraba como ignorado pese a estar trackeado de facto, y hubo una pérdida y restauración). Los planes ejecutados se conservan como traza histórica: no se borran; si quedan desfasados se marcan `Superseded`. Lo efímero del proyecto son los artefactos de sesión (`.project/`), no los documentos de diseño. `plans/archive/` fue eliminado del working tree; su contenido sigue disponible en la historia de git.
 - **Política de versionado, changelog, tags y estados**: definida en `VERSIONING.md` (raíz del repo). Resumen: trabajo e integración en `dev` con detalle por plan; releases estables solo en `master` vía tags; modelo por plan (cada plan ejecutado = una versión, atada a su RFC); invariante versión ↔ changelog ↔ tag; los estados de planes y RFCs cambian en el commit del plan y se reflejan en este INDEX.
 - **Frontera documental**: `.agents/` (versionado, permanente) no referencia `plans/` ni RFCs. Los conceptos que `.agents/` necesita se definen inline, de forma autocontenida. Ningún plan debe instruir referencias `.agents/` → `plans/`; la instrucción correcta es siempre "definir el concepto inline, sin mencionar la RFC".
+- **Layout fuente (RFC-55)**: el payload del producto vive en `protocol/` (`protocol/.agents/` + `protocol/_AGENTS.md`); el layout adoptado (`dist`) mantiene `.agents/` + `AGENTS.md` en la raíz. Los docs del payload describen el layout adoptado; los links a `AGENTS.md` rotos en fuente son intencionales y se documentan en `dev/source-layout.md`.
 
 ## Archivo
 

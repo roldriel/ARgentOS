@@ -5,7 +5,7 @@ Delegation Payload is its current transport). This module mirrors the
 payload's fields as an in-memory structure on the runtime side of the
 boundary. It introduces no new concepts: every field corresponds to a field
 of the invocation payload defined in
-`.agents/delegation/WORKER_DELEGATION_CONTRACT.md` (Required Invocation
+`protocol/.agents/delegation/WORKER_DELEGATION_CONTRACT.md` (Required Invocation
 Payload).
 """
 
@@ -67,7 +67,7 @@ def resolve_skills(names: list[str], skills_root: Path) -> tuple[SkillSource, ..
     """Resolve skill names to their sources under a skills root.
 
     Mirrors the contract rule: each entry is a skill name resolvable under
-    the skills directory (`.agents/delegation/WORKER_DELEGATION_CONTRACT.md`,
+    the skills directory (`protocol/.agents/delegation/WORKER_DELEGATION_CONTRACT.md`,
     `skills` field). A name that does not resolve raises, as a materialization
     must not invent a skill's content.
     """

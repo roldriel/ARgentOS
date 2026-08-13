@@ -43,7 +43,8 @@ While developing ARgentOS you work on the protocol itself. Therefore:
 
 ## Do NOT
 
-- Modify `protocol/.agents/` without an RFC `Accepted` or an approved plan.
+- Modify `protocol/.agents/` without its RFC-56 class via (A: RFC `Accepted`;
+  B: approved plan; C: green-battery mechanical fix).
 - "Fix" the intentionally broken `AGENTS.md` links in the payload
   (`docs/source-layout.md`).
 - Commit `.project/` artifacts — session state is ephemeral.
@@ -64,8 +65,10 @@ While developing ARgentOS you work on the protocol itself. Therefore:
 
 ## Task lifecycle
 
-Every change follows the same pipeline: **authorize** (RFC `Accepted` or plan
-`Aprobado para ejecución` + entry criteria) → **execute** on `dev` → **verify**
+Every change follows the same pipeline: **authorize** (by change class,
+RFC-56: Class A model/contracts requires an `Accepted` RFC; Class B
+documentary improvement requires a plan `Aprobado para ejecución`; Class C
+mechanical fixes commit directly) → **execute** on `dev` → **verify**
 (checkers below) → **close** (plan `Executed`, RFC Amendment Log, INDEX,
 changelog `(plan N, RFC-N)`, VERSION bump) → **commit** (atomic, Conventional
 Commit in English, on `dev`) → **promote** (merge to `master` + annotated tag,

@@ -60,13 +60,16 @@ Reglas:
 
 ## 4. Flujo por plan (playbook)
 
-1. **Autorización:** verificar la vía (RFC `Accepted` o plan `Aprobado para
-   ejecución` con justificación documentada en el plan) y los criterios de
-   entrada (checkers en verde).
+1. **Autorización:** verificar la vía según la clase del cambio (RFC-56):
+   **Clase A** (modelo conceptual/contratos) exige RFC `Accepted`; **Clase B**
+   (mejora documental compatible) exige plan `Aprobado para ejecución` con
+   justificación documentada; **Clase C** (corrección mecánica) no requiere
+   plan. Verificar los criterios de entrada (checkers en verde).
 2. **Ejecución en `dev`:** aplicar los pasos del plan sobre `protocol/.agents/`.
-3. **Verificación:** `python dev/tools/check_protocol_invariants.py --payload protocol .`,
-   `python dev/tools/check_plan_citations.py`, H13 por juicio, y tests si el
-   plan los exige. Si algo falla, no se versiona ni se promueve.
+3. **Verificación:** `python tools/check_protocol_invariants.py --payload protocol .`,
+   `python tools/check_plan_citations.py`, `python tools/check_plan_structure.py`,
+   H13 por juicio, y tests (`python -m pytest tests/`). Si algo falla, no se
+   versiona ni se promueve.
 4. **Estados:** plan → `Executed` (con `Nota de ejecución`), Amendment Log de la
    RFC, `plans/INDEX.md` como espejo.
 5. **Changelog + versión:** nueva sección `## [X.Y.Z] — fecha` con el ítem
@@ -104,8 +107,9 @@ Reglas:
 Planes:
 
 - `Aprobado para redacción` → entregables documentales que no tocan `protocol/.agents/`.
-- `Aprobado para ejecución` → cambios de `protocol/.agents/` o repo; requiere
-  justificación documentada (vía plan RFC-42) o RFC `Accepted`.
+- `Aprobado para ejecución` → cambios de `protocol/.agents/` o repo; la vía
+  depende de la clase del cambio (RFC-56): Clase A exige RFC `Accepted`,
+  Clase B alcanza con justificación documentada, Clase C no requiere plan.
 - `Executed` → todos los criterios de salida verificados, con `Nota de
   ejecución` (fecha + verificación). Parcial → `Executed (parcial: <qué falta>)`.
 - `Superseded` → reemplazado por otro plan (indicar cuál).

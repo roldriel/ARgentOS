@@ -9,6 +9,7 @@
 **Status:** Aprobado para redacción | Aprobado para ejecución
 **Fecha:** YYYY-MM-DD
 **RFC:** RFC-NN (`plans/rfc/NN-slug.md`) | —
+**Clase:** A | B (solo si el plan toca `protocol/.agents/`; ver RFC-56)
 **Depende de:** plan NN | —
 **Origen:** <auditoría, bitácora, decisión — con referencia verificable>
 

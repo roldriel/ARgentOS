@@ -11,7 +11,7 @@ distributed protocol package:
 
 2. BOUNDARY — every reference must point inside .agents/ or to the payload
    entry file. References to plans/, rfc/, tools/, docs/ or other root
-   documents break the self-contained promise of MIGRATION.md and would be
+   documents break the self-contained promise of docs/MIGRATION.md and would be
    broken links in the distributed copy.
 
 3. TAXONOMY METADATA — every protocol file in scope (state machines,

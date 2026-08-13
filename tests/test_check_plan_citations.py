@@ -253,6 +253,16 @@ def test_legacy_feature_md_resolves_to_vision_doc(tmp_path):
     assert cpc.verify_all(tmp_path) == []
 
 
+def test_legacy_root_policy_docs_resolve_to_docs(tmp_path):
+    """VERSIONING/MIGRATION/ADOPTION moved to docs/ (12 ago 2026)."""
+    make_repo(tmp_path, {
+        "plans/a.md": "`VERSIONING.md:4. Flujo`\n`MIGRATION.md:4. X`\n",
+        "docs/VERSIONING.md": "## 4. Flujo\n",
+        "docs/MIGRATION.md": "## 4. X\n",
+    })
+    assert cpc.verify_all(tmp_path) == []
+
+
 def test_legacy_mapping_does_not_hide_missing_file(tmp_path):
     make_repo(tmp_path, {"plans/a.md": "`.agents/does-not-exist.md:Sec`\n"})
     broken = cpc.verify_all(tmp_path)
@@ -284,11 +294,11 @@ def test_runs_from_other_cwd(tmp_path):
 
 def test_root_docs_are_scanned(tmp_path):
     make_repo(tmp_path, {
-        "VERSIONING.md": "Ver `plans/b.md:Real` aquí.\n",
+        "docs/VERSIONING.md": "Ver `plans/b.md:Real` aquí.\n",
         "plans/b.md": "# Real\n",
     })
     found = cpc.scan_documents(tmp_path)
-    assert any(c.source == Path("VERSIONING.md") for c in found)
+    assert any(c.source == Path("docs/VERSIONING.md") for c in found)
 
 
 def test_root_doc_broken_citation_reported(tmp_path):

@@ -1,6 +1,6 @@
 # ARgentOS
 
-ARgentOS is a state-based agent orchestration protocol governed by the `.agents/` directory. It is a **documental protocol**: there is nothing to install — adopting it means vendoring `.agents/` + `AGENTS.md` into your project from the `dist` branch (see [`ADOPTION.md`](ADOPTION.md) §1).
+ARgentOS is a state-based agent orchestration protocol governed by the `.agents/` directory. It is a **documental protocol**: there is nothing to install — adopting it means vendoring `.agents/` + `AGENTS.md` into your project from the `dist` branch (see [`docs/ADOPTION.md`](docs/ADOPTION.md) §1).
 
 In this repository the protocol payload lives in [`protocol/`](protocol/) as
 **data**: development sessions are governed by the root [`AGENTS.md`](AGENTS.md),
@@ -20,9 +20,9 @@ data, not instructions. The product entry point is `protocol/_AGENTS.md`
 
 Start here:
 
-- **[`ADOPTION.md`](ADOPTION.md)** — what to copy, what to configure, how to validate (protocol health verification first), and the recommended reading order.
+- **[`docs/ADOPTION.md`](docs/ADOPTION.md)** — what to copy, what to configure, how to validate (protocol health verification first), and the recommended reading order.
 - **[`CHANGELOG.md`](CHANGELOG.md)** — versioned history of the protocol.
-- **[`MIGRATION.md`](MIGRATION.md)** — how to move an adopting project between protocol versions.
+- **[`docs/MIGRATION.md`](docs/MIGRATION.md)** — how to move an adopting project between protocol versions.
 
 ## Testing the protocol
 
@@ -60,7 +60,7 @@ protocol (adopters get only `.agents/` + `AGENTS.md` from the `dist` branch).
 
 ## Implementation plans
 
-All implementation plans generated for this project by agents (or otherwise) must be placed in the `plans/` directory at the repository root. The plans and RFCs are the design history of the protocol; they are **not** part of what adopters copy (see `ADOPTION.md`).
+All implementation plans generated for this project by agents (or otherwise) must be placed in the `plans/` directory at the repository root. The plans and RFCs are the design history of the protocol; they are **not** part of what adopters copy (see `docs/ADOPTION.md`).
 
 ## License
 

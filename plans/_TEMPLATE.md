@@ -45,7 +45,7 @@ exactas (`ruta:sección`), nunca números de línea ni ordinales. -->
 ## Criterios de salida
 
 <!-- Checklist específico del plan que define "terminado". Complementa el DoD
-general de VERSIONING.md §10, no lo reemplaza. -->
+general de docs/VERSIONING.md §10, no lo reemplaza. -->
 
 - [ ] ...
 

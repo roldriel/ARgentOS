@@ -25,7 +25,7 @@ such as §5 → "5. Worker Delegation"). Numeric anchors with no matching
 heading (line numbers, line ranges) are reported as "non-heading anchor".
 
 Citations under ``.project/`` are exempt: session artifacts and knowledge-base
-state are ephemeral (MIGRATION.md §4) and are not part of the repository, so
+state are ephemeral (docs/MIGRATION.md §4) and are not part of the repository, so
 historical plans may cite them without a persistent target.
 
 Usage: python tools/check_plan_citations.py [--root REPO_ROOT]
@@ -71,10 +71,12 @@ ROOT_DOCS = (
     "AGENTS.md",
     "README.md",
     "ROADMAP.md",
-    "VERSIONING.md",
     "CHANGELOG.md",
-    "MIGRATION.md",
-    "ADOPTION.md",
+    "docs/VERSIONING.md",
+    "docs/MIGRATION.md",
+    "docs/ADOPTION.md",
+    "docs/AUDITORIA_DOCUMENTACION.md",
+    "docs/AGENTS.md",
     "runtime/README.md",
     "docs/source-layout.md",
 )
@@ -226,6 +228,9 @@ def legacy_target(path: str, root: Path) -> Path | None:
         return root / "protocol" / "_AGENTS.md"
     if path == "feature.md":
         return root / "plans" / "ec-pipeline-vision.md"
+    if path in ("VERSIONING.md", "MIGRATION.md", "ADOPTION.md",
+                "AUDITORIA_DOCUMENTACION.md"):
+        return root / "docs" / path
     if path.startswith(".agents/"):
         return root / "protocol" / path
     if path in _LEGACY_BARE_PATHS:

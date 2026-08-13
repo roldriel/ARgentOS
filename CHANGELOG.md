@@ -26,9 +26,9 @@ RFC que originó el cambio. Los planes viven en `plans/`, las RFCs en `plans/rfc
 y las policies del harness en `.agents/harness/policies/` y
 `.agents/orchestrators/*/harness/policies/`.
 
-La política de migración entre versiones vive en [`MIGRATION.md`](MIGRATION.md).
+La política de migración entre versiones vive en [`docs/MIGRATION.md`](docs/MIGRATION.md).
 La política de versionado, changelog, tags y estados de planes vive en
-[`VERSIONING.md`](VERSIONING.md).
+[`docs/VERSIONING.md`](docs/VERSIONING.md).
 
 ---
 

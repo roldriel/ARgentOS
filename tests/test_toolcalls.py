@@ -20,13 +20,14 @@ from runtime.toolcalls import prompt_rendering, toolcalls_rendering  # noqa: E40
 from runtime.toolcalls.budget import MaterializationCost, estimate_tokens  # noqa: E402
 from runtime.toolcalls.context import ExecutionContext, SkillSource, resolve_skills  # noqa: E402
 
-SKILLS_ROOT = REPO_ROOT / "protocol" / ".agents" / "skills"
+SKILLS_ROOT = REPO_ROOT / "tests" / "fixtures" / "skills"
 SAMPLE_SKILLS = ["planner", "extractor", "summarizer"]
 
 
 @pytest.fixture()
 def context() -> ExecutionContext:
-    """A realistic Execution Context built from real protocol skills."""
+    """An Execution Context built from the vendored fixture skills
+    (`tests/fixtures/skills/`), never from the product payload."""
     return ExecutionContext(
         session_uuid="00000000-0000-0000-0000-000000000000",
         current_state="EXECUTING",
@@ -57,7 +58,7 @@ def test_cost_totals():
 # --- Context resolution ------------------------------------------------------
 
 
-def test_resolve_skills_resolves_real_skills():
+def test_resolve_skills_resolves_fixture_skills():
     skills = resolve_skills(SAMPLE_SKILLS, SKILLS_ROOT)
     assert [s.name for s in skills] == SAMPLE_SKILLS
     for skill in skills:

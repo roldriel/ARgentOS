@@ -39,7 +39,7 @@ git subtree pull --prefix=. https://github.com/roldriel/ARgentOS.git dist --squa
   fuente (rama `dev` → `master` → CI publica en `dist`); el próximo
   `subtree pull` pisa cualquier edición local.
 - Para pinearse a una versión en vez de seguir `dist`, usar el tag publicado:
-  `git subtree pull --prefix=. <url> v3.0.1 --squash`.
+  `git subtree pull --prefix=. <url> 3.0.7 --squash`.
 
 ### 1.2. Copia manual (alternativa sin git)
 
@@ -55,7 +55,7 @@ Sin subtree no hay mecanismo de actualización: cada upgrade es una copia nueva
 
 No hace falta copiar nada más: `.agents/` es autocontenido y no referencia
 `plans/` ni RFCs (frontera documental, `plans/INDEX.md` §Convenciones). Los
-documentos de diseño (`plans/`, `feature.md`) son historia del desarrollo del
+documentos de diseño (`plans/`) son historia del desarrollo del
 protocolo, no parte del producto adoptado. `CHANGELOG.md` y `MIGRATION.md`
 conviene conservarlos como referencia de versionado, pero no son requeridos por
 el runtime.
@@ -141,8 +141,8 @@ Para entender el protocolo adoptado, en este orden:
 
 - No se adopta `plans/` ni las RFCs: son el proceso de diseño del protocolo, no
   el protocolo.
-- No se adopta `example/` ni `dev/` (`dev/tools/`, `dev/runtime/`): son bancos
-  de prueba y herramientas del desarrollo.
+- No se adopta `tools/` ni `runtime/` (ni el histórico `dev/`, disuelto el 12
+  ago 2026): son herramientas e implementaciones de referencia del desarrollo.
 - No hay soporte de múltiples versiones en paralelo: se adopta una versión y se
   migra siguiendo `MIGRATION.md`.
 
@@ -175,7 +175,7 @@ opción de *managed settings*) vive en el propio payload, para que esté
 disponible en todo proyecto adoptante: `.agents/harness/INDEX.md`, sección
 "Hook setup (enforced mode)".
 
-### 6.3. Límite honesto: los hooks son fail-open
+### 6.2. Límite honesto: los hooks son fail-open
 
 Todo CLI evaluado es **fail-open** ante crash o timeout del hook: si
 `hook_gate.py` falla, la tool call pasa libre. El modelo protege contra

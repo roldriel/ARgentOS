@@ -215,6 +215,8 @@ los planes 34–36 quedaron `Executed` el 11 ago 2026 (RFC-35…37 permanecen en
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
 | `54-protocol-source-containment.md` | RFC-55 | Executed (12 ago 2026) | Payload del producto en `protocol/` (`protocol/.agents/` + `protocol/_AGENTS.md`), AGENTS.md raíz de desarrollo, tooling/CI con `--payload protocol`, y consolidación de `dev/` (README, ROADMAP, source-layout). `dist` no cambia. |
+| `55-hook-setup-self-containment.md` | — (vía plan) | Aprobado para ejecución (12 ago 2026) | Autocontención del setup de hooks en el payload; elimina la referencia a `ADOPTION.md` desde `harness/INDEX.md`. |
+| `56-payload-immutability-anti-circumvention.md` | — (vía plan) | Aprobado para ejecución (12 ago 2026) | Regla inline de inmutabilidad del payload en `ANTI_CIRCUMVENTION.md` (cierra el pendiente del plan 41). |
 
 ## Backlog evidenciado - plan 19
 

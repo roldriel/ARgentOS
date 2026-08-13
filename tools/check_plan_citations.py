@@ -224,6 +224,8 @@ def legacy_target(path: str, root: Path) -> Path | None:
     """
     if path == "AGENTS.md":
         return root / "protocol" / "_AGENTS.md"
+    if path == "feature.md":
+        return root / "plans" / "ec-pipeline-vision.md"
     if path.startswith(".agents/"):
         return root / "protocol" / path
     if path in _LEGACY_BARE_PATHS:

@@ -33,8 +33,10 @@ fuente; en fuente, "AGENTS.md" es ambiguo (el de la raíz es el dev):
 ## Citas históricas de `plans/`
 
 Los planes y RFCs existentes citan `.agents/...` y `AGENTS.md` con rutas del
-layout viejo. `check_plan_citations.py` las resuelve con un mapeo legacy
-(`.agents/...` → `protocol/.agents/...`, `AGENTS.md` → `protocol/_AGENTS.md`).
+layout viejo, y `feature.md` (documento de visión que vivió en la raíz hasta
+el 12 ago 2026). `check_plan_citations.py` las resuelve con un mapeo legacy
+(`.agents/...` → `protocol/.agents/...`, `AGENTS.md` → `protocol/_AGENTS.md`,
+`feature.md` → `plans/ec-pipeline-vision.md`).
 **No reescribir planes históricos**: son traza.
 
 ## Guarda

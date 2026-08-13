@@ -244,6 +244,15 @@ def test_legacy_agents_md_resolves_to_payload_entry(tmp_path):
     assert cpc.verify_all(tmp_path) == []
 
 
+def test_legacy_feature_md_resolves_to_vision_doc(tmp_path):
+    """feature.md moved to plans/ec-pipeline-vision.md (12 ago 2026)."""
+    make_repo(tmp_path, {
+        "plans/a.md": "`feature.md:Stage 10`\n",
+        "plans/ec-pipeline-vision.md": "# Vision\n\n# Stage 10 — Prompt Rendering\n",
+    })
+    assert cpc.verify_all(tmp_path) == []
+
+
 def test_legacy_mapping_does_not_hide_missing_file(tmp_path):
     make_repo(tmp_path, {"plans/a.md": "`.agents/does-not-exist.md:Sec`\n"})
     broken = cpc.verify_all(tmp_path)

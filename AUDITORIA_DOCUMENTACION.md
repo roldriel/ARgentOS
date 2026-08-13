@@ -54,9 +54,11 @@ regenerada por CI.
   de estado, notas de regularización. Funciona, pero es frágil como fuente
   citada por todo el mundo; un día habrá que separar "convenciones" de
   "índice".
-- **`feature.md`** es un documento de diseño temprano con citas rotas
-  conocidas, fuera del scope de todos los checkers por decisión. Está en el
-  limbo: ni traza histórica archivada ni documento vivo mantenido.
+- ~~**`feature.md`**~~ **(resuelto 12 ago 2026)**: el documento de visión del
+  EC Pipeline se movió a `plans/ec-pipeline-vision.md` con banner de cierre
+  (visión completada). Las citas históricas `feature.md` resuelven por mapeo
+  legacy en `check_plan_citations.py`; el documento ahora está gobernado y
+  escaneado por los checkers.
 
 ## Puntos débiles
 

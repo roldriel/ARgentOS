@@ -1,6 +1,11 @@
 # Feature Vision — Execution Context Pipeline
 
-**Status:** Vision Document
+**Status:** Vision Document — **completada** (cerrada el 12 ago 2026)
+
+> ⚠ Documento histórico. La visión de los 4 niveles quedó completamente
+> ejecutada: el modelo vigente vive en las RFCs 00XX–00YM (`plans/rfc/`) y el
+> status de cada una en `plans/INDEX.md`. Este documento se conserva como
+> traza de diseño; no es fuente de verdad normativa.
 
 ---
 
@@ -80,7 +85,7 @@ Cada etapa posee una única responsabilidad.
 
 Cada RFC incorpora únicamente una de estas responsabilidades.
 
-El **Context Budget** no es una etapa en línea del pipeline: es una restricción lateral que participa en Prioritization, Resolution y Composition (ver §Stage 5 — Context Budget). Los diagramas de RFC-00YB y RFC-00YC solo muestran Budget → Resolution y Budget → Composition; la arista **Budget → Prioritization** es una **extensión nueva** introducida por este documento (plan `plans/04-main-pipeline-closure.md` §C.1) y no redefine ninguna RFC existente.
+El **Context Budget** no es una etapa en línea del pipeline: es una restricción lateral que participa en Prioritization, Resolution y Composition (ver §Stage 5 — Context Budget). Los diagramas de RFC-00YB y RFC-00YC solo muestran Budget → Resolution y Budget → Composition; la arista **Budget → Prioritization** es una **extensión nueva** introducida por este documento (plan `plans/04-main-pipeline-closure.md:C. Fixes de consistencia en feature.md`, ítem 1) y no redefine ninguna RFC existente.
 
 La línea `protocol / runtime boundary` marca la frontera: las etapas hasta Execution Context / Context Delivery (Stages 1–9) pertenecen al **protocolo**; Prompt Rendering y Worker Execution (Stages 10–11) pertenecen al **runtime** (ver §Stage 10 — Prompt Rendering).
 
@@ -164,7 +169,7 @@ Agrupar la información obtenida en las categorías canónicas del Execution Con
 * Capability Context
 * Execution Metadata
 
-Además, Context Organization **produce los Context Candidates**: cada elemento de información organizado dentro de esas categorías se convierte en la unidad conceptual que participa en Prioritization y Resolution (ver §Cross-Cutting Concepts → Context Candidate). Ninguna RFC previa definía quién transforma información organizada en candidates; esta declaración cierra el encadenamiento Organization → Prioritization (plan `plans/04-main-pipeline-closure.md` §C.6).
+Además, Context Organization **produce los Context Candidates**: cada elemento de información organizado dentro de esas categorías se convierte en la unidad conceptual que participa en Prioritization y Resolution (ver §Cross-Cutting Concepts → Context Candidate). Ninguna RFC previa definía quién transforma información organizada en candidates; esta declaración cierra el encadenamiento Organization → Prioritization (plan `plans/04-main-pipeline-closure.md:C. Fixes de consistencia en feature.md`, ítem 6).
 
 Todavía no existe ninguna decisión acerca de qué será utilizado.
 

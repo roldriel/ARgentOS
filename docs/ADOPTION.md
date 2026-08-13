@@ -168,52 +168,12 @@ El protocolo funciona en dos modos explícitos, sin zona gris:
   transaccional, fail-closed). El deny del hook incluye la instrucción exacta
   de recuperación. Requisito: Python 3.x stdlib, sin `pip`.
 
-### 6.1. Configuración enforced — Kimi Code
+### 6.1. Configuración de hooks por CLI
 
-En `~/.kimi-code/config.toml` (o el config del proyecto):
-
-```toml
-[[hooks]]
-event = "PreToolUse"
-matcher = "Write|Edit"
-command = "python .agents/harness/hook_gate.py"
-timeout = 5
-
-[[hooks]]
-event = "Stop"
-command = "python .agents/harness/hook_gate.py"
-timeout = 5
-```
-
-### 6.2. Configuración enforced — Claude Code
-
-En `.claude/settings.json` del proyecto (commiteable):
-
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          { "type": "command", "command": "python .agents/harness/hook_gate.py", "timeout": 5 }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          { "type": "command", "command": "python .agents/harness/hook_gate.py", "timeout": 5 }
-        ]
-      }
-    ]
-  }
-}
-```
-
-La opción fuerte en Claude Code son las *managed settings*
-(`allowManagedHooksOnly` y deny sobre `.agents/` y las configs de hooks),
-gestionadas fuera del repo: impiden que el propio agente desactive el hook.
+La configuración concreta de hooks por CLI (Kimi Code, Claude Code y la
+opción de *managed settings*) vive en el propio payload, para que esté
+disponible en todo proyecto adoptante: `.agents/harness/INDEX.md`, sección
+"Hook setup (enforced mode)".
 
 ### 6.3. Límite honesto: los hooks son fail-open
 

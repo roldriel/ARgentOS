@@ -150,9 +150,8 @@ the hook consults;
 `health_check.py` probes that `state.json` can be written and read.
 Without hooks installed the protocol runs in **declarative mode** (the
 default), which has no Python requirement: gates remain
-orchestrator-invoked and compliance is audited post-hoc. The adoption
-guide (`ADOPTION.md`) documents both modes and the per-CLI hook
-configuration.
+orchestrator-invoked and compliance is audited post-hoc. The per-CLI hook
+configuration for enforced mode lives in §Hook setup (enforced mode) below.
 
 Honest limit: hook systems are **fail-open** — a hook crash or timeout lets
 the tool call through. Mitigations are layered: the hook script is stdlib
@@ -162,6 +161,56 @@ when the plan gate (H04) `PASS` is recorded, it scans for project files
 modified after the session started but before the PASS, and the
 Orchestrator records suspects as an alert in the HARNESS_REPORT
 entry (contract: `.agents/contracts/HARNESS_REPORT.md`).
+
+## Hook setup (enforced mode)
+
+Enforced mode requires registering `hook_gate.py` as a CLI hook for two
+events: `PreToolUse` (matcher `Write|Edit`) and `Stop`. The paths below
+assume the adopted layout (`.agents/` at the project root).
+
+**Kimi Code** — in `~/.kimi-code/config.toml` (or the project config):
+
+```toml
+[[hooks]]
+event = "PreToolUse"
+matcher = "Write|Edit"
+command = "python .agents/harness/hook_gate.py"
+timeout = 5
+
+[[hooks]]
+event = "Stop"
+command = "python .agents/harness/hook_gate.py"
+timeout = 5
+```
+
+**Claude Code** — in the project's `.claude/settings.json` (committable):
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          { "type": "command", "command": "python .agents/harness/hook_gate.py", "timeout": 5 }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "python .agents/harness/hook_gate.py", "timeout": 5 }
+        ]
+      }
+    ]
+  }
+}
+```
+
+The strong option in Claude Code is *managed settings*
+(`allowManagedHooksOnly` plus deny rules on `.agents/` and the hook
+configs), managed outside the repo: they prevent the agent itself from
+disabling the hook.
 
 ## Constraints
 

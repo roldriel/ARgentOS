@@ -35,7 +35,21 @@ La política de versionado, changelog, tags y estados de planes vive en
 ## [Unreleased]
 
 (sin ítems por ahora — los cambios de repo que no tocan el payload no se
-listan; ver `VERSIONING.md` §5)
+listan; ver `docs/VERSIONING.md` §5)
+
+---
+
+## [3.0.6] — 2026-08-12
+
+### Fixed
+
+- **Autocontención del setup de hooks en el payload** (plan 55): la
+  configuración de hooks por CLI (Kimi Code, Claude Code, managed settings)
+  se trasladó de `ADOPTION.md` —que no se distribuye— a
+  `.agents/harness/INDEX.md` (sección "Hook setup (enforced mode)"), y se
+  eliminó la referencia del payload a `ADOPTION.md`. El modo enforced es
+  configurable desde el payload solo; `ADOPTION.md` apunta a la sección del
+  payload.
 
 ---
 

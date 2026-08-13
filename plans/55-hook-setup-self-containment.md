@@ -1,6 +1,6 @@
 # Plan 55 — Autocontención del setup de hooks en el payload
 
-**Status:** Aprobado para ejecución
+**Status:** Executed
 **Fecha:** 2026-08-12
 **RFC:** — (vía plan, ver justificación)
 **Depende de:** —
@@ -61,4 +61,12 @@ promoción y regeneración de `dist`.
 
 ## Nota de ejecución
 
-<!-- Se completa al ejecutar. -->
+Ejecutado el 2026-08-12. Entregables 1–3 aplicados: sección "Hook setup
+(enforced mode)" en `protocol/.agents/harness/INDEX.md` con las
+configuraciones de Kimi Code y Claude Code + nota de managed settings;
+mención a `ADOPTION.md` reemplazada por referencia interna; `docs/ADOPTION.md`
+§6.1–6.2 reemplazadas por el puntero al payload. `grep ADOPTION
+protocol/.agents/` vacío. Versión 3.0.6, changelog e INDEX actualizados.
+Verificación: invariantes OK, citas OK, estructura OK, 116 passed. Pendiente
+hasta la promoción: regeneración de `dist` y chequeo
+`tools/check_dist_sync.py`.

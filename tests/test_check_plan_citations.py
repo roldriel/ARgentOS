@@ -1,7 +1,8 @@
-"""Tests for dev/tools/check_plan_citations.py (TDD: written before the module).
+"""Tests for tools/check_plan_citations.py.
 
-Covers acceptance criteria AC-1..AC-8 of the task specification
-(.project/d4ab6a93-8e75-4880-baf3-676fce992936/00/04-TASK_SPECIFICATION.md).
+Covers citation extraction (both forms), broken-file and broken-section
+reporting, normalized/prefix heading matching, numeric anchors, CLI exit
+codes, legacy payload path mapping and the stdlib-only constraint.
 """
 
 from __future__ import annotations
@@ -13,10 +14,10 @@ from pathlib import Path
 
 import pytest
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
-TOOL = REPO_ROOT / "dev" / "tools" / "check_plan_citations.py"
+REPO_ROOT = Path(__file__).resolve().parents[1]
+TOOL = REPO_ROOT / "tools" / "check_plan_citations.py"
 
-sys.path.insert(0, str(REPO_ROOT / "dev" / "tools"))
+sys.path.insert(0, str(REPO_ROOT / "tools"))
 
 import check_plan_citations as cpc  # noqa: E402
 
@@ -55,7 +56,7 @@ def test_scan_is_recursive(tmp_path):
         "plans/INDEX.md": "sin citas\n",
         "other/d.md": "`plans/b.md:Sec`\n",  # outside plans/: must be ignored
     })
-    found = cpc.scan_plan_documents(tmp_path)
+    found = cpc.scan_documents(tmp_path)
     sources = {c.source for c in found}
     assert sources == {Path("plans/a.md"), Path("plans/rfc/c.md")}
 
@@ -267,6 +268,65 @@ def test_runs_from_other_cwd(tmp_path):
     other.mkdir()
     res = run_tool(tmp_path, cwd=other)
     assert res.returncode == 0
+
+
+# --- Root documents as citation sources --------------------------------------
+
+
+def test_root_docs_are_scanned(tmp_path):
+    make_repo(tmp_path, {
+        "VERSIONING.md": "Ver `plans/b.md:Real` aquí.\n",
+        "plans/b.md": "# Real\n",
+    })
+    found = cpc.scan_documents(tmp_path)
+    assert any(c.source == Path("VERSIONING.md") for c in found)
+
+
+def test_root_doc_broken_citation_reported(tmp_path):
+    make_repo(tmp_path, {"AGENTS.md": "`plans/nope.md:Sec`\n"})
+    broken = cpc.verify_all(tmp_path)
+    assert len(broken) == 1
+    assert broken[0].citation.source == Path("AGENTS.md")
+
+
+def test_scratch_root_docs_are_not_scanned(tmp_path):
+    """Working docs (feature.md, audit notes) are not canonical sources."""
+    make_repo(tmp_path, {
+        "feature.md": "`plans/nope.md:Sec`\n",
+        "AUDITORIA_DOCUMENTACION.md": "`plans/nope.md:Sec`\n",
+    })
+    assert cpc.verify_all(tmp_path) == []
+
+
+def test_component_docs_are_scanned(tmp_path):
+    """runtime/README.md and docs/source-layout.md are canonical sources."""
+    make_repo(tmp_path, {
+        "runtime/README.md": "`plans/nope.md:Sec`\n",
+        "docs/source-layout.md": "`plans/nope.md:Sec`\n",
+    })
+    broken = cpc.verify_all(tmp_path)
+    assert len(broken) == 2
+    assert {b.citation.source.as_posix() for b in broken} == {
+        "runtime/README.md",
+        "docs/source-layout.md",
+    }
+
+
+def test_legacy_bare_payload_filename_resolves(tmp_path):
+    make_repo(tmp_path, {
+        "CHANGELOG.md": "(`ORCHESTRATION_GUIDE.md` §7)\n",
+        "protocol/.agents/standards/orchestration/ORCHESTRATION_GUIDE.md": (
+            "# Orchestration Guide\n\n## 7. Mapping to workflow phases\n"
+        ),
+    })
+    assert cpc.verify_all(tmp_path) == []
+
+
+def test_legacy_bare_filename_does_not_hide_missing_file(tmp_path):
+    make_repo(tmp_path, {"CHANGELOG.md": "`ORCHESTRATION_GUIDE.md` §7\n"})
+    broken = cpc.verify_all(tmp_path)
+    assert len(broken) == 1
+    assert broken[0].reason == "file not found"
 
 
 # --- AC-7: stdlib only ----------------------------------------------------------

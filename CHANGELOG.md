@@ -32,6 +32,13 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [Unreleased]
+
+(sin ítems por ahora — los cambios de repo que no tocan el payload no se
+listan; ver `VERSIONING.md` §5)
+
+---
+
 ## [3.0.5] — 2026-08-12
 
 **Source containment: protocol payload in `protocol/`** (plan 54, RFC-55):

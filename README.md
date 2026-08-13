@@ -4,7 +4,7 @@ ARgentOS is a state-based agent orchestration protocol governed by the `.agents/
 
 In this repository the protocol payload lives in [`protocol/`](protocol/) as
 **data**: development sessions are governed by the root [`AGENTS.md`](AGENTS.md),
-not by the protocol itself (see `dev/source-layout.md`).
+not by the protocol itself (see `docs/source-layout.md`).
 
 Current protocol version: see [`protocol/.agents/VERSION`](protocol/.agents/VERSION).
 
@@ -28,8 +28,9 @@ Start here:
 
 The `protocol/.agents/` workflow is exercised by the dev-only test suites and the
 protocol invariant checker listed under "Verifying the protocol" below. There
-is no separate sample application in this repository: `dev/` holds the test
-tooling and reference implementations, none of which ships to adopters.
+is no separate sample application in this repository: `tools/` and `runtime/`
+hold the test tooling and reference implementations, none of which ships to
+adopters.
 
 ## Verifying the protocol
 
@@ -48,14 +49,19 @@ project for real protocol sessions.
 Protocol development only (not needed by adopters):
 
 ```bash
-python dev/tools/check_protocol_invariants.py --payload protocol .
-python -m pytest protocol/.agents/harness/tests/ dev/runtime/tests/ dev/tools/tests/
+python tools/check_protocol_invariants.py --payload protocol .
+python -m pytest tests/
 ```
 
-The `dev/` directory holds development tooling and reference implementations;
-see `dev/README.md` and `dev/ROADMAP.md`. It is not part of the distributed
+The `tools/` and `runtime/` directories hold development tooling and the
+reference implementation; project priorities live in `ROADMAP.md`. They are
+not part of the distributed
 protocol (adopters get only `.agents/` + `AGENTS.md` from the `dist` branch).
 
 ## Implementation plans
 
 All implementation plans generated for this project by agents (or otherwise) must be placed in the `plans/` directory at the repository root. The plans and RFCs are the design history of the protocol; they are **not** part of what adopters copy (see `ADOPTION.md`).
+
+## License
+
+[MIT](LICENSE).

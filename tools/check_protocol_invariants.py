@@ -10,7 +10,7 @@ distributed protocol package:
    then to .agents/, then to the payload root).
 
 2. BOUNDARY — every reference must point inside .agents/ or to the payload
-   entry file. References to plans/, rfc/, dev/, runtime/ or other root
+   entry file. References to plans/, rfc/, tools/, docs/ or other root
    documents break the self-contained promise of MIGRATION.md and would be
    broken links in the distributed copy.
 
@@ -30,7 +30,7 @@ example project paths (app/..., payment_*.py) are not treated as protocol
 references.
 
 Usage:
-  python dev/tools/check_protocol_invariants.py [--root REPO_ROOT]
+  python tools/check_protocol_invariants.py [--root REPO_ROOT]
                                                [--payload PROTOCOL]
                                                [--entry-file _AGENTS.md]
 
@@ -89,6 +89,16 @@ _BARE_RE = re.compile(
 
 _DEFAULT_PAYLOAD = "protocol"
 _DEFAULT_ENTRY_FILE = "_AGENTS.md"
+
+# Payload files allowed to carry the intentionally broken source link to the
+# product entry file (e.g. [AGENTS.md](../../../AGENTS.md)): broken in the
+# source tree, correct in the published dist layout. Inventory and rationale:
+# docs/source-layout.md. A path-link to AGENTS.md from any other payload file
+# is a violation; bare prose mentions (no path separator) are allowed.
+_ENTRY_LINK_ALLOWLIST = frozenset({
+    ".agents/standards/conduct/OPERATIONAL_RULES.md",
+    ".agents/standards/quality/PREFLIGHT_CHECKLIST.md",
+})
 
 _SKIP_PREFIXES = (
     "http://",
@@ -269,6 +279,17 @@ def verify_reference(
     filepart = token.split("#", 1)[0].strip()
     if not filepart or not is_candidate(filepart):
         return None
+    fp = filepart.replace("\\", "/")
+    if "/" in fp and Path(fp).name == "AGENTS.md":
+        rel = (root / ref.source).relative_to(payload).as_posix()
+        if rel not in _ENTRY_LINK_ALLOWLIST:
+            return Violation(
+                "BOUNDARY",
+                ref.source,
+                ref.line,
+                f"reference `{token}` links to the entry file from a file "
+                "outside the documented allowlist (docs/source-layout.md)",
+            )
     resolved = resolve_target(filepart, root / ref.source, payload, entry_file)
     status = classify(filepart, resolved, payload, entry_file)
     if status == "ok" or status == "skip":
@@ -421,7 +442,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-    root = (args.root or args.root_positional or Path(__file__).resolve().parents[2]).resolve()
+    root = (args.root or args.root_positional or Path(__file__).resolve().parents[1]).resolve()
     payload_rel = args.payload or Path(_DEFAULT_PAYLOAD)
     payload = (root / payload_rel).resolve()
     agents = payload / ".agents"

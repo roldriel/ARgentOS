@@ -50,3 +50,5 @@ distribuido en `dist`.
 - KB de `.project/` respaldada en TEMP antes del borrado.
 - Promoción a `master` + tags + `publish-dist` pendientes de autorización del
   usuario (VERSIONING §7/§9; regularización 3.0.2–3.0.4 pendiente).
+- Cierre (2026-08-12): promoción, tags 3.0.2–3.0.5 y regeneración de `dist`
+  ejecutados; registro en `VERSIONING.md` §9.

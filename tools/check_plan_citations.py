@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""Verify ruta:sección citations in plans/ Markdown documents.
+"""Verify ruta:sección citations in plans/ and root Markdown documents.
 
-Scans every .md file under plans/ recursively and extracts citations in the
+Scans every .md file under plans/ recursively, plus the canonical documents
+listed in ROOT_DOCS (root docs and component docs such as runtime/README.md),
+and extracts citations in the
 two forms used by the repository convention (plans/INDEX.md §Convenciones):
 
 1. Backtick-quoted `` `path:section` `` (e.g. `` `plans/INDEX.md:Convenciones` ``).
@@ -10,8 +12,11 @@ two forms used by the repository convention (plans/INDEX.md §Convenciones):
 
 For each citation it verifies that the cited file exists (resolved relative
 to the repository root, with a legacy mapping for pre-containment citations:
-``.agents/...`` → ``protocol/.agents/...`` and ``AGENTS.md`` →
-``protocol/_AGENTS.md``) and that the cited section exists as an ATX heading
+``.agents/...`` → ``protocol/.agents/...``, ``AGENTS.md`` →
+``protocol/_AGENTS.md`` and bare payload filenames cited from historical
+root documents, e.g. ``ORCHESTRATION_GUIDE.md`` →
+``protocol/.agents/standards/orchestration/ORCHESTRATION_GUIDE.md``) and that
+the cited section exists as an ATX heading
 in that file, comparing both sides normalized (trimmed, case-insensitive,
 leading '#' removed, trailing punctuation removed). A citation that is a
 prefix of a real heading followed by '.', '—', '-', ')' or whitespace also
@@ -23,7 +28,7 @@ Citations under ``.project/`` are exempt: session artifacts and knowledge-base
 state are ephemeral (MIGRATION.md §4) and are not part of the repository, so
 historical plans may cite them without a persistent target.
 
-Usage: python dev/tools/check_plan_citations.py [--root REPO_ROOT]
+Usage: python tools/check_plan_citations.py [--root REPO_ROOT]
 
 Exit code: 0 when no broken citation is found, 1 otherwise.
 Standard library only.
@@ -58,6 +63,29 @@ _NUMERIC_ONLY_RE = re.compile(r"^[\d.,\s-]+$")
 _PREFIX_NEXT_CHARS = " \t.—-)"
 
 _TRAILING_PUNCT = string.punctuation.replace("#", "")
+
+# Canonical documents scanned as citation sources, in addition to plans/:
+# the root docs plus the canonical component docs. Working/scratch documents
+# (feature.md, audit notes) are intentionally excluded.
+ROOT_DOCS = (
+    "AGENTS.md",
+    "README.md",
+    "ROADMAP.md",
+    "VERSIONING.md",
+    "CHANGELOG.md",
+    "MIGRATION.md",
+    "ADOPTION.md",
+    "runtime/README.md",
+    "docs/source-layout.md",
+)
+
+# Bare payload filenames cited from historical documents before source
+# containment (RFC-55), mapped to their current location under protocol/.
+_LEGACY_BARE_PATHS = {
+    "ORCHESTRATION_GUIDE.md": (
+        "protocol/.agents/standards/orchestration/ORCHESTRATION_GUIDE.md"
+    ),
+}
 
 
 @dataclass
@@ -149,13 +177,17 @@ def section_exists(section: str, markdown_text: str) -> bool:
     return False
 
 
-def scan_plan_documents(root: Path) -> list[Citation]:
-    """Extract citations from every .md file under <root>/plans/ recursively."""
+def scan_documents(root: Path) -> list[Citation]:
+    """Extract citations from plans/ (recursively) and the canonical root docs."""
     plans_dir = root / "plans"
     citations: list[Citation] = []
-    if not plans_dir.is_dir():
-        return citations
-    for doc in sorted(plans_dir.rglob("*.md")):
+    sources: list[Path] = []
+    if plans_dir.is_dir():
+        sources.extend(sorted(plans_dir.rglob("*.md")))
+    sources.extend(
+        root / name for name in ROOT_DOCS if (root / name).is_file()
+    )
+    for doc in sources:
         text = doc.read_text(encoding="utf-8", errors="replace")
         for citation in extract_citations(text):
             citation.source = doc.relative_to(root)
@@ -184,8 +216,9 @@ def verify_citation(citation: Citation, root: Path) -> BrokenCitation | None:
 def legacy_target(path: str, root: Path) -> Path | None:
     """Map a legacy citation path to the source-containment layout.
 
-    Historical plans/ documents cite the product payload at the old root
-    layout (``.agents/...`` and ``AGENTS.md``). Since the payload now lives
+    Historical documents cite the product payload at the old root
+    layout (``.agents/...`` and ``AGENTS.md``) or by bare payload filename
+    (``ORCHESTRATION_GUIDE.md``). Since the payload now lives
     under ``protocol/`` (RFC-55), those citations resolve via this mapping.
     Returns None when the path is not a legacy payload citation.
     """
@@ -193,13 +226,15 @@ def legacy_target(path: str, root: Path) -> Path | None:
         return root / "protocol" / "_AGENTS.md"
     if path.startswith(".agents/"):
         return root / "protocol" / path
+    if path in _LEGACY_BARE_PATHS:
+        return root / _LEGACY_BARE_PATHS[path]
     return None
 
 
 def verify_all(root: Path) -> list[BrokenCitation]:
     """Verify every citation found under <root>/plans/."""
     broken = []
-    for citation in scan_plan_documents(root):
+    for citation in scan_documents(root):
         result = verify_citation(citation, root)
         if result is not None:
             broken.append(result)
@@ -225,7 +260,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--root",
         type=Path,
-        default=Path(__file__).resolve().parents[2],
+        default=Path(__file__).resolve().parents[1],
         help="Repository root (default: parent of this script's directory).",
     )
     args = parser.parse_args(argv)

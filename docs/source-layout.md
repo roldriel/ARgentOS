@@ -40,6 +40,11 @@ layout viejo. `check_plan_citations.py` las resuelve con un mapeo legacy
 ## Guarda
 
 Si aparece un link nuevo roto en fuente que no apunte al entry file, el checker
-lo reporta como violación. Las únicas excepciones son las dos de la tabla de
-arriba; si un cambio futuro agrega una, hay que documentarla acá y cubrirla con
-test antes de mergear.
+lo reporta como violación. Además, los links de path al entry file
+(`[AGENTS.md](../../../AGENTS.md)`) están restringidos mecánicamente a la
+allowlist de los dos archivos del inventario (`_ENTRY_LINK_ALLOWLIST` en
+`tools/check_protocol_invariants.py`): un tercer archivo con ese link es
+violación BOUNDARY. Las menciones en prosa (sin separador de path) están
+permitidas — son la prosa que describe el layout adoptado. Si un cambio futuro
+agrega una excepción, hay que documentarla acá, sumarla a la allowlist y
+cubrirla con test antes de mergear.

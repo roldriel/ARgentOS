@@ -1,4 +1,4 @@
-"""Tests for dev/tools/check_protocol_invariants.py.
+"""Tests for tools/check_protocol_invariants.py.
 
 Covers the three invariants (reference resolution, distribution boundary,
 H13 taxonomy metadata) plus the false-positive controls (artifact names,
@@ -14,10 +14,10 @@ from pathlib import Path
 
 import pytest
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
-TOOL = REPO_ROOT / "dev" / "tools" / "check_protocol_invariants.py"
+REPO_ROOT = Path(__file__).resolve().parents[1]
+TOOL = REPO_ROOT / "tools" / "check_protocol_invariants.py"
 
-sys.path.insert(0, str(REPO_ROOT / "dev" / "tools"))
+sys.path.insert(0, str(REPO_ROOT / "tools"))
 
 import check_protocol_invariants as cpi  # noqa: E402
 
@@ -139,7 +139,7 @@ def test_dev_root_agents_md_not_scanned(tmp_path):
         ".agents/roles/sample.md": ROLE_OK,
     })
     (tmp_path / "AGENTS.md").write_text(
-        "Development entry: see `dev/README.md`.\n", encoding="utf-8"
+        "Development entry: see `AGENTS.md`.\n", encoding="utf-8"
     )
     assert cpi.verify(tmp_path) == []
 
@@ -265,10 +265,53 @@ def test_tool_uses_only_stdlib():
 # --- Source-layout inventory cross-check --------------------------------------
 
 
+def test_allowlisted_entry_links_pass(tmp_path):
+    """The two documented files may carry the intentionally broken link."""
+    make_repo(tmp_path, {
+        ".agents/standards/conduct/OPERATIONAL_RULES.md": (
+            "| entry | [AGENTS.md](../../../AGENTS.md) |\n"
+        ),
+        ".agents/standards/quality/PREFLIGHT_CHECKLIST.md": (
+            "- [ ] read [AGENTS.md](../../../AGENTS.md)\n"
+        ),
+        "AGENTS.md": "# Entry\n",
+    })
+    assert cpi.verify(tmp_path) == []
+
+
+def test_third_entry_link_is_a_violation(tmp_path):
+    """A path-link to AGENTS.md from any other payload file is flagged."""
+    make_repo(tmp_path, {
+        ".agents/standards/conduct/OPERATIONAL_RULES.md": (
+            "| entry | [AGENTS.md](../../../AGENTS.md) |\n"
+        ),
+        ".agents/standards/runtime/OTHER.md": (
+            "See [AGENTS.md](../../../AGENTS.md) now.\n"
+        ),
+        "AGENTS.md": "# Entry\n",
+    })
+    violations = cpi.verify(tmp_path)
+    assert any(
+        v.code == "BOUNDARY" and "allowlist" in v.message for v in violations
+    )
+    assert any("OTHER.md" in v.source.as_posix() for v in violations)
+
+
+def test_bare_prose_entry_mention_is_allowed(tmp_path):
+    """Prose mentions of AGENTS.md (no path separator) are not links."""
+    make_repo(tmp_path, {
+        ".agents/INDEX.md": (
+            "The entry point is `AGENTS.md` at the project root.\n"
+        ),
+        "AGENTS.md": "# Entry\n",
+    })
+    assert cpi.verify(tmp_path) == []
+
+
 def test_source_layout_documents_intentionally_broken_links():
-    """dev/source-layout.md must document the two intentionally broken source
+    """docs/source-layout.md must document the two intentionally broken source
     links so an agent knows not to fix them (allowlist == inventory)."""
-    doc = (REPO_ROOT / "dev" / "source-layout.md").read_text(
+    doc = (REPO_ROOT / "docs" / "source-layout.md").read_text(
         encoding="utf-8"
     )
     assert (

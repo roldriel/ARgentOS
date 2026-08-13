@@ -3,15 +3,7 @@ name: check-protocol
 on:
   push:
     branches: [dev, master]
-    paths:
-      - "protocol/**"
-      - "dev/**"
-      - ".github/workflows/check-protocol.yml"
   pull_request:
-    paths:
-      - "protocol/**"
-      - "dev/**"
-      - ".github/workflows/check-protocol.yml"
 
 jobs:
   check:
@@ -22,8 +14,12 @@ jobs:
         with:
           python-version: "3.12"
       - name: Protocol documentation invariants
-        run: python dev/tools/check_protocol_invariants.py --payload protocol .
+        run: python tools/check_protocol_invariants.py --payload protocol .
+      - name: Plan citations and structure
+        run: |
+          python tools/check_plan_citations.py
+          python tools/check_plan_structure.py
       - name: Protocol and tooling tests
         run: |
           python -m pip install --quiet pytest
-          python -m pytest protocol/.agents/harness/tests/ dev/runtime/tests/ dev/tools/tests/ -q
+          python -m pytest tests/ -q

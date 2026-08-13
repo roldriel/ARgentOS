@@ -13,8 +13,13 @@ install.
 - `protocol/_AGENTS.md` — the product's entry point, renamed with a leading
   underscore so it is not auto-discovered as an instruction file in this
   repository. `dist` publishes it as `AGENTS.md` at the adopting project root.
-- `dev/` — development tooling, reference implementations and tests. It is not
-  part of the distributed protocol. See `dev/README.md` and `dev/ROADMAP.md`.
+- `tools/` — repository verification tooling (the checkers run by CI and the
+  local battery).
+- `runtime/` — reference implementation of Execution Context materialization
+  (prompt and tool calls). See `runtime/README.md`.
+- `tests/` — centralized test suites for `tools/` and `runtime/`. They never
+  depend on the `protocol/` payload and never include the harness tests; see
+  `tests/AGENTS.md`.
 - `plans/` — design history (RFCs and implementation plans). See
   `plans/INDEX.md`.
 - `README.md`, `ADOPTION.md`, `MIGRATION.md`, `VERSIONING.md`, `CHANGELOG.md` —
@@ -30,10 +35,18 @@ While developing ARgentOS you work on the protocol itself. Therefore:
 - **Do not fix** relative links inside `protocol/.agents/` that target
   `AGENTS.md` and appear broken in this repository. They are intentionally
   broken here and correct in the published layout (`dist`). The inventory and
-  rationale live in `dev/source-layout.md`.
+  rationale live in `docs/source-layout.md`.
 - Skills injected from `protocol/.agents/skills/` are capabilities of the
   product. They may be used as tools during development, but they are never
   rules for this workspace.
+
+## Do NOT
+
+- Modify `protocol/.agents/` without an RFC `Accepted` or an approved plan.
+- "Fix" the intentionally broken `AGENTS.md` links in the payload
+  (`docs/source-layout.md`).
+- Commit `.project/` artifacts — session state is ephemeral.
+- Edit `dist` by hand — CI regenerates it from `master` on tags.
 
 ## Development workflow
 
@@ -44,18 +57,39 @@ While developing ARgentOS you work on the protocol itself. Therefore:
   modifying anything under `protocol/.agents/`.
 - Implementation plans and RFCs live in `plans/` and `plans/rfc/`; new design
   decisions are recorded there before they touch the payload.
+- Language: English in payload, code and commits (Conventional Commits);
+  Spanish in `plans/` and adoption docs. Commits are atomic per plan, e.g.
+  `fix(protocol): ... (plan 34, RFC-35)`.
+
+## Task lifecycle
+
+Every change follows the same pipeline: **authorize** (RFC `Accepted` or plan
+`Aprobado para ejecución` + entry criteria) → **execute** on `dev` → **verify**
+(checkers below) → **close** (plan `Executed`, RFC Amendment Log, INDEX,
+changelog `(plan N, RFC-N)`, VERSION bump) → **commit** (atomic, Conventional
+Commit in English, on `dev`) → **promote** (merge to `master` + annotated tag,
+with user authorization; CI regenerates `dist`).
+
+A plan is done when all of that is verified and committed; a version is
+published when it is also tagged on `master`. Sources of truth:
+`VERSIONING.md` (§4 playbook, §10 DoD) and `plans/INDEX.md` (§Convenciones).
 
 ## Verifying the protocol
 
 From the repository root:
 
 ```bash
-python dev/tools/check_protocol_invariants.py --payload protocol .
-python dev/tools/check_plan_citations.py
-python -m pytest protocol/.agents/harness/tests/ dev/runtime/tests/ dev/tools/tests/
+python tools/check_protocol_invariants.py --payload protocol .
+python tools/check_plan_citations.py
+python tools/check_plan_structure.py
+python tools/check_dist_sync.py
+python -m pytest tests/
 ```
 
-See `dev/README.md` for details and conventions.
+`check_dist_sync.py` compares the committed payload against the local `dist`
+branch; it is a local-only check (CI does not fetch `dist`).
+
+Project priorities live in `ROADMAP.md`; design history in `plans/INDEX.md`.
 
 ## Testing the protocol as an adopter
 

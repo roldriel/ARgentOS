@@ -39,6 +39,19 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.0.7] — 2026-08-12
+
+### Fixed
+
+- **Inmutabilidad del payload declarada en anti-circumvention** (plan 56):
+  `.agents/standards/conduct/ANTI_CIRCUMVENTION.md` ahora cuenta como
+  circunvention modificar `.agents/` por fuera del cauce de releases (la
+  versión publicada es la única unidad de cambio válida) y define la
+  consecuencia en Enforcement (payload inválido hasta coincidir con una
+  versión publicada; revert o `RECOVERY`). Regla inline, autocontenida.
+
+---
+
 ## [3.0.6] — 2026-08-12
 
 ### Fixed

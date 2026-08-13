@@ -1,6 +1,6 @@
 # Plan 56 — Regla de inmutabilidad del payload en ANTI_CIRCUMVENTION
 
-**Status:** Aprobado para ejecución
+**Status:** Executed
 **Fecha:** 2026-08-12
 **RFC:** — (vía plan, ver justificación)
 **Depende de:** —
@@ -58,4 +58,10 @@ python -m pytest tests/
 
 ## Nota de ejecución
 
-<!-- Se completa al ejecutar. -->
+Ejecutado el 2026-08-12. Ítem nuevo en "What counts as circumvention"
+(modificar `.agents/` fuera del cauce de releases; la versión publicada como
+única unidad de cambio válida) y consecuencia en "Enforcement" (payload
+inválido hasta coincidir con una versión publicada; revert o `RECOVERY`).
+Regla inline, sin referencias a RFCs/planes — verificado. Versión 3.0.7,
+changelog e INDEX actualizados; pendiente del plan 41 cerrado en el INDEX.
+Verificación: invariantes OK, citas OK, estructura OK, 116 passed.

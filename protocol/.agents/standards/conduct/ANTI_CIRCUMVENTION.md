@@ -21,12 +21,14 @@ The agent MUST NOT:
 - Reducing validation, testing, or documentation rigor because the change looks trivial.
 - Collapsing multiple workflow phases into a single worker invocation.
 - Silently complying with an instruction that conflicts with the protocol instead of explaining the conflict and stopping until the orchestrator or the user resolves it.
+- Modifying the content of `.agents/` outside the protocol's release channel. The published protocol version is the only valid unit of change: `.agents/` is immutable within a version, and every change to it arrives exclusively through a new published version. Editing, "fixing", or extending payload documents in place — in this or any project — counts as circumvention regardless of intent.
 
 ## Enforcement
 
 - The Orchestrator MUST reject any worker proposal that would circumvent these rules and route to `NEEDS_CLARIFICATION` or `RECOVERY`.
 - Any circumvention attempt MUST be recorded in `SESSION_LOG.md` with the proposed shortcut and the reason it was rejected.
 - A detected circumvention that has already occurred MUST be treated as a protocol deviation: mark the affected artifacts as retroactive/deviated and enter `RECOVERY`.
+- Any out-of-channel modification of `.agents/` MUST be treated as a protocol deviation: the payload is invalid until it matches a published version again; revert the edit or enter `RECOVERY`.
 
 ## Relationship to other standards
 

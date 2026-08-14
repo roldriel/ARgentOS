@@ -1,6 +1,6 @@
 # RFC-43 — Limpieza de la regla de entidades `planned` en H13
 
-**Status:** Proposal
+**Status:** Accepted (2026-08-12, revisión individual RFC-56; diseño aprobado, ejecución pendiente vía su plan)
 **Fecha:** 2026-08-11
 **Serie:** Remediación de auditoría 2.0.1
 **Origen:** Auditoría de estado ARgentOS 2.0.1 (2026-08-11), punto 2.10
@@ -38,3 +38,4 @@ La regla 9 de H13 describe el tratamiento de entidades `status: planned` citando
 | Fecha | Cambio | Origen |
 |---|---|---|
 | 2026-08-11 | Creación (Proposal) | Auditoría 2.0.1, punto 2.10 |
+| 2026-08-12 | Accepted (revisión individual, RFC-56/plan 57): diseño aprobado; la ejecución sigue el track de su plan asociado. | Revisión de la serie Proposal (RFC-56) |

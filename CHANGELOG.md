@@ -57,6 +57,18 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.2.0] — 2026-08-12
+
+### Added
+
+- **Configuración real de presupuesto y muestreo de discovery** (plan 38,
+  RFC-39): `features.toml` define `discovery_context_budget` (estimated
+  tokens) y `discovery_sample_size_per_language`; `init_worker` los
+  materializa en `discovery_input.json` y los workers de discovery dejan de
+  declarar defaults propios (fricción F-13).
+
+---
+
 ## [3.1.0] — 2026-08-12
 
 ### Changed

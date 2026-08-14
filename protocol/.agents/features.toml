@@ -31,6 +31,10 @@ llm_discovery = true
 discovery_orchestrator = true
 # [declarative] integer settings for the discovery agents.
 discovery_sample_size = 10
+discovery_sample_size_per_language = 50
+# Context budget for discovery workers, in estimated tokens
+# (unit per .agents/standards/context/BUDGET_MATERIALIZATION.md).
+discovery_context_budget = 32000
 discovery_environment_ttl_hours = 6
 discovery_project_ttl_hours = 24
 

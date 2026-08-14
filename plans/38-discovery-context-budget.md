@@ -1,6 +1,6 @@
 # Plan 38 — Configuración de presupuesto y muestreo en discovery
 
-**Status:** Aprobado para redacción
+**Status:** Executed
 **Fecha:** 2026-08-11
 **RFC:** RFC-39 (`plans/rfc/39-discovery-context-budget.md`)
 **Depende de:** —
@@ -50,3 +50,15 @@ Convertir `context_budget` y los límites de muestreo de discovery en configurac
 ## Trazabilidad
 
 - RFC-39; fricción F-13 de `plans/19-anexo-a-bitacora-fricciones.md`; backlog B-4.
+
+## Nota de ejecución
+
+Ejecutado el 2026-08-12 (vía RFC-39 Accepted). Decisión de muestreo: se
+mantiene el tope por lenguaje como setting configurable. `features.toml`
+gana `discovery_context_budget = 32000` y
+`discovery_sample_size_per_language = 50`; `init_worker` los lee y los
+escribe en `discovery_input.json`; la sección Sampling del orquestador de
+discovery y los cuatro workers de muestro quedan sin defaults propios (verificado: no
+quedan literales "per directory/per language"). Cubre el ítem
+`discovery_context_budget` del backlog B-4. Versión 3.2.0. Verificación:
+invariantes OK, citas OK, estructura OK, 116 passed.

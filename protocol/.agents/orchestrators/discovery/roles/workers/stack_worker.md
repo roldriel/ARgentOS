@@ -58,8 +58,8 @@ containers and databases.
 ## Sampling
 
 Apply the general sampling rules of the Discovery Orchestrator, bounded by
-`context_budget` and `sample_size` (default 10 files per directory, 50 per
-language, from `.agents/features.toml`):
+`context_budget`, `sample_size` and `sample_size_per_language` as given in
+`discovery_input.json` (never worker-local defaults):
 
 1. Exclude dependency and build directories.
 2. Group by extension and functional directory.

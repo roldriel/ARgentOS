@@ -44,6 +44,8 @@ The questions are **mutually exclusive in their main action**. If a single task 
 | 6 | Does the task implement business logic, endpoints, or services? | `backend_engineer` | `06-execute.md` | `.agents/roles/profiles/backend_engineer.md` |
 | 7 | Does none of the above apply, or is the task generic (analysis, planning, recovery)? | Generic `worker` | Any | None outside the corresponding workflow |
 
+**Tooling/CLI candidacy:** a tooling or developer-CLI task that does not touch the action domain of any existing profile produces an empty candidacy set — and that is a legitimate outcome, not a classification failure: Q7 applies and the generic `worker` executes it. Do not force a marginal profile (e.g. `backend_engineer` for a CLI with no business logic). If the tooling does touch a covered domain (e.g. it packages or runs tests), the corresponding profile applies instead.
+
 ### Alternative profiles that must not be used
 
 | If the task is... | Do not use |

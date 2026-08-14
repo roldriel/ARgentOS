@@ -33,4 +33,4 @@ The detailed procedure is defined in `.agents/orchestrators/core/workflow/08-rec
 
 ## Skills
 
-Delegations for this role activate the `hypothesis-generator` protocol skill (activation table in `.agents/skills/INDEX.md`; mechanics in `.agents/standards/orchestration/SKILLS.md`) to generate ranked, falsifiable hypotheses for the cause of the failure.
+Delegations for this role activate the `hypothesis-generator` and `risk-detector` protocol skills (activation table in `.agents/skills/INDEX.md`; mechanics in `.agents/standards/orchestration/SKILLS.md`): `hypothesis-generator` to generate ranked, falsifiable hypotheses for the cause of the failure, and `risk-detector` to surface the risks of each candidate corrective action.

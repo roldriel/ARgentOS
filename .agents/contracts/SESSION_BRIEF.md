@@ -56,6 +56,8 @@ answer = ""
 source = ""
 ```
 
+`source` records where the answer came from: `user` for a direct user answer, or `unattended_default` for a default applied under unattended mode (such entries stay `PENDING_USER_CONFIRMATION` until the user reviews them).
+
 ## Sections
 
 ### Metadata

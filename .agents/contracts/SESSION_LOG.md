@@ -34,6 +34,7 @@ Each entry should include as many of the following fields as applicable:
 - **Worker**: role adopted by the worker.
 - **Knowledge entries consulted**: UUIDs of KB entries used, or `none`.
 - **Decision**: orchestrator decision (`proceed`, `retry`, `recovery`, `needs_clarification`, `abort`).
+- **Pending confirmation**: any default applied under unattended mode is recorded as `PENDING_USER_CONFIRMATION` with the ambiguity, the applied default, and the policy entry that covered it.
 - **Feature flags active**: list of enabled feature flags at session start.
 
 ## Initial entry template
@@ -45,6 +46,8 @@ At session start, the Orchestrator MUST create `SESSION_LOG.md` with a header bl
 
 - Session UUID: `<uuid>`
 - Created: `<ISO-8601-timestamp>`
+- Protocol version: `<X.Y.Z>` (`.agents/VERSION` at session start)
+- Delegation mode: `subagent` | `single-instance` (see orchestrator's delegation execution modes)
 - Active feature flags: <comma-separated list or `all enabled`>
 
 ## <ISO-8601-timestamp>

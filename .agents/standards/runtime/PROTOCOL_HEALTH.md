@@ -36,6 +36,7 @@ Each item is marked `[machine]` — verified deterministically by executable har
 7. **Project skills (non-blocking).** `[agent]` When `.project/skills/` exists, each skill directory contains a `SKILL.md` with YAML front matter declaring `name` (matching the directory name) and `description`, and every `references/<file>` cited in the body exists on disk (format contract: `.agents/skills/README.md`). An invalid project skill produces a WARNING, is excluded from activation for the session, and never fails this checklist.
 8. **State storage probe.** `[machine]` `python .agents/harness/health_check.py` exits with code `0` and reports `"result": "PASS"`: a write/read/delete round-trip of a probe file inside `.project/` succeeds, so `state.json` (`.agents/harness/runner_state.py`) can be persisted.
 9. **Timestamp sanity.** `[agent]` If `.project/.last_health_check` exists, its timestamp is not in the future.
+10. **Discovery marker (only when the `knowledge_base` flag is enabled).** `[agent]` If `.project/knowledge/discovery/` exists, the canonical marker `.project/.last_discovery` exists and is parseable JSON with `timestamp`, `scope` and `status`; the legacy marker `.project/knowledge/discovery/.last_discovery` MUST NOT exist (remove it — the canonical file prevails).
 
 ## Decision
 

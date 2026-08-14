@@ -27,6 +27,7 @@ consumed_by: [core:RECOVERY, core:COMPLETED, discovery:DISCOVERY_READY]
 - Path: `.project/<session-uuid>/HARNESS_REPORT.md` (session root, not inside an iteration folder).
 - Producer: the Orchestrator, after every trigger evaluation (`PASS` or `FAIL`).
 - Consumers: the Orchestrator (recovery and completion decisions), the Discovery Orchestrator (its result payload points to this file), and any audit of the session.
+- Version note: the report header records the `protocol_version` in force at session start. Entries are evaluated under that version's harness (runner-evaluated before 2.0.0, prose-judgment from 2.0.0 on) and are immutable records of it.
 
 ## Required structure
 

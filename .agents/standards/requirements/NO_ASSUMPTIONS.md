@@ -56,6 +56,16 @@ When the user provides a clarification:
 - If it becomes a verifiable behavior, record it as an acceptance criterion in `TASK_SPECIFICATION.md`.
 - If it is a confirmed fact that the implementation depends on, record it as an `assumptions` entry in `TASK_SPECIFICATION.md` with `assumption: <text>` and `user_confirmed: true`.
 
+## Unattended mode (opt-in)
+
+When no user is available to answer clarifications (CI, batch runs, dogfooding), the protocol MUST NOT simulate the user. Unattended mode is an explicit, opt-in alternative:
+
+1. **Declared defaults policy.** Before the session starts, the user (or the executing plan) declares a defaults policy: for each anticipated ambiguity class, a `recommended_default` and its applicability condition. Ambiguities not covered by the policy stop the session as usual.
+2. **Applied and marked.** When a covered ambiguity occurs, the Orchestrator applies the default and records it in `SESSION_LOG.md` as `PENDING_USER_CONFIRMATION` and in `SESSION_BRIEF.md` with `source: unattended_default`.
+3. **Deferred confirmation.** Every decision taken by default stays marked until the user reviews the session. A correction triggers the normal re-analysis cycle; an unreviewed default is never treated as user-confirmed.
+
+Unattended mode never lowers the bar of this standard: it replaces "ask and wait" with "apply declared default and mark", never with "assume silently".
+
 ## Relationship to other standards
 
 This standard complements `.agents/standards/requirements/EARS.md`. Acceptance criteria derived from unresolved assumptions are not valid under this policy.

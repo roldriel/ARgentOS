@@ -171,6 +171,8 @@ Identify:
 
 This state produces the task analysis artifact. The artifact must comply with the `TASK_ANALYSIS.md` contract and must recommend a valid next state.
 
+Optional output (HIGH confidence path): when intent confidence is `HIGH` and no ambiguity blocks progression, this state also produces `.project/<session-uuid>/<iteration>/<order>-INTENT_REFLECTION.md` for traceability (auto-confirmed reflection; user confirmation is not required). When this optional artifact exists, H11 gates it before `BUILDING_TASK_SPECIFICATION`. The mandatory production path for `INTENT_REFLECTION.md` remains `CONFIRMING_INTENT` (MEDIUM/LOW confidence).
+
 ### Harness
 
 This transition is gated by harness trigger `H00` (`orchestrators/core/harness/policies/H00-task-analysis.md`).
@@ -321,6 +323,8 @@ The agent cannot continue because required information is missing or ambiguous.
 ### Required Action
 
 Request additional information from the user.
+
+Unattended mode (opt-in, see `.agents/standards/requirements/NO_ASSUMPTIONS.md`): when no user is available and the ambiguity is covered by the declared defaults policy, apply the default, mark it `PENDING_USER_CONFIRMATION`, and continue. Ambiguities not covered by the policy stop the session in this state as usual.
 
 ### Allowed Transition
 

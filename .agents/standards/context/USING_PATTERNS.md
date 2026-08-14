@@ -66,3 +66,9 @@ tools, runtimes) detected by the `environment_worker`. Workers MUST:
 If `environment.md` is missing or contradicts what the worker observes, the
 worker reports the inconsistency to the Orchestrator; it does not silently
 work around it.
+
+Freshness: before relying on `environment.md` or `development_patterns.md`,
+the consuming worker (or the Orchestrator on its behalf) verifies the entry
+is within its TTL. A stale entry is not consumed: it is marked `stale` in the
+manifest and revalidated through the discovery pipeline first (see the
+Freshness Rule in `.agents/orchestrators/discovery/states/DISCOVERY_STATE_MACHINE.md`).

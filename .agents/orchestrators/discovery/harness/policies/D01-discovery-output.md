@@ -78,8 +78,9 @@ it only validates the per-task `KB_RECOMMENDATION.md` artifact in
    per-entry contracts), and the manifest lists every published entry. `[agent]`
 9. **New entries present:** `executive_summary.md`, `file_map.md`,
    `entrypoint.md`, `api.md` and `glossary.md` exist and follow their
-   contracts; `executive_summary.md` declares the `project_shape` in its first
-   line, matching the manifest. `[agent]`
+   contracts; `executive_summary.md` declares the `project_shape` in its
+   `## Project Shape` section (first content section after the front
+   matter), matching the manifest. `[agent]`
 10. **Distribution rule:** `distribution.md` is present when the declared
     `project_shape` is `library` or `cli`; it may be legitimately absent for
     any other shape. `[agent]`

@@ -1,6 +1,6 @@
 # Plan 37 — Bloques de confianza en TASK_ANALYSIS
 
-**Status:** Aprobado para redacción
+**Status:** Executed
 **Fecha:** 2026-08-11
 **RFC:** RFC-38 (`plans/rfc/38-task-analysis-confidence-blocks.md`)
 **Depende de:** —
@@ -47,3 +47,13 @@ Definir la semántica de los bloques de confianza de `TASK_ANALYSIS.md` y alinea
 ## Trazabilidad
 
 - RFC-38; punto 2.5 de la auditoría.
+
+## Nota de ejecución
+
+Ejecutado el 2026-08-12 (vía RFC-38 Accepted). Decisión aplicada: opción 2
+de la RFC — `[confidence]` redefinido como confianza del análisis (gobernado
+por `CONFIDENCE.md`), `intent_confidence` canónico de la interpretación de
+intención. Contrato `TASK_ANALYSIS.md` (sección + criterios de completitud
+nombrando ambos bloques) y policy H00 ítem 12 alineados. Versión 3.1.0
+(MINOR: clarificación compatible, sin eliminación de bloques). Verificación:
+invariantes OK, citas OK, estructura OK, 116 passed.

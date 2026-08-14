@@ -193,7 +193,7 @@ los planes 34–36 quedaron `Executed` el 11 ago 2026 (RFC-35…37 permanecen en
 | `34-verify-workflow-inputs.md` | RFC-35 | 2.2 | Inputs y decisión del workflow 07. |
 | `35-plan-workflow-inputs.md` | RFC-36 | 2.3 | Inputs del workflow 05. |
 | `36-gather-context-h10-declaration.md` | RFC-37 | 2.4 | H10 como gate opcional de uso, no de transición. |
-| `37-task-analysis-confidence-blocks.md` | RFC-38 | 2.5 | Semántica de los bloques de confianza del análisis. |
+| `37-task-analysis-confidence-blocks.md` | RFC-38 | Executed (12 ago 2026, 3.1.0) | Semántica de los bloques de confianza del análisis. |
 | `38-discovery-context-budget.md` | RFC-39 | 2.6 | Config de `context_budget` y muestreo (F-13). |
 | `39-kb-discovery-entry-produced-by.md` | RFC-40 | 2.7 | Procedencia real de las entradas de KB. |
 | `40-discovery-artifact-boundaries.md` | RFC-41 | 2.8 / 5.2 | Fronteras de intermedios + namespacing `<order>` (F-11/F-20). |

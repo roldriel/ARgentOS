@@ -57,6 +57,20 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.1.0] — 2026-08-12
+
+### Changed
+
+- **Semántica de los bloques de confianza de TASK_ANALYSIS** (plan 37,
+  RFC-38): el bloque `[confidence]` queda redefinido como confianza de la
+  calidad del análisis (evidencia que sostiene sus afirmaciones), gobernado
+  por `CONFIDENCE.md`; `intent_confidence` es el bloque canónico de la
+  interpretación de intención, gobernado por `INTENT_CONFIDENCE.md`.
+  Contrato y policy H00 alineados; los criterios de completitud nombran
+  ambos bloques explícitamente.
+
+---
+
 ## [3.0.7] — 2026-08-12
 
 ### Fixed

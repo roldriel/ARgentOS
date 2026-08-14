@@ -931,7 +931,12 @@ entities:
     tag: knowledge
     description: A single knowledge-base entry produced by project discovery.
     produced_by:
-      - discovery:DISCOVERY_INIT
+      - discovery:DISCOVERY_ENV
+      - discovery:DISCOVERY_STACK
+      - discovery:DISCOVERY_FRAMEWORK
+      - discovery:DISCOVERY_PATTERNS
+      - discovery:DISCOVERY_BUSINESS
+      - discovery:DISCOVERY_MERGE
     consumed_by:
       - core:GATHERING_CONTEXT
     contract: .agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md

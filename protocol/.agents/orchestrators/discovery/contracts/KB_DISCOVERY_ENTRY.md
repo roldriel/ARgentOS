@@ -1,7 +1,7 @@
 +++
 artifact = "KB_DISCOVERY_ENTRY.md"
 phase = "n/a"
-produced_by = "discovery_orchestrator"
+produced_by = ["discovery:DISCOVERY_ENV", "discovery:DISCOVERY_STACK", "discovery:DISCOVERY_FRAMEWORK", "discovery:DISCOVERY_PATTERNS", "discovery:DISCOVERY_BUSINESS", "discovery:DISCOVERY_MERGE"]
 enforcement = "gated"
 gated_by = ["D01"]
 +++

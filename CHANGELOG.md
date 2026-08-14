@@ -57,6 +57,18 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.2.1] — 2026-08-12
+
+### Fixed
+
+- **Procedencia real de las entradas de discovery** (plan 39, RFC-40):
+  `produced_by` de `KB_DISCOVERY_ENTRY.md` y de la taxonomía pasa a la lista
+  de estados productores de la máquina de discovery (ENV, STACK, FRAMEWORK,
+  PATTERNS, BUSINESS, MERGE); `DISCOVERY_INIT` deja de figurar como productor
+  de las entradas generales.
+
+---
+
 ## [3.2.0] — 2026-08-12
 
 ### Added

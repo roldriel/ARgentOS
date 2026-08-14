@@ -1,6 +1,6 @@
 # Plan 39 — Procedencia real de las entradas de discovery
 
-**Status:** Aprobado para redacción
+**Status:** Executed
 **Fecha:** 2026-08-11
 **RFC:** RFC-40 (`plans/rfc/40-kb-discovery-entry-produced-by.md`)
 **Depende de:** —
@@ -44,3 +44,11 @@ Corregir la metadata de procedencia del contrato `KB_DISCOVERY_ENTRY.md` para qu
 ## Trazabilidad
 
 - RFC-40; punto 2.7 de la auditoría.
+
+## Nota de ejecución
+
+Ejecutado el 2026-08-12 (vía RFC-40 Accepted). `produced_by` del contrato
+`KB_DISCOVERY_ENTRY.md` y de la entidad en `PROTOCOL_TAXONOMY.md` alineados a
+los estados productores de `DISCOVERY_STATE_MACHINE.md` (ENV, STACK,
+FRAMEWORK, PATTERNS, BUSINESS, MERGE). Versión 3.2.1. Verificación:
+invariantes OK, citas OK, estructura OK, 116 passed.

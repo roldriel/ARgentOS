@@ -1,6 +1,6 @@
 # Plan 51 — Catálogo de fases y skills en los roles de worker
 
-**Status:** Aprobado para redacción
+**Status:** Executed
 **Fecha:** 2026-08-11
 **RFC:** RFC-52 (`plans/rfc/52-worker-role-phase-catalog.md`)
 **Depende de:** —
@@ -47,3 +47,12 @@ Completar el catálogo de fases en `worker.md` y alinear las skills de los roles
 ## Trazabilidad
 
 - RFC-52; punto 6.1 de la auditoría.
+
+## Nota de ejecución
+
+Ejecutado el 2026-08-12 (vía RFC-52 Accepted). el catálogo Phase roles de `worker.md`
+agrega la fase 01 (`intent_reflector`, con nota de perfil de fase sin archivo
+de rol); `recovery_analyst.md` suma `risk-detector`. Auditoría transversal de
+los 8 roles de fase contra la tabla de activación: los otros 7 ya coincidían
+(verificado rol por rol). Versión 3.6.1. Verificación: invariantes OK, citas
+OK, estructura OK, 121 passed.

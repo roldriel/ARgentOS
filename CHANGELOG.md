@@ -57,6 +57,17 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.6.1] — 2026-08-12
+
+### Fixed
+
+- **Catálogo de fases y skills de workers** (plan 51, RFC-52): `worker.md`
+  agrega la fase 01 (`intent_reflector`, perfil de fase) al catálogo;
+  `recovery_analyst.md` alinea sus skills con la tabla de activación
+  (`hypothesis-generator`, `risk-detector`).
+
+---
+
 ## [3.6.0] — 2026-08-12
 
 ### Added

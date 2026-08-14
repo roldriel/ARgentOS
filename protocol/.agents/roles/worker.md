@@ -44,6 +44,7 @@ The Worker is stateless between invocations. For each phase, the Orchestrator te
 One role per workflow phase, each defined in its own file under `.agents/roles/`:
 
 - `task_analyst` — phase 00, produces `TASK_ANALYSIS.md`.
+- `intent_reflector` — phase 01, produces `INTENT_REFLECTION.md`. Phase profile (not a role file under `.agents/roles/`); the Orchestrator delegates phase 01 to a worker adopting this profile.
 - `task_specification_writer` — phase 02, produces `TASK_SPECIFICATION.md`.
 - `context_gatherer` — phase 03, produces `CONTEXT_ARTIFACT.md`. It does not access the Knowledge Base directly; any KB entries are provided by the Orchestrator in the payload.
 - `context_validator` — phase 04, produces `CONTEXT_VALIDATION_REPORT.md`.

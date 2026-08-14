@@ -2,6 +2,20 @@
 
 This document defines how the Orchestrator assembles context for workers in the `.agents` protocol. It also defines the techniques for compressing that context without losing authority, acceptance criteria, critical constraints, or protocol state.
 
+## Determinism model
+
+Context assembly (discover → collect → organize → prioritize → resolve →
+compose → deliver) is **judgment with ordered criteria**: the policies of this
+directory define the order and the closed sets (tie-breaking criteria,
+deduplication/merge rules, compression techniques), so the procedure is
+deterministic in form, but every criterion is evaluated by the Orchestrator by
+judgment when assembling a payload. Nothing in the context pipeline is
+machine-enforced: the budget is advisory (see `BUDGET_MATERIALIZATION.md`,
+§Enforcement status) and the deterministic checks named as "harness Future
+Extensions" across the Resolution/Composition policies are possibilities, not
+guarantees. This declaration is canonical for how the context pipeline is
+described across `.agents/standards/context/`.
+
 ## 1. Priority of information
 
 When building a worker payload, the Orchestrator includes context in this order of priority:

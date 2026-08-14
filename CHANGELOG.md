@@ -57,6 +57,24 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.16.0] — 2026-08-14
+
+### Changed
+
+- **Evidencia de flags declarada (F7-A)** (plan 65): procedimiento canónico de
+  evidencia en `standards/INDEX.md` (expected = `declarative_flags` de
+  `session_start`; evidenced = eventos `flag_evidence`; unevidenced = expected
+  − evidenced), con la agregación de métricas como mecanismo declarado y la
+  honestidad de que los eventos son auto-reportados. La "unevidenced
+  compliance" pasa a ser detectable.
+- **Modelo de determinismo de contexto declarado (F5-A)** (plan 65):
+  `CONTEXT.md` declara que la asamblea de contexto es juicio con criterios
+  ordenados (determinismo procedimental, no machine-enforced), coherente con
+  el budget advisory (P2.1); las "harness Future Extensions" quedan como
+  posibilidades, no garantías.
+
+---
+
 ## [3.15.0] — 2026-08-14
 
 ### Changed

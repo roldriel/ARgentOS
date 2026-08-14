@@ -22,6 +22,28 @@ Ignoring an enabled declarative flag — not reading it, or reading it without a
 
 **Compliance evidence** is auditable as a two-part join: (1) the initial `SESSION_LOG.md` entry records the active flags — the session's standing obligations; (2) when a declarative flag conditions an agent's behavior, that condition is declared in the produced artifact or in the corresponding session-log entry, naming the flag and the applied effect (e.g. a delegation declaring the `caveman` level; a Discovery Orchestrator invocation logged as an event; TDD red-green-refactor evidence in `EXECUTION_SUMMARY.md` for dual flags). An active declarative flag with no consumption declaration and no logged deviation is *unevidenced compliance*. Evidence is never rewritten retroactively: a late-discovered omission is logged as a deviation, not patched.
 
+### Compliance evidence (canonical procedure)
+
+The evidence join is defined operationally as follows:
+
+1. **Expected flags**: the `declarative_flags` list of the session's
+   `session_start` event in `METRICS.md` (contract:
+   `.agents/contracts/METRICS.md`) — the session's standing obligations.
+2. **Evidenced flags**: the `flag_evidence` events in `METRICS.md` — each
+   names a declarative flag whose consumption was declared in a produced
+   artifact or in a session-log entry.
+3. **Unevidenced flags**: `expected − evidenced` per session. An enabled
+   declarative flag with no `flag_evidence` event and no logged deviation is
+   *unevidenced compliance*: detectable via this join, and subject to the
+   deviation rule when the omission is material.
+4. **Mechanism**: the metrics aggregation tool of the development repository
+   computes the three sets mechanically (dev-only; see
+   `standards/runtime/PROTOCOL_METRICS.md`, §Aggregation); the agent may
+   compute them by judgment in an adopting project.
+
+Honesty note: the events are self-reported (see `harness/INDEX.md`,
+§Enforcement model); the join is as accurate as the events recorded.
+
 | Flag | Description |
 |------|-------------|
 | `rubrics` | Enables the `reviewer` role and the `## Rubric Evaluation` section in verification. |
@@ -91,7 +113,7 @@ The technical-practice flags map each flag to the rubric that scores it and the 
 
 ## Context
 
-- `context/CONTEXT.md` — context engineering, knowledge-base budgets, context compression techniques, and compact tags.
+- `context/CONTEXT.md` — context engineering, the determinism model, knowledge-base budgets, context compression techniques, and compact tags.
 - `context/BUDGET_MATERIALIZATION.md` — materialization of the Context Budget for the prompt-based runtime: unit (estimated tokens), estimation rule, and conversion from the character-denominated KB budgets.
 - `context/RESOLUTION_TIE_BREAKING.md` — Resolution policy: ordered criteria for deciding between equivalent context candidates (explicit directive, source precedence, recency, coverage, first-fit).
 - `context/RESOLUTION_DEDUPLICATION.md` — Resolution policy: detection of fully-contained (redundant) candidates and their lossless removal.

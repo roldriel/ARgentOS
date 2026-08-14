@@ -866,9 +866,9 @@ ARgentOS's semantic determinism today is a goal, not a property.**
 | F2 | Trivial task profile is internally incoherent | §10, §18.2, §20 | Critical | ☑ Resolved | Plan 59 (2026-08-14): trivial path legalized (ANALYZING_TASK → PLANNING, reduced inputs); RFC-26 amended |
 | F3 | Multiple authoritative sources disagree on RECOVERY | §3, §18.1, §20 | Critical | ☑ Resolved | Plan 59 (2026-08-14): taxonomy core:RECOVERY.next aligned; H13 documents profile-conditional transitions |
 | F4 | Zero-hallucination / ground-truth guarantees are aspirational | §13, §20 | Critical | ☐ Open | |
-| F5 | Context determinism is explicitly deferred | §11, §12, §20 | High | ☐ Open | |
+| F5 | Context determinism is explicitly deferred | §11, §12, §20 | High | ☑ Resolved (by declaration) | Plan 65 (2026-08-14, option A): CONTEXT.md "Determinism model" (judgment with ordered criteria; procedural determinism); budget advisory (P2.1) |
 | F6 | Repo state documentation is stale and the battery is undefined | §3, §16, §18.4–18.7, §20 | High | ☑ Resolved | 2026-08-14 (Nivel 1 + Nivel 4): docs fixed, battery unified, version-state checker added |
-| F7 | Declarative flag compliance is undetectable by design | §8, §20 | High | ☐ Open | |
+| F7 | Declarative flag compliance is undetectable by design | §8, §20 | High | ☑ Resolved (by declaration + tooling) | Plan 65 (2026-08-14): canonical evidence procedure (expected/evidenced/unevidenced); computed by aggregate_metrics.py (Nivel 4) |
 
 ## Remediation order tracker (P0–P4)
 
@@ -939,6 +939,8 @@ See §18 for full detail.
 | 2026-08-14 | P4.3 | Contratos con schema_version (plan 62) | 39 contratos + `PROTOCOL_HEALTH.md` + checker + `MIGRATION.md` | Version 3.13.0 |
 | 2026-08-14 | P4.2 | Mapeo determinista de sesión (plan 63) | `hook_gate.py`, `runner_state.py`, `harness/INDEX.md` + tests | Version 3.14.0 |
 | 2026-08-14 | F1-A | Modelo de enforcement declarado (plan 64) | `harness/INDEX.md`, 16 policies, `HARNESS_REPORT.md`, `H13` | Version 3.15.0; option A |
+| 2026-08-14 | F7-A | Evidencia de flags declarada (plan 65) | `standards/INDEX.md`, `features.toml`, `PROTOCOL_METRICS.md` | Version 3.16.0 |
+| 2026-08-14 | F5-A | Determinismo de contexto declarado (plan 65) | `standards/context/CONTEXT.md` | Version 3.16.0 |
 
 ---
 

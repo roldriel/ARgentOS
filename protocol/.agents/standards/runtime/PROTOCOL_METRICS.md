@@ -93,6 +93,9 @@ Aggregation is performed by the agent on demand (metrics are advisory; nothing g
 4. Emit the aggregated report (JSON or a summary table) with one value per catalog metric.
 
 The aggregation consolidates the data points of one session or of the whole project (`.project/`). It never modifies session artifacts.
+The development repository provides a metrics aggregation tool that implements
+this procedure mechanically (dev-only; not part of the distributed protocol);
+adopting projects may aggregate by judgment or with their own tooling.
 
 ## Health signals
 

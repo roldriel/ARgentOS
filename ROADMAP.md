@@ -21,9 +21,10 @@ prioridades. No implementa nada: cada entrada cita su origen en
 Los estados de esos planes/RFCs se consultan en `plans/INDEX.md` (fuente de
 verdad descriptiva); esta tabla solo referencia, no duplica estados.
 
-Además, las RFCs 39–54 (en `Proposal`) madurarán tooling a medida que se
-acepten: budget de discovery, freshness de KB, validación mecánica de skills,
-catálogo de roles de worker, entre otros.
+Además, las RFCs 39–54 (todas `Accepted` desde el 12 ago 2026, vía RFC-56)
+maduran tooling a medida que se ejecuten sus planes: budget de discovery,
+freshness de KB, validación mecánica de skills, catálogo de roles de worker,
+entre otros.
 
 ## Proceso
 

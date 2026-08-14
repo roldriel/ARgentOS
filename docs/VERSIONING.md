@@ -68,8 +68,9 @@ Reglas:
 2. **Ejecución en `dev`:** aplicar los pasos del plan sobre `protocol/.agents/`.
 3. **Verificación:** `python tools/check_protocol_invariants.py --payload protocol .`,
    `python tools/check_plan_citations.py`, `python tools/check_plan_structure.py`,
-   H13 por juicio, y tests (`python -m pytest tests/`). Si algo falla, no se
-   versiona ni se promueve.
+   `python -m pytest tests/`, H13 por juicio y, solo en `master` tras la
+   promoción, `python tools/check_dist_sync.py` — es decir, la **batería
+   canónica** de §4.1. Si algo falla, no se versiona ni se promueve.
 4. **Estados:** plan → `Executed` (con `Nota de ejecución`), Amendment Log de la
    RFC, `plans/INDEX.md` como espejo.
 5. **Changelog + versión:** nueva sección `## [X.Y.Z] — fecha` con el ítem
@@ -82,6 +83,35 @@ Reglas:
    (mensaje que cite la sección del changelog). `publish-dist` corre con el tag.
 8. **Registro:** el tag queda como checkpoint inmutable; nada de este plan se
    vuelve a tocar salvo por un plan nuevo.
+
+### 4.1 Batería canónica de verificación
+
+La batería que define "verde" en este repo es la siguiente — única definición;
+`AGENTS.md` raíz y `plans/INDEX.md` §Convenciones la referencian, no la
+duplican:
+
+```bash
+python tools/check_protocol_invariants.py --payload protocol .
+python tools/check_plan_citations.py
+python tools/check_plan_structure.py
+python -m pytest tests/
+```
+
+Reglas:
+
+- **H13 por juicio:** la coherencia taxonómica
+  (`protocol/.agents/harness/policies/H13-protocol-taxonomy.md`) se aplica por
+  juicio en todo cambio de estructura del payload; no hay checker mecánico
+  (pendiente de remediación; tracker en `AUDITORIA_SISTEMA.md`).
+- **`check_dist_sync.py`:** local-only, se espera **verde solo en `master`**
+  (compara el payload commiteado contra la rama `dist` publicada; en `dev` con
+  planes sin publicar es roja por diseño, y CI no la fetchea).
+- **Sonda de producto:** `python protocol/.agents/harness/health_check.py` es
+  la verificación del producto adoptante (modo enforced), no parte de la
+  batería del repo.
+- **Tests del harness del producto:** `protocol/.agents/harness/tests/` no
+  corren en la batería del repo; se ejecutan en proyectos adoptantes
+  (pendiente de remediación: job de CI; tracker en `AUDITORIA_SISTEMA.md`).
 
 ## 5. Changelog
 
@@ -130,22 +160,23 @@ RFCs:
   tocar `VERSION`/changelog, o los ítems se acumulan en `[Unreleased]` y la
   numeración se asigna en la promoción.
 
-## 9. Estado actual y regularización (2026-08-12)
+## 9. Estado actual (2026-08-14)
 
 Estado:
 
-- `master` = `3.0.5` (tags `3.0.2`–`3.0.5` creados el 12 ago 2026).
-- `dev` = `3.0.5` (plan 54, RFC-55) promovido y taggeado; sin trabajo sin
-  publicar al cierre del release.
+- `master` = `3.6.3` (último commit `e88d416`, plan 53/RFC-54; tags
+  `3.0.2`…`3.6.3` creados el 11–12 ago 2026).
+- `dist` = `3.6.3`, regenerada desde `master` y verificada byte a byte contra
+  el payload de `master` el 14 ago 2026 (layout `.agents/` + `AGENTS.md`).
+- `dev` = `3.8.0` con los planes 46 (RFC-47) y 47 (RFC-48) ejecutados pero sin
+  publicar (commits `ddb9d89`, `304a50d`); las secciones `[3.7.0]` y `[3.8.0]`
+  del changelog no tienen tag hasta la promoción.
 
-Regularización ejecutada (12 ago 2026):
-
-1. Merge `dev` → `master` (fast-forward) con los planes 34–36 (3.0.2–3.0.4) y
-   el plan 54 (3.0.5).
-2. Tags anotados `3.0.2`, `3.0.3`, `3.0.4` y `3.0.5` en `master`.
-3. `publish-dist` regeneró `dist` desde `master` (verificado: layout `.agents/`
-   + `AGENTS.md`, entry file == `protocol/_AGENTS.md` del payload fuente,
-   VERSION 3.0.5).
+Nota histórica: la regularización del 12 ago 2026 (merge `dev` → `master` con
+los planes 34–36 y 54; tags `3.0.2`–`3.0.5`) quedó superada por las versiones
+`3.0.6`–`3.6.3` publicadas ese mismo día. Este §9 es un snapshot que se
+actualiza en cada release; la fuente inmutable de la verdad son `git tag` +
+`protocol/.agents/VERSION`.
 
 ## 10. Definition of Done
 
@@ -153,7 +184,7 @@ Un plan está terminado cuando:
 
 - [ ] Vía de autorización verificada y criterios de entrada cumplidos.
 - [ ] Cambios de `protocol/.agents/` aplicados según los pasos del plan.
-- [ ] Checkers en verde y H13 aplicado por juicio.
+- [ ] Batería canónica de §4.1 en verde y H13 aplicado por juicio.
 - [ ] Plan `Executed`, RFC con Amendment Log, INDEX actualizado.
 - [ ] Sección del changelog `[X.Y.Z]` con ítem `(plan N, RFC-N)` y `VERSION`
       bumped.

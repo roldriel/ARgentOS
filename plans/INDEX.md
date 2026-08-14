@@ -1,6 +1,21 @@
 # Índice de planes — ARgentOS
 
-Estado al 2026-08-12. El trabajo activo es el **Execution Context Pipeline** (`plans/ec-pipeline-vision.md`, visión completada) y su roadmap de RFCs conceptuales. La **serie de remediación de la auditoría 2.0.1** quedó redactada: RFC-55 `Accepted` y ejecutada (plan 54, release 3.0.5); RFC-29…31 `Accepted` (planes 28–30 `Executed`); RFC-32…54 en `Proposal` con sus planes en `Aprobado para redacción`/`Executed` según el caso — el siguiente paso es la aceptación de esas RFCs y la ejecución de sus planes. El 12 ago 2026 se completó además la remediación de la auditoría de documentación (`docs/AUDITORIA_DOCUMENTACION.md`, fuera del payload): AGENTS.md raíz operativo, plantillas de plan/RFC + `tools/check_plan_structure.py`, tests centralizados en `tests/`, batería completa en CI sin path filters, disolución de `dev/` (`tools/`, `runtime/`, `docs/` en raíz) y `tools/check_dist_sync.py`. Los planes de construcción del protocolo (dominios, taxonomía, discovery) están implementados; sus versiones históricas viven en `archive/`.
+Estado al 2026-08-14. La **serie de remediación de la auditoría 2.0.1** está
+completa: RFC-29…56 `Accepted` (las 23 RFCs de la serie 32…54 se revisaron una
+por una vía RFC-56, plan 57) y todos los planes numerados `Executed`. El
+trabajo activo es el **Execution Context Pipeline** (`plans/ec-pipeline-vision.md`,
+visión completada) y su roadmap de RFCs conceptuales. `dev` está 2 commits
+adelante de `master` (planes 46 y 47, versiones `[3.7.0]`/`[3.8.0]` sin
+publicar); `master`/`dist` están en `3.6.3`. El 12 ago 2026 se completó la
+remediación de la auditoría de documentación (`docs/AUDITORIA_DOCUMENTACION.md`,
+fuera del payload): AGENTS.md raíz operativo, plantillas de plan/RFC +
+`tools/check_plan_structure.py`, tests centralizados en `tests/`, batería en CI
+sin path filters, disolución de `dev/` (`tools/`, `runtime/`, `docs/` en raíz) y
+`tools/check_dist_sync.py`. El 14 ago 2026 se agregó `AUDITORIA_SISTEMA.md`
+(tracker vivo de remediación del sistema) y se unificó la definición de batería
+en `docs/VERSIONING.md` §4.1. Los planes de construcción del protocolo
+(dominios, taxonomía, discovery) están implementados; sus versiones históricas
+viven en `archive/`.
 
 ## Serie de RFCs (documentos canónicos)
 
@@ -265,7 +280,15 @@ Anunciadas en RFCs aprobadas pero fuera del roadmap actual (decidir destino):
 
 ## Convenciones
 
-- **Verificación**: `python tools/check_protocol_invariants.py --payload protocol .` + `python protocol/.agents/harness/health_check.py` + `python tools/check_plan_citations.py` + `python tools/check_plan_structure.py` + `python tools/check_dist_sync.py` (solo local: compara el payload commiteado contra la rama `dist`; CI no la fetchea) + `python -m pytest tests/`. Los tests del harness (`protocol/.agents/harness/tests/`) no corren en la batería del repo: son tests del producto, se ejecutan en proyectos adoptantes.
+- **Verificación**: la batería canónica es la de `docs/VERSIONING.md` §4.1
+  (`python tools/check_protocol_invariants.py --payload protocol .`,
+  `python tools/check_plan_citations.py`, `python tools/check_plan_structure.py`,
+  `python -m pytest tests/`, H13 por juicio). `python tools/check_dist_sync.py`
+  es local-only y se espera verde solo en `master` (CI no la fetchea);
+  `python protocol/.agents/harness/health_check.py` es la sonda del producto
+  (adoptantes, modo enforced), no parte de la batería del repo. Los tests del
+  harness (`protocol/.agents/harness/tests/`) no corren en la batería del repo:
+  son tests del producto, se ejecutan en proyectos adoptantes.
 - **Idioma**: inglés en el protocolo (`protocol/.agents/`), en su entry file (`protocol/_AGENTS.md`) y en el `AGENTS.md` raíz de desarrollo (es lo que leen los agentes), en el código y en los commits (Conventional Commits en inglés); español en la documentación de adopción (`docs/ADOPTION.md`, `docs/MIGRATION.md`, `CHANGELOG.md`), en `plans/` y en la documentación del tooling (`tools/`, `runtime/`, `docs/` — el código en inglés); `README.md` en inglés (público). Los documentos nuevos siguen esta regla; los existentes se alinean de forma incremental.
 - **Inmutabilidad y clases de cambio (RFC-56)**: `protocol/.agents/` solo se modifica por la vía que corresponde a la clase del cambio. **Clase A** (modelo conceptual, contratos, breaking): requiere RFC `Accepted`; una RFC en `Proposal` NO habilita tocar el payload. **Clase B** (mejora documental compatible, sin cambio de significado): plan `Aprobado para ejecución` con justificación documentada + batería en verde. **Clase C** (corrección mecánica: typos, formato, links; cero cambio de significado): commit directo en `dev` con la batería en verde, registrado en el changelog de la próxima versión. Reglas de borde: ante la duda se elige la clase más estricta; la clase se declara en el plan (A/B) o en el commit (C) y es revisable; la batería de verificación corre en las tres clases.
 - **Ciclo de status (RFCs)**: `Proposal` (borrador) → `Accepted` (aprobada) → `Superseded` (reemplazada; el header indica por cuál RFC). No existe `Approved`: los documentos que lo usaban se normalizaron a `Accepted` (2 ago 2026).

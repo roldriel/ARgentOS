@@ -1,12 +1,25 @@
 # ARgentOS (desarrollo) — estado y feedback crítico
 
-**Fecha:** 2026-08-12
+**Fecha:** 2026-08-14
 
 **Nota:** este archivo reemplaza al informe de auditoría de documentación del
 2026-08-12 (disponible en la historia de git). El estado de remediación de esa
-auditoría: 10 de 11 puntos cerrados; parciales el 3 (links Markdown genéricos
-sin checker, riesgo bajo) y el 6 (queda la referencia de RFC-42 en el
-payload, que requiere vía formal).
+auditoría: 10 de 11 puntos cerrados; los parciales 3 (links Markdown genéricos
+sin checker, riesgo bajo) y 6 (referencia de RFC-42 en el payload) quedaron
+cerrados el 12 ago 2026 (plan 56) — ver abajo.
+
+**Actualización 2026-08-14 (Nivel 1 de remediación, tracker
+`AUDITORIA_SISTEMA.md`):**
+
+- La serie RFC-32…54 quedó **toda `Accepted`** (revisión individual vía
+  RFC-56, plan 57); ninguna RFC queda en `Proposal`.
+- `test_toolcalls.py` quedó desacoplado del payload (usa
+  `tests/fixtures/skills/`).
+- La batería pasó de 114 a **121 tests** (`python -m pytest tests/`).
+- `docs/VERSIONING.md` §9 refleja el estado real de versiones (master 3.6.3,
+  dev 3.8.0, dist 3.6.3) y §4.1 define la batería canónica.
+- Pendientes de fondo sin cambio: branch protection, harness tests fuera de la
+  CI del repo, checker mecánico de coherencia taxonómica (H13).
 
 ---
 
@@ -41,15 +54,13 @@ regenerada por CI.
 
 ## Deuda técnica
 
-- **23 RFCs en `Proposal` (RFC-32…54) con planes redactados pero no
-  ejecutados.** Es la deuda grande: hay una serie completa de diseño
-  aprobado-en-papel esperando aceptación. Algunas ya tienen planes `Executed`
-  por vía plan con regularización pendiente — un patrón que resuelve el corto
-  plazo pero acumula deuda de gobernanza (ya pasó con RFC-24…28 y hubo que
-  regularizar retroactivamente).
-- **`test_toolcalls.py` sigue acoplado al payload** (lee skills reales).
-  Contradice la regla escrita en `tests/AGENTS.md` — señalado varias veces,
-  sin cerrar.
+- ~~**23 RFCs en `Proposal` (RFC-32…54)**~~ **(resuelto 12 ago 2026)**: la
+  serie completa se revisó una por una vía RFC-56 (plan 57) y quedó
+  `Accepted`; ninguna RFC está en `Proposal` y todos los planes numerados están
+  `Executed`.
+- ~~**`test_toolcalls.py` acoplado al payload**~~ **(resuelto 14 ago 2026)**:
+  el test usa fixtures propias (`tests/fixtures/skills/`); ya no lee skills
+  reales del payload y respeta la regla de `tests/AGENTS.md`.
 - **El INDEX carga demasiados roles**: índice, backlog, convenciones, snapshot
   de estado, notas de regularización. Funciona, pero es frágil como fuente
   citada por todo el mundo; un día habrá que separar "convenciones" de
@@ -70,31 +81,37 @@ regenerada por CI.
   corren en CI, pero CI no bloquea nada visible en el flujo actual (no hay
   branch protection mencionada); un push directo a `dev` roto no se entera
   nadie hasta que alguien mira.
-- **El punto 6 residual es un agujero de gobernanza conocido y abierto**:
-  `ANTI_CIRCUMVENTION.md` no referencia la regla RFC-42 que hoy gobierna todos
-  los cambios del payload. El documento que se llama "anti-circumvention" no
-  cita la regla anti-circumvention vigente.
+- **El punto 6 residual quedó cerrado (12 ago 2026, plan 56)**: la regla de
+  inmutabilidad del payload quedó incorporada inline a `ANTI_CIRCUMVENTION.md`
+  ("el payload es inmutable dentro de una versión; todo cambio llega por una
+  versión publicada"). Por frontera documental el payload no referencia RFCs;
+  la regla RFC-42 vive en la documentación del repo (`plans/INDEX.md`
+  §Convenciones).
 - **Harness sin cobertura en el repo.** Decisión del usuario, respetada, pero
   el costo real es: el código ejecutable del payload (`hook_gate.py`,
   `runner_state.py`) no tiene regresión automática en este repo; sus tests
   solo corren en proyectos adoptantes. Un plan que rompa el harness se
-  detecta tarde.
+  detecta tarde. El plan 46 agregó el test de integración del flujo enforced al
+  payload, pero la CI del repo sigue sin ejecutarlos (pendiente en
+  `AUDITORIA_SISTEMA.md` §Remediation Tracker).
 
 ## Cabos sueltos
 
-1. Referencia RFC-42 en el payload (requiere plan aprobado — es el único
-   pendiente con vía formal).
-2. Push de `dev` (4 commits locales sin publicar) y eventual sync de
-   `master`.
+1. ~~Referencia RFC-42 en el payload~~ **(cerrado 12 ago 2026, plan 56)**: regla
+   inline en `ANTI_CIRCUMVENTION.md`.
+2. Push de `dev` (2 commits locales sin publicar: planes 46 y 47) y eventual
+   promoción a `master`.
 3. Links Markdown genéricos sin checker (riesgo bajo, decisión consciente).
-4. Desacople de `test_toolcalls.py` (fixtures propias).
-5. `AUDITORIA_DOCUMENTACION.md` no tiene hogar conceptual: ¿vive en raíz para
-   siempre, se archiva en `plans/`, se borra cuando se cierre el punto 6?
+4. ~~Desacople de `test_toolcalls.py`~~ **(cerrado 14 ago 2026)**: fixtures
+   propias en `tests/fixtures/skills/`.
+5. Hogar conceptual de los documentos de estado: con la creación de
+   `AUDITORIA_SISTEMA.md` (14 ago 2026) como tracker vivo de remediación, este
+   archivo queda como estado/feedback histórico; decidir si se consolidan.
 
 ## Feedback crítico
 
 El proyecto tiene un riesgo estructural claro: **la gobernanza escala peor
-que el protocolo**. Hay 55 RFCs y 54 planes para un producto que son, en
+que el protocolo**. Hay 58 RFCs y 57 planes para un producto que son, en
 esencia, documentos Markdown. El aparato (ciclos de status, amendment logs,
 citas verificables, checkers) es excelente para sostener calidad, pero cada
 cambio chico paga un peaje burocrático alto, y la evidencia está a la vista:
@@ -104,7 +121,8 @@ misma cada dos semanas, la señal es que el proceso pide más ceremonia de la
 que el riesgo real justifica. Los checkers ayudan (mecanizan el cumplimiento),
 pero la pregunta que el proyecto eventualmente tiene que responder es: ¿qué
 cambios del payload realmente necesitan RFC, y cuáles podrían pasar por
-fast-track con checker verde? Mientras tanto, la prioridad honesta no es
-seguir remendando el workspace —que hoy quedó sólido— sino destrabar la serie
-Proposal: 23 diseños aprobados en papel que no ejecutan son 23 decisiones no
-tomadas.
+fast-track con checker verde? La serie Proposal se destrabó el 12 ago 2026
+(RFC-56, plan 57): las 23 RFCs quedaron `Accepted`. El riesgo estructural de
+fondo sigue vigente: la ceremonia de gobernanza es alta para un producto
+documental, y conviene revisar el peaje de cada cambio chico con la evidencia
+de los checkers como vara.

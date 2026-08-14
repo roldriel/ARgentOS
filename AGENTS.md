@@ -90,8 +90,10 @@ python tools/check_dist_sync.py
 python -m pytest tests/
 ```
 
+This is the canonical battery defined in `docs/VERSIONING.md` §4.1.
 `check_dist_sync.py` compares the committed payload against the local `dist`
-branch; it is a local-only check (CI does not fetch `dist`).
+branch; it is a local-only check (CI does not fetch `dist`) and is expected
+green only on `master` — on `dev`, unpublished plans make it red by design.
 
 Project priorities live in `ROADMAP.md`; design history in `plans/INDEX.md`.
 

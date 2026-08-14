@@ -1,6 +1,8 @@
 # ARgentOS — Exhaustive System Audit (living document)
 
-> **Status:** Living document — open remediation tracker.
+> **Status:** All original findings and remediation items resolved (2026-08-14).
+> Remaining work is optional future RFCs (real validators, machine budget
+> accounting), not open audit items.
 > **Audit date:** 2026-08-14
 > **Scope:** repository as of `dev` @ `304a50d` (VERSION 3.8.0; `master`/`dist` at 3.6.3).
 > **Method:** read-only audit. No repository files were modified during the audit.
@@ -865,7 +867,7 @@ ARgentOS's semantic determinism today is a goal, not a property.**
 | F1 | The "harness" is self-assessment, not enforcement | §7, §20 | Critical | ☑ Resolved (by declaration) | Plan 64 (2026-08-14, option A): the three-layer model is declared (enforced/reviewed/verified); claims no longer overstate machine enforcement. Building real validators (options B/C) remains a possible future RFC |
 | F2 | Trivial task profile is internally incoherent | §10, §18.2, §20 | Critical | ☑ Resolved | Plan 59 (2026-08-14): trivial path legalized (ANALYZING_TASK → PLANNING, reduced inputs); RFC-26 amended |
 | F3 | Multiple authoritative sources disagree on RECOVERY | §3, §18.1, §20 | Critical | ☑ Resolved | Plan 59 (2026-08-14): taxonomy core:RECOVERY.next aligned; H13 documents profile-conditional transitions |
-| F4 | Zero-hallucination / ground-truth guarantees are aspirational | §13, §20 | Critical | ☐ Open | |
+| F4 | Zero-hallucination / ground-truth guarantees are aspirational | §13, §20 | Critical | ☑ Resolved (by declaration) | Plan 64/65 (option A): the payload now declares what is enforced vs. reviewed vs. verified; ground-truth validation (D01) is explicitly judgment; no claim of machine-verifiable zero hallucination remains |
 | F5 | Context determinism is explicitly deferred | §11, §12, §20 | High | ☑ Resolved (by declaration) | Plan 65 (2026-08-14, option A): CONTEXT.md "Determinism model" (judgment with ordered criteria; procedural determinism); budget advisory (P2.1) |
 | F6 | Repo state documentation is stale and the battery is undefined | §3, §16, §18.4–18.7, §20 | High | ☑ Resolved | 2026-08-14 (Nivel 1 + Nivel 4): docs fixed, battery unified, version-state checker added |
 | F7 | Declarative flag compliance is undetectable by design | §8, §20 | High | ☑ Resolved (by declaration + tooling) | Plan 65 (2026-08-14): canonical evidence procedure (expected/evidenced/unevidenced); computed by aggregate_metrics.py (Nivel 4) |
@@ -905,8 +907,25 @@ See §18 for full detail.
 - [x] §18.8 Changelog order/aging — Resolved 2026-08-14 (plan 60): [Unreleased] on top; dev sections without tag documented as in-progress releases
 - [x] §18.9 `produced_by` domain — Resolved 2026-08-14 (plan 61): TOML front matter uses canonical actor/role/worker names; states only in the taxonomy YAML block
 - [x] §18.10 `RECOVERY_REPORT.md` enum — Resolved 2026-08-14 (plan 58, RFC-30): early-phase destinations added
-- [ ] §18.11 D01 "harness code" model
-- [x] §18.12 `DISCOVERY_MANIFEST` naming / `INTER_WORKER_MESSAGE` produced_by — Resolved 2026-08-14 (plan 58): naming note added; produced_by uses explicit roles. The produced_by value-domain unification (§18.9) remains open (P1.2)
+- [x] §18.11 D01 "harness code" model — Resolved 2026-08-14 (plan 60, P3.2): no executable runner today; mechanical validation is a possible future extension
+- [x] §18.12 `DISCOVERY_MANIFEST` naming / `INTER_WORKER_MESSAGE` produced_by — Resolved 2026-08-14 (plans 58/61): naming note added; produced_by uses explicit roles and the canonical domain (P1.2)
+
+## Estado final (2026-08-14)
+
+Todos los hallazgos F1–F7, los ítems P0.1–P4.4 y las contradicciones
+18.1–18.12 quedaron resueltos. La remediación se ejecutó en `dev` con los
+planes 58–65 (versiones 3.9.0–3.16.0) y commits documentales, manteniendo la
+batería canónica en verde en cada paso.
+
+Trabajo futuro opcional (no son ítems abiertos de la auditoría):
+
+- **F1-B/C — validadores ejecutables en el producto** (runner de validación
+  estructural de los ítems `[gate]`), si se quiere enforcement real más allá
+  del caparazón de hooks. Requeriría RFC nueva.
+- **P2.1-accounting — contabilidad mecánica del budget** (hoy es advisory).
+- **Agregación de métricas por sesión** (el agregador actual es proyecto-wide).
+- **Promoción del release**: merge `dev` → `master`, tag anotado `3.16.0` y
+  regeneración de `dist` (CI), cuando el usuario lo autorice.
 
 ## Remediation log
 

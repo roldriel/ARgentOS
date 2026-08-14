@@ -112,9 +112,21 @@ Possible values for `recommended_next_state`:
 PLANNING
 NEEDS_CLARIFICATION
 ABORT
+ANALYZING_TASK
+BUILDING_TASK_SPECIFICATION
+GATHERING_CONTEXT
+VALIDATING_CONTEXT
 ```
 
 `ABORT` is valid only as a founded abort: the cause is recorded in `SESSION_LOG.md` (a user decision, a recovery decision-table action, or an infeasibility judgment), per `DECISIONS.md` (`D5 — Abort authority`). No further work is performed after `ABORT`.
+
+The early-phase destinations (`ANALYZING_TASK`, `BUILDING_TASK_SPECIFICATION`,
+`GATHERING_CONTEXT`, `VALIDATING_CONTEXT`) correspond to the `RECOVERY` edges
+of the state machine (`.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md`,
+§RECOVERY): the destination is selected by the artifact to correct
+(`TASK_ANALYSIS.md` → `ANALYZING_TASK`, `TASK_SPECIFICATION.md` →
+`BUILDING_TASK_SPECIFICATION`, `CONTEXT_ARTIFACT.md` → `GATHERING_CONTEXT`,
+`CONTEXT_VALIDATION_REPORT.md` → `VALIDATING_CONTEXT`).
 
 ---
 

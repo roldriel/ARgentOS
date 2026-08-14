@@ -32,6 +32,31 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [3.9.0] — 2026-08-14
+
+### Changed
+
+- **RECOVERY_REPORT — destinos de fases tempranas** (plan 58, RFC-30):
+  `corrective_action.recommended_next_state` admite `ANALYZING_TASK`,
+  `BUILDING_TASK_SPECIFICATION`, `GATHERING_CONTEXT` y `VALIDATING_CONTEXT`,
+  alineando el contrato con las aristas de recovery ya legales en la máquina
+  de estados; `08-recovery.md` alinea la recomendación. Adición compatible:
+  los reportes válidos previos siguen siendo válidos.
+
+### Fixed
+
+- **Actor único de hashes en discovery** (plan 58, RFC-54): `orchestrator.md`
+  (sección 4.3) ya no instruye al core Orchestrator a computar hashes ni a
+  transportarlos en el payload de invocación; los computa `init_worker`
+  (`DISCOVERY_STATE_MACHINE.md`, sección Hash Calculation), completando la
+  ejecución del plan 53.
+- **Metadata de contratos de discovery** (plan 58): `INTER_WORKER_MESSAGE.md`
+  declara `produced_by` con roles explícitos de los workers de discovery;
+  `DISCOVERY_MANIFEST.md` aclara la relación contrato ↔ artefacto
+  (`.discovery_manifest`).
+
+---
+
 ## [3.8.0] — 2026-08-14
 
 ### Added

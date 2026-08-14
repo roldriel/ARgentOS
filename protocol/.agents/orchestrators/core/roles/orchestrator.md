@@ -155,11 +155,12 @@ When the `discovery_orchestrator` feature flag is enabled, the Orchestrator main
 
 Both TTLs are configured in `.agents/features.toml`.
 
-**Hash calculation.** Before invoking, the Orchestrator computes:
-
-1. **Config files hash:** SHA-256 of the relevant configuration files in deterministic order.
-2. **Sample files hash:** SHA-256 of the selected code sample.
-3. **Environment hash:** SHA-256 of the environment probe results.
+**Hash calculation.** Hashes are computed by the Discovery Orchestrator's
+`init_worker` during `discovery:DISCOVERY_INIT` and recorded in
+`discovery_input.json` and the manifest's `[hashes]` section
+(`orchestrators/discovery/states/DISCOVERY_STATE_MACHINE.md`). The core
+Orchestrator never computes hashes itself: it only detects the need for
+discovery (conditions above) and requests the scope.
 
 **Invocation.** The Orchestrator invokes the Discovery Orchestrator with a scope and the following payload:
 
@@ -176,12 +177,7 @@ Both TTLs are configured in `.agents/features.toml`.
   "project_root": "/path/to/project",
   "scope": "full",
   "context_budget": 100000,
-  "sample_size": 10,
-  "hashes": {
-    "config_files_hash": "sha256:abc...",
-    "sample_files_hash": "sha256:def...",
-    "environment_hash": "sha256:ghi..."
-  }
+  "sample_size": 10
 }
 ```
 

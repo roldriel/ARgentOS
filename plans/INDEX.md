@@ -13,9 +13,10 @@ fuera del payload): AGENTS.md raíz operativo, plantillas de plan/RFC +
 sin path filters, disolución de `dev/` (`tools/`, `runtime/`, `docs/` en raíz) y
 `tools/check_dist_sync.py`. El 14 ago 2026 se agregó `AUDITORIA_SISTEMA.md`
 (tracker vivo de remediación del sistema) y se unificó la definición de batería
-en `docs/VERSIONING.md` §4.1. Los planes de construcción del protocolo
-(dominios, taxonomía, discovery) están implementados; sus versiones históricas
-viven en `archive/`.
+en `docs/VERSIONING.md` §4.1. El mismo día se ejecutó el plan 58 (alineación
+Nivel 2 del payload con RFC-30/RFC-54, versión 3.9.0). Los planes de
+construcción del protocolo (dominios, taxonomía, discovery) están
+implementados; sus versiones históricas viven en `archive/`.
 
 ## Serie de RFCs (documentos canónicos)
 
@@ -235,6 +236,12 @@ los planes 34–36 quedaron `Executed` el 11 ago 2026 (RFC-35…37 permanecen en
 | `56-payload-immutability-anti-circumvention.md` | — (vía plan) | Executed (12 ago 2026) | Regla inline de inmutabilidad del payload en `ANTI_CIRCUMVENTION.md` (cierra el pendiente del plan 41). |
 | `57-governance-classes-rollout.md` | RFC-56 | Executed (12 ago 2026) | Implementación de las clases A/B/C en las fuentes de verdad + revisión individual de RFC-32…54. |
 
+## Octava serie: remediación de la auditoría de sistema (14 ago 2026)
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `58-remediacion-nivel-2.md` | RFC-30, RFC-54 | Executed | Alineación del payload con modelos Accepted: actor único de hashes (completa plan 53), enum de `RECOVERY_REPORT` con fases tempranas (completa plan 29), metadata de contratos de discovery. Versión 3.9.0. |
+
 ## Backlog evidenciado - plan 19
 
 (5 ago 2026.)
@@ -258,7 +265,8 @@ Resolución: los ítems B-1…B-8 se redactan como pares RFC + plan en la **Sext
 serie** (tabla arriba); cada plan referencia su fricción F-xx. B-1 → plan 40
 (y 47), B-2 → planes 29 y 33, B-3 → plan 50, B-4 → planes 37-43 y 53, B-5 →
 plan 44, B-6 → plan 46 (cobertura H15 vía tests del flujo enforced), B-7 →
-planes 29, 43 y 52, B-8 → plan 49.
+planes 29, 43 y 52, B-8 → plan 49. El actor único de hashes de B-4 (F-17) se
+completa con el plan 58.
 
 ## Documentos de soporte
 

@@ -876,10 +876,10 @@ ARgentOS's semantic determinism today is a goal, not a property.**
 |---|---|---|---|---|
 | P0.1 | Fix trivial-profile contradiction (transition set + inputs; state machine, workflow 05, H00 checklist) | F2 | ☐ Open | |
 | P0.2 | Fix RECOVERY taxonomy contradiction (taxonomy `next` includes early-phase transitions) | F3 | ☐ Open | |
-| P0.3 | Fix hash-actor contradiction (single actor; align orchestrator.md, DISCOVERY_STATE_MACHINE.md, invocation payload) | — | ☐ Open | |
+| P0.3 | Fix hash-actor contradiction (single actor; align orchestrator.md, DISCOVERY_STATE_MACHINE.md, invocation payload) | — | ☑ Resolved | Plan 58 (2026-08-14): orchestrator.md aligned; RFC-54 Accepted |
 | P1.1 | Restore mechanical H13 coherence checker (dev tool + CI) and single-source the battery definition | P0.2 | ☐ Open | |
 | P1.2 | Define and enforce `produced_by` / `profile` value domains | P1.1 | ☐ Open | |
-| P1.3 | Fix `RECOVERY_REPORT.md` enum (add early-phase destinations) | P0.2 | ☐ Open | |
+| P1.3 | Fix `RECOVERY_REPORT.md` enum (add early-phase destinations) | P0.2 | ☑ Resolved | Plan 58 (2026-08-14): enum includes early-phase destinations; RFC-30 Accepted |
 | P2.1 | Machine-checkable budget accounting or explicit advisory declaration | F5 | ☐ Open | |
 | P2.2 | Schema validation for `ENTRY`/`METRIC` comments and `state.json` | P1.1 | ☐ Open | |
 | P2.3 | Specify `retry_count` / recovery-table variable persistence | F1 | ☐ Open | |
@@ -897,16 +897,16 @@ See §18 for full detail.
 
 - [ ] §18.1 Taxonomy vs state machine (RECOVERY)
 - [ ] §18.2 Trivial profile vs state machine
-- [ ] §18.3 Hash actor
+- [x] §18.3 Hash actor — Resolved 2026-08-14 (plan 58, RFC-54): orchestrator.md no longer computes or carries hashes
 - [x] §18.4 Versioning state — Resolved 2026-08-14 (`docs/VERSIONING.md` §9 updated; master 3.6.3, dev 3.8.0, dist 3.6.3)
 - [x] §18.5 Documented state of the repo — Resolved 2026-08-14 (`docs/AUDITORIA_DOCUMENTACION.md` and `plans/INDEX.md` header updated)
 - [ ] §18.6 Single-source policy vs its own payload
 - [x] §18.7 Battery definition — Resolved 2026-08-14 (single canonical battery in `docs/VERSIONING.md` §4.1; `AGENTS.md` and `plans/INDEX.md` reference it)
 - [ ] §18.8 Changelog order/aging
 - [ ] §18.9 `produced_by` domain
-- [ ] §18.10 `RECOVERY_REPORT.md` enum
+- [x] §18.10 `RECOVERY_REPORT.md` enum — Resolved 2026-08-14 (plan 58, RFC-30): early-phase destinations added
 - [ ] §18.11 D01 "harness code" model
-- [ ] §18.12 `DISCOVERY_MANIFEST` naming / `INTER_WORKER_MESSAGE` provenance
+- [x] §18.12 `DISCOVERY_MANIFEST` naming / `INTER_WORKER_MESSAGE` produced_by — Resolved 2026-08-14 (plan 58): naming note added; produced_by uses explicit roles. The produced_by value-domain unification (§18.9) remains open (P1.2)
 
 ## Remediation log
 
@@ -917,6 +917,9 @@ See §18 for full detail.
 | 2026-08-14 | Nivel 1 | 1.3 Header de INDEX actualizado | `plans/INDEX.md` | Estado al 2026-08-14 |
 | 2026-08-14 | Nivel 1 | 1.4 Batería canónica unificada | `docs/VERSIONING.md` §4.1, `AGENTS.md`, `plans/INDEX.md` §Convenciones | Single definition; dist-sync green only on master |
 | 2026-08-14 | Nivel 1 (bonus) | ROADMAP stale line fixed | `ROADMAP.md` | RFCs 39–54 Accepted |
+| 2026-08-14 | Nivel 2 | 2.1 Hash-actor único completado | `protocol/.agents/orchestrators/core/roles/orchestrator.md` §4.3 | Plan 58, RFC-54 (completes plan 53) |
+| 2026-08-14 | Nivel 2 | 2.2 RECOVERY_REPORT enum con fases tempranas | `protocol/.agents/orchestrators/core/contracts/RECOVERY_REPORT.md`, `protocol/.agents/orchestrators/core/workflow/08-recovery.md` | Plan 58, RFC-30 (completes plan 29) |
+| 2026-08-14 | Nivel 2 | 2.3 Metadata de contratos de discovery | `protocol/.agents/orchestrators/discovery/contracts/INTER_WORKER_MESSAGE.md`, `protocol/.agents/orchestrators/discovery/contracts/DISCOVERY_MANIFEST.md` | Plan 58, Clase B |
 
 ---
 

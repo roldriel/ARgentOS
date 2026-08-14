@@ -862,7 +862,7 @@ ARgentOS's semantic determinism today is a goal, not a property.**
 
 | ID | Finding | Section ref | Severity | Status | Notes |
 |---|---|---|---|---|---|
-| F1 | The "harness" is self-assessment, not enforcement | §7, §20 | Critical | ☐ Open | |
+| F1 | The "harness" is self-assessment, not enforcement | §7, §20 | Critical | ☑ Resolved (by declaration) | Plan 64 (2026-08-14, option A): the three-layer model is declared (enforced/reviewed/verified); claims no longer overstate machine enforcement. Building real validators (options B/C) remains a possible future RFC |
 | F2 | Trivial task profile is internally incoherent | §10, §18.2, §20 | Critical | ☑ Resolved | Plan 59 (2026-08-14): trivial path legalized (ANALYZING_TASK → PLANNING, reduced inputs); RFC-26 amended |
 | F3 | Multiple authoritative sources disagree on RECOVERY | §3, §18.1, §20 | Critical | ☑ Resolved | Plan 59 (2026-08-14): taxonomy core:RECOVERY.next aligned; H13 documents profile-conditional transitions |
 | F4 | Zero-hallucination / ground-truth guarantees are aspirational | §13, §20 | Critical | ☐ Open | |
@@ -938,6 +938,7 @@ See §18 for full detail.
 | 2026-08-14 | P2.1 | Context Budget advisory (plan 62) | `WORKER_DELEGATION_CONTRACT.md`, `BUDGET_MATERIALIZATION.md`, `CONTEXT.md` | Version 3.13.0 |
 | 2026-08-14 | P4.3 | Contratos con schema_version (plan 62) | 39 contratos + `PROTOCOL_HEALTH.md` + checker + `MIGRATION.md` | Version 3.13.0 |
 | 2026-08-14 | P4.2 | Mapeo determinista de sesión (plan 63) | `hook_gate.py`, `runner_state.py`, `harness/INDEX.md` + tests | Version 3.14.0 |
+| 2026-08-14 | F1-A | Modelo de enforcement declarado (plan 64) | `harness/INDEX.md`, 16 policies, `HARNESS_REPORT.md`, `H13` | Version 3.15.0; option A |
 
 ---
 

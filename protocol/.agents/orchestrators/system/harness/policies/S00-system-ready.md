@@ -38,7 +38,7 @@ Validate that the protocol runtime environment is healthy before the System Agen
 
 ## Checklist
 
-**Evaluation audience:** the harness runner no longer exists; an item is `[machine]` only when validated deterministically by the state-storage probe (its exit code and JSON output); every other item is `[agent]` — evaluated by agent judgment when applying this policy or the health checklist. A `[machine]` failure is gateable without interpretation; an `[agent]` failure is declared judgment.
+**Evaluation audience:** the harness runner no longer exists; an item is `[machine]` only when validated deterministically by the state-storage probe (its exit code and JSON output); every other item is `[agent]` — evaluated by agent judgment when applying this policy or the health checklist. A `[machine]` failure is checkable without interpretation; an `[agent]` failure is declared judgment.
 
 1. `python .agents/harness/health_check.py` (state-storage probe) exits with code `0` and reports `"result": "PASS"`. `[machine]`
 2. Every `[agent]` item of the protocol health checklist (`.agents/standards/runtime/PROTOCOL_HEALTH.md`) passes: required directories and index files, contract front matter, flag-gated rubrics/KB/technical-practice standards, timestamp sanity. `[agent]`

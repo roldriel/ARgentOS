@@ -57,6 +57,20 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.15.0] — 2026-08-14
+
+### Changed
+
+- **Modelo de enforcement declarado honestamente** (plan 64, F1-A): el payload
+  distingue tres capas — enforced (caparazón de hooks, fail-open), reviewed
+  (gates por juicio del Orchestrator, trail auto-reportado) y verified
+  (checkers de desarrollo, dev-only). `harness/INDEX.md` gana la sección
+  "Enforcement model"; las policies dejan de decir que un ítem `[gate]` es
+  machine-gateable ("structurally checkable"); `HARNESS_REPORT.md` pasa a ser
+  el "review trail" auto-reportado; H13 nota los checkers dev-only.
+
+---
+
 ## [3.14.0] — 2026-08-14
 
 ### Changed

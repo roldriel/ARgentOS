@@ -13,11 +13,11 @@ fuera del payload): AGENTS.md raíz operativo, plantillas de plan/RFC +
 sin path filters, disolución de `dev/` (`tools/`, `runtime/`, `docs/` en raíz) y
 `tools/check_dist_sync.py`. El 14 ago 2026 se agregó `AUDITORIA_SISTEMA.md`
 (tracker vivo de remediación del sistema) y se unificó la definición de batería
-en `docs/VERSIONING.md` §4.1. El mismo día se ejecutaron los planes 58–63
-(Nivel 2, Nivel 3, lote fácil, P1.2, P2.1/P4.3 y P4.2 de la remediación,
-versiones 3.9.0–3.14.0). Los planes de construcción del protocolo (dominios,
-taxonomía, discovery) están implementados; sus versiones históricas viven en
-`archive/`.
+en `docs/VERSIONING.md` §4.1. El mismo día se ejecutaron los planes 58–64
+(Nivel 2, Nivel 3, lote fácil, P1.2, P2.1/P4.3, P4.2 y F1-A de la
+remediación, versiones 3.9.0–3.15.0). Los planes de construcción del protocolo
+(dominios, taxonomía, discovery) están implementados; sus versiones históricas
+viven en `archive/`.
 
 ## Serie de RFCs (documentos canónicos)
 
@@ -247,6 +247,7 @@ los planes 34–36 quedaron `Executed` el 11 ago 2026 (RFC-35…37 permanecen en
 | `61-remediacion-p1-2.md` | — (Clase B) | Executed | Dominios canónicos de `produced_by` (contratos) y `profile` (workflows), con enforcement en el checker de coherencia taxonómica. Versión 3.12.0. |
 | `62-remediacion-p2-1-p4-3.md` | — (Clase B) | Executed | Context Budget declarado advisory (P2.1) y contratos versionados con `schema_version` (P4.3), con enforcement en el checker. Versión 3.13.0. |
 | `63-remediacion-p4-2.md` | — (Clase B) | Executed | Mapeo determinista de sesión CLI ↔ protocolo (`.project/.sessions.json`) en `hook_gate.py` + `runner_state.py link`. Versión 3.14.0. |
+| `64-remediacion-f1-a.md` | — (Clase B) | Executed | Modelo de enforcement declarado en tres capas (enforced/reviewed/verified); rewordings de policies, HARNESS_REPORT y H13. Versión 3.15.0. |
 
 ## Backlog evidenciado - plan 19
 

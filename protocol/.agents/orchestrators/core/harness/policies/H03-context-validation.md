@@ -38,7 +38,7 @@ Validate that the context validation report justifies whether the gathered conte
 
 ## Checklist
 
-**Evaluation audience:** the harness runner no longer exists; every item in this policy is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` have objectively verifiable structure and are restated as numbered instructions in §"Gate Checklist", where the Orchestrator MUST cite evidence per item. Items marked `[agent]` are declared judgment.
+**Evaluation audience:** the harness runner no longer exists; every item in this policy is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` are structurally checkable and are restated as numbered instructions in §"Gate Checklist", where the Orchestrator MUST cite evidence per item. Items marked `[agent]` are declared judgment.
 
 1. The artifact file exists. `[gate]`
 2. The report explicitly states whether the context is sufficient. `[agent]`

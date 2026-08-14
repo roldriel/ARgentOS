@@ -38,7 +38,7 @@ Validate that the discovery session was initialized correctly and that the disco
 
 ## Checklist
 
-**Evaluation audience:** the harness runner no longer exists; each item is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` have objectively verifiable structure (artifact existence); items marked `[agent]` are declared judgment.
+**Evaluation audience:** the harness runner no longer exists; each item is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` are structurally checkable (artifact existence); items marked `[agent]` are declared judgment.
 
 1. The discovery report artifact file exists. `[gate]`
 2. The artifact complies with the contract in `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_REPORT.md`. `[agent]` (this policy declares no `required_sections` or semantic checks; contract compliance is judged by the agent)

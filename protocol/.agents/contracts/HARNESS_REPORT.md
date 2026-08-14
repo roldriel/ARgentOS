@@ -22,7 +22,7 @@ consumed_by: [core:RECOVERY, core:COMPLETED, discovery:DISCOVERY_READY]
 
 ## Purpose
 
-`HARNESS_REPORT.md` is the audit trail of the validation harness. It lives at the root of every session (`.project/<session-uuid>/HARNESS_REPORT.md`) and records every harness trigger invocation with its result, evidence, and aggregated metrics. It is written by the Orchestrator after every gate evaluation; no other agent edits it.
+`HARNESS_REPORT.md` is the **review trail** of the protocol harness. It lives at the root of every session (`.project/<session-uuid>/HARNESS_REPORT.md`) and records every harness trigger invocation with its result, evidence, and aggregated metrics. It is written by the Orchestrator after every gate evaluation; no other agent edits it. It is self-reported: it records the Orchestrator's judgment (see `.agents/harness/INDEX.md`, §Enforcement model); it is not independently verified evidence.
 
 ## Location and ownership
 

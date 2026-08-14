@@ -38,7 +38,7 @@ H10 does NOT participate in the discovery cycle (`discovery:DISCOVERY_VALIDATE` 
 
 ## Decision Criteria
 
-**Evaluation audience:** the harness runner no longer exists; each criterion is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` have objectively verifiable structure (artifact existence, required-section presence); items marked `[agent]` are declared judgment.
+**Evaluation audience:** the harness runner no longer exists; each criterion is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` are structurally checkable (artifact existence, required-section presence); items marked `[agent]` are declared judgment.
 
 `PASS` when all of the following hold; `FAIL` otherwise:
 

@@ -55,7 +55,7 @@ it only validates the per-task `KB_RECOMMENDATION.md` artifact in
 
 ## Checklist
 
-**Evaluation audience:** the harness runner no longer exists; each item is evaluated by the Orchestrator's judgment when the gate fires. Today every item is `[agent]` (declared judgment); per §"Implementation Note", items with deterministic structure (entry existence, `source_files` path existence, required fields and sections) are `[gate]`-candidates — objectively verifiable and gateable without interpretation if a future implementation restores mechanical checks.
+**Evaluation audience:** the harness runner no longer exists; each item is evaluated by the Orchestrator's judgment when the gate fires. Today every item is `[agent]` (declared judgment); per §"Implementation Note", items with deterministic structure (entry existence, `source_files` path existence, required fields and sections) are `[gate]`-candidates — objectively checkable without interpretation if a future implementation restores mechanical checks.
 
 1. **Real stack:** every language/framework listed in `stack.md` comes from a
    real configuration file (e.g., `pyproject.toml`, `package.json`,

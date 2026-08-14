@@ -43,7 +43,7 @@ state machines, workflows, harness policies, contracts, roles and workers.
 
 ## Rules
 
-**Evaluation audience:** the harness runner no longer exists; every rule below is evaluated by the Orchestrator's judgment when the policy is applied. All rules are `[gate]` items — objectively verifiable structure (file existence, metadata blocks, taxonomy references) — so a failure is gateable without interpretation; this policy contains no `[agent]` (agent-judgment) items.
+**Evaluation audience:** the harness runner no longer exists; every rule below is evaluated by the Orchestrator's judgment when the policy is applied. All rules are `[gate]` items — structurally checkable (file existence, metadata blocks, taxonomy references) — so a failure is checkable without interpretation; this policy contains no `[agent]` (agent-judgment) items.
 
 1. Every workflow must reference a `state` and a `domain` that exist in the taxonomy.
 2. Every harness policy must respect its domain namespace prefix (`H` = core, `D` = discovery,
@@ -96,6 +96,8 @@ to detect non-canonical terms against the master dictionary
 There is no executable test suite: the former `test_protocol_taxonomy.py` invariants live in
 the rules above. The Orchestrator (or the System Agent during bootstrap) applies them by
 judgment whenever the protocol structure changes.
+The development repository provides dev-only mechanical checkers for these rules (not part
+of the distributed protocol); the runtime applies H13 by judgment.
 
 ## Decision Criteria
 

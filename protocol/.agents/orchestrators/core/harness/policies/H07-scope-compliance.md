@@ -38,7 +38,7 @@ Validate that the executed work stayed within the task assigned by the user — 
 
 ## Checklist
 
-**Evaluation audience:** the harness runner no longer exists; every item in this policy is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` have objectively verifiable structure and are restated as numbered instructions in §"Gate Checklist", where the Orchestrator MUST cite evidence per item. Items marked `[agent]` are declared judgment.
+**Evaluation audience:** the harness runner no longer exists; every item in this policy is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` are structurally checkable and are restated as numbered instructions in §"Gate Checklist", where the Orchestrator MUST cite evidence per item. Items marked `[agent]` are declared judgment.
 
 1. The artifact contains a `Scope Compliance` section. `[gate]` (see §"Gate Checklist", item 2)
 2. The section declares whether the work respected the assigned scope. `[gate]` (see §"Gate Checklist", item 3, which verifies the declared `scope_respected` value)

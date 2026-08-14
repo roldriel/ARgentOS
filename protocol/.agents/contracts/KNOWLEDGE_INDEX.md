@@ -1,7 +1,7 @@
 +++
 artifact = "KNOWLEDGE_INDEX.md"
 phase = "bootstrap"
-produced_by = "argentos_system_agent"
+produced_by = "system_agent"
 enforcement = "informational"
 +++
 

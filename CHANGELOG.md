@@ -57,6 +57,22 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.12.0] — 2026-08-14
+
+### Changed
+
+- **Dominio canónico de `produced_by` en contratos** (plan 61, P1.2):
+  `produced_by` en el front matter TOML usa nombres canónicos de la taxonomía
+  (actor, `role_id` o `worker_id`); los estados viven solo en el bloque YAML
+  del taxonomy (`PROTOCOL_HEALTH.md` ítem 3). Contratos normalizados:
+  `KNOWLEDGE_INDEX.md`/`PROJECT_README.md` (`system_agent`) y
+  `KB_DISCOVERY_ENTRY.md` (roles de workers). Cierra la contradicción §18.9.
+- **`profile` de workflows validado** (plan 61): nombre canónico de
+  worker/rol o `null`; el checker de coherencia taxonómica valida
+  `produced_by`, `profile` y el catálogo de perfiles ↔ taxonomía.
+
+---
+
 ## [3.11.0] — 2026-08-14
 
 ### Changed

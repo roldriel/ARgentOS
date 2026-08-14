@@ -13,10 +13,10 @@ fuera del payload): AGENTS.md raíz operativo, plantillas de plan/RFC +
 sin path filters, disolución de `dev/` (`tools/`, `runtime/`, `docs/` en raíz) y
 `tools/check_dist_sync.py`. El 14 ago 2026 se agregó `AUDITORIA_SISTEMA.md`
 (tracker vivo de remediación del sistema) y se unificó la definición de batería
-en `docs/VERSIONING.md` §4.1. El mismo día se ejecutaron los planes 58, 59 y 60
-(Nivel 2, Nivel 3 y lote fácil de la remediación, versiones 3.9.0, 3.10.0 y
-3.11.0). Los planes de construcción del protocolo (dominios, taxonomía,
-discovery) están implementados; sus versiones históricas viven en `archive/`.
+en `docs/VERSIONING.md` §4.1. El mismo día se ejecutaron los planes 58–61
+(Nivel 2, Nivel 3, lote fácil y P1.2 de la remediación, versiones 3.9.0–3.12.0).
+Los planes de construcción del protocolo (dominios, taxonomía, discovery)
+están implementados; sus versiones históricas viven en `archive/`.
 
 ## Serie de RFCs (documentos canónicos)
 
@@ -243,6 +243,7 @@ los planes 34–36 quedaron `Executed` el 11 ago 2026 (RFC-35…37 permanecen en
 | `58-remediacion-nivel-2.md` | RFC-30, RFC-54 | Executed | Alineación del payload con modelos Accepted: actor único de hashes (completa plan 53), enum de `RECOVERY_REPORT` con fases tempranas (completa plan 29), metadata de contratos de discovery. Versión 3.9.0. |
 | `59-remediacion-nivel-3.md` | RFC-26 (enmendada), RFC-30 | Executed | Camino trivial legalizado (`ANALYZING_TASK → PLANNING` condicionada al perfil, inputs reducidos) y taxonomía `RECOVERY`/`ANALYZING_TASK` alineada con la máquina de estados. Versión 3.10.0. |
 | `60-remediacion-nivel-6.md` | — (Clase B) | Executed | Lote fácil: excepción single-source, convención `[Unreleased]`, contrato de evento de hook, modelo D01 aclarado, semántica de `retry_count`. Versión 3.11.0. |
+| `61-remediacion-p1-2.md` | — (Clase B) | Executed | Dominios canónicos de `produced_by` (contratos) y `profile` (workflows), con enforcement en el checker de coherencia taxonómica. Versión 3.12.0. |
 
 ## Backlog evidenciado - plan 19
 

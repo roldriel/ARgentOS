@@ -174,21 +174,22 @@ RFCs:
 
 ## 9. Estado actual (2026-08-14)
 
-Estado:
+Estado tras la promoción del release `3.16.0`:
 
-- `master` = `3.6.3` (último commit `e88d416`, plan 53/RFC-54; tags
-  `3.0.2`…`3.6.3` creados el 11–12 ago 2026).
-- `dist` = `3.6.3`, regenerada desde `master` y verificada byte a byte contra
-  el payload de `master` el 14 ago 2026 (layout `.agents/` + `AGENTS.md`).
-- `dev` = `3.8.0` con los planes 46 (RFC-47) y 47 (RFC-48) ejecutados pero sin
-  publicar (commits `ddb9d89`, `304a50d`); las secciones `[3.7.0]` y `[3.8.0]`
-  del changelog no tienen tag hasta la promoción.
+- `master` = `3.16.0` (tag anotado `3.16.0`; merge `dev` → `master` con los
+  planes 58–65 de la remediación de la auditoría de sistema).
+- `dist` = `3.16.0`, regenerada por CI (`publish-dist`) desde `master`.
+- `dev` = `3.16.0`, en sync con `master`.
 
-Nota histórica: la regularización del 12 ago 2026 (merge `dev` → `master` con
-los planes 34–36 y 54; tags `3.0.2`–`3.0.5`) quedó superada por las versiones
-`3.0.6`–`3.6.3` publicadas ese mismo día. Este §9 es un snapshot que se
-actualiza en cada release; la fuente inmutable de la verdad son `git tag` +
-`protocol/.agents/VERSION`.
+Notas:
+
+- Las secciones `[3.7.0]`–`[3.15.0]` del changelog son hitos del batch de
+  remediación en `dev`; no fueron releases individuales y no tienen tag. Solo
+  `3.16.0` es la versión publicada de ese batch (ver §5 y §8).
+- La regularización del 12 ago 2026 (planes 34–36 y 54; tags `3.0.2`–`3.0.5`)
+  y las versiones `3.0.6`–`3.6.3` quedan como historia. Este §9 es un
+  snapshot que se actualiza en cada release; la fuente inmutable de la verdad
+  son `git tag` + `protocol/.agents/VERSION`.
 
 ## 10. Definition of Done
 

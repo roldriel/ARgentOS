@@ -1,6 +1,6 @@
 # Plan 53 — Redacción de contratos de discovery (F-15 y F-19)
 
-**Status:** Aprobado para redacción
+**Status:** Executed
 **Fecha:** 2026-08-11
 **RFC:** RFC-54 (`plans/rfc/54-discovery-contract-wording.md`)
 **Depende de:** —
@@ -49,3 +49,14 @@ Eliminar las dos ambigüedades de redacción de discovery: ubicación del `proje
 ## Trazabilidad
 
 - RFC-54; fricciones F-15 y F-19 de `plans/19-anexo-a-bitacora-fricciones.md`; backlog B-4.
+
+## Nota de ejecución
+
+Ejecutado el 2026-08-12 (vía RFC-54 Accepted). `EXECUTIVE_SUMMARY.md` exige
+ahora la sección `## Project Shape` (primera sección de contenido tras el
+front matter) en lugar de la "primera línea"; D01 ítem 9 alineado. La sección
+Hash Calculation de la máquina de discovery declara actor único
+(`init_worker`, que registra en `discovery_input.json` y el manifest); el
+core Orchestrator solo solicita el scope. `init_worker.md` ya computaba los
+hashes en sus Tasks — consistente, sin cambio. Versión 3.6.3. Verificación:
+invariantes OK, citas OK, estructura OK, 121 passed.

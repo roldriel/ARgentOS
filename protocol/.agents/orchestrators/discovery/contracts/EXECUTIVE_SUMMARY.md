@@ -28,7 +28,7 @@ Define the format of the `executive_summary.md` knowledge-base entry produced by
 
 ## Required sections
 
-1. **First line: project shape** — the first line of the entry declares the `project_shape` (`library`, `cli`, `service`, `application`, `monorepo` or `unknown`), matching the `[knowledge_base]` field of the manifest. This tells the reader which other KB entries to expect.
+1. **Project Shape section** — the entry declares the `project_shape` (`library`, `cli`, `service`, `application`, `monorepo` or `unknown`) in a `## Project Shape` section, the first content section after the front matter, matching the `[knowledge_base]` field of the manifest. This tells the reader which other KB entries to expect.
 2. `## Project Purpose` — what the project does, in 2-3 lines.
 3. `## Stack in One Line` — the technology stack summarized in a single line.
 4. `## Entry Point` — where execution (or import, for libraries) starts; details live in `entrypoint.md`.

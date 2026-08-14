@@ -602,7 +602,10 @@ expired (i.e., discovery is invoked).
 
 # Hash Calculation
 
-The core Orchestrator computes the hashes before invoking:
+The `init_worker` computes the hashes as part of its task and records them in
+`discovery_input.json` and in the manifest's `[hashes]` section. The core
+Orchestrator only requests the scope and receives the result; it never
+computes hashes itself. The hashes are:
 
 1. **Config files hash:** SHA-256 of the relevant configuration files in
    deterministic order.

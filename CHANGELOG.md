@@ -57,6 +57,17 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.6.3] — 2026-08-12
+
+### Fixed
+
+- **Redacción de contratos de discovery** (plan 53, RFC-54): el
+  `project_shape` se declara en sección explícita `## Project Shape`
+  (elimina el requisito ambiguo de "primera línea", F-15) y el actor único
+  del cálculo de hashes es `init_worker` (F-19).
+
+---
+
 ## [3.6.2] — 2026-08-12
 
 ### Fixed

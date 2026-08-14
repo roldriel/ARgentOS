@@ -57,6 +57,19 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.4.0] — 2026-08-12
+
+### Added
+
+- **Modo desatendido de clarificación (opt-in)** (plan 44, RFC-45):
+  `NO_ASSUMPTIONS.md` define el modo (política de defaults declarada,
+  aplicación marcada, confirmación diferida — nunca asumir en silencio);
+  `AGENT_STATE_MACHINE.md` lo integra en `NEEDS_CLARIFICATION`;
+  `SESSION_BRIEF.md` gana `source: unattended_default` y `SESSION_LOG.md` el
+  registro `PENDING_USER_CONFIRMATION` (F-05).
+
+---
+
 ## [3.3.2] — 2026-08-12
 
 ### Fixed

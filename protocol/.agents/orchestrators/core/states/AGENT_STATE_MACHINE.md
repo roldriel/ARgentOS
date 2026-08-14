@@ -324,6 +324,8 @@ The agent cannot continue because required information is missing or ambiguous.
 
 Request additional information from the user.
 
+Unattended mode (opt-in, see `.agents/standards/requirements/NO_ASSUMPTIONS.md`): when no user is available and the ambiguity is covered by the declared defaults policy, apply the default, mark it `PENDING_USER_CONFIRMATION`, and continue. Ambiguities not covered by the policy stop the session in this state as usual.
+
 ### Allowed Transition
 
 After receiving new information:

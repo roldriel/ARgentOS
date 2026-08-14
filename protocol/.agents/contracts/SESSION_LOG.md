@@ -34,6 +34,7 @@ Each entry should include as many of the following fields as applicable:
 - **Worker**: role adopted by the worker.
 - **Knowledge entries consulted**: UUIDs of KB entries used, or `none`.
 - **Decision**: orchestrator decision (`proceed`, `retry`, `recovery`, `needs_clarification`, `abort`).
+- **Pending confirmation**: any default applied under unattended mode is recorded as `PENDING_USER_CONFIRMATION` with the ambiguity, the applied default, and the policy entry that covered it.
 - **Feature flags active**: list of enabled feature flags at session start.
 
 ## Initial entry template

@@ -1,6 +1,6 @@
 # Plan 44 — Modo desatendido de clarificación
 
-**Status:** Aprobado para redacción
+**Status:** Executed
 **Fecha:** 2026-08-11
 **RFC:** RFC-45 (`plans/rfc/45-unattended-clarification.md`)
 **Depende de:** —
@@ -50,3 +50,14 @@ Agregar un modo desatendido opt-in para sesiones sin usuario en línea, con defa
 ## Trazabilidad
 
 - RFC-45; fricción F-05 de `plans/19-anexo-a-bitacora-fricciones.md`; backlog B-5.
+
+## Nota de ejecución
+
+Ejecutado el 2026-08-12 (vía RFC-45 Accepted). Modo desatendido opt-in
+definido en `NO_ASSUMPTIONS.md` (política de defaults: clase de ambigüedad →
+`recommended_default` → condición de aplicabilidad; lo no cubierto detiene la
+sesión); flujo integrado en `NEEDS_CLARIFICATION`; `source:
+unattended_default` en `SESSION_BRIEF.md` y registro
+`PENDING_USER_CONFIRMATION` en `SESSION_LOG.md`. Resuelve B-5. Versión 3.4.0
+(MINOR: capacidad nueva compatible). Verificación: invariantes OK, citas OK,
+estructura OK, 116 passed.

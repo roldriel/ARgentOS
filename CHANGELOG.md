@@ -46,6 +46,11 @@ La política de versionado, changelog, tags y estados de planes vive en
 - **RFC-44…48 Accepted** (plan 57, misma revisión): diseños aprobados
   (reflexión HIGH, modo desatendido, trazas históricas, dogfooding enforced,
   contratos por entrada); ejecución pendiente vía planes 43–47.
+- **RFC-49…54 Accepted** (plan 57, misma revisión): diseños aprobados
+  (validación mecánica de skills, modo single-instance, frescura de KB,
+  catálogo de roles, candidatura tooling, contratos de discovery); ejecución
+  pendiente vía planes 48–53. Con este grupo queda cerrada la revisión
+  individual de la serie Proposal (23/23).
 
 (sin ítems de payload por ahora — los cambios de repo que no tocan el payload no se
 listan; ver `docs/VERSIONING.md` §5)

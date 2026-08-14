@@ -1,6 +1,6 @@
 # RFC-50 — Modelo de ejecución de delegaciones en una sola instancia
 
-**Status:** Proposal
+**Status:** Accepted (2026-08-12, revisión individual RFC-56; diseño aprobado, ejecución pendiente vía su plan)
 **Fecha:** 2026-08-11
 **Serie:** Remediación de auditoría 2.0.1
 **Origen:** Auditoría de estado ARgentOS 2.0.1 (2026-08-11), punto 5.1
@@ -42,3 +42,4 @@ El protocolo exige invocar un subagente por fase (`.agents/orchestrators/core/ro
 | Fecha | Cambio | Origen |
 |---|---|---|
 | 2026-08-11 | Creación (Proposal) | Auditoría 2.0.1, punto 5.1; F-09 |
+| 2026-08-12 | Accepted (revisión individual, RFC-56/plan 57): diseño aprobado; la ejecución sigue el track de su plan asociado. | Revisión de la serie Proposal (RFC-56) |

@@ -55,12 +55,12 @@ Estado al 2026-08-12. El trabajo activo es el **Execution Context Pipeline** (`p
 | RFC-46 | `rfc/46-historical-trace-policy.md` | Accepted (12 ago 2026, revisión RFC-56; plan 45, 11 ago 2026) | ¿Cómo se interpretan trazas producidas por un harness que ya no existe? |
 | RFC-47 | `rfc/47-enforced-mode-dogfooding.md` | Accepted (12 ago 2026, revisión RFC-56; plan 46, 11 ago 2026) | ¿Cómo se valida empíricamente el modo enforced? |
 | RFC-48 | `rfc/48-discovery-per-entry-contracts.md` | Accepted (12 ago 2026, revisión RFC-56; plan 47, 11 ago 2026) | ¿Dónde se definen las secciones requeridas de cada entrada de discovery? |
-| RFC-49 | `rfc/49-protocol-skill-mechanical-validation.md` | Proposal (plan 48, 11 ago 2026) | ¿Cómo se garantiza estructuralmente la validez de las skills del protocolo? |
-| RFC-50 | `rfc/50-delegation-single-instance-model.md` | Proposal (plan 49, 11 ago 2026) | ¿Cómo se mantiene la separación de roles en una sola instancia? |
-| RFC-51 | `rfc/51-discovery-kb-freshness.md` | Proposal (plan 50, 11 ago 2026) | ¿Cómo se evita consumir entradas de KB vencidas o revalidadas fuera del pipeline? |
-| RFC-52 | `rfc/52-worker-role-phase-catalog.md` | Proposal (plan 51, 11 ago 2026) | ¿Coincide el catálogo de roles de fase y sus skills con la tabla de activación? |
-| RFC-53 | `rfc/53-tooling-profile-candidacy.md` | Proposal (plan 52, 11 ago 2026) | ¿Cómo clasifican las 7 preguntas las tareas de tooling/CLI? |
-| RFC-54 | `rfc/54-discovery-contract-wording.md` | Proposal (plan 53, 11 ago 2026) | ¿Cómo se redactan sin ambigüedad el project_shape y el cálculo de hashes? |
+| RFC-49 | `rfc/49-protocol-skill-mechanical-validation.md` | Accepted (12 ago 2026, revisión RFC-56; plan 48, 11 ago 2026) | ¿Cómo se garantiza estructuralmente la validez de las skills del protocolo? |
+| RFC-50 | `rfc/50-delegation-single-instance-model.md` | Accepted (12 ago 2026, revisión RFC-56; plan 49, 11 ago 2026) | ¿Cómo se mantiene la separación de roles en una sola instancia? |
+| RFC-51 | `rfc/51-discovery-kb-freshness.md` | Accepted (12 ago 2026, revisión RFC-56; plan 50, 11 ago 2026) | ¿Cómo se evita consumir entradas de KB vencidas o revalidadas fuera del pipeline? |
+| RFC-52 | `rfc/52-worker-role-phase-catalog.md` | Accepted (12 ago 2026, revisión RFC-56; plan 51, 11 ago 2026) | ¿Coincide el catálogo de roles de fase y sus skills con la tabla de activación? |
+| RFC-53 | `rfc/53-tooling-profile-candidacy.md` | Accepted (12 ago 2026, revisión RFC-56; plan 52, 11 ago 2026) | ¿Cómo clasifican las 7 preguntas las tareas de tooling/CLI? |
+| RFC-54 | `rfc/54-discovery-contract-wording.md` | Accepted (12 ago 2026, revisión RFC-56; plan 53, 11 ago 2026) | ¿Cómo se redactan sin ambigüedad el project_shape y el cálculo de hashes? |
 | RFC-55 | `rfc/55-protocol-source-containment.md` | Accepted (12 ago 2026) | ¿Cómo se desarrolla ARgentOS sin que el protocolo gobierne el repo fuente? |
 | RFC-56 | `rfc/56-governance-fast-track.md` | Accepted (12 ago 2026) | ¿Qué cambios del payload requieren RFC y cuáles pasan por vía plan con verificación mecánica? |
 
@@ -218,7 +218,7 @@ los planes 34–36 quedaron `Executed` el 11 ago 2026 (RFC-35…37 permanecen en
 | `54-protocol-source-containment.md` | RFC-55 | Executed (12 ago 2026) | Payload del producto en `protocol/` (`protocol/.agents/` + `protocol/_AGENTS.md`), AGENTS.md raíz de desarrollo, tooling/CI con `--payload protocol`, y consolidación de `dev/` (README, ROADMAP, source-layout). `dist` no cambia. |
 | `55-hook-setup-self-containment.md` | — (vía plan) | Executed (12 ago 2026) | Autocontención del setup de hooks en el payload; elimina la referencia a `ADOPTION.md` desde `harness/INDEX.md`. |
 | `56-payload-immutability-anti-circumvention.md` | — (vía plan) | Executed (12 ago 2026) | Regla inline de inmutabilidad del payload en `ANTI_CIRCUMVENTION.md` (cierra el pendiente del plan 41). |
-| `57-governance-classes-rollout.md` | RFC-56 | Aprobado para ejecución (12 ago 2026) | Implementación de las clases A/B/C en las fuentes de verdad + revisión individual de RFC-32…54. |
+| `57-governance-classes-rollout.md` | RFC-56 | Executed (12 ago 2026) | Implementación de las clases A/B/C en las fuentes de verdad + revisión individual de RFC-32…54. |
 
 ## Backlog evidenciado - plan 19
 

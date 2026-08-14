@@ -1,6 +1,6 @@
 # Plan 57 — Implementación de las clases de gobernanza (RFC-56)
 
-**Status:** Aprobado para ejecución
+**Status:** Executed
 **Fecha:** 2026-08-12
 **RFC:** RFC-56 (`plans/rfc/56-governance-fast-track.md`)
 **Depende de:** —
@@ -65,4 +65,11 @@ commiteable y verde por sí mismo.
 
 ## Nota de ejecución
 
-<!-- Se completa al ejecutar. -->
+Ejecutado el 2026-08-12. Entregables 1–4: clases A/B/C vigentes en
+`plans/INDEX.md` §Convenciones (Inmutabilidad), `docs/VERSIONING.md` §4/§7,
+`AGENTS.md` raíz (Task lifecycle + Do NOT) y campo `Clase` en
+`plans/_TEMPLATE.md`. Entregable 5: las 23 RFCs de la serie (32…54) revisadas
+individualmente en cuatro grupos; veredicto unánime `Accepted` con evidencia
+registrada en cada Amendment Log, espejo en `plans/INDEX.md` y registro en
+`CHANGELOG.md` [Unreleased] §Modelo conceptual. Ninguna queda en `Proposal`.
+Verificación por grupo y final: citas OK, estructura OK, 116 passed.

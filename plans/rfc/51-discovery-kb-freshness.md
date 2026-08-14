@@ -1,6 +1,6 @@
 # RFC-51 — Frescura y revalidación de la KB de discovery
 
-**Status:** Proposal
+**Status:** Accepted (2026-08-12, revisión individual RFC-56; diseño aprobado, ejecución pendiente vía su plan)
 **Fecha:** 2026-08-11
 **Serie:** Remediación de auditoría 2.0.1
 **Origen:** Auditoría de estado ARgentOS 2.0.1 (2026-08-11), puntos 5.3 y 5.4
@@ -43,3 +43,4 @@ La KB de discovery puede quedar vencida y aun así consumirse: `environment.md` 
 | Fecha | Cambio | Origen |
 |---|---|---|
 | 2026-08-11 | Creación (Proposal) | Auditoría 2.0.1, puntos 5.3 / 5.4; F-12 |
+| 2026-08-12 | Accepted (revisión individual, RFC-56/plan 57): diseño aprobado; la ejecución sigue el track de su plan asociado. | Revisión de la serie Proposal (RFC-56) |

@@ -198,7 +198,7 @@ los planes 34–36 quedaron `Executed` el 11 ago 2026 (RFC-35…37 permanecen en
 | `39-kb-discovery-entry-produced-by.md` | RFC-40 | Executed (12 ago 2026, 3.2.1) | Procedencia real de las entradas de KB. |
 | `40-discovery-artifact-boundaries.md` | RFC-41 | Executed (12 ago 2026, 3.3.0) | Fronteras de intermedios + namespacing `<order>` (F-11/F-20). |
 | `41-rfc-plan-status-governance.md` | RFC-42 | 2.9 | Gobernanza RFC Proposal vs planes Executed (23-28). **Regularización aplicada el 11 ago 2026** (RFC-24…28 → Accepted retroactivo); referencia en `ANTI_CIRCUMVENTION.md` cerrada por el plan 56 (12 ago 2026). |
-| `42-h13-planned-cleanup.md` | RFC-43 | 2.10 | Limpieza de la regla de entidades `planned`. |
+| `42-h13-planned-cleanup.md` | RFC-43 | Executed (12 ago 2026, 3.3.1) | Limpieza de la regla de entidades `planned`. |
 | `43-intent-reflection-auto-confirm.md` | RFC-44 | 3.2 | Estado productor de la reflexión HIGH (F-04). |
 | `44-unattended-clarification.md` | RFC-45 | 3.3 | Modo desatendido de clarificación (F-05). |
 | `45-historical-trace-policy.md` | RFC-46 | 4.1 | Versión de protocolo en trazas e interpretación histórica. |

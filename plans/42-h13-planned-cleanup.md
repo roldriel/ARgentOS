@@ -1,6 +1,6 @@
 # Plan 42 — Limpieza de la regla de entidades `planned` en H13
 
-**Status:** Aprobado para redacción
+**Status:** Executed
 **Fecha:** 2026-08-11
 **RFC:** RFC-43 (`plans/rfc/43-h13-planned-cleanup.md`)
 **Depende de:** —
@@ -43,3 +43,12 @@ Eliminar la referencia vigente a entidades `planned` que ya no existen.
 ## Trazabilidad
 
 - RFC-43; punto 2.10 de la auditoría.
+
+## Nota de ejecución
+
+Ejecutado el 2026-08-12 (vía RFC-43 Accepted). Regla 9 de H13 convertida en
+nota histórica (con instrucción de restauración si el mecanismo se
+reintroduce). Verificado: ninguna entidad con `status: planned` en la
+taxonomía; las demás apariciones de "planned" en el payload son prosa sin
+relación (deviation/unplanned_changes). Versión 3.3.1. Verificación:
+invariantes OK, citas OK, estructura OK, 116 passed.

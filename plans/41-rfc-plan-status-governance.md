@@ -1,6 +1,6 @@
 # Plan 41 — Gobernanza de status entre RFCs y planes
 
-**Status:** Executed (parcial: referencia en `ANTI_CIRCUMVENTION.md` pendiente de RFC-42 Accepted)
+**Status:** Executed (parcial cerrado el 2026-08-12: RFC-42 `Accepted` en la revisión RFC-56 y referencia en `ANTI_CIRCUMVENTION.md` agregada por el plan 56, 3.0.7)
 **Fecha:** 2026-08-11
 **RFC:** RFC-42 (`plans/rfc/42-rfc-plan-status-governance.md`)
 **Depende de:** —

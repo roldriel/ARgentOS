@@ -62,9 +62,11 @@ state machines, workflows, harness policies, contracts, roles and workers.
    `H14` as missing.
 8. Every protocol file in scope must carry a taxonomy metadata block with at least
    `taxonomy`, `kind` and `domain`.
-9. Entities marked `status: planned` (e.g. `D01-discovery-output`, discovery orchestrator role
-   and workers) are validated for internal coherence but their files are not required to exist
-   yet; they are created by the discovery-orchestrator rollout.
+9. (Historical note) Entities marked `status: planned` were the rollout mechanism of the
+   discovery orchestrator: they were validated for internal coherence without requiring their
+   files to exist. No entity carries `status: planned` anymore; if the mechanism is ever
+   reintroduced, this rule is restored as: entities marked `status: planned` are validated for
+   internal coherence but their files are not required to exist yet.
 10. Every workflow file on disk must have a `kind: workflow` entity in the taxonomy whose
     `domain`, `state`, `lifecycle`, `previous_states`, `next_states`, `input_artifacts`,
     `output_artifacts`, `harness` and `actor` match the file's metadata block, and vice versa

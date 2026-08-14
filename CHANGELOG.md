@@ -57,6 +57,16 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.3.1] — 2026-08-12
+
+### Fixed
+
+- **Regla muerta de entidades `planned` en H13** (plan 42, RFC-43): la regla
+  9 de la policy pasa a nota histórica (el mecanismo `planned` ya no existe
+  en la taxonomía; se documenta cómo restaurarla si se reintroduce).
+
+---
+
 ## [3.3.0] — 2026-08-12
 
 ### Changed

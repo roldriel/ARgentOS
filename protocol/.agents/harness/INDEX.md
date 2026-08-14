@@ -77,6 +77,14 @@ If a harness trigger fails:
 
 When a harness trigger fails, the Orchestrator routes to recovery. The recovery logic is declared as a **recovery decision table** inside each policy file (§"Recovery Decision Table"): an ordered list of rules (conditions over context variables such as `artifact_exists` or `retry_count` → recommended action and target phase) that the Orchestrator evaluates by judgment, applying the first matching rule. Co-locating the table with the policy keeps the recovery rule next to the gate that fails.
 
+**`retry_count` semantics.** The recovery tables condition on `retry_count`
+(retries already attempted for this failure). The Orchestrator derives it at
+the moment the gate fails from the session's `HARNESS_REPORT.md`: the number of
+prior `FAIL` entries for the same trigger in the current iteration. `SKIP`
+entries do not count. The value is read from the report and is not stored
+elsewhere; `retry_count >= 1` means the trigger already failed at least once in
+this iteration.
+
 The Orchestrator resolves and reads the policy of its own domain: core (`H*`), discovery (`D*`), system (`S*`) and cross-cutting (`.agents/harness/policies/`).
 
 H09 and H10 have no recovery decision tables. When either fails, the Orchestrator applies the generic recovery fallback (`RECOVERY_GENERIC` → `08-recovery.md`).
@@ -163,6 +171,35 @@ Orchestrator records suspects as an alert in the HARNESS_REPORT
 entry (contract: `.agents/contracts/HARNESS_REPORT.md`).
 
 ## Hook setup (enforced mode)
+
+### Hook event schema
+
+`hook_gate.py` reads one JSON event from stdin. The schema is the CLI hook
+event used by the documented CLIs (Kimi Code, Claude Code):
+
+```json
+{
+  "session_id": "<cli session id>",
+  "cwd": "<project root>",
+  "hook_event_name": "PreToolUse" | "Stop",
+  "tool_name": "<tool>",
+  "tool_input": { "<key>": "<value>" }
+}
+```
+
+Rules:
+
+- The CLI session id is not the protocol session uuid. `hook_gate.py` first
+  tries `.project/<session_id>/`; when that directory does not exist it falls
+  back to the most recently modified session directory (single-active-session
+  assumption).
+- `PreToolUse` gates only `Write`/`Edit`; the target is read from
+  `tool_input` keys `file_path`, `path` or `filename`.
+- `Stop` gates iteration closure (H06 PASS, `NEEDS_CLARIFICATION` recorded, or
+  a terminal status in `state.json`).
+- The event is fail-open by contract: malformed JSON, missing fields, unknown
+  events, or any internal error resolve to allow (exit 0); post-hoc bypass
+  detection compensates when the H04 PASS is recorded (`runner_state.py`).
 
 Enforced mode requires registering `hook_gate.py` as a CLI hook for two
 events: `PreToolUse` (matcher `Write|Edit`) and `Stop`. The paths below

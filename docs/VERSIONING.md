@@ -126,6 +126,9 @@ Reglas:
 
 - Formato Keep a Changelog; secciones `Added / Changed / Deprecated / Removed /
   Fixed / Modelo conceptual`; versiones en orden descendente.
+- `[Unreleased]` va siempre arriba (Keep a Changelog) y acumula ítems de
+  gobernanza/modelo no asignados a una versión; en `dev` las secciones con
+  fecha sin tag son releases en curso que se oficializan al promover (ver §9).
 - Un ítem por plan: `**Título del cambio** (plan N, RFC-N): descripción`.
 - `Modelo conceptual` declara el estado de las RFCs involucradas (Accepted vs.
   Proposal pendiente de regularización).

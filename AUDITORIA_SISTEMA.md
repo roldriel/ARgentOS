@@ -882,14 +882,14 @@ ARgentOS's semantic determinism today is a goal, not a property.**
 | P1.3 | Fix `RECOVERY_REPORT.md` enum (add early-phase destinations) | P0.2 | ☑ Resolved | Plan 58 (2026-08-14): enum includes early-phase destinations; RFC-30 Accepted |
 | P2.1 | Machine-checkable budget accounting or explicit advisory declaration | F5 | ☐ Open | |
 | P2.2 | Schema validation for `ENTRY`/`METRIC` comments and `state.json` | P1.1 | ☑ Resolved | Nivel 4 (2026-08-14): tools/check_session_artifacts.py |
-| P2.3 | Specify `retry_count` / recovery-table variable persistence | F1 | ☐ Open | |
+| P2.3 | Specify `retry_count` / recovery-table variable persistence | F1 | ☑ Resolved | Plan 60 (2026-08-14): derived from HARNESS_REPORT.md FAIL entries per trigger/iteration (harness/INDEX.md + orchestrator.md) |
 | P3.1 | Correct stale docs (`VERSIONING.md` §9, `AUDITORIA_DOCUMENTACION.md`, `plans/INDEX.md`) + version-state checker or declared `dev` exception | F6 | ☑ Resolved | 2026-08-14: docs corrected (Nivel 1) + tools/check_version_state.py with declared dev exception (Nivel 4) |
-| P3.2 | Decide and document D01 "harness may contain Python" vs "no runner" model | — | ☐ Open | |
+| P3.2 | Decide and document D01 "harness may contain Python" vs "no runner" model | — | ☑ Resolved | Plan 60 (2026-08-14): no executable runner today; mechanical validation is a possible future extension. The F1 enforcement decision (Level 5) remains open |
 | P3.3 | Include product harness tests in a CI job | — | ☑ Resolved | Nivel 4 (2026-08-14): check-protocol.yml runs protocol/.agents/harness/tests/ (39 tests) |
-| P4.1 | Hook-event schema contract | — | ☐ Open | |
+| P4.1 | Hook-event schema contract | — | ☑ Resolved | Plan 60 (2026-08-14): harness/INDEX.md "Hook event schema" section |
 | P4.2 | Concurrency / session model | — | ☐ Open | |
 | P4.3 | Contract schema versions and machine-checkable migration rules | P1.2 | ☐ Open | |
-| P4.4 | Metrics aggregation tooling + event schema validation | P2.2 | ☐ Open | Schema validation done (4.2); aggregation tool pending |
+| P4.4 | Metrics aggregation tooling + event schema validation | P2.2 | ☑ Resolved | 2026-08-14: schema validation (4.2) + tools/aggregate_metrics.py |
 
 ## Contradictions checklist
 
@@ -900,9 +900,9 @@ See §18 for full detail.
 - [x] §18.3 Hash actor — Resolved 2026-08-14 (plan 58, RFC-54): orchestrator.md no longer computes or carries hashes
 - [x] §18.4 Versioning state — Resolved 2026-08-14 (`docs/VERSIONING.md` §9 updated; master 3.6.3, dev 3.8.0, dist 3.6.3)
 - [x] §18.5 Documented state of the repo — Resolved 2026-08-14 (`docs/AUDITORIA_DOCUMENTACION.md` and `plans/INDEX.md` header updated)
-- [ ] §18.6 Single-source policy vs its own payload
+- [x] §18.6 Single-source policy vs its own payload — Resolved 2026-08-14 (plan 60): PROTOCOL_BOUNDARIES declares the approved exception
 - [x] §18.7 Battery definition — Resolved 2026-08-14 (single canonical battery in `docs/VERSIONING.md` §4.1; `AGENTS.md` and `plans/INDEX.md` reference it)
-- [ ] §18.8 Changelog order/aging
+- [x] §18.8 Changelog order/aging — Resolved 2026-08-14 (plan 60): [Unreleased] on top; dev sections without tag documented as in-progress releases
 - [ ] §18.9 `produced_by` domain
 - [x] §18.10 `RECOVERY_REPORT.md` enum — Resolved 2026-08-14 (plan 58, RFC-30): early-phase destinations added
 - [ ] §18.11 D01 "harness code" model
@@ -928,6 +928,12 @@ See §18 for full detail.
 | 2026-08-14 | Nivel 4 | 4.2 Validación de esquema de sesión | `tools/check_session_artifacts.py` + tests | ENTRY/METRIC comments + state.json |
 | 2026-08-14 | Nivel 4 | 4.3 Tests del harness en CI | `.github/workflows/check-protocol.yml`, `tests/AGENTS.md` | 39 harness tests in CI |
 | 2026-08-14 | Nivel 4 | 4.4 Invariante versión ↔ changelog ↔ tag | `tools/check_version_state.py` + tests | dev exception declared |
+| 2026-08-14 | Nivel 6 | Lote fácil 1 — excepción single-source (§18.6) | `protocol/.agents/standards/runtime/PROTOCOL_BOUNDARIES.md` | Plan 60 |
+| 2026-08-14 | Nivel 6 | Lote fácil 2 — convención [Unreleased] (§18.8) | `CHANGELOG.md`, `docs/VERSIONING.md` §5 | Plan 60 |
+| 2026-08-14 | Nivel 6 | Lote fácil 3 — esquema de evento de hook (P4.1) | `protocol/.agents/harness/INDEX.md` | Plan 60 |
+| 2026-08-14 | Nivel 6 | Lote fácil 4 — modelo D01 aclarado (P3.2) | `protocol/.agents/orchestrators/discovery/harness/policies/D01-discovery-output.md` | Plan 60 |
+| 2026-08-14 | Nivel 6 | Lote fácil 5 — semántica de retry_count (P2.3) | `protocol/.agents/harness/INDEX.md`, `protocol/.agents/orchestrators/core/roles/orchestrator.md` | Plan 60 |
+| 2026-08-14 | Nivel 6 | Lote fácil 6 — agregación de métricas (P4.4) | `tools/aggregate_metrics.py` + tests | Dev tool, no plan required |
 
 ---
 

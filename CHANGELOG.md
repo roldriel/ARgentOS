@@ -32,6 +32,57 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [Unreleased]
+
+### Modelo conceptual
+
+- **RFC-32…37 y RFC-42 Accepted** (plan 57, revisión individual de la serie
+  Proposal según RFC-56): diseños verificados contra el payload, con sus
+  planes asociados ya `Executed` (31–36) o cerrados (41, vía plan 56). Sin
+  cambio de payload; solo estados y traza de gobernanza.
+- **RFC-38…41 y RFC-43 Accepted** (plan 57, misma revisión): diseños
+  aprobados por mérito propio; su ejecución sigue el track de los planes
+  37–40 y 42 (hoy `Aprobado para redacción`).
+- **RFC-44…48 Accepted** (plan 57, misma revisión): diseños aprobados
+  (reflexión HIGH, modo desatendido, trazas históricas, dogfooding enforced,
+  contratos por entrada); ejecución pendiente vía planes 43–47.
+- **RFC-49…54 Accepted** (plan 57, misma revisión): diseños aprobados
+  (validación mecánica de skills, modo single-instance, frescura de KB,
+  catálogo de roles, candidatura tooling, contratos de discovery); ejecución
+  pendiente vía planes 48–53. Con este grupo queda cerrada la revisión
+  individual de la serie Proposal (23/23).
+
+(sin ítems de payload por ahora — los cambios de repo que no tocan el payload no se
+listan; ver `docs/VERSIONING.md` §5)
+
+---
+
+## [3.11.0] — 2026-08-14
+
+### Changed
+
+- **Convención de `[Unreleased]`** (plan 60): `[Unreleased]` vuelve a la cima
+  del changelog (Keep a Changelog); las secciones con fecha sin tag en `dev`
+  quedan definidas como releases en curso que se oficializan al promover
+  (`docs/VERSIONING.md` §5).
+- **Esquema de evento de hook documentado** (plan 60): `harness/INDEX.md`
+  define el contrato JSON del evento de hook (enforced mode) y su semántica
+  fail-open.
+- **Semántica de `retry_count`** (plan 60): derivada de las entradas `FAIL`
+  del `HARNESS_REPORT.md` por trigger e iteración; documentada en
+  `harness/INDEX.md` y `orchestrator.md`.
+- **Modelo D01 aclarado** (plan 60): hoy no hay runner ejecutable en el
+  harness; la validación mecánica de D01 es una extensión futura posible, no
+  parte del payload distribuido.
+
+### Fixed
+
+- **Contradicción de la política single-source (§18.6)** (plan 60):
+  `PROTOCOL_BOUNDARIES.md` declara la excepción aprobada del restatement de
+  inmutabilidad en `ANTI_CIRCUMVENTION.md`.
+
+---
+
 ## [3.10.0] — 2026-08-14
 
 ### Changed
@@ -100,31 +151,6 @@ La política de versionado, changelog, tags y estados de planes vive en
 - **D01 single-source** (plan 47, RFC-48): el ítem 12 de
   `D01-discovery-output.md` verifica las secciones contra los contratos por
   entrada y elimina el listado duplicado de secciones.
-
----
-
-## [Unreleased]
-
-### Modelo conceptual
-
-- **RFC-32…37 y RFC-42 Accepted** (plan 57, revisión individual de la serie
-  Proposal según RFC-56): diseños verificados contra el payload, con sus
-  planes asociados ya `Executed` (31–36) o cerrados (41, vía plan 56). Sin
-  cambio de payload; solo estados y traza de gobernanza.
-- **RFC-38…41 y RFC-43 Accepted** (plan 57, misma revisión): diseños
-  aprobados por mérito propio; su ejecución sigue el track de los planes
-  37–40 y 42 (hoy `Aprobado para redacción`).
-- **RFC-44…48 Accepted** (plan 57, misma revisión): diseños aprobados
-  (reflexión HIGH, modo desatendido, trazas históricas, dogfooding enforced,
-  contratos por entrada); ejecución pendiente vía planes 43–47.
-- **RFC-49…54 Accepted** (plan 57, misma revisión): diseños aprobados
-  (validación mecánica de skills, modo single-instance, frescura de KB,
-  catálogo de roles, candidatura tooling, contratos de discovery); ejecución
-  pendiente vía planes 48–53. Con este grupo queda cerrada la revisión
-  individual de la serie Proposal (23/23).
-
-(sin ítems de payload por ahora — los cambios de repo que no tocan el payload no se
-listan; ver `docs/VERSIONING.md` §5)
 
 ---
 

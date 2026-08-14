@@ -122,10 +122,11 @@ The Discovery Orchestrator must:
 
 ## Implementation Note
 
-D01 may be implemented in Python as part of the harness. The harness is the
-guardian of the protocol and may contain code; this does not violate the
-principle that `.agents/` are instructions, because the harness is not an
-instruction for the agent.
+Today the harness has no executable validation runner: every D01 item is
+evaluated by the Discovery Orchestrator's judgment against the prose checklist.
+Mechanical validation of D01 items is a possible future extension — the
+protocol does not forbid the harness from containing code if a future design
+decides so — but nothing in the distributed payload depends on it.
 
 ## Recovery Decision Table
 

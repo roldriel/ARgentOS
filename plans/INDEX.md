@@ -50,11 +50,11 @@ Estado al 2026-08-12. El trabajo activo es el **Execution Context Pipeline** (`p
 | RFC-41 | `rfc/41-discovery-artifact-boundaries.md` | Accepted (12 ago 2026, revisión RFC-56; plan 40, 11 ago 2026) | ¿Dónde viven los intermedios de discovery y cómo se numeran sus artefactos? |
 | RFC-42 | `rfc/42-rfc-plan-status-governance.md` | Accepted (12 ago 2026, revisión RFC-56; plan 41, 11 ago 2026) | ¿Qué relación de status habilita a un plan a modificar `.agents/`? |
 | RFC-43 | `rfc/43-h13-planned-cleanup.md` | Accepted (12 ago 2026, revisión RFC-56; plan 42, 11 ago 2026) | ¿Qué tratamiento reciben las entidades `planned` inexistentes en H13? |
-| RFC-44 | `rfc/44-intent-reflection-auto-confirm.md` | Proposal (plan 43, 11 ago 2026) | ¿En qué estado se produce la INTENT_REFLECTION con confianza HIGH? |
-| RFC-45 | `rfc/45-unattended-clarification.md` | Proposal (plan 44, 11 ago 2026) | ¿Cómo resuelve el protocolo la clarificación sin usuario en línea? |
-| RFC-46 | `rfc/46-historical-trace-policy.md` | Proposal (plan 45, 11 ago 2026) | ¿Cómo se interpretan trazas producidas por un harness que ya no existe? |
-| RFC-47 | `rfc/47-enforced-mode-dogfooding.md` | Proposal (plan 46, 11 ago 2026) | ¿Cómo se valida empíricamente el modo enforced? |
-| RFC-48 | `rfc/48-discovery-per-entry-contracts.md` | Proposal (plan 47, 11 ago 2026) | ¿Dónde se definen las secciones requeridas de cada entrada de discovery? |
+| RFC-44 | `rfc/44-intent-reflection-auto-confirm.md` | Accepted (12 ago 2026, revisión RFC-56; plan 43, 11 ago 2026) | ¿En qué estado se produce la INTENT_REFLECTION con confianza HIGH? |
+| RFC-45 | `rfc/45-unattended-clarification.md` | Accepted (12 ago 2026, revisión RFC-56; plan 44, 11 ago 2026) | ¿Cómo resuelve el protocolo la clarificación sin usuario en línea? |
+| RFC-46 | `rfc/46-historical-trace-policy.md` | Accepted (12 ago 2026, revisión RFC-56; plan 45, 11 ago 2026) | ¿Cómo se interpretan trazas producidas por un harness que ya no existe? |
+| RFC-47 | `rfc/47-enforced-mode-dogfooding.md` | Accepted (12 ago 2026, revisión RFC-56; plan 46, 11 ago 2026) | ¿Cómo se valida empíricamente el modo enforced? |
+| RFC-48 | `rfc/48-discovery-per-entry-contracts.md` | Accepted (12 ago 2026, revisión RFC-56; plan 47, 11 ago 2026) | ¿Dónde se definen las secciones requeridas de cada entrada de discovery? |
 | RFC-49 | `rfc/49-protocol-skill-mechanical-validation.md` | Proposal (plan 48, 11 ago 2026) | ¿Cómo se garantiza estructuralmente la validez de las skills del protocolo? |
 | RFC-50 | `rfc/50-delegation-single-instance-model.md` | Proposal (plan 49, 11 ago 2026) | ¿Cómo se mantiene la separación de roles en una sola instancia? |
 | RFC-51 | `rfc/51-discovery-kb-freshness.md` | Proposal (plan 50, 11 ago 2026) | ¿Cómo se evita consumir entradas de KB vencidas o revalidadas fuera del pipeline? |

@@ -43,6 +43,9 @@ La política de versionado, changelog, tags y estados de planes vive en
 - **RFC-38…41 y RFC-43 Accepted** (plan 57, misma revisión): diseños
   aprobados por mérito propio; su ejecución sigue el track de los planes
   37–40 y 42 (hoy `Aprobado para redacción`).
+- **RFC-44…48 Accepted** (plan 57, misma revisión): diseños aprobados
+  (reflexión HIGH, modo desatendido, trazas históricas, dogfooding enforced,
+  contratos por entrada); ejecución pendiente vía planes 43–47.
 
 (sin ítems de payload por ahora — los cambios de repo que no tocan el payload no se
 listan; ver `docs/VERSIONING.md` §5)

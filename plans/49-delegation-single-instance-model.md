@@ -1,6 +1,6 @@
 # Plan 49 — Modelo de ejecución de delegaciones en una sola instancia
 
-**Status:** Aprobado para redacción
+**Status:** Executed
 **Fecha:** 2026-08-11
 **RFC:** RFC-50 (`plans/rfc/50-delegation-single-instance-model.md`)
 **Depende de:** —
@@ -48,3 +48,16 @@ Modelar el modo single-instance sin degradar la separación de roles ni el valor
 ## Trazabilidad
 
 - RFC-50; fricción F-09 de `plans/19-anexo-a-bitacora-fricciones.md`; backlog B-8.
+
+## Nota de ejecución
+
+Ejecutado el 2026-08-12 (vía RFC-50 Accepted). Modos de ejecución declarados
+en la sección 5 (Worker Delegation) del rol orquestador (subagente recomendado; single-instance permitido
+con tres mitigaciones: verificación como pasada de juicio separada con
+evidencia escrita por ítem, prohibición de auto-aceptar sin evidencia,
+registro del modo como riesgo en `METRICS.md`); declaración de modo en el
+encabezado de `SESSION_LOG.md`; nota de autoridad independiente del modo en
+`DECISIONS.md` (D1). Con estas mitigaciones, la traza del dogfooding (F-09)
+habría exigido una pasada de verificación separada con evidencia escrita.
+Resuelve B-8. Versión 3.5.0. Verificación: invariantes OK, citas OK,
+estructura OK, 121 passed.

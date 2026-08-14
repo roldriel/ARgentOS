@@ -202,8 +202,7 @@ The decision and the received status are recorded in `SESSION_LOG.md`.
 Before each delegation, the Orchestrator performs the **Execution Context Assembly Process**: the conceptual decomposition of Context Assembly into seven responsibilities — **Source Discovery** (determine which sources participate: role, profile, project context, skills, standards, policies), **Context Collection** (obtain the information from those sources), **Context Organization** (classify it into the Execution Context categories: Identity Context, Task Context, Knowledge Context, Capability Context, Execution Metadata), **Context Candidate Prioritization** (establish a relative priority relation among the available context candidates before composition; the ordering may be partial and may contain equivalent-priority groups, and it implies neither inclusion nor exclusion — ordering without selection), **Context Resolution** (transform the prioritized candidates into a conceptually consistent **Resolved Candidate Set** — one in which no pending conflict remains — before composition; it does not administer the Context Budget, it only observes its constraints as a potential source of conflicts, and it defines no algorithms, policies, or tie-breaking rules), **Context Composition** (build the final Execution Context from the resolved candidate set under a **Context Budget** — a purely conceptual constraint on the amount of information that can be included; the protocol defines no size, unit, or administration for it; Composition operates only on an already-resolved set and does not decide conflicts between candidates), and **Context Delivery** (deliver it through the delegation payload). This is a conceptual decomposition, not a new workflow stage; the field list below already constitutes the process.
 
 - For each phase, the Orchestrator invokes a new `worker` subagent.
-- The invocation includes:
-  - Session UUID.
+- The invocation includes:  - Session UUID.
   - Current state.
   - Target phase and role to adopt.
   - Required input artifacts.
@@ -213,6 +212,11 @@ Before each delegation, the Orchestrator performs the **Execution Context Assemb
   - Communication style (`caveman` level: `lite`, `full`, or `ultra`) when the `caveman` feature flag is enabled.
   - `skills: [...]` when skill selection (section 5.2) activates one or more skills.
 - When the discovery KB exists, delegations to execution workers (phase `06-execute.md`) MUST include references to `.project/knowledge/discovery/environment.md` and `.project/knowledge/discovery/development_patterns.md`, so execution respects the detected environment and development patterns.
+
+**Delegation execution modes.** Two declared modes, recorded in `SESSION_LOG.md` at session start:
+
+- **Subagent mode (recommended):** each phase is executed by a fresh `worker` subagent, as described above.
+- **Single-instance mode (allowed with restrictions):** one instance adopts each role in turn. It is permitted only when the runtime cannot spawn subagents, and it carries mandatory mitigations: (a) the verification phase (07) is executed as a separate, explicit judgment pass with written evidence per checklist item, never as self-confirmation of one's own output; (b) the Orchestrator MUST NOT accept its own recommendation without recorded evidence; (c) the mode is recorded as a session risk in `METRICS.md`. The mode never changes the authority model: the harness and the state machine veto identically in both.
 - The worker executes exactly one phase, returns the output artifact, and terminates.
 
 ### 5.1 Profile Selection Before Execution

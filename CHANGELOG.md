@@ -57,6 +57,19 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.5.0] — 2026-08-12
+
+### Added
+
+- **Modos de ejecución de delegaciones** (plan 49, RFC-50): modo subagente
+  (recomendado) y modo single-instance (permitido con mitigaciones:
+  verificación como pasada separada con evidencia escrita, prohibición de
+  auto-aceptar recomendaciones sin evidencia, registro de riesgo en
+  `METRICS.md`); el modo se declara en `SESSION_LOG.md` y `DECISIONS.md`
+  aclara que la autoridad del orquestador es independiente del modo (F-09).
+
+---
+
 ## [3.4.2] — 2026-08-12
 
 ### Fixed

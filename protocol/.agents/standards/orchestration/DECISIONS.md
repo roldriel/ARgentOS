@@ -28,7 +28,7 @@ Every transition to `ABORT` requires a cause recorded in `SESSION_LOG.md`: a use
 
 - **Question:** does the Orchestrator accept the worker's `recommendation.next_state` or override it?
 - **Inputs:** the recommendation and its reasoning; the harness result for the candidate transition; the transitions allowed by the state machine; the recommendation confidence (see `.agents/standards/quality/CONFIDENCE.md`).
-- **Authority:** the worker recommends; the Orchestrator decides. The state machine and the harness veto: a recommendation never enables a disallowed transition nor exempts the harness.
+- **Authority:** the worker recommends; the Orchestrator decides. The state machine and the harness veto: a recommendation never enables a disallowed transition nor exempts the harness. This authority model is independent of the delegation execution mode (subagent or single-instance); in single-instance mode, the acceptance decision requires written evidence sufficient for an external auditor, since producer and evaluator coincide.
 
 ### D2 — Reviewer outcome routing
 

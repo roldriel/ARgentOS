@@ -34,7 +34,14 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ## [Unreleased]
 
-(sin ítems por ahora — los cambios de repo que no tocan el payload no se
+### Modelo conceptual
+
+- **RFC-32…37 y RFC-42 Accepted** (plan 57, revisión individual de la serie
+  Proposal según RFC-56): diseños verificados contra el payload, con sus
+  planes asociados ya `Executed` (31–36) o cerrados (41, vía plan 56). Sin
+  cambio de payload; solo estados y traza de gobernanza.
+
+(sin ítems de payload por ahora — los cambios de repo que no tocan el payload no se
 listan; ver `docs/VERSIONING.md` §5)
 
 ---

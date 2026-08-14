@@ -1,6 +1,6 @@
 # RFC-37 — Declaración del gate H10 en la fase 03
 
-**Status:** Proposal
+**Status:** Accepted (2026-08-12, revisión individual RFC-56; evidencia en su plan asociado)
 **Fecha:** 2026-08-11
 **Serie:** Remediación de auditoría 2.0.1
 **Origen:** Auditoría de estado ARgentOS 2.0.1 (2026-08-11), punto 2.4
@@ -42,3 +42,4 @@ Consecuencia: un orquestador no sabe si H10 es obligatorio en la fase 03 ni qué
 |---|---|---|
 | 2026-08-11 | Creación (Proposal) | Auditoría 2.0.1, punto 2.4 |
 | 2026-08-11 | Implementación aplicada por el plan 36 (vía plan RFC-42, autorización explícita del usuario); status `Proposal` se mantiene pendiente de regularización de gobernanza | Decisión del usuario (2026-08-11) |
+| 2026-08-12 | Accepted (revisión individual, RFC-56/plan 57): diseño verificado contra el payload; implementación ya publicada (plan asociado `Executed`). | Revisión de la serie Proposal (RFC-56) |

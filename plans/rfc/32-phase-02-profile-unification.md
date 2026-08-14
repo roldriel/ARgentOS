@@ -1,6 +1,6 @@
 # RFC-32 — Perfil unificado de la fase 02
 
-**Status:** Proposal
+**Status:** Accepted (2026-08-12, revisión individual RFC-56; evidencia en su plan asociado)
 **Fecha:** 2026-08-11
 **Serie:** Remediación de auditoría 2.0.1
 **Origen:** Auditoría de estado ARgentOS 2.0.1 (2026-08-11), punto 1.4
@@ -51,3 +51,4 @@ Tres fuentes definen de forma distinta el perfil de la fase 02:
 |---|---|---|
 | 2026-08-11 | Creación (Proposal) | Auditoría 2.0.1, punto 1.4 |
 | 2026-08-11 | Plan 31 ejecutado: cambios aplicados en `.agents/`; status permanece `Proposal` (regularización de gobernanza pendiente) | Plan 31 |
+| 2026-08-12 | Accepted (revisión individual, RFC-56/plan 57): diseño verificado contra el payload; implementación ya publicada (plan asociado `Executed`). | Revisión de la serie Proposal (RFC-56) |

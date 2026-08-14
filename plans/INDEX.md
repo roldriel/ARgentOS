@@ -38,17 +38,17 @@ Estado al 2026-08-12. El trabajo activo es el **Execution Context Pipeline** (`p
 | RFC-29 | `rfc/29-h07-user-authorized-extra-work.md` | Accepted (plan 28 Executed, 11 ago 2026) | ¿Cómo expresa el protocolo el trabajo extra autorizado por el usuario sin que H07 lo convierta en fallo? |
 | RFC-30 | `rfc/30-recovery-to-early-phases.md` | Accepted (plan 29 Executed, 11 ago 2026) | ¿Qué transiciones legales corrigen artefactos de fases tempranas desde RECOVERY? |
 | RFC-31 | `rfc/31-abort-artifact-flow.md` | Accepted (plan 30 Executed, 11 ago 2026) | ¿Cómo se registra y cierra una sesión que termina en ABORT? |
-| RFC-32 | `rfc/32-phase-02-profile-unification.md` | Proposal (plan 31, 11 ago 2026) | ¿Quién redacta la TASK_SPECIFICATION y qué skills activa? |
-| RFC-33 | `rfc/33-execution-summary-steps-schema.md` | Proposal (plan 32, 11 ago 2026) | ¿Cuál es el nombre canónico de la lista de pasos de EXECUTION_SUMMARY? |
-| RFC-34 | `rfc/34-ears-criteria-canonical-form.md` | Proposal (plan 33, 11 ago 2026) | ¿Cuál es la forma canónica de los criterios de aceptación EARS? |
-| RFC-35 | `rfc/35-verify-workflow-inputs.md` | Proposal (plan 34 Executed, 11 ago 2026) | ¿Qué inputs consume la fase 07 y con qué valores decide? |
-| RFC-36 | `rfc/36-plan-workflow-inputs.md` | Proposal (plan 35 Executed, 11 ago 2026) | ¿Qué inputs recibe el worker de planificación? |
-| RFC-37 | `rfc/37-gather-context-h10-declaration.md` | Proposal (plan 36 Executed, 11 ago 2026) | ¿Qué transición protege H10 y cómo se declara en la fase 03? |
+| RFC-32 | `rfc/32-phase-02-profile-unification.md` | Accepted (12 ago 2026, revisión RFC-56; plan 31, 11 ago 2026) | ¿Quién redacta la TASK_SPECIFICATION y qué skills activa? |
+| RFC-33 | `rfc/33-execution-summary-steps-schema.md` | Accepted (12 ago 2026, revisión RFC-56; plan 32, 11 ago 2026) | ¿Cuál es el nombre canónico de la lista de pasos de EXECUTION_SUMMARY? |
+| RFC-34 | `rfc/34-ears-criteria-canonical-form.md` | Accepted (12 ago 2026, revisión RFC-56; plan 33, 11 ago 2026) | ¿Cuál es la forma canónica de los criterios de aceptación EARS? |
+| RFC-35 | `rfc/35-verify-workflow-inputs.md` | Accepted (12 ago 2026, revisión RFC-56; plan 34 Executed, 11 ago 2026) | ¿Qué inputs consume la fase 07 y con qué valores decide? |
+| RFC-36 | `rfc/36-plan-workflow-inputs.md` | Accepted (12 ago 2026, revisión RFC-56; plan 35 Executed, 11 ago 2026) | ¿Qué inputs recibe el worker de planificación? |
+| RFC-37 | `rfc/37-gather-context-h10-declaration.md` | Accepted (12 ago 2026, revisión RFC-56; plan 36 Executed, 11 ago 2026) | ¿Qué transición protege H10 y cómo se declara en la fase 03? |
 | RFC-38 | `rfc/38-task-analysis-confidence-blocks.md` | Proposal (plan 37, 11 ago 2026) | ¿Qué significa cada bloque de confianza del TASK_ANALYSIS? |
 | RFC-39 | `rfc/39-discovery-context-budget.md` | Proposal (plan 38, 11 ago 2026) | ¿Dónde se configuran los límites de muestreo y presupuesto de discovery? |
 | RFC-40 | `rfc/40-kb-discovery-entry-produced-by.md` | Proposal (plan 39, 11 ago 2026) | ¿Qué estados producen las entradas de la KB de discovery? |
 | RFC-41 | `rfc/41-discovery-artifact-boundaries.md` | Proposal (plan 40, 11 ago 2026) | ¿Dónde viven los intermedios de discovery y cómo se numeran sus artefactos? |
-| RFC-42 | `rfc/42-rfc-plan-status-governance.md` | Proposal (plan 41, 11 ago 2026) | ¿Qué relación de status habilita a un plan a modificar `.agents/`? |
+| RFC-42 | `rfc/42-rfc-plan-status-governance.md` | Accepted (12 ago 2026, revisión RFC-56; plan 41, 11 ago 2026) | ¿Qué relación de status habilita a un plan a modificar `.agents/`? |
 | RFC-43 | `rfc/43-h13-planned-cleanup.md` | Proposal (plan 42, 11 ago 2026) | ¿Qué tratamiento reciben las entidades `planned` inexistentes en H13? |
 | RFC-44 | `rfc/44-intent-reflection-auto-confirm.md` | Proposal (plan 43, 11 ago 2026) | ¿En qué estado se produce la INTENT_REFLECTION con confianza HIGH? |
 | RFC-45 | `rfc/45-unattended-clarification.md` | Proposal (plan 44, 11 ago 2026) | ¿Cómo resuelve el protocolo la clarificación sin usuario en línea? |

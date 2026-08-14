@@ -1,6 +1,6 @@
 # RFC-42 — Gobernanza de status entre RFCs y planes de implementación
 
-**Status:** Proposal
+**Status:** Accepted (2026-08-12, revisión individual RFC-56; evidencia en su plan asociado)
 **Fecha:** 2026-08-11
 **Serie:** Remediación de auditoría 2.0.1
 **Origen:** Auditoría de estado ARgentOS 2.0.1 (2026-08-11), punto 2.9
@@ -42,3 +42,4 @@
 |---|---|---|
 | 2026-08-11 | Creación (Proposal) | Auditoría 2.0.1, punto 2.9 |
 | 2026-08-11 | Aplicación parcial por decisión del usuario: regularización retroactiva de RFC-24…28 (`Accepted`) y regla de gobernanza documentada en `plans/INDEX.md`; pendiente la referencia en `ANTI_CIRCUMVENTION.md` hasta la aceptación de esta RFC. | Decisión del usuario (2026-08-11) sobre el plan 41 |
+| 2026-08-12 | Accepted (revisión individual, RFC-56/plan 57): la regla de dos vías quedó vigente y referenciada en el payload (plan 56, 3.0.7). Nota: RFC-56 la refina — agrega la Clase C y formaliza las clases A/B/C; no la desfasa. | Revisión de la serie Proposal (RFC-56) |

@@ -32,6 +32,32 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [3.10.0] — 2026-08-14
+
+### Changed
+
+- **Camino trivial legalizado** (plan 59, RFC-26 enmendada):
+  `ANALYZING_TASK → PLANNING` queda como transición permitida solo para el
+  perfil `trivial`, con `TASK_ANALYSIS.md` como referencia de tarea y sin
+  artefactos de contexto. Se alinean la máquina de estados (Task Profiles,
+  No-Skip Rule), los workflows 00/05/06/07 y su INDEX, las policies
+  H00/H04/H06 y los contratos `TASK_ANALYSIS`, `EXECUTION_PLAN` y
+  `VERIFICATION_REPORT`. Adición compatible: los artefactos válidos previos
+  siguen siendo válidos.
+- **Taxonomía alineada con la máquina de estados** (plan 59, RFC-30):
+  `core:RECOVERY.next` incluye las cuatro fases tempranas y
+  `core:ANALYZING_TASK.next` incluye `PLANNING`; H13 documenta las
+  transiciones condicionales por perfil.
+
+### Fixed
+
+- **Contradicciones §18.1 (taxonomía vs máquina de estados en RECOVERY) y
+  §18.2 (ciclo trivial con transición e inputs indefinidos)** (plan 59):
+  cerradas; el ciclo trivial es ejecutable sin transiciones ni inputs
+  indefinidos.
+
+---
+
 ## [3.9.0] — 2026-08-14
 
 ### Changed

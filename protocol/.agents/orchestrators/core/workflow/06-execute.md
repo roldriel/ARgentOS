@@ -6,7 +6,7 @@ state: EXECUTING
 lifecycle: execution
 previous_states: [core:PLAN_READY]
 next_states: [core:VERIFYING, core:RECOVERY]
-input_artifacts: [TASK_SPECIFICATION.md, CONTEXT_VALIDATION_REPORT.md, EXECUTION_PLAN.md]
+input_artifacts: [TASK_ANALYSIS.md, TASK_SPECIFICATION.md, CONTEXT_VALIDATION_REPORT.md, EXECUTION_PLAN.md]
 output_artifacts: [EXECUTION_SUMMARY.md]
 harness: [H05-execution-completed]
 actor: orchestrator
@@ -79,6 +79,19 @@ orchestrators/core/workflow/08-recovery.md
 ---
 
 # Input Artifacts
+
+## Task Analysis (trivial profile)
+
+Source:
+
+```text
+.project/<session-uuid>/<iteration>/<order>-TASK_ANALYSIS.md
+```
+
+For `trivial`-profile tasks this artifact replaces `TASK_SPECIFICATION.md` as
+the task reference; the context validation report is not produced in the
+reduced cycle (see `orchestrators/core/states/AGENT_STATE_MACHINE.md`, Task
+Profiles).
 
 ## Execution Plan
 

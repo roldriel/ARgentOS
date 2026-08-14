@@ -49,6 +49,9 @@ state machines, workflows, harness policies, contracts, roles and workers.
 2. Every harness policy must respect its domain namespace prefix (`H` = core, `D` = discovery,
    `S` = system; `H13` is the documented cross-cutting exception) and must reference
    transitions (`gates`) allowed by the taxonomy (`next` of the source state).
+   Profile-conditional transitions (e.g. `core:ANALYZING_TASK -> core:PLANNING` for the
+   `trivial` task profile) are modeled in the taxonomy as allowed transitions; the condition is
+   enforced by the H00 gate and the state machine's Task Profiles rules.
 3. Every artifact must have `produced_by` and `consumed_by` referencing existing states.
 4. Every worker must reference a valid `state`, `domain` and `actor`.
 5. There must be no orphan states: every non-terminal state must have at least one allowed

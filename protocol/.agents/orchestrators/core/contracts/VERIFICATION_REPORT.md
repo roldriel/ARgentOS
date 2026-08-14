@@ -50,6 +50,10 @@ Reference to the task specification that defines the acceptance criteria.
 specification = ""
 ```
 
+For `trivial`-profile tasks, this field cites the iteration's
+`TASK_ANALYSIS.md`; the acceptance criteria are its expected outcome and
+explicit requirements.
+
 ---
 
 ## Execution Plan Reference

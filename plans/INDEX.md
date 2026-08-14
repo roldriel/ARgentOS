@@ -13,8 +13,8 @@ fuera del payload): AGENTS.md raíz operativo, plantillas de plan/RFC +
 sin path filters, disolución de `dev/` (`tools/`, `runtime/`, `docs/` en raíz) y
 `tools/check_dist_sync.py`. El 14 ago 2026 se agregó `AUDITORIA_SISTEMA.md`
 (tracker vivo de remediación del sistema) y se unificó la definición de batería
-en `docs/VERSIONING.md` §4.1. El mismo día se ejecutó el plan 58 (alineación
-Nivel 2 del payload con RFC-30/RFC-54, versión 3.9.0). Los planes de
+en `docs/VERSIONING.md` §4.1. El mismo día se ejecutaron los planes 58 y 59
+(Nivel 2 y Nivel 3 de la remediación, versiones 3.9.0 y 3.10.0). Los planes de
 construcción del protocolo (dominios, taxonomía, discovery) están
 implementados; sus versiones históricas viven en `archive/`.
 
@@ -241,6 +241,7 @@ los planes 34–36 quedaron `Executed` el 11 ago 2026 (RFC-35…37 permanecen en
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
 | `58-remediacion-nivel-2.md` | RFC-30, RFC-54 | Executed | Alineación del payload con modelos Accepted: actor único de hashes (completa plan 53), enum de `RECOVERY_REPORT` con fases tempranas (completa plan 29), metadata de contratos de discovery. Versión 3.9.0. |
+| `59-remediacion-nivel-3.md` | RFC-26 (enmendada), RFC-30 | Executed | Camino trivial legalizado (`ANALYZING_TASK → PLANNING` condicionada al perfil, inputs reducidos) y taxonomía `RECOVERY`/`ANALYZING_TASK` alineada con la máquina de estados. Versión 3.10.0. |
 
 ## Backlog evidenciado - plan 19
 

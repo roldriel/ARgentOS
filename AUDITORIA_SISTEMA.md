@@ -863,8 +863,8 @@ ARgentOS's semantic determinism today is a goal, not a property.**
 | ID | Finding | Section ref | Severity | Status | Notes |
 |---|---|---|---|---|---|
 | F1 | The "harness" is self-assessment, not enforcement | §7, §20 | Critical | ☐ Open | |
-| F2 | Trivial task profile is internally incoherent | §10, §18.2, §20 | Critical | ☐ Open | |
-| F3 | Multiple authoritative sources disagree on RECOVERY | §3, §18.1, §20 | Critical | ☐ Open | |
+| F2 | Trivial task profile is internally incoherent | §10, §18.2, §20 | Critical | ☑ Resolved | Plan 59 (2026-08-14): trivial path legalized (ANALYZING_TASK → PLANNING, reduced inputs); RFC-26 amended |
+| F3 | Multiple authoritative sources disagree on RECOVERY | §3, §18.1, §20 | Critical | ☑ Resolved | Plan 59 (2026-08-14): taxonomy core:RECOVERY.next aligned; H13 documents profile-conditional transitions |
 | F4 | Zero-hallucination / ground-truth guarantees are aspirational | §13, §20 | Critical | ☐ Open | |
 | F5 | Context determinism is explicitly deferred | §11, §12, §20 | High | ☐ Open | |
 | F6 | Repo state documentation is stale and the battery is undefined | §3, §16, §18.4–18.7, §20 | High | ☐ Open | Docs and battery definition fixed 2026-08-14 (Nivel 1: 1.1–1.4); still missing the version-state checker (P3.1) |
@@ -874,8 +874,8 @@ ARgentOS's semantic determinism today is a goal, not a property.**
 
 | ID | Item | Depends on | Status | Evidence / Notes |
 |---|---|---|---|---|
-| P0.1 | Fix trivial-profile contradiction (transition set + inputs; state machine, workflow 05, H00 checklist) | F2 | ☐ Open | |
-| P0.2 | Fix RECOVERY taxonomy contradiction (taxonomy `next` includes early-phase transitions) | F3 | ☐ Open | |
+| P0.1 | Fix trivial-profile contradiction (transition set + inputs; state machine, workflow 05, H00 checklist) | F2 | ☑ Resolved | Plan 59 (2026-08-14): transition legalized + reduced input set; RFC-26 amended |
+| P0.2 | Fix RECOVERY taxonomy contradiction (taxonomy `next` includes early-phase transitions) | F3 | ☑ Resolved | Plan 59 (2026-08-14): taxonomy next includes early-phase transitions |
 | P0.3 | Fix hash-actor contradiction (single actor; align orchestrator.md, DISCOVERY_STATE_MACHINE.md, invocation payload) | — | ☑ Resolved | Plan 58 (2026-08-14): orchestrator.md aligned; RFC-54 Accepted |
 | P1.1 | Restore mechanical H13 coherence checker (dev tool + CI) and single-source the battery definition | P0.2 | ☐ Open | |
 | P1.2 | Define and enforce `produced_by` / `profile` value domains | P1.1 | ☐ Open | |
@@ -895,8 +895,8 @@ ARgentOS's semantic determinism today is a goal, not a property.**
 
 See §18 for full detail.
 
-- [ ] §18.1 Taxonomy vs state machine (RECOVERY)
-- [ ] §18.2 Trivial profile vs state machine
+- [x] §18.1 Taxonomy vs state machine (RECOVERY) — Resolved 2026-08-14 (plan 59, RFC-30): core:RECOVERY.next aligned
+- [x] §18.2 Trivial profile vs state machine — Resolved 2026-08-14 (plan 59, RFC-26 amended): ANALYZING_TASK → PLANNING legalized for trivial with reduced inputs
 - [x] §18.3 Hash actor — Resolved 2026-08-14 (plan 58, RFC-54): orchestrator.md no longer computes or carries hashes
 - [x] §18.4 Versioning state — Resolved 2026-08-14 (`docs/VERSIONING.md` §9 updated; master 3.6.3, dev 3.8.0, dist 3.6.3)
 - [x] §18.5 Documented state of the repo — Resolved 2026-08-14 (`docs/AUDITORIA_DOCUMENTACION.md` and `plans/INDEX.md` header updated)
@@ -920,6 +920,9 @@ See §18 for full detail.
 | 2026-08-14 | Nivel 2 | 2.1 Hash-actor único completado | `protocol/.agents/orchestrators/core/roles/orchestrator.md` §4.3 | Plan 58, RFC-54 (completes plan 53) |
 | 2026-08-14 | Nivel 2 | 2.2 RECOVERY_REPORT enum con fases tempranas | `protocol/.agents/orchestrators/core/contracts/RECOVERY_REPORT.md`, `protocol/.agents/orchestrators/core/workflow/08-recovery.md` | Plan 58, RFC-30 (completes plan 29) |
 | 2026-08-14 | Nivel 2 | 2.3 Metadata de contratos de discovery | `protocol/.agents/orchestrators/discovery/contracts/INTER_WORKER_MESSAGE.md`, `protocol/.agents/orchestrators/discovery/contracts/DISCOVERY_MANIFEST.md` | Plan 58, Clase B |
+| 2026-08-14 | Nivel 3 | 3.1 Camino trivial legalizado | `AGENT_STATE_MACHINE.md`, workflows 00/05/06/07 + INDEX, H00/H04/H06, contratos TASK_ANALYSIS/EXECUTION_PLAN/VERIFICATION_REPORT | Plan 59, RFC-26 amended (option 1) |
+| 2026-08-14 | Nivel 3 | 3.2 Taxonomía RECOVERY/ANALYZING_TASK alineada | `protocol/.agents/standards/runtime/PROTOCOL_TAXONOMY.md` | Plan 59, RFC-30 |
+| 2026-08-14 | Nivel 3 | 3.3 H13 documenta transiciones por perfil | `protocol/.agents/harness/policies/H13-protocol-taxonomy.md` | Plan 59 |
 
 ---
 

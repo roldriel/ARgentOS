@@ -127,6 +127,7 @@ entities:
       - core:BUILDING_TASK_SPECIFICATION
       - core:CONFIRMING_INTENT
       - core:NEEDS_CLARIFICATION
+      - core:PLANNING
       - core:RECOVERY
     artifacts_input:
       - SESSION_BRIEF.md
@@ -421,6 +422,10 @@ entities:
       - core:PLANNING
       - core:NEEDS_CLARIFICATION
       - core:ABORT
+      - core:ANALYZING_TASK
+      - core:BUILDING_TASK_SPECIFICATION
+      - core:GATHERING_CONTEXT
+      - core:VALIDATING_CONTEXT
     artifacts_input:
       - VERIFICATION_REPORT.md
     artifacts_output:
@@ -1812,11 +1817,13 @@ entities:
     lifecycle: planning
     previous_states:
       - core:CONTEXT_READY
+      - core:ANALYZING_TASK
       - core:RECOVERY
     next_states:
       - core:PLAN_READY
       - core:NEEDS_CLARIFICATION
     input_artifacts:
+      - TASK_ANALYSIS.md
       - TASK_SPECIFICATION.md
       - CONTEXT_ARTIFACT.md
       - CONTEXT_VALIDATION_REPORT.md
@@ -1839,6 +1846,7 @@ entities:
       - core:VERIFYING
       - core:RECOVERY
     input_artifacts:
+      - TASK_ANALYSIS.md
       - TASK_SPECIFICATION.md
       - CONTEXT_VALIDATION_REPORT.md
       - EXECUTION_PLAN.md
@@ -1861,6 +1869,7 @@ entities:
       - core:COMPLETED
       - core:RECOVERY
     input_artifacts:
+      - TASK_ANALYSIS.md
       - TASK_SPECIFICATION.md
       - EXECUTION_PLAN.md
       - EXECUTION_SUMMARY.md

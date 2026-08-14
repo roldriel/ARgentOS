@@ -160,6 +160,7 @@ Possible values:
 CONFIRMING_INTENT
 BUILDING_TASK_SPECIFICATION
 NEEDS_CLARIFICATION
+PLANNING             (only when the Task Profile is `trivial`)
 ```
 
 ---

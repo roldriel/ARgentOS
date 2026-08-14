@@ -4,9 +4,9 @@ kind: workflow
 domain: core
 state: PLANNING
 lifecycle: planning
-previous_states: [core:CONTEXT_READY, core:RECOVERY]
+previous_states: [core:CONTEXT_READY, core:ANALYZING_TASK, core:RECOVERY]
 next_states: [core:PLAN_READY, core:NEEDS_CLARIFICATION]
-input_artifacts: [TASK_SPECIFICATION.md, CONTEXT_ARTIFACT.md, CONTEXT_VALIDATION_REPORT.md]
+input_artifacts: [TASK_ANALYSIS.md, TASK_SPECIFICATION.md, CONTEXT_ARTIFACT.md, CONTEXT_VALIDATION_REPORT.md]
 output_artifacts: [EXECUTION_PLAN.md]
 harness: [H04-execution-plan]
 actor: orchestrator
@@ -37,7 +37,8 @@ Its only responsibility is producing an execution plan artifact.
 ## Required Initial State
 
 ```text
-CONTEXT_READY
+CONTEXT_READY          (standard / complex)
+ANALYZING_TASK         (trivial profile only)
 ```
 
 The agent must have the following artifacts available:
@@ -50,9 +51,26 @@ The agent must have the following artifacts available:
 
 before entering this stage.
 
+For `trivial`-profile tasks the agent enters from `ANALYZING_TASK` with
+`TASK_ANALYSIS.md` as the task reference and no context artifacts (see
+`orchestrators/core/states/AGENT_STATE_MACHINE.md`, Task Profiles).
+
 ---
 
 # Input Artifacts
+
+## Task Analysis (trivial profile)
+
+Source:
+
+```text
+.project/<session-uuid>/<iteration>/<order>-TASK_ANALYSIS.md
+```
+
+For `trivial`-profile tasks this artifact replaces `TASK_SPECIFICATION.md` as
+the task reference: its objective, expected outcome, explicit requirements and
+restrictions define the planning scope. The specification and context
+artifacts are not produced in the reduced cycle.
 
 ## Task Specification
 
@@ -176,7 +194,7 @@ Free-text sections of this artifact follow `.agents/standards/communication/CAVE
 The plan is valid only when:
 
 * It addresses the task objective.
-* It uses validated context.
+* It uses validated inputs (for `trivial`-profile tasks, the validated task analysis; otherwise the validated context).
 * It defines executable steps.
 * It defines verification criteria.
 * It does not depend on unresolved unknowns.

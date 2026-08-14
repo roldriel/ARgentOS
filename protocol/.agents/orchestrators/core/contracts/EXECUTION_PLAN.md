@@ -50,6 +50,9 @@ Reference to the task specification that originated this plan.
 specification = ""
 ```
 
+For `trivial`-profile tasks (no `TASK_SPECIFICATION.md` is produced), this
+field cites the iteration's `TASK_ANALYSIS.md`.
+
 ---
 
 ## Context Reference
@@ -61,6 +64,9 @@ Reference to the validated context used to create this plan.
 artifact = ""
 validation_report = ""
 ```
+
+For `trivial`-profile tasks this section is omitted: no context artifacts are
+produced in the reduced cycle.
 
 ---
 

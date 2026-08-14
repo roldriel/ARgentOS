@@ -34,7 +34,7 @@ Validate that `VERIFICATION_REPORT.md` demonstrates the task was completed and v
 - Target state: `COMPLETED`
 - Artifact: `.project/<session-uuid>/<iteration>/<order>-VERIFICATION_REPORT.md`
 - Contract: `.agents/orchestrators/core/contracts/VERIFICATION_REPORT.md`
-- Reference: `TASK_SPECIFICATION.md`, `EXECUTION_PLAN.md`
+- Reference: `TASK_SPECIFICATION.md`, `EXECUTION_PLAN.md` (for `trivial`-profile tasks, `TASK_ANALYSIS.md` replaces `TASK_SPECIFICATION.md`)
 
 ## Checklist
 
@@ -42,7 +42,7 @@ Validate that `VERIFICATION_REPORT.md` demonstrates the task was completed and v
 
 1. The artifact file exists. `[gate]`
 2. The report summarizes what was verified. `[agent]`
-3. Each acceptance criterion from `TASK_SPECIFICATION.md` is evaluated. `[agent]`
+3. Each acceptance criterion is evaluated (from `TASK_SPECIFICATION.md`; for `trivial`-profile tasks, from the expected outcome and explicit requirements of `TASK_ANALYSIS.md`). `[agent]`
 4. The report includes test results or equivalent evidence. `[agent]`
 5. The report identifies any issues or failures. `[agent]`
 6. The report explicitly recommends either `COMPLETED` or `RECOVERY`. `[gate]` (see §"Gate Checklist", item 4, which verifies the declared `decision.result`)
@@ -72,7 +72,7 @@ The Orchestrator evaluates each item below by judgment when the gate fires and M
 
 1. Verify that `VERIFICATION_REPORT.md` exists in the current iteration directory (`.project/<session-uuid>/<iteration>/`). Cite the resolved artifact path as evidence.
 2. Verify that the artifact contains each of the following sections (heading comparison is case-insensitive): `Metadata`, `Task Reference`, `Execution Plan Reference`, `Verification Objective`, `Acceptance Criteria Evaluation`, `Test Results`, `Issues Found`, `Final Decision`, `Confidence`, `State Transition`. Cite any missing section as failure evidence.
-3. Verify that `## Rubric Evaluation` exists and contains one `### <NAME>_RUBRIC` subsection per expected rubric: the six base rubrics defined in `.agents/standards/quality/RUBRICS.md` (`TASK_SPECIFICATION_RUBRIC`, `CONTEXT_ARTIFACT_RUBRIC`, `CONTEXT_VALIDATION_REPORT_RUBRIC`, `EXECUTION_PLAN_RUBRIC`, `EXECUTION_SUMMARY_RUBRIC`, `VERIFICATION_REPORT_RUBRIC`) plus the rubric of each technical practice listed in `technical_approach.enabled` of `TASK_SPECIFICATION.md` that is enabled at protocol level. Each subsection MUST declare a `Level:` line with a value in {`INSUFFICIENT`, `MEETS`, `EXCEEDS`} and a non-empty `Evidence:` line. Cite missing rubrics and subsections without level or evidence.
+3. Verify that `## Rubric Evaluation` exists and contains one `### <NAME>_RUBRIC` subsection per expected rubric: the six base rubrics defined in `.agents/standards/quality/RUBRICS.md` (`TASK_SPECIFICATION_RUBRIC`, `CONTEXT_ARTIFACT_RUBRIC`, `CONTEXT_VALIDATION_REPORT_RUBRIC`, `EXECUTION_PLAN_RUBRIC`, `EXECUTION_SUMMARY_RUBRIC`, `VERIFICATION_REPORT_RUBRIC`) plus the rubric of each technical practice listed in `technical_approach.enabled` of `TASK_SPECIFICATION.md` that is enabled at protocol level (for `trivial`-profile tasks there is no `technical_approach.enabled`; only the six base rubrics apply). Each subsection MUST declare a `Level:` line with a value in {`INSUFFICIENT`, `MEETS`, `EXCEEDS`} and a non-empty `Evidence:` line. Cite missing rubrics and subsections without level or evidence.
 4. Verify that `## Final Decision` contains a parseable TOML block and that `decision.result` is `COMPLETED` for the gate to PASS. Cite the declared value.
 5. Verify that `## Acceptance Criteria Evaluation` contains a parseable TOML block whose `acceptance_criteria` is a list, that no entry has `result = "FAIL"`, and that every entry with `result = "PARTIAL"` declares a non-empty `action_plan`. Cite each offending criterion.
 6. Verify that every citation in the artifact resolves against the filesystem. Recognized citation forms: backtick-quoted `` `path:section` ``, backtick-quoted path followed by `§section`, and the string values of the TOML keys `specification` and `execution_plan` inside ` ```toml ` blocks. A citation resolves when its path exists relative to the project root, the session directory, or any of the session's iteration directories; when the target is a `.md` file and the anchor is not numeric-only, the cited section MUST exist as an ATX heading in the target (normalized, case-insensitive comparison). Paths containing `<`/`>` placeholders are skipped. On failure, cite each broken citation (line, path, reason); on success, cite the number of citations verified.

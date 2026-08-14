@@ -54,16 +54,17 @@ Validate that `TASK_ANALYSIS.md` exists and complies with its contract before al
 11. The artifact contains a `Recommended Next State`. `[gate]`
 12. The artifact contains a `Confidence` section (analysis confidence, per `.agents/standards/quality/CONFIDENCE.md` — distinct from the `Intent Confidence Assessment`, which follows `INTENT_CONFIDENCE.md`). `[gate]`
 13. The artifact contains a `Task Profile` section. `[gate]`
-14. The `Recommended Next State` is one of the allowed transitions (`BUILDING_TASK_SPECIFICATION`, `CONFIRMING_INTENT`, or `NEEDS_CLARIFICATION`). `[agent]`
+14. The `Recommended Next State` is one of the allowed transitions (`BUILDING_TASK_SPECIFICATION`, `CONFIRMING_INTENT`, `NEEDS_CLARIFICATION`, or `PLANNING` when the `Task Profile` is `trivial`). `[agent]`
 15. If `Detected Ambiguities` contains any entry that would require an implementation decision, the `Recommended Next State` MUST be `NEEDS_CLARIFICATION`. `[agent]`
 16. Each ambiguity that would require an implementation decision includes at least two concrete resolution options and an `Other` option. `[agent]`
 17. The `Intent Confidence Assessment` includes a numeric `score`, a list of `applied_criteria`, and a `level` of `HIGH`, `MEDIUM`, or `LOW`. `[agent]`
 18. The `Intent Confidence Assessment.level` is consistent with the score thresholds defined in `.agents/standards/requirements/INTENT_CONFIDENCE.md`. `[agent]`
-19. If the `Recommended Next State` is `BUILDING_TASK_SPECIFICATION`, the `Intent Confidence Assessment.level` MUST be `HIGH` and no ambiguity may require an implementation decision. `[agent]`
+19. If the `Recommended Next State` is `BUILDING_TASK_SPECIFICATION` (or `PLANNING` for a `trivial`-profile task), the `Intent Confidence Assessment.level` MUST be `HIGH` and no ambiguity may require an implementation decision. `[agent]`
 20. If the `Intent Confidence Assessment.level` is `MEDIUM` or `LOW`, the `Recommended Next State` MUST be `CONFIRMING_INTENT` (unless ambiguities force `NEEDS_CLARIFICATION`). `[agent]`
 21. The `Task Profile` value is one of `trivial`, `standard`, or `complex`. `[agent]`
 22. The `Task Profile` justification is coherent with the assignment criteria in the contract (estimated file count, ambiguity, design decisions, interface impact). `[agent]`
 23. Every citation in the artifact (`` `path:section` ``, `` `path` §section ``, and TOML citation fields) resolves against the filesystem. `[gate]` (see §"Gate Checklist", item 2)
+24. If the `Task Profile` is `trivial`, the `Recommended Next State` MAY be `PLANNING` (item 19 applies). If the confidence is `MEDIUM`/`LOW` or an ambiguity requires an implementation decision, the task MUST be reclassified upward per the Task Profiles rules and the `Recommended Next State` follows the non-trivial rules. `[agent]`
 
 ## Gate Checklist
 

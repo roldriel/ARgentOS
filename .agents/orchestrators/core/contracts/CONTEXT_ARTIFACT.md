@@ -1,10 +1,12 @@
 +++
+schema_version = "1.0.0"
 artifact = "CONTEXT_ARTIFACT.md"
 phase = "03"
 produced_by = "context_gatherer"
 enforcement = "gated"
 gated_by = ["H02"]
 +++
+schema_version = "1.0.0"
 
 
 ---

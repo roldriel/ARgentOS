@@ -1,10 +1,12 @@
 +++
+schema_version = "1.0.0"
 artifact = "KB_RECOMMENDATION.md"
 phase = "n/a"
 produced_by = "context_discoverer"
 enforcement = "gated"
 gated_by = ["H10"]
 +++
+schema_version = "1.0.0"
 
 
 ---

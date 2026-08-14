@@ -5,7 +5,7 @@ domain: core
 state: ANALYZING_TASK
 lifecycle: task
 previous_states: [core:TASK_RECEIVED]
-next_states: [core:BUILDING_TASK_SPECIFICATION, core:CONFIRMING_INTENT, core:NEEDS_CLARIFICATION]
+next_states: [core:BUILDING_TASK_SPECIFICATION, core:CONFIRMING_INTENT, core:NEEDS_CLARIFICATION, core:PLANNING]
 input_artifacts: []
 output_artifacts: [TASK_ANALYSIS.md]
 harness: [H00-task-analysis]
@@ -55,6 +55,21 @@ Next module:
 
 ```text
 orchestrators/core/workflow/02-build-task-specification.md
+```
+
+---
+
+### PLANNING (trivial profile)
+
+The request is understood well enough to plan directly: the assigned task
+profile is `trivial`, so the intent-confirmation, specification and context
+states are not entered (see `orchestrators/core/states/AGENT_STATE_MACHINE.md`,
+Task Profiles).
+
+Next module:
+
+```text
+orchestrators/core/workflow/05-plan.md
 ```
 
 ---
@@ -159,7 +174,7 @@ Evaluate how confident the agent is in its interpretation of the user's intent u
 
 Calculate the score, list the applied criteria, and derive the confidence level:
 
-* **HIGH** (score >= 6): proceed to `BUILDING_TASK_SPECIFICATION`. Generate `INTENT_REFLECTION.md` for traceability as an optional output of this state (per `orchestrators/core/states/AGENT_STATE_MACHINE.md`, `ANALYZING_TASK`); user confirmation is optional, and H11 gates the reflection before the transition when it exists.
+* **HIGH** (score >= 6): proceed to `BUILDING_TASK_SPECIFICATION` (or to `PLANNING` when the assigned task profile is `trivial`). Generate `INTENT_REFLECTION.md` for traceability as an optional output of this state (per `orchestrators/core/states/AGENT_STATE_MACHINE.md`, `ANALYZING_TASK`); user confirmation is optional, and H11 gates the reflection before the transition when it exists.
 * **MEDIUM** (score 2–5): transition to `CONFIRMING_INTENT` and request user confirmation.
 * **LOW** (score < 2): transition to `CONFIRMING_INTENT` with a detailed reflection and request user clarification or reformulation.
 
@@ -256,6 +271,30 @@ Continue with:
 ```text
 orchestrators/core/workflow/02-build-task-specification.md
 ```
+
+## Trivial Path (profile `trivial`)
+
+If the request is sufficiently clear, intent confidence is HIGH, the task
+profile assigned in `TASK_ANALYSIS.md` is `trivial`, and the artifact
+recommends `PLANNING`:
+
+```text
+ANALYZING_TASK
+        |
+        v
+PLANNING
+```
+
+Continue with:
+
+```text
+orchestrators/core/workflow/05-plan.md
+```
+
+The intent-confirmation, specification, and context states are not entered;
+`TASK_ANALYSIS.md` serves as the task reference for planning, execution and
+verification (see `orchestrators/core/states/AGENT_STATE_MACHINE.md`, Task
+Profiles).
 
 ## Intent Requires Confirmation
 

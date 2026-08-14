@@ -1,9 +1,11 @@
 +++
+schema_version = "1.0.0"
 artifact = "REVIEW_REPORT.md"
 phase = "n/a"
 produced_by = "reviewer"
 enforcement = "informational"
 +++
+schema_version = "1.0.0"
 
 
 ---

@@ -1,10 +1,12 @@
 +++
+schema_version = "1.0.0"
 artifact = "VERIFICATION_REPORT.md"
 phase = "07"
 produced_by = "verifier"
 enforcement = "gated"
 gated_by = ["H06", "H07"]
 +++
+schema_version = "1.0.0"
 
 
 ---
@@ -49,6 +51,10 @@ Reference to the task specification that defines the acceptance criteria.
 [task_reference]
 specification = ""
 ```
+
+For `trivial`-profile tasks, this field cites the iteration's
+`TASK_ANALYSIS.md`; the acceptance criteria are its expected outcome and
+explicit requirements.
 
 ---
 

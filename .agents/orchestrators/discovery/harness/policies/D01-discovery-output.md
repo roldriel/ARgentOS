@@ -50,11 +50,12 @@ it only validates the per-task `KB_RECOMMENDATION.md` artifact in
 - Target state: `DISCOVERY_READY`
 - KB entries: `.project/knowledge/discovery/*.md`
 - Manifest: `.project/knowledge/discovery/.discovery_manifest`
-- Entry contract: `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md`
+- Entry contracts: `.agents/orchestrators/discovery/contracts/` (the base
+  contract `KB_DISCOVERY_ENTRY.md` plus the per-entry contracts)
 
 ## Checklist
 
-**Evaluation audience:** the harness runner no longer exists; each item is evaluated by the Orchestrator's judgment when the gate fires. Today every item is `[agent]` (declared judgment); per §"Implementation Note", items with deterministic structure (entry existence, `source_files` path existence, required fields and sections) are `[gate]`-candidates — objectively verifiable and gateable without interpretation if a future implementation restores mechanical checks.
+**Evaluation audience:** the harness runner no longer exists; each item is evaluated by the Orchestrator's judgment when the gate fires. Today every item is `[agent]` (declared judgment); per §"Implementation Note", items with deterministic structure (entry existence, `source_files` path existence, required fields and sections) are `[gate]`-candidates — objectively checkable without interpretation if a future implementation restores mechanical checks.
 
 1. **Real stack:** every language/framework listed in `stack.md` comes from a
    real configuration file (e.g., `pyproject.toml`, `package.json`,
@@ -87,15 +88,11 @@ it only validates the per-task `KB_RECOMMENDATION.md` artifact in
 11. **API surface matches shape:** the content of `api.md` matches the
     `project_shape` declared in the manifest (variant rules of
     `.agents/orchestrators/discovery/contracts/API_SURFACE.md`). `[agent]`
-12. **Required sections:** `architecture.md` contains
-    `## Module Responsibilities`, `## Strong Couplings`, `## Security` and
-    `## Extension Points`; `configuration.md` contains
-    `## Run, Build and Release`; `database.md` contains `## Main Models`;
-    `dependencies.md` contains `## Internal Dependencies`; `stack.md` contains
-    `## Compatibility Constraints`; `development_patterns.md` covers
-    `## Testing`, `## Logging and Errors` and `## Validation`;
-    `technical_debt.md` contains `## Top Risks`. `## Performance Invariants`
-    is required only when evidenced. `[agent]`
+12. **Per-entry sections:** every KB entry contains the specific sections
+    required by its per-entry contract
+    (`.agents/orchestrators/discovery/contracts/`), resolved per entry type.
+    D01 resolves required sections exclusively from the contracts; it does
+    not maintain a section list of its own. `[agent]`
 
 ## Rejection of Invented Outputs
 
@@ -125,10 +122,11 @@ The Discovery Orchestrator must:
 
 ## Implementation Note
 
-D01 may be implemented in Python as part of the harness. The harness is the
-guardian of the protocol and may contain code; this does not violate the
-principle that `.agents/` are instructions, because the harness is not an
-instruction for the agent.
+Today the harness has no executable validation runner: every D01 item is
+evaluated by the Discovery Orchestrator's judgment against the prose checklist.
+Mechanical validation of D01 items is a possible future extension — the
+protocol does not forbid the harness from containing code if a future design
+decides so — but nothing in the distributed payload depends on it.
 
 ## Recovery Decision Table
 

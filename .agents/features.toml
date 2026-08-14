@@ -14,6 +14,9 @@
 # conditions behavior and act on it there; ignoring it is a deviation that
 # must be logged. Compliance is auditable by joining the active-flags entry
 # in SESSION_LOG.md with the consumption declared in the produced artifacts.
+# The canonical evidence procedure (expected / evidenced / unevidenced) is
+# defined in standards/INDEX.md (§Compliance evidence); the metrics
+# aggregation computes it mechanically in the development repository.
 # Dual flags (technical-practice flags) carry both obligations independently.
 
 [features]

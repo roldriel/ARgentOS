@@ -50,7 +50,7 @@ Each violation is reported with its failure class, as defined inline in the dele
 
 ## Checklist
 
-**Evaluation audience:** the harness runner no longer exists; each item is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` have objectively verifiable structure (file existence, path resolution, schema shape); items marked `[agent]` are declared judgment.
+**Evaluation audience:** the harness runner no longer exists; each item is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` are structurally checkable (file existence, path resolution, schema shape); items marked `[agent]` are declared judgment.
 
 ### Pre-delegation gate
 

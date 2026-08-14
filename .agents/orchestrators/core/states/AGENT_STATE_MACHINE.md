@@ -69,6 +69,7 @@ No transition may bypass a required state because the task appears small, simple
 - The only valid paths to reduce work are:
   - Transitioning from `ANALYZING_TASK` to `NEEDS_CLARIFICATION` when information is missing.
   - Transitioning from `ANALYZING_TASK` to `CONFIRMING_INTENT` when confidence is not HIGH.
+  - Transitioning from `ANALYZING_TASK` to `PLANNING` when the task profile assigned in `TASK_ANALYSIS.md` is `trivial` (trivial-path transition; see Task Profiles).
   - Following the recovery loop back to `PLANNING`, `NEEDS_CLARIFICATION`, or an early phase (`ANALYZING_TASK`, `BUILDING_TASK_SPECIFICATION`, `GATHERING_CONTEXT`, `VALIDATING_CONTEXT`) through the transitions defined in the `RECOVERY` section.
 - If a worker proposes skipping a phase, the Orchestrator MUST record the proposal in `SESSION_LOG.md` and route to `RECOVERY` or `NEEDS_CLARIFICATION`.
 
@@ -78,7 +79,7 @@ For the explicit anti-circumvention rule, see `.agents/standards/conduct/ANTI_CI
 
 ## Task Profiles
 
-Every task is classified exactly once, during `ANALYZING_TASK`, into a task profile recorded in `TASK_ANALYSIS.md` (`Task Profile` section) with an objective justification. The profile determines which artifacts and harness gates are mandatory for the task; the states and transitions of this machine do not change.
+Every task is classified exactly once, during `ANALYZING_TASK`, into a task profile recorded in `TASK_ANALYSIS.md` (`Task Profile` section) with an objective justification. The profile determines which artifacts and harness gates are mandatory for the task and which states are entered. For the `trivial` profile the machine uses one profile-conditional transition (`ANALYZING_TASK → PLANNING`) and a reduced input set (see rule 5); for `standard` and `complex` the states and transitions of this machine apply unchanged.
 
 | Profile | Assignment criteria | Mandatory artifacts | Mandatory gates |
 | --- | --- | --- | --- |
@@ -92,7 +93,7 @@ Rules:
 2. **Escalation is upward-only.** If execution reveals complexity not seen during analysis (ambiguity, scope creep, interface impact), the Orchestrator reclassifies the task to `standard` or `complex`, records the reclassification in `SESSION_LOG.md`, and completes the artifacts the new profile requires. A task is never reclassified downward.
 3. **Gates omitted by profile are recorded, not absent.** When the Orchestrator evaluates a gate the profile does not require, it records the gate in `HARNESS_REPORT.md` as `skipped: profile`. The omission is a system decision, not an oversight, and does not violate the No-Skip Rule.
 4. **`NEEDS_CLARIFICATION` and `RECOVERY` apply to every profile.** A trivial task that turns ambiguous is reclassified upward; it is never forced through the reduced cycle.
-5. For a `trivial` task the path is `ANALYZING_TASK → PLANNING → EXECUTING → VERIFYING`: the specification, context, and intent-confirmation states do not apply, and no discovery or context workers are delegated. Every other transition rule of this machine applies unchanged.
+5. For a `trivial` task the path is `ANALYZING_TASK → PLANNING → EXECUTING → VERIFYING`: the intent-confirmation, specification, and context states (`CONFIRMING_INTENT`, `BUILDING_TASK_SPECIFICATION`, `TASK_READY`, `GATHERING_CONTEXT`, `CONTEXT_GATHERED`, `VALIDATING_CONTEXT`, `CONTEXT_READY`) are not entered, and no discovery or context workers are delegated. The `ANALYZING_TASK → PLANNING` transition is allowed **only** for the `trivial` profile and is gated by H00 (the `Task Profile` value in `TASK_ANALYSIS.md`); for `standard`/`complex` it is not an allowed transition. In the reduced cycle, planning, execution and verification consume `TASK_ANALYSIS.md` as the task reference in place of `TASK_SPECIFICATION.md` and require no context artifacts (see workflows 05–07 and the contracts `EXECUTION_PLAN.md` / `VERIFICATION_REPORT.md`). Every other transition rule of this machine applies unchanged.
 
 ---
 
@@ -187,6 +188,17 @@ ANALYZING_TASK
         v
 BUILDING_TASK_SPECIFICATION
 ```
+
+If the request is sufficiently understood, intent confidence is HIGH, the task profile assigned in `TASK_ANALYSIS.md` is `trivial`, and H00 passes:
+
+```text
+ANALYZING_TASK
+        |
+        v
+PLANNING
+```
+
+This transition is available **only** for `trivial`-profile tasks (see Task Profiles); it is not an allowed transition for `standard` or `complex` tasks.
 
 If the intent is understood but confidence is MEDIUM or LOW, or if the user should validate the interpretation:
 
@@ -509,6 +521,8 @@ PLANNING
 
 The agent defines how the task will be executed.
 
+For `trivial`-profile tasks the task reference is `TASK_ANALYSIS.md` and no context artifacts are required (see Task Profiles).
+
 ### Required Artifact
 
 ```text
@@ -574,6 +588,8 @@ The agent performs the planned actions.
 .project/<session-uuid>/<iteration>/<order>-EXECUTION_PLAN.md
 ```
 
+For `trivial`-profile tasks, `TASK_ANALYSIS.md` replaces `TASK_SPECIFICATION.md` and no context validation report is required (see Task Profiles).
+
 ### Required Output Artifact
 
 ```text
@@ -613,6 +629,8 @@ RECOVERY
 ### Description
 
 The agent evaluates whether the result satisfies the original specification.
+
+For `trivial`-profile tasks the task reference is `TASK_ANALYSIS.md` (expected outcome and explicit requirements) and H07 is recorded as `skipped: profile` (see Task Profiles).
 
 ### Required Artifact
 

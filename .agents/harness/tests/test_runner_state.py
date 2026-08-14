@@ -270,3 +270,34 @@ def test_cli_invalid_iteration_exits_2(session, capsys):
 
     assert exit_code == 2
     assert "invalid iteration" in capsys.readouterr().err
+
+
+# --- CLI session linking (P4.2) ----------------------------------------------
+
+
+def test_link_session_persists(session):
+    session_uuid, artifacts_dir, _ = session
+    runner_state.link_session("cli-y", session_uuid)
+    mapping = json.loads(
+        (artifacts_dir / ".sessions.json").read_text(encoding="utf-8")
+    )
+    assert mapping["cli-y"] == session_uuid
+
+
+def test_cli_link_writes_mapping(session, capsys):
+    session_uuid, artifacts_dir, _ = session
+    exit_code = runner_state.main(
+        ["--session", session_uuid, "--cli-session", "cli-x", "link"]
+    )
+    assert exit_code == 0
+    mapping = json.loads(
+        (artifacts_dir / ".sessions.json").read_text(encoding="utf-8")
+    )
+    assert mapping["cli-x"] == session_uuid
+
+
+def test_cli_link_requires_cli_session(session, capsys):
+    session_uuid, _, _ = session
+    exit_code = runner_state.main(["--session", session_uuid, "link"])
+    assert exit_code == 2
+    assert "--cli-session" in capsys.readouterr().err

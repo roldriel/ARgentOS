@@ -37,7 +37,7 @@ Validate that the execution phase completed all planned steps and left the proje
 
 ## Checklist
 
-**Evaluation audience:** the harness runner no longer exists; every item in this policy is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` have objectively verifiable structure and are restated as numbered instructions in §"Gate Checklist", where the Orchestrator MUST cite evidence per item. Items marked `[agent]` are declared judgment.
+**Evaluation audience:** the harness runner no longer exists; every item in this policy is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` are structurally checkable and are restated as numbered instructions in §"Gate Checklist", where the Orchestrator MUST cite evidence per item. Items marked `[agent]` are declared judgment.
 
 1. Every step in `EXECUTION_PLAN.md` has been executed or explicitly documented as skipped with justification. `[gate]` (see §"Gate Checklist", item 3: every step is `COMPLETED` or `SKIPPED` with notes)
 2. No project files outside the plan scope were modified. `[agent]`

@@ -6,7 +6,7 @@ state: VERIFYING
 lifecycle: execution
 previous_states: [core:EXECUTING]
 next_states: [core:COMPLETED, core:RECOVERY]
-input_artifacts: [TASK_SPECIFICATION.md, EXECUTION_PLAN.md, EXECUTION_SUMMARY.md]
+input_artifacts: [TASK_ANALYSIS.md, TASK_SPECIFICATION.md, EXECUTION_PLAN.md, EXECUTION_SUMMARY.md]
 output_artifacts: [VERIFICATION_REPORT.md]
 harness: [H06-verification-report, H07-scope-compliance]
 actor: orchestrator
@@ -79,6 +79,10 @@ Source:
 ```text
 .project/<session-uuid>/<iteration>/<order>-TASK_SPECIFICATION.md
 ```
+
+For `trivial`-profile tasks, `TASK_ANALYSIS.md` replaces this artifact as the
+task reference: its expected outcome and explicit requirements are the
+acceptance criteria evaluated by the verification report.
 
 Used to verify:
 

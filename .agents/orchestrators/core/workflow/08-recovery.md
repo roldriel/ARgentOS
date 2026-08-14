@@ -217,7 +217,9 @@ The artifact must comply with the `RECOVERY_REPORT.md` contract and contain:
 * Failure summary.
 * Root cause classification and description.
 * Analysis summary.
-* Corrective action recommendation (`PLANNING`, `NEEDS_CLARIFICATION` or `ABORT`).
+* Corrective action recommendation (`PLANNING`, `NEEDS_CLARIFICATION`,
+  `ABORT`, or one of the early-phase destinations `ANALYZING_TASK` /
+  `BUILDING_TASK_SPECIFICATION` / `GATHERING_CONTEXT` / `VALIDATING_CONTEXT`).
 * Updated artifacts (if any).
 * Confidence level.
 

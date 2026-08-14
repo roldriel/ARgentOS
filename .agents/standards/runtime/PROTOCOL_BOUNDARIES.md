@@ -12,6 +12,11 @@ Protocol rules MUST be defined in exactly one canonical location. Other files ma
 
 This policy applies to all Markdown files under `.agents/`.
 
+**Approved exception:** `standards/conduct/ANTI_CIRCUMVENTION.md` restates the
+payload-immutability rule inline; that restatement is normative for conduct
+and is the only sanctioned duplication of a full rule. Any new duplication
+requires an explicit exception documented here.
+
 ## Artifact Safety Rule
 
 Generated artifacts MUST be created inside the `.project/<session-uuid>/<iteration>/` directory, using the naming convention `<order>-ARTIFACT_NAME.md`, where `<order>` reflects the artifact's generation/reading sequence within the iteration.

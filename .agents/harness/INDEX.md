@@ -2,16 +2,47 @@
 
 ## Purpose
 
-The harness is a set of validation policies invoked by the Orchestrator before critical state transitions.
+The harness is a set of **review policies** that the Orchestrator applies
+**by judgment** before critical state transitions (see §Enforcement model below
+for what is mechanical vs. judgment). It defines the criteria so that:
 
-It ensures that:
-
-1. Required artifacts exist and comply with their contracts.
+1. Required artifacts exist and comply with their contracts (by judgment,
+   using structurally checkable criteria where available).
 2. State transitions follow the rules in `orchestrators/core/states/AGENT_STATE_MACHINE.md`.
 3. Workflow phases were executed in order without skipped steps.
-4. The process remains auditable and reproducible.
+4. The process remains auditable and reproducible through a self-reported
+   review trail.
 
 The harness is implemented as a set of policies, each carrying a «Gate Checklist» in prose that the Orchestrator evaluates by judgment when the gate fires. There is no executable validation runner. Three pure-stdlib Python scripts survive: `hook_gate.py` (the CLI enforcement hook), `runner_state.py` (the only writer of `state.json`, via its CLI), and `health_check.py` (the state-storage probe). Recovery routing lives in each policy's §"Recovery Decision Table" and protocol health verification in `.agents/standards/runtime/PROTOCOL_HEALTH.md`.
+
+## Enforcement model
+
+The harness has three layers; only the first is mechanical, the second is
+review, and the third is development-side:
+
+1. **Enforced (environment, mechanical):** the hook shell (`hook_gate.py`,
+   fail-open by contract) blocks `PreToolUse` `Write`/`Edit` without an H04
+   PASS and `Stop` without iteration closure; `runner_state.py` persists gate
+   results transactionally and runs the post-hoc bypass scan; `health_check.py`
+   probes `.project/` writability. This is the only machine-enforced part of
+   the protocol.
+2. **Reviewed (Orchestrator, judgment):** every gate checklist
+   (H00–H07, H09–H11, H15, D00, D01, S00, H13) is evaluated by the
+   Orchestrator by judgment when the gate fires. The `[gate]`/`[agent]` labels
+   describe how objective a criterion is — `[gate]` items are structurally
+   checkable, not machine-enforced — and `HARNESS_REPORT.md` is the
+   self-reported review trail, not independently verified evidence.
+3. **Verified (development repository, dev-only):** the development checkers
+   (protocol invariants, plan citations/structure, taxonomy coherence, session
+   artifacts, version state) mechanically verify the payload and the repository
+   in the development workspace and CI. They are not part of the distributed
+   protocol (adopters get `.agents/` + `AGENTS.md` only) and never block an
+   adopting session.
+
+This declaration is canonical for how the words "enforced", "reviewed" and
+"verified" are used across `.agents/`: "enforced" = the hook shell, "reviewed"
+= gate evaluation by judgment, "verified" = dev-only checkers of the
+development repository.
 
 ## Who Invokes the Harness
 
@@ -76,6 +107,14 @@ If a harness trigger fails:
 ## Recovery Mechanism
 
 When a harness trigger fails, the Orchestrator routes to recovery. The recovery logic is declared as a **recovery decision table** inside each policy file (§"Recovery Decision Table"): an ordered list of rules (conditions over context variables such as `artifact_exists` or `retry_count` → recommended action and target phase) that the Orchestrator evaluates by judgment, applying the first matching rule. Co-locating the table with the policy keeps the recovery rule next to the gate that fails.
+
+**`retry_count` semantics.** The recovery tables condition on `retry_count`
+(retries already attempted for this failure). The Orchestrator derives it at
+the moment the gate fails from the session's `HARNESS_REPORT.md`: the number of
+prior `FAIL` entries for the same trigger in the current iteration. `SKIP`
+entries do not count. The value is read from the report and is not stored
+elsewhere; `retry_count >= 1` means the trigger already failed at least once in
+this iteration.
 
 The Orchestrator resolves and reads the policy of its own domain: core (`H*`), discovery (`D*`), system (`S*`) and cross-cutting (`.agents/harness/policies/`).
 
@@ -163,6 +202,43 @@ Orchestrator records suspects as an alert in the HARNESS_REPORT
 entry (contract: `.agents/contracts/HARNESS_REPORT.md`).
 
 ## Hook setup (enforced mode)
+
+### Hook event schema
+
+`hook_gate.py` reads one JSON event from stdin. The schema is the CLI hook
+event used by the documented CLIs (Kimi Code, Claude Code):
+
+```json
+{
+  "session_id": "<cli session id>",
+  "cwd": "<project root>",
+  "hook_event_name": "PreToolUse" | "Stop",
+  "tool_name": "<tool>",
+  "tool_input": { "<key>": "<value>" }
+}
+```
+
+Rules:
+
+- The CLI session id is not the protocol session uuid. `hook_gate.py`
+  resolves the protocol session deterministically, in this order:
+  1. the mapping `.project/.sessions.json` (CLI session id → protocol uuid);
+  2. the exact directory `.project/<session_id>/`;
+  3. the only session directory;
+  4. the most recently modified session directory — used only on the first
+     event of a CLI session, after which the mapping is recorded so later
+     events of that CLI session resolve identically.
+  `runner_state.py link --cli-session <id> --session <uuid>` binds a CLI
+  session to a protocol session explicitly (e.g., when resuming a protocol
+  session across CLI conversations). The mapping file is runtime metadata,
+  best-effort: a write failure never blocks resolution.
+- `PreToolUse` gates only `Write`/`Edit`; the target is read from
+  `tool_input` keys `file_path`, `path` or `filename`.
+- `Stop` gates iteration closure (H06 PASS, `NEEDS_CLARIFICATION` recorded, or
+  a terminal status in `state.json`).
+- The event is fail-open by contract: malformed JSON, missing fields, unknown
+  events, or any internal error resolve to allow (exit 0); post-hoc bypass
+  detection compensates when the H04 PASS is recorded (`runner_state.py`).
 
 Enforced mode requires registering `hook_gate.py` as a CLI hook for two
 events: `PreToolUse` (matcher `Write|Edit`) and `Stop`. The paths below

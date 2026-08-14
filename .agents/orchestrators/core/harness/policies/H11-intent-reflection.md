@@ -37,7 +37,7 @@ Validate that `INTENT_REFLECTION.md` exists, complies with its contract, and rec
 
 ## Checklist
 
-**Evaluation audience:** the harness runner no longer exists; every item in this policy is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` have objectively verifiable structure (artifact existence, required-section presence); items marked `[agent]` are declared judgment.
+**Evaluation audience:** the harness runner no longer exists; every item in this policy is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` are structurally checkable (artifact existence, required-section presence); items marked `[agent]` are declared judgment.
 
 1. The artifact file exists. `[gate]`
 2. The artifact contains a `Metadata` section. `[gate]`

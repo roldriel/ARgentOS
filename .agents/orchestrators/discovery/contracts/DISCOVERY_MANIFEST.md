@@ -1,9 +1,11 @@
 +++
+schema_version = "1.0.0"
 artifact = "DISCOVERY_MANIFEST.md"
 phase = "n/a"
 produced_by = "synthesis_worker"
 enforcement = "informational"
 +++
+schema_version = "1.0.0"
 
 
 ---
@@ -25,6 +27,11 @@ Define the format of the manifest of the accumulative knowledge base. The manife
 ## Location
 
 `.project/knowledge/discovery/.discovery_manifest`
+
+> **Naming note:** this contract document is `DISCOVERY_MANIFEST.md`; the
+> runtime artifact it defines is `.discovery_manifest` (TOML) under
+> `.project/knowledge/discovery/`. The contract filename is not an artifact
+> path.
 
 ## Format
 

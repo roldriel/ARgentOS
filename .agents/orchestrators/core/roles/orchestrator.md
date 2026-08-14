@@ -155,11 +155,12 @@ When the `discovery_orchestrator` feature flag is enabled, the Orchestrator main
 
 Both TTLs are configured in `.agents/features.toml`.
 
-**Hash calculation.** Before invoking, the Orchestrator computes:
-
-1. **Config files hash:** SHA-256 of the relevant configuration files in deterministic order.
-2. **Sample files hash:** SHA-256 of the selected code sample.
-3. **Environment hash:** SHA-256 of the environment probe results.
+**Hash calculation.** Hashes are computed by the Discovery Orchestrator's
+`init_worker` during `discovery:DISCOVERY_INIT` and recorded in
+`discovery_input.json` and the manifest's `[hashes]` section
+(`orchestrators/discovery/states/DISCOVERY_STATE_MACHINE.md`). The core
+Orchestrator never computes hashes itself: it only detects the need for
+discovery (conditions above) and requests the scope.
 
 **Invocation.** The Orchestrator invokes the Discovery Orchestrator with a scope and the following payload:
 
@@ -176,12 +177,7 @@ Both TTLs are configured in `.agents/features.toml`.
   "project_root": "/path/to/project",
   "scope": "full",
   "context_budget": 100000,
-  "sample_size": 10,
-  "hashes": {
-    "config_files_hash": "sha256:abc...",
-    "sample_files_hash": "sha256:def...",
-    "environment_hash": "sha256:ghi..."
-  }
+  "sample_size": 10
 }
 ```
 
@@ -250,7 +246,7 @@ After receiving a worker result and a passing harness:
 
 - Transition to the next allowed state.
 - If the harness fails:
-  - Populate the context variables of the failed trigger's policy and apply its §"Recovery Decision Table" (first matching rule, top to bottom).
+  - Populate the context variables of the failed trigger's policy and apply its §"Recovery Decision Table" (first matching rule, top to bottom). `retry_count` is derived from `HARNESS_REPORT.md` (prior `FAIL` entries for the same trigger in the current iteration; see `.agents/harness/INDEX.md`, §Recovery Mechanism).
   - Apply the action of the matching rule (`RETRY_WORKER`, `NEEDS_CLARIFICATION`, `RECOVERY_GENERIC`, or `ABORT`).
   - If no rule applies or the situation does not match the table's variables, default to `RECOVERY_GENERIC` with `target_phase = "08-recovery.md"`.
 - If the worker fails to produce a valid artifact, route to `RECOVERY`.

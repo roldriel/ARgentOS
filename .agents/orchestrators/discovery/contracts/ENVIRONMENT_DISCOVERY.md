@@ -1,9 +1,11 @@
 +++
+schema_version = "1.0.0"
 artifact = "ENVIRONMENT_DISCOVERY.md"
 phase = "n/a"
 produced_by = "environment_worker"
 enforcement = "informational"
 +++
+schema_version = "1.0.0"
 
 
 ---

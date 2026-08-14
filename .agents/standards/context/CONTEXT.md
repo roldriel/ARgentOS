@@ -2,6 +2,20 @@
 
 This document defines how the Orchestrator assembles context for workers in the `.agents` protocol. It also defines the techniques for compressing that context without losing authority, acceptance criteria, critical constraints, or protocol state.
 
+## Determinism model
+
+Context assembly (discover → collect → organize → prioritize → resolve →
+compose → deliver) is **judgment with ordered criteria**: the policies of this
+directory define the order and the closed sets (tie-breaking criteria,
+deduplication/merge rules, compression techniques), so the procedure is
+deterministic in form, but every criterion is evaluated by the Orchestrator by
+judgment when assembling a payload. Nothing in the context pipeline is
+machine-enforced: the budget is advisory (see `BUDGET_MATERIALIZATION.md`,
+§Enforcement status) and the deterministic checks named as "harness Future
+Extensions" across the Resolution/Composition policies are possibilities, not
+guarantees. This declaration is canonical for how the context pipeline is
+described across `.agents/standards/context/`.
+
 ## 1. Priority of information
 
 When building a worker payload, the Orchestrator includes context in this order of priority:
@@ -30,6 +44,10 @@ The following budgets limit only the portion of context that comes from `.projec
 | Planning, execution, and verification | 4000 |
 
 The `context_discoverer` recommends a budget; the Orchestrator applies it when assembling the final payload.
+
+These budgets are advisory: the protocol does not measure or truncate the KB
+portion mechanically; compliance is recorded via the `context_budget` metric
+event (see `BUDGET_MATERIALIZATION.md`, §Enforcement status).
 
 ## 4. Budget distribution
 

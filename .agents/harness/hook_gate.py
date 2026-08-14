@@ -32,8 +32,10 @@ Usage (CLI hook configuration): ``python .agents/harness/hook_gate.py``
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -76,27 +78,80 @@ def _read_event() -> dict | None:
 
 
 def _resolve_session(event: dict) -> Path | None:
-    """Locate the active session directory under .project/.
+    """Locate the active session directory under .project/ deterministically.
 
-    The CLI session id does not necessarily match the protocol session
-    uuid, so fall back to the most recently modified session directory
-    (single active session per project is the operating assumption).
+    Resolution order:
+    1. Mapping: ``.project/.sessions.json`` (CLI session id -> protocol uuid).
+    2. Exact directory: ``.project/<session_id>/`` exists.
+    3. The only session directory.
+    4. The most recently modified session directory — used only on the first
+       event of a CLI session; the mapping is then recorded so subsequent
+       events of that CLI session resolve identically.
     """
-    if not PROJECT_DIR.is_dir():
-        return None
+    mapping = _load_sessions_mapping()
     session_id = event.get("session_id")
     if isinstance(session_id, str) and session_id:
+        if session_id in mapping:
+            candidate = PROJECT_DIR / mapping[session_id]
+            if candidate.is_dir():
+                return candidate
         candidate = PROJECT_DIR / session_id
         if candidate.is_dir():
             return candidate
-    sessions = [
-        p
-        for p in PROJECT_DIR.iterdir()
-        if p.is_dir() and not p.name.startswith(".") and p.name != "knowledge"
-    ]
+    sessions = _session_dirs()
     if not sessions:
         return None
-    return max(sessions, key=lambda p: p.stat().st_mtime)
+    if len(sessions) == 1:
+        resolved = sessions[0]
+    else:
+        resolved = max(sessions, key=lambda p: p.stat().st_mtime)
+    if isinstance(session_id, str) and session_id and resolved is not None:
+        mapping[session_id] = resolved.name
+        _save_sessions_mapping(mapping)
+    return resolved
+
+
+def _session_dirs() -> list[Path]:
+    """Return the session directories under .project/ (excluding persistent
+    state and dot entries)."""
+    if not PROJECT_DIR.is_dir():
+        return []
+    return [
+        p
+        for p in PROJECT_DIR.iterdir()
+        if p.is_dir()
+        and not p.name.startswith(".")
+        and p.name not in ("knowledge", "skills")
+    ]
+
+
+def _sessions_mapping_file() -> Path:
+    return PROJECT_DIR / ".sessions.json"
+
+
+def _load_sessions_mapping() -> dict:
+    """Load the CLI-session -> protocol-uuid mapping (best-effort)."""
+    try:
+        data = json.loads(_sessions_mapping_file().read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def _save_sessions_mapping(mapping: dict) -> None:
+    """Persist the mapping transactionally; failures are non-blocking."""
+    path = _sessions_mapping_file()
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        fd, tmp = tempfile.mkstemp(
+            dir=str(path.parent), prefix=".sessions.", suffix=".tmp"
+        )
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            json.dump(mapping, handle, indent=2)
+            handle.write("\n")
+        os.replace(tmp, path)
+    except OSError:
+        pass  # the mapping is best-effort; resolution still works without it
 
 
 def _latest_iteration(session_dir: Path) -> Path | None:

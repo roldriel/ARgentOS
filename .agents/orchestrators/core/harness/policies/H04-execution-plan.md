@@ -34,15 +34,15 @@ Validate that `EXECUTION_PLAN.md` defines an executable, safe, and scope-respect
 - Target state: `PLAN_READY`
 - Artifact: `.project/<session-uuid>/<iteration>/<order>-EXECUTION_PLAN.md`
 - Contract: `.agents/orchestrators/core/contracts/EXECUTION_PLAN.md`
-- Reference: `TASK_SPECIFICATION.md`, `CONTEXT_ARTIFACT.md`, `CONTEXT_VALIDATION_REPORT.md`
+- Reference: `TASK_SPECIFICATION.md`, `CONTEXT_ARTIFACT.md`, `CONTEXT_VALIDATION_REPORT.md` (for `trivial`-profile tasks, `TASK_ANALYSIS.md` replaces `TASK_SPECIFICATION.md` and no context artifacts are produced)
 
 ## Checklist
 
-**Evaluation audience:** the harness runner no longer exists; every item in this policy is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` have objectively verifiable structure and are restated as numbered instructions in §"Gate Checklist", where the Orchestrator MUST cite evidence per item. Items marked `[agent]` are declared judgment.
+**Evaluation audience:** the harness runner no longer exists; every item in this policy is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` are structurally checkable and are restated as numbered instructions in §"Gate Checklist", where the Orchestrator MUST cite evidence per item. Items marked `[agent]` are declared judgment.
 
 1. The artifact file exists. `[gate]`
 2. The plan addresses the task objective. `[agent]`
-3. The plan uses validated context (no invented assumptions). `[agent]`
+3. The plan uses validated inputs without invented assumptions (for `trivial`-profile tasks, the task analysis; otherwise the validated context artifacts). `[agent]`
 4. The plan defines executable, ordered steps. `[agent]`
 5. Each step specifies what, where, and why. `[agent]`
 6. The plan identifies risks and mitigation strategies. `[agent]`
@@ -59,7 +59,7 @@ The presence of the sections required by the artifact contract is `[gate]` even 
 The Orchestrator evaluates each item below by judgment when the gate fires and MUST cite evidence per item (artifact path, declared value, or broken reference) in `HARNESS_REPORT.md`.
 
 1. Verify that `EXECUTION_PLAN.md` exists in the current iteration directory (`.project/<session-uuid>/<iteration>/`). Cite the resolved artifact path as evidence.
-2. Verify that every citation in the artifact resolves against the filesystem. Recognized citation forms: backtick-quoted `` `path:section` ``, backtick-quoted path followed by `§section`, and the string values of the TOML keys `specification` and `execution_plan` inside ` ```toml ` blocks. A citation resolves when its path exists relative to the project root, the session directory, or any of the session's iteration directories; when the target is a `.md` file and the anchor is not numeric-only, the cited section MUST exist as an ATX heading in the target (normalized, case-insensitive comparison). Paths containing `<`/`>` placeholders are skipped. On failure, cite each broken citation (line, path, reason); on success, cite the number of citations verified.
+2. Verify that every citation in the artifact resolves against the filesystem. Recognized citation forms: backtick-quoted `` `path:section` ``, backtick-quoted path followed by `§section`, and the string values of the TOML keys `specification` and `execution_plan` inside ` ```toml ` blocks. A citation resolves when its path exists relative to the project root, the session directory, or any of the session's iteration directories; when the target is a `.md` file and the anchor is not numeric-only, the cited section MUST exist as an ATX heading in the target (normalized, case-insensitive comparison). Paths containing `<`/`>` placeholders are skipped. On failure, cite each broken citation (line, path, reason); on success, cite the number of citations verified. For `trivial`-profile tasks, the `specification` citation field references the iteration's `TASK_ANALYSIS.md`.
 
 ## Decision Criteria
 

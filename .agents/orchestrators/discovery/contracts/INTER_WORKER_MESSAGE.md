@@ -1,9 +1,11 @@
 +++
+schema_version = "1.0.0"
 artifact = "INTER_WORKER_MESSAGE.md"
 phase = "n/a"
-produced_by = "discovery_workers"
+produced_by = ["init_worker", "environment_worker", "stack_worker", "framework_worker", "patterns_worker", "business_worker", "synthesis_worker"]
 enforcement = "informational"
 +++
+schema_version = "1.0.0"
 
 
 ---

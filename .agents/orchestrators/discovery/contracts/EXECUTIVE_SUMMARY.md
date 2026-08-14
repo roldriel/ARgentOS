@@ -1,9 +1,11 @@
 +++
+schema_version = "1.0.0"
 artifact = "EXECUTIVE_SUMMARY.md"
 phase = "n/a"
 produced_by = "synthesis_worker"
 enforcement = "informational"
 +++
+schema_version = "1.0.0"
 
 
 ---

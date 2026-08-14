@@ -57,6 +57,17 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.6.2] — 2026-08-12
+
+### Fixed
+
+- **Candidatura de tareas tooling/CLI** (plan 52, RFC-53):
+  `ORCHESTRATION_GUIDE.md` declara que tooling/CLI sin dominio cubierto
+  produce candidatura vacía → worker genérico (resultado legítimo de Q7);
+  enmienda menor registrada en RFC-20 (F-06).
+
+---
+
 ## [3.6.1] — 2026-08-12
 
 ### Fixed

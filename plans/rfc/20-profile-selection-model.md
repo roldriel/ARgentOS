@@ -67,6 +67,8 @@ La selección es la decisión que toma el conjunto de candidatos y produce el va
 
 El worker genérico (`profile: null`) **no es un perfil candidato**: es el resultado conceptual de una selección con conjunto de candidatos vacío. La pregunta 7 de la guía ("Does none of the above apply...?") no compite con las demás: se evalúa solo cuando ninguna candidatura especializada existe. Conceptualmente: *sin candidatura especializada, no hay selección de perfil*.
 
+La candidatura vacía no es un fallo de clasificación: las tareas de tooling/CLI para desarrolladores que no tocan el dominio de acción de ningún perfil existente producen legítimamente el conjunto vacío y el worker genérico (ampliación de RFC-53, 2026-08-12).
+
 ## Exclusión mutua
 
 Dos perfiles son **mutuamente excluyentes** para una tarea cuando delegar la tarea completa a uno de ellos viola el dominio del otro: cada perfil ejecutaría trabajo que la definición del otro declara propio. La exclusión mutua es una propiedad de la *tarea candidata a varios perfiles*, no de los perfiles en abstracto.
@@ -183,3 +185,4 @@ La selección de perfil era el último mecanismo de delegación gobernado por "j
 | Fecha | Cambio | Origen |
 |---|---|---|
 | 2026-08-05 | Creación: modelo de selección de perfil (candidatura, selección, exclusión mutua, empate, divisibilidad, frontera de subtarea, fallback genérico). | Plan 12 (`plans/12-selection-models.md`) |
+| 2026-08-12 | Enmienda menor (§Fallback): la candidatura vacía es legítima para tareas tooling/CLI sin dominio cubierto; resultado natural: worker genérico. | Plan 52, RFC-53 |

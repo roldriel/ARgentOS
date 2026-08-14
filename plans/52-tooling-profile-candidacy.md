@@ -1,6 +1,6 @@
 # Plan 52 — Candidatura de tareas tooling/CLI a perfiles
 
-**Status:** Aprobado para redacción
+**Status:** Executed
 **Fecha:** 2026-08-11
 **RFC:** RFC-53 (`plans/rfc/53-tooling-profile-candidacy.md`)
 **Depende de:** —
@@ -44,3 +44,13 @@ Cerrar el hueco de candidatura de tareas tooling/CLI en la selección de perfile
 ## Trazabilidad
 
 - RFC-53; fricción F-06 de `plans/19-anexo-a-bitacora-fricciones.md`; backlog B-7.
+
+## Nota de ejecución
+
+Ejecutado el 2026-08-12 (vía RFC-53 Accepted). Nota de candidatura
+tooling/CLI agregada tras la tabla de las 7 preguntas en la guía de
+orquestación (candidatura vacía → worker genérico legítimo; perfil solo si el
+tooling toca un dominio cubierto); RFC-20 enmendada en su sección Fallback
+con registro en su Amendment Log. El caso de referencia (el verificador de
+citas del dogfooding) clasifica ahora como genérico sin discusión. Versión
+3.6.2. Verificación: invariantes OK, citas OK, estructura OK, 121 passed.

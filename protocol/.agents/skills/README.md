@@ -57,7 +57,7 @@ Optional directory with dense material (specs, checklists, long examples). Rules
 
 ## Enforcement
 
-- Protocol skills: verified structurally by the agent whenever the skills index or a skill changes (every indexed skill exists, front matter complete, cited `references/` files on disk).
+- Protocol skills: verified mechanically by the invariant checker of the development repository (every indexed skill exists, front matter complete with `name` matching the directory, cited `references/` files on disk, INDEX inventory in sync with directories). The runtime keeps evaluating by judgment; that checker is a development safety net, never a blocking gate, and is not part of the distributed protocol.
 - Project skills: enforced by the protocol health checklist (`.agents/standards/runtime/PROTOCOL_HEALTH.md`, item 7: non-blocking warning + exclusion for the session) and by the convention documented in `.project/skills/README.md`.
 
 A skill is not a source of authority: it describes a capability and never grants permissions. (The current runtime delivers that capability by having the Worker read the skill's content itself — an implementation detail, not part of the skill definition; see "What a skill is" above.) The authority hierarchy and conflict rules are defined in `.agents/standards/orchestration/SKILLS.md`.

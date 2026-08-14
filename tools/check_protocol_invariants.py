@@ -2,7 +2,7 @@
 """Verify documentation invariants of the distributed .agents/ protocol.
 
 Scans every .md file under <payload>/.agents/ plus the payload entry file
-(<payload>/_AGENTS.md by default) and checks three invariants that protect the
+(<payload>/_AGENTS.md by default) and checks the invariants that protect the
 distributed protocol package:
 
 1. REFERENCE RESOLUTION — every path-like reference to a protocol file
@@ -18,6 +18,11 @@ distributed protocol package:
    workflows, harness policies, contracts and roles, per harness policy
    H13) carries a taxonomy metadata block declaring taxonomy, kind and
    domain near the top of the file.
+
+4. SKILLS — every protocol skill directory carries a SKILL.md whose front
+   matter name matches the directory, with a non-empty description; every
+   cited references/ file exists; and the skills/INDEX.md inventory matches
+   the directories (dev-only safety net, RFC-49).
 
 Source-containment rules: the dev root AGENTS.md is NOT scanned (it is the
 development entry point, not a protocol document), and references whose final
@@ -368,15 +373,106 @@ def scan_references(
     return refs
 
 
+def check_skills(payload: Path) -> list[Violation]:
+    """SKILLS invariant: every protocol skill is structurally valid.
+
+    Rules (RFC-49, dev-only — the runtime keeps judging by prose):
+    1. Every directory under <payload>/.agents/skills/ contains SKILL.md.
+    2. Its front matter carries `name` (equal to the directory name) and a
+       non-empty `description`.
+    3. Every `references/<file>` cited in SKILL.md exists on disk.
+    4. The inventory table of skills/INDEX.md matches the skill directories
+       (every directory is listed; every listed row has a directory).
+    """
+    violations: list[Violation] = []
+    skills_root = payload / ".agents" / "skills"
+    if not skills_root.is_dir():
+        return violations
+    dirs = sorted(
+        d.name for d in skills_root.iterdir()
+        if d.is_dir() and not d.name.startswith("__")
+    )
+    for name in dirs:
+        skill_md = skills_root / name / "SKILL.md"
+        rel = skill_md.relative_to(payload)
+        if not skill_md.is_file():
+            violations.append(
+                Violation("SKILLS", rel, 1, f"missing SKILL.md for {name}")
+            )
+            continue
+        text = skill_md.read_text(encoding="utf-8", errors="replace")
+        m = re.match(r"^---\s*\n(.*?)\n---\s*\n", text, re.DOTALL)
+        if not m:
+            violations.append(
+                Violation("SKILLS", rel, 1, "no front matter block")
+            )
+        else:
+            fm = m.group(1)
+            fm_name = re.search(r"^name:\s*(.+)$", fm, re.MULTILINE)
+            fm_desc = re.search(r"^description:\s*(.+)$", fm, re.MULTILINE)
+            if not fm_name or fm_name.group(1).strip() != name:
+                violations.append(
+                    Violation(
+                        "SKILLS", rel, 1,
+                        f"front matter name does not match directory {name}",
+                    )
+                )
+            if not fm_desc or not fm_desc.group(1).strip():
+                violations.append(
+                    Violation("SKILLS", rel, 1, "empty description")
+                )
+        for ref in re.findall(r"references/([A-Za-z0-9_.-]+\.md)", text):
+            if not (skills_root / name / "references" / ref).is_file():
+                violations.append(
+                    Violation(
+                        "SKILLS", rel, 1,
+                        f"cited reference not found: references/{ref}",
+                    )
+                )
+    index = skills_root / "INDEX.md"
+    if index.is_file():
+        index_text = index.read_text(encoding="utf-8", errors="replace")
+        inventory = re.split(r"^## ", index_text, flags=re.MULTILINE)
+        section = next(
+            (s for s in inventory if s.startswith("Skill inventory")), ""
+        )
+        rows = set(
+            m.group(1)
+            for m in re.finditer(
+                r"^\|\s*`?([a-z0-9][a-z0-9-]*)`?\s*\|", section, re.MULTILINE
+            )
+            if not m.group(1).startswith("-")
+        )
+        rows.discard("Skill")
+        for name in dirs:
+            if name not in rows:
+                violations.append(
+                    Violation(
+                        "SKILLS", index.relative_to(payload), 1,
+                        f"skill directory not listed in INDEX.md: {name}",
+                    )
+                )
+        for row in sorted(rows):
+            if row not in dirs:
+                violations.append(
+                    Violation(
+                        "SKILLS", index.relative_to(payload), 1,
+                        f"INDEX.md row without skill directory: {row}",
+                    )
+                )
+    return violations
+
+
 def verify(
     root: Path,
     payload: Path | None = None,
     entry_file: str = _DEFAULT_ENTRY_FILE,
 ) -> list[Violation]:
-    """Run all three invariant checks; return the list of violations."""
+    """Run all invariant checks; return the list of violations."""
     payload = payload or (root / _DEFAULT_PAYLOAD)
     violations: list[Violation] = []
     agents = payload / ".agents"
+    violations.extend(check_skills(payload))
     for doc in sorted(agents.rglob("*.md")):
         rel = doc.relative_to(payload).as_posix()
         if in_metadata_scope(rel):

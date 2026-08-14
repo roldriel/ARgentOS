@@ -1,6 +1,6 @@
 # Plan 48 — Validación mecánica de skills del protocolo
 
-**Status:** Aprobado para redacción
+**Status:** Executed
 **Fecha:** 2026-08-11
 **RFC:** RFC-49 (`plans/rfc/49-protocol-skill-mechanical-validation.md`)
 **Depende de:** —
@@ -47,3 +47,18 @@ Agregar verificación mecánica dev-only de las skills del protocolo y corregir 
 ## Trazabilidad
 
 - RFC-49; punto 4.4 de la auditoría.
+
+## Nota de ejecución
+
+Ejecutado el 2026-08-12 (vía RFC-49 Accepted). Invariante SKILLS implementado
+en `tools/check_protocol_invariants.py` (cuatro reglas: SKILL.md presente,
+front matter con `name` == directorio y descripción no vacía, referencias
+citadas existentes, inventario de INDEX.md ↔ directorios, con parsing
+restringido a la sección Skill inventory). 5 tests nuevos en
+`tests/test_check_protocol_invariants.py`. `.agents/skills/README.md` e
+`INDEX.md` declaran la verificación mecánica dev-only (en prosa, sin paths —
+la referencia con path rompía la frontera BOUNDARY). `.project/skills/README.md`
+no existe en este repo (artefacto efímero de proyectos adoptantes): la
+corrección de atribución queda cubierta por la redacción del payload, que es
+la fuente que los adoptantes vendorizan. Versión 3.4.2. Verificación:
+invariantes OK, citas OK, estructura OK, 121 passed.

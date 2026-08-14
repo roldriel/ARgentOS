@@ -6,7 +6,7 @@ Every skill in this index is *integrated*: it is referenced by name from a worke
 
 ## Skill inventory
 
-One row per protocol skill. There is no executable structural test anymore: the Orchestrator verifies by judgment (protocol health checklist, item 7, for project skills; H13 coherence for protocol files) that every row exists on disk with valid front matter and that every skill directory is listed here.
+One row per protocol skill. Structural validity (every row exists on disk with valid front matter and every skill directory is listed here) is verified mechanically by the dev-only checker in the development repository; the Orchestrator additionally verifies by judgment (protocol health checklist, item 7, for project skills; H13 coherence for protocol files).
 
 | Skill | Description |
 | --- | --- |

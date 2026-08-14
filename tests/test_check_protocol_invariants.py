@@ -262,6 +262,68 @@ def test_tool_uses_only_stdlib():
     assert third_party == set(), f"third-party imports: {third_party}"
 
 
+# --- SKILLS invariant -------------------------------------------------------
+
+SKILL_OK = (
+    "---\nname: sample-skill\ndescription: Does sample things.\n"
+    "when_to_activate: In tests.\n---\n\n# Mission\n\nRead `references/spec.md`.\n"
+)
+
+
+def make_skill_repo(tmp_path: Path, index_rows: str = "| sample-skill | x |") -> Path:
+    return make_repo(tmp_path, {
+        ".agents/skills/sample-skill/SKILL.md": SKILL_OK,
+        ".agents/skills/sample-skill/references/spec.md": "# Spec\n",
+        ".agents/skills/INDEX.md": (
+            "# Skills\n\n## Skill inventory\n\n| Skill | Description |\n"
+            "| --- | --- |\n" + index_rows + "\n"
+        ),
+    })
+
+
+def test_skills_clean_repo_passes(tmp_path):
+    make_skill_repo(tmp_path)
+    assert not [v for v in cpi.verify(tmp_path) if v.code == "SKILLS"]
+
+
+def test_skills_missing_skill_md_flagged(tmp_path):
+    make_skill_repo(tmp_path)
+    (tmp_path / "protocol/.agents/skills/sample-skill/SKILL.md").unlink()
+    violations = cpi.verify(tmp_path)
+    assert any(v.code == "SKILLS" and "missing SKILL.md" in v.message
+               for v in violations)
+
+
+def test_skills_name_mismatch_flagged(tmp_path):
+    make_repo(tmp_path, {
+        ".agents/skills/sample-skill/SKILL.md": SKILL_OK.replace(
+            "name: sample-skill", "name: other-name"
+        ),
+        ".agents/skills/INDEX.md": "## Skill inventory\n\n| Skill | D |\n| sample-skill | x |\n",
+    })
+    violations = cpi.verify(tmp_path)
+    assert any(v.code == "SKILLS" and "name does not match" in v.message
+               for v in violations)
+
+
+def test_skills_broken_reference_flagged(tmp_path):
+    make_repo(tmp_path, {
+        ".agents/skills/sample-skill/SKILL.md": SKILL_OK,
+        ".agents/skills/INDEX.md": "## Skill inventory\n\n| Skill | D |\n| sample-skill | x |\n",
+    })
+    violations = cpi.verify(tmp_path)
+    assert any(v.code == "SKILLS" and "references/spec.md" in v.message
+               for v in violations)
+
+
+def test_skills_index_desync_flagged(tmp_path):
+    make_skill_repo(tmp_path, index_rows="| ghost-skill | x |")
+    violations = cpi.verify(tmp_path)
+    messages = [v.message for v in violations if v.code == "SKILLS"]
+    assert any("not listed" in m for m in messages)
+    assert any("without skill directory" in m for m in messages)
+
+
 # --- Source-layout inventory cross-check --------------------------------------
 
 

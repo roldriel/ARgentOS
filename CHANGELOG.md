@@ -57,6 +57,18 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.4.2] — 2026-08-12
+
+### Fixed
+
+- **Validación mecánica de skills del protocolo** (plan 48, RFC-49): el
+  checker de invariantes del repo de desarrollo gana el invariante SKILLS
+  (front matter, `name` == directorio, referencias citadas, inventario INDEX
+  ↔ directorios); `skills/README.md` e `skills/INDEX.md` actualizan su
+  Enforcement para declararlo (dev-only, no bloqueante).
+
+---
+
 ## [3.4.1] — 2026-08-12
 
 ### Added

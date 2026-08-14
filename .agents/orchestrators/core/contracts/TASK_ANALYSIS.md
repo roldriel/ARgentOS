@@ -166,7 +166,13 @@ NEEDS_CLARIFICATION
 
 ## Confidence
 
-Confidence level of the analysis.
+Confidence in the quality of the analysis itself: how well the evidence
+gathered supports its claims (the interpreted objective, the identified
+requirements, the evaluated ambiguities). Distinct from
+`intent_confidence`, which measures the interpretation of the user's intent.
+
+The assessment must follow the levels and the anti-inflation rule of
+`.agents/standards/quality/CONFIDENCE.md`.
 
 ```toml
 [confidence]
@@ -222,5 +228,6 @@ The task analysis is valid when:
 * Ambiguities are evaluated.
 * A sufficiency assessment is provided.
 * A valid recommended next state is defined.
-* A confidence level is provided.
+* An intent confidence assessment is provided (`intent_confidence`, per `INTENT_CONFIDENCE.md`).
+* An analysis confidence assessment is provided (`confidence`, per `CONFIDENCE.md`).
 * A task profile is assigned with an objective justification.

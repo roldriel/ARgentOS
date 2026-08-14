@@ -100,7 +100,7 @@ for the workers.
 ```text
 .project/<session-uuid>/discovery/discovery_input.json
 .project/<session-uuid>/discovery/invalidation_report.json
-.project/<session-uuid>/<iteration>/<order>-KB_DISCOVERY_REPORT.md
+.project/<session-uuid>/<iteration>/D<order>-KB_DISCOVERY_REPORT.md
 .project/knowledge/discovery/file_map.md
 ```
 
@@ -140,7 +140,7 @@ enter according to the invocation `scope`.
 ### Required Input Artifact
 
 ```text
-.project/<session-uuid>/<iteration>/<order>-KB_DISCOVERY_REPORT.md
+.project/<session-uuid>/<iteration>/D<order>-KB_DISCOVERY_REPORT.md
 ```
 
 ### Allowed Transitions

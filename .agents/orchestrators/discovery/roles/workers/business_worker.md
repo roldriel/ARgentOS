@@ -49,8 +49,9 @@ project.
 
 ## Sampling
 
-Apply the general sampling rules, bounded by `context_budget` and `sample_size`
-(default 10 files per directory, 50 per language, from `.agents/features.toml`):
+Apply the general sampling rules, bounded by `context_budget`, `sample_size`
+and `sample_size_per_language` as given in `discovery_input.json` (never
+worker-local defaults):
 exclude dependency/build directories, group by extension and functional
 directory, select up to `sample_size` files per group prioritizing
 representative names, and cap the total by `context_budget`.

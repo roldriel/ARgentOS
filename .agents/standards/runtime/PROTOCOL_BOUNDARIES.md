@@ -29,6 +29,9 @@ Conceptual rules for iterations and `<order>`:
 - **Iteration boundary:** each user request — one full workflow pass — opens a new sequential iteration folder. Internal loops of the same pass (clarification cycles, recovery loops, bounded retries) continue in the current iteration: an iteration serves one request, and whatever serves the same request stays in its iteration.
 - **Partial iteration:** an iteration that did not reach a terminal state (`COMPLETED`/`ABORT`) before the session ended is a partial iteration. When a session is resumed, continuing the same request resumes the partial iteration from its last intact artifact; a new request opens a new iteration and the partial one remains as historical trace. A partial iteration is never rewritten: artifacts already produced are not regenerated retroactively.
 - **`<order>` rule:** `<order>` is the artifact generation sequence within the iteration. It is monotonic with the flow (an artifact produced later carries a higher order) and is auditable against `SESSION_LOG.md`. An `<order>` that does not reflect the real generation order is a trace-integrity violation, not a style error.
+- **Domain namespacing:** the `<order>` sequence is unique per domain, not global to the iteration. Session artifacts of the `discovery` domain carry the prefix `D<order>-` (e.g. `D01-KB_DISCOVERY_REPORT.md`); artifacts of the `core` domain keep the plain `<order>-`. Two domains never share the same sequence space.
+
+**Discovery intermediates exception:** discovery worker intermediates (`discovery_input.json`, per-worker JSON outputs, `invalidation_report.json`) live in `.project/<session-uuid>/discovery/` instead of the iteration folder and do NOT carry `<order>`. This is the only documented exception to the Artifact Safety Rule's location requirement; session-level discovery artifacts (the discovery report) still live in the iteration with the `D<order>-` prefix.
 
 Example:
 

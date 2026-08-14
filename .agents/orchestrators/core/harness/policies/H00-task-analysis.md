@@ -52,7 +52,7 @@ Validate that `TASK_ANALYSIS.md` exists and complies with its contract before al
 9. The artifact contains an `Intent Confidence Assessment`. `[gate]`
 10. The artifact contains a `Sufficiency Assessment`. `[gate]`
 11. The artifact contains a `Recommended Next State`. `[gate]`
-12. The artifact contains a `Confidence` section. `[gate]`
+12. The artifact contains a `Confidence` section (analysis confidence, per `.agents/standards/quality/CONFIDENCE.md` — distinct from the `Intent Confidence Assessment`, which follows `INTENT_CONFIDENCE.md`). `[gate]`
 13. The artifact contains a `Task Profile` section. `[gate]`
 14. The `Recommended Next State` is one of the allowed transitions (`BUILDING_TASK_SPECIFICATION`, `CONFIRMING_INTENT`, or `NEEDS_CLARIFICATION`). `[agent]`
 15. If `Detected Ambiguities` contains any entry that would require an implementation decision, the `Recommended Next State` MUST be `NEEDS_CLARIFICATION`. `[agent]`

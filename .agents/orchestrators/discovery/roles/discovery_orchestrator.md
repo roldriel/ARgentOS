@@ -152,8 +152,11 @@ General rules:
 3. Select up to `sample_size` files per group, prioritizing representative names.
 4. Cap the total by `context_budget`.
 
-Defaults (`.agents/features.toml`): `discovery_sample_size = 10` per directory,
-50 per language.
+Limits (`.agents/features.toml`, read by `init_worker` into
+`discovery_input.json`): `discovery_sample_size` per directory,
+`discovery_sample_size_per_language` per language, and
+`discovery_context_budget` as the total cap. Workers never declare their own
+defaults.
 
 ## Retries
 

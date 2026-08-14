@@ -61,7 +61,10 @@ following the intermediate-working-directory mechanism (Option A).
    those entries in the manifest with `confidence: low` and `status: legacy`.
    Legacy entries are never deleted without a trace.
 5. Prepare `discovery_input.json` for the workers selected by the scope,
-   including `context_budget`, `sample_size` and the list of previous KB entries
+   reading `discovery_context_budget`, `discovery_sample_size` and
+   `discovery_sample_size_per_language` from `.agents/features.toml` and
+   writing them as `context_budget`, `sample_size` and
+   `sample_size_per_language`, plus the list of previous KB entries
    each worker must consider.
 6. Classify the project into a `project_shape` — one of `library`, `cli`,
    `service`, `application`, `monorepo` or `unknown` — using deterministic

@@ -57,6 +57,18 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.3.2] — 2026-08-12
+
+### Fixed
+
+- **Estado productor de INTENT_REFLECTION en confianza HIGH** (plan 43,
+  RFC-44): `ANALYZING_TASK` declara la reflexión como salida opcional en la
+  vía HIGH (auto-confirmada, H11 la gates antes de
+  `BUILDING_TASK_SPECIFICATION`); `orchestrator.md` y el workflow 00
+  describen ambas vías de producción (F-04).
+
+---
+
 ## [3.3.1] — 2026-08-12
 
 ### Fixed

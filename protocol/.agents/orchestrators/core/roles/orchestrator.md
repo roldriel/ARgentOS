@@ -302,7 +302,7 @@ The Orchestrator MUST manage the `CONFIRMING_INTENT` state:
 - On user correction, the Orchestrator MUST transition to `ANALYZING_TASK`, include the correction in the delegation payload, and ensure the next `INTENT_REFLECTION.md` increments `correction_cycle`.
 - On user rejection without correction, the Orchestrator MUST transition to `NEEDS_CLARIFICATION`.
 - If `correction_cycle >= 2`, the Orchestrator MUST NOT allow another correction cycle; it MUST transition to `NEEDS_CLARIFICATION` and ask the user to reformulate the original task.
-- If confidence is `HIGH` and no ambiguity blocks progression, the Orchestrator MAY auto-confirm the reflection for traceability and proceed to `BUILDING_TASK_SPECIFICATION`. The `INTENT_REFLECTION.md` artifact should still be generated.
+- If confidence is `HIGH` and no ambiguity blocks progression, the Orchestrator MAY auto-confirm the reflection for traceability and proceed to `BUILDING_TASK_SPECIFICATION`. In this HIGH path the `INTENT_REFLECTION.md` artifact is still generated: it is produced in `ANALYZING_TASK` as that state's optional output (see `orchestrators/core/states/AGENT_STATE_MACHINE.md`), and H11 gates it before the transition.
 
 ## Phase 07: Verification
 

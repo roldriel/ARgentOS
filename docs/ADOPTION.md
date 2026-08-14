@@ -175,7 +175,15 @@ opción de *managed settings*) vive en el propio payload, para que esté
 disponible en todo proyecto adoptante: `.agents/harness/INDEX.md`, sección
 "Hook setup (enforced mode)".
 
-### 6.2. Límite honesto: los hooks son fail-open
+### 6.2. Comportamiento verificado del flujo enforced
+
+El flujo completo está verificado end-to-end por el test de integración
+`.agents/harness/tests/test_enforced_flow.py` (plan 46): deny de `Write` sin
+H04, allow tras registrar H04 con `runner_state.py`, deny de `Stop` sin H06,
+allow con H06 o estado terminal, y alerta del scan de bypass ante archivos
+modificados antes del PASS. Comportamiento confirmado el 2026-08-12.
+
+### 6.3. Límite honesto: los hooks son fail-open
 
 Todo CLI evaluado es **fail-open** ante crash o timeout del hook: si
 `hook_gate.py` falla, la tool call pasa libre. El modelo protege contra

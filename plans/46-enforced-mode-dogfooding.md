@@ -1,6 +1,6 @@
 # Plan 46 — Dogfooding del modo enforced
 
-**Status:** Aprobado para redacción
+**Status:** Executed
 **Fecha:** 2026-08-11
 **RFC:** RFC-47 (`plans/rfc/47-enforced-mode-dogfooding.md`)
 **Depende de:** —
@@ -50,3 +50,19 @@ Verificar empíricamente el modo enforced y dejar evidencia reproducible de su c
 ## Trazabilidad
 
 - RFC-47; punto 4.2 de la auditoría; planes 26/27 de `plans/INDEX.md`.
+
+## Nota de ejecución
+
+Ejecutado el 2026-08-12 (vía RFC-47 Accepted). Diseño de la simulación: los
+scripts se copian a un layout adoptado en tmp y se ejercitan por subprocess
+(sin monkeypatching), exactamente como los invocaría un CLI adoptante.
+Cobertura verificada: deny de `Write`/`Edit` sin H04; allow dentro de
+`.project/`; registro de H04/H06 vía CLI de `runner_state.py` con
+`state.json` creado y consumido; deny de `Stop` sin cierre; allow con H06 y
+con estado terminal `COMPLETED`; alerta del scan de bypass ante un archivo
+del proyecto modificado antes del PASS. Resultado: 3 tests nuevos, suite del
+harness 39/39 en verde — el flujo enforced funciona como está documentado;
+no fue necesario ajustar código. `docs/ADOPTION.md` gana §6.2
+(comportamiento verificado); planes 25/26 actualizados a "dogfooding
+verificado" en el INDEX. Versión 3.7.0. Verificación: invariantes OK, citas
+OK, estructura OK, 121 passed (repo) + 39/39 (harness).

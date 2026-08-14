@@ -57,6 +57,18 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.7.0] — 2026-08-12
+
+### Added
+
+- **Test de integración del modo enforced** (plan 46, RFC-47):
+  `.agents/harness/tests/test_enforced_flow.py` verifica end-to-end el flujo
+  `state.json` + hooks en layout adoptado (deny sin H04, allow con H04, deny
+  de `Stop` sin cierre, allow con H06/terminal, alerta del scan de bypass).
+  El modo enforced queda verificado empíricamente (dogfooding, F-09/B-6).
+
+---
+
 ## [3.6.3] — 2026-08-12
 
 ### Fixed

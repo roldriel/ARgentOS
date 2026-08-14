@@ -106,6 +106,14 @@ Release 3.0.1 (PATCH): correcciones documentales sin cambios de modelo.
 Este cambio se publica como versión `3.0.1` (2026-08-11); esta sección es la
 guía de migración del cambio.
 
+## 3.2 Namespacing de artefactos de discovery — plan 40 (2026-08-12)
+
+Desde `3.3.0`, los artefactos de sesión del dominio discovery usan prefijo
+`D<order>-` (p. ej. `D01-KB_DISCOVERY_REPORT.md`) y los intermedios de workers
+viven en `.project/<session-uuid>/discovery/` sin `<order>`. No requiere
+acción en proyectos adoptantes: las iteraciones previas quedan como traza
+histórica (no se renombran); la regla aplica a ejecuciones futuras.
+
 ## 4. Qué NO migra
 
 - **Artefactos de sesión** (`.project/`): son efímeros y específicos del proyecto;

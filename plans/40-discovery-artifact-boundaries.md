@@ -1,6 +1,6 @@
 # Plan 40 — Fronteras de artefactos de discovery y namespacing de `<order>`
 
-**Status:** Aprobado para redacción
+**Status:** Executed
 **Fecha:** 2026-08-11
 **RFC:** RFC-41 (`plans/rfc/41-discovery-artifact-boundaries.md`)
 **Depende de:** —
@@ -47,3 +47,14 @@ Documentar la excepción de intermedios de discovery en la regla de artefactos y
 ## Trazabilidad
 
 - RFC-41; fricciones F-11 y F-20 de `plans/19-anexo-a-bitacora-fricciones.md`; backlog B-1, B-4.
+
+## Nota de ejecución
+
+Ejecutado el 2026-08-12 (vía RFC-41 Accepted). `PROTOCOL_BOUNDARIES.md`
+declara la regla de namespacing por dominio (`D<order>-` para discovery) y la
+excepción de intermedios en `.project/<session-uuid>/discovery/`;
+`DISCOVERY_STATE_MACHINE.md` numera su reporte con `D<order>-` (2 lugares).
+D01 ya validaba las entradas en `knowledge/discovery/` directamente — el
+artefacto-puente no existía como requisito vigente, sin cambio necesario.
+Guía de migración en `MIGRATION.md` §3.2. Versión 3.3.0. Verificación:
+invariantes OK, citas OK, estructura OK, 116 passed.

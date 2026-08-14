@@ -57,6 +57,20 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.3.0] — 2026-08-12
+
+### Changed
+
+- **Namespacing de artefactos de discovery y excepción de intermedios**
+  (plan 40, RFC-41): `PROTOCOL_BOUNDARIES.md` declara la unicidad de
+  `<order>` por dominio (discovery usa prefijo `D<order>-`) y la excepción de
+  intermedios de discovery en `.project/<session-uuid>/discovery/`; la
+  máquina de discovery numera su reporte con el prefijo. Resuelve las
+  colisiones de `<order>` entre dominios (F-20) y el workaround del
+  artefacto-puente (F-11). Guía en `MIGRATION.md` §3.2.
+
+---
+
 ## [3.2.1] — 2026-08-12
 
 ### Fixed

@@ -114,6 +114,7 @@ CONTRACT = """+++
 artifact = "SAMPLE.md"
 phase = "00"
 produced_by = "task_analyst"
+schema_version = "1.0.0"
 +++
 """
 
@@ -194,6 +195,22 @@ def test_contract_produced_by_state_rejected(tmp_path):
     ctr.write_text(CONTRACT.replace('"task_analyst"', '"core:A"'), encoding="utf-8")
     v = ctc.violations_for_root(root, root / "protocol")
     assert any("produced_by 'core:A' is not a canonical producer name" in x for x in v)
+
+
+def test_contract_missing_schema_version(tmp_path):
+    root = make_payload(tmp_path)
+    ctr = root / "protocol" / ".agents" / "orchestrators" / "core" / "contracts" / "SAMPLE.md"
+    ctr.write_text(CONTRACT.replace('schema_version = "1.0.0"\n', ""), encoding="utf-8")
+    v = ctc.violations_for_root(root, root / "protocol")
+    assert any("missing schema_version" in x for x in v)
+
+
+def test_contract_bad_schema_version(tmp_path):
+    root = make_payload(tmp_path)
+    ctr = root / "protocol" / ".agents" / "orchestrators" / "core" / "contracts" / "SAMPLE.md"
+    ctr.write_text(CONTRACT.replace('"1.0.0"', '"banana"'), encoding="utf-8")
+    v = ctc.violations_for_root(root, root / "protocol")
+    assert any("schema_version 'banana' is not semver" in x for x in v)
 
 
 def test_workflow_profile_not_canonical(tmp_path):

@@ -392,6 +392,13 @@ def violations_for_root(
             out.append(
                 f"CONTRACT {rel} artifact field {artifact!r} != filename {contract.name}"
             )
+        schema_version = fm.get("schema_version")
+        if schema_version is None:
+            out.append(f"CONTRACT {rel} missing schema_version (semver)")
+        elif not re.fullmatch(r"\d+\.\d+\.\d+", schema_version):
+            out.append(
+                f"CONTRACT {rel} schema_version {schema_version!r} is not semver"
+            )
         produced = fm.get("produced_by")
         values = produced if isinstance(produced, list) else ([produced] if produced else [])
         for value in values:

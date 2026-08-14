@@ -1,6 +1,6 @@
 # Plan 45 — Política de trazas históricas no reproducibles
 
-**Status:** Aprobado para redacción
+**Status:** Executed
 **Fecha:** 2026-08-11
 **RFC:** RFC-46 (`plans/rfc/46-historical-trace-policy.md`)
 **Depende de:** —
@@ -48,3 +48,12 @@ Declarar la versión de protocolo en las trazas de sesión y definir la interpre
 ## Trazabilidad
 
 - RFC-46; punto 4.1 de la auditoría.
+
+## Nota de ejecución
+
+Ejecutado el 2026-08-12 (vía RFC-46 Accepted). `protocol_version` agregado al
+encabezado de `SESSION_LOG.md`, al evento `session_start` de `METRICS.md` y
+como nota de versión en `HARNESS_REPORT.md`; nota histórica (runner hasta
+2.0.0, juicio desde 2.0.0) agregada en `plans/INDEX.md` §Convenciones. La
+traza `d4ab6a93-...` no se tocó (regla de inmutabilidad de trazas). Versión
+3.4.1. Verificación: invariantes OK, citas OK, estructura OK, 116 passed.

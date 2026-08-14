@@ -57,6 +57,17 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.4.1] — 2026-08-12
+
+### Added
+
+- **Versión de protocolo en trazas de sesión** (plan 45, RFC-46):
+  `SESSION_LOG.md`, `METRICS.md` (`session_start`) y `HARNESS_REPORT.md`
+  declaran `protocol_version`; las trazas son registros inmutables de la
+  versión vigente (gates por runner antes de 2.0.0, por juicio desde 2.0.0).
+
+---
+
 ## [3.4.0] — 2026-08-12
 
 ### Added

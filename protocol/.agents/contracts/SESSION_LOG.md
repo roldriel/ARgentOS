@@ -46,6 +46,7 @@ At session start, the Orchestrator MUST create `SESSION_LOG.md` with a header bl
 
 - Session UUID: `<uuid>`
 - Created: `<ISO-8601-timestamp>`
+- Protocol version: `<X.Y.Z>` (`.agents/VERSION` at session start)
 - Active feature flags: <comma-separated list or `all enabled`>
 
 ## <ISO-8601-timestamp>

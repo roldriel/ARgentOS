@@ -52,7 +52,7 @@ Every event carries `timestamp` (ISO-8601) and `type`. Required fields per type:
 
 | `type` | Required fields | Meaning |
 |---|---|---|
-| `session_start` | `declarative_flags` (list of strings) | Active declarative feature flags at session start: the session's standing evidence obligations. |
+| `session_start` | `declarative_flags` (list of strings), `protocol_version` (string) | Active declarative feature flags at session start: the session's standing evidence obligations. `protocol_version` is the value of `.agents/VERSION` at session start; session artifacts are immutable records of the protocol version in force at that moment and are never rewritten or "reproduced" with a newer version. |
 | `state_transition` | `from`, `to`, `iteration` | A state-machine transition applied by the Orchestrator. `to` uses the state name (e.g. `RECOVERY`, `NEEDS_CLARIFICATION`). |
 | `reviewer_retry` | `artifact`, `cycle` | One reviewer `REWORK` correction cycle over an artifact; `cycle` is the 1-based retry ordinal. |
 | `failure` | `class` | A reported failure. `class` is one of `F1` (blocker), `F2` (deviation), `F3` (ambiguity), `F4` (inconsistency), `F5` (harness FAIL). Optional: `policy` (e.g. `H15`), `audience` (`machine` or `agent`). |

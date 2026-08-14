@@ -97,3 +97,9 @@ Ejecutado el 2026-08-14. Versión `3.10.0` (MINOR: adición compatible de una
 transición condicional por perfil y alineación taxonómica; los artefactos
 válidos previos siguen siendo válidos). Verificación: invariantes OK, citas
 OK, estructura OK, 121 passed; `check_dist_sync` rojo en `dev` por diseño.
+Nota adicional (misma sesión): se completó la sincronización de la taxonomía
+que el plan declaró (H13 rule 10): `workflow:00-analyze-task.next_states`,
+`core:PLANNING.previous` y `workflow:08-recovery.next_states`, más
+`TASK_ANALYSIS.md` en `artifacts_input` de PLANNING/EXECUTING/VERIFYING.
+La coherencia queda verificada mecánicamente por el nuevo checker de desarrollo
+`tools/check_taxonomy_coherence.py` (Nivel 4).

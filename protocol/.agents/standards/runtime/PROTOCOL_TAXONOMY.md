@@ -320,12 +320,14 @@ entities:
     description: Define how the task will be executed.
     previous:
       - core:CONTEXT_READY
+      - core:ANALYZING_TASK
       - core:RECOVERY
     next:
       - core:PLAN_READY
       - core:NEEDS_CLARIFICATION
       - core:RECOVERY
     artifacts_input:
+      - TASK_ANALYSIS.md
       - TASK_SPECIFICATION.md
       - CONTEXT_ARTIFACT.md
       - CONTEXT_VALIDATION_REPORT.md
@@ -367,6 +369,7 @@ entities:
       - core:VERIFYING
       - core:RECOVERY
     artifacts_input:
+      - TASK_ANALYSIS.md
       - TASK_SPECIFICATION.md
       - CONTEXT_VALIDATION_REPORT.md
       - EXECUTION_PLAN.md
@@ -390,6 +393,7 @@ entities:
       - core:COMPLETED
       - core:RECOVERY
     artifacts_input:
+      - TASK_ANALYSIS.md
       - TASK_SPECIFICATION.md
       - EXECUTION_PLAN.md
       - EXECUTION_SUMMARY.md
@@ -1717,6 +1721,7 @@ entities:
       - core:BUILDING_TASK_SPECIFICATION
       - core:CONFIRMING_INTENT
       - core:NEEDS_CLARIFICATION
+      - core:PLANNING
     input_artifacts: []
     output_artifacts:
       - TASK_ANALYSIS.md
@@ -1900,6 +1905,10 @@ entities:
       - core:PLANNING
       - core:NEEDS_CLARIFICATION
       - core:ABORT
+      - core:ANALYZING_TASK
+      - core:BUILDING_TASK_SPECIFICATION
+      - core:GATHERING_CONTEXT
+      - core:VALIDATING_CONTEXT
     input_artifacts:
       - VERIFICATION_REPORT.md
     output_artifacts:

@@ -134,6 +134,30 @@ def read_front_matter(text: str, after_toml: bool = False) -> dict:
     return parse_simple_map("\n".join(body))
 
 
+def parse_toml_front_matter(text: str) -> dict:
+    """Parse the first ``+++ ... +++`` TOML block into scalars/lists."""
+    start = text.find("+++")
+    if start == -1:
+        return {}
+    end = text.find("+++", start + 3)
+    if end == -1:
+        return {}
+    data: dict = {}
+    for line in text[start + 3 : end].splitlines():
+        m = re.match(r"^([A-Za-z0-9_]+)\s*=\s*(.+)$", line.strip())
+        if not m:
+            continue
+        key, value = m.group(1), m.group(2).strip()
+        if value.startswith('"') and value.endswith('"'):
+            data[key] = value[1:-1]
+        elif value.startswith("[") and value.endswith("]"):
+            inner = value[1:-1].strip()
+            data[key] = [x.strip().strip('"') for x in inner.split(",")] if inner else []
+        else:
+            data[key] = value
+    return data
+
+
 def parse_taxonomy_entities(payload: Path) -> tuple[dict, list[str]]:
     """Return (entities dict, list of duplicate keys)."""
     taxonomy_file = (
@@ -220,6 +244,16 @@ def violations_for_root(
         for key, ent in entities.items()
         if ent.get("kind") == "state"
     }
+    canonical: set[str] = set()
+    for key, ent in entities.items():
+        kind = ent.get("kind")
+        if kind == "actor":
+            canonical.add(key)
+        elif kind in ("role", "worker"):
+            for field in ("role_id", "worker_id"):
+                value = ent.get(field)
+                if value:
+                    canonical.add(value)
 
     # 2. State machines declare states that exist in the taxonomy.
     state_machines = sorted(
@@ -270,6 +304,15 @@ def violations_for_root(
                 )
         if ent.get("actor") != fm.get("actor"):
             out.append(f"WORKFLOW {rel} actor mismatch")
+        profile = fm.get("profile")
+        if profile is not None and profile != "null" and profile not in canonical:
+            out.append(
+                f"WORKFLOW {rel} profile {profile!r} is not a canonical worker/role name"
+            )
+        if ent.get("profile") != profile:
+            out.append(
+                f"WORKFLOW {rel} profile mismatch (taxonomy {ent.get('profile')} vs file {profile})"
+            )
         tax_state = states.get(state_key)
         if tax_state is not None:
             if not set(fm.get("next_states", [])).issubset(set(tax_state.get("next", []))):
@@ -331,6 +374,54 @@ def violations_for_root(
                     out.append(
                         f"CONTRACT {key} {field} references unknown state: {ref}"
                     )
+
+    # 5b. Contract TOML front matter: produced_by uses canonical producer names.
+    contracts = sorted(
+        list((payload / ".agents" / "contracts").glob("*.md"))
+        + list((payload / ".agents" / "orchestrators").rglob("contracts/*.md"))
+    )
+    for contract in contracts:
+        rel = contract.relative_to(payload).as_posix()
+        fm = parse_toml_front_matter(
+            contract.read_text(encoding="utf-8", errors="replace")
+        )
+        if not fm:
+            continue
+        artifact = fm.get("artifact")
+        if artifact is not None and artifact != contract.name:
+            out.append(
+                f"CONTRACT {rel} artifact field {artifact!r} != filename {contract.name}"
+            )
+        produced = fm.get("produced_by")
+        values = produced if isinstance(produced, list) else ([produced] if produced else [])
+        for value in values:
+            if value not in canonical:
+                out.append(
+                    f"CONTRACT {rel} produced_by {value!r} is not a canonical producer name"
+                )
+
+    # 5c. Profiles catalog <-> taxonomy worker entities.
+    profiles_dir = payload / ".agents" / "roles" / "profiles"
+    worker_by_profile_file = {
+        ent.get("profile_file"): key
+        for key, ent in entities.items()
+        if ent.get("kind") == "worker" and ent.get("profile_file")
+    }
+    if profiles_dir.is_dir():
+        for profile_file in sorted(
+            p.relative_to(payload).as_posix()
+            for p in profiles_dir.glob("*.md")
+            if p.name != "README.md"
+        ):
+            if profile_file not in worker_by_profile_file:
+                out.append(
+                    f"PROFILE {profile_file} has no taxonomy worker entity with profile_file"
+                )
+        for profile_file, key in worker_by_profile_file.items():
+            if not (payload / profile_file).is_file():
+                out.append(
+                    f"PROFILE taxonomy {key} profile_file {profile_file} does not exist"
+                )
 
     # 6. Reachability per domain.
     by_domain: dict[str, list[str]] = {}

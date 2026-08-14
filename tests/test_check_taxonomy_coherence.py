@@ -39,7 +39,12 @@ entities:
     output_artifacts: []
     harness: []
     actor: orchestrator
+    profile: null
     file: .agents/orchestrators/core/workflow/00-sample.md
+  task_analyst:
+    kind: worker
+    domain: core
+    worker_id: task_analyst
   H00-sample:
     kind: harness
     domain: core
@@ -105,6 +110,13 @@ gates:
 # Policy
 """
 
+CONTRACT = """+++
+artifact = "SAMPLE.md"
+phase = "00"
+produced_by = "task_analyst"
++++
+"""
+
 
 def make_payload(tmp_path: Path) -> Path:
     agents = tmp_path / "protocol" / ".agents"
@@ -121,6 +133,9 @@ def make_payload(tmp_path: Path) -> Path:
     pol = agents / "orchestrators" / "core" / "harness" / "policies"
     pol.mkdir(parents=True)
     (pol / "H00-sample.md").write_text(POLICY, encoding="utf-8")
+    ctr = agents / "orchestrators" / "core" / "contracts"
+    ctr.mkdir(parents=True)
+    (ctr / "SAMPLE.md").write_text(CONTRACT, encoding="utf-8")
     return tmp_path
 
 
@@ -163,3 +178,39 @@ def test_state_declared_not_in_taxonomy(tmp_path):
     sm.write_text(SM.replace("  - B\n", "  - B\n  - C\n"), encoding="utf-8")
     v = ctc.violations_for_root(root, root / "protocol")
     assert any("core:C" in x and "not a taxonomy state" in x for x in v)
+
+
+def test_contract_produced_by_not_canonical(tmp_path):
+    root = make_payload(tmp_path)
+    ctr = root / "protocol" / ".agents" / "orchestrators" / "core" / "contracts" / "SAMPLE.md"
+    ctr.write_text(CONTRACT.replace('"task_analyst"', '"bogus"'), encoding="utf-8")
+    v = ctc.violations_for_root(root, root / "protocol")
+    assert any("produced_by 'bogus' is not a canonical producer name" in x for x in v)
+
+
+def test_contract_produced_by_state_rejected(tmp_path):
+    root = make_payload(tmp_path)
+    ctr = root / "protocol" / ".agents" / "orchestrators" / "core" / "contracts" / "SAMPLE.md"
+    ctr.write_text(CONTRACT.replace('"task_analyst"', '"core:A"'), encoding="utf-8")
+    v = ctc.violations_for_root(root, root / "protocol")
+    assert any("produced_by 'core:A' is not a canonical producer name" in x for x in v)
+
+
+def test_workflow_profile_not_canonical(tmp_path):
+    root = make_payload(tmp_path)
+    wf = root / "protocol" / ".agents" / "orchestrators" / "core" / "workflow" / "00-sample.md"
+    wf.write_text(WF.replace("profile: null", "profile: bogus"), encoding="utf-8")
+    v = ctc.violations_for_root(root, root / "protocol")
+    assert any("profile 'bogus' is not a canonical worker/role name" in x for x in v)
+
+
+def test_profile_catalog_missing_entity(tmp_path):
+    root = make_payload(tmp_path)
+    profiles = root / "protocol" / ".agents" / "roles" / "profiles"
+    profiles.mkdir(parents=True)
+    (profiles / "ghost.md").write_text("# Ghost\n", encoding="utf-8")
+    v = ctc.violations_for_root(root, root / "protocol")
+    assert any(
+        "PROFILE .agents/roles/profiles/ghost.md has no taxonomy worker entity" in x
+        for x in v
+    )

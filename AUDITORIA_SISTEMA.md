@@ -887,7 +887,7 @@ ARgentOS's semantic determinism today is a goal, not a property.**
 | P3.2 | Decide and document D01 "harness may contain Python" vs "no runner" model | — | ☑ Resolved | Plan 60 (2026-08-14): no executable runner today; mechanical validation is a possible future extension. The F1 enforcement decision (Level 5) remains open |
 | P3.3 | Include product harness tests in a CI job | — | ☑ Resolved | Nivel 4 (2026-08-14): check-protocol.yml runs protocol/.agents/harness/tests/ (39 tests) |
 | P4.1 | Hook-event schema contract | — | ☑ Resolved | Plan 60 (2026-08-14): harness/INDEX.md "Hook event schema" section |
-| P4.2 | Concurrency / session model | — | ☐ Open | |
+| P4.2 | Concurrency / session model | — | ☑ Resolved | Plan 63 (2026-08-14): deterministic CLI-session mapping (.project/.sessions.json) + runner_state link; hook fail-open unchanged |
 | P4.3 | Contract schema versions and machine-checkable migration rules | P1.2 | ☑ Resolved | Plan 62 (2026-08-14): schema_version (semver) on all 39 contracts; checker validates presence/format; MIGRATION.md documents bump rules |
 | P4.4 | Metrics aggregation tooling + event schema validation | P2.2 | ☑ Resolved | 2026-08-14: schema validation (4.2) + tools/aggregate_metrics.py |
 
@@ -937,6 +937,7 @@ See §18 for full detail.
 | 2026-08-14 | P1.2 | Dominios de produced_by / profile (plan 61) | `PROTOCOL_HEALTH.md`, 3 contratos, `tools/check_taxonomy_coherence.py` + tests | Version 3.12.0; closes §18.9 |
 | 2026-08-14 | P2.1 | Context Budget advisory (plan 62) | `WORKER_DELEGATION_CONTRACT.md`, `BUDGET_MATERIALIZATION.md`, `CONTEXT.md` | Version 3.13.0 |
 | 2026-08-14 | P4.3 | Contratos con schema_version (plan 62) | 39 contratos + `PROTOCOL_HEALTH.md` + checker + `MIGRATION.md` | Version 3.13.0 |
+| 2026-08-14 | P4.2 | Mapeo determinista de sesión (plan 63) | `hook_gate.py`, `runner_state.py`, `harness/INDEX.md` + tests | Version 3.14.0 |
 
 ---
 

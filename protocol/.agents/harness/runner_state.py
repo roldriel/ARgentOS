@@ -124,9 +124,14 @@ def state_path(session_uuid: str, iteration: str) -> Path:
 def _persist(session_uuid: str, iteration: str, data: dict[str, Any]) -> Path:
     """Write state.json transactionally (temp file + atomic rename)."""
     path = state_path(session_uuid, iteration)
+    return _write_json(path, data)
+
+
+def _write_json(path: Path, data: dict[str, Any]) -> Path:
+    """Write a JSON file transactionally (temp file + atomic rename)."""
     path.parent.mkdir(parents=True, exist_ok=True)
     fd, tmp_name = tempfile.mkstemp(
-        dir=str(path.parent), prefix=".state.json.", suffix=".tmp"
+        dir=str(path.parent), prefix="." + path.name + ".", suffix=".tmp"
     )
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as handle:
@@ -140,6 +145,29 @@ def _persist(session_uuid: str, iteration: str, data: dict[str, Any]) -> Path:
             pass
         raise
     return path
+
+
+def sessions_mapping_file() -> Path:
+    """Path of the CLI-session -> protocol-uuid mapping (.project/.sessions.json)."""
+    return ARTIFACTS_DIR / ".sessions.json"
+
+
+def link_session(cli_session: str, session_uuid: str) -> Path:
+    """Bind a CLI session id to a protocol session uuid in .project/.sessions.json.
+
+    The hook (`hook_gate.py`) resolves sessions by this mapping first; explicit
+    linking is useful when a CLI conversation resumes a protocol session across
+    conversations (the CLI session id differs from the protocol uuid).
+    """
+    mapping_path = sessions_mapping_file()
+    try:
+        mapping = json.loads(mapping_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        mapping = {}
+    if not isinstance(mapping, dict):
+        mapping = {}
+    mapping[cli_session] = session_uuid
+    return _write_json(mapping_path, mapping)
 
 
 def empty_state(session_uuid: str, iteration: str) -> dict[str, Any]:
@@ -300,9 +328,15 @@ def main(argv: list[str] | None = None) -> int:
         help="terminal state for the 'terminal' action (ABORT or COMPLETED)",
     )
     parser.add_argument(
+        "--cli-session",
+        default=None,
+        help="CLI session id to bind for the 'link' action",
+    )
+    parser.add_argument(
         "action",
-        choices=["pass", "terminal"],
-        help="outcome to record ('pass' for a gate PASS, 'terminal' for ABORT/COMPLETED)",
+        choices=["pass", "terminal", "link"],
+        help="outcome to record ('pass' for a gate PASS, 'terminal' for ABORT/COMPLETED, "
+        "'link' to bind a CLI session to this protocol session)",
     )
     args = parser.parse_args(argv)
 
@@ -325,6 +359,19 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.action == "pass" and not args.trigger:
         return _cli_error("the 'pass' action requires --trigger")
+
+    if args.action == "link":
+        if not args.cli_session:
+            return _cli_error("the 'link' action requires --cli-session")
+        try:
+            path = link_session(args.cli_session, args.session)
+        except OSError as exc:
+            return _cli_error(f"could not write .sessions.json: {exc}")
+        print(
+            f"CLI session linked: {args.cli_session} -> {args.session} "
+            f"({path})"
+        )
+        return 0
 
     if args.action == "terminal":
         if args.state not in TERMINAL_STATES:

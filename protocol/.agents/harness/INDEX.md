@@ -189,10 +189,18 @@ event used by the documented CLIs (Kimi Code, Claude Code):
 
 Rules:
 
-- The CLI session id is not the protocol session uuid. `hook_gate.py` first
-  tries `.project/<session_id>/`; when that directory does not exist it falls
-  back to the most recently modified session directory (single-active-session
-  assumption).
+- The CLI session id is not the protocol session uuid. `hook_gate.py`
+  resolves the protocol session deterministically, in this order:
+  1. the mapping `.project/.sessions.json` (CLI session id → protocol uuid);
+  2. the exact directory `.project/<session_id>/`;
+  3. the only session directory;
+  4. the most recently modified session directory — used only on the first
+     event of a CLI session, after which the mapping is recorded so later
+     events of that CLI session resolve identically.
+  `runner_state.py link --cli-session <id> --session <uuid>` binds a CLI
+  session to a protocol session explicitly (e.g., when resuming a protocol
+  session across CLI conversations). The mapping file is runtime metadata,
+  best-effort: a write failure never blocks resolution.
 - `PreToolUse` gates only `Write`/`Edit`; the target is read from
   `tool_input` keys `file_path`, `path` or `filename`.
 - `Stop` gates iteration closure (H06 PASS, `NEEDS_CLARIFICATION` recorded, or

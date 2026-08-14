@@ -57,6 +57,20 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.14.0] — 2026-08-14
+
+### Changed
+
+- **Resolución determinista de sesión en el hook** (plan 63, P4.2):
+  `hook_gate.py` resuelve la sesión del protocolo por mapeo persistido
+  (`.project/.sessions.json`), directorio exacto, sesión única o —solo en el
+  primer evento de una CLI session— la más reciente, registrando el mapeo.
+  `runner_state.py link --cli-session <id>` permite la vinculación explícita
+  (p. ej. al reanudar entre conversaciones CLI). El fail-open y la semántica
+  de los gates no cambian.
+
+---
+
 ## [3.13.0] — 2026-08-14
 
 ### Changed

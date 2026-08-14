@@ -9,6 +9,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 import uuid
 from pathlib import Path
 
@@ -210,3 +211,40 @@ def test_malformed_stdin_is_fail_open_allow():
     )
     # Documented fail-open: a hook that cannot parse its event must allow.
     assert result.returncode == 0
+
+
+# --- Session mapping (deterministic resolution, P4.2) -----------------------
+
+
+def test_mapping_locks_cli_session_to_protocol_session(project):
+    session_uuid, project_dir, _ = project
+    event = pre_tool_use(session_uuid="cli-1")
+    first = hook_gate._resolve_session(event)
+    assert first is not None and first.name == session_uuid
+
+    # A newer session appears afterwards: the mapping must keep the CLI
+    # session bound to the original protocol session.
+    second_dir = project_dir / "second"
+    (second_dir / "00").mkdir(parents=True)
+    future = time.time() + 1000
+    os.utime(second_dir, (future, future))
+
+    again = hook_gate._resolve_session(event)
+    assert again is not None and again.name == session_uuid
+
+    mapping = json.loads((project_dir / ".sessions.json").read_text(encoding="utf-8"))
+    assert mapping["cli-1"] == session_uuid
+
+
+def test_unmapped_cli_session_uses_most_recent(project):
+    session_uuid, project_dir, _ = project
+    other = project_dir / "other"
+    (other / "00").mkdir(parents=True)
+    future = time.time() + 2000
+    os.utime(other, (future, future))
+
+    resolved = hook_gate._resolve_session(pre_tool_use(session_uuid="cli-2"))
+    assert resolved is not None and resolved.name == "other"
+
+    mapping = json.loads((project_dir / ".sessions.json").read_text(encoding="utf-8"))
+    assert mapping["cli-2"] == "other"

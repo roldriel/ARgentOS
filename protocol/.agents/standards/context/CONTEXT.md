@@ -31,6 +31,10 @@ The following budgets limit only the portion of context that comes from `.projec
 
 The `context_discoverer` recommends a budget; the Orchestrator applies it when assembling the final payload.
 
+These budgets are advisory: the protocol does not measure or truncate the KB
+portion mechanically; compliance is recorded via the `context_budget` metric
+event (see `BUDGET_MATERIALIZATION.md`, §Enforcement status).
+
 ## 4. Budget distribution
 
 If N entries are selected, each entry receives at most `budget / N` characters, with a minimum of 500 characters per entry. If the budget does not allow at least 500 characters per selected entry, the Orchestrator reduces the number of entries until the minimum is satisfied.

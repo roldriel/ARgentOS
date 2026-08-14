@@ -1,9 +1,11 @@
 +++
+schema_version = "1.0.0"
 artifact = "ARCHITECTURE.md"
 phase = "n/a"
 produced_by = "framework_worker"
 enforcement = "informational"
 +++
+schema_version = "1.0.0"
 
 
 ---

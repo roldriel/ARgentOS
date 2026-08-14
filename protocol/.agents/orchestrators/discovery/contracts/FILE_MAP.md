@@ -1,9 +1,11 @@
 +++
+schema_version = "1.0.0"
 artifact = "FILE_MAP.md"
 phase = "n/a"
 produced_by = "init_worker"
 enforcement = "informational"
 +++
+schema_version = "1.0.0"
 
 
 ---

@@ -1,9 +1,11 @@
 +++
+schema_version = "1.0.0"
 artifact = "BUSINESS_RULES.md"
 phase = "n/a"
 produced_by = "business_worker"
 enforcement = "informational"
 +++
+schema_version = "1.0.0"
 
 
 ---

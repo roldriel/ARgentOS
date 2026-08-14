@@ -1,9 +1,11 @@
 +++
+schema_version = "1.0.0"
 artifact = "HARNESS_REPORT.md"
 phase = "all"
 produced_by = "orchestrator"
 enforcement = "informational"
 +++
+schema_version = "1.0.0"
 
 
 ---

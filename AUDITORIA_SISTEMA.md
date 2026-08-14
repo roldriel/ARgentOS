@@ -880,7 +880,7 @@ ARgentOS's semantic determinism today is a goal, not a property.**
 | P1.1 | Restore mechanical H13 coherence checker (dev tool + CI) and single-source the battery definition | P0.2 | ☑ Resolved | Nivel 4 (2026-08-14): tools/check_taxonomy_coherence.py + CI job; battery single-sourced in docs/VERSIONING.md §4.1 |
 | P1.2 | Define and enforce `produced_by` / `profile` value domains | P1.1 | ☑ Resolved | Plan 61 (2026-08-14): canonical domains defined (PROTOCOL_HEALTH item 3), 3 contracts normalized, checker validates produced_by/profile/profiles catalog |
 | P1.3 | Fix `RECOVERY_REPORT.md` enum (add early-phase destinations) | P0.2 | ☑ Resolved | Plan 58 (2026-08-14): enum includes early-phase destinations; RFC-30 Accepted |
-| P2.1 | Machine-checkable budget accounting or explicit advisory declaration | F5 | ☐ Open | |
+| P2.1 | Machine-checkable budget accounting or explicit advisory declaration | F5 | ☑ Resolved | Plan 62 (2026-08-14): advisory declared in delegation contract, BUDGET_MATERIALIZATION and CONTEXT.md; machine accounting remains a possible future extension |
 | P2.2 | Schema validation for `ENTRY`/`METRIC` comments and `state.json` | P1.1 | ☑ Resolved | Nivel 4 (2026-08-14): tools/check_session_artifacts.py |
 | P2.3 | Specify `retry_count` / recovery-table variable persistence | F1 | ☑ Resolved | Plan 60 (2026-08-14): derived from HARNESS_REPORT.md FAIL entries per trigger/iteration (harness/INDEX.md + orchestrator.md) |
 | P3.1 | Correct stale docs (`VERSIONING.md` §9, `AUDITORIA_DOCUMENTACION.md`, `plans/INDEX.md`) + version-state checker or declared `dev` exception | F6 | ☑ Resolved | 2026-08-14: docs corrected (Nivel 1) + tools/check_version_state.py with declared dev exception (Nivel 4) |
@@ -888,7 +888,7 @@ ARgentOS's semantic determinism today is a goal, not a property.**
 | P3.3 | Include product harness tests in a CI job | — | ☑ Resolved | Nivel 4 (2026-08-14): check-protocol.yml runs protocol/.agents/harness/tests/ (39 tests) |
 | P4.1 | Hook-event schema contract | — | ☑ Resolved | Plan 60 (2026-08-14): harness/INDEX.md "Hook event schema" section |
 | P4.2 | Concurrency / session model | — | ☐ Open | |
-| P4.3 | Contract schema versions and machine-checkable migration rules | P1.2 | ☐ Open | |
+| P4.3 | Contract schema versions and machine-checkable migration rules | P1.2 | ☑ Resolved | Plan 62 (2026-08-14): schema_version (semver) on all 39 contracts; checker validates presence/format; MIGRATION.md documents bump rules |
 | P4.4 | Metrics aggregation tooling + event schema validation | P2.2 | ☑ Resolved | 2026-08-14: schema validation (4.2) + tools/aggregate_metrics.py |
 
 ## Contradictions checklist
@@ -935,6 +935,8 @@ See §18 for full detail.
 | 2026-08-14 | Nivel 6 | Lote fácil 5 — semántica de retry_count (P2.3) | `protocol/.agents/harness/INDEX.md`, `protocol/.agents/orchestrators/core/roles/orchestrator.md` | Plan 60 |
 | 2026-08-14 | Nivel 6 | Lote fácil 6 — agregación de métricas (P4.4) | `tools/aggregate_metrics.py` + tests | Dev tool, no plan required |
 | 2026-08-14 | P1.2 | Dominios de produced_by / profile (plan 61) | `PROTOCOL_HEALTH.md`, 3 contratos, `tools/check_taxonomy_coherence.py` + tests | Version 3.12.0; closes §18.9 |
+| 2026-08-14 | P2.1 | Context Budget advisory (plan 62) | `WORKER_DELEGATION_CONTRACT.md`, `BUDGET_MATERIALIZATION.md`, `CONTEXT.md` | Version 3.13.0 |
+| 2026-08-14 | P4.3 | Contratos con schema_version (plan 62) | 39 contratos + `PROTOCOL_HEALTH.md` + checker + `MIGRATION.md` | Version 3.13.0 |
 
 ---
 

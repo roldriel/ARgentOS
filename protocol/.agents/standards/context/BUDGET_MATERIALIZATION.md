@@ -46,3 +46,13 @@ The delegation contract once carried the undenominated literal `context_budget: 
 ## 6. Other runtimes
 
 A non-prompt runtime declares its own unit (e.g., bytes of a context store, number of tool declarations) and estimation rule in its own materialization document. What does not change: the Budget is finite, it constrains the construction of the Execution Context, and every materialized value is a finite, positive constraint in the runtime's declared unit.
+
+## 7. Enforcement status
+
+The materialized Budget is **advisory**: the prompt-based runtime does not
+measure the assembled payload against `context_budget`, truncate it, or block
+a delegation that exceeds it. The estimation rule exists so that declared vs.
+consumed can be recorded and audited (the `context_budget` event of
+`METRICS.md`), not to enforce a limit. Any mechanical enforcement is a harness
+Future Extension; until then, "the Budget is respected" is a declarative
+compliance claim, never a machine-checked one.

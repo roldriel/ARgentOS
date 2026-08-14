@@ -1,9 +1,11 @@
 +++
+schema_version = "1.0.0"
 artifact = "METRICS.md"
 phase = "all"
 produced_by = "orchestrator"
 enforcement = "informational"
 +++
+schema_version = "1.0.0"
 
 
 ---

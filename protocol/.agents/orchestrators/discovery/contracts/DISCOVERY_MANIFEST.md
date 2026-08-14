@@ -1,9 +1,11 @@
 +++
+schema_version = "1.0.0"
 artifact = "DISCOVERY_MANIFEST.md"
 phase = "n/a"
 produced_by = "synthesis_worker"
 enforcement = "informational"
 +++
+schema_version = "1.0.0"
 
 
 ---

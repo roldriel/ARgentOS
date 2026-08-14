@@ -1,10 +1,12 @@
 +++
+schema_version = "1.0.0"
 artifact = "KB_DISCOVERY_ENTRY.md"
 phase = "n/a"
 produced_by = ["environment_worker", "stack_worker", "framework_worker", "patterns_worker", "business_worker", "synthesis_worker"]
 enforcement = "gated"
 gated_by = ["D01"]
 +++
+schema_version = "1.0.0"
 
 
 ---

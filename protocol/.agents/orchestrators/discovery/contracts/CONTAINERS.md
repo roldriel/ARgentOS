@@ -1,9 +1,11 @@
 +++
+schema_version = "1.0.0"
 artifact = "CONTAINERS.md"
 phase = "n/a"
 produced_by = "stack_worker"
 enforcement = "informational"
 +++
+schema_version = "1.0.0"
 
 
 ---

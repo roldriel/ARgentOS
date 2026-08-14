@@ -57,6 +57,23 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.13.0] — 2026-08-14
+
+### Changed
+
+- **Context Budget declarado advisory** (plan 62, P2.1): `context_budget` no se
+  mide ni se trunca mecánicamente; el estado de enforcement queda declarado en
+  el contrato de delegación, `BUDGET_MATERIALIZATION.md` y `CONTEXT.md`. La
+  contabilidad declarado vs consumido sigue registrándose por el evento de
+  métricas.
+- **Contratos versionados con `schema_version`** (plan 62, P4.3): todo contrato
+  declara `schema_version` (semver) en su front matter; el checker de
+  coherencia taxonómica valida presencia y formato; `MIGRATION.md` documenta
+  el uso para adoptantes. Adición compatible de metadata: los artefactos
+  válidos previos siguen siendo válidos.
+
+---
+
 ## [3.12.0] — 2026-08-14
 
 ### Changed

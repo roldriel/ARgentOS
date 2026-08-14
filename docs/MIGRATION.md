@@ -30,9 +30,12 @@ Para pasar un proyecto adoptante de la versión `X` a la versión `Y`:
 2. **Revisar contratos modificados** (`.agents/contracts/`,
    `.agents/orchestrators/*/contracts/`): para cada contrato listado en el
    changelog, comparar campos obligatorios (front matter `artifact`, `phase`,
-   `produced_by`) y secciones requeridas contra los artefactos que el proyecto ya
-   produce. Un cambio MAJOR en un contrato exige actualizar las plantillas o los
-   artefactos vivos del proyecto.
+   `produced_by`, `schema_version`) y secciones requeridas contra los
+   artefactos que el proyecto ya produce. `schema_version` es semver: un salto
+   **MAJOR** (campos obligatorios incompatibles) exige actualizar las
+   plantillas o los artefactos vivos del proyecto; **MINOR** (adiciones
+   compatibles) y **PATCH** (fixes documentales) no rompen los artefactos
+   válidos existentes.
 3. **Revisar artifacts renombrados o eliminados**: todo rename/removal aparece en
    la sección **Removed** del changelog. Actualizar referencias en roles, workflow
    y artefactos propios del proyecto.

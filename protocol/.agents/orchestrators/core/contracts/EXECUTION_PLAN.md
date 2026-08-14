@@ -1,10 +1,12 @@
 +++
+schema_version = "1.0.0"
 artifact = "EXECUTION_PLAN.md"
 phase = "05"
 produced_by = "planner"
 enforcement = "gated"
 gated_by = ["H04"]
 +++
+schema_version = "1.0.0"
 
 
 ---

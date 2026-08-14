@@ -65,6 +65,14 @@ The invocation is not a function call; it is a structured handoff of context and
 
 `context_budget` is the Context Budget for this delegation as materialized by the current runtime: the finite share of the Budget available for populating the payload (in particular, the `knowledge_entries` excerpts). The contract defines the concept only; the value, its units, and its limits belong to the runtime, not to this contract. A valid value is always a finite, positive constraint on the resource the runtime uses to represent the Budget. For the prompt-based runtime, the value is denominated in estimated tokens as defined in `.agents/standards/context/BUDGET_MATERIALIZATION.md`.
 
+**Enforcement status: advisory.** The protocol does not mechanically measure,
+truncate, or block payload composition against `context_budget`. The value is
+a normative ceiling: the Orchestrator should not exceed it when assembling the
+payload, and the Worker should treat it as a bound, but compliance is
+declarative and auditable via the `context_budget` metric event
+(`METRICS.md`), not machine-enforced. Mechanical enforcement is a harness
+Future Extension.
+
 `communication_style` is optional. It is populated by the Orchestrator when the `caveman` feature flag is enabled. The `enabled` field is a boolean, and `level` is one of `lite`, `full`, or `ultra` (default: `full`). When present, the Worker MUST apply `.agents/standards/communication/CAVEMAN.md` at the specified level to all natural-language output, including the artifact and the return report.
 
 `technical_approach` is optional. It is populated by the Orchestrator when any technical-practice feature flag (`tdd`, `srp`, `ocp`, `lsp`, `isp`, `dip`, `screaming_architecture`, `clean_architecture`, `layered_architecture`, `dry`, `grasp`, `ddd_tactical`, `ddd_strategic`) is enabled and the `TASK_SPECIFICATION.md` contains a `## Technical Approach` section. The Worker MUST read and apply the corresponding standards (for example, `.agents/standards/testing/TDD.md`, `.agents/standards/development/design/SOLID/SRP.md`, `.agents/standards/development/design/SCREAMING_ARCHITECTURE.md`, or `.agents/standards/development/design/DDD_TACTICAL.md`) and record compliance evidence in the output artifact.

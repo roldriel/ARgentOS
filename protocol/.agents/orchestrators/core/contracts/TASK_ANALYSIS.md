@@ -1,10 +1,12 @@
 +++
+schema_version = "1.0.0"
 artifact = "TASK_ANALYSIS.md"
 phase = "00"
 produced_by = "task_analyst"
 enforcement = "gated"
 gated_by = ["H00"]
 +++
+schema_version = "1.0.0"
 
 
 ---

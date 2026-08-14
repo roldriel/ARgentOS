@@ -1,9 +1,11 @@
 +++
+schema_version = "1.0.0"
 artifact = "TECHNICAL_DEBT.md"
 phase = "n/a"
 produced_by = "business_worker"
 enforcement = "informational"
 +++
+schema_version = "1.0.0"
 
 
 ---

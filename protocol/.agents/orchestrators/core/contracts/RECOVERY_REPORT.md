@@ -1,10 +1,12 @@
 +++
+schema_version = "1.0.0"
 artifact = "RECOVERY_REPORT.md"
 phase = "08"
 produced_by = "recovery_analyst"
 enforcement = "gated"
 gated_by = ["H09"]
 +++
+schema_version = "1.0.0"
 
 
 ---

@@ -1,9 +1,11 @@
 +++
+schema_version = "1.0.0"
 artifact = "DEVELOPMENT_PATTERNS.md"
 phase = "n/a"
 produced_by = "patterns_worker"
 enforcement = "informational"
 +++
+schema_version = "1.0.0"
 
 
 ---

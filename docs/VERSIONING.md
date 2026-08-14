@@ -94,15 +94,24 @@ duplican:
 python tools/check_protocol_invariants.py --payload protocol .
 python tools/check_plan_citations.py
 python tools/check_plan_structure.py
+python tools/check_taxonomy_coherence.py
+python tools/check_session_artifacts.py
+python tools/check_version_state.py
 python -m pytest tests/
 ```
 
 Reglas:
 
-- **H13 por juicio:** la coherencia taxonómica
+- **H13 por juicio + checker de desarrollo:** la coherencia taxonómica
   (`protocol/.agents/harness/policies/H13-protocol-taxonomy.md`) se aplica por
-  juicio en todo cambio de estructura del payload; no hay checker mecánico
-  (pendiente de remediación; tracker en `AUDITORIA_SISTEMA.md`).
+  juicio en todo cambio de estructura del payload; `tools/check_taxonomy_coherence.py`
+  restaura mecánicamente los invariantes del ex `test_protocol_taxonomy.py`
+  (H13 rules 2/5/10) como red de seguridad de desarrollo.
+- **`check_session_artifacts.py`:** valida los bloques `ENTRY`/`METRIC` y los
+  `state.json` bajo `.project/`; sin `.project/` es OK.
+- **`check_version_state.py`:** invariante versión ↔ changelog ↔ tag; en `dev`
+  las secciones/versión sin tag son warning (excepción declarada), y es error
+  cuando una versión no tiene sección o un tag no la tiene.
 - **`check_dist_sync.py`:** local-only, se espera **verde solo en `master`**
   (compara el payload commiteado contra la rama `dist` publicada; en `dev` con
   planes sin publicar es roja por diseño, y CI no la fetchea).
@@ -110,8 +119,8 @@ Reglas:
   la verificación del producto adoptante (modo enforced), no parte de la
   batería del repo.
 - **Tests del harness del producto:** `protocol/.agents/harness/tests/` no
-  corren en la batería del repo; se ejecutan en proyectos adoptantes
-  (pendiente de remediación: job de CI; tracker en `AUDITORIA_SISTEMA.md`).
+  corren en la batería canónica, pero sí en el job de CI de regresión del
+  producto (`.github/workflows/check-protocol.yml`) y en proyectos adoptantes.
 
 ## 5. Changelog
 

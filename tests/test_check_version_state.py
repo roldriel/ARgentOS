@@ -1,0 +1,48 @@
+"""Tests for tools/check_version_state.py (dev-only, no payload dependency)."""
+
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO_ROOT / "tools"))
+
+import check_version_state as cvs  # noqa: E402
+
+
+def make_repo(tmp_path: Path, version="1.2.3", sections=None, tags=None):
+    (tmp_path / "protocol" / ".agents").mkdir(parents=True)
+    (tmp_path / "protocol" / ".agents" / "VERSION").write_text(version + "\n", encoding="utf-8")
+    section_list = sections if sections is not None else [version]
+    body = "# Changelog\n\n" + "".join(
+        f"## [{s}] — 2026-08-14\n\n- item\n\n" for s in section_list
+    )
+    (tmp_path / "CHANGELOG.md").write_text(body, encoding="utf-8")
+    cvs.get_tags = lambda root: tags if tags is not None else []
+    return tmp_path
+
+
+def test_ok_with_dev_exception(tmp_path):
+    root = make_repo(tmp_path, version="1.2.3", sections=["1.2.3", "1.1.0"], tags=["1.1.0"])
+    errors, warnings = cvs.verify(root)
+    assert errors == []
+    assert any("1.2.3" in w for w in warnings)
+
+
+def test_version_without_changelog_section(tmp_path):
+    root = make_repo(tmp_path, version="1.2.3", sections=["1.1.0"], tags=[])
+    errors, _ = cvs.verify(root)
+    assert any("has no ## [1.2.3] section" in e for e in errors)
+
+
+def test_tag_without_changelog_section(tmp_path):
+    root = make_repo(tmp_path, version="1.2.3", sections=["1.2.3"], tags=["1.2.3", "0.9.0"])
+    errors, _ = cvs.verify(root)
+    assert any("tag 0.9.0 has no" in e for e in errors)
+
+
+def test_bad_semver(tmp_path):
+    root = make_repo(tmp_path, version="banana")
+    errors, _ = cvs.verify(root)
+    assert any("not semver" in e for e in errors)

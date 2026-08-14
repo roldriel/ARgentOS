@@ -86,6 +86,9 @@ From the repository root:
 python tools/check_protocol_invariants.py --payload protocol .
 python tools/check_plan_citations.py
 python tools/check_plan_structure.py
+python tools/check_taxonomy_coherence.py
+python tools/check_session_artifacts.py
+python tools/check_version_state.py
 python tools/check_dist_sync.py
 python -m pytest tests/
 ```

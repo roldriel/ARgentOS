@@ -1,0 +1,155 @@
+#!/usr/bin/env python3
+"""Validate the machine-readable session artifacts of a project.
+
+Scans ``<root>/.project/`` for the artifacts whose contracts declare
+machine-readable blocks:
+
+- ``HARNESS_REPORT.md``: every ``<!-- ENTRY: {...} -->`` comment must be valid
+  JSON with the required fields of the HARNESS_REPORT contract.
+- ``METRICS.md``: every ``<!-- METRIC: {...} -->`` comment must be valid JSON
+  with the required fields of the METRICS contract event catalog.
+- ``state.json``: the shape written by ``runner_state.py`` (session,
+  iteration, task_profile, gates, last_gate, status, updated).
+
+The task is a dev-only safety net: the runtime aggregation reads these blocks
+by judgment. A missing ``.project/`` is not a violation (exit 0).
+
+Usage:
+  python tools/check_session_artifacts.py [--root REPO_ROOT]
+
+Exit code: 0 when no violations are found, 1 otherwise.
+Standard library only.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+from pathlib import Path
+
+
+ENTRY_REQUIRED = {"timestamp", "trigger", "transition", "result", "checks"}
+ENTRY_RESULTS = {"PASS", "FAIL", "SKIP"}
+
+METRIC_REQUIRED = {
+    "session_start": ["declarative_flags", "protocol_version"],
+    "state_transition": ["from", "to", "iteration"],
+    "reviewer_retry": ["artifact", "cycle"],
+    "failure": ["class"],
+    "delegation": ["phase", "profile", "skills", "h15"],
+    "skill_override": ["skill"],
+    "flag_evidence": ["flag"],
+    "context_budget": ["phase", "declared", "consumed"],
+    "context_candidates": ["prioritized", "resolved", "composed"],
+}
+
+STATE_STATUSES = {"no_gates_passed", "in_progress", "ABORT", "COMPLETED"}
+STATE_KEYS = {"session", "iteration", "task_profile", "gates", "last_gate", "status", "updated"}
+
+
+def scan(root: Path) -> list[str]:
+    """Return a human-readable list of session-artifact violations."""
+    out: list[str] = []
+    project = root / ".project"
+    if not project.is_dir():
+        return out
+
+    for report in sorted(project.rglob("HARNESS_REPORT.md")):
+        text = report.read_text(encoding="utf-8", errors="replace")
+        for idx, raw in enumerate(re.finditer(r"<!-- ENTRY: (.*?) -->", text, re.DOTALL), 1):
+            payload = raw.group(1).strip()
+            try:
+                data = json.loads(payload)
+            except json.JSONDecodeError as exc:
+                out.append(f"ENTRY {report.relative_to(root)}#{idx}: invalid JSON ({exc})")
+                continue
+            if not isinstance(data, dict):
+                out.append(f"ENTRY {report.relative_to(root)}#{idx}: not an object")
+                continue
+            missing = ENTRY_REQUIRED - set(data)
+            if missing:
+                out.append(
+                    f"ENTRY {report.relative_to(root)}#{idx}: missing fields {sorted(missing)}"
+                )
+            if data.get("result") not in ENTRY_RESULTS:
+                out.append(
+                    f"ENTRY {report.relative_to(root)}#{idx}: bad result {data.get('result')!r}"
+                )
+            checks = data.get("checks")
+            if not isinstance(checks, list):
+                out.append(f"ENTRY {report.relative_to(root)}#{idx}: checks is not a list")
+
+    for metrics in sorted(project.rglob("METRICS.md")):
+        text = metrics.read_text(encoding="utf-8", errors="replace")
+        for idx, raw in enumerate(re.finditer(r"<!-- METRIC: (.*?) -->", text, re.DOTALL), 1):
+            payload = raw.group(1).strip()
+            try:
+                data = json.loads(payload)
+            except json.JSONDecodeError as exc:
+                out.append(f"METRIC {metrics.relative_to(root)}#{idx}: invalid JSON ({exc})")
+                continue
+            if not isinstance(data, dict) or "type" not in data:
+                out.append(f"METRIC {metrics.relative_to(root)}#{idx}: missing type")
+                continue
+            required = METRIC_REQUIRED.get(data["type"])
+            if required is None:
+                out.append(f"METRIC {metrics.relative_to(root)}#{idx}: unknown type {data['type']!r}")
+                continue
+            missing = set(required) - set(data)
+            if missing:
+                out.append(
+                    f"METRIC {metrics.relative_to(root)}#{idx} ({data['type']}): "
+                    f"missing fields {sorted(missing)}"
+                )
+
+    for state_file in sorted(project.rglob("state.json")):
+        try:
+            data = json.loads(state_file.read_text(encoding="utf-8", errors="replace"))
+        except json.JSONDecodeError as exc:
+            out.append(f"STATE {state_file.relative_to(root)}: invalid JSON ({exc})")
+            continue
+        if not isinstance(data, dict):
+            out.append(f"STATE {state_file.relative_to(root)}: not an object")
+            continue
+        missing = STATE_KEYS - set(data)
+        if missing:
+            out.append(f"STATE {state_file.relative_to(root)}: missing fields {sorted(missing)}")
+        if data.get("status") not in STATE_STATUSES:
+            out.append(f"STATE {state_file.relative_to(root)}: bad status {data.get('status')!r}")
+        gates = data.get("gates")
+        if not isinstance(gates, dict):
+            out.append(f"STATE {state_file.relative_to(root)}: gates is not an object")
+        else:
+            for trigger, entry in gates.items():
+                if (
+                    not isinstance(entry, dict)
+                    or entry.get("result") != "PASS"
+                    or not isinstance(entry.get("timestamp"), str)
+                ):
+                    out.append(
+                        f"STATE {state_file.relative_to(root)}: bad gate entry {trigger!r}"
+                    )
+    return out
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--root", type=Path, default=None)
+    args = parser.parse_args(argv)
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    root = (args.root or Path(__file__).resolve().parents[1]).resolve()
+    violations = scan(root)
+    if not violations:
+        print("Session artifacts OK.")
+        return 0
+    print(f"Session artifact violations: {len(violations)}")
+    for v in violations:
+        print(f"- {v}")
+    return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

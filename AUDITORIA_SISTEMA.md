@@ -867,7 +867,7 @@ ARgentOS's semantic determinism today is a goal, not a property.**
 | F3 | Multiple authoritative sources disagree on RECOVERY | §3, §18.1, §20 | Critical | ☑ Resolved | Plan 59 (2026-08-14): taxonomy core:RECOVERY.next aligned; H13 documents profile-conditional transitions |
 | F4 | Zero-hallucination / ground-truth guarantees are aspirational | §13, §20 | Critical | ☐ Open | |
 | F5 | Context determinism is explicitly deferred | §11, §12, §20 | High | ☐ Open | |
-| F6 | Repo state documentation is stale and the battery is undefined | §3, §16, §18.4–18.7, §20 | High | ☐ Open | Docs and battery definition fixed 2026-08-14 (Nivel 1: 1.1–1.4); still missing the version-state checker (P3.1) |
+| F6 | Repo state documentation is stale and the battery is undefined | §3, §16, §18.4–18.7, §20 | High | ☑ Resolved | 2026-08-14 (Nivel 1 + Nivel 4): docs fixed, battery unified, version-state checker added |
 | F7 | Declarative flag compliance is undetectable by design | §8, §20 | High | ☐ Open | |
 
 ## Remediation order tracker (P0–P4)
@@ -877,19 +877,19 @@ ARgentOS's semantic determinism today is a goal, not a property.**
 | P0.1 | Fix trivial-profile contradiction (transition set + inputs; state machine, workflow 05, H00 checklist) | F2 | ☑ Resolved | Plan 59 (2026-08-14): transition legalized + reduced input set; RFC-26 amended |
 | P0.2 | Fix RECOVERY taxonomy contradiction (taxonomy `next` includes early-phase transitions) | F3 | ☑ Resolved | Plan 59 (2026-08-14): taxonomy next includes early-phase transitions |
 | P0.3 | Fix hash-actor contradiction (single actor; align orchestrator.md, DISCOVERY_STATE_MACHINE.md, invocation payload) | — | ☑ Resolved | Plan 58 (2026-08-14): orchestrator.md aligned; RFC-54 Accepted |
-| P1.1 | Restore mechanical H13 coherence checker (dev tool + CI) and single-source the battery definition | P0.2 | ☐ Open | |
+| P1.1 | Restore mechanical H13 coherence checker (dev tool + CI) and single-source the battery definition | P0.2 | ☑ Resolved | Nivel 4 (2026-08-14): tools/check_taxonomy_coherence.py + CI job; battery single-sourced in docs/VERSIONING.md §4.1 |
 | P1.2 | Define and enforce `produced_by` / `profile` value domains | P1.1 | ☐ Open | |
 | P1.3 | Fix `RECOVERY_REPORT.md` enum (add early-phase destinations) | P0.2 | ☑ Resolved | Plan 58 (2026-08-14): enum includes early-phase destinations; RFC-30 Accepted |
 | P2.1 | Machine-checkable budget accounting or explicit advisory declaration | F5 | ☐ Open | |
-| P2.2 | Schema validation for `ENTRY`/`METRIC` comments and `state.json` | P1.1 | ☐ Open | |
+| P2.2 | Schema validation for `ENTRY`/`METRIC` comments and `state.json` | P1.1 | ☑ Resolved | Nivel 4 (2026-08-14): tools/check_session_artifacts.py |
 | P2.3 | Specify `retry_count` / recovery-table variable persistence | F1 | ☐ Open | |
-| P3.1 | Correct stale docs (`VERSIONING.md` §9, `AUDITORIA_DOCUMENTACION.md`, `plans/INDEX.md`) + version-state checker or declared `dev` exception | F6 | ☐ Open | Docs corrected 2026-08-14 (VERSIONING §9, AUDITORIA, INDEX header, ROADMAP); missing the version-state checker or declared exception |
+| P3.1 | Correct stale docs (`VERSIONING.md` §9, `AUDITORIA_DOCUMENTACION.md`, `plans/INDEX.md`) + version-state checker or declared `dev` exception | F6 | ☑ Resolved | 2026-08-14: docs corrected (Nivel 1) + tools/check_version_state.py with declared dev exception (Nivel 4) |
 | P3.2 | Decide and document D01 "harness may contain Python" vs "no runner" model | — | ☐ Open | |
-| P3.3 | Include product harness tests in a CI job | — | ☐ Open | |
+| P3.3 | Include product harness tests in a CI job | — | ☑ Resolved | Nivel 4 (2026-08-14): check-protocol.yml runs protocol/.agents/harness/tests/ (39 tests) |
 | P4.1 | Hook-event schema contract | — | ☐ Open | |
 | P4.2 | Concurrency / session model | — | ☐ Open | |
 | P4.3 | Contract schema versions and machine-checkable migration rules | P1.2 | ☐ Open | |
-| P4.4 | Metrics aggregation tooling + event schema validation | P2.2 | ☐ Open | |
+| P4.4 | Metrics aggregation tooling + event schema validation | P2.2 | ☐ Open | Schema validation done (4.2); aggregation tool pending |
 
 ## Contradictions checklist
 
@@ -923,6 +923,11 @@ See §18 for full detail.
 | 2026-08-14 | Nivel 3 | 3.1 Camino trivial legalizado | `AGENT_STATE_MACHINE.md`, workflows 00/05/06/07 + INDEX, H00/H04/H06, contratos TASK_ANALYSIS/EXECUTION_PLAN/VERIFICATION_REPORT | Plan 59, RFC-26 amended (option 1) |
 | 2026-08-14 | Nivel 3 | 3.2 Taxonomía RECOVERY/ANALYZING_TASK alineada | `protocol/.agents/standards/runtime/PROTOCOL_TAXONOMY.md` | Plan 59, RFC-30 |
 | 2026-08-14 | Nivel 3 | 3.3 H13 documenta transiciones por perfil | `protocol/.agents/harness/policies/H13-protocol-taxonomy.md` | Plan 59 |
+| 2026-08-14 | Nivel 3 (compleción) | Sincronización taxonómica (workflow:00, core:PLANNING.previous, workflow:08, artifacts_input) | `protocol/.agents/standards/runtime/PROTOCOL_TAXONOMY.md` | Plan 59 (H13 rule 10), verified by 4.1 |
+| 2026-08-14 | Nivel 4 | 4.1 Checker mecánico de coherencia taxonómica | `tools/check_taxonomy_coherence.py` + tests + CI | Restores former test_protocol_taxonomy invariants |
+| 2026-08-14 | Nivel 4 | 4.2 Validación de esquema de sesión | `tools/check_session_artifacts.py` + tests | ENTRY/METRIC comments + state.json |
+| 2026-08-14 | Nivel 4 | 4.3 Tests del harness en CI | `.github/workflows/check-protocol.yml`, `tests/AGENTS.md` | 39 harness tests in CI |
+| 2026-08-14 | Nivel 4 | 4.4 Invariante versión ↔ changelog ↔ tag | `tools/check_version_state.py` + tests | dev exception declared |
 
 ---
 

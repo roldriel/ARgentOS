@@ -574,7 +574,10 @@ The core Orchestrator invokes the Discovery Orchestrator when:
 `.project/.last_discovery` is a small JSON file written by the Discovery
 Orchestrator when a run reaches `DISCOVERY_READY`. It is the discovery
 equivalent of `.project/.last_health_check` and drives condition 2 (and the
-TTL checks of condition 7). Shape:
+TTL checks of condition 7). It is the **only** discovery marker: the legacy
+marker at `.project/knowledge/discovery/.last_discovery` is deprecated and
+MUST be removed when found (the canonical file prevails on any conflict).
+Shape:
 
 ```json
 {
@@ -621,6 +624,17 @@ in `invalidation_report.json`.
 
 The TTL values are configured in `.agents/features.toml`
 (`discovery_project_ttl_hours`, `discovery_environment_ttl_hours`).
+
+# Freshness Rule
+
+KB entries are consumed only while fresh. Before delegating any phase that
+consumes `environment.md` or `development_patterns.md`, the Orchestrator
+verifies the entry's freshness against its TTL (via `.last_discovery` and the
+manifest's provenance fields). An expired entry is marked `[entries] stale`
+in the manifest, is excluded from recommendations, and is revalidated through
+the pipeline (scope `env` or the corresponding scope) before the delegation.
+KB entries are updated **only** through the discovery pipeline: manual edits
+are recorded as deviations and trigger `init_worker` for formal revalidation.
 
 ---
 

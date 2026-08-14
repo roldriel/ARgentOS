@@ -57,6 +57,18 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.6.0] — 2026-08-12
+
+### Added
+
+- **Regla de frescura de la KB de discovery** (plan 50, RFC-51): las
+  entradas se consumen solo frescas (verificación de TTL antes de delegar);
+  las vencidas se marcan `[entries] stale` y se revalidan solo por pipeline;
+  `.project/.last_discovery` es el marcador único (legado deprecado) y el
+  health checklist lo valida (F-12).
+
+---
+
 ## [3.5.0] — 2026-08-12
 
 ### Added

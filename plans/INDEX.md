@@ -206,7 +206,7 @@ los planes 34–36 quedaron `Executed` el 11 ago 2026 (RFC-35…37 permanecen en
 | `47-discovery-per-entry-contracts.md` | RFC-48 | 4.3 / 6.3 | Contratos por entrada de discovery; single-source en D01. |
 | `48-protocol-skill-mechanical-validation.md` | RFC-49 | Executed (12 ago 2026, 3.4.2) | Verificación mecánica dev-only de skills. |
 | `49-delegation-single-instance-model.md` | RFC-50 | Executed (12 ago 2026, 3.5.0) | Modos de ejecución de delegaciones (F-09). |
-| `50-discovery-kb-freshness.md` | RFC-51 | 5.3 / 5.4 | Frescura de KB, marcador único y revalidación por pipeline (F-12). |
+| `50-discovery-kb-freshness.md` | RFC-51 | Executed (12 ago 2026, 3.6.0) | Frescura de KB, marcador único y revalidación por pipeline (F-12). |
 | `51-worker-role-phase-catalog.md` | RFC-52 | 6.1 | Catálogo de fases y skills de los roles de worker. |
 | `52-tooling-profile-candidacy.md` | RFC-53 | 6.2 | Candidatura tooling/CLI (F-06). |
 | `53-discovery-contract-wording.md` | RFC-54 | 6.4 | Redacción de EXECUTIVE_SUMMARY y hash calculation (F-15/F-19). |

@@ -1,6 +1,6 @@
 # Plan 50 — Frescura y revalidación de la KB de discovery
 
-**Status:** Aprobado para redacción
+**Status:** Executed
 **Fecha:** 2026-08-11
 **RFC:** RFC-51 (`plans/rfc/51-discovery-kb-freshness.md`)
 **Depende de:** —
@@ -50,3 +50,15 @@ Evitar el consumo de entradas de discovery vencidas y canalizar toda revalidaci�
 ## Trazabilidad
 
 - RFC-51; fricción F-12 de `plans/19-anexo-a-bitacora-fricciones.md`; backlog B-3, B-4.
+
+## Nota de ejecución
+
+Ejecutado el 2026-08-12 (vía RFC-51 Accepted). Regla de frescura agregada a
+la máquina de discovery (sección "Freshness Rule": verificación de TTL antes
+de delegar, `[entries] stale`, revalidación solo por pipeline) y a
+la sección 5 del estándar de uso de patrones; marcador `.project/.last_discovery` declarado único
+con el legado deprecado; ítem 10 del health checklist valida el marcador
+canónico y proscribe el legado. La revalidación manual del 11-08 queda
+registrada como desviación histórica en esta nota (el canal manual queda
+proscripto por la regla nueva). Versión 3.6.0. Verificación: invariantes OK,
+citas OK, estructura OK, 121 passed.

@@ -50,7 +50,8 @@ it only validates the per-task `KB_RECOMMENDATION.md` artifact in
 - Target state: `DISCOVERY_READY`
 - KB entries: `.project/knowledge/discovery/*.md`
 - Manifest: `.project/knowledge/discovery/.discovery_manifest`
-- Entry contract: `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md`
+- Entry contracts: `.agents/orchestrators/discovery/contracts/` (the base
+  contract `KB_DISCOVERY_ENTRY.md` plus the per-entry contracts)
 
 ## Checklist
 
@@ -87,15 +88,11 @@ it only validates the per-task `KB_RECOMMENDATION.md` artifact in
 11. **API surface matches shape:** the content of `api.md` matches the
     `project_shape` declared in the manifest (variant rules of
     `.agents/orchestrators/discovery/contracts/API_SURFACE.md`). `[agent]`
-12. **Required sections:** `architecture.md` contains
-    `## Module Responsibilities`, `## Strong Couplings`, `## Security` and
-    `## Extension Points`; `configuration.md` contains
-    `## Run, Build and Release`; `database.md` contains `## Main Models`;
-    `dependencies.md` contains `## Internal Dependencies`; `stack.md` contains
-    `## Compatibility Constraints`; `development_patterns.md` covers
-    `## Testing`, `## Logging and Errors` and `## Validation`;
-    `technical_debt.md` contains `## Top Risks`. `## Performance Invariants`
-    is required only when evidenced. `[agent]`
+12. **Per-entry sections:** every KB entry contains the specific sections
+    required by its per-entry contract
+    (`.agents/orchestrators/discovery/contracts/`), resolved per entry type.
+    D01 resolves required sections exclusively from the contracts; it does
+    not maintain a section list of its own. `[agent]`
 
 ## Rejection of Invented Outputs
 

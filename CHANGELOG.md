@@ -32,6 +32,26 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [3.8.0] — 2026-08-14
+
+### Added
+
+- **Contratos por entrada del discovery** (plan 47, RFC-48): 14 contratos
+  nuevos en `.agents/orchestrators/discovery/contracts/` (FILE_MAP, STACK,
+  DEPENDENCIES, CONTAINERS, DATABASE, DISTRIBUTION, ARCHITECTURE,
+  CONFIGURATION, ENTRYPOINT, BUSINESS_RULES, PROJECT_FLOW, TECHNICAL_DEBT,
+  KNOWN_ERRORS, GLOSSARY) con el formato base de `KB_DISCOVERY_ENTRY.md` más
+  sus secciones específicas. Las 14 entidades quedaron registradas en
+  `PROTOCOL_TAXONOMY.md`.
+
+### Changed
+
+- **D01 single-source** (plan 47, RFC-48): el ítem 12 de
+  `D01-discovery-output.md` verifica las secciones contra los contratos por
+  entrada y elimina el listado duplicado de secciones.
+
+---
+
 ## [Unreleased]
 
 ### Modelo conceptual

@@ -42,3 +42,4 @@ Existen contratos para 8 tipos de entrada de discovery (`KB_DISCOVERY_ENTRY.md`,
 |---|---|---|
 | 2026-08-11 | Creación (Proposal) | Auditoría 2.0.1, puntos 4.3 / 6.3 |
 | 2026-08-12 | Accepted (revisión individual, RFC-56/plan 57): diseño aprobado; la ejecución sigue el track de su plan asociado. | Revisión de la serie Proposal (RFC-56) |
+| 2026-08-14 | Executed (plan 47, 3.8.0): 14 contratos por entrada creados, D01 ítem 12 refactorizado a referencia de contratos, entidades registradas en la taxonomía. | Ejecución del plan 47 |

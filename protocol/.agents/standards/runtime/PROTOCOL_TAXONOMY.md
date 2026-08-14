@@ -2383,6 +2383,163 @@ entities:
       - core:GATHERING_CONTEXT
     file: .agents/orchestrators/discovery/contracts/API_SURFACE.md
 
+  contract:ARCHITECTURE.md:
+    kind: contract
+    domain: discovery
+    artifact: ARCHITECTURE.md
+    lifecycle: discovery
+    produced_by:
+      - discovery:DISCOVERY_FRAMEWORK
+    consumed_by:
+      - discovery:DISCOVERY_MERGE
+    file: .agents/orchestrators/discovery/contracts/ARCHITECTURE.md
+
+  contract:BUSINESS_RULES.md:
+    kind: contract
+    domain: discovery
+    artifact: BUSINESS_RULES.md
+    lifecycle: discovery
+    produced_by:
+      - discovery:DISCOVERY_BUSINESS
+    consumed_by:
+      - discovery:DISCOVERY_MERGE
+    file: .agents/orchestrators/discovery/contracts/BUSINESS_RULES.md
+
+  contract:CONFIGURATION.md:
+    kind: contract
+    domain: discovery
+    artifact: CONFIGURATION.md
+    lifecycle: discovery
+    produced_by:
+      - discovery:DISCOVERY_FRAMEWORK
+    consumed_by:
+      - discovery:DISCOVERY_MERGE
+    file: .agents/orchestrators/discovery/contracts/CONFIGURATION.md
+
+  contract:CONTAINERS.md:
+    kind: contract
+    domain: discovery
+    artifact: CONTAINERS.md
+    lifecycle: discovery
+    produced_by:
+      - discovery:DISCOVERY_STACK
+    consumed_by:
+      - discovery:DISCOVERY_MERGE
+    file: .agents/orchestrators/discovery/contracts/CONTAINERS.md
+
+  contract:DATABASE.md:
+    kind: contract
+    domain: discovery
+    artifact: DATABASE.md
+    lifecycle: discovery
+    produced_by:
+      - discovery:DISCOVERY_STACK
+    consumed_by:
+      - discovery:DISCOVERY_MERGE
+    file: .agents/orchestrators/discovery/contracts/DATABASE.md
+
+  contract:DEPENDENCIES.md:
+    kind: contract
+    domain: discovery
+    artifact: DEPENDENCIES.md
+    lifecycle: discovery
+    produced_by:
+      - discovery:DISCOVERY_STACK
+    consumed_by:
+      - discovery:DISCOVERY_MERGE
+    file: .agents/orchestrators/discovery/contracts/DEPENDENCIES.md
+
+  contract:DISTRIBUTION.md:
+    kind: contract
+    domain: discovery
+    artifact: DISTRIBUTION.md
+    lifecycle: discovery
+    produced_by:
+      - discovery:DISCOVERY_STACK
+    consumed_by:
+      - discovery:DISCOVERY_MERGE
+    file: .agents/orchestrators/discovery/contracts/DISTRIBUTION.md
+
+  contract:ENTRYPOINT.md:
+    kind: contract
+    domain: discovery
+    artifact: ENTRYPOINT.md
+    lifecycle: discovery
+    produced_by:
+      - discovery:DISCOVERY_FRAMEWORK
+    consumed_by:
+      - discovery:DISCOVERY_MERGE
+      - core:GATHERING_CONTEXT
+    file: .agents/orchestrators/discovery/contracts/ENTRYPOINT.md
+
+  contract:FILE_MAP.md:
+    kind: contract
+    domain: discovery
+    artifact: FILE_MAP.md
+    lifecycle: discovery
+    produced_by:
+      - discovery:DISCOVERY_INIT
+    consumed_by:
+      - discovery:DISCOVERY_MERGE
+      - core:GATHERING_CONTEXT
+    file: .agents/orchestrators/discovery/contracts/FILE_MAP.md
+
+  contract:GLOSSARY.md:
+    kind: contract
+    domain: discovery
+    artifact: GLOSSARY.md
+    lifecycle: discovery
+    produced_by:
+      - discovery:DISCOVERY_BUSINESS
+    consumed_by:
+      - discovery:DISCOVERY_MERGE
+      - core:GATHERING_CONTEXT
+    file: .agents/orchestrators/discovery/contracts/GLOSSARY.md
+
+  contract:KNOWN_ERRORS.md:
+    kind: contract
+    domain: discovery
+    artifact: KNOWN_ERRORS.md
+    lifecycle: discovery
+    produced_by:
+      - discovery:DISCOVERY_BUSINESS
+    consumed_by:
+      - discovery:DISCOVERY_MERGE
+    file: .agents/orchestrators/discovery/contracts/KNOWN_ERRORS.md
+
+  contract:PROJECT_FLOW.md:
+    kind: contract
+    domain: discovery
+    artifact: PROJECT_FLOW.md
+    lifecycle: discovery
+    produced_by:
+      - discovery:DISCOVERY_BUSINESS
+    consumed_by:
+      - discovery:DISCOVERY_MERGE
+    file: .agents/orchestrators/discovery/contracts/PROJECT_FLOW.md
+
+  contract:STACK.md:
+    kind: contract
+    domain: discovery
+    artifact: STACK.md
+    lifecycle: discovery
+    produced_by:
+      - discovery:DISCOVERY_STACK
+    consumed_by:
+      - discovery:DISCOVERY_MERGE
+    file: .agents/orchestrators/discovery/contracts/STACK.md
+
+  contract:TECHNICAL_DEBT.md:
+    kind: contract
+    domain: discovery
+    artifact: TECHNICAL_DEBT.md
+    lifecycle: discovery
+    produced_by:
+      - discovery:DISCOVERY_BUSINESS
+    consumed_by:
+      - discovery:DISCOVERY_MERGE
+    file: .agents/orchestrators/discovery/contracts/TECHNICAL_DEBT.md
+
   contract:INTER_WORKER_MESSAGE.md:
     kind: contract
     domain: discovery

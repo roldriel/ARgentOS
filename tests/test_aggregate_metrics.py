@@ -88,3 +88,37 @@ def test_no_project_dir(tmp_path):
     report = am.aggregate(tmp_path)
     assert report["session.iterations"] == 0
     assert report["corrupt"] == {"entry": 0, "metric": 0}
+
+
+def build_session_two(tmp_path: Path) -> Path:
+    session = tmp_path / ".project" / "s2"
+    (session / "00").mkdir(parents=True)
+    (session / "00" / "07-VERIFICATION_REPORT.md").write_text("# v\n", encoding="utf-8")
+    (session / "METRICS.md").write_text(
+        '<!-- METRIC: {"timestamp": "2026-08-14T11:00:00+00:00", "type": "session_start", '
+        '"declarative_flags": ["srp"], "protocol_version": "3.16.0"} -->\n'
+        '<!-- METRIC: {"timestamp": "2026-08-14T11:01:00+00:00", "type": "state_transition", '
+        '"from": "PLANNING", "to": "PLAN_READY", "iteration": "00"} -->\n',
+        encoding="utf-8",
+    )
+    return tmp_path
+
+
+def test_per_session_catalog(tmp_path):
+    build_session(tmp_path)
+    build_session_two(tmp_path)
+    s1 = am.aggregate_session(tmp_path / ".project" / "s1")
+    s2 = am.aggregate_session(tmp_path / ".project" / "s2")
+    assert s1["flow.transitions"] == 1
+    assert s1["delegation.count"] == 1
+    assert s1["flags.expected"] == ["tdd"]
+    assert s2["flow.transitions"] == 1
+    assert s2["delegation.count"] == 0
+    assert s2["flags.expected"] == ["srp"]
+
+    project = am.aggregate(tmp_path)
+    assert project["flow.transitions"] == 2
+    assert project["delegation.count"] == 1
+    assert project["flags.expected"] == ["srp", "tdd"]
+    assert project["session.iterations"] == 3
+    assert len(project["session.artifacts_per_iteration"]) == 2

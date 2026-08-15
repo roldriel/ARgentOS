@@ -57,6 +57,18 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.19.0] — 2026-08-15
+
+### Changed
+
+- **Validador estructural obligatorio en los gates** (plan 68, RFC-58, F1-B):
+  para los triggers soportados (H00–H07, H09–H11, D00) el Orchestrator MUST
+  invocar `gate_validator.py` antes de juzgar PASS; un FAIL estructural
+  bloquea el PASS salvo desviación documentada. El fail-open de los hooks y
+  los ítems `[agent]` no cambian.
+
+---
+
 ## [3.18.0] — 2026-08-15
 
 ### Added

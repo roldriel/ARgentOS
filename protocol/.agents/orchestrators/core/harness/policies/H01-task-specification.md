@@ -68,6 +68,7 @@ The Orchestrator evaluates each item below by judgment when the gate fires and M
 5. Verify the technical approach declaration. First resolve each technical-practice feature flag: the environment variable `AGENTS_FEATURE_<FLAG>` wins over `.agents/features.toml` (`[features]` table), which wins over the default (enabled). If no technical-practice flag is enabled, this item passes trivially — record the flag resolution as evidence. Otherwise, if a `## Technical Approach` section with a TOML block is present, verify that: `technical_approach.enabled` is a list; when the list is non-empty, `technical_approach.notes` is a list with at least one non-empty entry; and every practice in `enabled` is a known technical-practice flag (see `technical_practices` in the protocol standards) and is enabled at protocol level per the flag resolution above. An absent `## Technical Approach` section means no practices were selected and passes. Cite the flag resolution, the declared `enabled` list, and each violation.
 
 ## Decision Criteria
+**Structural validator:** the Orchestrator MUST run `python .agents/harness/gate_validator.py --trigger H01 --artifact <path>` before judging PASS; a structural FAIL blocks PASS unless recorded as a documented deviation.
 
 - `PASS`: All checklist items are satisfied.
 - `FAIL`: Any required section is missing or any criterion is not met.

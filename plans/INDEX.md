@@ -13,10 +13,11 @@ fuera del payload): AGENTS.md raíz operativo, plantillas de plan/RFC +
 sin path filters, disolución de `dev/` (`tools/`, `runtime/`, `docs/` en raíz) y
 `tools/check_dist_sync.py`. El 14 ago 2026 se agregó `AUDITORIA_SISTEMA.md`
 (tracker vivo de remediación del sistema) y se unificó la definición de batería
-en `docs/VERSIONING.md` §4.1. El 14–15 ago 2026 se ejecutaron los planes 58–67
-(remediación de la auditoría de sistema y cierre de backlog B-6, versiones
-3.9.0–3.18.0). Los planes de construcción del protocolo (dominios, taxonomía,
-discovery) están implementados; sus versiones históricas viven en `archive/`.
+en `docs/VERSIONING.md` §4.1. El 14–15 ago 2026 se ejecutaron los planes 58–68
+(remediación de la auditoría de sistema, cierre de backlog B-6 y validador
+obligatorio F1-B, versiones 3.9.0–3.19.0). Los planes de construcción del
+protocolo (dominios, taxonomía, discovery) están implementados; sus versiones
+históricas viven en `archive/`.
 
 ## Serie de RFCs (documentos canónicos)
 
@@ -80,6 +81,7 @@ discovery) están implementados; sus versiones históricas viven en `archive/`.
 | RFC-55 | `rfc/55-protocol-source-containment.md` | Accepted (12 ago 2026) | ¿Cómo se desarrolla ARgentOS sin que el protocolo gobierne el repo fuente? |
 | RFC-56 | `rfc/56-governance-fast-track.md` | Accepted (12 ago 2026) | ¿Qué cambios del payload requieren RFC y cuáles pasan por vía plan con verificación mecánica? |
 | RFC-57 | `rfc/57-harness-structural-validator.md` | Accepted (15 ago 2026) | ¿Cómo se da soporte mecánico opcional a los ítems `[gate]` sin cambiar el modelo de juicio? |
+| RFC-58 | `rfc/58-mandatory-structural-validator.md` | Accepted (15 ago 2026) | ¿Cómo se vuelve obligatorio el validador estructural a nivel de gate sin tocar el fail-open de los hooks? |
 
 ## Roadmap de implementación (planes activos)
 
@@ -251,6 +253,7 @@ los planes 34–36 quedaron `Executed` el 11 ago 2026 (RFC-35…37 permanecen en
 | `65-remediacion-f7-f5.md` | — (Clase B) | Executed | Evidencia de flags declarada (expected/evidenced/unevidenced) y modelo de determinismo de contexto declarado. Versión 3.16.0. |
 | `66-harness-structural-validator.md` | RFC-57 | Executed | Validador estructural opcional del harness (`gate_validator.py`) como soporte mecánico de los ítems `[gate]`. Versión 3.17.0. |
 | `67-remediacion-b-6.md` | — (Clase B) | Executed | Soporte estructural de H15 en el runner (`validate-delegation`/`validate-return`). Versión 3.18.0. |
+| `68-mandatory-structural-validator.md` | RFC-58 | Executed | Validador estructural obligatorio a nivel de gate (MUST antes del PASS; FAIL estructural bloquea salvo desviación documentada). Versión 3.19.0. |
 
 ## Backlog evidenciado - plan 19
 

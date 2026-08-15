@@ -962,6 +962,7 @@ Trabajo futuro opcional (no son ítems abiertos de la auditoría):
 | 2026-08-14 | F5-A | Determinismo de contexto declarado (plan 65) | `standards/context/CONTEXT.md` | Version 3.16.0 |
 | 2026-08-15 | F1-C | Validador estructural opcional (plan 66, RFC-57) | `protocol/.agents/harness/gate_validator.py` + tests + docs | Version 3.17.0 |
 | 2026-08-15 | B-6 | Soporte estructural de H15 en el runner (plan 67) | `protocol/.agents/harness/runner_state.py` + tests + `harness/INDEX.md` | Version 3.18.0; backlog B-6 closed |
+| 2026-08-15 | F1-B | Validador estructural obligatorio (plan 68, RFC-58) | 12 policies + `harness/INDEX.md` + `gate_validator.py` docstring | Version 3.19.0 |
 
 ---
 

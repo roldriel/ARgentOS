@@ -13,11 +13,10 @@ fuera del payload): AGENTS.md raíz operativo, plantillas de plan/RFC +
 sin path filters, disolución de `dev/` (`tools/`, `runtime/`, `docs/` en raíz) y
 `tools/check_dist_sync.py`. El 14 ago 2026 se agregó `AUDITORIA_SISTEMA.md`
 (tracker vivo de remediación del sistema) y se unificó la definición de batería
-en `docs/VERSIONING.md` §4.1. El 14–15 ago 2026 se ejecutaron los planes 58–66
-(remediación de la auditoría de sistema: niveles 2/3, lote fácil, P1.2,
-P2.1/P4.3, P4.2, F1-A, F7-A/F5-A y F1-B/C, versiones 3.9.0–3.17.0). Los planes
-de construcción del protocolo (dominios, taxonomía, discovery) están
-implementados; sus versiones históricas viven en `archive/`.
+en `docs/VERSIONING.md` §4.1. El 14–15 ago 2026 se ejecutaron los planes 58–67
+(remediación de la auditoría de sistema y cierre de backlog B-6, versiones
+3.9.0–3.18.0). Los planes de construcción del protocolo (dominios, taxonomía,
+discovery) están implementados; sus versiones históricas viven en `archive/`.
 
 ## Serie de RFCs (documentos canónicos)
 
@@ -251,6 +250,7 @@ los planes 34–36 quedaron `Executed` el 11 ago 2026 (RFC-35…37 permanecen en
 | `64-remediacion-f1-a.md` | — (Clase B) | Executed | Modelo de enforcement declarado en tres capas (enforced/reviewed/verified); rewordings de policies, HARNESS_REPORT y H13. Versión 3.15.0. |
 | `65-remediacion-f7-f5.md` | — (Clase B) | Executed | Evidencia de flags declarada (expected/evidenced/unevidenced) y modelo de determinismo de contexto declarado. Versión 3.16.0. |
 | `66-harness-structural-validator.md` | RFC-57 | Executed | Validador estructural opcional del harness (`gate_validator.py`) como soporte mecánico de los ítems `[gate]`. Versión 3.17.0. |
+| `67-remediacion-b-6.md` | — (Clase B) | Executed | Soporte estructural de H15 en el runner (`validate-delegation`/`validate-return`). Versión 3.18.0. |
 
 ## Backlog evidenciado - plan 19
 
@@ -274,9 +274,9 @@ Descartados como ruido (con justificación en el anexo A): F-10 (deriva de reloj
 Resolución: los ítems B-1…B-8 se redactan como pares RFC + plan en la **Sexta
 serie** (tabla arriba); cada plan referencia su fricción F-xx. B-1 → plan 40
 (y 47), B-2 → planes 29 y 33, B-3 → plan 50, B-4 → planes 37-43 y 53, B-5 →
-plan 44, B-6 → plan 46 (cobertura H15 vía tests del flujo enforced), B-7 →
-planes 29, 43 y 52, B-8 → plan 49. El actor único de hashes de B-4 (F-17) se
-completa con el plan 58.
+plan 44, B-6 → planes 46 y 67 (tests del flujo enforced + subcomandos
+validate-delegation/validate-return), B-7 → planes 29, 43 y 52, B-8 → plan 49.
+El actor único de hashes de B-4 (F-17) se completa con el plan 58.
 
 ## Documentos de soporte
 

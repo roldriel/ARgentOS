@@ -38,6 +38,15 @@ Exit 0 on success; exit 2 with a clear message on stderr on error.
 Records a terminal state (`ABORT` or `COMPLETED`) in state.json, preserving
 the recorded gate passes. Same transactional write and exit conventions.
 
+H15 schema support (no session required):
+
+    python .agents/harness/runner_state.py --input <json> validate-delegation
+    python .agents/harness/runner_state.py --input <json> validate-return
+
+Validates the delegation payload or the worker return report against the
+delegation contract fields. The H15 gate remains the Orchestrator's judgment;
+these subcommands are mechanical schema support.
+
 Self-contained: stdlib only, no other harness module imports.
 """
 
@@ -168,6 +177,72 @@ def link_session(cli_session: str, session_uuid: str) -> Path:
         mapping = {}
     mapping[cli_session] = session_uuid
     return _write_json(mapping_path, mapping)
+
+
+DELEGATION_REQUIRED = (
+    "session_uuid",
+    "current_state",
+    "target_phase",
+    "role_to_adopt",
+    "input_artifacts",
+    "harness_policy",
+    "task_summary",
+)
+
+VALID_PROFILES = {
+    "backend_engineer",
+    "database_engineer",
+    "integration_engineer",
+    "qa_engineer",
+    "tech_writer",
+    "functional_writer",
+    "intent_reflector",
+    "intent_reflection_reviewer",
+    None,
+}
+
+RETURN_REQUIRED = (
+    "output_artifact",
+    "role_executed",
+    "profile_executed",
+    "phase_completed",
+    "summary",
+    "blockers",
+    "deviations",
+)
+
+DEVIATION_PREFIXES = ("deviation:", "ambiguity:", "inconsistency:")
+
+
+def validate_delegation(data: Any) -> list[str]:
+    """Return the schema errors of a delegation payload (empty when valid)."""
+    if not isinstance(data, dict):
+        return ["payload is not an object"]
+    errors = [f"missing required field: {f}" for f in DELEGATION_REQUIRED if f not in data]
+    if "input_artifacts" in data and not isinstance(data["input_artifacts"], list):
+        errors.append("input_artifacts must be a list")
+    profile = data.get("profile")
+    if profile not in VALID_PROFILES:
+        errors.append(f"invalid profile: {profile!r}")
+    budget = data.get("context_budget")
+    if budget is not None and (not isinstance(budget, (int, float)) or budget <= 0):
+        errors.append("context_budget must be a finite positive number")
+    return errors
+
+
+def validate_return(data: Any) -> list[str]:
+    """Return the schema errors of a worker return report (empty when valid)."""
+    if not isinstance(data, dict):
+        return ["report is not an object"]
+    errors = [f"missing required field: {f}" for f in RETURN_REQUIRED if f not in data]
+    for field in ("blockers", "deviations"):
+        value = data.get(field)
+        if value is not None and not isinstance(value, list):
+            errors.append(f"{field} must be a list")
+    for entry in data.get("deviations", []) or []:
+        if not isinstance(entry, str) or not entry.lower().startswith(DEVIATION_PREFIXES):
+            errors.append(f"deviation entry without class prefix: {entry!r}")
+    return errors
 
 
 def empty_state(session_uuid: str, iteration: str) -> dict[str, Any]:
@@ -311,7 +386,11 @@ def main(argv: list[str] | None = None) -> int:
             "registers results."
         )
     )
-    parser.add_argument("--session", required=True, help="session uuid")
+    parser.add_argument(
+        "--session",
+        default=None,
+        help="session uuid (required for pass/terminal/link actions)",
+    )
     parser.add_argument(
         "--trigger",
         default=None,
@@ -333,12 +412,48 @@ def main(argv: list[str] | None = None) -> int:
         help="CLI session id to bind for the 'link' action",
     )
     parser.add_argument(
+        "--input",
+        default=None,
+        help="JSON file for validate-delegation/validate-return ('-' for stdin)",
+    )
+    parser.add_argument(
         "action",
-        choices=["pass", "terminal", "link"],
+        choices=["pass", "terminal", "link", "validate-delegation", "validate-return"],
         help="outcome to record ('pass' for a gate PASS, 'terminal' for ABORT/COMPLETED, "
-        "'link' to bind a CLI session to this protocol session)",
+        "'link' to bind a CLI session to this protocol session, "
+        "'validate-delegation'/'validate-return' for H15 schema support)",
     )
     args = parser.parse_args(argv)
+
+    if args.action in ("validate-delegation", "validate-return"):
+        if not args.input:
+            return _cli_error("validate actions require --input <file> or '-' (stdin)")
+        if args.input == "-":
+            raw = sys.stdin.read()
+        else:
+            try:
+                raw = Path(args.input).read_text(encoding="utf-8")
+            except OSError as exc:
+                return _cli_error(f"could not read input: {exc}")
+        try:
+            data = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            return _cli_error(f"invalid JSON input: {exc}")
+        errors = (
+            validate_delegation(data)
+            if args.action == "validate-delegation"
+            else validate_return(data)
+        )
+        if errors:
+            print(f"{args.action}: FAIL")
+            for error in errors:
+                print(f"  - {error}")
+            return 2
+        print(f"{args.action}: PASS")
+        return 0
+
+    if not args.session:
+        return _cli_error("--session is required for the pass/terminal/link actions")
 
     session_dir = ARTIFACTS_DIR / args.session
     if not session_dir.is_dir():

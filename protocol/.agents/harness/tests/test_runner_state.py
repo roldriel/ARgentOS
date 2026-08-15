@@ -301,3 +301,84 @@ def test_cli_link_requires_cli_session(session, capsys):
     exit_code = runner_state.main(["--session", session_uuid, "link"])
     assert exit_code == 2
     assert "--cli-session" in capsys.readouterr().err
+
+
+# --- H15 schema support (B-6) ------------------------------------------------
+
+
+def valid_delegation() -> dict:
+    return {
+        "session_uuid": "u",
+        "current_state": "EXECUTING",
+        "target_phase": "orchestrators/core/workflow/06-execute.md",
+        "role_to_adopt": "worker",
+        "input_artifacts": ["a.md"],
+        "harness_policy": "H05-execution-completed.md",
+        "task_summary": "x",
+    }
+
+
+def test_validate_delegation_valid(tmp_path, capsys):
+    f = tmp_path / "delegation.json"
+    f.write_text(json.dumps(valid_delegation()), encoding="utf-8")
+    assert runner_state.main(["--input", str(f), "validate-delegation"]) == 0
+    assert "PASS" in capsys.readouterr().out
+
+
+def test_validate_delegation_missing_field(tmp_path, capsys):
+    f = tmp_path / "delegation.json"
+    f.write_text('{"session_uuid": "u"}', encoding="utf-8")
+    assert runner_state.main(["--input", str(f), "validate-delegation"]) == 2
+    out = capsys.readouterr().out
+    assert "FAIL" in out and "missing required field" in out
+
+
+def test_validate_delegation_bad_profile(tmp_path, capsys):
+    payload = valid_delegation()
+    payload["profile"] = "bogus"
+    f = tmp_path / "delegation.json"
+    f.write_text(json.dumps(payload), encoding="utf-8")
+    assert runner_state.main(["--input", str(f), "validate-delegation"]) == 2
+    assert "invalid profile" in capsys.readouterr().out
+
+
+def test_validate_delegation_bad_budget(tmp_path, capsys):
+    payload = valid_delegation()
+    payload["context_budget"] = -1
+    f = tmp_path / "delegation.json"
+    f.write_text(json.dumps(payload), encoding="utf-8")
+    assert runner_state.main(["--input", str(f), "validate-delegation"]) == 2
+    assert "context_budget" in capsys.readouterr().out
+
+
+def valid_return() -> dict:
+    return {
+        "output_artifact": "a.md",
+        "role_executed": "executor",
+        "profile_executed": None,
+        "phase_completed": "06",
+        "summary": "s",
+        "blockers": [],
+        "deviations": ["deviation: note"],
+    }
+
+
+def test_validate_return_valid(tmp_path, capsys):
+    f = tmp_path / "return.json"
+    f.write_text(json.dumps(valid_return()), encoding="utf-8")
+    assert runner_state.main(["--input", str(f), "validate-return"]) == 0
+    assert "PASS" in capsys.readouterr().out
+
+
+def test_validate_return_bad_deviation_prefix(tmp_path, capsys):
+    report = valid_return()
+    report["deviations"] = ["note without class"]
+    f = tmp_path / "return.json"
+    f.write_text(json.dumps(report), encoding="utf-8")
+    assert runner_state.main(["--input", str(f), "validate-return"]) == 2
+    assert "without class prefix" in capsys.readouterr().out
+
+
+def test_validate_requires_input(tmp_path, capsys):
+    assert runner_state.main(["validate-delegation"]) == 2
+    assert "--input" in capsys.readouterr().err

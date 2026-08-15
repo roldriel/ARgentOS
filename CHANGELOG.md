@@ -57,6 +57,19 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.18.0] — 2026-08-15
+
+### Added
+
+- **Soporte estructural de H15 en el runner** (plan 67, B-6):
+  `runner_state.py validate-delegation` y `validate-return` validan el payload
+  de delegación y el return report contra el contrato (campos requeridos,
+  tipos, enums de `profile`, `context_budget` finito positivo, prefijos de
+  clase en `deviations`). El gate H15 sigue siendo juicio del Orchestrator;
+  los subcomandos son soporte mecánico de schema.
+
+---
+
 ## [3.17.0] — 2026-08-15
 
 ### Added

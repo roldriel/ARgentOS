@@ -149,6 +149,12 @@ H15 (`delegation-validity`) is not a state-transition gate over a session artifa
 
 H15 is evaluated by the Orchestrator's judgment against the «Gate Checklist» in prose of its policy; its recovery routing is the §"Recovery Decision Table" of `.agents/orchestrators/core/harness/policies/H15-delegation-validity.md`.
 
+The runner provides mechanical schema support for H15:
+`python .agents/harness/runner_state.py --input <json> validate-delegation` and
+`... validate-return` validate the delegation payload and the worker return
+report against the delegation contract fields; the gate remains the
+Orchestrator's judgment.
+
 ## Project Discovery
 
 Project discovery is performed by the **Discovery Orchestrator**, an agent-based subsystem in the `discovery` domain (`.agents/orchestrators/discovery/`). It has its own state machine (`discovery:DISCOVERY_*` states), its own workflow modules (numbered `00`–`08` inside `.agents/orchestrators/discovery/workflow/`), and its own harness triggers, which use the `D` prefix instead of the core `H` prefix. Workflow and harness numbering is therefore per-domain.

@@ -69,7 +69,8 @@ Requisitos de entorno, por modo de adopción (§6):
   `pip` ni dependencias externas). Solo cuatro scripts lo usan: `hook_gate.py`
   (hook del CLI), `runner_state.py` (registro transaccional de `state.json`),
   `health_check.py` (sonda de almacenamiento de estado) y `gate_validator.py`
-  (validador estructural opcional de los ítems `[gate]`).
+  (validador estructural de los ítems `[gate]`, obligatorio para los triggers
+  soportados; nunca bloquea a nivel de entorno).
 - `pytest` solo se necesita para **desarrollar el protocolo** (suite reducida
   de tests del harness en `.agents/harness/tests/`); no es un requisito de
   adopción.
@@ -172,8 +173,10 @@ El protocolo funciona en dos modos explícitos, sin zona gris:
   **Soporte estructural opcional:** el Orchestrator puede invocar
   `python .agents/harness/gate_validator.py --trigger <HXX> --artifact <ruta>`
   para obtener evidencia mecánica de los ítems `[gate]` (secciones, TOML y
-  enums, citas, EARS, rubricas estructurales); el juicio del gate sigue siendo
-  suyo y el validador nunca bloquea.
+  enums, citas, EARS, rubricas estructurales). Para los triggers soportados
+  (H00–H07, H09–H11, D00) la invocación es obligatoria antes del PASS; un FAIL
+  estructural bloquea el PASS salvo desviación documentada. El validador nunca
+  se invoca desde los hooks y no bloquea a nivel de entorno.
 
 ### 6.1. Configuración de hooks por CLI
 

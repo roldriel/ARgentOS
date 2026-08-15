@@ -1,5 +1,11 @@
 # ARgentOS (desarrollo) — estado y feedback crítico
 
+> **Histórico (2026-08-15):** este archivo documenta el estado y feedback de
+> la auditoría de documentación del 12 ago 2026. Queda como histórico; el
+> tracker vivo de remediación de sistema es `AUDITORIA_SISTEMA.md` en la raíz
+> del repo (cerrado el 14 ago 2026 y actualizado a medida que la remediación
+> avanza).
+
 **Fecha:** 2026-08-14
 
 **Nota:** este archivo reemplaza al informe de auditoría de documentación del
@@ -104,9 +110,9 @@ regenerada por CI.
 3. Links Markdown genéricos sin checker (riesgo bajo, decisión consciente).
 4. ~~Desacople de `test_toolcalls.py`~~ **(cerrado 14 ago 2026)**: fixtures
    propias en `tests/fixtures/skills/`.
-5. Hogar conceptual de los documentos de estado: con la creación de
-   `AUDITORIA_SISTEMA.md` (14 ago 2026) como tracker vivo de remediación, este
-   archivo queda como estado/feedback histórico; decidir si se consolidan.
+5. ~~Hogar conceptual de los documentos de estado~~ **(cerrado 15 ago 2026)**:
+   este archivo queda en `docs/` como histórico (banner arriba); el tracker
+   vivo de remediación es `AUDITORIA_SISTEMA.md` en la raíz del repo.
 
 ## Feedback crítico
 

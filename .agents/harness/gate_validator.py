@@ -2,11 +2,12 @@
 """Optional structural validator for harness gate checklists (RFC-57).
 
 Implements the structurally checkable subset of the harness policies'
-``[gate]`` items as a pure-stdlib CLI. It is **optional mechanical support**:
-the Orchestrator's judgment remains the arbiter of every gate (see
-``.agents/harness/INDEX.md``, §Enforcement model), and this validator never
-blocks anything. Its results may be recorded in ``HARNESS_REPORT.md`` as
-evidence.
+``[gate]`` items as a pure-stdlib CLI. For the supported triggers (H00-H07,
+H09-H11, D00) the policies require the Orchestrator to run it before judging
+PASS; a structural FAIL blocks PASS unless recorded as a documented deviation
+(see ``.agents/harness/INDEX.md``, §Enforcement model). The validator is never
+invoked by the hooks and never blocks at the environment level. Its results
+may be recorded in ``HARNESS_REPORT.md`` as evidence.
 
 Supported triggers (structural subset): H00-H07, H09-H11, D00. D01 (KB ground
 truth) and S00 (probe) are not covered by design.

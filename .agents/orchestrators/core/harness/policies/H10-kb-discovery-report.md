@@ -37,6 +37,7 @@ H10 does NOT participate in the discovery cycle (`discovery:DISCOVERY_VALIDATE` 
 - Contract: `.agents/orchestrators/core/contracts/KB_RECOMMENDATION.md`
 
 ## Decision Criteria
+**Structural validator:** the Orchestrator MUST run `python .agents/harness/gate_validator.py --trigger H10 --artifact <path>` before judging PASS; a structural FAIL blocks PASS unless recorded as a documented deviation.
 
 **Evaluation audience:** the harness runner no longer exists; each criterion is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` are structurally checkable (artifact existence, required-section presence); items marked `[agent]` are declared judgment.
 

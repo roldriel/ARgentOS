@@ -34,6 +34,7 @@ Validate that `RECOVERY_REPORT.md` exists and contains the required sections bef
 - Contract: `.agents/orchestrators/core/contracts/RECOVERY_REPORT.md`
 
 ## Decision Criteria
+**Structural validator:** the Orchestrator MUST run `python .agents/harness/gate_validator.py --trigger H09 --artifact <path>` before judging PASS; a structural FAIL blocks PASS unless recorded as a documented deviation.
 
 **Evaluation audience:** the harness runner no longer exists; both criteria are evaluated by the Orchestrator's judgment when the gate fires (artifact existence and presence of the sections required by the artifact contract). A structural failure is checkable without interpretation; this policy contains no purely agent-judgment items.
 

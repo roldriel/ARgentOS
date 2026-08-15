@@ -50,6 +50,7 @@ Validate that the execution phase completed all planned steps and left the proje
 The presence of the sections required by the artifact contract is `[gate]` even though it is not restated as a numbered item; the Orchestrator verifies it against the contract cited in §"Input".
 
 ## Decision Criteria
+**Structural validator:** the Orchestrator MUST run `python .agents/harness/gate_validator.py --trigger H05 --artifact <path>` before judging PASS; a structural FAIL blocks PASS unless recorded as a documented deviation.
 
 - `PASS`: All planned steps are complete and the project is verifiable.
 - `FAIL`: Steps were skipped, scope was exceeded, or the project is not verifiable.

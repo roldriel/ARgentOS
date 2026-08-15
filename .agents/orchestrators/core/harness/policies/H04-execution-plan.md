@@ -62,6 +62,7 @@ The Orchestrator evaluates each item below by judgment when the gate fires and M
 2. Verify that every citation in the artifact resolves against the filesystem. Recognized citation forms: backtick-quoted `` `path:section` ``, backtick-quoted path followed by `§section`, and the string values of the TOML keys `specification` and `execution_plan` inside ` ```toml ` blocks. A citation resolves when its path exists relative to the project root, the session directory, or any of the session's iteration directories; when the target is a `.md` file and the anchor is not numeric-only, the cited section MUST exist as an ATX heading in the target (normalized, case-insensitive comparison). Paths containing `<`/`>` placeholders are skipped. On failure, cite each broken citation (line, path, reason); on success, cite the number of citations verified. For `trivial`-profile tasks, the `specification` citation field references the iteration's `TASK_ANALYSIS.md`.
 
 ## Decision Criteria
+**Structural validator:** the Orchestrator MUST run `python .agents/harness/gate_validator.py --trigger H04 --artifact <path>` before judging PASS; a structural FAIL blocks PASS unless recorded as a documented deviation.
 
 - `PASS`: All checklist items are satisfied.
 - `FAIL`: The plan is unsafe, incomplete, out of scope, or depends on unresolved unknowns.

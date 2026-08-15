@@ -48,6 +48,7 @@ Validate that the executed work stayed within the task assigned by the user — 
 6. The section satisfies exactly one scope branch. Branch A: `scope_respected` is `true`, `unplanned_changes` is empty and `user_authorized_extra_work` is `false`. Branch B: `scope_respected` is `true`, `unplanned_changes` lists the changes and `user_authorized_extra_work` is `true` with the written authorization cited. `scope_respected` equal to `false` is a scope failure under both branches. `[gate]` (see §"Gate Checklist", items 3–6)
 
 ## Decision Criteria
+**Structural validator:** the Orchestrator MUST run `python .agents/harness/gate_validator.py --trigger H07 --artifact <path>` before judging PASS; a structural FAIL blocks PASS unless recorded as a documented deviation.
 
 - `PASS`: The `Scope Compliance` section exists and satisfies Branch A, or Branch B with cited written authorization.
 - `FAIL`: The section is missing, `scope_respected` is `false`, the declared branch is mixed or incoherent (for example, a non-empty `unplanned_changes` with `user_authorized_extra_work = false`, or `user_authorized_extra_work = true` without cited evidence), or extra work was performed without user authorization.

@@ -32,10 +32,12 @@ review, and the third is development-side:
    describe how objective a criterion is — `[gate]` items are structurally
    checkable, not machine-enforced — and `HARNESS_REPORT.md` is the
    self-reported review trail, not independently verified evidence.
-   The Orchestrator MAY invoke `.agents/harness/gate_validator.py` (optional
-   structural validator, stdlib) as mechanical support for the `[gate]` items;
-   its results are recorded in `HARNESS_REPORT.md` as evidence, and the gate
-   decision remains the Orchestrator's — the validator never blocks.
+   For the supported triggers (H00–H07, H09–H11, D00) the Orchestrator MUST
+   invoke `.agents/harness/gate_validator.py` before judging PASS; a
+   structural FAIL blocks PASS unless recorded as a documented deviation. The
+   validator is never invoked by the hooks and never blocks at the environment
+   level; the decision (including any documented override) remains the
+   Orchestrator's.
 3. **Verified (development repository, dev-only):** the development checkers
    (protocol invariants, plan citations/structure, taxonomy coherence, session
    artifacts, version state) mechanically verify the payload and the repository
@@ -75,10 +77,11 @@ The harness runs as a gate **before** each critical transition:
 1. The Orchestrator identifies the target transition.
 2. The Orchestrator loads the corresponding policy file.
 3. The Orchestrator reads the relevant artifact(s) and session state.
-4. The Orchestrator checks each item in the policy checklist.
-   The Orchestrator MAY run `.agents/harness/gate_validator.py --trigger <HXX>
-   --artifact <path>` to obtain mechanical evidence for the structurally
-   checkable items; the decision in step 5 remains its own.
+4. The Orchestrator checks each item in the policy checklist. For the
+   supported triggers (H00–H07, H09–H11, D00) the Orchestrator MUST run
+   `.agents/harness/gate_validator.py --trigger <HXX> --artifact <path>`; a
+   structural FAIL blocks PASS unless recorded as a documented deviation. The
+   decision in step 5 remains its own.
 5. The Orchestrator decides `PASS` or `FAIL` for the trigger.
 6. The Orchestrator writes the result to `HARNESS_REPORT.md`.
 
@@ -148,6 +151,12 @@ H15 (`delegation-validity`) is not a state-transition gate over a session artifa
 | H15 post-return | When the Orchestrator receives the return report, before applying the transition trigger | Return report schema and failure classes |
 
 H15 is evaluated by the Orchestrator's judgment against the «Gate Checklist» in prose of its policy; its recovery routing is the §"Recovery Decision Table" of `.agents/orchestrators/core/harness/policies/H15-delegation-validity.md`.
+
+The runner provides mechanical schema support for H15:
+`python .agents/harness/runner_state.py --input <json> validate-delegation` and
+`... validate-return` validate the delegation payload and the worker return
+report against the delegation contract fields; the gate remains the
+Orchestrator's judgment.
 
 ## Project Discovery
 

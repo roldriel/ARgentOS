@@ -864,7 +864,7 @@ ARgentOS's semantic determinism today is a goal, not a property.**
 
 | ID | Finding | Section ref | Severity | Status | Notes |
 |---|---|---|---|---|---|
-| F1 | The "harness" is self-assessment, not enforcement | §7, §20 | Critical | ☑ Resolved (by declaration) | Plan 64 (2026-08-14, option A): the three-layer model is declared (enforced/reviewed/verified); claims no longer overstate machine enforcement. Building real validators (options B/C) remains a possible future RFC |
+| F1 | The "harness" is self-assessment, not enforcement | §7, §20 | Critical | ☑ Resolved (by declaration + optional validator) | Plan 64 (2026-08-14, option A): three-layer model declared; RFC-57 + plan 66 (2026-08-15, option C): gate_validator.py provides optional mechanical support for [gate] items (judgment remains the arbiter; never blocks) |
 | F2 | Trivial task profile is internally incoherent | §10, §18.2, §20 | Critical | ☑ Resolved | Plan 59 (2026-08-14): trivial path legalized (ANALYZING_TASK → PLANNING, reduced inputs); RFC-26 amended |
 | F3 | Multiple authoritative sources disagree on RECOVERY | §3, §18.1, §20 | Critical | ☑ Resolved | Plan 59 (2026-08-14): taxonomy core:RECOVERY.next aligned; H13 documents profile-conditional transitions |
 | F4 | Zero-hallucination / ground-truth guarantees are aspirational | §13, §20 | Critical | ☑ Resolved (by declaration) | Plan 64/65 (option A): the payload now declares what is enforced vs. reviewed vs. verified; ground-truth validation (D01) is explicitly judgment; no claim of machine-verifiable zero hallucination remains |
@@ -919,9 +919,9 @@ batería canónica en verde en cada paso.
 
 Trabajo futuro opcional (no son ítems abiertos de la auditoría):
 
-- **F1-B/C — validadores ejecutables en el producto** (runner de validación
-  estructural de los ítems `[gate]`), si se quiere enforcement real más allá
-  del caparazón de hooks. Requeriría RFC nueva.
+- **F1-B — validador obligatorio/bloqueante**: el validador estructural hoy es
+  opcional (opción C, RFC-57/plan 66); volverlo bloqueante o parte del runner
+  del harness requeriría una RFC nueva.
 - **P2.1-accounting — contabilidad mecánica del budget** (hoy es advisory).
 - **Agregación de métricas por sesión** (el agregador actual es proyecto-wide).
 - **Promoción del release**: merge `dev` → `master`, tag anotado `3.16.0` y
@@ -960,6 +960,7 @@ Trabajo futuro opcional (no son ítems abiertos de la auditoría):
 | 2026-08-14 | F1-A | Modelo de enforcement declarado (plan 64) | `harness/INDEX.md`, 16 policies, `HARNESS_REPORT.md`, `H13` | Version 3.15.0; option A |
 | 2026-08-14 | F7-A | Evidencia de flags declarada (plan 65) | `standards/INDEX.md`, `features.toml`, `PROTOCOL_METRICS.md` | Version 3.16.0 |
 | 2026-08-14 | F5-A | Determinismo de contexto declarado (plan 65) | `standards/context/CONTEXT.md` | Version 3.16.0 |
+| 2026-08-15 | F1-C | Validador estructural opcional (plan 66, RFC-57) | `protocol/.agents/harness/gate_validator.py` + tests + docs | Version 3.17.0 |
 
 ---
 

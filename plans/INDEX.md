@@ -13,11 +13,11 @@ fuera del payload): AGENTS.md raíz operativo, plantillas de plan/RFC +
 sin path filters, disolución de `dev/` (`tools/`, `runtime/`, `docs/` en raíz) y
 `tools/check_dist_sync.py`. El 14 ago 2026 se agregó `AUDITORIA_SISTEMA.md`
 (tracker vivo de remediación del sistema) y se unificó la definición de batería
-en `docs/VERSIONING.md` §4.1. El mismo día se ejecutaron los planes 58–65
-(Nivel 2, Nivel 3, lote fácil, P1.2, P2.1/P4.3, P4.2, F1-A y F7-A/F5-A de la
-remediación, versiones 3.9.0–3.16.0). Los planes de construcción del protocolo
-(dominios, taxonomía, discovery) están implementados; sus versiones históricas
-viven en `archive/`.
+en `docs/VERSIONING.md` §4.1. El 14–15 ago 2026 se ejecutaron los planes 58–66
+(remediación de la auditoría de sistema: niveles 2/3, lote fácil, P1.2,
+P2.1/P4.3, P4.2, F1-A, F7-A/F5-A y F1-B/C, versiones 3.9.0–3.17.0). Los planes
+de construcción del protocolo (dominios, taxonomía, discovery) están
+implementados; sus versiones históricas viven en `archive/`.
 
 ## Serie de RFCs (documentos canónicos)
 
@@ -80,6 +80,7 @@ viven en `archive/`.
 | RFC-54 | `rfc/54-discovery-contract-wording.md` | Accepted (12 ago 2026, revisión RFC-56; plan 53, 11 ago 2026) | ¿Cómo se redactan sin ambigüedad el project_shape y el cálculo de hashes? |
 | RFC-55 | `rfc/55-protocol-source-containment.md` | Accepted (12 ago 2026) | ¿Cómo se desarrolla ARgentOS sin que el protocolo gobierne el repo fuente? |
 | RFC-56 | `rfc/56-governance-fast-track.md` | Accepted (12 ago 2026) | ¿Qué cambios del payload requieren RFC y cuáles pasan por vía plan con verificación mecánica? |
+| RFC-57 | `rfc/57-harness-structural-validator.md` | Accepted (15 ago 2026) | ¿Cómo se da soporte mecánico opcional a los ítems `[gate]` sin cambiar el modelo de juicio? |
 
 ## Roadmap de implementación (planes activos)
 
@@ -249,6 +250,7 @@ los planes 34–36 quedaron `Executed` el 11 ago 2026 (RFC-35…37 permanecen en
 | `63-remediacion-p4-2.md` | — (Clase B) | Executed | Mapeo determinista de sesión CLI ↔ protocolo (`.project/.sessions.json`) en `hook_gate.py` + `runner_state.py link`. Versión 3.14.0. |
 | `64-remediacion-f1-a.md` | — (Clase B) | Executed | Modelo de enforcement declarado en tres capas (enforced/reviewed/verified); rewordings de policies, HARNESS_REPORT y H13. Versión 3.15.0. |
 | `65-remediacion-f7-f5.md` | — (Clase B) | Executed | Evidencia de flags declarada (expected/evidenced/unevidenced) y modelo de determinismo de contexto declarado. Versión 3.16.0. |
+| `66-harness-structural-validator.md` | RFC-57 | Executed | Validador estructural opcional del harness (`gate_validator.py`) como soporte mecánico de los ítems `[gate]`. Versión 3.17.0. |
 
 ## Backlog evidenciado - plan 19
 

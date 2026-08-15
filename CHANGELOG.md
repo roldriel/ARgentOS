@@ -57,6 +57,20 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.17.0] — 2026-08-15
+
+### Added
+
+- **Validador estructural opcional del harness** (plan 66, RFC-57):
+  `.agents/harness/gate_validator.py` implementa el subconjunto
+  mecánicamente checkable de los ítems `[gate]` (existencia, secciones
+  normativas, bloques TOML y enums, resolución de citas, EARS, rubricas
+  estructurales) para H00–H07, H09–H11 y D00. Es soporte opcional de revisión:
+  el juicio del Orchestrator sigue siendo el árbitro, nunca bloquea, y sus
+  resultados se registran como evidencia en `HARNESS_REPORT.md`.
+
+---
+
 ## [3.16.0] — 2026-08-14
 
 ### Changed

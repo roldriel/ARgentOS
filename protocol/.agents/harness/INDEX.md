@@ -32,6 +32,10 @@ review, and the third is development-side:
    describe how objective a criterion is — `[gate]` items are structurally
    checkable, not machine-enforced — and `HARNESS_REPORT.md` is the
    self-reported review trail, not independently verified evidence.
+   The Orchestrator MAY invoke `.agents/harness/gate_validator.py` (optional
+   structural validator, stdlib) as mechanical support for the `[gate]` items;
+   its results are recorded in `HARNESS_REPORT.md` as evidence, and the gate
+   decision remains the Orchestrator's — the validator never blocks.
 3. **Verified (development repository, dev-only):** the development checkers
    (protocol invariants, plan citations/structure, taxonomy coherence, session
    artifacts, version state) mechanically verify the payload and the repository
@@ -72,6 +76,9 @@ The harness runs as a gate **before** each critical transition:
 2. The Orchestrator loads the corresponding policy file.
 3. The Orchestrator reads the relevant artifact(s) and session state.
 4. The Orchestrator checks each item in the policy checklist.
+   The Orchestrator MAY run `.agents/harness/gate_validator.py --trigger <HXX>
+   --artifact <path>` to obtain mechanical evidence for the structurally
+   checkable items; the decision in step 5 remains its own.
 5. The Orchestrator decides `PASS` or `FAIL` for the trigger.
 6. The Orchestrator writes the result to `HARNESS_REPORT.md`.
 

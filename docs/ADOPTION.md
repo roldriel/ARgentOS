@@ -66,9 +66,10 @@ Requisitos de entorno, por modo de adopción (§6):
   gates del harness los evalúa el orquestador por juicio contra las checklists
   de cada policy. No se necesita Python ni ninguna herramienta externa.
 - **Modo enforced: Python 3.x disponible como `python`, stdlib pura** (sin
-  `pip` ni dependencias externas). Solo tres scripts lo usan: `hook_gate.py`
-  (hook del CLI), `runner_state.py` (registro transaccional de `state.json`)
-  y `health_check.py` (sonda de almacenamiento de estado).
+  `pip` ni dependencias externas). Solo cuatro scripts lo usan: `hook_gate.py`
+  (hook del CLI), `runner_state.py` (registro transaccional de `state.json`),
+  `health_check.py` (sonda de almacenamiento de estado) y `gate_validator.py`
+  (validador estructural opcional de los ítems `[gate]`).
 - `pytest` solo se necesita para **desarrollar el protocolo** (suite reducida
   de tests del harness en `.agents/harness/tests/`); no es un requisito de
   adopción.
@@ -167,6 +168,12 @@ El protocolo funciona en dos modos explícitos, sin zona gris:
   --iteration <N> pass`, que es el único escritor de `state.json` (escritura
   transaccional, fail-closed). El deny del hook incluye la instrucción exacta
   de recuperación. Requisito: Python 3.x stdlib, sin `pip`.
+
+  **Soporte estructural opcional:** el Orchestrator puede invocar
+  `python .agents/harness/gate_validator.py --trigger <HXX> --artifact <ruta>`
+  para obtener evidencia mecánica de los ítems `[gate]` (secciones, TOML y
+  enums, citas, EARS, rubricas estructurales); el juicio del gate sigue siendo
+  suyo y el validador nunca bloquea.
 
 ### 6.1. Configuración de hooks por CLI
 

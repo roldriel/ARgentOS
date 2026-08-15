@@ -83,10 +83,15 @@ regenerada por CI.
   de planes.** Cada plan ejecutado es una versión: funciona, pero versiones
   como 3.0.2–3.0.5 nacieron de regularizaciones, no de cambios de producto.
   El número de versión comunica poco al adoptante.
-- **La verificación depende de disciplina de ejecución local.** Los checkers
+- ~~**La verificación depende de disciplina de ejecución local.** Los checkers
   corren en CI, pero CI no bloquea nada visible en el flujo actual (no hay
-  branch protection mencionada); un push directo a `dev` roto no se entera
-  nadie hasta que alguien mira.
+  branch protection); un push directo a `dev` roto no se entera nadie hasta
+  que alguien mira.~~ **(cerrado por decisión del owner, 15 ago 2026)**: el
+  repo es privado en el plan gratuito de GitHub, que no ofrece protected
+  branches ni rulesets; no se paga GitHub Pro ni se hace público. La
+  mitigación aceptada es la batería local (§4.1 de `docs/VERSIONING.md`) +
+  CI `check-protocol` + disciplina de promoción. Ver nota en
+  `docs/VERSIONING.md` §9.
 - **El punto 6 residual quedó cerrado (12 ago 2026, plan 56)**: la regla de
   inmutabilidad del payload quedó incorporada inline a `ANTI_CIRCUMVENTION.md`
   ("el payload es inmutable dentro de una versión; todo cambio llega por una

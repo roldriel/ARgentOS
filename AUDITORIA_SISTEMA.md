@@ -924,8 +924,14 @@ Trabajo futuro opcional (no son ítems abiertos de la auditoría):
   del harness requeriría una RFC nueva.
 - **P2.1-accounting — contabilidad mecánica del budget** (hoy es advisory).
 - **Agregación de métricas por sesión** (el agregador actual es proyecto-wide).
-- **Promoción del release**: merge `dev` → `master`, tag anotado `3.16.0` y
-  regeneración de `dist` (CI), cuando el usuario lo autorice.
+- **Branch protection server-side**: descartada por decisión del owner
+  (2026-08-15). El repo es privado en el plan gratuito de GitHub, que exige
+  GitHub Pro para protected branches/rulesets; no se paga Pro ni se hace el
+  repo público. Mitigación actual: batería local (§4.1) + CI `check-protocol`
+  + disciplina de promoción. Nota oficial en `docs/VERSIONING.md` §9;
+  reevaluar solo si cambia el plan o la visibilidad.
+- **Promoción del release**: ya ejecutada (2026-08-15) para `3.16.0`–`3.19.0`
+  con tags anotados y `dist` regenerada por CI.
 
 ## Remediation log
 

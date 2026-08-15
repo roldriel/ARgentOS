@@ -191,6 +191,16 @@ Notas:
   y las versiones `3.0.6`–`3.6.3` quedan como historia. Este §9 es un
   snapshot que se actualiza en cada release; la fuente inmutable de la verdad
   son `git tag` + `protocol/.agents/VERSION`.
+- **Branch protection no habilitada (decisión del owner, 15 ago 2026):** el
+  repo es privado en el plan gratuito de GitHub, que no incluye protected
+  branches ni rulesets (el API responde `Upgrade to GitHub Pro or make this
+  repository public`). Por decisión del owner no se paga GitHub Pro ni se
+  hace el repo público, así que la CI no bloquea pushes a `dev`/`master` de
+  forma server-enforzada. La mitigación aceptada es: batería canónica local
+  (§4.1) + job `check-protocol` en CI + disciplina de promoción (merge
+  `dev` → `master` con revisión y tag anotado, §1). Si en el futuro cambia el
+  plan o la visibilidad del repo, esta nota se puede rever y habilitar
+  protección real.
 
 ## 10. Definition of Done
 

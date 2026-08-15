@@ -103,6 +103,23 @@ def scan(root: Path) -> list[str]:
                     f"METRIC {metrics.relative_to(root)}#{idx} ({data['type']}): "
                     f"missing fields {sorted(missing)}"
                 )
+            if data["type"] == "context_budget":
+                declared = data.get("declared")
+                consumed = data.get("consumed")
+                if not isinstance(declared, (int, float)) or declared <= 0:
+                    out.append(
+                        f"METRIC {metrics.relative_to(root)}#{idx} (context_budget): "
+                        f"declared must be a finite positive number (got {declared!r})"
+                    )
+                if (
+                    isinstance(declared, (int, float))
+                    and isinstance(consumed, (int, float))
+                    and consumed > declared
+                ):
+                    out.append(
+                        f"METRIC {metrics.relative_to(root)}#{idx} (context_budget): "
+                        f"consumed {consumed} exceeds declared {declared}"
+                    )
 
     for state_file in sorted(project.rglob("state.json")):
         try:

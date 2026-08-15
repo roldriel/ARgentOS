@@ -74,6 +74,7 @@ def empty_report() -> dict:
         "delegation.profiles": {},
         "context.budget_declared": 0,
         "context.budget_consumed": 0,
+        "context.budget_overruns": 0,
         "context.candidates.prioritized": 0,
         "context.candidates.resolved": 0,
         "context.candidates.composed": 0,
@@ -128,6 +129,7 @@ def _merge(target: dict, source: dict) -> None:
         "delegation.skill_overrides",
         "context.budget_declared",
         "context.budget_consumed",
+        "context.budget_overruns",
         "context.candidates.prioritized",
         "context.candidates.resolved",
         "context.candidates.composed",
@@ -235,6 +237,12 @@ def _scan_session(session: Path) -> tuple[dict, list[datetime]]:
                     report["context.budget_declared"] += declared
                 if isinstance(consumed, (int, float)):
                     report["context.budget_consumed"] += consumed
+                if (
+                    isinstance(declared, (int, float))
+                    and isinstance(consumed, (int, float))
+                    and consumed > declared
+                ):
+                    report["context.budget_overruns"] += 1
             elif etype == "context_candidates":
                 for key in ("prioritized", "resolved", "composed"):
                     value = data.get(key)

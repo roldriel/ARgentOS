@@ -122,3 +122,19 @@ def test_per_session_catalog(tmp_path):
     assert project["flags.expected"] == ["srp", "tdd"]
     assert project["session.iterations"] == 3
     assert len(project["session.artifacts_per_iteration"]) == 2
+
+
+def test_budget_overruns_counted(tmp_path):
+    session = tmp_path / ".project" / "s1"
+    session.mkdir(parents=True)
+    (session / "METRICS.md").write_text(
+        '<!-- METRIC: {"timestamp": "t", "type": "context_budget", '
+        '"phase": "06", "declared": 100, "consumed": 150} -->\n'
+        '<!-- METRIC: {"timestamp": "t", "type": "context_budget", '
+        '"phase": "05", "declared": 200, "consumed": 50} -->\n',
+        encoding="utf-8",
+    )
+    report = am.aggregate(tmp_path)
+    assert report["context.budget_overruns"] == 1
+    assert report["context.budget_declared"] == 300
+    assert report["context.budget_consumed"] == 200

@@ -59,3 +59,18 @@ def test_invalid_artifacts_flagged(tmp_path):
     assert any("unknown type" in x for x in v)
     assert any("missing fields" in x and "METRIC" in x and "delegation" in x for x in v)
     assert any("missing fields" in x and "STATE" in x for x in v)
+
+
+def test_budget_accounting_flagged(tmp_path):
+    session = tmp_path / ".project" / "uuid" / "00"
+    session.mkdir(parents=True)
+    (tmp_path / ".project" / "uuid" / "METRICS.md").write_text(
+        '<!-- METRIC: {"timestamp": "t", "type": "context_budget", '
+        '"phase": "06", "declared": 100, "consumed": 150} -->\n'
+        '<!-- METRIC: {"timestamp": "t", "type": "context_budget", '
+        '"phase": "05", "declared": -5, "consumed": 0} -->\n',
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any("exceeds declared" in x for x in v)
+    assert any("must be a finite positive number" in x for x in v)

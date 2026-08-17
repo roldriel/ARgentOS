@@ -64,6 +64,35 @@ listan; ver `docs/VERSIONING.md` §5)
   `[Unreleased]` del changelog sin claims stale, y conteos de tests de
   `docs/AUDITORIA_DOCUMENTACION.md` / `AUDITORIA_SISTEMA.md` actualizados.
 
+## [3.21.0] — 2026-08-16
+
+### Added
+
+- **Chequeo mecánico de salidas de state machines** (plan 70):
+  `check_taxonomy_coherence.py` compara los "Required Output Artifacts" de
+  cada state machine contra los `output_artifacts` del workflow mapeado
+  (bidireccional, con normalización de prefijos de orden). Sobre el payload
+  previo a esta versión detecta 21 mismatches de discovery; tras la
+  alineación queda en verde.
+
+### Changed
+
+- **Contrato de verificación y H06 alineados** (plan 70): `[[test_results]]`
+  de `VERIFICATION_REPORT.md` declara el campo opcional `evidence` (archivo
+  existente o comando en `SESSION_LOG.md`); el ítem 7 del Gate Checklist de
+  H06 verifica el campo cuando está declarado, con fallback a `SESSION_LOG.md`.
+- **Listas de salidas de discovery completas y con paths reales** (plan 70):
+  los front matters de los workflows 01–06 de discovery y sus entidades en la
+  taxonomía usan los nombres de archivo de KB reales (`environment.md`,
+  `development_patterns.md`, etc.) e incluyen todas las entradas de KB por
+  estado; la entidad de estado `discovery:DISCOVERY_INIT` corrige su
+  `artifacts_output` (incluye `discovery_input.json`, `invalidation_report.json`
+  y `file_map.md`; elimina el `KB_DISCOVERY_ENTRY.md` erróneo).
+- **Convención de naming de contratos por entrada** (plan 70):
+  `KB_DISCOVERY_ENTRY.md` documenta que el nombre del contrato (p.ej.
+  `ENVIRONMENT_DISCOVERY.md`) no es el path del artefacto (p.ej.
+  `environment.md`).
+
 ## [3.19.0] — 2026-08-15
 
 ### Changed

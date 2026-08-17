@@ -110,6 +110,7 @@ Record the results of the validation strategy defined in the execution plan.
 test = ""
 result = ""
 details = ""
+evidence = ""
 ```
 
 Possible values for `result`:
@@ -119,6 +120,11 @@ PASS
 FAIL
 SKIPPED
 ```
+
+`evidence` is optional: when declared, it MUST reference an existing file or a
+command string recorded in `SESSION_LOG.md` (verified by H06, §"Gate
+Checklist", item 7). When absent, the command string in `test` MUST appear in
+`SESSION_LOG.md` for results other than `SKIPPED`.
 
 ---
 

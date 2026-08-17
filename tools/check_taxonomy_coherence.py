@@ -24,6 +24,9 @@ Checks:
    existing taxonomy states.
 6. Every state is reachable within its domain (roots are states with no
    ``previous``; a domain with no root is checked for internal connectivity).
+7. Every state machine "Required Output Artifacts" section matches the
+   ``output_artifacts`` of the workflow mapped to that state (bidirectional,
+   basename comparison with order-prefix normalization).
 
 Usage:
   python tools/check_taxonomy_coherence.py [--root REPO_ROOT]
@@ -230,6 +233,60 @@ def parse_taxonomy_entities(payload: Path) -> tuple[dict, list[str]]:
     return entities, duplicates
 
 
+_ARTIFACT_TOKEN_RE = re.compile(r"\.project/[A-Za-z0-9_./<>\-]+")
+_ORDER_PREFIX_RE = re.compile(r"^(?:D?\d+|D?<order>)-", re.IGNORECASE)
+
+
+def normalize_artifact_name(name: str) -> str:
+    """Normalize an artifact reference to its basename without order prefixes.
+
+    Handles the forms used by state machines and workflow front matter:
+    ``.project/<session-uuid>/<iteration>/<order>-TASK_ANALYSIS.md``,
+    ``.project/<session-uuid>/<iteration>/D<order>-KB_DISCOVERY_REPORT.md``,
+    ``.project/knowledge/discovery/distribution.md  (only for library/cli
+    project shapes)`` and plain names such as ``environment.md`` or
+    ``.discovery_manifest``.
+    """
+    name = re.split(r"\s*\(\s*only\b", name.strip())[0].strip()
+    name = name.rstrip(".,;:)]")
+    base = name.replace("\\", "/").split("/")[-1]
+    return _ORDER_PREFIX_RE.sub("", base)
+
+
+def parse_sm_required_outputs(text: str) -> dict[str, set[str]]:
+    """Return {state name -> {artifact basenames}} from a state machine.
+
+    Parses each ``## <STATE>`` section for a ``### Required Output
+    Artifact(s)`` subsection and extracts the basenames of the
+    ``.project/...`` paths in its first fenced code block. States without a
+    fenced output block (e.g. validation prose) are skipped.
+    """
+    outputs: dict[str, set[str]] = {}
+    sections = re.split(r"(?m)^##\s+", text)
+    for section in sections:
+        if not section.strip():
+            continue
+        title = section.splitlines()[0].strip()
+        m = re.search(
+            r"###\s+Required Output Artifacts?\s*(.*?)(?=^#{1,3}\s|\Z)",
+            section,
+            re.MULTILINE | re.DOTALL,
+        )
+        if not m:
+            continue
+        fence = re.search(r"```[^\n]*\n(.*?)\n```", m.group(1), re.DOTALL)
+        if not fence:
+            continue
+        names = set()
+        for line in fence.group(1).splitlines():
+            tok = _ARTIFACT_TOKEN_RE.search(line)
+            if tok:
+                names.add(normalize_artifact_name(tok.group(0)))
+        if names:
+            outputs[title] = names
+    return outputs
+
+
 def violations_for_root(
     root: Path, payload: Path
 ) -> list[str]:
@@ -324,6 +381,40 @@ def violations_for_root(
                 out.append(
                     f"WORKFLOW {rel} previous_states not in taxonomy {state_key}.previous: "
                     f"{sorted(set(fm.get('previous_states', [])) - set(tax_state.get('previous', [])))}"
+                )
+
+    # 7. State machine "Required Output Artifacts" vs workflow output_artifacts.
+    wf_outputs_by_state: dict[str, tuple[Path, set[str]]] = {}
+    for wf in workflows:
+        if wf.name in ("INDEX.md", "README.md"):
+            continue
+        fm = read_front_matter(
+            wf.read_text(encoding="utf-8", errors="replace")
+        )
+        state_key = f"{fm.get('domain')}:{fm.get('state')}"
+        wf_outputs_by_state[state_key] = (
+            wf,
+            {normalize_artifact_name(x) for x in fm.get("output_artifacts", [])},
+        )
+    for sm in state_machines:
+        sm_text = sm.read_text(encoding="utf-8", errors="replace")
+        fm = read_front_matter(sm_text)
+        domain = fm.get("domain")
+        sm_outputs = parse_sm_required_outputs(sm_text)
+        for state_name, outputs in sm_outputs.items():
+            pair = wf_outputs_by_state.get(f"{domain}:{state_name}")
+            if pair is None:
+                continue
+            wf_path, wf_outputs = pair
+            for name in sorted(outputs - wf_outputs):
+                out.append(
+                    f"STATE {sm.relative_to(root)} requires output {name} "
+                    f"missing in workflow {wf_path.relative_to(root)} output_artifacts"
+                )
+            for name in sorted(wf_outputs - outputs):
+                out.append(
+                    f"WORKFLOW {wf_path.relative_to(root)} output_artifacts "
+                    f"{name} missing in state machine {sm.relative_to(root)}"
                 )
 
     # 4. Harness policies: gates within taxonomy next, unique IDs, policy_file.

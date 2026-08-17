@@ -36,7 +36,8 @@ entities:
     next_states:
       - core:B
     input_artifacts: []
-    output_artifacts: []
+    output_artifacts:
+      - OUT_A.md
     harness: []
     actor: orchestrator
     profile: null
@@ -74,6 +75,14 @@ states_defined:
   - B
 ---
 # Sample
+
+## A
+
+### Required Output Artifacts
+
+```text
+.project/<session-uuid>/<iteration>/<order>-OUT_A.md
+```
 """
 
 WF = """---
@@ -85,7 +94,7 @@ lifecycle: task
 previous_states: []
 next_states: [core:B]
 input_artifacts: []
-output_artifacts: []
+output_artifacts: [OUT_A.md]
 harness: []
 actor: orchestrator
 profile: null
@@ -231,3 +240,40 @@ def test_profile_catalog_missing_entity(tmp_path):
         "PROFILE .agents/roles/profiles/ghost.md has no taxonomy worker entity" in x
         for x in v
     )
+
+
+def test_state_output_missing_from_workflow(tmp_path):
+    root = make_payload(tmp_path)
+    wf = root / "protocol" / ".agents" / "orchestrators" / "core" / "workflow" / "00-sample.md"
+    wf.write_text(
+        WF.replace("output_artifacts: [OUT_A.md]", "output_artifacts: []"),
+        encoding="utf-8",
+    )
+    taxonomy = root / "protocol" / ".agents" / "standards" / "runtime" / "PROTOCOL_TAXONOMY.md"
+    text = taxonomy.read_text(encoding="utf-8")
+    text = text.replace(
+        "    output_artifacts:\n      - OUT_A.md\n",
+        "    output_artifacts: []\n",
+    )
+    taxonomy.write_text(text, encoding="utf-8")
+    v = ctc.violations_for_root(root, root / "protocol")
+    assert any("requires output OUT_A.md missing in workflow" in x for x in v)
+
+
+def test_workflow_output_missing_from_state_machine(tmp_path):
+    root = make_payload(tmp_path)
+    sm = root / "protocol" / ".agents" / "orchestrators" / "core" / "states" / "SAMPLE_STATE_MACHINE.md"
+    sm.write_text(SM.replace("OUT_A.md", "OUT_B.md"), encoding="utf-8")
+    v = ctc.violations_for_root(root, root / "protocol")
+    assert any("output_artifacts OUT_A.md missing in state machine" in x for x in v)
+    assert any("requires output OUT_B.md missing in workflow" in x for x in v)
+
+
+def test_output_order_prefixes_normalized(tmp_path):
+    root = make_payload(tmp_path)
+    sm = root / "protocol" / ".agents" / "orchestrators" / "core" / "states" / "SAMPLE_STATE_MACHINE.md"
+    sm.write_text(
+        SM.replace("<order>-OUT_A.md", "D<order>-OUT_A.md"),
+        encoding="utf-8",
+    )
+    assert ctc.violations_for_root(root, root / "protocol") == []

@@ -792,7 +792,7 @@ de enforcement más reciente.
 | Bloque | Status | Evidencia / Notas |
 |---|---|---|
 | 0 — Quick wins | ☑ Resolved | Plan 69 `Executed` (2026-08-16, versión 3.20.0); ítems 1–6 aplicados en `dev` con batería en verde |
-| 1 — Coherencia de contratos | Pendiente | Ítems 7–9 |
+| 1 — Coherencia de contratos | ☑ Resolved | Plan 70 `Executed` (2026-08-16, versión 3.21.0); ítems 7–9 aplicados en `dev` con batería en verde |
 | 2 — Cierre P0 | Pendiente | Ítems 10–12 |
 | 3 — Determinismo y verificación | Pendiente | Ítems 13–18 |
 | 4 — Modelo y runtime | Pendiente | Ítems 19–22 |

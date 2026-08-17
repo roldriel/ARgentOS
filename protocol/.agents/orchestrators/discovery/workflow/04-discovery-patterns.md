@@ -7,7 +7,7 @@ lifecycle: discovery
 previous_states: [discovery:DISCOVERY_RUNNING]
 next_states: [discovery:DISCOVERY_MERGE, discovery:DISCOVERY_FAILED]
 input_artifacts: [discovery_input.json]
-output_artifacts: [worker_patterns.json, DEVELOPMENT_PATTERNS.md]
+output_artifacts: [worker_patterns.json, development_patterns.md]
 harness: []
 actor: discovery_orchestrator
 profile: patterns_worker

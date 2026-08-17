@@ -5,7 +5,8 @@ completa: RFC-29…56 `Accepted` (las 23 RFCs de la serie 32…54 se revisaron u
 por una vía RFC-56, plan 57) y todos los planes numerados `Executed`. El
 trabajo activo es la remediación de la **auditoría de sistema 3.1**
 (`AUDITORIA_SISTEMA_2026-08-16.md`). `master`/`dist` están en `3.19.0` (tags
-anotados `3.16.0`–`3.19.0`); `dev` está en sync con `master`. El 12 ago 2026 se
+anotados `3.16.0`–`3.19.0`); `dev` lleva las versiones en curso `3.20.0` y
+`3.21.0` sin publicar. El 12 ago 2026 se
 completó la remediación de la auditoría de documentación
 (`docs/AUDITORIA_DOCUMENTACION.md`, fuera del payload): AGENTS.md raíz
 operativo, plantillas de plan/RFC + `tools/check_plan_structure.py`, tests
@@ -23,6 +24,7 @@ discovery) están implementados; sus versiones históricas viven en `archive/`.
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
 | `69-remediacion-bloque-0.md` | — (vía plan, Clase B) | Executed | Bloque 0 de `AUDITORIA_SISTEMA_2026-08-16.md`: conteo de scripts del harness, literal de discovery budget, snapshot del INDEX, `[Unreleased]` del changelog, conteos de auditorías previas y modelo produced_by/consumed_by de contratos de discovery. Versión 3.20.0. |
+| `70-remediacion-bloque-1.md` | — (vía plan, Clase B) | Executed | Bloque 1 de `AUDITORIA_SISTEMA_2026-08-16.md`: alineación del contrato de verificación con H06 (campo `evidence` opcional), reconciliación de salidas de discovery (workflows + taxonomía, naming de contratos por entrada) y chequeo mecánico bidireccional de salidas de state machines en el checker de coherencia taxonómica. Versión 3.21.0. |
 
 ## Serie de RFCs (documentos canónicos)
 

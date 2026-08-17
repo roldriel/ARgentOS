@@ -137,6 +137,20 @@ listan; ver `docs/VERSIONING.md` §5)
   de los hooks, auditable post-hoc); `check_session_artifacts.py` valida la
   forma del objeto.
 
+## [3.24.0] — 2026-08-16
+
+### Modelo conceptual
+
+- **Recovery context, ranking de destinos múltiples y continuidad de sesión**
+  (plan 73, RFC-59): definidas la derivación de las variables de las recovery
+  decision tables (mecánicas desde el validador/filesystem; de juicio con
+  evidencia al momento del fallo) y su registro como objeto `recovery` en la
+  entrada FAIL de `HARNESS_REPORT.md`; el ranking de destinos de recovery (fase
+  más temprana con artefacto inválido, un destino por entrada,
+  `pending_artifacts` en `RECOVERY_REPORT.md`); y el procedimiento de
+  reanudación de iteraciones parciales ("artefacto intacto" + 5 pasos) en
+  `PROTOCOL_BOUNDARIES.md`.
+
 ## [3.19.0] — 2026-08-15
 
 ### Changed

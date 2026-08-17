@@ -133,6 +133,28 @@ entries do not count. The value is read from the report and is not stored
 elsewhere; `retry_count >= 1` means the trigger already failed at least once in
 this iteration.
 
+**Recovery context.** When a trigger fails, the Orchestrator evaluates the
+policy's Recovery Decision Table over a recovery context: the conditions named
+in the table plus `retry_count`. Conditions are derived as follows:
+
+- `retry_count` — from the session's `HARNESS_REPORT.md` (prior `FAIL` entries
+  for the same trigger in the current iteration; see above).
+- Mechanical conditions (artifact existence, required sections, TOML enums,
+  citation resolution, path existence) — MUST be derived from the structural
+  validator's check list when the trigger is validator-supported, or from
+  direct filesystem checks otherwise. The Orchestrator MUST NOT claim a
+  mechanical condition from its own judgment when the validator output says
+  otherwise.
+- Judgment conditions (scope coherence, ambiguity, feasibility) — evaluated by
+  judgment; their values MUST be recorded with evidence at failure time. A
+  retroactive value is a trace-integrity violation.
+
+The evaluation is recorded in the same `HARNESS_REPORT.md` FAIL entry as an
+optional `recovery` object (`variables`, `matched_rule`, `target_phase`;
+contract: `.agents/contracts/HARNESS_REPORT.md`, §"Recovery context"). The
+first matching rule top-to-bottom and the `RECOVERY_GENERIC` default are
+unchanged.
+
 The Orchestrator resolves and reads the policy of its own domain: core (`H*`), discovery (`D*`), system (`S*`) and cross-cutting (`.agents/harness/policies/`).
 
 H09 and H10 have no recovery decision tables. When either fails, the Orchestrator applies the generic recovery fallback (`RECOVERY_GENERIC` → `08-recovery.md`).

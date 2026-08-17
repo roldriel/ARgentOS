@@ -247,6 +247,11 @@ After receiving a worker result and a passing harness:
 - Transition to the next allowed state.
 - If the harness fails:
   - Populate the context variables of the failed trigger's policy and apply its §"Recovery Decision Table" (first matching rule, top to bottom). `retry_count` is derived from `HARNESS_REPORT.md` (prior `FAIL` entries for the same trigger in the current iteration; see `.agents/harness/INDEX.md`, §Recovery Mechanism).
+  - Derive the recovery context conditions per `.agents/harness/INDEX.md`
+    (§Recovery Mechanism): mechanical conditions from the structural validator
+    output or the filesystem, judgment conditions recorded with evidence at
+    failure time; record the evaluation in the gate's `HARNESS_REPORT.md` FAIL
+    entry as a `recovery` object.
   - Apply the action of the matching rule (`RETRY_WORKER`, `NEEDS_CLARIFICATION`, `RECOVERY_GENERIC`, or `ABORT`).
   - If no rule applies or the situation does not match the table's variables, default to `RECOVERY_GENERIC` with `target_phase = "08-recovery.md"`.
 - If the worker fails to produce a valid artifact, route to `RECOVERY`.

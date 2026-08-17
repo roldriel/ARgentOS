@@ -278,12 +278,25 @@ Rules:
   session across CLI conversations). The mapping file is runtime metadata,
   best-effort: a write failure never blocks resolution.
 - `PreToolUse` gates only `Write`/`Edit`; the target is read from
-  `tool_input` keys `file_path`, `path` or `filename`.
+  `tool_input` keys `file_path`, `path` or `filename`. A `Write`/`Edit` whose
+  `tool_input` is a dict that names no target is denied (exit 2); a missing
+  `tool_input` remains fail-open (missing-field property).
 - `Stop` gates iteration closure (H06 PASS, `NEEDS_CLARIFICATION` recorded, or
   a terminal status in `state.json`).
 - The event is fail-open by contract: malformed JSON, missing fields, unknown
   events, or any internal error resolve to allow (exit 0); post-hoc bypass
   detection compensates when the H04 PASS is recorded (`runner_state.py`).
+
+### Bypass surface and coverage
+
+The hook gates only `Write`/`Edit` events on
+project deliverables. `Read`, `Glob`, `Grep` and `Bash` calls are not gated:
+writes performed outside the gated events are covered by the post-hoc bypass
+scan of `runner_state.py` (files modified after the session started but before
+the H04 PASS), never by command-string parsing — the protocol does not parse
+command text, which would fake a control it does not have. A `Write`/`Edit`
+whose `tool_input` names no target is denied, so the bypass cannot be crafted
+by omitting the target field.
 
 Enforced mode requires registering `hook_gate.py` as a CLI hook for two
 events: `PreToolUse` (matcher `Write|Edit`) and `Stop`. The paths below

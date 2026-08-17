@@ -11,10 +11,13 @@ Decision (in order):
 1. The tool call does not touch a project deliverable (not a
    ``PreToolUse`` on ``Write``/``Edit``, or the target path lives inside
    ``.project/`` / ``.agents/``) -> allow (exit 0).
-2. ``PreToolUse`` on ``Write``/``Edit`` targeting a deliverable without a
+2. ``PreToolUse`` on ``Write``/``Edit`` whose ``tool_input`` is a dict that
+   names no target (``file_path``/``path``/``filename``) -> deny (exit 2);
+   a missing ``tool_input`` remains fail-open (missing-field property).
+3. ``PreToolUse`` on ``Write``/``Edit`` targeting a deliverable without a
    current H04 (plan) PASS in state.json -> deny (exit 2) with a recovery
    instruction on stderr.
-3. ``Stop`` without iteration closure (H06 PASS, NEEDS_CLARIFICATION
+4. ``Stop`` without iteration closure (H06 PASS, NEEDS_CLARIFICATION
    recorded in TASK_ANALYSIS.md, a terminal status (ABORT/COMPLETED)
    recorded in state.json, or no task started in the session) -> deny
    (exit 2) with a recovery instruction on stderr.
@@ -255,11 +258,19 @@ def decide(event: dict) -> int:
         tool_name = event.get("tool_name") or event.get("tool") or ""
         if tool_name not in WRITE_TOOLS:
             return _allow()
+        tool_input = event.get("tool_input")
+        if not isinstance(tool_input, dict):
+            # Missing tool_input is a missing field: fail-open (documented).
+            return _allow()
         target = _target_path(event)
         if target is None:
-            # Cannot identify the target: fail-open (documented),
-            # runner_state.py compensates with post-hoc detection.
-            return _allow()
+            # Write/Edit with a tool_input that names no target: deny. The
+            # event is well-formed but does not say what would be written, so
+            # allowing it would be a craftable bypass of the plan gate.
+            return _deny(
+                "Enforcement hook: Write/Edit without an identifiable target "
+                "(tool_input must include file_path, path or filename)."
+            )
         if _is_protocol_path(target):
             return _allow()
         session_dir = _resolve_session(event)

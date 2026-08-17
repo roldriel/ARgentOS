@@ -82,6 +82,37 @@ def test_writes_inside_protocol_dirs_are_allowed(project):
     assert hook_gate.decide(event) == 0
 
 
+def test_write_without_target_is_denied(project, capsys):
+    session_uuid, _, _ = project
+    event = pre_tool_use(file_path=None)
+    code = hook_gate.decide(event)
+    assert code == 2
+    assert "identifiable target" in capsys.readouterr().err
+
+
+def test_write_with_empty_tool_input_is_denied(project):
+    session_uuid, _, _ = project
+    event = {
+        "hook_event_name": "PreToolUse",
+        "session_id": session_uuid,
+        "cwd": ".",
+        "tool_name": "Write",
+        "tool_input": {},
+    }
+    assert hook_gate.decide(event) == 2
+
+
+def test_write_without_tool_input_stays_fail_open(project):
+    session_uuid, _, _ = project
+    event = {
+        "hook_event_name": "PreToolUse",
+        "session_id": session_uuid,
+        "cwd": ".",
+        "tool_name": "Write",
+    }
+    assert hook_gate.decide(event) == 0
+
+
 def test_other_events_are_allowed(project):
     assert hook_gate.decide({"hook_event_name": "SessionStart"}) == 0
 

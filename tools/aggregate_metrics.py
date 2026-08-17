@@ -14,11 +14,13 @@ session. Unparseable comments are counted as corrupt, never silently
 discarded. The aggregation is advisory: nothing gates on it.
 
 Usage:
-  python tools/aggregate_metrics.py [--root REPO_ROOT] [--per-session]
+  python tools/aggregate_metrics.py [--root REPO_ROOT] [--per-session] [--audit]
 
 Without ``--per-session`` the output is the project-wide catalog; with it, a
 ``sessions`` object with one catalog per session is added. Prints JSON and
-exits 0. Standard library only.
+exits 0. With ``--audit``, prints the mechanical cross-checks
+(``state.json`` gate PASS records vs ``HARNESS_REPORT.md`` PASS entries) and
+exits 1 when a discrepancy is found. Standard library only.
 """
 
 from __future__ import annotations
@@ -294,6 +296,59 @@ def aggregate(root: Path) -> dict:
     return report
 
 
+def audit_cross_checks(root: Path) -> list[str]:
+    """Return alerts for mechanical cross-checks of the metric data points.
+
+    Every ``state.json`` gate PASS must have a matching ``PASS`` entry for the
+    same trigger in the session's ``HARNESS_REPORT.md`` (the review trail and
+    the persisted state must agree). The reverse direction is not flagged:
+    entries for non-state gates (e.g. H15) legitimately lack a state.json
+    record.
+    """
+    alerts: list[str] = []
+    project = root / ".project"
+    if not project.is_dir():
+        return alerts
+    for session in session_dirs(root):
+        state_triggers: set[str] = set()
+        for state_file in sorted(session.rglob("state.json")):
+            try:
+                state = json.loads(
+                    state_file.read_text(encoding="utf-8", errors="replace")
+                )
+            except json.JSONDecodeError:
+                continue
+            if not isinstance(state, dict):
+                continue
+            gates = state.get("gates")
+            if not isinstance(gates, dict):
+                continue
+            for trigger, entry in gates.items():
+                if isinstance(entry, dict) and entry.get("result") == "PASS":
+                    state_triggers.add(trigger)
+        entry_triggers: set[str] = set()
+        report = session / "HARNESS_REPORT.md"
+        if report.is_file():
+            text = report.read_text(encoding="utf-8", errors="replace")
+            for raw in ENTRY_RE.finditer(text):
+                try:
+                    data = json.loads(raw.group(1))
+                except json.JSONDecodeError:
+                    continue
+                if (
+                    isinstance(data, dict)
+                    and data.get("result") == "PASS"
+                    and isinstance(data.get("trigger"), str)
+                ):
+                    entry_triggers.add(data["trigger"])
+        for trigger in sorted(state_triggers - entry_triggers):
+            alerts.append(
+                f"{session.name}: state.json records PASS for {trigger} "
+                "without a matching PASS entry in HARNESS_REPORT.md"
+            )
+    return alerts
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--root", type=Path, default=None)
@@ -302,10 +357,26 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="also print one catalog per session under a 'sessions' key",
     )
+    parser.add_argument(
+        "--audit",
+        action="store_true",
+        help="print mechanical cross-check alerts (state.json vs HARNESS_REPORT) "
+        "and exit 1 when a discrepancy is found",
+    )
     args = parser.parse_args(argv)
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     root = (args.root or Path(__file__).resolve().parents[1]).resolve()
+    if args.audit:
+        alerts = audit_cross_checks(root)
+        if alerts:
+            print(f"Metric audit alerts: {len(alerts)}")
+            for alert in alerts:
+                print(f"- {alert}")
+            return 1
+        print("Metric audit OK: every state.json gate PASS has a matching "
+              "HARNESS_REPORT.md PASS entry.")
+        return 0
     report = aggregate(root)
     if args.per_session:
         output = {

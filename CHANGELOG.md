@@ -151,6 +151,32 @@ listan; ver `docs/VERSIONING.md` §5)
   reanudación de iteraciones parciales ("artefacto intacto" + 5 pasos) en
   `PROTOCOL_BOUNDARIES.md`.
 
+## [3.25.0] — 2026-08-17
+
+### Modelo conceptual
+
+- **Contabilidad del Context Budget y clases de confianza de métricas**
+  (plan 74, RFC-60): el Budget materializado pasa de advisory a measured —
+  `consumed` se computa con la regla de estimación sobre los excerpts de
+  `knowledge_entries`, se registra en el evento `context_budget` y los overruns
+  post-compresión son desviaciones registradas; `PROTOCOL_METRICS.md` declara
+  las clases Derived / Recorded / Verified para el catálogo y el agregador gana
+  el modo `--audit` (gates de `state.json` vs entradas de `HARNESS_REPORT.md`).
+
+### Changed
+
+- **Superficie de bypass del hook endurecida** (plan 74, ítem 20): `Write`/
+  `Edit` cuyo `tool_input` es un dict sin target (`file_path`/`path`/
+  `filename`) pasan de fail-open a deny (exit 2); `tool_input` ausente y los
+  errores internos siguen fail-open; `Read`/`Glob`/`Grep`/`Bash` siguen sin
+  gate, con la cobertura por el scan post-hoc documentada en
+  `harness/INDEX.md` (§Bypass surface and coverage).
+
+### Added
+
+- **Tool de medición del budget** (plan 74): `tools/measure_context_budget.py`
+  computa `consumed` desde un payload de delegación y falla en overrun.
+
 ## [3.19.0] — 2026-08-15
 
 ### Changed

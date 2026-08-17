@@ -795,4 +795,4 @@ de enforcement más reciente.
 | 1 — Coherencia de contratos | ☑ Resolved | Plan 70 `Executed` (2026-08-16, versión 3.21.0); ítems 7–9 aplicados en `dev` con batería en verde |
 | 2 — Cierre P0 | ☑ Resolved | Plan 71 `Executed` (2026-08-16, versión 3.22.0); ítems 10–12 aplicados en `dev` con batería en verde |
 | 3 — Determinismo y verificación | ☑ Resolved | Ítems 15/17/18 ☑ Resolved (plan 72, 2026-08-16, versión 3.23.0); ítems 13/14/16 ☑ Resolved (RFC-59 + plan 73, 2026-08-16, versión 3.24.0) |
-| 4 — Modelo y runtime | Pendiente | Ítems 19–22 |
+| 4 — Modelo y runtime | ☑ Resolved | Ítems 19/20/21 ☑ Resolved (RFC-60 + plan 74, 2026-08-17, versión 3.25.0); ítem 22 (ceremonia de gobernanza) documentado como decisión del owner, sin cambios |

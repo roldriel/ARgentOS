@@ -2341,7 +2341,14 @@ entities:
     lifecycle: discovery
     produced_by:
       - discovery:DISCOVERY_INIT
+      - discovery:DISCOVERY_ENV
+      - discovery:DISCOVERY_STACK
+      - discovery:DISCOVERY_FRAMEWORK
+      - discovery:DISCOVERY_PATTERNS
+      - discovery:DISCOVERY_BUSINESS
+      - discovery:DISCOVERY_MERGE
     consumed_by:
+      - discovery:DISCOVERY_MERGE
       - core:GATHERING_CONTEXT
     file: .agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md
 
@@ -2565,7 +2572,19 @@ entities:
     lifecycle: discovery
     produced_by:
       - discovery:DISCOVERY_INIT
+      - discovery:DISCOVERY_ENV
+      - discovery:DISCOVERY_STACK
+      - discovery:DISCOVERY_FRAMEWORK
+      - discovery:DISCOVERY_PATTERNS
+      - discovery:DISCOVERY_BUSINESS
+      - discovery:DISCOVERY_MERGE
     consumed_by:
+      - discovery:DISCOVERY_INIT
+      - discovery:DISCOVERY_ENV
+      - discovery:DISCOVERY_STACK
+      - discovery:DISCOVERY_FRAMEWORK
+      - discovery:DISCOVERY_PATTERNS
+      - discovery:DISCOVERY_BUSINESS
       - discovery:DISCOVERY_MERGE
     file: .agents/orchestrators/discovery/contracts/INTER_WORKER_MESSAGE.md
 

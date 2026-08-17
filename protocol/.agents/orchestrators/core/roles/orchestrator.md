@@ -176,12 +176,12 @@ discovery (conditions above) and requests the scope.
 {
   "project_root": "/path/to/project",
   "scope": "full",
-  "context_budget": 100000,
+  "context_budget": 32000,
   "sample_size": 10
 }
 ```
 
-This payload is an inter-orchestrator invocation (core → discovery), not an inter-worker message; it does not carry `message_version` / `from_worker` / `to_worker`.
+This payload is an inter-orchestrator invocation (core → discovery), not an inter-worker message; it does not carry `message_version` / `from_worker` / `to_worker`. The `context_budget` and `sample_size` values mirror `discovery_context_budget` and `discovery_sample_size` in `.agents/features.toml`; `init_worker` reads the configured values from that file when it builds `discovery_input.json` (`.agents/orchestrators/discovery/roles/workers/init_worker.md`).
 
 **Response handling.** The Discovery Orchestrator returns a structured result and never responds to the user:
 

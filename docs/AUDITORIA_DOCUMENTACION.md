@@ -21,7 +21,7 @@ cerrados el 12 ago 2026 (plan 56) — ver abajo.
   RFC-56, plan 57); ninguna RFC queda en `Proposal`.
 - `test_toolcalls.py` quedó desacoplado del payload (usa
   `tests/fixtures/skills/`).
-- La batería pasó de 114 a **121 tests** (`python -m pytest tests/`).
+- La batería pasó de 114 a **145 tests** (`python -m pytest tests/`).
 - `docs/VERSIONING.md` §9 refleja el estado real de versiones (master 3.6.3,
   dev 3.8.0, dist 3.6.3) y §4.1 define la batería canónica.
 - Pendientes de fondo sin cambio: branch protection, harness tests fuera de la
@@ -34,7 +34,7 @@ cerrados el 12 ago 2026 (plan 56) — ver abajo.
 El repo se organiza en tres capas claras: `protocol/` es el producto (data,
 intocable sin vía RFC/plan), `tools/` + `runtime/` son la instrumentación y la
 implementación de referencia, y `plans/` es la historia de diseño que gobierna
-todo cambio. Alrededor gira una batería de verificación (4 checkers + 114
+todo cambio. Alrededor gira una batería de verificación (6 checkers + 145
 tests) que corre igual en local y en CI. El flujo de trabajo es: RFC/plan
 aprobado → ejecución en `dev` → verificación → cierre documental (estados,
 changelog, VERSION) → commit atómico → promoción a `master` con tag → `dist`
@@ -103,8 +103,8 @@ regenerada por CI.
   `runner_state.py`) no tiene regresión automática en este repo; sus tests
   solo corren en proyectos adoptantes. Un plan que rompa el harness se
   detecta tarde. El plan 46 agregó el test de integración del flujo enforced al
-  payload, pero la CI del repo sigue sin ejecutarlos (pendiente en
-  `AUDITORIA_SISTEMA.md` §Remediation Tracker).
+  payload, y la CI del repo los ejecuta en el job `check-protocol` desde
+  2026-08-14 (64 tests).
 
 ## Cabos sueltos
 

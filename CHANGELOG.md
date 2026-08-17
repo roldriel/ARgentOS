@@ -36,26 +36,33 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Modelo conceptual
 
-- **RFC-32…37 y RFC-42 Accepted** (plan 57, revisión individual de la serie
-  Proposal según RFC-56): diseños verificados contra el payload, con sus
-  planes asociados ya `Executed` (31–36) o cerrados (41, vía plan 56). Sin
-  cambio de payload; solo estados y traza de gobernanza.
-- **RFC-38…41 y RFC-43 Accepted** (plan 57, misma revisión): diseños
-  aprobados por mérito propio; su ejecución sigue el track de los planes
-  37–40 y 42 (hoy `Aprobado para redacción`).
-- **RFC-44…48 Accepted** (plan 57, misma revisión): diseños aprobados
-  (reflexión HIGH, modo desatendido, trazas históricas, dogfooding enforced,
-  contratos por entrada); ejecución pendiente vía planes 43–47.
-- **RFC-49…54 Accepted** (plan 57, misma revisión): diseños aprobados
-  (validación mecánica de skills, modo single-instance, frescura de KB,
-  catálogo de roles, candidatura tooling, contratos de discovery); ejecución
-  pendiente vía planes 48–53. Con este grupo queda cerrada la revisión
-  individual de la serie Proposal (23/23).
+- **Revisión de la serie Proposal completada** (plan 57, RFC-56): las 23 RFCs
+  de la serie 32–54 quedaron `Accepted` y sus planes asociados (31–53) están
+  `Executed`. Sin cambio de payload; solo estados y traza de gobernanza.
 
 (sin ítems de payload por ahora — los cambios de repo que no tocan el payload no se
 listan; ver `docs/VERSIONING.md` §5)
 
 ---
+
+## [3.20.0] — 2026-08-16
+
+### Fixed
+
+- **Conteo de scripts del harness y literal de budget de discovery** (plan 69,
+  bloque 0 de la auditoría de sistema 3.1): `harness/INDEX.md` pasa de "three
+  pure-stdlib scripts" a cuatro (incluye `gate_validator.py`); el ejemplo de
+  invocación al Discovery Orchestrator en `orchestrator.md` usa
+  `context_budget: 32000`, alineado con `discovery_context_budget` de
+  `features.toml`.
+- **Modelo produced_by/consumed_by de contratos de discovery** (plan 69,
+  Clase B): la taxonomía refleja los productores reales de
+  `INTER_WORKER_MESSAGE.md` y `KB_DISCOVERY_ENTRY.md` (los workers por scope),
+  coherente con el front matter TOML de los contratos.
+- **Snapshot del índice y conteos de auditorías previas** (plan 69): header de
+  `plans/INDEX.md` alineado con el estado real (3.19.0, `dev` en sync),
+  `[Unreleased]` del changelog sin claims stale, y conteos de tests de
+  `docs/AUDITORIA_DOCUMENTACION.md` / `AUDITORIA_SISTEMA.md` actualizados.
 
 ## [3.19.0] — 2026-08-15
 

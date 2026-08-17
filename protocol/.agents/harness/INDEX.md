@@ -13,7 +13,7 @@ for what is mechanical vs. judgment). It defines the criteria so that:
 4. The process remains auditable and reproducible through a self-reported
    review trail.
 
-The harness is implemented as a set of policies, each carrying a «Gate Checklist» in prose that the Orchestrator evaluates by judgment when the gate fires. There is no executable validation runner. Three pure-stdlib Python scripts survive: `hook_gate.py` (the CLI enforcement hook), `runner_state.py` (the only writer of `state.json`, via its CLI), and `health_check.py` (the state-storage probe). Recovery routing lives in each policy's §"Recovery Decision Table" and protocol health verification in `.agents/standards/runtime/PROTOCOL_HEALTH.md`.
+The harness is implemented as a set of policies, each carrying a «Gate Checklist» in prose that the Orchestrator evaluates by judgment when the gate fires. There is no executable validation runner. Four pure-stdlib Python scripts survive: `hook_gate.py` (the CLI enforcement hook), `runner_state.py` (the only writer of `state.json`, via its CLI), `health_check.py` (the state-storage probe) and `gate_validator.py` (the structural validator for the `[gate]` subset). Recovery routing lives in each policy's §"Recovery Decision Table" and protocol health verification in `.agents/standards/runtime/PROTOCOL_HEALTH.md`.
 
 ## Enforcement model
 

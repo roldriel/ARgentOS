@@ -172,14 +172,15 @@ RFCs:
   tocar `VERSION`/changelog, o los ítems se acumulan en `[Unreleased]` y la
   numeración se asigna en la promoción.
 
-## 9. Estado actual (2026-08-15)
+## 9. Estado actual (2026-08-17)
 
-Estado tras la promoción del release `3.19.0`:
+Estado tras la promoción del release `3.25.0`:
 
-- `master` = `3.19.0` (tags anotados `3.18.0` y `3.19.0`; merge `dev` →
-  `master` con el cierre de backlog B-6 y el validador obligatorio F1-B).
-- `dist` = `3.19.0`, regenerada por CI (`publish-dist`) desde `master`.
-- `dev` = `3.19.0`, en sync con `master`.
+- `master` = `3.25.0` (tags anotados `3.20.0`–`3.25.0`; merge `dev` →
+  `master` con el cierre completo de la remediación de la auditoría de sistema
+  3.1: planes 69–74 y RFCs 59–60).
+- `dist` = pendiente de regeneración por CI (`publish-dist`) desde `master`.
+- `dev` = `3.25.0`, en sync con `master`.
 
 Notas:
 
@@ -187,6 +188,8 @@ Notas:
   remediación en `dev`; no fueron releases individuales y no tienen tag.
   `3.16.0`, `3.17.0`, `3.18.0` y `3.19.0` son las versiones publicadas del
   ciclo (ver §5 y §8).
+- `3.20.0`–`3.25.0` se promovieron en un solo merge con un tag anotado por
+  versión (planes 69–74, RFCs 59–60).
 - La regularización del 12 ago 2026 (planes 34–36 y 54; tags `3.0.2`–`3.0.5`)
   y las versiones `3.0.6`–`3.6.3` quedan como historia. Este §9 es un
   snapshot que se actualiza en cada release; la fuente inmutable de la verdad

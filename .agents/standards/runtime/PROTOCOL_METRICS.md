@@ -57,7 +57,7 @@ Metrics are grouped by what they measure. The `Source` column states where the d
 
 | Metric | Definition | Source |
 |---|---|---|
-| `context.budget_declared` / `context.budget_consumed` | Context Budget declared vs. consumed per delegation, in the materialized unit of `.agents/standards/context/BUDGET_MATERIALIZATION.md` | `event:context_budget` |
+| `context.budget_declared` / `context.budget_consumed` | Context Budget declared vs. consumed per delegation, in the materialized unit of `.agents/standards/context/BUDGET_MATERIALIZATION.md`; `consumed` is computed with the estimation rule (Verified) | `event:context_budget` |
 | `context.candidates` | Context candidates prioritized vs. resolved vs. composed | `event:context_candidates` |
 
 ### Session
@@ -96,6 +96,28 @@ The aggregation consolidates the data points of one session or of the whole proj
 The development repository provides a metrics aggregation tool that implements
 this procedure mechanically (dev-only; not part of the distributed protocol);
 adopting projects may aggregate by judgment or with their own tooling.
+
+## Verifiability classes
+
+Every metric data point belongs to one of three classes, declared here and
+tagged in the aggregated report:
+
+- **Derived** — computable from the session filesystem or persisted state
+  without trusting the reporter: `session.iterations`,
+  `session.artifacts_per_iteration`, and the cross-check between `state.json`
+  gate records and `HARNESS_REPORT.md` entries.
+- **Recorded** — the event is the only record; its value is accepted as the
+  report of what happened: `state_transition`, `failure`, `delegation`,
+  `reviewer_retry`, `skill_override`, `flag_evidence`.
+- **Verified** — corroborated by a second artifact the reporter does not
+  control in that step: `context.budget_declared` / `context.budget_consumed`
+  against the estimation rule of `BUDGET_MATERIALIZATION.md` when the payload
+  is captured; `flags.evidenced` against the consumption declaration in a
+  produced artifact; harness `PASS` entries against `state.json` gate records.
+
+No metric gates anything; the class only declares the trust boundary. The
+aggregation report tags each metric with its class, and the development-side
+`--audit` mode reports discrepancies between the mechanical cross-checks.
 
 ## Health signals
 

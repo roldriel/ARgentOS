@@ -29,6 +29,18 @@ These entries live in `.project/knowledge/discovery/` and provide pre-processed 
 
 ---
 
+## Naming convention
+
+Per-entry contracts are named after the entry type (e.g.
+`ENVIRONMENT_DISCOVERY.md`, `DEVELOPMENT_PATTERNS.md`, `ARCHITECTURE.md`); the
+runtime artifact they define is the lowercase KB file (e.g. `environment.md`,
+`development_patterns.md`, `architecture.md`) under
+`.project/knowledge/discovery/`. The contract filename is not the artifact
+path: workflow `output_artifacts` and state machine "Required Output
+Artifacts" use the KB file names.
+
+---
+
 # KB Discovery Entry
 
 ## Metadata

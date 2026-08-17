@@ -15,6 +15,9 @@ truth) and S00 (probe) are not covered by design.
 Checks per trigger:
 - artifact existence;
 - required normative sections of the contract;
+- profile-aware H04: for `trivial`-profile tasks the `Context Reference`
+  section is not required (the EXECUTION_PLAN contract omits it in the reduced
+  cycle); the profile is read from the session's TASK_ANALYSIS.md;
 - machine-readable TOML blocks (parseable, required keys, enum values);
 - citation resolution (``path:section``, ``path`` §section, TOML citation
   fields) against the project and session roots;
@@ -54,6 +57,12 @@ KNOWN_TECH_PRACTICES = {
     "ddd_tactical",
     "ddd_strategic",
 }
+
+_PROFILE_SECTION_RE = re.compile(
+    r"^##\s+Task Profile\s*\n(.*?)(?=^##\s|\Z)", re.MULTILINE | re.DOTALL
+)
+_PROFILE_VALUE_RE = re.compile(r'^\s*value\s*=\s*"([^"]+)"', re.MULTILINE)
+_VALID_PROFILES = ("trivial", "standard", "complex")
 
 BASE_RUBRICS = (
     "TASK_SPECIFICATION_RUBRIC",
@@ -271,6 +280,31 @@ def features(root: Path) -> dict:
     return data
 
 
+def read_task_profile(iterations: list[Path]) -> str | None:
+    """Return the task profile declared in the session's TASK_ANALYSIS.md.
+
+    Searches the session iteration directories (highest iteration wins) for a
+    file ending in ``TASK_ANALYSIS.md`` and reads the ``value`` key of its
+    ``Task Profile`` section. Returns None when the profile cannot be
+    determined; H04 then applies the standard (full) section set.
+    """
+    for iter_dir in reversed(iterations):
+        candidates = sorted(iter_dir.glob("*TASK_ANALYSIS.md"))
+        if not candidates:
+            continue
+        try:
+            content = candidates[-1].read_text(encoding="utf-8")
+        except OSError:
+            continue
+        section = _PROFILE_SECTION_RE.search(content)
+        if not section:
+            continue
+        match = _PROFILE_VALUE_RE.search(section.group(1))
+        if match and match.group(1) in _VALID_PROFILES:
+            return match.group(1)
+    return None
+
+
 def _roots_from_artifact(artifact: Path) -> tuple[Path, Path | None, list[Path]]:
     """Return (project root, session dir, iteration dirs) for citation checks."""
     resolved = artifact.resolve()
@@ -374,7 +408,20 @@ def validate(trigger: str, artifact: Path, root: Path | None = None) -> tuple[li
 
     text = artifact.read_text(encoding="utf-8", errors="replace")
     headings = headings_of(text)
-    for section in spec.get("sections", []):
+    sections = list(spec.get("sections", []))
+    if trigger == "H04" and read_task_profile(_roots_from_artifact(artifact)[2]) == "trivial":
+        sections = [s for s in sections if s != "Context Reference"]
+        checks.append(
+            {
+                "id": "profile",
+                "result": "PASS",
+                "evidence": (
+                    "trivial task profile: Context Reference omitted per the "
+                    "EXECUTION_PLAN.md contract"
+                ),
+            }
+        )
+    for section in sections:
         if _normalize(section) not in headings:
             checks.append(
                 {"id": "section", "result": "FAIL", "evidence": f"missing section: {section}"}
@@ -432,6 +479,8 @@ def validate(trigger: str, artifact: Path, root: Path | None = None) -> tuple[li
             checks.append({"id": "rubrics", "result": "SKIP", "evidence": "rubrics flag disabled"})
 
     roots = _roots_from_artifact(artifact) if root is None else (root, None, [])
+    if trigger == "H06":
+        checks.extend(_check_test_results(text, roots))
     checks.extend(check_citations(text, roots))
 
     failed = any(c["result"] == "FAIL" for c in checks)
@@ -532,6 +581,89 @@ def _check_toml(toml_key: str, text: str) -> list[dict]:
         checks.append({"id": toml_key, "result": "FAIL",
                        "evidence": f"no parseable TOML block with [{toml_key}]"})
     return checks
+
+
+def _evidence_resolves(evidence: str, roots: tuple) -> bool:
+    """True when an evidence path resolves to an existing file."""
+    if not evidence.strip() or "<" in evidence or ">" in evidence:
+        return False
+    fp = evidence.replace("\\", "/")
+    project, session, iterations = roots
+    candidates = []
+    if Path(fp).is_absolute():
+        candidates.append(Path(fp))
+    else:
+        base_dirs = [project] if project else []
+        if session:
+            base_dirs.append(session)
+        base_dirs.extend(iterations)
+        for base in base_dirs:
+            candidates.append(base / fp)
+    return any(c.is_file() for c in candidates)
+
+
+def _check_test_results(text: str, roots: tuple) -> list[dict]:
+    """Validate the test_results TOML block of H06 (VERIFICATION_REPORT.md).
+
+    Per the contract (3.21.0) and H06 §Gate Checklist item 7: a result other
+    than SKIPPED must either declare an ``evidence`` that resolves to an
+    existing file, or its ``test`` command string must appear in the session's
+    SESSION_LOG.md. When no ``[[test_results]]`` block exists the check is SKIP
+    (compatible with prior artifacts that predate the block).
+    """
+    blocks: list[dict] = []
+    for block in toml_blocks(text):
+        parsed = parse_toml(block)
+        value = parsed.get("test_results")
+        if isinstance(value, list):
+            blocks.extend(x for x in value if isinstance(x, dict))
+    if not blocks:
+        return [
+            {
+                "id": "test_results",
+                "result": "SKIP",
+                "evidence": "no test_results TOML block",
+            }
+        ]
+    project, session, _ = roots
+    log_text = ""
+    if session is not None:
+        log = session / "SESSION_LOG.md"
+        if log.is_file():
+            try:
+                log_text = log.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                log_text = ""
+    bad: list[str] = []
+    for i, entry in enumerate(blocks, 1):
+        result = entry.get("result")
+        if result not in ("PASS", "FAIL", "SKIPPED"):
+            bad.append(f"entry {i}: bad result {result!r}")
+            continue
+        if result == "SKIPPED":
+            continue
+        evidence = entry.get("evidence")
+        test = entry.get("test", "")
+        if evidence:
+            if not _evidence_resolves(str(evidence), roots):
+                bad.append(f"entry {i}: evidence does not resolve to an existing file")
+        elif not (isinstance(test, str) and test and test in log_text):
+            bad.append(f"entry {i}: no evidence and test command not found in SESSION_LOG.md")
+    if bad:
+        return [
+            {
+                "id": "test_results",
+                "result": "FAIL",
+                "evidence": "; ".join(bad[:5]),
+            }
+        ]
+    return [
+        {
+            "id": "test_results",
+            "result": "PASS",
+            "evidence": f"{len(blocks)} valid test result(s)",
+        }
+    ]
 
 
 def _check_rubrics(text: str) -> list[dict]:

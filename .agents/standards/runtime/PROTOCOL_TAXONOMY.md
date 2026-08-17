@@ -566,8 +566,10 @@ entities:
       - discovery:DISCOVERY_FAILED
     artifacts_input: []
     artifacts_output:
+      - discovery_input.json
+      - invalidation_report.json
       - KB_DISCOVERY_REPORT.md
-      - KB_DISCOVERY_ENTRY.md
+      - file_map.md
     workflow: .agents/orchestrators/discovery/workflow/00-discovery-init.md
     harness:
       - D00-discovery-init
@@ -611,7 +613,7 @@ entities:
       - discovery_input.json
     artifacts_output:
       - worker_environment.json
-      - ENVIRONMENT_DISCOVERY.md
+      - environment.md
     workflow: .agents/orchestrators/discovery/workflow/01-discovery-env.md
     harness: []
     actor: discovery_orchestrator
@@ -632,6 +634,11 @@ entities:
       - discovery_input.json
     artifacts_output:
       - worker_stack.json
+      - stack.md
+      - dependencies.md
+      - containers.md
+      - database.md
+      - distribution.md
     workflow: .agents/orchestrators/discovery/workflow/02-discovery-stack.md
     harness: []
     actor: discovery_orchestrator
@@ -652,6 +659,10 @@ entities:
       - worker_stack.json
     artifacts_output:
       - worker_framework.json
+      - architecture.md
+      - configuration.md
+      - entrypoint.md
+      - api.md
     workflow: .agents/orchestrators/discovery/workflow/03-discovery-framework.md
     harness: []
     actor: discovery_orchestrator
@@ -672,7 +683,7 @@ entities:
       - discovery_input.json
     artifacts_output:
       - worker_patterns.json
-      - DEVELOPMENT_PATTERNS.md
+      - development_patterns.md
     workflow: .agents/orchestrators/discovery/workflow/04-discovery-patterns.md
     harness: []
     actor: discovery_orchestrator
@@ -693,6 +704,11 @@ entities:
       - discovery_input.json
     artifacts_output:
       - worker_business.json
+      - business_rules.md
+      - project_flow.md
+      - technical_debt.md
+      - known_errors.md
+      - glossary.md
     workflow: .agents/orchestrators/discovery/workflow/05-discovery-business.md
     harness: []
     actor: discovery_orchestrator
@@ -720,7 +736,8 @@ entities:
       - worker_patterns.json
       - worker_business.json
     artifacts_output:
-      - DISCOVERY_MANIFEST.md
+      - executive_summary.md
+      - .discovery_manifest
     workflow: .agents/orchestrators/discovery/workflow/06-discovery-merge.md
     harness: []
     actor: discovery_orchestrator
@@ -1955,7 +1972,7 @@ entities:
       - discovery_input.json
     output_artifacts:
       - worker_environment.json
-      - ENVIRONMENT_DISCOVERY.md
+      - environment.md
     harness: []
     actor: discovery_orchestrator
     profile: environment_worker
@@ -1975,6 +1992,11 @@ entities:
       - discovery_input.json
     output_artifacts:
       - worker_stack.json
+      - stack.md
+      - dependencies.md
+      - containers.md
+      - database.md
+      - distribution.md
     harness: []
     actor: discovery_orchestrator
     profile: stack_worker
@@ -1994,6 +2016,10 @@ entities:
       - worker_stack.json
     output_artifacts:
       - worker_framework.json
+      - architecture.md
+      - configuration.md
+      - entrypoint.md
+      - api.md
     harness: []
     actor: discovery_orchestrator
     profile: framework_worker
@@ -2013,7 +2039,7 @@ entities:
       - discovery_input.json
     output_artifacts:
       - worker_patterns.json
-      - DEVELOPMENT_PATTERNS.md
+      - development_patterns.md
     harness: []
     actor: discovery_orchestrator
     profile: patterns_worker
@@ -2033,6 +2059,11 @@ entities:
       - discovery_input.json
     output_artifacts:
       - worker_business.json
+      - business_rules.md
+      - project_flow.md
+      - technical_debt.md
+      - known_errors.md
+      - glossary.md
     harness: []
     actor: discovery_orchestrator
     profile: business_worker
@@ -2058,7 +2089,8 @@ entities:
       - worker_patterns.json
       - worker_business.json
     output_artifacts:
-      - DISCOVERY_MANIFEST.md
+      - executive_summary.md
+      - .discovery_manifest
     harness: []
     actor: discovery_orchestrator
     profile: synthesis_worker
@@ -2341,7 +2373,14 @@ entities:
     lifecycle: discovery
     produced_by:
       - discovery:DISCOVERY_INIT
+      - discovery:DISCOVERY_ENV
+      - discovery:DISCOVERY_STACK
+      - discovery:DISCOVERY_FRAMEWORK
+      - discovery:DISCOVERY_PATTERNS
+      - discovery:DISCOVERY_BUSINESS
+      - discovery:DISCOVERY_MERGE
     consumed_by:
+      - discovery:DISCOVERY_MERGE
       - core:GATHERING_CONTEXT
     file: .agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md
 
@@ -2565,7 +2604,19 @@ entities:
     lifecycle: discovery
     produced_by:
       - discovery:DISCOVERY_INIT
+      - discovery:DISCOVERY_ENV
+      - discovery:DISCOVERY_STACK
+      - discovery:DISCOVERY_FRAMEWORK
+      - discovery:DISCOVERY_PATTERNS
+      - discovery:DISCOVERY_BUSINESS
+      - discovery:DISCOVERY_MERGE
     consumed_by:
+      - discovery:DISCOVERY_INIT
+      - discovery:DISCOVERY_ENV
+      - discovery:DISCOVERY_STACK
+      - discovery:DISCOVERY_FRAMEWORK
+      - discovery:DISCOVERY_PATTERNS
+      - discovery:DISCOVERY_BUSINESS
       - discovery:DISCOVERY_MERGE
     file: .agents/orchestrators/discovery/contracts/INTER_WORKER_MESSAGE.md
 

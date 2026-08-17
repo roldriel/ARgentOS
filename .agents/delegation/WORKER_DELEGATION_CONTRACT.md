@@ -65,13 +65,16 @@ The invocation is not a function call; it is a structured handoff of context and
 
 `context_budget` is the Context Budget for this delegation as materialized by the current runtime: the finite share of the Budget available for populating the payload (in particular, the `knowledge_entries` excerpts). The contract defines the concept only; the value, its units, and its limits belong to the runtime, not to this contract. A valid value is always a finite, positive constraint on the resource the runtime uses to represent the Budget. For the prompt-based runtime, the value is denominated in estimated tokens as defined in `.agents/standards/context/BUDGET_MATERIALIZATION.md`.
 
-**Enforcement status: advisory.** The protocol does not mechanically measure,
-truncate, or block payload composition against `context_budget`. The value is
-a normative ceiling: the Orchestrator should not exceed it when assembling the
-payload, and the Worker should treat it as a bound, but compliance is
-declarative and auditable via the `context_budget` metric event
-(`METRICS.md`), not machine-enforced. Mechanical enforcement is a harness
-Future Extension.
+**Enforcement status: measured.** The protocol measures the
+`knowledge_entries` excerpts of the payload with the estimation rule of
+`.agents/standards/context/BUDGET_MATERIALIZATION.md` (§2) before delegating.
+The Orchestrator MUST record the computed consumed figure in the
+`context_budget` metric event (`METRICS.md`); when it exceeds
+`context_budget`, the Orchestrator MUST apply the compression rules of
+`CONTEXT.md` (§8.4) or reduce the entries, and a delegation that still exceeds
+the ceiling MUST be logged as a deviation (class F2) with the true consumed
+value. The protocol does not truncate or block at delegation time; compliance
+is measured and auditable, never silent.
 
 `communication_style` is optional. It is populated by the Orchestrator when the `caveman` feature flag is enabled. The `enabled` field is a boolean, and `level` is one of `lite`, `full`, or `ultra` (default: `full`). When present, the Worker MUST apply `.agents/standards/communication/CAVEMAN.md` at the specified level to all natural-language output, including the artifact and the return report.
 

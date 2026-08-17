@@ -67,19 +67,75 @@ The report follows a fixed declarative structure that the Orchestrator must resp
    ```
 
    The `alerts` array is optional (absent or empty when no alert was raised).
+   The `deviation` field is optional: when the Orchestrator records a `PASS`
+   on a gate whose structural validator returned FAIL, the entry MUST carry a
+   `deviation` object `{"cause": "<short reason>", "evidence": "<citation of
+   the artifact or session-log entry>"}` (see §"Documented deviations").
+   The `recovery` field is optional: when a FAIL routes through a recovery
+   decision table, the entry carries `{"variables": {<condition>: <value>},
+   "matched_rule": "<action or rule number>", "target_phase": "<module or ->"}`
+   (see §"Recovery context").
 
    These `ENTRY` comments are part of the contract: they must remain valid JSON and must not be removed or edited.
 
-4. **`## Metrics`** — aggregated per trigger across all entries. `SKIP` entries count toward `Invocations` but toward neither `PASS` nor `FAIL`:
+4. **`## Documented deviations`** — the only way a structural FAIL becomes a
+   recorded `PASS`; every override carries cause and evidence (see below).
+
+## Documented deviations
+
+A documented deviation is the only way a structural FAIL becomes a recorded
+`PASS`: the Orchestrator overrides a structural validator FAIL and records the
+override in the gate's `ENTRY` comment as a `deviation` object with a
+non-empty `cause` and a non-empty `evidence` (an artifact path or a
+session-log entry that supports the override).
+
+Rules:
+
+- A deviation is never silent: every override is recorded in the same entry it
+  affects, with cause and evidence.
+- A deviation never changes the fail-open behavior of the enforcement hooks
+  (`.agents/harness/INDEX.md`, §Enforcement model).
+- A deviation is auditable post-hoc: recorded `PASS` entries are recomputed
+  against the artifacts and compared with the recorded result.
+- `deviation` is optional in every other entry: an entry without it is
+  presumed to reflect a structural PASS.
+
+## Recovery context
+
+When a trigger fails and the Orchestrator applies the failed policy's Recovery
+Decision Table, the evaluation is recorded in the gate's FAIL entry as an
+optional `recovery` object:
+
+```json
+{
+  "variables": {"artifact_exists": false, "retry_count": 0},
+  "matched_rule": "RETRY_WORKER",
+  "target_phase": "00-analyze-task.md"
+}
+```
+
+- `variables`: the conditions evaluated for the table, as derived per
+  `.agents/harness/INDEX.md` (§Recovery Mechanism): mechanical conditions from
+  the structural validator output or the filesystem, judgment conditions
+  recorded with evidence at failure time.
+- `matched_rule`: the action of the first matching rule, or `RECOVERY_GENERIC`
+  when no rule matches.
+- `target_phase`: the workflow module of the destination (or `-` when the
+  action is `NEEDS_CLARIFICATION` or `ABORT`).
+
+The object is optional: an entry without it means no recovery table was
+applied (for example, a `SKIP` entry or a failure recorded without routing).
+
+5. **`## Metrics`** — aggregated per trigger across all entries. `SKIP` entries count toward `Invocations` but toward neither `PASS` nor `FAIL`:
 
    ```markdown
    | Trigger | Invocations | PASS | FAIL | Avg Duration (ms) |
    |---|---|---|---|---|
    ```
 
-5. **`## Rubric Scores`** (optional) — present only when the latest entry carries `rubric_scores`; one bullet per rubric: `- <rubric>: <score>`.
+7. **`## Rubric Scores`** (optional) — present only when the latest entry carries `rubric_scores`; one bullet per rubric: `- <rubric>: <score>`.
 
-6. **`## Final Decision`** — the result and trigger of the most recent invocation:
+8. **`## Final Decision`** — the result and trigger of the most recent invocation:
 
    ```markdown
    - Last result: `<PASS|FAIL|SKIP>`

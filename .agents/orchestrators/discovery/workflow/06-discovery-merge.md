@@ -7,7 +7,7 @@ lifecycle: discovery
 previous_states: [discovery:DISCOVERY_ENV, discovery:DISCOVERY_FRAMEWORK, discovery:DISCOVERY_PATTERNS, discovery:DISCOVERY_BUSINESS]
 next_states: [discovery:DISCOVERY_VALIDATE, discovery:DISCOVERY_FAILED]
 input_artifacts: [worker_environment.json, worker_stack.json, worker_framework.json, worker_patterns.json, worker_business.json]
-output_artifacts: [DISCOVERY_MANIFEST.md]
+output_artifacts: [executive_summary.md, .discovery_manifest]
 harness: []
 actor: discovery_orchestrator
 profile: synthesis_worker

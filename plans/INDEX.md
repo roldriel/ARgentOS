@@ -1,23 +1,34 @@
 # Índice de planes — ARgentOS
 
-Estado al 2026-08-14. La **serie de remediación de la auditoría 2.0.1** está
+Estado al 2026-08-16. La **serie de remediación de la auditoría 2.0.1** está
 completa: RFC-29…56 `Accepted` (las 23 RFCs de la serie 32…54 se revisaron una
 por una vía RFC-56, plan 57) y todos los planes numerados `Executed`. El
-trabajo activo es el **Execution Context Pipeline** (`plans/ec-pipeline-vision.md`,
-visión completada) y su roadmap de RFCs conceptuales. `dev` está 2 commits
-adelante de `master` (planes 46 y 47, versiones `[3.7.0]`/`[3.8.0]` sin
-publicar); `master`/`dist` están en `3.6.3`. El 12 ago 2026 se completó la
-remediación de la auditoría de documentación (`docs/AUDITORIA_DOCUMENTACION.md`,
-fuera del payload): AGENTS.md raíz operativo, plantillas de plan/RFC +
-`tools/check_plan_structure.py`, tests centralizados en `tests/`, batería en CI
-sin path filters, disolución de `dev/` (`tools/`, `runtime/`, `docs/` en raíz) y
-`tools/check_dist_sync.py`. El 14 ago 2026 se agregó `AUDITORIA_SISTEMA.md`
-(tracker vivo de remediación del sistema) y se unificó la definición de batería
-en `docs/VERSIONING.md` §4.1. El 14–15 ago 2026 se ejecutaron los planes 58–68
-(remediación de la auditoría de sistema, cierre de backlog B-6 y validador
-obligatorio F1-B, versiones 3.9.0–3.19.0). Los planes de construcción del
-protocolo (dominios, taxonomía, discovery) están implementados; sus versiones
-históricas viven en `archive/`.
+trabajo activo es la remediación de la **auditoría de sistema 3.1**
+(`AUDITORIA_SISTEMA_2026-08-16.md`). `master`/`dist` están en `3.19.0` (tags
+anotados `3.16.0`–`3.19.0`); `dev` lleva las versiones en curso `3.20.0`–
+`3.25.0` sin publicar. El 12 ago 2026 se
+completó la remediación de la auditoría de documentación
+(`docs/AUDITORIA_DOCUMENTACION.md`, fuera del payload): AGENTS.md raíz
+operativo, plantillas de plan/RFC + `tools/check_plan_structure.py`, tests
+centralizados en `tests/`, batería en CI sin path filters, disolución de `dev/`
+(`tools/`, `runtime/`, `docs/` en raíz) y `tools/check_dist_sync.py`. El 14 ago
+2026 se agregó `AUDITORIA_SISTEMA.md` (tracker vivo de remediación del sistema)
+y se unificó la definición de batería en `docs/VERSIONING.md` §4.1. El 14–15
+ago 2026 se ejecutaron los planes 58–68 (remediación de la auditoría de
+sistema, cierre de backlog B-6 y validador obligatorio F1-B, versiones
+3.9.0–3.19.0). Los planes de construcción del protocolo (dominios, taxonomía,
+discovery) están implementados; sus versiones históricas viven en `archive/`.
+
+## Novena serie: remediación de la auditoría de sistema 3.1 (16 ago 2026)
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `69-remediacion-bloque-0.md` | — (vía plan, Clase B) | Executed | Bloque 0 de `AUDITORIA_SISTEMA_2026-08-16.md`: conteo de scripts del harness, literal de discovery budget, snapshot del INDEX, `[Unreleased]` del changelog, conteos de auditorías previas y modelo produced_by/consumed_by de contratos de discovery. Versión 3.20.0. |
+| `70-remediacion-bloque-1.md` | — (vía plan, Clase B) | Executed | Bloque 1 de `AUDITORIA_SISTEMA_2026-08-16.md`: alineación del contrato de verificación con H06 (campo `evidence` opcional), reconciliación de salidas de discovery (workflows + taxonomía, naming de contratos por entrada) y chequeo mecánico bidireccional de salidas de state machines en el checker de coherencia taxonómica. Versión 3.21.0. |
+| `71-remediacion-bloque-2.md` | — (vía plan, Clase B) | Executed | Bloque 2 de `AUDITORIA_SISTEMA_2026-08-16.md`: validador estructural profile-aware para H04 (camino trivial, F-A), declaración del gate trivial en H00 e INDEX (F-B) y cobertura bidireccional de gates en el checker de coherencia taxonómica. Versión 3.22.0. |
+| `72-remediacion-bloque-3-parte-1.md` | — (vía plan, Clase B) | Executed | Bloque 3 parte 1 de `AUDITORIA_SISTEMA_2026-08-16.md`: evidencia determinista de tests en el validador H06, registro de desviaciones documentadas en `HARNESS_REPORT.md`/`harness/INDEX.md` con validación en el checker de sesión, y tool dev-only de auditoría post-hoc de gates. Versión 3.23.0. |
+| `73-remediacion-bloque-3-parte-2.md` | RFC-59 | Executed | Bloque 3 parte 2 de `AUDITORIA_SISTEMA_2026-08-16.md` (ítems 13/14/16): recovery context con derivación/registro de variables de las tablas, ranking de destinos múltiples de recovery y procedimiento de reanudación de sesión. Versión 3.24.0. |
+| `74-remediacion-bloque-4.md` | RFC-60 | Executed | Bloque 4 de `AUDITORIA_SISTEMA_2026-08-16.md` (ítems 19/20/21): contabilidad mecánica del Context Budget (estado measured + tool de medición), modelo de confianza de métricas (clases Derived/Recorded/Verified + `--audit` del agregador) y endurecimiento de la superficie de bypass del hook (deny de Write/Edit sin target). Versión 3.25.0. |
 
 ## Serie de RFCs (documentos canónicos)
 
@@ -82,6 +93,8 @@ históricas viven en `archive/`.
 | RFC-56 | `rfc/56-governance-fast-track.md` | Accepted (12 ago 2026) | ¿Qué cambios del payload requieren RFC y cuáles pasan por vía plan con verificación mecánica? |
 | RFC-57 | `rfc/57-harness-structural-validator.md` | Accepted (15 ago 2026) | ¿Cómo se da soporte mecánico opcional a los ítems `[gate]` sin cambiar el modelo de juicio? |
 | RFC-58 | `rfc/58-mandatory-structural-validator.md` | Accepted (15 ago 2026) | ¿Cómo se vuelve obligatorio el validador estructural a nivel de gate sin tocar el fail-open de los hooks? |
+| RFC-59 | `rfc/59-recovery-context-session-continuity.md` | Accepted (16 ago 2026) | ¿Cómo se derivan, registran y ordenan las decisiones de recovery (variables de contexto, destinos múltiples) y cómo se reanuda una sesión desde su último artefacto intacto? |
+| RFC-60 | `rfc/60-budget-accounting-metrics-trust.md` | Accepted (17 ago 2026) | ¿Cómo se hace mecánicamente verificable la contabilidad del Context Budget (declared vs consumed) y cómo se clasifica la confianza de los datos de métricas auto-reportados? |
 
 ## Roadmap de implementación (planes activos)
 

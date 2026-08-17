@@ -13,7 +13,7 @@ for what is mechanical vs. judgment). It defines the criteria so that:
 4. The process remains auditable and reproducible through a self-reported
    review trail.
 
-The harness is implemented as a set of policies, each carrying a «Gate Checklist» in prose that the Orchestrator evaluates by judgment when the gate fires. There is no executable validation runner. Three pure-stdlib Python scripts survive: `hook_gate.py` (the CLI enforcement hook), `runner_state.py` (the only writer of `state.json`, via its CLI), and `health_check.py` (the state-storage probe). Recovery routing lives in each policy's §"Recovery Decision Table" and protocol health verification in `.agents/standards/runtime/PROTOCOL_HEALTH.md`.
+The harness is implemented as a set of policies, each carrying a «Gate Checklist» in prose that the Orchestrator evaluates by judgment when the gate fires. There is no executable validation runner. Four pure-stdlib Python scripts survive: `hook_gate.py` (the CLI enforcement hook), `runner_state.py` (the only writer of `state.json`, via its CLI), `health_check.py` (the state-storage probe) and `gate_validator.py` (the structural validator for the `[gate]` subset). Recovery routing lives in each policy's §"Recovery Decision Table" and protocol health verification in `.agents/standards/runtime/PROTOCOL_HEALTH.md`.
 
 ## Enforcement model
 
@@ -50,6 +50,13 @@ This declaration is canonical for how the words "enforced", "reviewed" and
 = gate evaluation by judgment, "verified" = dev-only checkers of the
 development repository.
 
+**Documented deviations.** The only way a structural FAIL becomes a recorded
+`PASS` is a documented deviation: the Orchestrator records it in the gate's
+`HARNESS_REPORT.md` ENTRY comment as a `deviation` object with `cause` and
+`evidence` (contract: `.agents/contracts/HARNESS_REPORT.md`, §"Documented
+deviations"). A deviation is never silent, never applies to the fail-open of
+the hooks, and is auditable post-hoc.
+
 ## Who Invokes the Harness
 
 Only the **Orchestrator** may invoke the harness.
@@ -62,7 +69,7 @@ The harness runs as a gate **before** each critical transition:
 
 | Trigger | Transition | Policy |
 | --- | --- | --- |
-| H00 | `ANALYZING_TASK → BUILDING_TASK_SPECIFICATION`, `CONFIRMING_INTENT`, or `NEEDS_CLARIFICATION` | `.agents/orchestrators/core/harness/policies/H00-task-analysis.md` |
+| H00 | `ANALYZING_TASK → BUILDING_TASK_SPECIFICATION`, `CONFIRMING_INTENT`, `NEEDS_CLARIFICATION`, or `PLANNING` (trivial profile) | `.agents/orchestrators/core/harness/policies/H00-task-analysis.md` |
 | H11 | `CONFIRMING_INTENT → BUILDING_TASK_SPECIFICATION` | `.agents/orchestrators/core/harness/policies/H11-intent-reflection.md` |
 | H01 | `BUILDING_TASK_SPECIFICATION → TASK_READY` | `.agents/orchestrators/core/harness/policies/H01-task-specification.md` |
 | H02 | `GATHERING_CONTEXT → CONTEXT_GATHERED` | `.agents/orchestrators/core/harness/policies/H02-context-artifact.md` |
@@ -125,6 +132,28 @@ prior `FAIL` entries for the same trigger in the current iteration. `SKIP`
 entries do not count. The value is read from the report and is not stored
 elsewhere; `retry_count >= 1` means the trigger already failed at least once in
 this iteration.
+
+**Recovery context.** When a trigger fails, the Orchestrator evaluates the
+policy's Recovery Decision Table over a recovery context: the conditions named
+in the table plus `retry_count`. Conditions are derived as follows:
+
+- `retry_count` — from the session's `HARNESS_REPORT.md` (prior `FAIL` entries
+  for the same trigger in the current iteration; see above).
+- Mechanical conditions (artifact existence, required sections, TOML enums,
+  citation resolution, path existence) — MUST be derived from the structural
+  validator's check list when the trigger is validator-supported, or from
+  direct filesystem checks otherwise. The Orchestrator MUST NOT claim a
+  mechanical condition from its own judgment when the validator output says
+  otherwise.
+- Judgment conditions (scope coherence, ambiguity, feasibility) — evaluated by
+  judgment; their values MUST be recorded with evidence at failure time. A
+  retroactive value is a trace-integrity violation.
+
+The evaluation is recorded in the same `HARNESS_REPORT.md` FAIL entry as an
+optional `recovery` object (`variables`, `matched_rule`, `target_phase`;
+contract: `.agents/contracts/HARNESS_REPORT.md`, §"Recovery context"). The
+first matching rule top-to-bottom and the `RECOVERY_GENERIC` default are
+unchanged.
 
 The Orchestrator resolves and reads the policy of its own domain: core (`H*`), discovery (`D*`), system (`S*`) and cross-cutting (`.agents/harness/policies/`).
 
@@ -249,12 +278,25 @@ Rules:
   session across CLI conversations). The mapping file is runtime metadata,
   best-effort: a write failure never blocks resolution.
 - `PreToolUse` gates only `Write`/`Edit`; the target is read from
-  `tool_input` keys `file_path`, `path` or `filename`.
+  `tool_input` keys `file_path`, `path` or `filename`. A `Write`/`Edit` whose
+  `tool_input` is a dict that names no target is denied (exit 2); a missing
+  `tool_input` remains fail-open (missing-field property).
 - `Stop` gates iteration closure (H06 PASS, `NEEDS_CLARIFICATION` recorded, or
   a terminal status in `state.json`).
 - The event is fail-open by contract: malformed JSON, missing fields, unknown
   events, or any internal error resolve to allow (exit 0); post-hoc bypass
   detection compensates when the H04 PASS is recorded (`runner_state.py`).
+
+### Bypass surface and coverage
+
+The hook gates only `Write`/`Edit` events on
+project deliverables. `Read`, `Glob`, `Grep` and `Bash` calls are not gated:
+writes performed outside the gated events are covered by the post-hoc bypass
+scan of `runner_state.py` (files modified after the session started but before
+the H04 PASS), never by command-string parsing — the protocol does not parse
+command text, which would fake a control it does not have. A `Write`/`Edit`
+whose `tool_input` names no target is denied, so the bypass cannot be crafted
+by omitting the target field.
 
 Enforced mode requires registering `hook_gate.py` as a CLI hook for two
 events: `PreToolUse` (matcher `Write|Edit`) and `Stop`. The paths below

@@ -74,3 +74,55 @@ def test_budget_accounting_flagged(tmp_path):
     v = csa.scan(tmp_path)
     assert any("exceeds declared" in x for x in v)
     assert any("must be a finite positive number" in x for x in v)
+
+
+def test_valid_deviation_passes(tmp_path):
+    session = tmp_path / ".project" / "uuid" / "00"
+    session.mkdir(parents=True)
+    (tmp_path / ".project" / "uuid" / "HARNESS_REPORT.md").write_text(
+        '<!-- ENTRY: {"timestamp": "t", "trigger": "H04", "transition": "A -> B", '
+        '"result": "PASS", "checks": [{"id": "c", "result": "PASS", "evidence": "e"}], '
+        '"deviation": {"cause": "trivial profile", "evidence": "01-TASK_ANALYSIS.md"}} -->\n',
+        encoding="utf-8",
+    )
+    assert csa.scan(tmp_path) == []
+
+
+def test_malformed_deviation_flagged(tmp_path):
+    session = tmp_path / ".project" / "uuid" / "00"
+    session.mkdir(parents=True)
+    (tmp_path / ".project" / "uuid" / "HARNESS_REPORT.md").write_text(
+        '<!-- ENTRY: {"timestamp": "t", "trigger": "H04", "transition": "A -> B", '
+        '"result": "PASS", "checks": [], "deviation": {"cause": ""}} -->\n',
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any("deviation.cause must be a non-empty string" in x for x in v)
+    assert any("deviation.evidence must be a non-empty string" in x for x in v)
+
+
+def test_valid_recovery_passes(tmp_path):
+    session = tmp_path / ".project" / "uuid" / "00"
+    session.mkdir(parents=True)
+    (tmp_path / ".project" / "uuid" / "HARNESS_REPORT.md").write_text(
+        '<!-- ENTRY: {"timestamp": "t", "trigger": "H00", "transition": "A -> B", '
+        '"result": "FAIL", "checks": [], '
+        '"recovery": {"variables": {"artifact_exists": false, "retry_count": 0}, '
+        '"matched_rule": "RETRY_WORKER", "target_phase": "00-analyze-task.md"}} -->\n',
+        encoding="utf-8",
+    )
+    assert csa.scan(tmp_path) == []
+
+
+def test_malformed_recovery_flagged(tmp_path):
+    session = tmp_path / ".project" / "uuid" / "00"
+    session.mkdir(parents=True)
+    (tmp_path / ".project" / "uuid" / "HARNESS_REPORT.md").write_text(
+        '<!-- ENTRY: {"timestamp": "t", "trigger": "H00", "transition": "A -> B", '
+        '"result": "FAIL", "checks": [], '
+        '"recovery": {"matched_rule": "", "variables": []}} -->\n',
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any("recovery.matched_rule must be a non-empty string" in x for x in v)
+    assert any("recovery.variables must be an object" in x for x in v)

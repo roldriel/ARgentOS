@@ -142,6 +142,20 @@ updated_artifacts = [""]
 
 ---
 
+## Pending Artifacts
+
+Early-phase artifacts that require correction but are not corrected in this
+recovery entry, because the destination is the earliest phase with an invalid
+artifact (see `.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md`,
+§RECOVERY). Optional; present when more than one early-phase artifact needs
+correction.
+
+```toml
+pending_artifacts = [""]
+```
+
+---
+
 ## Confidence
 
 Confidence level of the recovery analysis, per `.agents/standards/quality/CONFIDENCE.md`. A root cause with `LOW` confidence SHOULD prefer the least invasive corrective action (`RETRY_WORKER` or `NEEDS_CLARIFICATION`) over structural changes.
@@ -170,4 +184,6 @@ The recovery report is valid when:
 * A root cause is classified and described.
 * An analysis summary is provided.
 * A valid corrective action recommendation is defined.
+* Pending artifacts are recorded when more than one early-phase artifact
+  requires correction.
 * A confidence level is provided.

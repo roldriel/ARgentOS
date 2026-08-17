@@ -7,7 +7,7 @@ lifecycle: discovery
 previous_states: [discovery:DISCOVERY_RUNNING]
 next_states: [discovery:DISCOVERY_MERGE, discovery:DISCOVERY_FAILED]
 input_artifacts: [discovery_input.json]
-output_artifacts: [worker_business.json]
+output_artifacts: [worker_business.json, business_rules.md, project_flow.md, technical_debt.md, known_errors.md, glossary.md]
 harness: []
 actor: discovery_orchestrator
 profile: business_worker

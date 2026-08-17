@@ -176,12 +176,12 @@ discovery (conditions above) and requests the scope.
 {
   "project_root": "/path/to/project",
   "scope": "full",
-  "context_budget": 100000,
+  "context_budget": 32000,
   "sample_size": 10
 }
 ```
 
-This payload is an inter-orchestrator invocation (core → discovery), not an inter-worker message; it does not carry `message_version` / `from_worker` / `to_worker`.
+This payload is an inter-orchestrator invocation (core → discovery), not an inter-worker message; it does not carry `message_version` / `from_worker` / `to_worker`. The `context_budget` and `sample_size` values mirror `discovery_context_budget` and `discovery_sample_size` in `.agents/features.toml`; `init_worker` reads the configured values from that file when it builds `discovery_input.json` (`.agents/orchestrators/discovery/roles/workers/init_worker.md`).
 
 **Response handling.** The Discovery Orchestrator returns a structured result and never responds to the user:
 
@@ -247,6 +247,11 @@ After receiving a worker result and a passing harness:
 - Transition to the next allowed state.
 - If the harness fails:
   - Populate the context variables of the failed trigger's policy and apply its §"Recovery Decision Table" (first matching rule, top to bottom). `retry_count` is derived from `HARNESS_REPORT.md` (prior `FAIL` entries for the same trigger in the current iteration; see `.agents/harness/INDEX.md`, §Recovery Mechanism).
+  - Derive the recovery context conditions per `.agents/harness/INDEX.md`
+    (§Recovery Mechanism): mechanical conditions from the structural validator
+    output or the filesystem, judgment conditions recorded with evidence at
+    failure time; record the evaluation in the gate's `HARNESS_REPORT.md` FAIL
+    entry as a `recovery` object.
   - Apply the action of the matching rule (`RETRY_WORKER`, `NEEDS_CLARIFICATION`, `RECOVERY_GENERIC`, or `ABORT`).
   - If no rule applies or the situation does not match the table's variables, default to `RECOVERY_GENERIC` with `target_phase = "08-recovery.md"`.
 - If the worker fails to produce a valid artifact, route to `RECOVERY`.

@@ -49,10 +49,14 @@ A non-prompt runtime declares its own unit (e.g., bytes of a context store, numb
 
 ## 7. Enforcement status
 
-The materialized Budget is **advisory**: the prompt-based runtime does not
-measure the assembled payload against `context_budget`, truncate it, or block
-a delegation that exceeds it. The estimation rule exists so that declared vs.
-consumed can be recorded and audited (the `context_budget` event of
-`METRICS.md`), not to enforce a limit. Any mechanical enforcement is a harness
-Future Extension; until then, "the Budget is respected" is a declarative
-compliance claim, never a machine-checked one.
+The materialized Budget is **measured**: the runtime measures the
+`knowledge_entries` excerpts of a delegation with the estimation rule (§2)
+before delegating. The Orchestrator MUST compute the consumed figure and
+record it in the `context_budget` metric event (`METRICS.md`, declared vs.
+consumed). When `consumed > context_budget`, the Orchestrator MUST apply the
+compression rules of `CONTEXT.md` (§8.4) or reduce the entries before
+delegating; if a delegation still exceeds the ceiling, the Orchestrator MUST
+log a deviation (class F2) and record the true consumed value. The protocol
+does not truncate or block at delegation time; compliance is measured and
+auditable, never silent. A "Budget respected" claim is falsifiable against the
+recorded `declared`/`consumed` pair.

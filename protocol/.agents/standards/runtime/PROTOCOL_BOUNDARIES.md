@@ -33,6 +33,23 @@ Conceptual rules for iterations and `<order>`:
 
 - **Iteration boundary:** each user request — one full workflow pass — opens a new sequential iteration folder. Internal loops of the same pass (clarification cycles, recovery loops, bounded retries) continue in the current iteration: an iteration serves one request, and whatever serves the same request stays in its iteration.
 - **Partial iteration:** an iteration that did not reach a terminal state (`COMPLETED`/`ABORT`) before the session ended is a partial iteration. When a session is resumed, continuing the same request resumes the partial iteration from its last intact artifact; a new request opens a new iteration and the partial one remains as historical trace. A partial iteration is never rewritten: artifacts already produced are not regenerated retroactively.
+- **Resume procedure.** Resuming a partial iteration follows these steps:
+  1. Read the iteration's `state.json` and the `HARNESS_REPORT.md` ENTRY
+     comments.
+  2. Find the last intact artifact by descending `<order>`.
+  3. If the producing state of the last intact artifact has a pending exit gate
+     (no recorded PASS for its trigger), resume in that state: re-run the exit
+     gate on the intact artifact and continue forward.
+  4. If the last artifact is not intact, resume in the state that produces it
+     (re-invoke its worker); artifacts after it are re-produced, artifacts
+     before it are never rewritten.
+  5. Record the resume basis in `SESSION_LOG.md` (iteration, last intact
+     artifact, resumed state).
+- **Intact artifact.** An artifact is intact when: (a) it exists; (b) its
+  machine-readable blocks parse where the contract requires them; (c) it
+  contains the required contract sections; and (d) when the exit of its
+  producing state is gated, the corresponding trigger has a recorded `PASS` in
+  `HARNESS_REPORT.md` or `state.json`.
 - **`<order>` rule:** `<order>` is the artifact generation sequence within the iteration. It is monotonic with the flow (an artifact produced later carries a higher order) and is auditable against `SESSION_LOG.md`. An `<order>` that does not reflect the real generation order is a trace-integrity violation, not a style error.
 - **Domain namespacing:** the `<order>` sequence is unique per domain, not global to the iteration. Session artifacts of the `discovery` domain carry the prefix `D<order>-` (e.g. `D01-KB_DISCOVERY_REPORT.md`); artifacts of the `core` domain keep the plain `<order>-`. Two domains never share the same sequence space.
 

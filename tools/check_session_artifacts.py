@@ -80,6 +80,50 @@ def scan(root: Path) -> list[str]:
             checks = data.get("checks")
             if not isinstance(checks, list):
                 out.append(f"ENTRY {report.relative_to(root)}#{idx}: checks is not a list")
+            deviation = data.get("deviation")
+            if deviation is not None:
+                if not isinstance(deviation, dict):
+                    out.append(
+                        f"ENTRY {report.relative_to(root)}#{idx}: deviation is not an object"
+                    )
+                else:
+                    cause = deviation.get("cause")
+                    evidence = deviation.get("evidence")
+                    if not isinstance(cause, str) or not cause.strip():
+                        out.append(
+                            f"ENTRY {report.relative_to(root)}#{idx}: "
+                            "deviation.cause must be a non-empty string"
+                        )
+                    if not isinstance(evidence, str) or not evidence.strip():
+                        out.append(
+                            f"ENTRY {report.relative_to(root)}#{idx}: "
+                            "deviation.evidence must be a non-empty string"
+                        )
+            recovery = data.get("recovery")
+            if recovery is not None:
+                if not isinstance(recovery, dict):
+                    out.append(
+                        f"ENTRY {report.relative_to(root)}#{idx}: recovery is not an object"
+                    )
+                else:
+                    rule = recovery.get("matched_rule")
+                    if not isinstance(rule, str) or not rule.strip():
+                        out.append(
+                            f"ENTRY {report.relative_to(root)}#{idx}: "
+                            "recovery.matched_rule must be a non-empty string"
+                        )
+                    variables = recovery.get("variables")
+                    if variables is not None and not isinstance(variables, dict):
+                        out.append(
+                            f"ENTRY {report.relative_to(root)}#{idx}: "
+                            "recovery.variables must be an object"
+                        )
+                    target = recovery.get("target_phase")
+                    if target is not None and not isinstance(target, str):
+                        out.append(
+                            f"ENTRY {report.relative_to(root)}#{idx}: "
+                            "recovery.target_phase must be a string"
+                        )
 
     for metrics in sorted(project.rglob("METRICS.md")):
         text = metrics.read_text(encoding="utf-8", errors="replace")

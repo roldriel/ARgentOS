@@ -10,8 +10,9 @@ directory define the order and the closed sets (tie-breaking criteria,
 deduplication/merge rules, compression techniques), so the procedure is
 deterministic in form, but every criterion is evaluated by the Orchestrator by
 judgment when assembling a payload. Nothing in the context pipeline is
-machine-enforced: the budget is advisory (see `BUDGET_MATERIALIZATION.md`,
-§Enforcement status) and the deterministic checks named as "harness Future
+machine-enforced: the budget is measured but not truncated or blocked at
+delegation time (see `BUDGET_MATERIALIZATION.md`, §Enforcement status) and the
+deterministic checks named as "harness Future
 Extensions" across the Resolution/Composition policies are possibilities, not
 guarantees. This declaration is canonical for how the context pipeline is
 described across `.agents/standards/context/`.
@@ -45,9 +46,11 @@ The following budgets limit only the portion of context that comes from `.projec
 
 The `context_discoverer` recommends a budget; the Orchestrator applies it when assembling the final payload.
 
-These budgets are advisory: the protocol does not measure or truncate the KB
-portion mechanically; compliance is recorded via the `context_budget` metric
-event (see `BUDGET_MATERIALIZATION.md`, §Enforcement status).
+These budgets are measured: the protocol measures the KB portion of a
+delegation with the estimation rule of `BUDGET_MATERIALIZATION.md` and records
+declared vs. consumed in the `context_budget` metric event; it does not
+truncate or block at delegation time. An overrun after compression is a
+recorded deviation (see `BUDGET_MATERIALIZATION.md`, §Enforcement status).
 
 ## 4. Budget distribution
 

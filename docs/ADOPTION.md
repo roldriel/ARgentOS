@@ -205,3 +205,9 @@ registrar el PASS de H04 si aparecen archivos modificados antes de ese PASS).
 Si el
 entorno no tolera ese límite, quedarse en modo declarativo es igual de válido
 — pero debe declararse como tal.
+
+El hook deniega además `Write`/`Edit` cuyo `tool_input` no nombra un target
+(sin `file_path`/`path`/`filename`); `Read`/`Glob`/`Grep`/`Bash` no están
+gated y los writes por esas vías quedan cubiertos por el scan post-hoc, no por
+parsing de comandos (ver `.agents/harness/INDEX.md`, §Bypass surface and
+coverage).

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import sys
+import json
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -138,3 +139,34 @@ def test_budget_overruns_counted(tmp_path):
     assert report["context.budget_overruns"] == 1
     assert report["context.budget_declared"] == 300
     assert report["context.budget_consumed"] == 200
+
+
+def test_audit_matching_gates_no_alerts(tmp_path):
+    session = tmp_path / ".project" / "s1"
+    (session / "00").mkdir(parents=True)
+    (session / "00" / "state.json").write_text(
+        json.dumps({"gates": {"H04": {"result": "PASS", "timestamp": "t"}}}),
+        encoding="utf-8",
+    )
+    (session / "HARNESS_REPORT.md").write_text(
+        '<!-- ENTRY: {"timestamp": "t", "trigger": "H04", "transition": "A -> B", '
+        '"result": "PASS", "checks": []} -->\n',
+        encoding="utf-8",
+    )
+    assert am.audit_cross_checks(tmp_path) == []
+
+
+def test_audit_state_gate_without_entry_alerted(tmp_path):
+    session = tmp_path / ".project" / "s1"
+    (session / "00").mkdir(parents=True)
+    (session / "00" / "state.json").write_text(
+        json.dumps({"gates": {"H04": {"result": "PASS", "timestamp": "t"}}}),
+        encoding="utf-8",
+    )
+    (session / "HARNESS_REPORT.md").write_text(
+        '<!-- ENTRY: {"timestamp": "t", "trigger": "H00", "transition": "X -> Y", '
+        '"result": "PASS", "checks": []} -->\n',
+        encoding="utf-8",
+    )
+    alerts = am.audit_cross_checks(tmp_path)
+    assert any("H04" in a and "without a matching PASS entry" in a for a in alerts)

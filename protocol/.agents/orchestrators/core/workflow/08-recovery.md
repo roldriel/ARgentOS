@@ -327,6 +327,13 @@ ANALYZING_TASK | BUILDING_TASK_SPECIFICATION | GATHERING_CONTEXT | VALIDATING_CO
 
 Continue with the workflow module of the destination phase (`00-analyze-task.md`, `02-build-task-specification.md`, `03-gather-context.md`, `04-validate-context.md`). The destination is selected by the artifact to correct; the corrective action and its evidence are recorded in `SESSION_LOG.md`.
 
+When more than one early-phase artifact requires correction, the destination is
+the earliest phase with an invalid artifact (order `ANALYZING_TASK` →
+`BUILDING_TASK_SPECIFICATION` → `GATHERING_CONTEXT` → `VALIDATING_CONTEXT`);
+one destination per recovery entry. The remaining artifacts are recorded in
+`RECOVERY_REPORT.md` (`pending_artifacts`) and corrected in subsequent recovery
+loops.
+
 ## Recovery via Abort
 
 If the failure is unrecoverable, a policy's recovery decision table yields `ABORT`, or the user aborted the task:

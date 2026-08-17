@@ -685,6 +685,16 @@ This artifact records the failure analysis, root cause classification, and recom
 
 `RETRY_WORKER` is a corrective action, not a state transition. When the recovery decision table of a failed gate yields `RETRY_WORKER` with the current phase as `target_phase`, the Orchestrator re-invokes the worker in the same state: no transition occurs and no recovery report is required for that retry. When the table yields `RETRY_WORKER` with an earlier phase as `target_phase`, the failure routes to `RECOVERY` and the task uses one of the early-phase transitions below.
 
+### Multiple invalid early-phase artifacts
+
+If more than one artifact of the early phases requires correction, the
+destination is the earliest phase with an invalid artifact, in the phase order
+`ANALYZING_TASK` → `BUILDING_TASK_SPECIFICATION` → `GATHERING_CONTEXT` →
+`VALIDATING_CONTEXT`. One destination per recovery entry; artifacts of later
+phases are corrected in subsequent recovery loops, after the upstream artifact
+is corrected and its gate passes. The set of pending artifacts is recorded in
+`RECOVERY_REPORT.md` (`pending_artifacts`).
+
 ### Allowed Transitions
 
 If the failure can be corrected by replanning:

@@ -887,7 +887,7 @@ ARgentOS's semantic determinism today is a goal, not a property.**
 | P2.3 | Specify `retry_count` / recovery-table variable persistence | F1 | ☑ Resolved | Plan 60 (2026-08-14): derived from HARNESS_REPORT.md FAIL entries per trigger/iteration (harness/INDEX.md + orchestrator.md) |
 | P3.1 | Correct stale docs (`VERSIONING.md` §9, `AUDITORIA_DOCUMENTACION.md`, `plans/INDEX.md`) + version-state checker or declared `dev` exception | F6 | ☑ Resolved | 2026-08-14: docs corrected (Nivel 1) + tools/check_version_state.py with declared dev exception (Nivel 4) |
 | P3.2 | Decide and document D01 "harness may contain Python" vs "no runner" model | — | ☑ Resolved | Plan 60 (2026-08-14): no executable runner today; mechanical validation is a possible future extension. The F1 enforcement decision (Level 5) remains open |
-| P3.3 | Include product harness tests in a CI job | — | ☑ Resolved | Nivel 4 (2026-08-14): check-protocol.yml runs protocol/.agents/harness/tests/ (39 tests) |
+| P3.3 | Include product harness tests in a CI job | — | ☑ Resolved | Nivel 4 (2026-08-14): check-protocol.yml runs protocol/.agents/harness/tests/ (64 tests) |
 | P4.1 | Hook-event schema contract | — | ☑ Resolved | Plan 60 (2026-08-14): harness/INDEX.md "Hook event schema" section |
 | P4.2 | Concurrency / session model | — | ☑ Resolved | Plan 63 (2026-08-14): deterministic CLI-session mapping (.project/.sessions.json) + runner_state link; hook fail-open unchanged |
 | P4.3 | Contract schema versions and machine-checkable migration rules | P1.2 | ☑ Resolved | Plan 62 (2026-08-14): schema_version (semver) on all 39 contracts; checker validates presence/format; MIGRATION.md documents bump rules |

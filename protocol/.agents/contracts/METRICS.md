@@ -70,3 +70,6 @@ Every event carries `timestamp` (ISO-8601) and `type`. Required fields per type:
 - Events record identifiers and quantities only — never artifact prose, user text, or task content (privacy rule of `.agents/standards/runtime/PROTOCOL_METRICS.md`).
 - Unknown event types and unknown extra fields are ignored by aggregation, never errors.
 - The artifact must not include credentials, tokens, or personal data.
+- Events are self-reported by the Orchestrator; the verifiability class of
+  each event type is declared in `.agents/standards/runtime/PROTOCOL_METRICS.md`
+  (§Verifiability classes).

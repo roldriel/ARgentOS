@@ -36,26 +36,146 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Modelo conceptual
 
-- **RFC-32…37 y RFC-42 Accepted** (plan 57, revisión individual de la serie
-  Proposal según RFC-56): diseños verificados contra el payload, con sus
-  planes asociados ya `Executed` (31–36) o cerrados (41, vía plan 56). Sin
-  cambio de payload; solo estados y traza de gobernanza.
-- **RFC-38…41 y RFC-43 Accepted** (plan 57, misma revisión): diseños
-  aprobados por mérito propio; su ejecución sigue el track de los planes
-  37–40 y 42 (hoy `Aprobado para redacción`).
-- **RFC-44…48 Accepted** (plan 57, misma revisión): diseños aprobados
-  (reflexión HIGH, modo desatendido, trazas históricas, dogfooding enforced,
-  contratos por entrada); ejecución pendiente vía planes 43–47.
-- **RFC-49…54 Accepted** (plan 57, misma revisión): diseños aprobados
-  (validación mecánica de skills, modo single-instance, frescura de KB,
-  catálogo de roles, candidatura tooling, contratos de discovery); ejecución
-  pendiente vía planes 48–53. Con este grupo queda cerrada la revisión
-  individual de la serie Proposal (23/23).
+- **Revisión de la serie Proposal completada** (plan 57, RFC-56): las 23 RFCs
+  de la serie 32–54 quedaron `Accepted` y sus planes asociados (31–53) están
+  `Executed`. Sin cambio de payload; solo estados y traza de gobernanza.
 
 (sin ítems de payload por ahora — los cambios de repo que no tocan el payload no se
 listan; ver `docs/VERSIONING.md` §5)
 
 ---
+
+## [3.20.0] — 2026-08-16
+
+### Fixed
+
+- **Conteo de scripts del harness y literal de budget de discovery** (plan 69,
+  bloque 0 de la auditoría de sistema 3.1): `harness/INDEX.md` pasa de "three
+  pure-stdlib scripts" a cuatro (incluye `gate_validator.py`); el ejemplo de
+  invocación al Discovery Orchestrator en `orchestrator.md` usa
+  `context_budget: 32000`, alineado con `discovery_context_budget` de
+  `features.toml`.
+- **Modelo produced_by/consumed_by de contratos de discovery** (plan 69,
+  Clase B): la taxonomía refleja los productores reales de
+  `INTER_WORKER_MESSAGE.md` y `KB_DISCOVERY_ENTRY.md` (los workers por scope),
+  coherente con el front matter TOML de los contratos.
+- **Snapshot del índice y conteos de auditorías previas** (plan 69): header de
+  `plans/INDEX.md` alineado con el estado real (3.19.0, `dev` en sync),
+  `[Unreleased]` del changelog sin claims stale, y conteos de tests de
+  `docs/AUDITORIA_DOCUMENTACION.md` / `AUDITORIA_SISTEMA.md` actualizados.
+
+## [3.21.0] — 2026-08-16
+
+### Added
+
+- **Chequeo mecánico de salidas de state machines** (plan 70):
+  `check_taxonomy_coherence.py` compara los "Required Output Artifacts" de
+  cada state machine contra los `output_artifacts` del workflow mapeado
+  (bidireccional, con normalización de prefijos de orden). Sobre el payload
+  previo a esta versión detecta 21 mismatches de discovery; tras la
+  alineación queda en verde.
+
+### Changed
+
+- **Contrato de verificación y H06 alineados** (plan 70): `[[test_results]]`
+  de `VERIFICATION_REPORT.md` declara el campo opcional `evidence` (archivo
+  existente o comando en `SESSION_LOG.md`); el ítem 7 del Gate Checklist de
+  H06 verifica el campo cuando está declarado, con fallback a `SESSION_LOG.md`.
+- **Listas de salidas de discovery completas y con paths reales** (plan 70):
+  los front matters de los workflows 01–06 de discovery y sus entidades en la
+  taxonomía usan los nombres de archivo de KB reales (`environment.md`,
+  `development_patterns.md`, etc.) e incluyen todas las entradas de KB por
+  estado; la entidad de estado `discovery:DISCOVERY_INIT` corrige su
+  `artifacts_output` (incluye `discovery_input.json`, `invalidation_report.json`
+  y `file_map.md`; elimina el `KB_DISCOVERY_ENTRY.md` erróneo).
+- **Convención de naming de contratos por entrada** (plan 70):
+  `KB_DISCOVERY_ENTRY.md` documenta que el nombre del contrato (p.ej.
+  `ENVIRONMENT_DISCOVERY.md`) no es el path del artefacto (p.ej.
+  `environment.md`).
+
+## [3.22.0] — 2026-08-16
+
+### Added
+
+- **Cobertura bidireccional de gates en el checker** (plan 71):
+  `check_taxonomy_coherence.py` verifica que el origen de cada gate coincide
+  con el `state` declarado por su policy y que el header TOML `transition` y
+  los `gates:` de cada policy nombran las mismas transiciones, con tests.
+
+### Fixed
+
+- **Validador estructural profile-aware para H04** (plan 71, F-A): para tareas
+  de perfil `trivial`, `gate_validator.py` ya no exige `## Context Reference`
+  (el contrato de `EXECUTION_PLAN.md` la omite en el ciclo reducido); el perfil
+  se lee de `TASK_ANALYSIS.md` de la sesión, con tests de producto del camino
+  trivial.
+- **Gate trivial declarado en H00** (plan 71, F-B): el front matter de H00
+  (header `transition` y `gates:`) y la tabla de triggers de `harness/INDEX.md`
+  declaran `ANALYZING_TASK → PLANNING` (solo perfil trivial), alineados con la
+  máquina de estados.
+
+## [3.23.0] — 2026-08-16
+
+### Added
+
+- **Auditoría post-hoc de gates** (plan 72): nuevo tool dev-only
+  `tools/audit_gates.py` que recomputa el subconjunto estructural de los PASS
+  registrados en `HARNESS_REPORT.md` invocando el validador del producto y
+  reporta los PASS que el validador rechaza sin desviación registrada.
+
+### Changed
+
+- **Evidencia determinista de tests en H06** (plan 72): `gate_validator.py`
+  valida el bloque `[[test_results]]` de `VERIFICATION_REPORT.md` — resultados
+  no `SKIPPED` deben declarar `evidence` que resuelva a un archivo existente o
+  tener el comando `test` en `SESSION_LOG.md` (semántica del contrato 3.21.0 y
+  de H06 ítem 7); sin bloque TOML el chequeo es SKIP.
+- **Registro de desviaciones documentadas** (plan 72): `HARNESS_REPORT.md`
+  define el campo opcional `deviation` (cause + evidence) en los ENTRY como
+  única vía para que un FAIL estructural se registre como PASS, y
+  `harness/INDEX.md` declara su regla (nunca silenciosa, no afecta el fail-open
+  de los hooks, auditable post-hoc); `check_session_artifacts.py` valida la
+  forma del objeto.
+
+## [3.24.0] — 2026-08-16
+
+### Modelo conceptual
+
+- **Recovery context, ranking de destinos múltiples y continuidad de sesión**
+  (plan 73, RFC-59): definidas la derivación de las variables de las recovery
+  decision tables (mecánicas desde el validador/filesystem; de juicio con
+  evidencia al momento del fallo) y su registro como objeto `recovery` en la
+  entrada FAIL de `HARNESS_REPORT.md`; el ranking de destinos de recovery (fase
+  más temprana con artefacto inválido, un destino por entrada,
+  `pending_artifacts` en `RECOVERY_REPORT.md`); y el procedimiento de
+  reanudación de iteraciones parciales ("artefacto intacto" + 5 pasos) en
+  `PROTOCOL_BOUNDARIES.md`.
+
+## [3.25.0] — 2026-08-17
+
+### Modelo conceptual
+
+- **Contabilidad del Context Budget y clases de confianza de métricas**
+  (plan 74, RFC-60): el Budget materializado pasa de advisory a measured —
+  `consumed` se computa con la regla de estimación sobre los excerpts de
+  `knowledge_entries`, se registra en el evento `context_budget` y los overruns
+  post-compresión son desviaciones registradas; `PROTOCOL_METRICS.md` declara
+  las clases Derived / Recorded / Verified para el catálogo y el agregador gana
+  el modo `--audit` (gates de `state.json` vs entradas de `HARNESS_REPORT.md`).
+
+### Changed
+
+- **Superficie de bypass del hook endurecida** (plan 74, ítem 20): `Write`/
+  `Edit` cuyo `tool_input` es un dict sin target (`file_path`/`path`/
+  `filename`) pasan de fail-open a deny (exit 2); `tool_input` ausente y los
+  errores internos siguen fail-open; `Read`/`Glob`/`Grep`/`Bash` siguen sin
+  gate, con la cobertura por el scan post-hoc documentada en
+  `harness/INDEX.md` (§Bypass surface and coverage).
+
+### Added
+
+- **Tool de medición del budget** (plan 74): `tools/measure_context_budget.py`
+  computa `consumed` desde un payload de delegación y falla en overrun.
 
 ## [3.19.0] — 2026-08-15
 

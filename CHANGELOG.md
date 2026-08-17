@@ -114,6 +114,29 @@ listan; ver `docs/VERSIONING.md` §5)
   declaran `ANALYZING_TASK → PLANNING` (solo perfil trivial), alineados con la
   máquina de estados.
 
+## [3.23.0] — 2026-08-16
+
+### Added
+
+- **Auditoría post-hoc de gates** (plan 72): nuevo tool dev-only
+  `tools/audit_gates.py` que recomputa el subconjunto estructural de los PASS
+  registrados en `HARNESS_REPORT.md` invocando el validador del producto y
+  reporta los PASS que el validador rechaza sin desviación registrada.
+
+### Changed
+
+- **Evidencia determinista de tests en H06** (plan 72): `gate_validator.py`
+  valida el bloque `[[test_results]]` de `VERIFICATION_REPORT.md` — resultados
+  no `SKIPPED` deben declarar `evidence` que resuelva a un archivo existente o
+  tener el comando `test` en `SESSION_LOG.md` (semántica del contrato 3.21.0 y
+  de H06 ítem 7); sin bloque TOML el chequeo es SKIP.
+- **Registro de desviaciones documentadas** (plan 72): `HARNESS_REPORT.md`
+  define el campo opcional `deviation` (cause + evidence) en los ENTRY como
+  única vía para que un FAIL estructural se registre como PASS, y
+  `harness/INDEX.md` declara su regla (nunca silenciosa, no afecta el fail-open
+  de los hooks, auditable post-hoc); `check_session_artifacts.py` valida la
+  forma del objeto.
+
 ## [3.19.0] — 2026-08-15
 
 ### Changed

@@ -293,3 +293,95 @@ def test_h04_trivial_with_context_reference_passes(tmp_path):
     artifact = make_h04_plan(tmp_path, "trivial", with_context_reference=True)
     checks, decision = gate_validator.validate("H04", artifact)
     assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]
+
+
+def make_h06_report(
+    tmp_path: Path,
+    test_results_toml: str,
+    session_log: str | None = None,
+    evidence: str | None = None,
+) -> Path:
+    """Build a VERIFICATION_REPORT with a test_results TOML block."""
+    session = tmp_path / ".project" / f"test-{uuid.uuid4()}" / "00"
+    session.mkdir(parents=True)
+    if session_log is not None:
+        (session.parent / "SESSION_LOG.md").write_text(session_log, encoding="utf-8")
+    if evidence is not None:
+        (session / evidence).write_text("evidence\n", encoding="utf-8")
+    sections = {
+        "Metadata": "- x",
+        "Task Reference": "- spec",
+        "Execution Plan Reference": "- plan",
+        "Verification Objective": "- v",
+        "Acceptance Criteria Evaluation": (
+            "```toml\n[[acceptance_criteria]]\ncriterion = \"c\"\nresult = \"PASS\"\n```"
+        ),
+        "Test Results": test_results_toml,
+        "Issues Found": "- none",
+        "Final Decision": "```toml\n[decision]\nresult = \"COMPLETED\"\n```",
+        "Confidence": "- high",
+        "State Transition": "- x",
+        "Rubric Evaluation": rubric_block(),
+    }
+    parts = ["# Report"]
+    for heading, body in sections.items():
+        parts.append(f"## {heading}")
+        parts.append(body)
+    artifact = session / "VERIFICATION_REPORT.md"
+    artifact.write_text("\n\n".join(parts) + "\n", encoding="utf-8")
+    return artifact
+
+
+def test_h06_test_results_evidence_passes(tmp_path):
+    artifact = make_h06_report(
+        tmp_path,
+        "```toml\n[[test_results]]\ntest = \"pytest -q\"\nresult = \"PASS\"\n"
+        'details = ""\nevidence = "results.log"\n```',
+        evidence="results.log",
+    )
+    checks, decision = gate_validator.validate("H06", artifact)
+    assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]
+    assert any(c["id"] == "test_results" and c["result"] == "PASS" for c in checks)
+
+
+def test_h06_test_results_session_log_fallback_passes(tmp_path):
+    artifact = make_h06_report(
+        tmp_path,
+        "```toml\n[[test_results]]\ntest = \"pytest -q\"\nresult = \"PASS\"\n"
+        'details = ""\n```',
+        session_log="ran: pytest -q\n",
+    )
+    checks, decision = gate_validator.validate("H06", artifact)
+    assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]
+
+
+def test_h06_test_results_missing_evidence_fails(tmp_path):
+    artifact = make_h06_report(
+        tmp_path,
+        "```toml\n[[test_results]]\ntest = \"pytest -q\"\nresult = \"PASS\"\n"
+        'details = ""\n```',
+    )
+    checks, decision = gate_validator.validate("H06", artifact)
+    assert decision == "FAIL"
+    assert any("test command not found in SESSION_LOG.md" in c["evidence"] for c in checks)
+
+
+def test_h06_test_results_unresolved_evidence_fails(tmp_path):
+    artifact = make_h06_report(
+        tmp_path,
+        "```toml\n[[test_results]]\ntest = \"pytest -q\"\nresult = \"PASS\"\n"
+        'details = ""\nevidence = "missing.log"\n```',
+    )
+    checks, decision = gate_validator.validate("H06", artifact)
+    assert decision == "FAIL"
+    assert any("evidence does not resolve" in c["evidence"] for c in checks)
+
+
+def test_h06_test_results_skipped_exempt(tmp_path):
+    artifact = make_h06_report(
+        tmp_path,
+        "```toml\n[[test_results]]\ntest = \"pytest -q\"\nresult = \"SKIPPED\"\n"
+        'details = ""\n```',
+    )
+    checks, decision = gate_validator.validate("H06", artifact)
+    assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]

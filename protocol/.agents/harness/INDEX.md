@@ -50,6 +50,13 @@ This declaration is canonical for how the words "enforced", "reviewed" and
 = gate evaluation by judgment, "verified" = dev-only checkers of the
 development repository.
 
+**Documented deviations.** The only way a structural FAIL becomes a recorded
+`PASS` is a documented deviation: the Orchestrator records it in the gate's
+`HARNESS_REPORT.md` ENTRY comment as a `deviation` object with `cause` and
+`evidence` (contract: `.agents/contracts/HARNESS_REPORT.md`, §"Documented
+deviations"). A deviation is never silent, never applies to the fail-open of
+the hooks, and is auditable post-hoc.
+
 ## Who Invokes the Harness
 
 Only the **Orchestrator** may invoke the harness.

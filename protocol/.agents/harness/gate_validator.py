@@ -479,6 +479,8 @@ def validate(trigger: str, artifact: Path, root: Path | None = None) -> tuple[li
             checks.append({"id": "rubrics", "result": "SKIP", "evidence": "rubrics flag disabled"})
 
     roots = _roots_from_artifact(artifact) if root is None else (root, None, [])
+    if trigger == "H06":
+        checks.extend(_check_test_results(text, roots))
     checks.extend(check_citations(text, roots))
 
     failed = any(c["result"] == "FAIL" for c in checks)
@@ -579,6 +581,89 @@ def _check_toml(toml_key: str, text: str) -> list[dict]:
         checks.append({"id": toml_key, "result": "FAIL",
                        "evidence": f"no parseable TOML block with [{toml_key}]"})
     return checks
+
+
+def _evidence_resolves(evidence: str, roots: tuple) -> bool:
+    """True when an evidence path resolves to an existing file."""
+    if not evidence.strip() or "<" in evidence or ">" in evidence:
+        return False
+    fp = evidence.replace("\\", "/")
+    project, session, iterations = roots
+    candidates = []
+    if Path(fp).is_absolute():
+        candidates.append(Path(fp))
+    else:
+        base_dirs = [project] if project else []
+        if session:
+            base_dirs.append(session)
+        base_dirs.extend(iterations)
+        for base in base_dirs:
+            candidates.append(base / fp)
+    return any(c.is_file() for c in candidates)
+
+
+def _check_test_results(text: str, roots: tuple) -> list[dict]:
+    """Validate the test_results TOML block of H06 (VERIFICATION_REPORT.md).
+
+    Per the contract (3.21.0) and H06 §Gate Checklist item 7: a result other
+    than SKIPPED must either declare an ``evidence`` that resolves to an
+    existing file, or its ``test`` command string must appear in the session's
+    SESSION_LOG.md. When no ``[[test_results]]`` block exists the check is SKIP
+    (compatible with prior artifacts that predate the block).
+    """
+    blocks: list[dict] = []
+    for block in toml_blocks(text):
+        parsed = parse_toml(block)
+        value = parsed.get("test_results")
+        if isinstance(value, list):
+            blocks.extend(x for x in value if isinstance(x, dict))
+    if not blocks:
+        return [
+            {
+                "id": "test_results",
+                "result": "SKIP",
+                "evidence": "no test_results TOML block",
+            }
+        ]
+    project, session, _ = roots
+    log_text = ""
+    if session is not None:
+        log = session / "SESSION_LOG.md"
+        if log.is_file():
+            try:
+                log_text = log.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                log_text = ""
+    bad: list[str] = []
+    for i, entry in enumerate(blocks, 1):
+        result = entry.get("result")
+        if result not in ("PASS", "FAIL", "SKIPPED"):
+            bad.append(f"entry {i}: bad result {result!r}")
+            continue
+        if result == "SKIPPED":
+            continue
+        evidence = entry.get("evidence")
+        test = entry.get("test", "")
+        if evidence:
+            if not _evidence_resolves(str(evidence), roots):
+                bad.append(f"entry {i}: evidence does not resolve to an existing file")
+        elif not (isinstance(test, str) and test and test in log_text):
+            bad.append(f"entry {i}: no evidence and test command not found in SESSION_LOG.md")
+    if bad:
+        return [
+            {
+                "id": "test_results",
+                "result": "FAIL",
+                "evidence": "; ".join(bad[:5]),
+            }
+        ]
+    return [
+        {
+            "id": "test_results",
+            "result": "PASS",
+            "evidence": f"{len(blocks)} valid test result(s)",
+        }
+    ]
 
 
 def _check_rubrics(text: str) -> list[dict]:

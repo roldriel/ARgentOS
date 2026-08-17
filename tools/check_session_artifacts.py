@@ -80,6 +80,25 @@ def scan(root: Path) -> list[str]:
             checks = data.get("checks")
             if not isinstance(checks, list):
                 out.append(f"ENTRY {report.relative_to(root)}#{idx}: checks is not a list")
+            deviation = data.get("deviation")
+            if deviation is not None:
+                if not isinstance(deviation, dict):
+                    out.append(
+                        f"ENTRY {report.relative_to(root)}#{idx}: deviation is not an object"
+                    )
+                else:
+                    cause = deviation.get("cause")
+                    evidence = deviation.get("evidence")
+                    if not isinstance(cause, str) or not cause.strip():
+                        out.append(
+                            f"ENTRY {report.relative_to(root)}#{idx}: "
+                            "deviation.cause must be a non-empty string"
+                        )
+                    if not isinstance(evidence, str) or not evidence.strip():
+                        out.append(
+                            f"ENTRY {report.relative_to(root)}#{idx}: "
+                            "deviation.evidence must be a non-empty string"
+                        )
 
     for metrics in sorted(project.rglob("METRICS.md")):
         text = metrics.read_text(encoding="utf-8", errors="replace")

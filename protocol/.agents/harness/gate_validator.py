@@ -15,6 +15,9 @@ truth) and S00 (probe) are not covered by design.
 Checks per trigger:
 - artifact existence;
 - required normative sections of the contract;
+- profile-aware H04: for `trivial`-profile tasks the `Context Reference`
+  section is not required (the EXECUTION_PLAN contract omits it in the reduced
+  cycle); the profile is read from the session's TASK_ANALYSIS.md;
 - machine-readable TOML blocks (parseable, required keys, enum values);
 - citation resolution (``path:section``, ``path`` §section, TOML citation
   fields) against the project and session roots;
@@ -54,6 +57,12 @@ KNOWN_TECH_PRACTICES = {
     "ddd_tactical",
     "ddd_strategic",
 }
+
+_PROFILE_SECTION_RE = re.compile(
+    r"^##\s+Task Profile\s*\n(.*?)(?=^##\s|\Z)", re.MULTILINE | re.DOTALL
+)
+_PROFILE_VALUE_RE = re.compile(r'^\s*value\s*=\s*"([^"]+)"', re.MULTILINE)
+_VALID_PROFILES = ("trivial", "standard", "complex")
 
 BASE_RUBRICS = (
     "TASK_SPECIFICATION_RUBRIC",
@@ -271,6 +280,31 @@ def features(root: Path) -> dict:
     return data
 
 
+def read_task_profile(iterations: list[Path]) -> str | None:
+    """Return the task profile declared in the session's TASK_ANALYSIS.md.
+
+    Searches the session iteration directories (highest iteration wins) for a
+    file ending in ``TASK_ANALYSIS.md`` and reads the ``value`` key of its
+    ``Task Profile`` section. Returns None when the profile cannot be
+    determined; H04 then applies the standard (full) section set.
+    """
+    for iter_dir in reversed(iterations):
+        candidates = sorted(iter_dir.glob("*TASK_ANALYSIS.md"))
+        if not candidates:
+            continue
+        try:
+            content = candidates[-1].read_text(encoding="utf-8")
+        except OSError:
+            continue
+        section = _PROFILE_SECTION_RE.search(content)
+        if not section:
+            continue
+        match = _PROFILE_VALUE_RE.search(section.group(1))
+        if match and match.group(1) in _VALID_PROFILES:
+            return match.group(1)
+    return None
+
+
 def _roots_from_artifact(artifact: Path) -> tuple[Path, Path | None, list[Path]]:
     """Return (project root, session dir, iteration dirs) for citation checks."""
     resolved = artifact.resolve()
@@ -374,7 +408,20 @@ def validate(trigger: str, artifact: Path, root: Path | None = None) -> tuple[li
 
     text = artifact.read_text(encoding="utf-8", errors="replace")
     headings = headings_of(text)
-    for section in spec.get("sections", []):
+    sections = list(spec.get("sections", []))
+    if trigger == "H04" and read_task_profile(_roots_from_artifact(artifact)[2]) == "trivial":
+        sections = [s for s in sections if s != "Context Reference"]
+        checks.append(
+            {
+                "id": "profile",
+                "result": "PASS",
+                "evidence": (
+                    "trivial task profile: Context Reference omitted per the "
+                    "EXECUTION_PLAN.md contract"
+                ),
+            }
+        )
+    for section in sections:
         if _normalize(section) not in headings:
             checks.append(
                 {"id": "section", "result": "FAIL", "evidence": f"missing section: {section}"}

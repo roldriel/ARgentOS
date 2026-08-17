@@ -93,6 +93,27 @@ listan; ver `docs/VERSIONING.md` §5)
   `ENVIRONMENT_DISCOVERY.md`) no es el path del artefacto (p.ej.
   `environment.md`).
 
+## [3.22.0] — 2026-08-16
+
+### Added
+
+- **Cobertura bidireccional de gates en el checker** (plan 71):
+  `check_taxonomy_coherence.py` verifica que el origen de cada gate coincide
+  con el `state` declarado por su policy y que el header TOML `transition` y
+  los `gates:` de cada policy nombran las mismas transiciones, con tests.
+
+### Fixed
+
+- **Validador estructural profile-aware para H04** (plan 71, F-A): para tareas
+  de perfil `trivial`, `gate_validator.py` ya no exige `## Context Reference`
+  (el contrato de `EXECUTION_PLAN.md` la omite en el ciclo reducido); el perfil
+  se lee de `TASK_ANALYSIS.md` de la sesión, con tests de producto del camino
+  trivial.
+- **Gate trivial declarado en H00** (plan 71, F-B): el front matter de H00
+  (header `transition` y `gates:`) y la tabla de triggers de `harness/INDEX.md`
+  declaran `ANALYZING_TASK → PLANNING` (solo perfil trivial), alineados con la
+  máquina de estados.
+
 ## [3.19.0] — 2026-08-15
 
 ### Changed

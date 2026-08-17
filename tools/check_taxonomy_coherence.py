@@ -27,6 +27,10 @@ Checks:
 7. Every state machine "Required Output Artifacts" section matches the
    ``output_artifacts`` of the workflow mapped to that state (bidirectional,
    basename comparison with order-prefix normalization).
+8. Harness gate declarations are internally consistent: every gate's source
+   matches the policy's declared ``state``, and the policy's TOML
+   ``transition`` header and its ``gates`` name the same transitions
+   (bidirectional).
 
 Usage:
   python tools/check_taxonomy_coherence.py [--root REPO_ROOT]
@@ -454,6 +458,49 @@ def violations_for_root(
                 out.append(
                     f"POLICY {rel} gate {gate} target not in taxonomy {src}.next"
                 )
+        # 8a. Gate source must match the policy's declared state.
+        policy_state = fm.get("state")
+        for gate in fm.get("gates", []):
+            m = re.match(r"^([^ ]+) -> ([^ ]+)$", gate)
+            if not m:
+                continue
+            src = m.group(1)
+            if policy_state and src != policy_state:
+                out.append(
+                    f"POLICY {rel} gate {gate} source {src} != policy state {policy_state}"
+                )
+        # 8b. The TOML `transition` header and `gates` must name the same
+        # transitions, when the header declares them.
+        tom = parse_toml_front_matter(
+            policy.read_text(encoding="utf-8", errors="replace")
+        )
+        header = tom.get("transition", "")
+        hm = re.match(r"^([A-Z][A-Z0-9_]*)\s*(?:→|->)\s*(.+)$", header)
+        if hm:
+            domain = fm.get("domain")
+            src = hm.group(1)
+            dests = [
+                re.sub(r"\s*\(.*\)$", "", d).strip()
+                for d in re.split(r",|\bor\b", hm.group(2))
+            ]
+            dests = [d for d in dests if re.fullmatch(r"[A-Z][A-Z0-9_]*", d)]
+            gate_set = set(fm.get("gates", []))
+            for dst in dests:
+                gate = f"{domain}:{src} -> {domain}:{dst}"
+                if gate not in gate_set:
+                    out.append(
+                        f"POLICY {rel} transition header names {src} -> {dst} "
+                        "missing from gates"
+                    )
+            for gate in gate_set:
+                gm = re.match(r"^([^ ]+) -> ([^ ]+)$", gate)
+                if not gm:
+                    continue
+                bare_dst = gm.group(2).split(":", 1)[-1]
+                if bare_dst not in dests:
+                    out.append(
+                        f"POLICY {rel} gates {gate} not named in transition header"
+                    )
 
     # 5. Contract produced_by / consumed_by reference existing states.
     for key, ent in entities.items():

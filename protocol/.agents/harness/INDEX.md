@@ -62,7 +62,7 @@ The harness runs as a gate **before** each critical transition:
 
 | Trigger | Transition | Policy |
 | --- | --- | --- |
-| H00 | `ANALYZING_TASK → BUILDING_TASK_SPECIFICATION`, `CONFIRMING_INTENT`, or `NEEDS_CLARIFICATION` | `.agents/orchestrators/core/harness/policies/H00-task-analysis.md` |
+| H00 | `ANALYZING_TASK → BUILDING_TASK_SPECIFICATION`, `CONFIRMING_INTENT`, `NEEDS_CLARIFICATION`, or `PLANNING` (trivial profile) | `.agents/orchestrators/core/harness/policies/H00-task-analysis.md` |
 | H11 | `CONFIRMING_INTENT → BUILDING_TASK_SPECIFICATION` | `.agents/orchestrators/core/harness/policies/H11-intent-reflection.md` |
 | H01 | `BUILDING_TASK_SPECIFICATION → TASK_READY` | `.agents/orchestrators/core/harness/policies/H01-task-specification.md` |
 | H02 | `GATHERING_CONTEXT → CONTEXT_GATHERED` | `.agents/orchestrators/core/harness/policies/H02-context-artifact.md` |

@@ -230,3 +230,66 @@ def test_cli_exit_codes(tmp_path):
     )
     assert result.returncode == 0
     assert json.loads(result.stdout)["decision"] == "PASS"
+
+
+def make_h04_plan(tmp_path: Path, profile: str, with_context_reference: bool) -> Path:
+    """Build an EXECUTION_PLAN for the given task profile in a fake session."""
+    session = tmp_path / ".project" / f"test-{uuid.uuid4()}" / "00"
+    session.mkdir(parents=True)
+    (session / "TASK_ANALYSIS.md").write_text(
+        "# Analysis\n\n"
+        "## Task Profile\n\n"
+        "```toml\n"
+        "[task_profile]\n"
+        f'value = "{profile}"\n'
+        'justification = "bounded change"\n'
+        "```\n",
+        encoding="utf-8",
+    )
+    sections = {
+        "Metadata": "- x",
+        "Task Reference": "- spec",
+        "Objective": "- o",
+        "Approach Summary": "- a",
+        "Technical Approach": "- t",
+        "Implementation Steps": "- s",
+        "Affected Components": "- c",
+        "Dependencies": "- d",
+        "Risks": "- r",
+        "Validation Strategy": "- v",
+        "Rollback Considerations": "- rb",
+        "Plan Decision": "- p",
+        "State Transition": "- st",
+    }
+    if with_context_reference:
+        sections["Context Reference"] = "- ctx"
+    parts = ["# Plan"]
+    for heading, body in sections.items():
+        parts.append(f"## {heading}")
+        parts.append(body)
+    artifact = session / "EXECUTION_PLAN.md"
+    artifact.write_text("\n\n".join(parts) + "\n", encoding="utf-8")
+    return artifact
+
+
+def test_h04_trivial_omits_context_reference_passes(tmp_path):
+    artifact = make_h04_plan(tmp_path, "trivial", with_context_reference=False)
+    checks, decision = gate_validator.validate("H04", artifact)
+    assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]
+    assert any(c["id"] == "profile" and c["result"] == "PASS" for c in checks)
+
+
+def test_h04_standard_requires_context_reference(tmp_path):
+    artifact = make_h04_plan(tmp_path, "standard", with_context_reference=False)
+    checks, decision = gate_validator.validate("H04", artifact)
+    assert decision == "FAIL"
+    assert any(
+        c["id"] == "section" and "Context Reference" in c["evidence"]
+        for c in checks
+    )
+
+
+def test_h04_trivial_with_context_reference_passes(tmp_path):
+    artifact = make_h04_plan(tmp_path, "trivial", with_context_reference=True)
+    checks, decision = gate_validator.validate("H04", artifact)
+    assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]

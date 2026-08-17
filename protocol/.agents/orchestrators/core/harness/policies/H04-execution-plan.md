@@ -63,6 +63,9 @@ The Orchestrator evaluates each item below by judgment when the gate fires and M
 
 ## Decision Criteria
 **Structural validator:** the Orchestrator MUST run `python .agents/harness/gate_validator.py --trigger H04 --artifact <path>` before judging PASS; a structural FAIL blocks PASS unless recorded as a documented deviation.
+For `trivial`-profile tasks the validator applies the profile-aware section
+set: `## Context Reference` is not required (the contract omits it in the
+reduced cycle; the profile is read from the session's `TASK_ANALYSIS.md`).
 
 - `PASS`: All checklist items are satisfied.
 - `FAIL`: The plan is unsafe, incomplete, out of scope, or depends on unresolved unknowns.

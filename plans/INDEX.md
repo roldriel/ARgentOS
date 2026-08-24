@@ -34,7 +34,7 @@ discovery) están implementados; sus versiones históricas viven en `archive/`.
 
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
-| `75-discovery-consent-visibility.md` | RFC-61 | Aprobado para ejecución | Gate de consentimiento del discovery (`discovery_require_consent`), scope `lite`, sección "Qué aprendimos" en el cierre de tarea y skill `/discovery`. |
+| `75-discovery-consent-visibility.md` | RFC-61 | Executed | Gate de consentimiento del discovery (`discovery_require_consent`), scope `lite`, sección "Qué aprendimos" en el cierre de tarea y skill `/discovery`. Versión 3.26.0. |
 
 ## Serie de RFCs (documentos canónicos)
 

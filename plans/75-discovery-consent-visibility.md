@@ -1,6 +1,6 @@
 # Plan 75 — Consentimiento y visibilidad del discovery (RFC-61)
 
-**Status:** Aprobado para ejecución
+**Status:** Executed
 **Fecha:** 2026-08-24
 **RFC:** RFC-61 (`plans/rfc/61-kb-transparency-consent-lifecycle.md`)
 **Clase:** A (modelo del Orchestrator, contratos, máquina de estados, flags, métricas y skill nueva)
@@ -104,4 +104,9 @@ Discusión de diseño con el mantenedor (2026-08-23) → RFC-61 (Accepted 2026-0
 
 ## Nota de ejecución
 
-Se completa al ejecutar: fecha, verificación realizada y resultado. Si algún criterio de salida queda incumplido, `Status: Executed (parcial: <qué falta>)`.
+2026-08-24: ejecutado en `dev`. Batería canónica en verde: invariantes (201
+archivos, 8.624 referencias), citas, estructura, coherencia taxonómica,
+artefactos de sesión y versiones (warnings de dev esperados por tags
+pendientes); 168 tests de desarrollo en verde. Changelog `[3.26.0]` y
+`protocol/.agents/VERSION` bumped; plan 75 registrado como `Executed` en
+`plans/INDEX.md`. Commit atómico en `dev`.

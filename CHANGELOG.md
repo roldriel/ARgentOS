@@ -45,6 +45,19 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [3.26.0] — 2026-08-24
+
+### Added
+
+- **Consentimiento del discovery** (plan 75, RFC-61): flag declarativo `discovery_require_consent` (default `true`) que convierte la detección automática del discovery en una consulta No-Assumption al usuario (condición disparada, opciones `full`/`lite`/sin discovery + opción libre); ante silencio o respuesta vaga se pide clarificación (sin default), en sesión no interactiva no se ejecuta y el bypass queda registrado en `SESSION_LOG.md`; con `false` se restaura la invocación automática.
+- **Scope `lite` de discovery** (plan 75, RFC-61): `init_worker` + `environment_worker` + `stack_worker` + `framework_worker` + `synthesis_worker`, respetando el grafo de dependencias; figura en la tabla de scopes, en la invocación y en el marcador `.last_discovery`.
+- **Skill `/discovery`** (plan 75, RFC-61): skill user-invoked fuera de la activation table; `/discovery` y `/discovery full` ejecutan `full`, `/discovery lite` ejecuta `lite`; reporta entradas escritas/actualizadas, stale marcados y duración.
+- **Evento de métricas `discovery_consent`** (plan 75, RFC-61): catálogo del contrato `METRICS.md` con `condition`, `options`, `decision`; métrica `discovery.consent_by_decision` de clase Recorded en `PROTOCOL_METRICS.md`.
+
+### Changed
+
+- **Cierre de tarea con "What we learned"** (plan 75, RFC-61): el feedback de cierre posterior a `VERIFYING → COMPLETED` (gated por H06/H07) incluye la sección condicional "Qué aprendimos" con el conocimiento persistido en `.project/knowledge/entries/`, informativa y sin acción requerida del usuario; `VERIFICATION_REPORT.md` no se modifica.
+
 ## [3.20.0] — 2026-08-16
 
 ### Fixed

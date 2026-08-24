@@ -143,7 +143,7 @@ See `.agents/roles/context_discoverer.md` and `.agents/standards/context/CONTEXT
 
 When the `discovery_orchestrator` feature flag is enabled, the Orchestrator maintains the discovery knowledge base (`.project/knowledge/discovery/`) by invoking the Discovery Orchestrator of the `discovery` domain (`.agents/orchestrators/discovery/roles/discovery_orchestrator.md`). The Orchestrator does not know the internal details of the discovery subsystem; it only detects the need, invokes with a scope, and consumes the result.
 
-**Detection.** The Orchestrator invokes the Discovery Orchestrator when any of the following holds:
+**Detection.** The Orchestrator detects a discovery need when any of the following holds:
 
 1. `.project/knowledge/discovery/` does not exist.
 2. `.last_discovery` exceeds the project TTL (`discovery_project_ttl_hours`, default 24h). The marker file `.project/.last_discovery` is written by the Discovery Orchestrator on `DISCOVERY_READY`; its format is defined in `.agents/orchestrators/discovery/states/DISCOVERY_STATE_MACHINE.md` ("The `.last_discovery` marker").
@@ -155,6 +155,23 @@ When the `discovery_orchestrator` feature flag is enabled, the Orchestrator main
 
 Both TTLs are configured in `.agents/features.toml`.
 
+**Consent gate.** When the `discovery_require_consent` flag is enabled (default `true`), a detected need is never invoked directly: the Orchestrator presents a No-Assumption consultation to the user (see `.agents/standards/requirements/NO_ASSUMPTIONS.md`) with:
+
+1. The detection condition that triggered the need and the available detail (the expired TTL, the changed hash, or the reported inconsistency).
+2. Concrete options with their relative cost:
+   - `full` — complete discovery (all entries; the most expensive).
+   - `lite` — environment, language, stack and architecture, without deep qualitative analysis.
+   - **No discovery** — continue without KB, with the documented degradation (delegations operate without KB context).
+3. A free-form option ("other answer").
+
+The user's explicit decision determines the scope (`full` or `lite`), a rejection (no discovery), or a custom request. On silence or a vague answer (e.g. "go ahead"), the Orchestrator does NOT execute any scope: it asks for clarification again, as with any other ambiguity. There is no execution default. A user-requested refresh (detection condition 5) is itself explicit consent and proceeds without a new consultation.
+
+In a non-interactive session or when the consultation channel is degraded (no user available to respond), the Orchestrator does not run discovery: it continues without KB and records in `SESSION_LOG.md` the detected condition and the reason for the bypass. Without the possibility of consent there is no unrequested work.
+
+With `discovery_require_consent = false`, the legacy automatic behavior is restored: a detected need invokes the Discovery Orchestrator directly according to the scope table below, without consultation.
+
+Every consent-gate event is recorded in `SESSION_LOG.md`: the triggered condition, the options presented, the user decision (chosen scope, rejection, or non-interactive bypass), and the timestamp.
+
 **Hash calculation.** Hashes are computed by the Discovery Orchestrator's
 `init_worker` during `discovery:DISCOVERY_INIT` and recorded in
 `discovery_input.json` and the manifest's `[hashes]` section
@@ -162,11 +179,12 @@ Both TTLs are configured in `.agents/features.toml`.
 Orchestrator never computes hashes itself: it only detects the need for
 discovery (conditions above) and requests the scope.
 
-**Invocation.** The Orchestrator invokes the Discovery Orchestrator with a scope and the following payload:
+**Invocation.** Once consent is granted (or `discovery_require_consent` is disabled), the Orchestrator invokes the Discovery Orchestrator with a scope and the following payload:
 
 | Scope | Workers invoked | Use |
 | ------- | ----------------- | ----- |
 | `full` | All | First run or major change. |
+| `lite` | `init_worker`, `environment_worker`, `stack_worker`, `framework_worker`, `synthesis_worker` | Environment, language, stack and architecture, without deep qualitative analysis. |
 | `env` | `init_worker`, `environment_worker`, `synthesis_worker` | Tooling change. |
 | `stack` | `init_worker`, `stack_worker`, `framework_worker`, `synthesis_worker` | New dependencies. |
 | `patterns` | `init_worker`, `patterns_worker`, `synthesis_worker` | Convention change. |
@@ -322,6 +340,17 @@ The `verifier` MUST read:
 The `verifier` MUST produce `VERIFICATION_REPORT.md` in the expected session artifact location.
 
 The Orchestrator MUST run harness triggers H06 and H07 on the report before allowing the transition to `COMPLETED`. If either trigger fails, the Orchestrator MUST transition to `RECOVERY`.
+
+## Closing Feedback
+
+When the workflow reaches `COMPLETED` (after harness triggers H06 and H07 pass on `VERIFICATION_REPORT.md`), the Orchestrator includes in the closing feedback a conditional "What we learned" section summarizing the knowledge persisted during the session in `.project/knowledge/entries/`, applying the curation filter of `.agents/standards/context/KNOWLEDGE_CURATION.md` (§"Inclusion rules").
+
+Rules:
+
+- **The agent curates.** The Orchestrator decides which learnings deserve persistence, applying the existing curation filter; the user neither chooses entry by entry nor approves persistence.
+- **Informative, not transactional.** The section reports what was already persisted ("Persisted in `entries/...`: ..."). It requires no user action. If the user detects an error, they request the correction as with any other protocol output; if nothing is said, nothing happens.
+- **Conditional.** If the session produced no learnings that pass the filter, the section is omitted (the empty result is not reported).
+- `VERIFICATION_REPORT.md` is not modified; the verifier's responsibilities do not change.
 
 ## Delegation Contract
 

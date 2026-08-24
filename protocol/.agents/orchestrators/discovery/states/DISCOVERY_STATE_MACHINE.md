@@ -559,7 +559,7 @@ DISCOVERY_INIT
 
 # Invocation Conditions
 
-The core Orchestrator invokes the Discovery Orchestrator when:
+The core Orchestrator detects a discovery need when:
 
 1. `.project/knowledge/discovery/` does not exist.
 2. `.last_discovery` exceeds the project TTL (24h).
@@ -568,6 +568,14 @@ The core Orchestrator invokes the Discovery Orchestrator when:
 5. The user requested an explicit refresh.
 6. An execution worker reports an inconsistency.
 7. The environment TTL (6h) expired and the scope is `env`.
+
+Detection does not imply invocation: with `discovery_require_consent` enabled
+(default), a detected need produces a consent consultation with the user (see
+`.agents/orchestrators/core/roles/orchestrator.md` §"4.3 Discovery Orchestrator
+Invocation"); the Discovery Orchestrator is invoked only after explicit
+consent or via the user-invoked `/discovery` skill. In a non-interactive
+session discovery is not invoked. With `discovery_require_consent = false`,
+detection invokes directly (legacy automatic behavior).
 
 ## The `.last_discovery` marker
 
@@ -582,19 +590,20 @@ Shape:
 ```json
 {
   "timestamp": "<ISO-8601 UTC>",
-  "scope": "full|env|stack|patterns|business",
+  "scope": "full|lite|env|stack|patterns|business",
   "status": "DISCOVERY_READY"
 }
 ```
 
 If the file is missing or unparsable, the core Orchestrator treats the TTL as
-expired (i.e., discovery is invoked).
+expired (i.e., a discovery need is detected).
 
 # Scopes
 
 | Scope | Workers invoked | Use |
 |-------|-----------------|-----|
 | `full` | All | First run or major change. |
+| `lite` | `init_worker`, `environment_worker`, `stack_worker`, `framework_worker`, `synthesis_worker` | Environment, language, stack and architecture, without deep qualitative analysis. |
 | `env` | `init_worker`, `environment_worker`, `synthesis_worker` | Tooling change. |
 | `stack` | `init_worker`, `stack_worker`, `framework_worker`, `synthesis_worker` | New dependencies. |
 | `patterns` | `init_worker`, `patterns_worker`, `synthesis_worker` | Convention change. |

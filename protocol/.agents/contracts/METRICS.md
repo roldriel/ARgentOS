@@ -63,6 +63,7 @@ Every event carries `timestamp` (ISO-8601) and `type`. Required fields per type:
 | `flag_evidence` | `flag` | A declarative flag whose consumption was declared in an artifact or log entry. |
 | `context_budget` | `phase`, `declared`, `consumed` | Context Budget declared vs. consumed for one delegation, in estimated tokens (`.agents/standards/context/BUDGET_MATERIALIZATION.md`). |
 | `context_candidates` | `prioritized`, `resolved`, `composed` | Candidate counts across the context pipeline of one delegation. |
+| `discovery_consent` | `condition`, `options`, `decision` | A discovery consent gate presented by the Orchestrator: the detection condition that triggered it, the options offered, and the decision (chosen scope, rejection, or non-interactive bypass). |
 
 ## Constraints
 

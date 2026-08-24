@@ -51,6 +51,7 @@ Honesty note: the events are self-reported (see `harness/INDEX.md`,
 | `caveman` | Applies `.agents/standards/communication/CAVEMAN.md` to all protocol communication. |
 | `llm_discovery` | Enables LLM-based project discovery. |
 | `discovery_orchestrator` | Enables the Discovery Orchestrator of the `discovery` domain. |
+| `discovery_require_consent` | Requires explicit user consent before any automatic discovery invocation (default `true`). |
 | `discovery_sample_size` | Number of files sampled during discovery (default 10; not boolean). |
 | `discovery_environment_ttl_hours` | TTL of the environment discovery entry (default 6; not boolean). |
 | `discovery_project_ttl_hours` | TTL of the project discovery KB (default 24; not boolean). |

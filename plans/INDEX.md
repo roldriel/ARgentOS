@@ -95,6 +95,7 @@ discovery) están implementados; sus versiones históricas viven en `archive/`.
 | RFC-58 | `rfc/58-mandatory-structural-validator.md` | Accepted (15 ago 2026) | ¿Cómo se vuelve obligatorio el validador estructural a nivel de gate sin tocar el fail-open de los hooks? |
 | RFC-59 | `rfc/59-recovery-context-session-continuity.md` | Accepted (16 ago 2026) | ¿Cómo se derivan, registran y ordenan las decisiones de recovery (variables de contexto, destinos múltiples) y cómo se reanuda una sesión desde su último artefacto intacto? |
 | RFC-60 | `rfc/60-budget-accounting-metrics-trust.md` | Accepted (17 ago 2026) | ¿Cómo se hace mecánicamente verificable la contabilidad del Context Budget (declared vs consumed) y cómo se clasifica la confianza de los datos de métricas auto-reportados? |
+| RFC-61 | `rfc/61-kb-transparency-consent-lifecycle.md` | Accepted (2026-08-24) | ¿Cómo hace ARgentOS que el discovery — trabajo no pedido explícitamente — sea consentido y visible para el usuario? |
 
 ## Roadmap de implementación (planes activos)
 

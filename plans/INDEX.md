@@ -30,6 +30,12 @@ discovery) están implementados; sus versiones históricas viven en `archive/`.
 | `73-remediacion-bloque-3-parte-2.md` | RFC-59 | Executed | Bloque 3 parte 2 de `AUDITORIA_SISTEMA_2026-08-16.md` (ítems 13/14/16): recovery context con derivación/registro de variables de las tablas, ranking de destinos múltiples de recovery y procedimiento de reanudación de sesión. Versión 3.24.0. |
 | `74-remediacion-bloque-4.md` | RFC-60 | Executed | Bloque 4 de `AUDITORIA_SISTEMA_2026-08-16.md` (ítems 19/20/21): contabilidad mecánica del Context Budget (estado measured + tool de medición), modelo de confianza de métricas (clases Derived/Recorded/Verified + `--audit` del agregador) y endurecimiento de la superficie de bypass del hook (deny de Write/Edit sin target). Versión 3.25.0. |
 
+## Décima serie: consentimiento y visibilidad del discovery (24 ago 2026)
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `75-discovery-consent-visibility.md` | RFC-61 | Aprobado para ejecución | Gate de consentimiento del discovery (`discovery_require_consent`), scope `lite`, sección "Qué aprendimos" en el cierre de tarea y skill `/discovery`. |
+
 ## Serie de RFCs (documentos canónicos)
 
 | RFC | Archivo | Status | Pregunta que responde |

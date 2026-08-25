@@ -1,11 +1,11 @@
 +++
-schema_version = "1.0.0"
+schema_version = "1.1.0"
 artifact = "HARNESS_REPORT.md"
 phase = "all"
 produced_by = "orchestrator"
 enforcement = "informational"
 +++
-schema_version = "1.0.0"
+schema_version = "1.1.0"
 
 
 ---
@@ -57,16 +57,22 @@ The report follows a fixed declarative structure that the Orchestrator must resp
    - `Result`: `PASS`, `FAIL`, or `SKIP`. `SKIP` means `skipped: profile`: the gate is not mandatory for the task profile assigned in the session's `TASK_ANALYSIS.md`; the omission is a system decision, not an oversight.
    - `Timestamp`: ISO-8601 timestamp of the invocation.
    - `Artifact checked`: present only when the trigger validates an artifact.
-   - `Checks`: one bullet per check, formatted as `` `<check-id>`: <result> — <evidence> ``. A skipped gate records a single check `gate_required_for_profile` with result `SKIP` and evidence `skipped: profile — …`.
+   - `Checks`: one bullet per check, formatted as `` `<check-id>`: <result> — <evidence> `` with an optional `` `claim_class` `` marker. Every check cites its evidence or declares an explicit `claim_class`: with non-empty `evidence` the implicit class is `verified`; without `evidence`, the check MUST declare `claim_class: attested` or `claim_class: inference` (`verified` requires `evidence`). A skipped gate records a single check `gate_required_for_profile` with result `SKIP`, evidence `skipped: profile — …` and no claim class.
    - `Alert` (optional): one `- Alert: <message>` line per post-hoc audit alert (for example, a suspected enforcement-hook bypass detected by `.agents/harness/runner_state.py` when files were modified before the plan gate PASS). Alerts never change the gate result.
 
    Each entry ends with a machine-readable HTML comment so history is preserved across updates:
 
    ```markdown
-   <!-- ENTRY: {"timestamp": "...", "trigger": "...", "transition": "...", "result": "...", "checks": [{"id": "...", "result": "...", "evidence": "..."}], "artifact": "...", "duration_ms": 0, "rubric_scores": {...}, "alerts": [...]} -->
+   <!-- ENTRY: {"timestamp": "...", "clock": "utc", "trigger": "...", "transition": "...", "result": "...", "checks": [{"id": "...", "result": "...", "evidence": "...", "claim_class": "verified"}], "artifact": "...", "duration_ms": 0, "rubric_scores": {...}, "alerts": [...]} -->
    ```
 
    The `alerts` array is optional (absent or empty when no alert was raised).
+   `clock` is optional (`utc` | `agent_clock`): mechanically written records
+   default to `utc`; agent-written timestamps produced without a reliable clock
+   MUST declare `clock: agent_clock` (G-004). `claim_class` on each check
+   (`verified` | `attested` | `inference`) is optional in the JSON only when
+   the check carries non-empty `evidence`; a check without `evidence` MUST
+   carry an explicit `claim_class` of `attested` or `inference` (G-002/G-003).
    The `deviation` field is optional: when the Orchestrator records a `PASS`
    on a gate whose structural validator returned FAIL, the entry MUST carry a
    `deviation` object `{"cause": "<short reason>", "evidence": "<citation of

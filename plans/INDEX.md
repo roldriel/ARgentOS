@@ -36,6 +36,28 @@ discovery) están implementados; sus versiones históricas viven en `archive/`.
 |---|---|---|---|
 | `75-discovery-consent-visibility.md` | RFC-61 | Executed | Gate de consentimiento del discovery (`discovery_require_consent`), scope `lite`, sección "Qué aprendimos" en el cierre de tarea y skill `/discovery`. Versión 3.26.0. |
 
+## Undécima serie: decisiones arquitectónicas post-auditoría (25 ago 2026)
+
+RFCs de modelo conceptual derivadas de `ARCHITECTURAL_DECISION_MODEL.md` (basado en
+`ARCHITECTURAL_PROBLEM_MODEL.md`). RFC-62 `Accepted` (plan 76); RFC-63…67
+`Proposal`; ninguna RFC habilita modificar `protocol/.agents/` hasta su plan de
+ejecución.
+
+| RFC | Status | Descripción |
+|---|---|---|
+| `rfc/62-guarantee-model-and-enforcement-boundaries.md` | Accepted (plan 76) | Garantías clasificadas y matriz de enforcement (D0, D11). |
+| `rfc/63-state-and-artifact-lifecycle-model.md` | Proposal | Dimensiones de estado, lifecycle de artefactos y semántica de COMPLETED (D1, D2, D3). |
+| `rfc/64-execution-record-model.md` | Proposal | Identidad, registros, temporalidad y observabilidad de la ejecución (D5, D6, D7, D10). |
+| `rfc/65-evidence-and-verification-model.md` | Proposal | Clases de evidencia y regla VERIFIED (D4, D12). |
+| `rfc/66-authorization-and-capability-model.md` | Proposal | Frontera de efectos y bloque `effects` (D8, D11). |
+| `rfc/67-knowledge-lifecycle-model.md` | Proposal | Lifecycle mínimo de conocimiento (D9). |
+
+## Duodécima serie: modelo de garantías y fronteras de enforcement (25 ago 2026)
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `76-guarantee-model-enforcement-boundaries.md` | RFC-62 | Executed | Catálogo cerrado de garantías con cinco clases, matriz de enforcement por capa en el payload y la guía de adopción, regla operacional de claims (evidencia o atestación/inferencia), reemplazo de "zero hallucinations" como garantía técnica y celdas External en los checkers dev. Versión 4.0.0 (MAJOR). |
+
 ## Serie de RFCs (documentos canónicos)
 
 | RFC | Archivo | Status | Pregunta que responde |
@@ -102,6 +124,12 @@ discovery) están implementados; sus versiones históricas viven en `archive/`.
 | RFC-59 | `rfc/59-recovery-context-session-continuity.md` | Accepted (16 ago 2026) | ¿Cómo se derivan, registran y ordenan las decisiones de recovery (variables de contexto, destinos múltiples) y cómo se reanuda una sesión desde su último artefacto intacto? |
 | RFC-60 | `rfc/60-budget-accounting-metrics-trust.md` | Accepted (17 ago 2026) | ¿Cómo se hace mecánicamente verificable la contabilidad del Context Budget (declared vs consumed) y cómo se clasifica la confianza de los datos de métricas auto-reportados? |
 | RFC-61 | `rfc/61-kb-transparency-consent-lifecycle.md` | Accepted (2026-08-24) | ¿Cómo hace ARgentOS que el discovery — trabajo no pedido explícitamente — sea consentido y visible para el usuario? |
+| RFC-62 | `rfc/62-guarantee-model-and-enforcement-boundaries.md` | Accepted (plan 76, 2026-08-25) | ¿Qué garantiza ARgentOS, qué no, y quién verifica cada garantía? |
+| RFC-63 | `rfc/63-state-and-artifact-lifecycle-model.md` | Proposal | ¿Qué dimensiones de estado existen y cuál es el lifecycle de los artefactos? |
+| RFC-64 | `rfc/64-execution-record-model.md` | Proposal | ¿Cómo se registra y reconstruye una ejecución sin Event Sourcing? |
+| RFC-65 | `rfc/65-evidence-and-verification-model.md` | Proposal | ¿Qué cuenta como evidencia y cuándo un artefacto puede declararse VERIFIED? |
+| RFC-66 | `rfc/66-authorization-and-capability-model.md` | Proposal | ¿Cuándo una capability está autorizada para producir un efecto? |
+| RFC-67 | `rfc/67-knowledge-lifecycle-model.md` | Proposal | ¿Qué ciclo mínimo necesita el conocimiento para ser reutilizable y revalidable? |
 
 ## Roadmap de implementación (planes activos)
 

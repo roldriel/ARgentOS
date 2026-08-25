@@ -1,11 +1,11 @@
 +++
-schema_version = "1.0.0"
+schema_version = "1.1.0"
 artifact = "METRICS.md"
 phase = "all"
 produced_by = "orchestrator"
 enforcement = "informational"
 +++
-schema_version = "1.0.0"
+schema_version = "1.1.0"
 
 
 ---
@@ -43,7 +43,7 @@ consumed_by: [core:COMPLETED]
 2. **`## Entries`** — one HTML comment per event, in chronological order:
 
    ```markdown
-   <!-- METRIC: {"timestamp": "...", "type": "...", ...} -->
+   <!-- METRIC: {"timestamp": "...", "clock": "utc", "type": "...", ...} -->
    ```
 
    These `METRIC` comments are part of the contract: they must remain valid JSON, one event per comment, and must not be removed or edited. Human-readable notes between comments are allowed but carry no metric meaning.
@@ -64,6 +64,11 @@ Every event carries `timestamp` (ISO-8601) and `type`. Required fields per type:
 | `context_budget` | `phase`, `declared`, `consumed` | Context Budget declared vs. consumed for one delegation, in estimated tokens (`.agents/standards/context/BUDGET_MATERIALIZATION.md`). |
 | `context_candidates` | `prioritized`, `resolved`, `composed` | Candidate counts across the context pipeline of one delegation. |
 | `discovery_consent` | `condition`, `options`, `decision` | A discovery consent gate presented by the Orchestrator: the detection condition that triggered it, the options offered, and the decision (chosen scope, rejection, or non-interactive bypass). |
+
+Every event MAY carry `clock` (`utc` | `agent_clock`): mechanically written
+records default to `utc`; agent-written timestamps produced without a reliable
+clock MUST declare `clock: agent_clock` (G-004). `utc` requires a UTC-normalized
+timestamp (`Z` or `+00:00`); `agent_clock` accepts any ISO-8601 timestamp.
 
 ## Constraints
 

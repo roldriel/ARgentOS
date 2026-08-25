@@ -211,3 +211,31 @@ El hook deniega además `Write`/`Edit` cuyo `tool_input` no nombra un target
 gated y los writes por esas vías quedan cubiertos por el scan post-hoc, no por
 parsing de comandos (ver `.agents/harness/INDEX.md`, §Bypass surface and
 coverage).
+
+### 6.4. Catálogo de garantías y matriz de enforcement
+
+El protocolo declara un **catálogo cerrado de garantías**, cada una clasificada
+en exactamente una de cinco clases, y una **matriz de enforcement** que asigna a
+cada garantía quién la verifica (agente, harness, runtime, herramienta externa
+o humano). Ambas viven en el payload: `.agents/harness/INDEX.md`, secciones
+"Guarantee catalog" y "Enforcement boundaries".
+
+Resumen operativo:
+
+- **Lo que garantiza el protocolo** es un conjunto acotado y clasificado de
+  propiedades (identidad y versión de sesión, presencia de registros, registro
+  de gates, coherencia de `state.json` ↔ `HARNESS_REPORT`, estructura de
+  artefactos, evidencia asociada a claims, autorización de efectos, freshness
+  de conocimiento, presupuesto, reproducibilidad de ítems `[gate]`, y las
+  dependencias de actores externos). No garantiza corrección semántica del
+  juicio, ni independencia de verificación en single-instance, ni ausencia de
+  alucinación.
+- **Regla de claims:** todo claim emitido por el protocolo es evidencia-citado
+  o está marcado explícitamente como atestación/inferencia. "Verificado" solo
+  se usa con evidencia citada de clase distinta de atestación; sin evidencia
+  citable, el término es "atestado". Los reportes nuevos distinguen ambos
+  términos.
+- **Modo declarativo:** las garantías verificables se declaran y se verifican
+  post-hoc por herramientas del desarrollo (dev-only) o se marcan como
+  atestación; no hay requisito de Python. El enforcement mecánico es un
+  subconjunto finito y declarado, y los hooks siguen siendo fail-open.

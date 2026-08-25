@@ -1,12 +1,12 @@
 +++
-schema_version = "1.0.0"
+schema_version = "1.1.0"
 artifact = "VERIFICATION_REPORT.md"
 phase = "07"
 produced_by = "verifier"
 enforcement = "gated"
 gated_by = ["H06", "H07"]
 +++
-schema_version = "1.0.0"
+schema_version = "1.1.0"
 
 
 ---
@@ -89,6 +89,7 @@ Evaluate each acceptance criterion defined in the task specification.
 criterion = ""
 result = ""
 evidence = ""
+claim_class = ""
 ```
 
 Possible values for `result`:
@@ -98,6 +99,12 @@ PASS
 FAIL
 PARTIAL
 ```
+
+`claim_class` is optional (`verified` | `attested` | `inference`): with
+non-empty `evidence` the implicit class is `verified`; without `evidence`, the
+criterion MUST declare `claim_class: attested` or `claim_class: inference`
+(`verified` requires `evidence`). The report distinguishes verified claims
+from attestations (G-002/G-003).
 
 ---
 
@@ -111,6 +118,7 @@ test = ""
 result = ""
 details = ""
 evidence = ""
+claim_class = ""
 ```
 
 Possible values for `result`:
@@ -124,7 +132,10 @@ SKIPPED
 `evidence` is optional: when declared, it MUST reference an existing file or a
 command string recorded in `SESSION_LOG.md` (verified by H06, §"Gate
 Checklist", item 7). When absent, the command string in `test` MUST appear in
-`SESSION_LOG.md` for results other than `SKIPPED`.
+`SESSION_LOG.md` for results other than `SKIPPED`. `claim_class` follows the
+same rule as acceptance criteria: with `evidence` the implicit class is
+`verified`; without `evidence`, the result MUST declare `claim_class:
+attested` or `claim_class: inference`.
 
 ---
 
@@ -306,6 +317,7 @@ reasoning = "string"
 criterion = "string"
 result = "PASS" # or "FAIL" or "PARTIAL"
 evidence = "string"
+claim_class = "verified" # or "attested" / "inference"; required when evidence is empty
 action_plan = "string" # required only when result is PARTIAL
 ```
 

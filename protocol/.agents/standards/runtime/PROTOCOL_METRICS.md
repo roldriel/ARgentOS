@@ -125,6 +125,15 @@ No metric gates anything; the class only declares the trust boundary. The
 aggregation report tags each metric with its class, and the development-side
 `--audit` mode reports discrepancies between the mechanical cross-checks.
 
+Events MAY carry the optional `clock` field (`utc` | `agent_clock`, contract:
+`.agents/contracts/METRICS.md`, §Event catalog): `utc` is the default for
+mechanically written records; agent-written timestamps without a reliable clock
+declare `clock: agent_clock` (G-004). The `Verified` class means "corroborated
+by a second artifact", not external verification of the event: a data point
+without that corroboration is a recorded report, and a claim about it that
+cannot cite evidence is an attestation (`.agents/harness/INDEX.md`,
+§Enforcement boundaries).
+
 ## Health signals
 
 Three signals summarize protocol health. Each has a conceptual interpretation; none has a threshold — their value is comparative across time.

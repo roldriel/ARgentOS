@@ -45,6 +45,24 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [4.0.0] — 2026-08-25
+
+### Added
+
+- **Catálogo de garantías y matriz de enforcement** (plan 76, RFC-62): `harness/INDEX.md` declara el catálogo cerrado de 12 garantías clasificadas en cinco clases (declarativa, verificable, mecánicamente enforceada, juicio del agente, actores externos) y la matriz por capa (agente / harness / runtime / externo / humano) con las invariantes ENF-001…ENF-003; `docs/ADOPTION.md` §6.4 la expone para adoptantes.
+- **Regla de claims y campos de clase** (plan 76, RFC-62): "zero hallucinations" deja de ser una garantía técnica; todo claim es evidencia-citado o está marcado como atestación/inferencia. Los checks de `HARNESS_REPORT.md` y los criterios/resultados de `VERIFICATION_REPORT.md` ganan `claim_class` (`verified` / `attested` / `inference`); `clock` (`utc` | `agent_clock`) en los ENTRY y en los eventos de `METRICS.md`; `Evidence` opcional en `SESSION_LOG.md`; checklist de `PROTOCOL_HEALTH.md` con presencia de registros raíz, identidad de sesión y reloj.
+- **Checkers dev de las celdas External** (plan 76, RFC-62): `check_session_artifacts.py` valida presencia/versión/UUID de sesión, atestaciones sin marca y timestamps UTC para sesiones `>= 4.0.0`; `aggregate_metrics.py --audit` reconcilia `state.json` ↔ `HARNESS_REPORT.md` en ambas direcciones para los gates de estado.
+
+### Changed
+
+- **Significado declarado de "verificado"** (plan 76, RFC-62, MAJOR): un claim es `verified` solo con evidencia de clase distinta de atestación; sin evidencia el término es `attested`. Las policies H01/H06/H07 citan evidencia con clase en sus Gate Checklists; `docs/MIGRATION.md` §6 documenta la migración y las trazas históricas.
+
+### Modelo conceptual
+
+RFC-62 aceptada (plan 76, 2026-08-25): modelo híbrido de garantías y fronteras de enforcement (D0, D11).
+
+---
+
 ## [3.26.0] — 2026-08-24
 
 ### Added

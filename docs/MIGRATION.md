@@ -132,3 +132,32 @@ histórica (no se renombran); la regla aplica a ejecuciones futuras.
 Se soporta una sola línea de versión: la vigente. No hay ramas de mantenimiento
 de versiones anteriores (fuera de alcance declarado en
 `plans/20-release-adoption.md` §Fuera de alcance).
+
+## 6. Modelo de garantías y fronteras de enforcement — 4.0.0 (plan 76, RFC-62)
+
+Cambio **MAJOR** del modelo conceptual: cambia el significado declarado de
+"verificado" y agrega obligaciones de registro.
+
+- **Nueva semántica de "verificado".** Un claim puede llamarse "verificado"
+  solo cuando cita evidencia de clase distinta de atestación. Sin evidencia
+  citable, el término permitido es "atestado". El detalle de las clases de
+  evidencia se define en el modelo de evidencia posterior.
+- **Obligaciones nuevas.** Todo claim emitido por el protocolo es
+  evidencia-citado o está marcado explícitamente como atestación/inferencia
+  (regla de claims). Los gate checks de `HARNESS_REPORT.md` y los criterios y
+  resultados de `VERIFICATION_REPORT.md` distinguen `verified` de
+  `attested`/`inference`; los timestamps mecánicos usan reloj UTC y los
+  agentes sin reloj confiable marcan `clock: agent_clock`; `SESSION_LOG.md`
+  puede citar `Evidence` por decisión.
+- **Campos nuevos opcionales.** `claim_class` (HARNESS_REPORT y
+  VERIFICATION_REPORT), `clock` (HARNESS_REPORT y METRICS) y `Evidence`
+  (SESSION_LOG) son adiciones compatibles: los artefactos válidos previos
+  siguen siendo válidos (schema 1.1.0).
+- **Trazas históricas.** Las sesiones previas a 4.0.0 son registros inmutables
+  bajo la semántica vieja (RFC-46): no se reescriben ni se re-reportan. Los
+  checkers de desarrollo no las reportan.
+- **Adopción.** Leer `.agents/harness/INDEX.md`, secciones "Guarantee
+  catalog" y "Enforcement boundaries", para la matriz completa por capa y el
+  comportamiento en modo declarativo vs. enforced. No se requiere ninguna
+  acción de migración sobre artefactos existentes; los reportes nuevos deben
+  cumplir la regla de claims.

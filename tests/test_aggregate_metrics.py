@@ -170,3 +170,37 @@ def test_audit_state_gate_without_entry_alerted(tmp_path):
     )
     alerts = am.audit_cross_checks(tmp_path)
     assert any("H04" in a and "without a matching PASS entry" in a for a in alerts)
+
+
+def test_audit_entry_without_state_alerted(tmp_path):
+    session = tmp_path / ".project" / "s1"
+    (session / "00").mkdir(parents=True)
+    (session / "00" / "state.json").write_text("{}", encoding="utf-8")
+    (session / "METRICS.md").write_text(
+        '<!-- METRIC: {"timestamp": "2026-08-14T11:00:00+00:00", "type": '
+        '"session_start", "declarative_flags": [], "protocol_version": "4.0.0"} -->\n',
+        encoding="utf-8",
+    )
+    (session / "HARNESS_REPORT.md").write_text(
+        '<!-- ENTRY: {"timestamp": "t", "trigger": "H04", "transition": "A -> B", '
+        '"result": "PASS", "checks": []} -->\n',
+        encoding="utf-8",
+    )
+    alerts = am.audit_cross_checks(tmp_path)
+    assert any("H04" in a and "without a matching PASS in state.json" in a for a in alerts)
+
+
+def test_audit_legacy_entry_without_state_ok(tmp_path):
+    session = tmp_path / ".project" / "s1"
+    (session / "00").mkdir(parents=True)
+    (session / "METRICS.md").write_text(
+        '<!-- METRIC: {"timestamp": "2026-08-14T11:00:00+00:00", "type": '
+        '"session_start", "declarative_flags": [], "protocol_version": "3.16.0"} -->\n',
+        encoding="utf-8",
+    )
+    (session / "HARNESS_REPORT.md").write_text(
+        '<!-- ENTRY: {"timestamp": "t", "trigger": "H04", "transition": "A -> B", '
+        '"result": "PASS", "checks": []} -->\n',
+        encoding="utf-8",
+    )
+    assert am.audit_cross_checks(tmp_path) == []

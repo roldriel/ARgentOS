@@ -1,12 +1,12 @@
 +++
-schema_version = "1.0.0"
+schema_version = "3.0.0"
 artifact = "TASK_SPECIFICATION.md"
 phase = "02"
 produced_by = "task_specification_writer"
 enforcement = "gated"
 gated_by = ["H01"]
 +++
-schema_version = "1.0.0"
+schema_version = "3.0.0"
 
 
 ---
@@ -36,8 +36,12 @@ This artifact represents the minimum validated definition required before contin
 ```toml
 id = ""
 created_at = ""
-status = ""
 ```
+
+The artifact lifecycle (`draft` / `validated` / `superseded`) is derived from
+the harness gate record: this artifact becomes `validated` when gate H01 records
+PASS in `state.json`. It is read-only derived metadata; the author never
+declares it.
 
 ---
 
@@ -150,6 +154,37 @@ user_confirmed = false
 
 ---
 
+## Effects
+
+Authorization record for effects outside the default frontier
+(`.agents/standards/runtime/AUTHORIZATION.md`). Required when the task includes
+out-of-frontier effects (network/HTTP, remote git operations, installations,
+destructive changes, writes outside the project); omitted otherwise. An
+assumption with `user_confirmed: false` never constitutes authorization; plan
+approval covers only the effects declared here and the planned writes of the
+execution plan.
+
+```toml
+[[effects]]
+name = ""
+kind = "network" # network | remote_git | install | destructive | write_outside_project
+authorized_by = "" # user | unattended_default
+evidence_ref = ""
+status = "" # authorized | not_authorized | pending_user_confirmation
+```
+
+- `name`: unique identifier of the effect within this artifact.
+- `kind`: closed enum of out-of-frontier effect categories.
+- `authorized_by`: who authorized the effect: the user (`user`) or a declared
+  unattended default (`unattended_default`).
+- `evidence_ref`: reference to the record that sustains the authorization (a
+  clarification entry of `SESSION_BRIEF.md` or an entry of `SESSION_LOG.md`).
+- `status`: `authorized` — the effect is authorized; `not_authorized` — a
+  denial is recorded; `pending_user_confirmation` — an unattended default
+  awaiting user review.
+
+---
+
 ## Unknowns
 
 Information that is missing and may block execution.
@@ -162,20 +197,13 @@ unknowns = [""]
 
 ## Validation
 
-Result of the specification review.
+The validation result is derived from the harness gate record: this artifact
+becomes `validated` when gate H01 records PASS in `state.json`. The author does
+not declare validation state; the notes below are free-form review notes, not
+state.
 
 ```toml
-[validation]
-complete = false
 notes = [""]
 ```
 
 ---
-
-## State
-
-Current workflow state associated with this artifact.
-
-```toml
-state = ""
-```

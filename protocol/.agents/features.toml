@@ -32,6 +32,11 @@ caveman = true
 # [declarative] llm_discovery, discovery_orchestrator — read by discovery agents.
 llm_discovery = true
 discovery_orchestrator = true
+# [declarative] discovery_require_consent — read by the core Orchestrator at
+# discovery detection time (orchestrator.md §4.3); when enabled, automatic
+# discovery needs explicit user consent; when disabled, the legacy automatic
+# invocation applies.
+discovery_require_consent = true
 # [declarative] integer settings for the discovery agents.
 discovery_sample_size = 10
 discovery_sample_size_per_language = 50

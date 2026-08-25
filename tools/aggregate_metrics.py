@@ -19,8 +19,11 @@ Usage:
 Without ``--per-session`` the output is the project-wide catalog; with it, a
 ``sessions`` object with one catalog per session is added. Prints JSON and
 exits 0. With ``--audit``, prints the mechanical cross-checks
-(``state.json`` gate PASS records vs ``HARNESS_REPORT.md`` PASS entries) and
-exits 1 when a discrepancy is found. Standard library only.
+(``state.json`` gate PASS records vs ``HARNESS_REPORT.md`` PASS entries, both
+directions for state-machine triggers H00–H07 and H11) and exits 1 when a
+discrepancy is found. The reverse direction (HARNESS PASS without ``state.json``
+record) only applies to sessions that declare ``protocol_version >= 4.0.0``;
+earlier sessions are historical traces (RFC-46). Standard library only.
 """
 
 from __future__ import annotations
@@ -36,6 +39,45 @@ from pathlib import Path
 ENTRY_RE = re.compile(r"<!-- ENTRY: (.*?) -->", re.DOTALL)
 METRIC_RE = re.compile(r"<!-- METRIC: (.*?) -->", re.DOTALL)
 SESSION_SKIP = {"knowledge", "skills"}
+STATE_TRIGGERS = {
+    "H00", "H01", "H02", "H03", "H04", "H05", "H06", "H07", "H11",
+}
+SEMVER_RE = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
+NEW_PROTOCOL = (4, 0, 0)
+
+
+def session_protocol_version(session: Path) -> tuple[int, int, int] | None:
+    """Return the protocol version declared by a session, if any.
+
+    The declaration lives in the ``SESSION_LOG.md`` header
+    (``- Protocol version: X.Y.Z``) or, failing that, in the ``session_start``
+    metric event of ``METRICS.md``.
+    """
+    log = session / "SESSION_LOG.md"
+    if log.is_file():
+        text = log.read_text(encoding="utf-8", errors="replace")
+        m = re.search(r"^-\s*Protocol version:\s*(\S+)", text, re.MULTILINE)
+        if m:
+            sm = SEMVER_RE.match(m.group(1).strip())
+            if sm:
+                return tuple(int(p) for p in sm.groups())  # type: ignore[return-value]
+    metrics = session / "METRICS.md"
+    if metrics.is_file():
+        text = metrics.read_text(encoding="utf-8", errors="replace")
+        for raw in METRIC_RE.finditer(text):
+            try:
+                data = json.loads(raw.group(1))
+            except json.JSONDecodeError:
+                continue
+            if (
+                isinstance(data, dict)
+                and data.get("type") == "session_start"
+                and isinstance(data.get("protocol_version"), str)
+            ):
+                sm = SEMVER_RE.match(data["protocol_version"].strip())
+                if sm:
+                    return tuple(int(p) for p in sm.groups())  # type: ignore[return-value]
+    return None
 
 
 def parse_iso(value: str) -> datetime | None:
@@ -301,9 +343,11 @@ def audit_cross_checks(root: Path) -> list[str]:
 
     Every ``state.json`` gate PASS must have a matching ``PASS`` entry for the
     same trigger in the session's ``HARNESS_REPORT.md`` (the review trail and
-    the persisted state must agree). The reverse direction is not flagged:
-    entries for non-state gates (e.g. H15) legitimately lack a state.json
-    record.
+    the persisted state must agree). Conversely, for sessions declaring
+    ``protocol_version >= 4.0.0``, a ``PASS`` entry for a state-machine trigger
+    (H00–H07, H11) without a matching ``state.json`` record is also flagged.
+    Entries for non-state gates (e.g. H15) legitimately lack a ``state.json``
+    record in both directions.
     """
     alerts: list[str] = []
     project = root / ".project"
@@ -346,6 +390,15 @@ def audit_cross_checks(root: Path) -> list[str]:
                 f"{session.name}: state.json records PASS for {trigger} "
                 "without a matching PASS entry in HARNESS_REPORT.md"
             )
+        version = session_protocol_version(session)
+        if version is not None and version >= NEW_PROTOCOL:
+            for trigger in sorted(
+                (entry_triggers & STATE_TRIGGERS) - state_triggers
+            ):
+                alerts.append(
+                    f"{session.name}: HARNESS_REPORT.md records PASS for "
+                    f"{trigger} without a matching PASS in state.json"
+                )
     return alerts
 
 

@@ -37,8 +37,11 @@ Each item is marked `[machine]` — verified deterministically by executable har
 8. **State storage probe.** `[machine]` `python .agents/harness/health_check.py` exits with code `0` and reports `"result": "PASS"`: a write/read/delete round-trip of a probe file inside `.project/` succeeds, so `state.json` (`.agents/harness/runner_state.py`) can be persisted.
 9. **Timestamp sanity.** `[agent]` If `.project/.last_health_check` exists, its timestamp is not in the future.
 10. **Discovery marker (only when the `knowledge_base` flag is enabled).** `[agent]` If `.project/knowledge/discovery/` exists, the canonical marker `.project/.last_discovery` exists and is parseable JSON with `timestamp`, `scope` and `status`; the legacy marker `.project/knowledge/discovery/.last_discovery` MUST NOT exist (remove it — the canonical file prevails).
+11. **Session root records.** `[agent]` When `.project/<session-uuid>/` exists, the session root contains `HARNESS_REPORT.md`, `METRICS.md` and `SESSION_LOG.md`, and at least one `state.json` exists per iteration directory. This is G-001: every session declares `protocol_version` and produces the root records. Presence is verified post-hoc by the development-side session-artifacts checker (External cell of the enforcement matrix in `.agents/harness/INDEX.md`, §Enforcement boundaries).
+12. **Session identity.** `[agent]` The header of `SESSION_LOG.md` declares a `Session UUID` and a `Protocol version` that is a valid semver string (`X.Y.Z`) — the value of `.agents/VERSION` at session start.
+13. **Timestamps.** `[agent]` Timestamps of mechanically written records use the UTC clock; agent-written timestamps produced without a reliable clock are marked `clock: agent_clock` (G-004; contracts: `.agents/contracts/METRICS.md`, §Event catalog, and `.agents/contracts/HARNESS_REPORT.md`, §Required structure).
 
 ## Decision
 
-- **PASS**: items 1–6, 8 and 9 hold (item 7 only emits warnings).
-- **FAIL**: any of items 1–6, 8 or 9 fails. The System Agent reports the failing items and transitions to `system:BOOTSTRAP_FAILED`.
+- **PASS**: items 1–6, 8, 9 and 11–13 hold (item 7 only emits warnings; item 10 applies only when the `knowledge_base` flag is enabled).
+- **FAIL**: any of items 1–6, 8, 9 or 11–13 fails. The System Agent reports the failing items and transitions to `system:BOOTSTRAP_FAILED`.

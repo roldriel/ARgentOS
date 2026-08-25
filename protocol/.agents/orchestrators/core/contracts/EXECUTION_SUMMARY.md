@@ -1,12 +1,12 @@
 +++
-schema_version = "1.0.0"
+schema_version = "4.0.0"
 artifact = "EXECUTION_SUMMARY.md"
 phase = "06"
 produced_by = "executor"
 enforcement = "gated"
 gated_by = ["H05"]
 +++
-schema_version = "1.0.0"
+schema_version = "4.0.0"
 
 
 ---
@@ -36,8 +36,12 @@ This artifact records what was changed, how it aligns with the execution plan, w
 ```toml
 id = ""
 created_at = ""
-status = ""
 ```
+
+The artifact lifecycle (`draft` / `validated` / `superseded`) is derived from
+the harness gate record: this artifact becomes `validated` when gate H05 records
+PASS in `state.json`. It is read-only derived metadata; the author never
+declares it.
 
 ---
 
@@ -95,6 +99,9 @@ COMPLETED
 SKIPPED
 BLOCKED
 ```
+
+Step status belongs to the execution dimension (the step's own outcome), not to
+the artifact lifecycle.
 
 ---
 
@@ -179,6 +186,49 @@ CRITICAL
 
 ---
 
+## Invalidated Facts
+
+Discovered facts (claims of discovery snapshots) that this execution changed.
+Required when the execution changed discovered facts; omitted otherwise. The
+discovery pipeline revalidates the affected entries with the scope that owns
+each entry (see `.agents/orchestrators/discovery/states/DISCOVERY_STATE_MACHINE.md`
+§Invocation Conditions).
+
+```toml
+[[invalidated_facts]]
+fact = ""
+entry = ""
+reason = ""
+```
+
+- `fact`: the claim (discovered fact) that the execution changed.
+- `entry`: the originating entry (e.g. `.project/knowledge/discovery/environment.md`).
+- `reason`: what the execution changed and why the discovered fact is no longer current.
+
+---
+
+## Effects Executed
+
+Record of out-of-frontier effects executed during the task, with a reference
+to their authorization (`.agents/standards/runtime/AUTHORIZATION.md`).
+Required when authorized out-of-frontier effects were executed; omitted
+otherwise.
+
+```toml
+[[effects_executed]]
+effect = ""
+executed = true
+authorization_ref = ""
+```
+
+- `effect`: the `name` of the corresponding entry in the task specification's
+  `Effects` section (or in `SESSION_BRIEF.md` for `trivial`-profile tasks).
+- `executed`: `true` if the effect was executed, `false` if it was authorized
+  but not executed.
+- `authorization_ref`: the `evidence_ref` of the authorized entry.
+
+---
+
 ## Final Project State
 
 Indication of whether the project is ready for verification.
@@ -197,6 +247,9 @@ BLOCKED
 ```
 
 The project must be `VERIFIABLE` for H05 to pass. `BLOCKED` indicates that execution could not reach a verifiable state.
+
+This `status` is the declared project state (project dimension), not the
+artifact lifecycle.
 
 ---
 
@@ -242,6 +295,24 @@ status = "COMPLETED" # or "SKIPPED" or "BLOCKED"
 notes = "string" # required when status is SKIPPED or BLOCKED
 ```
 
+### `## Effects Executed`
+
+```toml
+[[effects_executed]]
+effect = "string"
+executed = true # or false
+authorization_ref = "string"
+```
+
+### `## Invalidated Facts`
+
+```toml
+[[invalidated_facts]]
+fact = "string"
+entry = "string"
+reason = "string"
+```
+
 ---
 
 # Completion Criteria
@@ -254,3 +325,4 @@ The execution summary is valid when:
 * Intermediate validations are recorded.
 * The final project state is explicit.
 * A confidence level is provided.
+* If the execution changed discovered facts, `invalidated_facts` is declared.

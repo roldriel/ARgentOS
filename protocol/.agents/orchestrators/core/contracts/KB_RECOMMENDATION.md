@@ -1,12 +1,12 @@
 +++
-schema_version = "1.0.0"
+schema_version = "2.0.0"
 artifact = "KB_RECOMMENDATION.md"
 phase = "n/a"
 produced_by = "context_discoverer"
 enforcement = "gated"
 gated_by = ["H10"]
 +++
-schema_version = "1.0.0"
+schema_version = "2.0.0"
 
 
 ---
@@ -34,7 +34,15 @@ The `KB_RECOMMENDATION.md` artifact records which Knowledge Base entries the `co
 ## Required sections
 
 1. `## Discovery Objective` — what the discoverer was asked to find.
-2. `## Recommended Entries` — list of recommended KB entries with priority, relevance confidence (`HIGH`/`MEDIUM`/`LOW` per `.agents/standards/quality/CONFIDENCE.md`), sections to include, and reason.
+2. `## Recommended Entries` — list of recommended KB entries with priority, relevance confidence (`HIGH`/`MEDIUM`/`LOW` per `.agents/standards/quality/CONFIDENCE.md`), sections to include, and reason. Each entry declares:
+   - `- **Kind**: discovery | knowledge | lesson` — the type of the recommended
+     entry (`discovery` for snapshots under `.project/knowledge/discovery/`,
+     `knowledge` for curated entries under `.project/knowledge/entries/`,
+     `lesson` for lesson claims under `.project/knowledge/entries/`).
+   - `- **Path**: <resolvable location>` — the actual location of the entry
+     (e.g. `.project/knowledge/discovery/environment.md` or
+     `.project/knowledge/entries/<file>.md`). `session_uuid` is provenance,
+     never the location.
 3. `## Context Budget Recommendation` — recommended KB context budget in characters.
 4. `## Notes` — caveats, reasons to ignore recommendations, curation actions (entries marked `noisy`/`retired` per `.agents/standards/context/KNOWLEDGE_CURATION.md`), and entries recommended with `LOW` relevance confidence.
 
@@ -48,6 +56,8 @@ The report may include a machine-readable JSON block (for example, inside a fenc
   "recommended_entries": [
     {
       "session_uuid": "string",
+      "kind": "discovery",
+      "path": ".project/knowledge/discovery/environment.md",
       "priority": 1,
       "confidence": "HIGH",
       "include_sections": ["lessons_learned"],
@@ -63,3 +73,9 @@ The report may include a machine-readable JSON block (for example, inside a fenc
 
 - The report must not include full artifacts from previous sessions.
 - The report must not include credentials, tokens, or personal data.
+- A claim that is expired or whose provenance does not resolve is never
+  recommended (`.agents/standards/context/KNOWLEDGE_LIFECYCLE.md` §Freshness
+  per claim).
+- Every recommendation is type-labeled: an entry without `kind` and `path` is
+  non-conforming; snapshot, current knowledge and historical knowledge are
+  never mixed without the tag.

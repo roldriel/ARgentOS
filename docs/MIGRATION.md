@@ -132,3 +132,165 @@ histórica (no se renombran); la regla aplica a ejecuciones futuras.
 Se soporta una sola línea de versión: la vigente. No hay ramas de mantenimiento
 de versiones anteriores (fuera de alcance declarado en
 `plans/20-release-adoption.md` §Fuera de alcance).
+
+## 6. Modelo de garantías y fronteras de enforcement — 4.0.0 (plan 76, RFC-62)
+
+Cambio **MAJOR** del modelo conceptual: cambia el significado declarado de
+"verificado" y agrega obligaciones de registro.
+
+- **Nueva semántica de "verificado".** Un claim puede llamarse "verificado"
+  solo cuando cita evidencia de clase distinta de atestación. Sin evidencia
+  citable, el término permitido es "atestado". El detalle de las clases de
+  evidencia se define en el modelo de evidencia posterior.
+- **Obligaciones nuevas.** Todo claim emitido por el protocolo es
+  evidencia-citado o está marcado explícitamente como atestación/inferencia
+  (regla de claims). Los gate checks de `HARNESS_REPORT.md` y los criterios y
+  resultados de `VERIFICATION_REPORT.md` distinguen `verified` de
+  `attested`/`inference`; los timestamps mecánicos usan reloj UTC y los
+  agentes sin reloj confiable marcan `clock: agent_clock`; `SESSION_LOG.md`
+  puede citar `Evidence` por decisión.
+- **Campos nuevos opcionales.** `claim_class` (HARNESS_REPORT y
+  VERIFICATION_REPORT), `clock` (HARNESS_REPORT y METRICS) y `Evidence`
+  (SESSION_LOG) son adiciones compatibles: los artefactos válidos previos
+  siguen siendo válidos (schema 1.1.0).
+- **Trazas históricas.** Las sesiones previas a 4.0.0 son registros inmutables
+  bajo la semántica vieja (RFC-46): no se reescriben ni se re-reportan. Los
+  checkers de desarrollo no las reportan.
+- **Adopción.** Leer `.agents/harness/INDEX.md`, secciones "Guarantee
+  catalog" y "Enforcement boundaries", para la matriz completa por capa y el
+  comportamiento en modo declarativo vs. enforced. No se requiere ninguna
+  acción de migración sobre artefactos existentes; los reportes nuevos deben
+  cumplir la regla de claims.
+
+## 7. Modelo de estado y lifecycle de artefactos — 5.0.0 (plan 77, RFC-63)
+
+Cambio **MAJOR** del modelo conceptual: separa el estado en dimensiones y
+convierte el lifecycle de los artefactos en un estado derivado.
+
+- **Campos manuales retirados.** Los contratos de TASK_ANALYSIS,
+  TASK_SPECIFICATION, CONTEXT_ARTIFACT, CONTEXT_VALIDATION_REPORT,
+  EXECUTION_PLAN, EXECUTION_SUMMARY y VERIFICATION_REPORT dejan de declarar
+  `status` (Metadata), `state` (sección `## State`), `validation.complete` y
+  `approved` (Plan Decision). El lifecycle del artefacto (`draft` /
+  `validated` / `superseded`) se deriva del registro de gates y nunca se
+  escribe a mano. `schema_version` de los siete contratos pasa a 2.0.0.
+- **Semántica de COMPLETED.** `COMPLETED` significa completitud relativa al
+  alcance confirmado: H06/H07 PASS, gates en-scope con PASS, sin criterios
+  FAIL/PENDING y aprobaciones humanas completadas o diferidas con confirmación.
+- **Aprobaciones diferidas.** `VERIFICATION_REPORT.md` gana la sección
+  `## Deferred Items` y `SESSION_BRIEF.md` registra las aprobaciones diferidas
+  con `deferred: true` y confirmación del usuario.
+- **Review gate.** Para tareas `complex` con `rubrics` habilitado, la revisión
+  de `REVIEW_REPORT.md` es un Gate State sobre el artefacto
+  (`review_required` → `review_passed` | `review_failed`) registrado en
+  `HARNESS_REPORT.md`; no es un estado de tarea ni un gate de transición.
+- **Trazas históricas.** Las sesiones previas a 5.0.0 son registros inmutables
+  bajo la semántica vieja (RFC-46): los checkers de desarrollo no las reportan.
+- **Adopción.** Leer `.agents/harness/INDEX.md`, sección "State dimensions",
+  para el modelo completo de dimensiones e invariantes. Los artefactos
+  existentes no requieren acción: los reportes nuevos no declaran campos de
+  estado manuales e incluyen `Deferred Items` (vacío si no hay diferidos).
+
+## 8. Modelo de evidencia y verificación — 7.0.0 (plan 79, RFC-65)
+
+Cambio **MAJOR** del modelo conceptual: define qué cuenta como evidencia y
+cuándo un claim puede declararse VERIFIED.
+
+- **Cinco clases de evidencia.** `observation`, `measurement`, `attestation`,
+  `assertion` y `reference` (`.agents/standards/quality/EVIDENCE.md`). Toda
+  entrada de evidencia lleva `class`, `claim_id` y `ref`; una atestación lleva
+  además `actor` y `statement`.
+- **Bloques `[[evidence]]`.** `VERIFICATION_REPORT.md` gana la sección
+  `## Evidence` y sus criterios/resultados declaran `claim_id` (schema
+  `3.0.0`); los ENTRY de `HARNESS_REPORT.md` pueden registrar el array
+  `evidence` con clase por check.
+- **"Verificado" exige evidencia no-atestación.** Un claim se declara
+  `verified` solo con una entrada de evidencia de clase distinta de
+  `attestation`; sin ella el término es `attested` (o `inference` declarado
+  explícitamente). Un ítem `[gate]` se satisface con
+  observación/medición/referencia, o con desviación documentada; la atestación
+  nunca lo satisface sola.
+- **Detección de atestaciones sin marca.** `gate_validator.py` (H06) rechaza un
+  criterio PASS sin evidencia con clase válida; `audit_gates.py` (dev) marca
+  atestaciones sin etiquetar en los PASS registrados.
+- **Trazas históricas.** Las sesiones previas a 7.0.0 son registros inmutables
+  bajo la semántica previa (RFC-46): no se reescriben ni se re-reportan.
+- **Adopción.** Los reportes nuevos de `VERIFICATION_REPORT.md` incluyen
+  `## Evidence` y `claim_id`; los checks de `HARNESS_REPORT.md` citan evidencia
+  con clase o declaran `claim_class`. Los reportes 6.0.0 que declaraban
+  "verificado" con evidencia solo en texto libre dejan de ser conformes.
+
+## 9. Modelo de autorización y capacidades — 8.0.0 (plan 80, RFC-66)
+
+Cambio **MAJOR** del modelo conceptual: distingue capability de autorización y
+hace verificable la frontera de efectos externos.
+
+- **Vocabulario.** Capability (disponibilidad de herramienta/skill),
+  Permission (regla del protocolo), Authorization (registro que vincula una
+  capability con un efecto permitido para una ejecución), Execution (uso
+  efectivo) y Effect (cambio observable). La capability nunca es autorización.
+- **Frontera por defecto.** Lectura/ejecución dentro del proyecto y del
+  protocolo y escritura planificada no requieren autorización explícita;
+  red/HTTP, operaciones git remotas, instalaciones, cambios destructivos y
+  escrituras fuera del proyecto sí (`AUTHORIZATION.md`).
+- **Bloque `effects`.** `TASK_SPECIFICATION.md` gana la sección `## Effects`
+  (schema `3.0.0`) con `name`/`kind`/`authorized_by`/`evidence_ref`/`status`,
+  obligatoria cuando hay efectos fuera de frontera; `EXECUTION_SUMMARY.md` gana
+  `## Effects Executed` (schema `3.0.0`) con `effect`/`executed`/
+  `authorization_ref`; `SESSION_BRIEF.md` registra `[[effects]]` cuando la
+  autorización proviene de una clarificación o de un default desatendido.
+- **Quién autoriza.** Solo el usuario (clarificación/confirmación de plan) o un
+  default declarado en modo desatendido con `status:
+  pending_user_confirmation`; `user_confirmed: false` nunca constituye
+  autorización.
+- **Estados.** AUTHORIZED / UNAUTHORIZED (denegación registrada) /
+  AUTHORIZATION_UNDETERMINED (sin registro suficiente); nunca se infiere
+  UNAUTHORIZED por ausencia de registro.
+- **Policies.** H01/H04 exigen autorización registrada para efectos fuera de
+  frontera; H05 verifica el registro de efectos ejecutados. El validador
+  estructural valida la forma del bloque (H01) y rechaza autorizaciones propias
+  del plan (H04).
+- **Trazas históricas.** Las sesiones previas a 8.0.0 son registros inmutables
+  bajo la semántica previa (RFC-46): no se reescriben ni se re-reportan. El
+  caso BeaconRBX se clasifica por semántica como AUTHORIZATION_UNDETERMINED,
+  sin re-juzgar la sesión.
+- **Adopción.** Las task specifications nuevas con efectos fuera de frontera
+  incluyen `## Effects`; los execution summaries registran
+  `## Effects Executed`; los planes no declaran autorizaciones propias.
+
+## 10. Modelo de lifecycle de conocimiento — 9.0.0 (plan 81, RFC-67)
+
+Cambio **MAJOR** del modelo conceptual: define el ciclo mínimo del
+conocimiento (tipos, frescura por claim, invalidación post-ejecución y
+revalidación scoped).
+
+- **Tipos de conocimiento.** `snapshot` (entrada de discovery point-in-time con
+  TTL y hashes, `kind: snapshot` en `KB_DISCOVERY_ENTRY.md`, schema `2.0.0`),
+  `claim` (unidad dentro de una entrada; objeto de frescura e invalidación) y
+  `lesson` (claim de aprendizaje de sesión con `session_id`,
+  `protocol_version` y evidencia RFC-65). El modelo vive en
+  `.agents/standards/context/KNOWLEDGE_LIFECYCLE.md`.
+- **Frescura por claim.** Una claim es reutilizable si está fresca (TTL por
+  claim; por defecto hereda el de su entrada) y su proveniencia resuelve
+  (`source_files`/`source_sessions` existen). Una claim vencida o sin
+  proveniencia no se recomienda ni se consume.
+- **Invalidación post-ejecución.** `EXECUTION_SUMMARY.md` gana la sección
+  `## Invalidated Facts` (schema `4.0.0`, `fact`/`entry`/`reason`), obligatoria
+  cuando la ejecución cambió hechos descubiertos; el pipeline de discovery
+  revalida las entradas afectadas con el scope que las posee (condición de
+  invocación nueva del state machine), nunca un rediscovery full por defecto.
+- **Recomendaciones.** `KB_RECOMMENDATION.md` (schema `2.0.0`) resuelve la
+  ubicación de cada entrada con `kind` + `path`; `session_uuid` queda como
+  proveniencia, no como ubicación (P12).
+- **Lessons del cierre.** El Closing Feedback persiste lessons con
+  `kind: lesson`, `session_id`, `protocol_version` y evidencia; sin
+  proveniencia no se registran.
+- **TTL.** Cambiar un TTL exige medición previa del costo de rediscovery
+  (D-201); sin medición se mantienen los valores vigentes.
+- **Trazas históricas.** Las sesiones previas a 9.0.0 son registros inmutables
+  bajo la semántica previa (RFC-46): no se reescriben ni se re-reportan; las
+  lessons previas sin `kind` no se reclasifican.
+- **Adopción.** Los discovery entries nuevos declaran `kind: snapshot`; los
+  execution summaries que cambian hechos descubiertos declaran
+  `invalidated_facts`; las recomendaciones nuevas llevan `kind`/`path`; los
+  reportes previos siguen siendo válidos como traza.

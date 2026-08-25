@@ -23,7 +23,22 @@ Checks per trigger:
   fields) against the project and session roots;
 - EARS pattern of acceptance-criteria bullets (H01);
 - structural presence of ``## Rubric Evaluation`` (H06, when the ``rubrics``
-  flag is enabled).
+  flag is enabled);
+- section-coherence conflicts (H00: sufficiency/next-state and HIGH-intent
+  contradictions; H03: VALIDATED decision with INCOMPLETE/CONFLICTING
+  evaluations);
+- profile-aware review gate (H06: a `complex` task requires a
+  ``REVIEW_REPORT.md`` in the iteration) and the ``Deferred Items`` TOML
+  structure when present (H06);
+- evidence model (H06: ``[[evidence]]`` entries with ``class``/``claim_id``/
+  ``ref`` and the VERIFIED rule — every PASS claim needs non-attestation
+  evidence or an explicit ``claim_class``).
+- authorization model (H01: ``[[effects]]`` shape and enums of the ``Effects``
+  section; H04: the EXECUTION_PLAN must not declare its own ``Effects``
+  section).
+- knowledge lifecycle (H05: ``[[invalidated_facts]]`` shape when the
+  ``Invalidated Facts`` section is present; H10: ``kind``/``path`` of the
+  embedded ``recommended_entries`` JSON when present).
 
 Usage:
   python .agents/harness/gate_validator.py --trigger <HXX> --artifact <path>
@@ -73,6 +88,30 @@ BASE_RUBRICS = (
     "VERIFICATION_REPORT_RUBRIC",
 )
 
+EVIDENCE_CLASSES = {
+    "observation",
+    "measurement",
+    "attestation",
+    "assertion",
+    "reference",
+}
+
+NON_ATTESTATION_EVIDENCE = EVIDENCE_CLASSES - {"attestation"}
+
+EFFECT_KINDS = {
+    "network",
+    "remote_git",
+    "install",
+    "destructive",
+    "write_outside_project",
+}
+
+AUTHORIZED_BY = {"user", "unattended_default"}
+
+EFFECT_STATUSES = {"authorized", "not_authorized", "pending_user_confirmation"}
+
+KNOWLEDGE_KINDS = {"discovery", "knowledge", "lesson"}
+
 TRIGGERS = {
     "H00": {
         "artifact": "TASK_ANALYSIS.md",
@@ -98,7 +137,7 @@ TRIGGERS = {
             "Metadata", "Task Reference", "Context Objective", "Project Context",
             "Relevant Components", "Existing Behavior", "Dependencies",
             "Constraints Discovered", "Available Evidence", "Unknowns",
-            "Context Validation", "State",
+            "Context Validation",
         ],
     },
     "H03": {
@@ -266,6 +305,19 @@ def section_text(text: str, heading: str) -> str:
 
 def toml_blocks(text: str) -> list[str]:
     return [m.group(1) for m in re.finditer(r"```toml\n(.*?)\n```", text, re.DOTALL)]
+
+
+def json_blocks(text: str) -> list[dict]:
+    """Return the parsed objects of every ```json fenced block."""
+    blocks: list[dict] = []
+    for m in re.finditer(r"```json\n(.*?)\n```", text, re.DOTALL):
+        try:
+            data = json.loads(m.group(1))
+        except json.JSONDecodeError:
+            continue
+        if isinstance(data, dict):
+            blocks.append(data)
+    return blocks
 
 
 def features(root: Path) -> dict:
@@ -448,6 +500,24 @@ def validate(trigger: str, artifact: Path, root: Path | None = None) -> tuple[li
             else:
                 checks.append({"id": "ears", "result": "PASS", "evidence": f"{len(bullets)} EARS bullets"})
 
+    if trigger == "H00":
+        checks.extend(_check_h00_conflicts(text))
+
+    if trigger == "H03":
+        checks.extend(_check_h03_conflicts(text))
+
+    if trigger == "H01":
+        checks.extend(_check_effects(text))
+
+    if trigger == "H04":
+        checks.extend(_check_no_plan_effects(text))
+
+    if trigger == "H05":
+        checks.extend(_check_invalidated_facts(text))
+
+    if trigger == "H10":
+        checks.extend(_check_recommendation(text))
+
     if spec.get("technical_approach"):
         body = section_text(text, "Technical Approach")
         enabled = []
@@ -481,6 +551,9 @@ def validate(trigger: str, artifact: Path, root: Path | None = None) -> tuple[li
     roots = _roots_from_artifact(artifact) if root is None else (root, None, [])
     if trigger == "H06":
         checks.extend(_check_test_results(text, roots))
+        checks.extend(_check_deferred_items(text))
+        checks.append(_check_review_report(artifact))
+        checks.extend(_check_evidence(text))
     checks.extend(check_citations(text, roots))
 
     failed = any(c["result"] == "FAIL" for c in checks)
@@ -543,6 +616,7 @@ def _check_toml(toml_key: str, text: str) -> list[dict]:
                                "evidence": "acceptance_criteria is not a list"})
                 continue
             bad = []
+            evidence_entries = _evidence_entries(text)
             for criterion in value:
                 if not isinstance(criterion, dict):
                     bad.append("non-object criterion")
@@ -550,11 +624,29 @@ def _check_toml(toml_key: str, text: str) -> list[dict]:
                 result = criterion.get("result")
                 if result not in ("PASS", "FAIL", "PARTIAL"):
                     bad.append(f"bad criterion result {result!r}")
+                    continue
                 elif result == "PARTIAL" and not criterion.get("action_plan"):
                     bad.append("PARTIAL criterion without action_plan")
+                if result == "FAIL":
+                    continue
+                claim_class = criterion.get("claim_class")
+                evidence = criterion.get("evidence")
+                claims_verified = claim_class == "verified" or (
+                    claim_class is None
+                    and isinstance(evidence, str)
+                    and bool(evidence.strip())
+                )
+                if claim_class is None and not claims_verified:
+                    bad.append("criterion without evidence and without claim_class")
+                elif claims_verified and not _has_non_attestation_evidence(
+                    evidence_entries, criterion.get("claim_id")
+                ):
+                    bad.append(
+                        "verified criterion without non-attestation evidence"
+                    )
             if bad:
                 checks.append({"id": "acceptance_criteria", "result": "FAIL",
-                               "evidence": f"{len(bad)} offending criterion/criteria"})
+                               "evidence": "; ".join(bad[:5])})
             else:
                 checks.append({"id": "acceptance_criteria", "result": "PASS",
                                "evidence": f"{len(value)} valid criterion/criteria"})
@@ -600,6 +692,80 @@ def _evidence_resolves(evidence: str, roots: tuple) -> bool:
         for base in base_dirs:
             candidates.append(base / fp)
     return any(c.is_file() for c in candidates)
+
+
+def _evidence_entries(text: str) -> list[dict]:
+    """Collect ``[[evidence]]`` entries from the ``## Evidence`` section."""
+    body = section_text(text, "Evidence")
+    entries: list[dict] = []
+    for block in toml_blocks(body):
+        parsed = parse_toml(block)
+        value = parsed.get("evidence")
+        if isinstance(value, list):
+            entries.extend(x for x in value if isinstance(x, dict))
+    return entries
+
+
+def _has_non_attestation_evidence(entries: list[dict], claim_id: object) -> bool:
+    """True when an evidence entry supports the claim with class != attestation."""
+    return any(
+        e.get("class") in NON_ATTESTATION_EVIDENCE and e.get("claim_id") == claim_id
+        for e in entries
+    )
+
+
+def _check_evidence(text: str) -> list[dict]:
+    """H06: validate the ``[[evidence]]`` entries of ``## Evidence``."""
+    entries = _evidence_entries(text)
+    if not entries:
+        return [
+            {
+                "id": "evidence",
+                "result": "SKIP",
+                "evidence": "no [[evidence]] entries",
+            }
+        ]
+    bad: list[str] = []
+    for i, entry in enumerate(entries, 1):
+        cls = entry.get("class")
+        if cls not in EVIDENCE_CLASSES:
+            bad.append(f"entry {i}: bad class {cls!r}")
+        claim_id = entry.get("claim_id")
+        if not isinstance(claim_id, str) or not claim_id.strip():
+            bad.append(f"entry {i}: missing claim_id")
+        ref = entry.get("ref")
+        if not isinstance(ref, str) or not ref.strip():
+            bad.append(f"entry {i}: missing ref")
+        if cls == "measurement":
+            exit_code = entry.get("exit_code")
+            if exit_code is not None and (
+                not isinstance(exit_code, int) or exit_code < 0
+            ):
+                bad.append(
+                    f"entry {i}: measurement exit_code must be a non-negative integer"
+                )
+        if cls == "attestation":
+            actor = entry.get("actor")
+            statement = entry.get("statement")
+            if not isinstance(actor, str) or not actor.strip():
+                bad.append(f"entry {i}: attestation missing actor")
+            if not isinstance(statement, str) or not statement.strip():
+                bad.append(f"entry {i}: attestation missing statement")
+    if bad:
+        return [
+            {
+                "id": "evidence",
+                "result": "FAIL",
+                "evidence": "; ".join(bad[:5]),
+            }
+        ]
+    return [
+        {
+            "id": "evidence",
+            "result": "PASS",
+            "evidence": f"{len(entries)} valid evidence entr(y/ies)",
+        }
+    ]
 
 
 def _check_test_results(text: str, roots: tuple) -> list[dict]:
@@ -649,6 +815,20 @@ def _check_test_results(text: str, roots: tuple) -> list[dict]:
                 bad.append(f"entry {i}: evidence does not resolve to an existing file")
         elif not (isinstance(test, str) and test and test in log_text):
             bad.append(f"entry {i}: no evidence and test command not found in SESSION_LOG.md")
+        claim_class = entry.get("claim_class")
+        claims_verified = claim_class == "verified" or (
+            claim_class is None
+            and isinstance(evidence, str)
+            and bool(evidence.strip())
+        )
+        if claim_class is None and not claims_verified:
+            bad.append(f"entry {i}: result without evidence and without claim_class")
+        elif claims_verified and not _has_non_attestation_evidence(
+            _evidence_entries(text), entry.get("claim_id")
+        ):
+            bad.append(
+                f"entry {i}: verified result without non-attestation evidence"
+            )
     if bad:
         return [
             {
@@ -711,6 +891,369 @@ def _subsection_text(body: str, name: str) -> str:
             break
         out.append(line)
     return "\n".join(out)
+
+
+def _h00_next_state(text: str) -> str | None:
+    """Return the declared ``recommended_next_state`` of a TASK_ANALYSIS."""
+    body = section_text(text, "Recommended Next State")
+    m = re.search(r'^\s*recommended_next_state\s*=\s*"([^"]+)"', body, re.MULTILINE)
+    return m.group(1) if m else None
+
+
+def _check_h00_conflicts(text: str) -> list[dict]:
+    """H00 section-coherence checks (AL-004): TASK_ANALYSIS self-contradictions.
+
+    A task analysis that declares the request ready for specification while
+    recommending NEEDS_CLARIFICATION, or that declares HIGH intent confidence
+    while recommending CONFIRMING_INTENT (HIGH auto-confirms), is internally
+    conflicting and fails structurally.
+    """
+    recommended = _h00_next_state(text)
+    if recommended is None:
+        return []  # section presence is checked separately; nothing to compare
+    checks: list[dict] = []
+    sufficiency = parse_toml(section_text(text, "Sufficiency Assessment"))
+    ready = sufficiency.get("sufficiency", {}).get("ready_for_specification")
+    if ready is True and recommended == "NEEDS_CLARIFICATION":
+        checks.append(
+            {
+                "id": "conflicting_sections",
+                "result": "FAIL",
+                "evidence": (
+                    "sufficiency.ready_for_specification=true but "
+                    "recommended_next_state=NEEDS_CLARIFICATION"
+                ),
+            }
+        )
+    else:
+        checks.append(
+            {
+                "id": "conflicting_sections",
+                "result": "PASS",
+                "evidence": "sufficiency and recommended next state are coherent",
+            }
+        )
+    intent = parse_toml(section_text(text, "Intent Confidence Assessment"))
+    level = intent.get("intent_confidence", {}).get("level")
+    if level == "HIGH" and recommended == "CONFIRMING_INTENT":
+        checks.append(
+            {
+                "id": "conflict_high_intent_confirm",
+                "result": "FAIL",
+                "evidence": (
+                    "intent_confidence.level=HIGH but "
+                    "recommended_next_state=CONFIRMING_INTENT "
+                    "(HIGH auto-confirms the reflection)"
+                ),
+            }
+        )
+    else:
+        checks.append(
+            {
+                "id": "conflict_high_intent_confirm",
+                "result": "PASS",
+                "evidence": "intent confidence and recommended next state are coherent",
+            }
+        )
+    return checks
+
+
+def _check_effects(text: str) -> list[dict]:
+    """H01: validate the ``[[effects]]`` entries of the ``## Effects`` section."""
+    body = section_text(text, "Effects")
+    if not body.strip():
+        return [
+            {
+                "id": "effects",
+                "result": "SKIP",
+                "evidence": "no Effects section (no out-of-frontier effects declared)",
+            }
+        ]
+    entries: list[dict] = []
+    for block in toml_blocks(body):
+        parsed = parse_toml(block)
+        value = parsed.get("effects")
+        if isinstance(value, list):
+            entries.extend(x for x in value if isinstance(x, dict))
+    if not entries:
+        return [
+            {
+                "id": "effects",
+                "result": "SKIP",
+                "evidence": "Effects section present without [[effects]] entries",
+            }
+        ]
+    bad: list[str] = []
+    names: list[str] = []
+    for i, entry in enumerate(entries, 1):
+        name = entry.get("name")
+        if not isinstance(name, str) or not name.strip():
+            bad.append(f"entry {i}: missing name")
+        else:
+            names.append(name)
+        kind = entry.get("kind")
+        if kind not in EFFECT_KINDS:
+            bad.append(f"entry {i}: bad kind {kind!r}")
+        authorized_by = entry.get("authorized_by")
+        if authorized_by not in AUTHORIZED_BY:
+            bad.append(f"entry {i}: bad authorized_by {authorized_by!r}")
+        status = entry.get("status")
+        if status not in EFFECT_STATUSES:
+            bad.append(f"entry {i}: bad status {status!r}")
+        evidence_ref = entry.get("evidence_ref")
+        if not isinstance(evidence_ref, str) or not evidence_ref.strip():
+            bad.append(f"entry {i}: missing evidence_ref")
+    if len(names) != len(set(names)):
+        bad.append("duplicate effect names")
+    if bad:
+        return [
+            {
+                "id": "effects",
+                "result": "FAIL",
+                "evidence": "; ".join(bad[:5]),
+            }
+        ]
+    return [
+        {
+            "id": "effects",
+            "result": "PASS",
+            "evidence": f"{len(entries)} valid effects entr(y/ies)",
+        }
+    ]
+
+
+def _check_no_plan_effects(text: str) -> list[dict]:
+    """H04: the EXECUTION_PLAN must not declare its own authorizations."""
+    body = section_text(text, "Effects")
+    if body.strip():
+        return [
+            {
+                "id": "effects",
+                "result": "FAIL",
+                "evidence": (
+                    "EXECUTION_PLAN must not declare an Effects section: plan "
+                    "approval covers only task-specification effects"
+                ),
+            }
+        ]
+    return [
+        {
+            "id": "effects",
+            "result": "PASS",
+            "evidence": "no Effects section in the plan",
+        }
+    ]
+
+
+def _check_invalidated_facts(text: str) -> list[dict]:
+    """H05: validate the ``[[invalidated_facts]]`` block when present.
+
+    The ``Invalidated Facts`` section is required-when-applicable (KN-004):
+    an execution that changed discovered facts must declare them. A missing
+    section is a SKIP (the applicability is executor judgment); a present
+    section without entries or with empty fields is a FAIL.
+    """
+    body = section_text(text, "Invalidated Facts")
+    if not body.strip():
+        return [
+            {
+                "id": "invalidated_facts",
+                "result": "SKIP",
+                "evidence": "no Invalidated Facts section",
+            }
+        ]
+    entries: list[dict] = []
+    for block in toml_blocks(body):
+        parsed = parse_toml(block)
+        value = parsed.get("invalidated_facts")
+        if isinstance(value, list):
+            entries.extend(x for x in value if isinstance(x, dict))
+    if not entries:
+        return [
+            {
+                "id": "invalidated_facts",
+                "result": "FAIL",
+                "evidence": (
+                    "Invalidated Facts section present without "
+                    "[[invalidated_facts]] entries"
+                ),
+            }
+        ]
+    bad: list[str] = []
+    for i, entry in enumerate(entries, 1):
+        for field in ("fact", "entry", "reason"):
+            value = entry.get(field)
+            if not isinstance(value, str) or not value.strip():
+                bad.append(f"entry {i}: missing {field}")
+    if bad:
+        return [
+            {
+                "id": "invalidated_facts",
+                "result": "FAIL",
+                "evidence": "; ".join(bad[:5]),
+            }
+        ]
+    return [
+        {
+            "id": "invalidated_facts",
+            "result": "PASS",
+            "evidence": f"{len(entries)} valid invalidated fact(s)",
+        }
+    ]
+
+
+def _check_recommendation(text: str) -> list[dict]:
+    """H10: validate the embedded JSON of KB_RECOMMENDATION.md.
+
+    When a ``recommended_entries`` list exists in the embedded JSON, every
+    item must declare ``kind`` (discovery | knowledge | lesson) and a
+    non-empty ``path`` (KN-002). Without a JSON block the check is a SKIP: the
+    prose ``Recommended Entries`` section is agent judgment.
+    """
+    bad: list[str] = []
+    seen = False
+    for data in json_blocks(text):
+        entries = data.get("recommended_entries")
+        if not isinstance(entries, list):
+            continue
+        seen = True
+        for i, entry in enumerate(entries, 1):
+            if not isinstance(entry, dict):
+                bad.append(f"item {i}: not an object")
+                continue
+            kind = entry.get("kind")
+            if kind not in KNOWLEDGE_KINDS:
+                bad.append(f"item {i}: bad kind {kind!r}")
+            path = entry.get("path")
+            if not isinstance(path, str) or not path.strip():
+                bad.append(f"item {i}: missing path")
+    if not seen:
+        return [
+            {
+                "id": "recommendation",
+                "result": "SKIP",
+                "evidence": "no recommended_entries JSON block",
+            }
+        ]
+    if bad:
+        return [
+            {
+                "id": "recommendation",
+                "result": "FAIL",
+                "evidence": "; ".join(bad[:5]),
+            }
+        ]
+    return [
+        {
+            "id": "recommendation",
+            "result": "PASS",
+            "evidence": "recommended entries declare kind and path",
+        }
+    ]
+
+
+def _check_h03_conflicts(text: str) -> list[dict]:
+    """H03 section-coherence check (AL-004): VALIDATED with failing evaluations."""
+    decision = parse_toml(section_text(text, "Validation Decision"))
+    result = decision.get("decision", {}).get("result")
+    if result != "VALIDATED":
+        return []  # the conflict rule only applies to a VALIDATED decision
+    completeness = parse_toml(section_text(text, "Completeness Evaluation"))
+    consistency = parse_toml(section_text(text, "Consistency Evaluation"))
+    problems = []
+    if completeness.get("completeness", {}).get("status") == "INCOMPLETE":
+        problems.append("completeness.status=INCOMPLETE")
+    if consistency.get("consistency", {}).get("status") == "CONFLICTING":
+        problems.append("consistency.status=CONFLICTING")
+    if problems:
+        return [
+            {
+                "id": "conflicting_sections",
+                "result": "FAIL",
+                "evidence": "decision.result=VALIDATED but " + "; ".join(problems),
+            }
+        ]
+    return [
+        {
+            "id": "conflicting_sections",
+            "result": "PASS",
+            "evidence": "validation decision coherent with the evaluations",
+        }
+    ]
+
+
+def _check_deferred_items(text: str) -> list[dict]:
+    """H06: structurally validate the ``Deferred Items`` block when present."""
+    body = section_text(text, "Deferred Items")
+    if not body.strip():
+        return [
+            {
+                "id": "deferred_items",
+                "result": "SKIP",
+                "evidence": "no Deferred Items section",
+            }
+        ]
+    entries: list[dict] = []
+    for block in toml_blocks(body):
+        parsed = parse_toml(block)
+        value = parsed.get("deferred_items")
+        if isinstance(value, list):
+            entries.extend(x for x in value if isinstance(x, dict))
+    if not entries:
+        return [
+            {
+                "id": "deferred_items",
+                "result": "PASS",
+                "evidence": "Deferred Items present and empty",
+            }
+        ]
+    bad: list[str] = []
+    for i, entry in enumerate(entries, 1):
+        if entry.get("deferred") is not True:
+            bad.append(f"entry {i}: deferred is not true")
+        confirmed = entry.get("confirmed_by")
+        if not isinstance(confirmed, str) or not confirmed.strip():
+            bad.append(f"entry {i}: missing confirmed_by")
+    if bad:
+        return [
+            {
+                "id": "deferred_items",
+                "result": "FAIL",
+                "evidence": "; ".join(bad[:5]),
+            }
+        ]
+    return [
+        {
+            "id": "deferred_items",
+            "result": "PASS",
+            "evidence": f"{len(entries)} deferred item(s) with confirmation",
+        }
+    ]
+
+
+def _check_review_report(artifact: Path) -> dict:
+    """H06 profile-aware: a `complex` task requires a REVIEW_REPORT.md."""
+    profile = read_task_profile(_roots_from_artifact(artifact)[2])
+    if profile != "complex":
+        return {
+            "id": "review_report",
+            "result": "SKIP",
+            "evidence": "task profile is not complex",
+        }
+    if any(
+        p.is_file() and p.name.endswith("REVIEW_REPORT.md")
+        for p in artifact.parent.iterdir()
+    ):
+        return {
+            "id": "review_report",
+            "result": "PASS",
+            "evidence": "REVIEW_REPORT.md present for the complex task",
+        }
+    return {
+        "id": "review_report",
+        "result": "FAIL",
+        "evidence": "complex task profile requires REVIEW_REPORT.md in the iteration",
+    }
 
 
 def main(argv: list[str] | None = None) -> int:

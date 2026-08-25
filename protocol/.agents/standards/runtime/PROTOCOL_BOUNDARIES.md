@@ -147,6 +147,10 @@ Unless explicitly authorized, the agent MUST NOT:
 
 The technical practices selected in `TASK_SPECIFICATION.md` (`## Technical Approach`) constitute explicit authorization for the commands they require. For example, when `tdd` is enabled (see `.agents/standards/testing/TDD.md`), the worker is authorized to write and run the tests the TDD cycle demands.
 
+Authorization for out-of-frontier effects is recorded in the `Effects` section
+of `TASK_SPECIFICATION.md` (see `.agents/standards/runtime/AUTHORIZATION.md`);
+the availability of a tool or skill is never an authorization.
+
 ### External interaction
 
 Unless explicitly instructed, the agent MUST NOT:
@@ -154,3 +158,9 @@ Unless explicitly instructed, the agent MUST NOT:
 - Perform external HTTP requests or network calls.
 - Simulate payments, transfers, callbacks, or any other financial transaction.
 - Trigger side effects outside the local codebase.
+
+These are out-of-frontier effects: executing one requires an `effects` entry
+with `authorized_by` non-empty and `status` other than `not_authorized`
+(`.agents/standards/runtime/AUTHORIZATION.md`). The frontier itself is the
+default permission; a capability available in the runtime does not authorize
+it.

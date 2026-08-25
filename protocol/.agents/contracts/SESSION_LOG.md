@@ -1,11 +1,11 @@
 +++
-schema_version = "1.0.0"
+schema_version = "1.1.0"
 artifact = "SESSION_LOG.md"
 phase = "all"
 produced_by = "orchestrator"
 enforcement = "informational"
 +++
-schema_version = "1.0.0"
+schema_version = "1.1.0"
 
 
 ---
@@ -36,6 +36,10 @@ Each entry should include as many of the following fields as applicable:
 - **Worker**: role adopted by the worker.
 - **Knowledge entries consulted**: UUIDs of KB entries used, or `none`.
 - **Decision**: orchestrator decision (`proceed`, `retry`, `recovery`, `needs_clarification`, `abort`).
+- **Evidence** (optional): citation of an artifact path or of another entry in
+  this log that supports the recorded decision, bypass or applied default
+  (claims rule of `.agents/harness/INDEX.md`, §Enforcement boundaries: every
+  claim is evidence-cited or explicitly marked as attestation/inference).
 - **Pending confirmation**: any default applied under unattended mode is recorded as `PENDING_USER_CONFIRMATION` with the ambiguity, the applied default, and the policy entry that covered it.
 - **Feature flags active**: list of enabled feature flags at session start.
 

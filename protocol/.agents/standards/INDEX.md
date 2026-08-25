@@ -51,6 +51,7 @@ Honesty note: the events are self-reported (see `harness/INDEX.md`,
 | `caveman` | Applies `.agents/standards/communication/CAVEMAN.md` to all protocol communication. |
 | `llm_discovery` | Enables LLM-based project discovery. |
 | `discovery_orchestrator` | Enables the Discovery Orchestrator of the `discovery` domain. |
+| `discovery_require_consent` | Requires explicit user consent before any automatic discovery invocation (default `true`). |
 | `discovery_sample_size` | Number of files sampled during discovery (default 10; not boolean). |
 | `discovery_environment_ttl_hours` | TTL of the environment discovery entry (default 6; not boolean). |
 | `discovery_project_ttl_hours` | TTL of the project discovery KB (default 24; not boolean). |
@@ -110,6 +111,10 @@ The technical-practice flags map each flag to the rubric that scores it and the 
 - `quality/RUBRICS.md` — rubric evaluation format and scoring levels.
 - `quality/PREFLIGHT_CHECKLIST.md` — pre-flight self-checklist for workers.
 - `quality/CONFIDENCE.md` — general confidence model (HIGH/MEDIUM/LOW) with falsable level definitions and the anti-inflation rule, applied to verification reports, recovery analyses and KB recommendations; includes the recommendation-confidence specialization for Orchestrator accept-or-override decisions.
+- `quality/EVIDENCE.md` — evidence model: five evidence classes
+  (`observation`/`measurement`/`attestation`/`assertion`/`reference`),
+  `[[evidence]]` entries, sufficiency rules per `[gate]`/`[agent]` item, and the
+  VERIFIED invariant (non-attestation evidence or the term "attested").
 
 ## Context
 
@@ -125,6 +130,7 @@ The technical-practice flags map each flag to the rubric that scores it and the 
 - `context/ENVIRONMENT_PROBE.md` — rules for probing the execution environment (OS, shell, tools) before acting.
 - `context/USING_PATTERNS.md` — how workers consume the discovery knowledge base (detected environment and development patterns).
 - `context/KNOWLEDGE_CURATION.md` — anti-noise inclusion rules and `curation_status` lifecycle (`active`/`noisy`/`retired`) for KB entries under `.project/knowledge/entries/`.
+- `context/KNOWLEDGE_LIFECYCLE.md` — knowledge lifecycle model: `snapshot`/`claim`/`lesson` types, per-claim freshness with resolvable provenance, post-execution invalidation (`invalidated_facts`) and pipeline-scoped revalidation.
 
 ## Testing
 
@@ -174,6 +180,7 @@ Specialized worker profiles live in `.agents/roles/profiles/` and are enabled by
 ## Runtime
 
 - `runtime/PROTOCOL_BOUNDARIES.md` — file-system boundaries, artifact locations, and agent autonomy rules.
+- `runtime/AUTHORIZATION.md` — authorization and capability model: default frontier, `effects` block, who can authorize, and the AUTHORIZED / UNAUTHORIZED / AUTHORIZATION_UNDETERMINED states.
 - `runtime/PROTOCOL_TAXONOMY.md` — master dictionary of the protocol: domains, lifecycles, states, artifacts, harness policies, actors, roles and workers, with `<domain>:<state>` references. Every state machine, workflow, harness policy, contract and role carries a YAML metadata block pointing to it (`taxonomy`, `kind`, `domain` as minimum). Files that already start with a TOML front matter block (`+++`) — policies and contracts — carry the YAML block immediately after the TOML block; all other files carry it at the top. Coherence is validated by the Orchestrator's judgment against harness policy `.agents/harness/policies/H13-protocol-taxonomy.md` (cross-cutting; `H08`, `H12` and `H14` are intentionally absent).
 - `runtime/EXTERNAL_DEPENDENCIES.md` — `.agents/` must not depend on project-specific technologies or third-party runtime dependencies.
 - `runtime/PYTHON_DEPENDENCIES.md` — concrete application of the external-dependencies policy for the current Python runtime.

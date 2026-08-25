@@ -42,6 +42,7 @@ One row per protocol skill. Structural validity (every row exists on disk with v
 | formatter | Reformat output into a declared target structure (JSON, YAML, CSV, table, Markdown). Activated by judgment (artifact-producing delegations; see `.agents/roles/worker.md` §"Skill Consumption"). |
 | terminology-enforcer | Enforce the protocol's canonical vocabulary in artifacts. Activated by judgment (see policy H13, §"Agent-side enforcement"). |
 | suggest-commits | Analyze git changes and propose logical Conventional Commits grouped by intent. Utility skill for the adopting project (user-invoked, not part of the task workflow; outside the activation table by design). |
+| discovery | Run a project discovery on demand (user-invoked, not part of the task workflow; outside the activation table by design): `/discovery` runs scope `full`, `/discovery lite` runs scope `lite`. |
 
 ## Activation table
 

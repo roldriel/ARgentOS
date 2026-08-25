@@ -45,6 +45,219 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [9.0.0] — 2026-08-25
+
+### Added
+
+- **Modelo de lifecycle de conocimiento** (plan 81, RFC-67):
+  `.agents/standards/context/KNOWLEDGE_LIFECYCLE.md` define los tipos
+  `snapshot`/`claim`/`lesson`, la frescura por claim con proveniencia
+  resoluble, los disparadores de invalidación (incluida la post-ejecución) y
+  la revalidación scoped por el pipeline de discovery; `standards/INDEX.md` lo
+  referencia.
+- **`kind`/`path` en KB_RECOMMENDATION** (plan 81, RFC-67): cada entrada
+  recomendada declara `kind` (`discovery`|`knowledge`|`lesson`) y `path`
+  resoluble (schema `2.0.0`); `session_uuid` queda como proveniencia, no como
+  ubicación.
+- **`invalidated_facts` en EXECUTION_SUMMARY** (plan 81, RFC-67): sección
+  `## Invalidated Facts` con `fact`/`entry`/`reason` (schema `4.0.0`),
+  obligatoria cuando la ejecución cambió hechos descubiertos; el pipeline
+  revalida las entradas afectadas con el scope que las posee.
+- **Checks mecánicos de conocimiento** (plan 81, RFC-67): `gate_validator.py`
+  valida la forma de `invalidated_facts` (H05) y de `kind`/`path` (H10);
+  `check_session_artifacts.py` aplica los checks a sesiones `>= 9.0.0` y
+  valida la provenance de lessons (`kind: lesson`).
+
+### Changed
+
+- **Frescura por claim con proveniencia resoluble** (plan 81, RFC-67, MAJOR):
+  `KB_DISCOVERY_ENTRY.md` declara `kind: snapshot` y semántica de claims por
+  hecho; la Freshness Rule del discovery evalúa por claim y excluye de
+  recomendaciones/consumo las claims vencidas o sin proveniencia;
+  `DISCOVERY_STATE_MACHINE.md` agrega la condición de invocación
+  post-ejecución y la medición previa para cambios de TTL; `docs/MIGRATION.md`
+  §10 documenta la migración y las trazas históricas.
+- **Lessons con proveniencia en el cierre** (plan 81, RFC-67, MAJOR): el
+  Closing Feedback persiste lessons con `kind: lesson`, `session_id`,
+  `protocol_version` y evidencia (RFC-65); `KNOWLEDGE_CURATION.md` y
+  `context_discoverer.md` alineados.
+
+### Removed
+
+- **Reutilización de claims vencidas o con proveniencia no resoluble** (plan 81,
+  RFC-67, MAJOR): deja de ser válida en entradas y recomendaciones nuevas; sin
+  etiqueta de tipo no se mezclan snapshot/current/historical knowledge.
+
+### Modelo conceptual
+
+RFC-67 aceptada (plan 81, 2026-08-25): lifecycle mínimo de conocimiento (D9).
+
+---
+
+## [8.0.0] — 2026-08-25
+
+### Added
+
+- **Estándar de autorización** (plan 80, RFC-66):
+  `.agents/standards/runtime/AUTHORIZATION.md` define el vocabulario
+  Capability/Permission/Authorization/Execution/Effect, la frontera por
+  defecto, quién autoriza y los estados AUTHORIZED/UNAUTHORIZED/
+  AUTHORIZATION_UNDETERMINED; `standards/INDEX.md` lo referencia.
+- **Bloque `effects` en el payload** (plan 80, RFC-66):
+  `TASK_SPECIFICATION.md` gana la sección `## Effects`
+  (`name`/`kind`/`authorized_by`/`evidence_ref`/`status`, schema `3.0.0`)
+  obligatoria cuando hay efectos fuera de frontera; `EXECUTION_SUMMARY.md` gana
+  `## Effects Executed` (`effect`/`executed`/`authorization_ref`, schema
+  `3.0.0`); `SESSION_BRIEF.md` registra `[[effects]]` para autorizaciones de
+  clarificación o default desatendido.
+- **Checks mecánicos de autorización** (plan 80, RFC-66): `gate_validator.py`
+  valida la forma del bloque `effects` (H01) y rechaza una sección `Effects`
+  propia en EXECUTION_PLAN (H04); `check_session_artifacts.py` clasifica los
+  efectos ejecutados para sesiones `>= 8.0.0`.
+
+### Changed
+
+- **Policies H01/H04/H05 con autorización** (plan 80, RFC-66, MAJOR): H01/H04
+  exigen autorización registrada para efectos fuera de frontera y rechazan
+  suposiciones no confirmadas como autorización; H05 verifica el registro de
+  efectos ejecutados; `NO_ASSUMPTIONS.md` y `PROTOCOL_BOUNDARIES.md` usan el
+  vocabulario del estándar.
+- **Frontera verificable** (plan 80, RFC-66, MAJOR): la frontera por defecto se
+  mantiene pero cada efecto fuera de frontera se vincula a una entrada de
+  autorización; `docs/MIGRATION.md` §9 documenta la migración y las trazas
+  históricas.
+
+### Removed
+
+- **Efectos fuera de frontera con suposición no confirmada sin registro**
+  (plan 80, RFC-66, MAJOR): dejan de ser válidos en specs nuevos; sin registro
+  la traza es AUTHORIZATION_UNDETERMINED, nunca UNAUTHORIZED por ausencia.
+
+### Modelo conceptual
+
+RFC-66 aceptada (plan 80, 2026-08-25): modelo de autorización y capacidades
+(D8, D11).
+
+---
+
+## [7.0.0] — 2026-08-25
+
+### Added
+
+- **Clases de evidencia y estándar EVIDENCE** (plan 79, RFC-65):
+  `.agents/standards/quality/EVIDENCE.md` define las cinco clases
+  (`observation`/`measurement`/`attestation`/`assertion`/`reference`), el
+  esquema `[[evidence]]` (`class`/`claim_id`/`ref`) y los invariantes
+  EV-001…EV-004 / REL-001…REL-003; `standards/INDEX.md` y `harness/INDEX.md`
+  lo referencian.
+- **Bloques `[[evidence]]` en el payload** (plan 79, RFC-65):
+  `VERIFICATION_REPORT.md` gana la sección `## Evidence` y `claim_id` en
+  criterios/resultados (`schema_version` 3.0.0); los ENTRY de
+  `HARNESS_REPORT.md` pueden registrar el array `evidence` con clase por check.
+- **Checks mecánicos de evidencia** (plan 79, RFC-65): `gate_validator.py`
+  (H06) valida las entries y rechaza un criterio PASS sin evidencia con clase
+  válida; `audit_gates.py` marca atestaciones sin etiquetar y checks `verified`
+  sin evidencia no-atestación; `check_session_artifacts.py` aplica los checks a
+  sesiones `>= 7.0.0`.
+
+### Changed
+
+- **Policies H05/H06/H07 con evidencia con clase por ítem** (plan 79, RFC-65,
+  MAJOR): los checklists citan evidencia con clase por ítem; H06 agrega el ítem
+  `[gate]` de `## Evidence`/VERIFIED; H07 exige `reference`/`assertion` para la
+  autorización escrita de la Rama B.
+- **Significado de PASS/"verificado"** (plan 79, RFC-65, MAJOR): un claim es
+  `verified` solo con una entrada de evidencia de clase distinta de
+  `attestation`; un ítem `[gate]` se satisface con observación/medición/
+  referencia o desviación documentada; `docs/MIGRATION.md` §8 documenta la
+  migración y las trazas históricas.
+
+### Removed
+
+- **"Verificado" sin entrada de evidencia** (plan 79, RFC-65, MAJOR): la
+  declaración "verificado" sin entrada de evidencia con clase deja de ser
+  válida en reportes nuevos; el término permitido es "atestado".
+
+### Modelo conceptual
+
+RFC-65 aceptada (plan 79, 2026-08-25): clases de evidencia y regla VERIFIED
+(D4, D12).
+
+---
+
+## [5.0.0] — 2026-08-25
+
+### Added
+
+- **Dimensiones de estado y lifecycle de artefactos** (plan 77, RFC-63): el
+  payload declara tres dimensiones con entidad propia (Task State, Gate State,
+  Artifact Lifecycle) y cuatro derivadas (Execution, Verification, Approval,
+  Plan) con sus fuentes de verdad en `harness/INDEX.md` (§State dimensions); el
+  Artifact Lifecycle (`draft`/`validated`/`superseded`) es derivado del registro
+  de gates y nunca se escribe a mano.
+- **`Deferred Items` y review gate** (plan 77, RFC-63):
+  `VERIFICATION_REPORT.md` gana la sección `## Deferred Items` (aprobaciones
+  humanas diferidas con confirmación) y `SESSION_BRIEF.md` registra los
+  diferidos; para `complex` con `rubrics` habilitado, el review sobre
+  `REVIEW_REPORT.md` es un Gate State obligatorio (`review_passed` /
+  `review_failed`) registrado en `HARNESS_REPORT.md` (trigger `REVIEW`).
+- **Checks mecánicos de lifecycle** (plan 77, RFC-63): `gate_validator.py`
+  rechaza secciones en conflicto (H00/H03), `complex` sin `REVIEW_REPORT.md` y
+  `Deferred Items` inválidos; `check_session_artifacts.py` detecta campos
+  manuales de estado y COMPLETED sin gates in-scope para sesiones `>= 5.0.0`.
+
+### Changed
+
+- **Semántica de COMPLETED relativa al alcance** (plan 77, RFC-63, MAJOR):
+  COMPLETED exige gates en-scope PASS, sin criterios FAIL/PENDING y aprobaciones
+  completadas o diferidas con confirmación; H05/H06/H07 citan la dimensión de
+  cada check en sus Gate Checklists; `protocol/.agents/orchestrators/core/roles/orchestrator.md`
+  §4.1 hace determinista el review gate.
+
+### Removed
+
+- **Campos manuales de estado** (plan 77, RFC-63, MAJOR): `status` (Metadata),
+  sección `## State`, `validation.complete` y `approved` (Plan Decision)
+  desaparecen de los siete contratos de artefactos; `schema_version` 2.0.0.
+
+### Modelo conceptual
+
+RFC-63 aceptada (plan 77, 2026-08-25): dimensiones de estado, lifecycle de
+artefactos y semántica de COMPLETED (D1, D2, D3).
+
+---
+
+## [4.0.0] — 2026-08-25
+
+### Added
+
+- **Catálogo de garantías y matriz de enforcement** (plan 76, RFC-62): `harness/INDEX.md` declara el catálogo cerrado de 12 garantías clasificadas en cinco clases (declarativa, verificable, mecánicamente enforceada, juicio del agente, actores externos) y la matriz por capa (agente / harness / runtime / externo / humano) con las invariantes ENF-001…ENF-003; `docs/ADOPTION.md` §6.4 la expone para adoptantes.
+- **Regla de claims y campos de clase** (plan 76, RFC-62): "zero hallucinations" deja de ser una garantía técnica; todo claim es evidencia-citado o está marcado como atestación/inferencia. Los checks de `HARNESS_REPORT.md` y los criterios/resultados de `VERIFICATION_REPORT.md` ganan `claim_class` (`verified` / `attested` / `inference`); `clock` (`utc` | `agent_clock`) en los ENTRY y en los eventos de `METRICS.md`; `Evidence` opcional en `SESSION_LOG.md`; checklist de `PROTOCOL_HEALTH.md` con presencia de registros raíz, identidad de sesión y reloj.
+- **Checkers dev de las celdas External** (plan 76, RFC-62): `check_session_artifacts.py` valida presencia/versión/UUID de sesión, atestaciones sin marca y timestamps UTC para sesiones `>= 4.0.0`; `aggregate_metrics.py --audit` reconcilia `state.json` ↔ `HARNESS_REPORT.md` en ambas direcciones para los gates de estado.
+
+### Changed
+
+- **Significado declarado de "verificado"** (plan 76, RFC-62, MAJOR): un claim es `verified` solo con evidencia de clase distinta de atestación; sin evidencia el término es `attested`. Las policies H01/H06/H07 citan evidencia con clase en sus Gate Checklists; `docs/MIGRATION.md` §6 documenta la migración y las trazas históricas.
+
+### Modelo conceptual
+
+RFC-62 aceptada (plan 76, 2026-08-25): modelo híbrido de garantías y fronteras de enforcement (D0, D11).
+
+---
+
+## [3.26.0] — 2026-08-24
+
+### Added
+
+- **Consentimiento del discovery** (plan 75, RFC-61): flag declarativo `discovery_require_consent` (default `true`) que convierte la detección automática del discovery en una consulta No-Assumption al usuario (condición disparada, opciones `full`/`lite`/sin discovery + opción libre); ante silencio o respuesta vaga se pide clarificación (sin default), en sesión no interactiva no se ejecuta y el bypass queda registrado en `SESSION_LOG.md`; con `false` se restaura la invocación automática.
+- **Scope `lite` de discovery** (plan 75, RFC-61): `init_worker` + `environment_worker` + `stack_worker` + `framework_worker` + `synthesis_worker`, respetando el grafo de dependencias; figura en la tabla de scopes, en la invocación y en el marcador `.last_discovery`.
+- **Skill `/discovery`** (plan 75, RFC-61): skill user-invoked fuera de la activation table; `/discovery` y `/discovery full` ejecutan `full`, `/discovery lite` ejecuta `lite`; reporta entradas escritas/actualizadas, stale marcados y duración.
+- **Evento de métricas `discovery_consent`** (plan 75, RFC-61): catálogo del contrato `METRICS.md` con `condition`, `options`, `decision`; métrica `discovery.consent_by_decision` de clase Recorded en `PROTOCOL_METRICS.md`.
+
+### Changed
+
+- **Cierre de tarea con "What we learned"** (plan 75, RFC-61): el feedback de cierre posterior a `VERIFYING → COMPLETED` (gated por H06/H07) incluye la sección condicional "Qué aprendimos" con el conocimiento persistido en `.project/knowledge/entries/`, informativa y sin acción requerida del usuario; `VERIFICATION_REPORT.md` no se modifica.
+
 ## [3.20.0] — 2026-08-16
 
 ### Fixed

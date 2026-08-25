@@ -113,7 +113,7 @@ When enabled, the Orchestrator invokes the `reviewer` before critical transition
 
 The active flags are recorded in `.project/<session-uuid>/SESSION_LOG.md` at session start. When `caveman` is enabled, the log entry itself should follow `.agents/standards/communication/CAVEMAN.md`.
 
-### 4.1 Optional reviewer invocation
+### 4.1 Reviewer invocation and review gate
 
 When `rubrics` is enabled, before each critical transition the Orchestrator MAY invoke the `reviewer` worker on the artifact that is about to be consumed. The reviewer returns a Review Report with recommendation `APPROVE`, `REWORK`, or `NEEDS_CLARIFICATION`.
 
@@ -123,11 +123,25 @@ The Orchestrator may invoke the reviewer before transitions such as:
 - `PLAN_READY → EXECUTING` (review `EXECUTION_PLAN.md`).
 - `EXECUTING → VERIFYING` (review `EXECUTION_SUMMARY.md`).
 
+**Review gate (mandatory for `complex`).** When `rubrics` is enabled and the
+task profile assigned in `TASK_ANALYSIS.md` is `complex`, the review over
+`REVIEW_REPORT.md` is mandatory before `VERIFYING → COMPLETED`: the Orchestrator
+MUST invoke the `reviewer` (producing the report) and MUST evaluate the review
+gate over the report — `review_passed` when the recommendation is `APPROVE`,
+`review_failed` when it is `REWORK` or `NEEDS_CLARIFICATION`. The outcome is
+recorded in `HARNESS_REPORT.md` as a gate entry with `trigger: "REVIEW"`,
+transition `VERIFYING → COMPLETED`, and the review checklist of the report
+contract. The review gate is a Gate State over the artifact, not a task state
+and not a transition gate: it is never registered in `state.json`.
+
 The Orchestrator must:
 
-- On `APPROVE`: proceed with the harness and transition.
-- On `REWORK`: route the artifact to the corresponding worker role for correction, within the retry bound (a finite, session-visible limit on corrections of the same artifact under the same recommendation; by default one retry), or route to `RECOVERY` once the bound is exhausted. `REWORK` is a recommendation from the reviewer, not a protocol state.
-- On `NEEDS_CLARIFICATION`: transition to `NEEDS_CLARIFICATION` and request user input.
+- On `APPROVE` (`review_passed`): proceed with the harness and transition.
+- On `REWORK` (`review_failed`): route the artifact to the corresponding worker role for correction, within the retry bound (a finite, session-visible limit on corrections of the same artifact under the same recommendation; by default one retry), or route to `RECOVERY` once the bound is exhausted. `REWORK` is a recommendation from the reviewer, not a protocol state.
+- On `NEEDS_CLARIFICATION` (`review_failed`): transition to `NEEDS_CLARIFICATION` and request user input.
+
+For `standard`/`trivial` tasks, or when `rubrics` is disabled, the invocation
+remains optional (MAY) and no review Gate State is recorded.
 
 See `.agents/roles/reviewer.md` for the reviewer role details and `.agents/standards/quality/RUBRICS.md` for the rubric definitions.
 
@@ -135,7 +149,10 @@ See `.agents/roles/reviewer.md` for the reviewer role details and `.agents/stand
 
 When `knowledge_base` is enabled and `.project/knowledge/entries/` is non-empty, the Orchestrator invokes the `context_discoverer` worker before delegating the real phase worker. The discoverer produces `KB_RECOMMENDATION.md` with recommended KB entries and a context budget.
 
-The Orchestrator then reads the discovery report, selects the recommended entries (or overrides the selection and records the reason in `SESSION_LOG.md`), and includes the selected `knowledge_entries` and `context_budget` in the delegation payload to the phase worker. If the discoverer reports no relevant entries, the Orchestrator omits `knowledge_entries` from the payload.
+Each recommendation declares `kind` and `path` per the `KB_RECOMMENDATION.md`
+contract; the Orchestrator resolves the recommended entries by their `path`.
+
+The Orchestrator then reads the discovery report, selects the recommended entries (or overrides the selection and records the reason in `SESSION_LOG.md`), and includes the selected `knowledge_entries` and `context_budget` in the delegation payload to the phase worker. It never includes a claim that is expired or whose provenance does not resolve (`.agents/standards/context/KNOWLEDGE_LIFECYCLE.md` §Freshness per claim). If the discoverer reports no relevant entries, the Orchestrator omits `knowledge_entries` from the payload.
 
 See `.agents/roles/context_discoverer.md` and `.agents/standards/context/CONTEXT.md` for details.
 
@@ -143,7 +160,7 @@ See `.agents/roles/context_discoverer.md` and `.agents/standards/context/CONTEXT
 
 When the `discovery_orchestrator` feature flag is enabled, the Orchestrator maintains the discovery knowledge base (`.project/knowledge/discovery/`) by invoking the Discovery Orchestrator of the `discovery` domain (`.agents/orchestrators/discovery/roles/discovery_orchestrator.md`). The Orchestrator does not know the internal details of the discovery subsystem; it only detects the need, invokes with a scope, and consumes the result.
 
-**Detection.** The Orchestrator invokes the Discovery Orchestrator when any of the following holds:
+**Detection.** The Orchestrator detects a discovery need when any of the following holds:
 
 1. `.project/knowledge/discovery/` does not exist.
 2. `.last_discovery` exceeds the project TTL (`discovery_project_ttl_hours`, default 24h). The marker file `.project/.last_discovery` is written by the Discovery Orchestrator on `DISCOVERY_READY`; its format is defined in `.agents/orchestrators/discovery/states/DISCOVERY_STATE_MACHINE.md` ("The `.last_discovery` marker").
@@ -152,8 +169,27 @@ When the `discovery_orchestrator` feature flag is enabled, the Orchestrator main
 5. The user requested an explicit refresh.
 6. An execution worker reports an inconsistency.
 7. The environment TTL (`discovery_environment_ttl_hours`, default 6h) expired and the scope is `env`.
+8. An execution declared `invalidated_facts` in `EXECUTION_SUMMARY.md`: the
+   affected entries are revalidated with the scope that owns each entry.
 
 Both TTLs are configured in `.agents/features.toml`.
+
+**Consent gate.** When the `discovery_require_consent` flag is enabled (default `true`), a detected need is never invoked directly: the Orchestrator presents a No-Assumption consultation to the user (see `.agents/standards/requirements/NO_ASSUMPTIONS.md`) with:
+
+1. The detection condition that triggered the need and the available detail (the expired TTL, the changed hash, or the reported inconsistency).
+2. Concrete options with their relative cost:
+   - `full` — complete discovery (all entries; the most expensive).
+   - `lite` — environment, language, stack and architecture, without deep qualitative analysis.
+   - **No discovery** — continue without KB, with the documented degradation (delegations operate without KB context).
+3. A free-form option ("other answer").
+
+The user's explicit decision determines the scope (`full` or `lite`), a rejection (no discovery), or a custom request. On silence or a vague answer (e.g. "go ahead"), the Orchestrator does NOT execute any scope: it asks for clarification again, as with any other ambiguity. There is no execution default. A user-requested refresh (detection condition 5) is itself explicit consent and proceeds without a new consultation.
+
+In a non-interactive session or when the consultation channel is degraded (no user available to respond), the Orchestrator does not run discovery: it continues without KB and records in `SESSION_LOG.md` the detected condition and the reason for the bypass. Without the possibility of consent there is no unrequested work.
+
+With `discovery_require_consent = false`, the legacy automatic behavior is restored: a detected need invokes the Discovery Orchestrator directly according to the scope table below, without consultation.
+
+Every consent-gate event is recorded in `SESSION_LOG.md`: the triggered condition, the options presented, the user decision (chosen scope, rejection, or non-interactive bypass), and the timestamp.
 
 **Hash calculation.** Hashes are computed by the Discovery Orchestrator's
 `init_worker` during `discovery:DISCOVERY_INIT` and recorded in
@@ -162,11 +198,12 @@ Both TTLs are configured in `.agents/features.toml`.
 Orchestrator never computes hashes itself: it only detects the need for
 discovery (conditions above) and requests the scope.
 
-**Invocation.** The Orchestrator invokes the Discovery Orchestrator with a scope and the following payload:
+**Invocation.** Once consent is granted (or `discovery_require_consent` is disabled), the Orchestrator invokes the Discovery Orchestrator with a scope and the following payload:
 
 | Scope | Workers invoked | Use |
 | ------- | ----------------- | ----- |
 | `full` | All | First run or major change. |
+| `lite` | `init_worker`, `environment_worker`, `stack_worker`, `framework_worker`, `synthesis_worker` | Environment, language, stack and architecture, without deep qualitative analysis. |
 | `env` | `init_worker`, `environment_worker`, `synthesis_worker` | Tooling change. |
 | `stack` | `init_worker`, `stack_worker`, `framework_worker`, `synthesis_worker` | New dependencies. |
 | `patterns` | `init_worker`, `patterns_worker`, `synthesis_worker` | Convention change. |
@@ -322,6 +359,21 @@ The `verifier` MUST read:
 The `verifier` MUST produce `VERIFICATION_REPORT.md` in the expected session artifact location.
 
 The Orchestrator MUST run harness triggers H06 and H07 on the report before allowing the transition to `COMPLETED`. If either trigger fails, the Orchestrator MUST transition to `RECOVERY`.
+
+## Closing Feedback
+
+When the workflow reaches `COMPLETED` (after harness triggers H06 and H07 pass on `VERIFICATION_REPORT.md`), the Orchestrator includes in the closing feedback a conditional "What we learned" section summarizing the knowledge persisted during the session in `.project/knowledge/entries/`, applying the curation filter of `.agents/standards/context/KNOWLEDGE_CURATION.md` (§"Inclusion rules").
+
+Rules:
+
+- **The agent curates.** The Orchestrator decides which learnings deserve persistence, applying the existing curation filter; the user neither chooses entry by entry nor approves persistence.
+- **Provenance.** Every persisted learning is a `lesson` claim: it carries
+  `kind: lesson`, `session_id`, `protocol_version` and an evidence reference
+  (`.agents/standards/quality/EVIDENCE.md`). The Orchestrator never persists a
+  lesson without provenance.
+- **Informative, not transactional.** The section reports what was already persisted ("Persisted in `entries/...`: ..."). It requires no user action. If the user detects an error, they request the correction as with any other protocol output; if nothing is said, nothing happens.
+- **Conditional.** If the session produced no learnings that pass the filter, the section is omitted (the empty result is not reported).
+- `VERIFICATION_REPORT.md` is not modified; the verifier's responsibilities do not change.
 
 ## Delegation Contract
 

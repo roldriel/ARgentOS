@@ -1,12 +1,12 @@
 +++
-schema_version = "1.0.0"
+schema_version = "3.0.0"
 artifact = "VERIFICATION_REPORT.md"
 phase = "07"
 produced_by = "verifier"
 enforcement = "gated"
 gated_by = ["H06", "H07"]
 +++
-schema_version = "1.0.0"
+schema_version = "3.0.0"
 
 
 ---
@@ -38,8 +38,12 @@ This artifact does not contain new implementation. It only records the result of
 ```toml
 id = ""
 created_at = ""
-status = ""
 ```
+
+The artifact lifecycle (`draft` / `validated` / `superseded`) is derived from
+the harness gate record: this artifact becomes `validated` when gates H06 and
+H07 record PASS in `state.json`. It is read-only derived metadata; the author
+never declares it.
 
 ---
 
@@ -86,9 +90,11 @@ Evaluate each acceptance criterion defined in the task specification.
 
 ```toml
 [[acceptance_criteria]]
+claim_id = ""
 criterion = ""
 result = ""
 evidence = ""
+claim_class = ""
 ```
 
 Possible values for `result`:
@@ -99,6 +105,16 @@ FAIL
 PARTIAL
 ```
 
+Each criterion carries a stable `claim_id` (for example `AC-01`); the
+`[[evidence]]` entries of `## Evidence` reference it. `claim_class` is optional
+(`verified` | `attested` | `inference`): with non-empty `evidence` — or a
+matching evidence entry — the implicit class is `verified`; `verified` requires
+at least one `[[evidence]]` entry of class other than `attestation` for the
+claim. Without such evidence the criterion MUST declare `claim_class: attested`
+or `claim_class: inference`. The report distinguishes verified claims from
+attestations (G-002/G-003; evidence classes per
+`.agents/standards/quality/EVIDENCE.md`).
+
 ---
 
 ## Test Results
@@ -107,10 +123,12 @@ Record the results of the validation strategy defined in the execution plan.
 
 ```toml
 [[test_results]]
+claim_id = ""
 test = ""
 result = ""
 details = ""
 evidence = ""
+claim_class = ""
 ```
 
 Possible values for `result`:
@@ -121,10 +139,45 @@ FAIL
 SKIPPED
 ```
 
-`evidence` is optional: when declared, it MUST reference an existing file or a
-command string recorded in `SESSION_LOG.md` (verified by H06, §"Gate
-Checklist", item 7). When absent, the command string in `test` MUST appear in
-`SESSION_LOG.md` for results other than `SKIPPED`.
+Each result carries a stable `claim_id` (for example `TR-01`). `evidence` is
+optional: when declared, it MUST reference an existing file or a command string
+recorded in `SESSION_LOG.md` (verified by H06, §"Gate Checklist", item 7).
+When absent, the command string in `test` MUST appear in `SESSION_LOG.md` for
+results other than `SKIPPED`. `claim_class` follows the same rule as acceptance
+criteria: with `evidence` — or a matching evidence entry — the implicit class is
+`verified`; `verified` requires at least one `[[evidence]]` entry of class other
+than `attestation` for the claim. Without such evidence the result MUST declare
+`claim_class: attested` or `claim_class: inference`.
+
+---
+
+## Evidence
+
+Record the evidence that supports the acceptance criteria and test results.
+Every entry references the claim it supports via `claim_id` and carries a class
+from the evidence model (`.agents/standards/quality/EVIDENCE.md`):
+
+```toml
+[[evidence]]
+class = ""
+claim_id = ""
+ref = ""
+```
+
+Required fields per entry: `class` (`observation` | `measurement` | `attestation`
+| `assertion` | `reference`), `claim_id` (the id of the criterion or test result
+it supports) and `ref` (path, `path:section`, or command output). Optional fields
+by class:
+
+- `measurement` — `command` (string) and `exit_code` (non-negative integer)
+  when the runtime allows capturing them.
+- `attestation` — `actor` and `statement` (both required for an attestation to
+  carry its mark).
+- `reference` — `section` and optional `hash`.
+
+A claim declared "verified" (or with non-empty `evidence`) MUST have at least one
+entry of class other than `attestation`; a claim supported only by `attestation`
+entries MUST use the term "attested" (EV-004).
 
 ---
 
@@ -202,6 +255,24 @@ Requirements:
 * `user_authorized_extra_work` MUST be `true` only if there is work outside the approved plan that the user explicitly approved in writing during the session and the evidence is cited in the report. Otherwise it MUST be `false`.
 * `notes` MAY contain any clarification about scope boundaries or user decisions.
 * Branch validity: `scope_respected = true` with a non-empty `unplanned_changes` is valid only in Branch B (`user_authorized_extra_work = true` with cited evidence). `scope_respected = true` with `user_authorized_extra_work = false` requires `unplanned_changes` to be an empty list (Branch A).
+
+---
+
+## Deferred Items
+
+In-scope human approvals deferred with explicit user confirmation. A deferred
+item is never presented as completed: it remains an open approval recorded in
+this section and in `SESSION_BRIEF.md`, and `COMPLETED` requires every in-scope
+approval to be completed or deferred with confirmation.
+
+```toml
+[[deferred_items]]
+item = ""
+deferred = true
+confirmed_by = ""
+confirmation_date = ""
+reason = ""
+```
 
 ---
 
@@ -291,6 +362,17 @@ notes = "string"
 # user_authorized_extra_work=true with cited written authorization (Branch B).
 ```
 
+### `## Deferred Items`
+
+```toml
+[[deferred_items]]
+item = "string"
+deferred = true # deferred items must carry deferred=true and a confirmation
+confirmed_by = "string" # user or session-log entry that confirmed the deferral
+confirmation_date = "ISO-8601"
+reason = "string"
+```
+
 ### `## Final Decision`
 
 ```toml
@@ -303,10 +385,25 @@ reasoning = "string"
 
 ```toml
 [[acceptance_criteria]]
+claim_id = "AC-01" # stable id referenced by [[evidence]]
 criterion = "string"
 result = "PASS" # or "FAIL" or "PARTIAL"
 evidence = "string"
+claim_class = "verified" # or "attested" / "inference"; required when evidence is empty
 action_plan = "string" # required only when result is PARTIAL
+```
+
+### `## Evidence`
+
+```toml
+[[evidence]]
+class = "measurement" # observation | measurement | attestation | assertion | reference
+claim_id = "AC-01" # must match an acceptance_criteria or test_results claim_id
+ref = "path/to/artifact" # or path:section, or command output
+command = "python -m pytest tests/sync/test_tree_exporter.py" # optional, measurement
+exit_code = 0 # optional, measurement; non-negative integer
+actor = "executor" # required for attestation
+statement = "sources/ were not opened while writing the kit" # required for attestation
 ```
 
 ---
@@ -346,6 +443,13 @@ The report is valid when:
 * The executed changes were evaluated against the task specification.
 * All acceptance criteria were reviewed.
 * The validation strategy was executed.
+* Every criterion or test result that declares "verified" (explicitly or via a
+  non-empty `evidence`) is supported by a `[[evidence]]` entry of class other
+  than `attestation`; claims without such evidence are declared `attested` or
+  `inference`.
+* `## Deferred Items` is present (an empty list when nothing is deferred); every
+  deferred item carries `deferred: true` with user confirmation, and no deferred
+  item is presented as completed.
 * A final decision was produced.
 * A valid state transition was defined.
 * When rubrics are enabled, the `## Rubric Evaluation` section is present and structurally valid.

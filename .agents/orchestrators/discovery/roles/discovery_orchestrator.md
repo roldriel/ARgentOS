@@ -48,6 +48,7 @@ only:
    - The user requests a refresh.
 2. Invokes the Discovery Orchestrator with a `scope`:
    - `full`: run the whole pipeline.
+   - `lite`: `init_worker`, `environment_worker`, `stack_worker`, `framework_worker`, `synthesis_worker`.
    - `env`: `init_worker`, `environment_worker`, `synthesis_worker`.
    - `stack`: `init_worker`, `stack_worker`, `framework_worker`, `synthesis_worker`.
    - `patterns`: `init_worker`, `patterns_worker`, `synthesis_worker`.
@@ -57,6 +58,13 @@ only:
    `.agents/orchestrators/discovery/states/DISCOVERY_STATE_MACHINE.md`
    (section "Scopes").
 3. Receives the result: `discovery:DISCOVERY_READY` or `discovery:DISCOVERY_FAILED`.
+
+Invocation follows an explicit user decision: a consent-gate consultation of
+the core Orchestrator (`discovery_require_consent`, default enabled; see
+`.agents/orchestrators/core/roles/orchestrator.md` §"4.3 Discovery Orchestrator
+Invocation") or the user-invoked `/discovery` skill. With
+`discovery_require_consent = false`, detection invokes directly (legacy
+automatic behavior).
 
 ## Responsibilities
 

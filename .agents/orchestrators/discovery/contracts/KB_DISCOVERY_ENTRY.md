@@ -1,12 +1,12 @@
 +++
-schema_version = "1.0.0"
+schema_version = "2.0.0"
 artifact = "KB_DISCOVERY_ENTRY.md"
 phase = "n/a"
 produced_by = ["environment_worker", "stack_worker", "framework_worker", "patterns_worker", "business_worker", "synthesis_worker"]
 enforcement = "gated"
 gated_by = ["D01"]
 +++
-schema_version = "1.0.0"
+schema_version = "2.0.0"
 
 
 ---
@@ -47,6 +47,7 @@ Artifacts" use the KB file names.
 
 ```toml
 artifact = "KB_DISCOVERY_ENTRY.md"
+kind = "snapshot"
 title = "Stack"
 generated_at = ""
 updated_at = ""
@@ -65,6 +66,9 @@ previous_versions = []
 Every discovery entry MUST include TOML front matter with:
 
 - `artifact`: must be `KB_DISCOVERY_ENTRY.md`.
+- `kind`: must be `snapshot`. Every discovery entry is a snapshot:
+  point-in-time knowledge with TTL and hashes (see
+  `.agents/standards/context/KNOWLEDGE_LIFECYCLE.md`).
 - `title`: human-readable title of the entry.
 - `generated_at`: ISO 8601 timestamp when the entry was generated.
 - `tags`: list including `discovery` and the entry category.
@@ -81,6 +85,9 @@ Entries of the accumulative KB MAY also include:
 - `previous_versions`: list of references to previous versions of the entry (optional).
 
 `source_files` may include `"system_probe"` for environment entries, whose facts come from probing the execution environment rather than from project files. `"system_probe"` is a valid source **only for environment entries**.
+
+Provenance applies per claim: every fact bullet of `## Discovered Facts` is a
+claim whose reuse requires its `source_files`/`source_sessions` to resolve.
 
 ---
 
@@ -101,6 +108,14 @@ Bullet list of deterministic facts extracted from project files. Each bullet sho
 ```text
 - **<key>**: <value>
 ```
+
+Each bullet is a **claim**: freshness is evaluated per claim (by default the
+entry's TTL per its discovery scope, see `DISCOVERY_STATE_MACHINE.md` §TTL and
+Cache) and its provenance must resolve (`source_files`/`source_sessions` exist
+at consumption time). A claim may declare its own freshness/provenance only as
+an explicit override; the entry itself remains `kind: snapshot`. A claim that
+is expired or whose provenance does not resolve is not reusable and marks the
+entry stale for pipeline revalidation (`.agents/standards/context/KNOWLEDGE_LIFECYCLE.md`).
 
 If no deterministic facts are available, the section should state:
 

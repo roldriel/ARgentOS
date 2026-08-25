@@ -1,12 +1,12 @@
 +++
-schema_version = "1.0.0"
+schema_version = "2.0.0"
 artifact = "TASK_ANALYSIS.md"
 phase = "00"
 produced_by = "task_analyst"
 enforcement = "gated"
 gated_by = ["H00"]
 +++
-schema_version = "1.0.0"
+schema_version = "2.0.0"
 
 
 ---
@@ -36,8 +36,12 @@ This artifact captures the interpreted user request, the identified objective, r
 ```toml
 id = ""
 created_at = ""
-status = ""
 ```
+
+The artifact lifecycle (`draft` / `validated` / `superseded`) is derived from
+the harness gate record: this artifact becomes `validated` when gate H00 records
+PASS in `state.json`. It is read-only derived metadata; the author never
+declares it.
 
 ---
 

@@ -38,6 +38,10 @@ Validate that the execution phase completed all planned steps and left the proje
 ## Checklist
 
 **Evaluation audience:** the harness runner no longer exists; every item in this policy is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` are structurally checkable and are restated as numbered instructions in §"Gate Checklist", where the Orchestrator MUST cite evidence per item. Items marked `[agent]` are declared judgment.
+Evidence is cited per item with a class from the evidence standard
+(`.agents/standards/quality/EVIDENCE.md`): `observation`/`measurement`/
+`reference` when the evidence is citable; `attestation` only with actor and
+statement.
 
 1. Every step in `EXECUTION_PLAN.md` has been executed or explicitly documented as skipped with justification. `[gate]` (see §"Gate Checklist", item 3: every step is `COMPLETED` or `SKIPPED` with notes)
 2. No project files outside the plan scope were modified. `[agent]`
@@ -65,12 +69,23 @@ The Orchestrator must:
 
 ## Gate Checklist
 
-The Orchestrator evaluates each item below by judgment when the gate fires and MUST cite evidence per item (artifact path, declared value, or offending entry) in `HARNESS_REPORT.md`.
+The Orchestrator evaluates each item below by judgment when the gate fires and MUST cite evidence per item (artifact path, declared value, or offending entry) in `HARNESS_REPORT.md`, with an evidence class per `.agents/standards/quality/EVIDENCE.md` (`observation`/`measurement`/`reference` when citable, marked `attestation` otherwise).
 
 1. Verify that `EXECUTION_SUMMARY.md` exists in the current iteration directory (`.project/<session-uuid>/<iteration>/`). Cite the resolved artifact path as evidence.
 2. Verify that `## Final Project State` contains a parseable TOML block and that `final_state.status` is one of `VERIFIABLE` or `BLOCKED`. The gate FAILS unless the declared status is `VERIFIABLE`. Cite the declared value.
 3. Verify that `## Steps Executed` contains a parseable TOML block whose `steps_executed` is a list, that every step has a `status` in {`COMPLETED`, `SKIPPED`, `BLOCKED`}, that no step is `BLOCKED`, and that every `SKIPPED` step carries non-empty `notes`. Cite each offending step.
 4. Verify the technical practice evidence. Read `technical_approach.enabled` from the `## Technical Approach` TOML block of `TASK_SPECIFICATION.md` in the same iteration. If either input is missing, or the `enabled` list is empty, record that this item is skipped. Otherwise verify, in the `## Technical Practice Evidence` TOML block of the summary, that each enabled practice has an entry with an `applied` field: when `applied = false`, a non-empty `reason` is required; when `applied = true`, at least one additional non-empty evidence field is required. Cite each practice entry and each violation.
+5. Verify that the `## Metadata` block of the summary declares no manual
+   lifecycle field (`status`, `state`, `approved`, `validation.complete`): the
+   artifact lifecycle is derived from the gate record (this artifact is
+   `validated` by the H05 PASS), never written by the executor (AL-001). Cite
+   any offending field.
+6. Verify the executed-effects record. When the task executed out-of-frontier
+   effects, verify that `## Effects Executed` exists, that every
+   `[[effects_executed]]` entry with `executed: true` has an `effect` name
+   declared in the task specification's `Effects` section (or in
+   `SESSION_BRIEF.md` for `trivial`-profile tasks) and a non-empty
+   `authorization_ref`. Cite each offending entry.
 
 ## Recovery Decision Table
 

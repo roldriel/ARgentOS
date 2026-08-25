@@ -48,7 +48,10 @@ review, and the third is development-side:
 This declaration is canonical for how the words "enforced", "reviewed" and
 "verified" are used across `.agents/`: "enforced" = the hook shell, "reviewed"
 = gate evaluation by judgment, "verified" = dev-only checkers of the
-development repository.
+development repository. A claim may additionally be called "verified" only when
+it cites evidence of a class other than attestation; without citable evidence
+the permitted term is "attested" (see §Guarantee catalog and §Enforcement
+boundaries).
 
 **Documented deviations.** The only way a structural FAIL becomes a recorded
 `PASS` is a documented deviation: the Orchestrator records it in the gate's
@@ -56,6 +59,87 @@ development repository.
 `evidence` (contract: `.agents/contracts/HARNESS_REPORT.md`, §"Documented
 deviations"). A deviation is never silent, never applies to the fail-open of
 the hooks, and is auditable post-hoc.
+
+## Guarantee catalog
+
+The protocol provides a closed set of guarantees. Each guarantee belongs to
+exactly one of five classes, and the class determines who verifies it (see
+§Enforcement boundaries):
+
+- **Declarative** — protocol policy with no mechanical verification (for
+  example, "the knowledge base is only updated through the pipeline").
+- **Verifiable** — checkable from artifacts by tooling (presence, version,
+  timestamps, associated evidence, bidirectional gate consistency).
+- **Mechanically enforced** — executed by runtime/hooks (gate registration,
+  state probe, write deny without H04 in enforced mode, stop without closure).
+- **Agent-judgment-dependent** — semantic evaluation not covered by the
+  previous classes; its result is recorded with cited evidence or as an
+  explicit attestation.
+- **External-actor-dependent** — human approvals, external tools, and
+  best-effort reproducibility of command outputs.
+
+| Guarantee | Class | Verified by |
+|---|---|---|
+| Session identity and versioning (`protocol_version`, UUID) | Verifiable | Runtime (dev tool) + agent |
+| Presence of session records (`state.json`, HARNESS, METRICS, SESSION_LOG) | Verifiable | Runtime (dev tool) + agent |
+| Gate registration (gate, result, when) | Mechanically enforced | `runner_state` (state) + agent (review) |
+| `state.json` ↔ HARNESS coherence (bidirectional, timings) | Verifiable | Runtime (dev tool) |
+| Artifact structure (sections, ENTRY/METRIC, EARS) | Verifiable | `gate_validator` (structural) + agent |
+| Evidence associated with claims (class + reference) | Verifiable | agent + dev tool (class semantics in `.agents/standards/quality/EVIDENCE.md`) |
+| Determinable authorization for out-of-boundary effects | Verifiable | agent + human (authorization model) |
+| Knowledge freshness/invalidation | Verifiable | agent + dev tool (knowledge model) |
+| Budget compliance (declared/consumed pair) | Verifiable | runtime + agent |
+| Reproducibility of `[gate]` items | Verifiable (best-effort) | dev tool (`audit_gates`) |
+| Verification independence | External-actor-dependent | multi-agent only; in single-instance it is declared an attestation |
+| Human approvals | External-actor-dependent | human |
+
+A guarantee labeled "mechanically enforced" MUST NOT depend on agent judgment
+(ENF-001). In declarative mode every verifiable guarantee is declared and then
+verified post-hoc by an external (dev) tool, or marked as an attestation
+(ENF-002). Hooks remain fail-open; this matrix does not declare them an
+absolute control (ENF-003).
+
+## Enforcement boundaries
+
+The matrix below is the operative boundary: the agent stays the verifier where
+the cell says Agent/Harness; mechanical enforcement is limited to
+Runtime/External and is optional in declarative mode.
+
+| Property | Agent | Harness (gates) | Runtime (scripts/hooks) | External (dev tools/CI) | Human |
+|---|---|---|---|---|---|
+| Session identity/version | declares | — | registers | verifies | — |
+| Presence of root records | produces | checks (`[gate]` item) | — | verifies | — |
+| Gate registration | judges | — | registers in `state.json` | reconciles (bidirectional) | — |
+| Artifact structure | produces | evaluates with `gate_validator` | — | verifies post-hoc | — |
+| Evidence with class and association | cites (class per EVIDENCE.md) | evaluates (H05/H06) | — | detects unmarked attestations | — |
+| Canonical timestamps | marks source | — | writes UTC (`runner_state`) | compares | — |
+| Effect authorization | declares (effects) | verifies (H01/H04) | — | audits | confirms/denies |
+| Budget (declared/consumed) | declares | — | measures (optional) | verifies presence | — |
+| Reproducibility of `[gate]` items | — | — | — | re-runs (`audit_gates`) | — |
+| Verification independence | — | — | — | — | multi-agent only; single-instance ⇒ attestation |
+| Human approvals | — | — | — | — | decides |
+| Discovery consent | asks | — | — | — | decides |
+
+Boundary rules:
+
+1. What is mechanically checkable (presence, version, structure, timestamps,
+   bidirectionality) is verified by Runtime/External when available; in
+   declarative mode the agent declares it and the dev tool verifies it
+   post-hoc.
+2. What is semantic (sufficient evidence, authorization, completeness) is agent
+   judgment with structural checks as support.
+3. An empty cell means "does not apply", not "no control".
+
+**Claims rule.** "Zero hallucinations" is not a technical guarantee of the
+protocol. The operational rule that replaces it: every claim emitted by the
+protocol is evidence-cited, or explicitly marked as an attestation or
+inference. A claim may be called "verified" only when it cites evidence of a
+class other than attestation; without citable evidence the permitted term is
+"attested". Gate records and reports implement this distinction per claim (see
+`.agents/contracts/HARNESS_REPORT.md`, §"Required structure", and
+`.agents/orchestrators/core/contracts/VERIFICATION_REPORT.md`, §"Acceptance
+Criteria Evaluation"). Evidence classes and sufficiency rules are defined in
+`.agents/standards/quality/EVIDENCE.md`.
 
 ## Who Invokes the Harness
 
@@ -207,7 +291,10 @@ The protocol state of each iteration lives in
 `.project/<session-uuid>/<iteration>/state.json`: session, iteration, task
 profile, gates passed with timestamps, last gate, and `status` (in progress
 or terminal `ABORT`/`COMPLETED`). This section is the canonical source for
-how that state is written and consumed. Invariants:
+how that state is written and consumed. The Task State and the Gate States of
+transition gates live in `state.json`; non-transition Gate States (for example
+the review gate) and the derived Artifact Lifecycle live in `HARNESS_REPORT.md`
+(see §State dimensions below). Invariants:
 
 1. Only `.agents/harness/runner_state.py` writes it, transactionally (temp
    file + rename), via its CLI:
@@ -220,6 +307,56 @@ how that state is written and consumed. Invariants:
 2. Hooks and the Orchestrator read it; nobody else writes it. A missing or
    corrupt `state.json` means *no gate has passed* (fail-closed for
    consumers).
+
+### State dimensions
+
+The protocol separates state into three dimensions with their own entity and
+four derived concepts. This subsection is the canonical declaration of their
+sources of truth:
+
+| Dimension | Type | Source of truth | Transitions produced by |
+| --- | --- | --- | --- |
+| Task State | entity (core state machine) | `state.json` + `orchestrators/core/states/AGENT_STATE_MACHINE.md` | Orchestrator |
+| Gate State | entity (per gate) | `state.json` (transition gates) + `HARNESS_REPORT.md` ENTRY (other gates) | Orchestrator (judgment) + `runner_state.py` (registration) |
+| Artifact Lifecycle | entity (derived) | derived from the Gate State record | mechanical derivation |
+| Execution State | derived | identical to Task State | — |
+| Verification State | derived | Gate State (H06/H07) + VERIFICATION_REPORT / REVIEW_REPORT | — |
+| Approval State | derived | `SESSION_BRIEF.md` + `Deferred Items` | user |
+| Plan State | external | project plans/docs | project governance |
+
+**Artifact Lifecycle.** States: `draft`, `validated`, `superseded`. Events:
+`produced`, `corrected`, `gate_failed`, `gate_passed`. Properties: `archived`
+(partial iteration preserved as a location property) and `rejected` (a
+correction event, not a persistent state). `approved`, `verified` and `executed`
+are NOT artifact states: they belong to the Gate/Verification/Approval
+dimensions. An artifact is `validated` exactly when its exit gate has a PASS
+recorded in `state.json`; the lifecycle is never written by hand.
+
+**Review gate.** For `complex` tasks with the `rubrics` flag enabled, the review
+over `REVIEW_REPORT.md` is a Gate State over the artifact
+(`review_required` → `review_passed` | `review_failed`) recorded in
+`HARNESS_REPORT.md` (trigger `REVIEW`); it is not a Task State and not a
+transition gate (never in `state.json`).
+
+Invariants:
+
+- ST-001: the Task State changes only through the allowed transitions of the
+  core state machine.
+- ST-002: every transition gate (H00–H07, H11) has a Gate State recorded in
+  `state.json`.
+- ST-003: the Artifact Lifecycle is never written by hand; it is derived from
+  the Gate State record.
+- ST-004: no payload document declares "state" without indicating its dimension.
+- AL-001: the artifact lifecycle state is derived, never written by the author.
+- AL-002: `validated` ⇔ the exit gate has PASS in `state.json`.
+- AL-003: a `superseded` artifact is not consumed as input by later phases.
+- AL-004: conflicting sections within an artifact are a structural FAIL.
+- CMP-001: `COMPLETED` ⇒ every in-scope gate has PASS in `state.json`.
+- CMP-002: `COMPLETED` ⇒ no in-scope criterion is FAIL/PENDING in the
+  verification report.
+- CMP-003: every deferred item has user confirmation and appears in
+  `Deferred Items`.
+- CMP-004: no deferred item is presented as completed.
 
 `state.json` enables optional **hook enforcement** at the CLI level
 (enforced mode), which requires only Python 3 standard library — no pip

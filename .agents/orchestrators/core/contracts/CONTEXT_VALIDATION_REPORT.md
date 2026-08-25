@@ -1,12 +1,12 @@
 +++
-schema_version = "1.0.0"
+schema_version = "2.0.0"
 artifact = "CONTEXT_VALIDATION_REPORT.md"
 phase = "04"
 produced_by = "context_validator"
 enforcement = "gated"
 gated_by = ["H03"]
 +++
-schema_version = "1.0.0"
+schema_version = "2.0.0"
 
 
 ---
@@ -38,8 +38,12 @@ This artifact does not contain new context. It only evaluates the existing conte
 ```toml
 id = ""
 created_at = ""
-status = ""
 ```
+
+The artifact lifecycle (`draft` / `validated` / `superseded`) is derived from
+the harness gate record: this artifact becomes `validated` when gate H03 records
+PASS in `state.json`. It is read-only derived metadata; the author never
+declares it.
 
 ---
 

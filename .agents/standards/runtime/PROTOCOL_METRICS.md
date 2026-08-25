@@ -60,6 +60,12 @@ Metrics are grouped by what they measure. The `Source` column states where the d
 | `context.budget_declared` / `context.budget_consumed` | Context Budget declared vs. consumed per delegation, in the materialized unit of `.agents/standards/context/BUDGET_MATERIALIZATION.md`; `consumed` is computed with the estimation rule (Verified) | `event:context_budget` |
 | `context.candidates` | Context candidates prioritized vs. resolved vs. composed | `event:context_candidates` |
 
+### Discovery
+
+| Metric | Definition | Source |
+|---|---|---|
+| `discovery.consent_by_decision` | Distribution of discovery consent-gate decisions (chosen scope, rejection, non-interactive bypass) | `event:discovery_consent` |
+
 ### Session
 
 | Metric | Definition | Source |
@@ -108,7 +114,7 @@ tagged in the aggregated report:
   gate records and `HARNESS_REPORT.md` entries.
 - **Recorded** — the event is the only record; its value is accepted as the
   report of what happened: `state_transition`, `failure`, `delegation`,
-  `reviewer_retry`, `skill_override`, `flag_evidence`.
+  `reviewer_retry`, `skill_override`, `flag_evidence`, `discovery_consent`.
 - **Verified** — corroborated by a second artifact the reporter does not
   control in that step: `context.budget_declared` / `context.budget_consumed`
   against the estimation rule of `BUDGET_MATERIALIZATION.md` when the payload
@@ -118,6 +124,15 @@ tagged in the aggregated report:
 No metric gates anything; the class only declares the trust boundary. The
 aggregation report tags each metric with its class, and the development-side
 `--audit` mode reports discrepancies between the mechanical cross-checks.
+
+Events MAY carry the optional `clock` field (`utc` | `agent_clock`, contract:
+`.agents/contracts/METRICS.md`, §Event catalog): `utc` is the default for
+mechanically written records; agent-written timestamps without a reliable clock
+declare `clock: agent_clock` (G-004). The `Verified` class means "corroborated
+by a second artifact", not external verification of the event: a data point
+without that corroboration is a recorded report, and a claim about it that
+cannot cite evidence is an attestation (`.agents/harness/INDEX.md`,
+§Enforcement boundaries).
 
 ## Health signals
 

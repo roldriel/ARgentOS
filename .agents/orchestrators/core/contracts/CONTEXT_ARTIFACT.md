@@ -1,12 +1,12 @@
 +++
-schema_version = "1.0.0"
+schema_version = "2.0.0"
 artifact = "CONTEXT_ARTIFACT.md"
 phase = "03"
 produced_by = "context_gatherer"
 enforcement = "gated"
 gated_by = ["H02"]
 +++
-schema_version = "1.0.0"
+schema_version = "2.0.0"
 
 
 ---
@@ -38,8 +38,12 @@ The artifact must contain only relevant and traceable context.
 ```toml
 id = ""
 created_at = ""
-status = ""
 ```
+
+The artifact lifecycle (`draft` / `validated` / `superseded`) is derived from
+the harness gate record: this artifact becomes `validated` when gate H02 records
+PASS in `state.json`. It is read-only derived metadata; the author never
+declares it.
 
 ---
 
@@ -170,24 +174,17 @@ unknowns = [""]
 
 ## Context Validation
 
-Current validation state.
+The validation result is derived from the harness gate record: this artifact
+becomes `validated` when the validation gate H03 records PASS in `state.json`.
+The author does not declare validation state.
 
 ```toml
 [validation]
-complete = false
 confidence = ""
 notes = [""]
 ```
 
 ---
-
-## State
-
-Current workflow state associated with this artifact.
-
-```toml
-state = ""
-```
 
 ## Relationship to project artifacts
 

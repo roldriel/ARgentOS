@@ -39,14 +39,14 @@ discovery) están implementados; sus versiones históricas viven en `archive/`.
 ## Undécima serie: decisiones arquitectónicas post-auditoría (25 ago 2026)
 
 RFCs de modelo conceptual derivadas de `ARCHITECTURAL_DECISION_MODEL.md` (basado en
-`ARCHITECTURAL_PROBLEM_MODEL.md`). RFC-62 `Accepted` (plan 76); RFC-63…67
-`Proposal`; ninguna RFC habilita modificar `protocol/.agents/` hasta su plan de
-ejecución.
+`ARCHITECTURAL_PROBLEM_MODEL.md`). RFC-62 `Accepted` (plan 76); RFC-63
+`Accepted` (plan 77); RFC-64…67 `Proposal`; ninguna RFC habilita modificar
+`protocol/.agents/` hasta su plan de ejecución.
 
 | RFC | Status | Descripción |
 |---|---|---|
 | `rfc/62-guarantee-model-and-enforcement-boundaries.md` | Accepted (plan 76) | Garantías clasificadas y matriz de enforcement (D0, D11). |
-| `rfc/63-state-and-artifact-lifecycle-model.md` | Proposal | Dimensiones de estado, lifecycle de artefactos y semántica de COMPLETED (D1, D2, D3). |
+| `rfc/63-state-and-artifact-lifecycle-model.md` | Accepted (plan 77) | Dimensiones de estado, lifecycle de artefactos y semántica de COMPLETED (D1, D2, D3). |
 | `rfc/64-execution-record-model.md` | Proposal | Identidad, registros, temporalidad y observabilidad de la ejecución (D5, D6, D7, D10). |
 | `rfc/65-evidence-and-verification-model.md` | Proposal | Clases de evidencia y regla VERIFIED (D4, D12). |
 | `rfc/66-authorization-and-capability-model.md` | Proposal | Frontera de efectos y bloque `effects` (D8, D11). |
@@ -57,6 +57,12 @@ ejecución.
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
 | `76-guarantee-model-enforcement-boundaries.md` | RFC-62 | Executed | Catálogo cerrado de garantías con cinco clases, matriz de enforcement por capa en el payload y la guía de adopción, regla operacional de claims (evidencia o atestación/inferencia), reemplazo de "zero hallucinations" como garantía técnica y celdas External en los checkers dev. Versión 4.0.0 (MAJOR). |
+
+## Decimotercera serie: modelo de estado y lifecycle de artefactos (25 ago 2026)
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `77-state-artifact-lifecycle-model.md` | RFC-63 | Executed | Dimensiones de estado con entidad propia (Task State, Gate State, Artifact Lifecycle) y cuatro derivadas (Execution, Verification, Approval, Plan), lifecycle de artefactos derivado del registro de gates (nunca escrito a mano), semántica de COMPLETED relativa al alcance confirmado con `Deferred Items`, y resolución del review gate como Gate State sobre REVIEW_REPORT. Versión 5.0.0 (MAJOR). |
 
 ## Serie de RFCs (documentos canónicos)
 
@@ -125,7 +131,7 @@ ejecución.
 | RFC-60 | `rfc/60-budget-accounting-metrics-trust.md` | Accepted (17 ago 2026) | ¿Cómo se hace mecánicamente verificable la contabilidad del Context Budget (declared vs consumed) y cómo se clasifica la confianza de los datos de métricas auto-reportados? |
 | RFC-61 | `rfc/61-kb-transparency-consent-lifecycle.md` | Accepted (2026-08-24) | ¿Cómo hace ARgentOS que el discovery — trabajo no pedido explícitamente — sea consentido y visible para el usuario? |
 | RFC-62 | `rfc/62-guarantee-model-and-enforcement-boundaries.md` | Accepted (plan 76, 2026-08-25) | ¿Qué garantiza ARgentOS, qué no, y quién verifica cada garantía? |
-| RFC-63 | `rfc/63-state-and-artifact-lifecycle-model.md` | Proposal | ¿Qué dimensiones de estado existen y cuál es el lifecycle de los artefactos? |
+| RFC-63 | `rfc/63-state-and-artifact-lifecycle-model.md` | Accepted (plan 77, 2026-08-25) | ¿Qué dimensiones de estado existen y cuál es el lifecycle de los artefactos? |
 | RFC-64 | `rfc/64-execution-record-model.md` | Proposal | ¿Cómo se registra y reconstruye una ejecución sin Event Sourcing? |
 | RFC-65 | `rfc/65-evidence-and-verification-model.md` | Proposal | ¿Qué cuenta como evidencia y cuándo un artefacto puede declararse VERIFIED? |
 | RFC-66 | `rfc/66-authorization-and-capability-model.md` | Proposal | ¿Cuándo una capability está autorizada para producir un efecto? |

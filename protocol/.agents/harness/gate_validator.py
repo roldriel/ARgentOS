@@ -23,7 +23,13 @@ Checks per trigger:
   fields) against the project and session roots;
 - EARS pattern of acceptance-criteria bullets (H01);
 - structural presence of ``## Rubric Evaluation`` (H06, when the ``rubrics``
-  flag is enabled).
+  flag is enabled);
+- section-coherence conflicts (H00: sufficiency/next-state and HIGH-intent
+  contradictions; H03: VALIDATED decision with INCOMPLETE/CONFLICTING
+  evaluations);
+- profile-aware review gate (H06: a `complex` task requires a
+  ``REVIEW_REPORT.md`` in the iteration) and the ``Deferred Items`` TOML
+  structure when present (H06).
 
 Usage:
   python .agents/harness/gate_validator.py --trigger <HXX> --artifact <path>
@@ -98,7 +104,7 @@ TRIGGERS = {
             "Metadata", "Task Reference", "Context Objective", "Project Context",
             "Relevant Components", "Existing Behavior", "Dependencies",
             "Constraints Discovered", "Available Evidence", "Unknowns",
-            "Context Validation", "State",
+            "Context Validation",
         ],
     },
     "H03": {
@@ -448,6 +454,12 @@ def validate(trigger: str, artifact: Path, root: Path | None = None) -> tuple[li
             else:
                 checks.append({"id": "ears", "result": "PASS", "evidence": f"{len(bullets)} EARS bullets"})
 
+    if trigger == "H00":
+        checks.extend(_check_h00_conflicts(text))
+
+    if trigger == "H03":
+        checks.extend(_check_h03_conflicts(text))
+
     if spec.get("technical_approach"):
         body = section_text(text, "Technical Approach")
         enabled = []
@@ -481,6 +493,8 @@ def validate(trigger: str, artifact: Path, root: Path | None = None) -> tuple[li
     roots = _roots_from_artifact(artifact) if root is None else (root, None, [])
     if trigger == "H06":
         checks.extend(_check_test_results(text, roots))
+        checks.extend(_check_deferred_items(text))
+        checks.append(_check_review_report(artifact))
     checks.extend(check_citations(text, roots))
 
     failed = any(c["result"] == "FAIL" for c in checks)
@@ -711,6 +725,175 @@ def _subsection_text(body: str, name: str) -> str:
             break
         out.append(line)
     return "\n".join(out)
+
+
+def _h00_next_state(text: str) -> str | None:
+    """Return the declared ``recommended_next_state`` of a TASK_ANALYSIS."""
+    body = section_text(text, "Recommended Next State")
+    m = re.search(r'^\s*recommended_next_state\s*=\s*"([^"]+)"', body, re.MULTILINE)
+    return m.group(1) if m else None
+
+
+def _check_h00_conflicts(text: str) -> list[dict]:
+    """H00 section-coherence checks (AL-004): TASK_ANALYSIS self-contradictions.
+
+    A task analysis that declares the request ready for specification while
+    recommending NEEDS_CLARIFICATION, or that declares HIGH intent confidence
+    while recommending CONFIRMING_INTENT (HIGH auto-confirms), is internally
+    conflicting and fails structurally.
+    """
+    recommended = _h00_next_state(text)
+    if recommended is None:
+        return []  # section presence is checked separately; nothing to compare
+    checks: list[dict] = []
+    sufficiency = parse_toml(section_text(text, "Sufficiency Assessment"))
+    ready = sufficiency.get("sufficiency", {}).get("ready_for_specification")
+    if ready is True and recommended == "NEEDS_CLARIFICATION":
+        checks.append(
+            {
+                "id": "conflicting_sections",
+                "result": "FAIL",
+                "evidence": (
+                    "sufficiency.ready_for_specification=true but "
+                    "recommended_next_state=NEEDS_CLARIFICATION"
+                ),
+            }
+        )
+    else:
+        checks.append(
+            {
+                "id": "conflicting_sections",
+                "result": "PASS",
+                "evidence": "sufficiency and recommended next state are coherent",
+            }
+        )
+    intent = parse_toml(section_text(text, "Intent Confidence Assessment"))
+    level = intent.get("intent_confidence", {}).get("level")
+    if level == "HIGH" and recommended == "CONFIRMING_INTENT":
+        checks.append(
+            {
+                "id": "conflict_high_intent_confirm",
+                "result": "FAIL",
+                "evidence": (
+                    "intent_confidence.level=HIGH but "
+                    "recommended_next_state=CONFIRMING_INTENT "
+                    "(HIGH auto-confirms the reflection)"
+                ),
+            }
+        )
+    else:
+        checks.append(
+            {
+                "id": "conflict_high_intent_confirm",
+                "result": "PASS",
+                "evidence": "intent confidence and recommended next state are coherent",
+            }
+        )
+    return checks
+
+
+def _check_h03_conflicts(text: str) -> list[dict]:
+    """H03 section-coherence check (AL-004): VALIDATED with failing evaluations."""
+    decision = parse_toml(section_text(text, "Validation Decision"))
+    result = decision.get("decision", {}).get("result")
+    if result != "VALIDATED":
+        return []  # the conflict rule only applies to a VALIDATED decision
+    completeness = parse_toml(section_text(text, "Completeness Evaluation"))
+    consistency = parse_toml(section_text(text, "Consistency Evaluation"))
+    problems = []
+    if completeness.get("completeness", {}).get("status") == "INCOMPLETE":
+        problems.append("completeness.status=INCOMPLETE")
+    if consistency.get("consistency", {}).get("status") == "CONFLICTING":
+        problems.append("consistency.status=CONFLICTING")
+    if problems:
+        return [
+            {
+                "id": "conflicting_sections",
+                "result": "FAIL",
+                "evidence": "decision.result=VALIDATED but " + "; ".join(problems),
+            }
+        ]
+    return [
+        {
+            "id": "conflicting_sections",
+            "result": "PASS",
+            "evidence": "validation decision coherent with the evaluations",
+        }
+    ]
+
+
+def _check_deferred_items(text: str) -> list[dict]:
+    """H06: structurally validate the ``Deferred Items`` block when present."""
+    body = section_text(text, "Deferred Items")
+    if not body.strip():
+        return [
+            {
+                "id": "deferred_items",
+                "result": "SKIP",
+                "evidence": "no Deferred Items section",
+            }
+        ]
+    entries: list[dict] = []
+    for block in toml_blocks(body):
+        parsed = parse_toml(block)
+        value = parsed.get("deferred_items")
+        if isinstance(value, list):
+            entries.extend(x for x in value if isinstance(x, dict))
+    if not entries:
+        return [
+            {
+                "id": "deferred_items",
+                "result": "PASS",
+                "evidence": "Deferred Items present and empty",
+            }
+        ]
+    bad: list[str] = []
+    for i, entry in enumerate(entries, 1):
+        if entry.get("deferred") is not True:
+            bad.append(f"entry {i}: deferred is not true")
+        confirmed = entry.get("confirmed_by")
+        if not isinstance(confirmed, str) or not confirmed.strip():
+            bad.append(f"entry {i}: missing confirmed_by")
+    if bad:
+        return [
+            {
+                "id": "deferred_items",
+                "result": "FAIL",
+                "evidence": "; ".join(bad[:5]),
+            }
+        ]
+    return [
+        {
+            "id": "deferred_items",
+            "result": "PASS",
+            "evidence": f"{len(entries)} deferred item(s) with confirmation",
+        }
+    ]
+
+
+def _check_review_report(artifact: Path) -> dict:
+    """H06 profile-aware: a `complex` task requires a REVIEW_REPORT.md."""
+    profile = read_task_profile(_roots_from_artifact(artifact)[2])
+    if profile != "complex":
+        return {
+            "id": "review_report",
+            "result": "SKIP",
+            "evidence": "task profile is not complex",
+        }
+    if any(
+        p.is_file() and p.name.endswith("REVIEW_REPORT.md")
+        for p in artifact.parent.iterdir()
+    ):
+        return {
+            "id": "review_report",
+            "result": "PASS",
+            "evidence": "REVIEW_REPORT.md present for the complex task",
+        }
+    return {
+        "id": "review_report",
+        "result": "FAIL",
+        "evidence": "complex task profile requires REVIEW_REPORT.md in the iteration",
+    }
 
 
 def main(argv: list[str] | None = None) -> int:

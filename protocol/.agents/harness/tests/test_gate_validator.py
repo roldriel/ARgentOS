@@ -385,3 +385,258 @@ def test_h06_test_results_skipped_exempt(tmp_path):
     )
     checks, decision = gate_validator.validate("H06", artifact)
     assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]
+
+
+def h00_sections(sufficiency: bool, next_state: str, intent_level: str) -> dict:
+    """Build the full H00 section set of a TASK_ANALYSIS."""
+    return {
+        "Metadata": "- x",
+        "User Request": "- u",
+        "Interpreted Objective": "- o",
+        "Expected Outcome": "- e",
+        "Explicit Requirements": "- r",
+        "Explicit Restrictions": "- c",
+        "Detected Ambiguities": "- none",
+        "Intent Confidence Assessment": (
+            f"```toml\n[intent_confidence]\nlevel = \"{intent_level}\"\n```"
+        ),
+        "Sufficiency Assessment": (
+            f"```toml\n[sufficiency]\nready_for_specification = {str(sufficiency).lower()}\n```"
+        ),
+        "Recommended Next State": (
+            f"```toml\nrecommended_next_state = \"{next_state}\"\n```"
+        ),
+        "Confidence": "- high",
+        "Task Profile": (
+            "```toml\n[task_profile]\nvalue = \"standard\"\njustification = \"x\"\n```"
+        ),
+    }
+
+
+def test_h00_coherent_sections_pass(tmp_path):
+    artifact = make_artifact(
+        tmp_path,
+        "TASK_ANALYSIS.md",
+        h00_sections(True, "BUILDING_TASK_SPECIFICATION", "HIGH"),
+    )
+    checks, decision = gate_validator.validate("H00", artifact)
+    assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]
+    assert any(
+        c["id"] == "conflicting_sections" and c["result"] == "PASS"
+        for c in checks
+    )
+
+
+def test_h00_sufficiency_next_state_conflict_fails(tmp_path):
+    artifact = make_artifact(
+        tmp_path,
+        "TASK_ANALYSIS.md",
+        h00_sections(True, "NEEDS_CLARIFICATION", "HIGH"),
+    )
+    checks, decision = gate_validator.validate("H00", artifact)
+    assert decision == "FAIL"
+    assert any(
+        c["id"] == "conflicting_sections"
+        and c["result"] == "FAIL"
+        and "NEEDS_CLARIFICATION" in c["evidence"]
+        for c in checks
+    )
+
+
+def test_h00_high_intent_confirm_conflict_fails(tmp_path):
+    artifact = make_artifact(
+        tmp_path,
+        "TASK_ANALYSIS.md",
+        h00_sections(True, "CONFIRMING_INTENT", "HIGH"),
+    )
+    checks, decision = gate_validator.validate("H00", artifact)
+    assert decision == "FAIL"
+    assert any(
+        c["id"] == "conflict_high_intent_confirm"
+        and c["result"] == "FAIL"
+        and "HIGH" in c["evidence"]
+        for c in checks
+    )
+
+
+def h03_sections(decision_result: str, completeness: str, consistency: str) -> dict:
+    """Build the full H03 section set of a CONTEXT_VALIDATION_REPORT."""
+    return {
+        "Metadata": "- x",
+        "Context Reference": "- ctx",
+        "Validation Objective": "- o",
+        "Completeness Evaluation": (
+            f"```toml\n[completeness]\nstatus = \"{completeness}\"\n```"
+        ),
+        "Relevance Evaluation": "```toml\n[relevance]\nstatus = \"VALID\"\n```",
+        "Consistency Evaluation": (
+            f"```toml\n[consistency]\nstatus = \"{consistency}\"\n```"
+        ),
+        "Risk Evaluation": "- none",
+        "Validation Decision": (
+            f"```toml\n[decision]\nresult = \"{decision_result}\"\n```"
+        ),
+        "Required Actions": "- none",
+        "Confidence": "- high",
+        "State Transition": "- st",
+    }
+
+
+def test_h03_coherent_decision_passes(tmp_path):
+    artifact = make_artifact(
+        tmp_path,
+        "CONTEXT_VALIDATION_REPORT.md",
+        h03_sections("VALIDATED", "COMPLETE", "CONSISTENT"),
+    )
+    checks, decision = gate_validator.validate("H03", artifact)
+    assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]
+    assert any(
+        c["id"] == "conflicting_sections" and c["result"] == "PASS"
+        for c in checks
+    )
+
+
+def test_h03_validated_with_incomplete_fails(tmp_path):
+    artifact = make_artifact(
+        tmp_path,
+        "CONTEXT_VALIDATION_REPORT.md",
+        h03_sections("VALIDATED", "INCOMPLETE", "CONSISTENT"),
+    )
+    checks, decision = gate_validator.validate("H03", artifact)
+    assert decision == "FAIL"
+    assert any(
+        c["id"] == "conflicting_sections"
+        and c["result"] == "FAIL"
+        and "INCOMPLETE" in c["evidence"]
+        for c in checks
+    )
+
+
+def test_h03_validated_with_conflicting_fails(tmp_path):
+    artifact = make_artifact(
+        tmp_path,
+        "CONTEXT_VALIDATION_REPORT.md",
+        h03_sections("VALIDATED", "COMPLETE", "CONFLICTING"),
+    )
+    checks, decision = gate_validator.validate("H03", artifact)
+    assert decision == "FAIL"
+    assert any(
+        c["id"] == "conflicting_sections"
+        and c["result"] == "FAIL"
+        and "CONFLICTING" in c["evidence"]
+        for c in checks
+    )
+
+
+def deferred_items_toml(entries: str) -> str:
+    return "```toml\n" + entries + "```"
+
+
+def test_h06_deferred_items_valid_passes(tmp_path):
+    artifact = make_artifact(
+        tmp_path,
+        "VERIFICATION_REPORT.md",
+        h06_sections(
+            {
+                "Deferred Items": deferred_items_toml(
+                    '[[deferred_items]]\nitem = "sign-off"\ndeferred = true\n'
+                    'confirmed_by = "user"\nconfirmation_date = "2026-08-25"\n'
+                ),
+                "Rubric Evaluation": rubric_block(),
+            }
+        ),
+    )
+    checks, decision = gate_validator.validate("H06", artifact)
+    assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]
+    assert any(c["id"] == "deferred_items" and c["result"] == "PASS" for c in checks)
+
+
+def test_h06_deferred_items_missing_confirmation_fails(tmp_path):
+    artifact = make_artifact(
+        tmp_path,
+        "VERIFICATION_REPORT.md",
+        h06_sections(
+            {
+                "Deferred Items": deferred_items_toml(
+                    '[[deferred_items]]\nitem = "sign-off"\ndeferred = false\n'
+                ),
+                "Rubric Evaluation": rubric_block(),
+            }
+        ),
+    )
+    checks, decision = gate_validator.validate("H06", artifact)
+    assert decision == "FAIL"
+    assert any(
+        c["id"] == "deferred_items"
+        and c["result"] == "FAIL"
+        and "deferred is not true" in c["evidence"]
+        for c in checks
+    )
+
+
+def test_h06_deferred_items_absent_skips(tmp_path):
+    artifact = make_artifact(
+        tmp_path,
+        "VERIFICATION_REPORT.md",
+        h06_sections({"Rubric Evaluation": rubric_block()}),
+    )
+    checks, decision = gate_validator.validate("H06", artifact)
+    assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]
+    assert any(c["id"] == "deferred_items" and c["result"] == "SKIP" for c in checks)
+
+
+def set_task_profile(artifact: Path, profile: str) -> None:
+    (artifact.parent / "TASK_ANALYSIS.md").write_text(
+        "# Analysis\n\n"
+        "## Task Profile\n\n"
+        "```toml\n"
+        "[task_profile]\n"
+        f'value = "{profile}"\n'
+        'justification = "x"\n'
+        "```\n",
+        encoding="utf-8",
+    )
+
+
+def test_h06_complex_without_review_report_fails(tmp_path):
+    artifact = make_artifact(
+        tmp_path,
+        "VERIFICATION_REPORT.md",
+        h06_sections({"Rubric Evaluation": rubric_block()}),
+    )
+    set_task_profile(artifact, "complex")
+    checks, decision = gate_validator.validate("H06", artifact)
+    assert decision == "FAIL"
+    assert any(
+        c["id"] == "review_report"
+        and c["result"] == "FAIL"
+        and "REVIEW_REPORT.md" in c["evidence"]
+        for c in checks
+    )
+
+
+def test_h06_complex_with_review_report_passes(tmp_path):
+    artifact = make_artifact(
+        tmp_path,
+        "VERIFICATION_REPORT.md",
+        h06_sections({"Rubric Evaluation": rubric_block()}),
+    )
+    set_task_profile(artifact, "complex")
+    (artifact.parent / "REVIEW_REPORT.md").write_text(
+        "# Review\n\n## Recommendation\n\nAPPROVE\n", encoding="utf-8"
+    )
+    checks, decision = gate_validator.validate("H06", artifact)
+    assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]
+    assert any(c["id"] == "review_report" and c["result"] == "PASS" for c in checks)
+
+
+def test_h06_standard_review_report_skips(tmp_path):
+    artifact = make_artifact(
+        tmp_path,
+        "VERIFICATION_REPORT.md",
+        h06_sections({"Rubric Evaluation": rubric_block()}),
+    )
+    set_task_profile(artifact, "standard")
+    checks, decision = gate_validator.validate("H06", artifact)
+    assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]
+    assert any(c["id"] == "review_report" and c["result"] == "SKIP" for c in checks)

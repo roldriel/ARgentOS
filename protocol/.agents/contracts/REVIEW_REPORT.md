@@ -24,6 +24,14 @@ consumed_by: [core:COMPLETED]
 
 This artifact is produced by the `reviewer` worker. It is **not** a main workflow phase artifact; it is an internal review artifact used before critical transitions when the `rubrics` feature flag is enabled.
 
+The report is produced by the `reviewer` when the review gate is required
+(`complex` task profile with the `rubrics` feature flag enabled) or when the
+Orchestrator invokes the reviewer optionally. The review outcome is a Gate
+State over this artifact — `review_passed` when the recommendation is
+`APPROVE`, `review_failed` when it is `REWORK` or `NEEDS_CLARIFICATION` —
+recorded by the Orchestrator in `HARNESS_REPORT.md`. The review gate is not a
+task state and not a transition gate.
+
 ## Purpose
 
 The `REVIEW_REPORT.md` artifact records the evaluation of a phase artifact against its rubric before a critical state transition. It is produced by the `reviewer` worker when the `rubrics` feature flag is enabled.

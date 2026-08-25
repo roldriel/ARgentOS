@@ -1,12 +1,12 @@
 +++
-schema_version = "1.0.0"
+schema_version = "2.0.0"
 artifact = "TASK_SPECIFICATION.md"
 phase = "02"
 produced_by = "task_specification_writer"
 enforcement = "gated"
 gated_by = ["H01"]
 +++
-schema_version = "1.0.0"
+schema_version = "2.0.0"
 
 
 ---
@@ -36,8 +36,12 @@ This artifact represents the minimum validated definition required before contin
 ```toml
 id = ""
 created_at = ""
-status = ""
 ```
+
+The artifact lifecycle (`draft` / `validated` / `superseded`) is derived from
+the harness gate record: this artifact becomes `validated` when gate H01 records
+PASS in `state.json`. It is read-only derived metadata; the author never
+declares it.
 
 ---
 
@@ -162,20 +166,13 @@ unknowns = [""]
 
 ## Validation
 
-Result of the specification review.
+The validation result is derived from the harness gate record: this artifact
+becomes `validated` when gate H01 records PASS in `state.json`. The author does
+not declare validation state; the notes below are free-form review notes, not
+state.
 
 ```toml
-[validation]
-complete = false
 notes = [""]
 ```
 
 ---
-
-## State
-
-Current workflow state associated with this artifact.
-
-```toml
-state = ""
-```

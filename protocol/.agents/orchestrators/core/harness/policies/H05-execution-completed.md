@@ -71,6 +71,11 @@ The Orchestrator evaluates each item below by judgment when the gate fires and M
 2. Verify that `## Final Project State` contains a parseable TOML block and that `final_state.status` is one of `VERIFIABLE` or `BLOCKED`. The gate FAILS unless the declared status is `VERIFIABLE`. Cite the declared value.
 3. Verify that `## Steps Executed` contains a parseable TOML block whose `steps_executed` is a list, that every step has a `status` in {`COMPLETED`, `SKIPPED`, `BLOCKED`}, that no step is `BLOCKED`, and that every `SKIPPED` step carries non-empty `notes`. Cite each offending step.
 4. Verify the technical practice evidence. Read `technical_approach.enabled` from the `## Technical Approach` TOML block of `TASK_SPECIFICATION.md` in the same iteration. If either input is missing, or the `enabled` list is empty, record that this item is skipped. Otherwise verify, in the `## Technical Practice Evidence` TOML block of the summary, that each enabled practice has an entry with an `applied` field: when `applied = false`, a non-empty `reason` is required; when `applied = true`, at least one additional non-empty evidence field is required. Cite each practice entry and each violation.
+5. Verify that the `## Metadata` block of the summary declares no manual
+   lifecycle field (`status`, `state`, `approved`, `validation.complete`): the
+   artifact lifecycle is derived from the gate record (this artifact is
+   `validated` by the H05 PASS), never written by the executor (AL-001). Cite
+   any offending field.
 
 ## Recovery Decision Table
 

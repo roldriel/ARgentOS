@@ -85,7 +85,7 @@ Every task is classified exactly once, during `ANALYZING_TASK`, into a task prof
 | --- | --- | --- | --- |
 | `trivial` | Bounded change: at most 3 files estimated, no design decisions, no requirements ambiguity, no impact on public interfaces | `TASK_ANALYSIS.md`, `EXECUTION_PLAN.md`, `VERIFICATION_REPORT.md` (plus the session-level artifacts) | H00, H04, H06 |
 | `standard` | The default. Any task that meets neither the `trivial` nor the `complex` criteria | The full cycle documented in this machine | All gates, per transition |
-| `complex` | Multiple subsystems, architecture decisions, or declared high risk | The full cycle plus `REVIEW_REPORT.md`, and the discovery cycle when it applies | The full cycle plus the review gate |
+| `complex` | Multiple subsystems, architecture decisions, or declared high risk | The full cycle plus `REVIEW_REPORT.md`, and the discovery cycle when it applies | The full cycle |
 
 Rules:
 
@@ -94,6 +94,7 @@ Rules:
 3. **Gates omitted by profile are recorded, not absent.** When the Orchestrator evaluates a gate the profile does not require, it records the gate in `HARNESS_REPORT.md` as `skipped: profile`. The omission is a system decision, not an oversight, and does not violate the No-Skip Rule.
 4. **`NEEDS_CLARIFICATION` and `RECOVERY` apply to every profile.** A trivial task that turns ambiguous is reclassified upward; it is never forced through the reduced cycle.
 5. For a `trivial` task the path is `ANALYZING_TASK → PLANNING → EXECUTING → VERIFYING`: the intent-confirmation, specification, and context states (`CONFIRMING_INTENT`, `BUILDING_TASK_SPECIFICATION`, `TASK_READY`, `GATHERING_CONTEXT`, `CONTEXT_GATHERED`, `VALIDATING_CONTEXT`, `CONTEXT_READY`) are not entered, and no discovery or context workers are delegated. The `ANALYZING_TASK → PLANNING` transition is allowed **only** for the `trivial` profile and is gated by H00 (the `Task Profile` value in `TASK_ANALYSIS.md`); for `standard`/`complex` it is not an allowed transition. In the reduced cycle, planning, execution and verification consume `TASK_ANALYSIS.md` as the task reference in place of `TASK_SPECIFICATION.md` and require no context artifacts (see workflows 05–07 and the contracts `EXECUTION_PLAN.md` / `VERIFICATION_REPORT.md`). Every other transition rule of this machine applies unchanged.
+6. **The review gate is a Gate State, not a task state.** For a `complex` task, `REVIEW_REPORT.md` is a mandatory artifact of the full cycle and is evaluated through a review gate over the artifact (`review_required` → `review_passed` | `review_failed`) when the `rubrics` feature flag is enabled. The review gate is not a Task State and not a transition gate: it is recorded by the Orchestrator in `HARNESS_REPORT.md` (never in `state.json`), and the Orchestrator's invocation rule is defined in the Orchestrator role (`orchestrators/core/roles/orchestrator.md`).
 
 ---
 
@@ -762,7 +763,13 @@ ABORT
 
 ### Description
 
-The task has been completed and verified.
+The task has been completed and verified relative to the confirmed scope.
+`COMPLETED` means: H06 and H07 recorded PASS; every in-scope gate has PASS
+recorded; the verification report declares no in-scope acceptance criterion as
+FAIL or PENDING; and every in-scope human approval is completed or deferred with
+user confirmation (recorded in the report's `Deferred Items` and in
+`SESSION_BRIEF.md`). A session with human pending items that are neither
+completed nor deferred with confirmation is not `COMPLETED`.
 
 ### Required Artifact
 

@@ -268,3 +268,149 @@ def test_bad_clock_value_flagged(tmp_path):
     )
     v = csa.scan(tmp_path)
     assert any("bad clock 'local'" in x for x in v)
+
+
+def test_lifecycle_manual_status_flagged(tmp_path):
+    session = _write_session(tmp_path, version="5.0.0")
+    (session / "00" / "00-TASK_ANALYSIS.md").write_text(
+        "# Analysis\n\n## Metadata\n\n```toml\nid = \"x\"\ncreated_at = \"t\"\n"
+        'status = ""\n```\n',
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any("ARTIFACT" in x and "manual lifecycle field" in x for x in v)
+
+
+def test_lifecycle_state_section_flagged(tmp_path):
+    session = _write_session(tmp_path, version="5.0.0")
+    (session / "00" / "03-CONTEXT_ARTIFACT.md").write_text(
+        "# Artifact\n\n## State\n\n```toml\nstate = \"\"\n```\n",
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any("ARTIFACT" in x and "`## State` section" in x for x in v)
+
+
+def test_lifecycle_clean_artifacts_pass(tmp_path):
+    session = _write_session(tmp_path, version="5.0.0")
+    (session / "00" / "00-TASK_ANALYSIS.md").write_text(
+        "# Analysis\n\n## Metadata\n\n```toml\nid = \"x\"\ncreated_at = \"t\"\n```\n",
+        encoding="utf-8",
+    )
+    assert csa.scan(tmp_path) == []
+
+
+def test_legacy_session_manual_status_not_flagged(tmp_path):
+    session = _write_session(tmp_path, version="3.26.0")
+    (session / "00" / "00-TASK_ANALYSIS.md").write_text(
+        "# Analysis\n\n## Metadata\n\n```toml\nid = \"x\"\ncreated_at = \"t\"\n"
+        'status = ""\n```\n',
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert all("manual lifecycle" not in x for x in v)
+
+
+def test_completed_without_in_scope_gates_flagged(tmp_path):
+    session = _write_session(tmp_path, version="5.0.0")
+    state = {
+        "session": "uuid",
+        "iteration": "00",
+        "task_profile": "standard",
+        "gates": {"H04": {"result": "PASS", "timestamp": "2026-08-25T10:05:00Z"}},
+        "last_gate": "H04",
+        "status": "COMPLETED",
+        "updated": "2026-08-25T10:05:00Z",
+    }
+    (session / "00" / "state.json").write_text(json.dumps(state), encoding="utf-8")
+    v = csa.scan(tmp_path)
+    assert any("COMPLETED without in-scope gate PASS" in x for x in v)
+
+
+def test_completed_with_all_gates_passes(tmp_path):
+    session = _write_session(tmp_path, version="5.0.0")
+    gates = {
+        h: {"result": "PASS", "timestamp": "2026-08-25T10:05:00Z"}
+        for h in ("H00", "H01", "H02", "H03", "H04", "H05", "H06", "H07")
+    }
+    state = {
+        "session": "uuid",
+        "iteration": "00",
+        "task_profile": "standard",
+        "gates": gates,
+        "last_gate": "H07",
+        "status": "COMPLETED",
+        "updated": "2026-08-25T10:05:00Z",
+    }
+    (session / "00" / "state.json").write_text(json.dumps(state), encoding="utf-8")
+    assert csa.scan(tmp_path) == []
+
+
+def test_complex_completed_without_review_gate_flagged(tmp_path):
+    session = _write_session(tmp_path, version="5.0.0")
+    gates = {
+        h: {"result": "PASS", "timestamp": "2026-08-25T10:05:00Z"}
+        for h in ("H00", "H01", "H02", "H03", "H04", "H05", "H06", "H07")
+    }
+    state = {
+        "session": "uuid",
+        "iteration": "00",
+        "task_profile": "complex",
+        "gates": gates,
+        "last_gate": "H07",
+        "status": "COMPLETED",
+        "updated": "2026-08-25T10:05:00Z",
+    }
+    (session / "00" / "state.json").write_text(json.dumps(state), encoding="utf-8")
+    v = csa.scan(tmp_path)
+    assert any("REVIEW gate PASS" in x for x in v)
+
+
+def test_complex_completed_with_review_gate_passes(tmp_path):
+    session = _write_session(tmp_path, version="5.0.0")
+    gates = {
+        h: {"result": "PASS", "timestamp": "2026-08-25T10:05:00Z"}
+        for h in ("H00", "H01", "H02", "H03", "H04", "H05", "H06", "H07")
+    }
+    state = {
+        "session": "uuid",
+        "iteration": "00",
+        "task_profile": "complex",
+        "gates": gates,
+        "last_gate": "H07",
+        "status": "COMPLETED",
+        "updated": "2026-08-25T10:05:00Z",
+    }
+    (session / "00" / "state.json").write_text(json.dumps(state), encoding="utf-8")
+    (session / "HARNESS_REPORT.md").write_text(
+        (session / "HARNESS_REPORT.md").read_text(encoding="utf-8")
+        + '<!-- ENTRY: {"timestamp": "2026-08-25T10:06:00Z", "clock": "utc", '
+        '"trigger": "REVIEW", "transition": "VERIFYING -> COMPLETED", '
+        '"result": "PASS", "checks": [{"id": "c", "result": "PASS", '
+        '"evidence": "07-REVIEW_REPORT.md"}]} -->\n',
+        encoding="utf-8",
+    )
+    assert csa.scan(tmp_path) == []
+
+
+def test_deferred_items_without_confirmation_flagged(tmp_path):
+    session = _write_session(tmp_path, version="5.0.0")
+    (session / "00" / "07-VERIFICATION_REPORT.md").write_text(
+        "# Report\n\n## Deferred Items\n\n```toml\n"
+        '[[deferred_items]]\nitem = "sign-off"\ndeferred = false\n```\n',
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any("REPORT" in x and "`deferred = true`" in x for x in v)
+    assert any("REPORT" in x and "`confirmed_by`" in x for x in v)
+
+
+def test_deferred_items_with_confirmation_passes(tmp_path):
+    session = _write_session(tmp_path, version="5.0.0")
+    (session / "00" / "07-VERIFICATION_REPORT.md").write_text(
+        "# Report\n\n## Deferred Items\n\n```toml\n"
+        '[[deferred_items]]\nitem = "sign-off"\ndeferred = true\n'
+        'confirmed_by = "user"\nconfirmation_date = "2026-08-25"\n```\n',
+        encoding="utf-8",
+    )
+    assert csa.scan(tmp_path) == []

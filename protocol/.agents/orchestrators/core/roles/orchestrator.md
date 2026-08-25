@@ -113,7 +113,7 @@ When enabled, the Orchestrator invokes the `reviewer` before critical transition
 
 The active flags are recorded in `.project/<session-uuid>/SESSION_LOG.md` at session start. When `caveman` is enabled, the log entry itself should follow `.agents/standards/communication/CAVEMAN.md`.
 
-### 4.1 Optional reviewer invocation
+### 4.1 Reviewer invocation and review gate
 
 When `rubrics` is enabled, before each critical transition the Orchestrator MAY invoke the `reviewer` worker on the artifact that is about to be consumed. The reviewer returns a Review Report with recommendation `APPROVE`, `REWORK`, or `NEEDS_CLARIFICATION`.
 
@@ -123,11 +123,25 @@ The Orchestrator may invoke the reviewer before transitions such as:
 - `PLAN_READY → EXECUTING` (review `EXECUTION_PLAN.md`).
 - `EXECUTING → VERIFYING` (review `EXECUTION_SUMMARY.md`).
 
+**Review gate (mandatory for `complex`).** When `rubrics` is enabled and the
+task profile assigned in `TASK_ANALYSIS.md` is `complex`, the review over
+`REVIEW_REPORT.md` is mandatory before `VERIFYING → COMPLETED`: the Orchestrator
+MUST invoke the `reviewer` (producing the report) and MUST evaluate the review
+gate over the report — `review_passed` when the recommendation is `APPROVE`,
+`review_failed` when it is `REWORK` or `NEEDS_CLARIFICATION`. The outcome is
+recorded in `HARNESS_REPORT.md` as a gate entry with `trigger: "REVIEW"`,
+transition `VERIFYING → COMPLETED`, and the review checklist of the report
+contract. The review gate is a Gate State over the artifact, not a task state
+and not a transition gate: it is never registered in `state.json`.
+
 The Orchestrator must:
 
-- On `APPROVE`: proceed with the harness and transition.
-- On `REWORK`: route the artifact to the corresponding worker role for correction, within the retry bound (a finite, session-visible limit on corrections of the same artifact under the same recommendation; by default one retry), or route to `RECOVERY` once the bound is exhausted. `REWORK` is a recommendation from the reviewer, not a protocol state.
-- On `NEEDS_CLARIFICATION`: transition to `NEEDS_CLARIFICATION` and request user input.
+- On `APPROVE` (`review_passed`): proceed with the harness and transition.
+- On `REWORK` (`review_failed`): route the artifact to the corresponding worker role for correction, within the retry bound (a finite, session-visible limit on corrections of the same artifact under the same recommendation; by default one retry), or route to `RECOVERY` once the bound is exhausted. `REWORK` is a recommendation from the reviewer, not a protocol state.
+- On `NEEDS_CLARIFICATION` (`review_failed`): transition to `NEEDS_CLARIFICATION` and request user input.
+
+For `standard`/`trivial` tasks, or when `rubrics` is disabled, the invocation
+remains optional (MAY) and no review Gate State is recorded.
 
 See `.agents/roles/reviewer.md` for the reviewer role details and `.agents/standards/quality/RUBRICS.md` for the rubric definitions.
 

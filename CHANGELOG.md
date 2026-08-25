@@ -45,6 +45,48 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [5.0.0] — 2026-08-25
+
+### Added
+
+- **Dimensiones de estado y lifecycle de artefactos** (plan 77, RFC-63): el
+  payload declara tres dimensiones con entidad propia (Task State, Gate State,
+  Artifact Lifecycle) y cuatro derivadas (Execution, Verification, Approval,
+  Plan) con sus fuentes de verdad en `harness/INDEX.md` (§State dimensions); el
+  Artifact Lifecycle (`draft`/`validated`/`superseded`) es derivado del registro
+  de gates y nunca se escribe a mano.
+- **`Deferred Items` y review gate** (plan 77, RFC-63):
+  `VERIFICATION_REPORT.md` gana la sección `## Deferred Items` (aprobaciones
+  humanas diferidas con confirmación) y `SESSION_BRIEF.md` registra los
+  diferidos; para `complex` con `rubrics` habilitado, el review sobre
+  `REVIEW_REPORT.md` es un Gate State obligatorio (`review_passed` /
+  `review_failed`) registrado en `HARNESS_REPORT.md` (trigger `REVIEW`).
+- **Checks mecánicos de lifecycle** (plan 77, RFC-63): `gate_validator.py`
+  rechaza secciones en conflicto (H00/H03), `complex` sin `REVIEW_REPORT.md` y
+  `Deferred Items` inválidos; `check_session_artifacts.py` detecta campos
+  manuales de estado y COMPLETED sin gates in-scope para sesiones `>= 5.0.0`.
+
+### Changed
+
+- **Semántica de COMPLETED relativa al alcance** (plan 77, RFC-63, MAJOR):
+  COMPLETED exige gates en-scope PASS, sin criterios FAIL/PENDING y aprobaciones
+  completadas o diferidas con confirmación; H05/H06/H07 citan la dimensión de
+  cada check en sus Gate Checklists; `protocol/.agents/orchestrators/core/roles/orchestrator.md`
+  §4.1 hace determinista el review gate.
+
+### Removed
+
+- **Campos manuales de estado** (plan 77, RFC-63, MAJOR): `status` (Metadata),
+  sección `## State`, `validation.complete` y `approved` (Plan Decision)
+  desaparecen de los siete contratos de artefactos; `schema_version` 2.0.0.
+
+### Modelo conceptual
+
+RFC-63 aceptada (plan 77, 2026-08-25): dimensiones de estado, lifecycle de
+artefactos y semántica de COMPLETED (D1, D2, D3).
+
+---
+
 ## [4.0.0] — 2026-08-25
 
 ### Added

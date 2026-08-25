@@ -290,7 +290,10 @@ The protocol state of each iteration lives in
 `.project/<session-uuid>/<iteration>/state.json`: session, iteration, task
 profile, gates passed with timestamps, last gate, and `status` (in progress
 or terminal `ABORT`/`COMPLETED`). This section is the canonical source for
-how that state is written and consumed. Invariants:
+how that state is written and consumed. The Task State and the Gate States of
+transition gates live in `state.json`; non-transition Gate States (for example
+the review gate) and the derived Artifact Lifecycle live in `HARNESS_REPORT.md`
+(see §State dimensions below). Invariants:
 
 1. Only `.agents/harness/runner_state.py` writes it, transactionally (temp
    file + rename), via its CLI:
@@ -303,6 +306,56 @@ how that state is written and consumed. Invariants:
 2. Hooks and the Orchestrator read it; nobody else writes it. A missing or
    corrupt `state.json` means *no gate has passed* (fail-closed for
    consumers).
+
+### State dimensions
+
+The protocol separates state into three dimensions with their own entity and
+four derived concepts. This subsection is the canonical declaration of their
+sources of truth:
+
+| Dimension | Type | Source of truth | Transitions produced by |
+| --- | --- | --- | --- |
+| Task State | entity (core state machine) | `state.json` + `orchestrators/core/states/AGENT_STATE_MACHINE.md` | Orchestrator |
+| Gate State | entity (per gate) | `state.json` (transition gates) + `HARNESS_REPORT.md` ENTRY (other gates) | Orchestrator (judgment) + `runner_state.py` (registration) |
+| Artifact Lifecycle | entity (derived) | derived from the Gate State record | mechanical derivation |
+| Execution State | derived | identical to Task State | — |
+| Verification State | derived | Gate State (H06/H07) + VERIFICATION_REPORT / REVIEW_REPORT | — |
+| Approval State | derived | `SESSION_BRIEF.md` + `Deferred Items` | user |
+| Plan State | external | project plans/docs | project governance |
+
+**Artifact Lifecycle.** States: `draft`, `validated`, `superseded`. Events:
+`produced`, `corrected`, `gate_failed`, `gate_passed`. Properties: `archived`
+(partial iteration preserved as a location property) and `rejected` (a
+correction event, not a persistent state). `approved`, `verified` and `executed`
+are NOT artifact states: they belong to the Gate/Verification/Approval
+dimensions. An artifact is `validated` exactly when its exit gate has a PASS
+recorded in `state.json`; the lifecycle is never written by hand.
+
+**Review gate.** For `complex` tasks with the `rubrics` flag enabled, the review
+over `REVIEW_REPORT.md` is a Gate State over the artifact
+(`review_required` → `review_passed` | `review_failed`) recorded in
+`HARNESS_REPORT.md` (trigger `REVIEW`); it is not a Task State and not a
+transition gate (never in `state.json`).
+
+Invariants:
+
+- ST-001: the Task State changes only through the allowed transitions of the
+  core state machine.
+- ST-002: every transition gate (H00–H07, H11) has a Gate State recorded in
+  `state.json`.
+- ST-003: the Artifact Lifecycle is never written by hand; it is derived from
+  the Gate State record.
+- ST-004: no payload document declares "state" without indicating its dimension.
+- AL-001: the artifact lifecycle state is derived, never written by the author.
+- AL-002: `validated` ⇔ the exit gate has PASS in `state.json`.
+- AL-003: a `superseded` artifact is not consumed as input by later phases.
+- AL-004: conflicting sections within an artifact are a structural FAIL.
+- CMP-001: `COMPLETED` ⇒ every in-scope gate has PASS in `state.json`.
+- CMP-002: `COMPLETED` ⇒ no in-scope criterion is FAIL/PENDING in the
+  verification report.
+- CMP-003: every deferred item has user confirmation and appears in
+  `Deferred Items`.
+- CMP-004: no deferred item is presented as completed.
 
 `state.json` enables optional **hook enforcement** at the CLI level
 (enforced mode), which requires only Python 3 standard library — no pip

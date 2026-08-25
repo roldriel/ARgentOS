@@ -1,12 +1,12 @@
 +++
-schema_version = "1.1.0"
+schema_version = "2.0.0"
 artifact = "VERIFICATION_REPORT.md"
 phase = "07"
 produced_by = "verifier"
 enforcement = "gated"
 gated_by = ["H06", "H07"]
 +++
-schema_version = "1.1.0"
+schema_version = "2.0.0"
 
 
 ---
@@ -38,8 +38,12 @@ This artifact does not contain new implementation. It only records the result of
 ```toml
 id = ""
 created_at = ""
-status = ""
 ```
+
+The artifact lifecycle (`draft` / `validated` / `superseded`) is derived from
+the harness gate record: this artifact becomes `validated` when gates H06 and
+H07 record PASS in `state.json`. It is read-only derived metadata; the author
+never declares it.
 
 ---
 
@@ -216,6 +220,24 @@ Requirements:
 
 ---
 
+## Deferred Items
+
+In-scope human approvals deferred with explicit user confirmation. A deferred
+item is never presented as completed: it remains an open approval recorded in
+this section and in `SESSION_BRIEF.md`, and `COMPLETED` requires every in-scope
+approval to be completed or deferred with confirmation.
+
+```toml
+[[deferred_items]]
+item = ""
+deferred = true
+confirmed_by = ""
+confirmation_date = ""
+reason = ""
+```
+
+---
+
 ## Final Decision
 
 The final result of the verification.
@@ -302,6 +324,17 @@ notes = "string"
 # user_authorized_extra_work=true with cited written authorization (Branch B).
 ```
 
+### `## Deferred Items`
+
+```toml
+[[deferred_items]]
+item = "string"
+deferred = true # deferred items must carry deferred=true and a confirmation
+confirmed_by = "string" # user or session-log entry that confirmed the deferral
+confirmation_date = "ISO-8601"
+reason = "string"
+```
+
 ### `## Final Decision`
 
 ```toml
@@ -358,6 +391,9 @@ The report is valid when:
 * The executed changes were evaluated against the task specification.
 * All acceptance criteria were reviewed.
 * The validation strategy was executed.
+* `## Deferred Items` is present (an empty list when nothing is deferred); every
+  deferred item carries `deferred: true` with user confirmation, and no deferred
+  item is presented as completed.
 * A final decision was produced.
 * A valid state transition was defined.
 * When rubrics are enabled, the `## Rubric Evaluation` section is present and structurally valid.

@@ -1,12 +1,12 @@
 +++
-schema_version = "1.0.0"
+schema_version = "2.0.0"
 artifact = "EXECUTION_PLAN.md"
 phase = "05"
 produced_by = "planner"
 enforcement = "gated"
 gated_by = ["H04"]
 +++
-schema_version = "1.0.0"
+schema_version = "2.0.0"
 
 
 ---
@@ -38,8 +38,12 @@ The execution plan must define **how the task will be executed**, but it must no
 ```toml
 id = ""
 created_at = ""
-status = ""
 ```
+
+The artifact lifecycle (`draft` / `validated` / `superseded`) is derived from
+the harness gate record: this artifact becomes `validated` when gate H04 records
+PASS in `state.json`. It is read-only derived metadata; the author never
+declares it.
 
 ---
 
@@ -195,11 +199,12 @@ strategy = ""
 
 ## Plan Decision
 
-Final planning decision.
+Final planning decision. Plan approval is an Approval/Gate State derived from
+the harness gate record: this plan is approved when gate H04 records PASS in
+`state.json`. The planner does not declare approval.
 
 ```toml
 [decision]
-approved = false
 reasoning = ""
 ```
 

@@ -72,6 +72,9 @@ The Orchestrator evaluates each item below by judgment when the gate fires and M
 5. Verify the declared `scope_compliance.user_authorized_extra_work` value. For Branch B (`true`), the Orchestrator MUST judge the written authorization evidence (the report references `SESSION_LOG.md` or a session artifact) and MAY activate the `decision-extractor` skill to recover the confirmed user decision; the evidence citation is recorded in `HARNESS_REPORT.md`. Cite the declared value and the evidence.
 6. Verify the branch is coherent: `scope_respected = true` with a non-empty `unplanned_changes` requires `user_authorized_extra_work = true` with cited evidence; a mixed declaration is a FAIL. Cite the declared values.
 7. Verify the evidence-or-attestation rule: every check of this gate is recorded in `HARNESS_REPORT.md` citing evidence or declaring `claim_class` (`verified` requires evidence; `attested`/`inference` are declared explicitly). For Branch B, the written authorization is cited as evidence; if the Orchestrator cannot cite it, the PASS is recorded as `attested`, not as external verification.
+8. Verify dimension coherence: `scope_compliance` records approval/scope
+   decisions (Approval/Gate State), never the artifact lifecycle; when citing
+   each check, indicate the state dimension it belongs to (ST-004).
 
 ## Recovery Decision Table
 

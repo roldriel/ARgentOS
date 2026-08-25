@@ -56,6 +56,12 @@ reflected_in = ""
 question = ""
 answer = ""
 source = ""
+
+[[deferred_approvals]]
+item = ""
+deferred = true
+confirmed_by = ""
+confirmation_date = ""
 ```
 
 `source` records where the answer came from: `user` for a direct user answer, or `unattended_default` for a default applied under unattended mode (such entries stay `PENDING_USER_CONFIRMATION` until the user reviews them).
@@ -74,6 +80,14 @@ Summary of what the user wants, with a reference to the `INTENT_REFLECTION.md` a
 
 List of question/answer pairs obtained through `NEEDS_CLARIFICATION`.
 
+### Deferred Approvals
+
+In-scope human approvals deferred with explicit user confirmation. Each entry
+carries `deferred: true` and the user confirmation (`confirmed_by` /
+`confirmation_date`); entries stay `PENDING_USER_CONFIRMATION` until confirmed
+and are never presented as completed. The Approval State of the session derives
+from this section together with the `Deferred Items` of the verification report.
+
 ### Constraints
 
 Fixed rules or limitations accepted during the session.
@@ -87,6 +101,8 @@ Information still missing that may block execution.
 - Created during `CONFIRMING_INTENT` when the user confirms intent.
 - Updated during `BUILDING_TASK_SPECIFICATION` when ambiguities are resolved.
 - Updated during `NEEDS_CLARIFICATION` when new answers are received.
+- Updated when an in-scope approval is deferred with user confirmation (the
+  verification report's `Deferred Items` and this section stay in sync).
 - Read by `task_analyst` when re-entering `ANALYZING_TASK`.
 
 ## Completion Criteria

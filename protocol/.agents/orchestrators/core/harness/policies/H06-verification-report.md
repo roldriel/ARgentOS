@@ -72,13 +72,22 @@ The Orchestrator must:
 The Orchestrator evaluates each item below by judgment when the gate fires and MUST cite evidence per item (artifact path, section name, declared value, or broken reference) in `HARNESS_REPORT.md`.
 
 1. Verify that `VERIFICATION_REPORT.md` exists in the current iteration directory (`.project/<session-uuid>/<iteration>/`). Cite the resolved artifact path as evidence.
-2. Verify that the artifact contains each of the following sections (heading comparison is case-insensitive): `Metadata`, `Task Reference`, `Execution Plan Reference`, `Verification Objective`, `Acceptance Criteria Evaluation`, `Test Results`, `Issues Found`, `Final Decision`, `Confidence`, `State Transition`. Cite any missing section as failure evidence.
+2. Verify that the artifact contains each of the following sections (heading comparison is case-insensitive): `Metadata`, `Task Reference`, `Execution Plan Reference`, `Verification Objective`, `Acceptance Criteria Evaluation`, `Test Results`, `Issues Found`, `Deferred Items`, `Final Decision`, `Confidence`, `State Transition`. Cite any missing section as failure evidence.
 3. Verify that `## Rubric Evaluation` exists and contains one `### <NAME>_RUBRIC` subsection per expected rubric: the six base rubrics defined in `.agents/standards/quality/RUBRICS.md` (`TASK_SPECIFICATION_RUBRIC`, `CONTEXT_ARTIFACT_RUBRIC`, `CONTEXT_VALIDATION_REPORT_RUBRIC`, `EXECUTION_PLAN_RUBRIC`, `EXECUTION_SUMMARY_RUBRIC`, `VERIFICATION_REPORT_RUBRIC`) plus the rubric of each technical practice listed in `technical_approach.enabled` of `TASK_SPECIFICATION.md` that is enabled at protocol level (for `trivial`-profile tasks there is no `technical_approach.enabled`; only the six base rubrics apply). Each subsection MUST declare a `Level:` line with a value in {`INSUFFICIENT`, `MEETS`, `EXCEEDS`} and a non-empty `Evidence:` line. Cite missing rubrics and subsections without level or evidence.
 4. Verify that `## Final Decision` contains a parseable TOML block and that `decision.result` is `COMPLETED` for the gate to PASS. Cite the declared value.
 5. Verify that `## Acceptance Criteria Evaluation` contains a parseable TOML block whose `acceptance_criteria` is a list, that no entry has `result = "FAIL"`, and that every entry with `result = "PARTIAL"` declares a non-empty `action_plan`. Cite each offending criterion.
 6. Verify that every citation in the artifact resolves against the filesystem. Recognized citation forms: backtick-quoted `` `path:section` ``, backtick-quoted path followed by `§section`, and the string values of the TOML keys `specification` and `execution_plan` inside ` ```toml ` blocks. A citation resolves when its path exists relative to the project root, the session directory, or any of the session's iteration directories; when the target is a `.md` file and the anchor is not numeric-only, the cited section MUST exist as an ATX heading in the target (normalized, case-insensitive comparison). Paths containing `<`/`>` placeholders are skipped. On failure, cite each broken citation (line, path, reason); on success, cite the number of citations verified.
 7. Verify the test evidence: for every `[[test_results]]` entry in `## Test Results` whose `result` is not `SKIPPED`, verify that when an `evidence` field is declared it references an existing file (or a command string recorded in the session's `SESSION_LOG.md`), and that when `evidence` is absent the command string in `test` appears in the session's `SESSION_LOG.md`. Cite each command without evidence.
 8. Verify the evidence-or-attestation rule: every check of this gate is recorded in `HARNESS_REPORT.md` citing evidence or declaring `claim_class` (`verified` requires evidence; `attested`/`inference` are declared explicitly). Judgment items (`[agent]`) without citable evidence — for example, the verification summary of what was verified — are recorded as `attested`, never as verification.
+9. Verify the deferred-items rule: `## Deferred Items` is present (an empty
+   list when nothing is deferred), its TOML block is parseable, every entry
+   carries `deferred: true` with a non-empty `confirmed_by`, and no deferred
+   item is presented as completed. `COMPLETED` requires that no in-scope
+   criterion is FAIL or PENDING and that every in-scope approval is completed or
+   deferred with user confirmation (CMP-002…CMP-004). For `complex` sessions the
+   structural validator additionally fails when no `REVIEW_REPORT.md` exists in
+   the iteration (review gate over the report, §State dimensions of
+   `.agents/harness/INDEX.md`); cite the validator output.
 
 ## Recovery Decision Table
 

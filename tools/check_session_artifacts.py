@@ -21,6 +21,14 @@ UTC-normalized timestamps unless ``clock: agent_clock`` is declared. Sessions
 without a declared version, or with an earlier one, are historical traces and
 are not reported (RFC-46).
 
+For sessions that declare ``protocol_version >= 5.0.0`` it additionally
+enforces the artifact-lifecycle model: core session artifacts must not declare
+manual lifecycle fields (``status = ""``, ``## State``, ``validation.complete``,
+``approved``), a ``COMPLETED`` ``state.json`` must record every in-scope
+transition gate PASS (plus a REVIEW gate PASS in ``HARNESS_REPORT.md`` for
+``complex`` tasks), and ``Deferred Items`` entries must carry ``deferred: true``
+with user confirmation.
+
 The task is a dev-only safety net: the runtime aggregation reads these blocks
 by judgment. A missing ``.project/`` is not a violation (exit 0).
 
@@ -62,7 +70,24 @@ CLAIM_CLASSES = {"verified", "attested", "inference"}
 CLOCK_VALUES = {"utc", "agent_clock"}
 SESSION_SKIP = {"knowledge", "skills"}
 NEW_PROTOCOL = (4, 0, 0)
+LIFECYCLE_PROTOCOL = (5, 0, 0)
 SEMVER_RE = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
+
+CORE_ARTIFACTS = (
+    "TASK_ANALYSIS.md",
+    "TASK_SPECIFICATION.md",
+    "CONTEXT_ARTIFACT.md",
+    "CONTEXT_VALIDATION_REPORT.md",
+    "EXECUTION_PLAN.md",
+    "EXECUTION_SUMMARY.md",
+    "VERIFICATION_REPORT.md",
+)
+
+STATE_GATES_BY_PROFILE = {
+    "trivial": {"H00", "H04", "H06"},
+    "standard": {"H00", "H01", "H02", "H03", "H04", "H05", "H06", "H07"},
+    "complex": {"H00", "H01", "H02", "H03", "H04", "H05", "H06", "H07"},
+}
 
 
 def _parse_version(value: str) -> tuple[int, int, int] | None:
@@ -164,6 +189,17 @@ def scan(root: Path) -> list[str]:
                     f"SESSION {session.relative_to(root)}: SESSION_LOG.md "
                     "header must declare a Protocol version"
                 )
+        if version >= LIFECYCLE_PROTOCOL:
+            for artifact_file in sorted(session.rglob("*.md")):
+                if not artifact_file.name.endswith(CORE_ARTIFACTS):
+                    continue
+                text = artifact_file.read_text(encoding="utf-8", errors="replace")
+                for issue in _manual_lifecycle_issues(text):
+                    out.append(f"ARTIFACT {artifact_file.relative_to(root)}: {issue}")
+            for report_file in sorted(session.rglob("*VERIFICATION_REPORT.md")):
+                text = report_file.read_text(encoding="utf-8", errors="replace")
+                for issue in _deferred_items_issues(text):
+                    out.append(f"REPORT {report_file.relative_to(root)}: {issue}")
 
     for report in sorted(project.rglob("HARNESS_REPORT.md")):
         text = report.read_text(encoding="utf-8", errors="replace")
@@ -359,7 +395,144 @@ def scan(root: Path) -> list[str]:
                     out.append(
                         f"STATE {state_file.relative_to(root)}: bad gate entry {trigger!r}"
                     )
+            session_dir = state_file.parent.parent
+            version = session_protocol_version(session_dir)
+            if (
+                version is not None
+                and version >= LIFECYCLE_PROTOCOL
+                and data.get("status") == "COMPLETED"
+            ):
+                profile = data.get("task_profile")
+                expected = STATE_GATES_BY_PROFILE.get(profile)
+                if expected is None:
+                    out.append(
+                        f"STATE {state_file.relative_to(root)}: COMPLETED with "
+                        f"unknown task_profile {profile!r}"
+                    )
+                else:
+                    missing = set(expected) - set(gates)
+                    if (
+                        profile in ("standard", "complex")
+                        and "H11" in missing
+                        and not _session_entered_confirming_intent(session_dir)
+                    ):
+                        missing.discard("H11")
+                    if missing:
+                        out.append(
+                            f"STATE {state_file.relative_to(root)}: COMPLETED "
+                            f"without in-scope gate PASS(es): {sorted(missing)}"
+                        )
+                    if profile == "complex" and not _review_gate_passed(session_dir):
+                        out.append(
+                            f"STATE {state_file.relative_to(root)}: COMPLETED "
+                            "complex session without a REVIEW gate PASS in "
+                            "HARNESS_REPORT.md"
+                        )
     return out
+
+
+def _section_text(text: str, heading: str) -> str:
+    """Return the body of a ``## <heading>`` section, until the next ``##``."""
+    lines = text.splitlines()
+    start = None
+    pattern = re.compile(r"^##\s+" + re.escape(heading) + r"\s*$")
+    for i, line in enumerate(lines):
+        if pattern.match(line.strip()):
+            start = i
+            break
+    if start is None:
+        return ""
+    out = []
+    for line in lines[start + 1 :]:
+        if line.strip().startswith("##"):
+            break
+        out.append(line)
+    return "\n".join(out)
+
+
+def _manual_lifecycle_issues(text: str) -> list[str]:
+    """AL-001/ST-004: manual lifecycle declarations in a core artifact."""
+    issues: list[str] = []
+    if re.search(r'^\s*status\s*=\s*""\s*$', text, re.MULTILINE):
+        issues.append("declares a manual lifecycle field `status = \"\"`")
+    if re.search(r"^##\s+State\s*$", text, re.MULTILINE):
+        issues.append("has a `## State` section (lifecycle mixed with task state)")
+    in_validation = False
+    for line in text.splitlines():
+        stripped = line.strip()
+        if re.match(r"^\[[^\]]+\]$", stripped):
+            in_validation = stripped == "[validation]"
+            continue
+        if in_validation and re.match(r"^complete\s*=", stripped):
+            issues.append("declares a manual `validation.complete` field")
+    if re.search(r"^\s*approved\s*=\s*false\s*$", text, re.MULTILINE):
+        issues.append("declares a manual `approved` field in Plan Decision")
+    return issues
+
+
+def _deferred_items_issues(text: str) -> list[str]:
+    """CMP-003/CMP-004: deferred items must carry user confirmation."""
+    issues: list[str] = []
+    body = _section_text(text, "Deferred Items")
+    if not body.strip():
+        return issues
+    for block in re.findall(r"```toml\n(.*?)\n```", body, re.DOTALL):
+        for entry in re.split(r"(?=^\[\[deferred_items\]\])", block, flags=re.MULTILINE):
+            entry = entry.strip()
+            if not entry.startswith("[[deferred_items]]"):
+                continue
+            if not re.search(r"^\s*deferred\s*=\s*true\s*$", entry, re.MULTILINE):
+                issues.append("deferred_items entry without `deferred = true`")
+            m = re.search(
+                r'^\s*confirmed_by\s*=\s*"([^"]*)"\s*$', entry, re.MULTILINE
+            )
+            if m is None or not m.group(1).strip():
+                issues.append("deferred_items entry without `confirmed_by`")
+    return issues
+
+
+def _session_entered_confirming_intent(session: Path) -> bool:
+    """True when the session entered CONFIRMING_INTENT (H11 path)."""
+    report = session / "HARNESS_REPORT.md"
+    if report.is_file():
+        text = report.read_text(encoding="utf-8", errors="replace")
+        if re.search(r'"trigger"\s*:\s*"H11"', text):
+            return True
+    metrics = session / "METRICS.md"
+    if metrics.is_file():
+        text = metrics.read_text(encoding="utf-8", errors="replace")
+        for raw in re.finditer(r"<!-- METRIC: (.*?) -->", text, re.DOTALL):
+            try:
+                data = json.loads(raw.group(1).strip())
+            except json.JSONDecodeError:
+                continue
+            if (
+                isinstance(data, dict)
+                and data.get("type") == "state_transition"
+                and data.get("to") == "CONFIRMING_INTENT"
+            ):
+                return True
+    return False
+
+
+def _review_gate_passed(session: Path) -> bool:
+    """True when HARNESS_REPORT.md records a REVIEW gate PASS."""
+    report = session / "HARNESS_REPORT.md"
+    if not report.is_file():
+        return False
+    text = report.read_text(encoding="utf-8", errors="replace")
+    for raw in re.finditer(r"<!-- ENTRY: (.*?) -->", text, re.DOTALL):
+        try:
+            data = json.loads(raw.group(1).strip())
+        except json.JSONDecodeError:
+            continue
+        if (
+            isinstance(data, dict)
+            and data.get("trigger") == "REVIEW"
+            and data.get("result") == "PASS"
+        ):
+            return True
+    return False
 
 
 def main(argv: list[str] | None = None) -> int:

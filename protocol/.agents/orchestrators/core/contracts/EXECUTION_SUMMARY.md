@@ -1,12 +1,12 @@
 +++
-schema_version = "1.0.0"
+schema_version = "2.0.0"
 artifact = "EXECUTION_SUMMARY.md"
 phase = "06"
 produced_by = "executor"
 enforcement = "gated"
 gated_by = ["H05"]
 +++
-schema_version = "1.0.0"
+schema_version = "2.0.0"
 
 
 ---
@@ -36,8 +36,12 @@ This artifact records what was changed, how it aligns with the execution plan, w
 ```toml
 id = ""
 created_at = ""
-status = ""
 ```
+
+The artifact lifecycle (`draft` / `validated` / `superseded`) is derived from
+the harness gate record: this artifact becomes `validated` when gate H05 records
+PASS in `state.json`. It is read-only derived metadata; the author never
+declares it.
 
 ---
 
@@ -95,6 +99,9 @@ COMPLETED
 SKIPPED
 BLOCKED
 ```
+
+Step status belongs to the execution dimension (the step's own outcome), not to
+the artifact lifecycle.
 
 ---
 
@@ -197,6 +204,9 @@ BLOCKED
 ```
 
 The project must be `VERIFIABLE` for H05 to pass. `BLOCKED` indicates that execution could not reach a verifiable state.
+
+This `status` is the declared project state (project dimension), not the
+artifact lifecycle.
 
 ---
 

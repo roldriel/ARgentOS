@@ -161,3 +161,32 @@ Cambio **MAJOR** del modelo conceptual: cambia el significado declarado de
   comportamiento en modo declarativo vs. enforced. No se requiere ninguna
   acción de migración sobre artefactos existentes; los reportes nuevos deben
   cumplir la regla de claims.
+
+## 7. Modelo de estado y lifecycle de artefactos — 5.0.0 (plan 77, RFC-63)
+
+Cambio **MAJOR** del modelo conceptual: separa el estado en dimensiones y
+convierte el lifecycle de los artefactos en un estado derivado.
+
+- **Campos manuales retirados.** Los contratos de TASK_ANALYSIS,
+  TASK_SPECIFICATION, CONTEXT_ARTIFACT, CONTEXT_VALIDATION_REPORT,
+  EXECUTION_PLAN, EXECUTION_SUMMARY y VERIFICATION_REPORT dejan de declarar
+  `status` (Metadata), `state` (sección `## State`), `validation.complete` y
+  `approved` (Plan Decision). El lifecycle del artefacto (`draft` /
+  `validated` / `superseded`) se deriva del registro de gates y nunca se
+  escribe a mano. `schema_version` de los siete contratos pasa a 2.0.0.
+- **Semántica de COMPLETED.** `COMPLETED` significa completitud relativa al
+  alcance confirmado: H06/H07 PASS, gates en-scope con PASS, sin criterios
+  FAIL/PENDING y aprobaciones humanas completadas o diferidas con confirmación.
+- **Aprobaciones diferidas.** `VERIFICATION_REPORT.md` gana la sección
+  `## Deferred Items` y `SESSION_BRIEF.md` registra las aprobaciones diferidas
+  con `deferred: true` y confirmación del usuario.
+- **Review gate.** Para tareas `complex` con `rubrics` habilitado, la revisión
+  de `REVIEW_REPORT.md` es un Gate State sobre el artefacto
+  (`review_required` → `review_passed` | `review_failed`) registrado en
+  `HARNESS_REPORT.md`; no es un estado de tarea ni un gate de transición.
+- **Trazas históricas.** Las sesiones previas a 5.0.0 son registros inmutables
+  bajo la semántica vieja (RFC-46): los checkers de desarrollo no las reportan.
+- **Adopción.** Leer `.agents/harness/INDEX.md`, sección "State dimensions",
+  para el modelo completo de dimensiones e invariantes. Los artefactos
+  existentes no requieren acción: los reportes nuevos no declaran campos de
+  estado manuales e incluyen `Deferred Items` (vacío si no hay diferidos).

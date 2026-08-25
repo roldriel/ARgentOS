@@ -39,6 +39,10 @@ Validate that `VERIFICATION_REPORT.md` demonstrates the task was completed and v
 ## Checklist
 
 **Evaluation audience:** the harness runner no longer exists; every item in this policy is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` are structurally checkable and are restated as numbered instructions in §"Gate Checklist", where the Orchestrator MUST cite evidence per item. Items marked `[agent]` are declared judgment.
+Evidence is cited per item with a class from the evidence standard
+(`.agents/standards/quality/EVIDENCE.md`): `observation`/`measurement`/
+`reference` when the evidence is citable; `attestation` only with actor and
+statement.
 
 1. The artifact file exists. `[gate]`
 2. The report summarizes what was verified. `[agent]`
@@ -50,6 +54,7 @@ Validate that `VERIFICATION_REPORT.md` demonstrates the task was completed and v
 8. The report does not rely on assumptions to claim success. `[agent]`
 9. Every citation in the artifact (`` `path:section` ``, `` `path` §section ``, and the TOML citation fields `task_reference.specification` and `plan_reference.execution_plan`) resolves against the filesystem. `[gate]` (see §"Gate Checklist", item 6)
 10. Every command declared in `## Test Results` with a result other than `SKIPPED` has existing evidence: an `evidence` field referencing an existing file, or a matching entry in `SESSION_LOG.md`. `[gate]` (see §"Gate Checklist", item 7)
+11. Every acceptance criterion with `result = PASS` (or `PARTIAL`) is supported by evidence with a valid class: the `## Evidence` section references its `claim_id`, each `[[evidence]]` entry declares `class`/`claim_id`/`ref`, and at least one entry per criterion has a class other than `attestation`, unless the criterion declares `claim_class: attested`/`inference`. `[gate]` (see §"Gate Checklist", item 10)
 
 The presence of the required sections listed in §"Gate Checklist" item 2, and the rubric evaluation of item 3 (when the `rubrics` feature flag is enabled), are `[gate]` even though they are not restated as numbered items in the checklist above.
 
@@ -77,8 +82,8 @@ The Orchestrator evaluates each item below by judgment when the gate fires and M
 4. Verify that `## Final Decision` contains a parseable TOML block and that `decision.result` is `COMPLETED` for the gate to PASS. Cite the declared value.
 5. Verify that `## Acceptance Criteria Evaluation` contains a parseable TOML block whose `acceptance_criteria` is a list, that no entry has `result = "FAIL"`, and that every entry with `result = "PARTIAL"` declares a non-empty `action_plan`. Cite each offending criterion.
 6. Verify that every citation in the artifact resolves against the filesystem. Recognized citation forms: backtick-quoted `` `path:section` ``, backtick-quoted path followed by `§section`, and the string values of the TOML keys `specification` and `execution_plan` inside ` ```toml ` blocks. A citation resolves when its path exists relative to the project root, the session directory, or any of the session's iteration directories; when the target is a `.md` file and the anchor is not numeric-only, the cited section MUST exist as an ATX heading in the target (normalized, case-insensitive comparison). Paths containing `<`/`>` placeholders are skipped. On failure, cite each broken citation (line, path, reason); on success, cite the number of citations verified.
-7. Verify the test evidence: for every `[[test_results]]` entry in `## Test Results` whose `result` is not `SKIPPED`, verify that when an `evidence` field is declared it references an existing file (or a command string recorded in the session's `SESSION_LOG.md`), and that when `evidence` is absent the command string in `test` appears in the session's `SESSION_LOG.md`. Cite each command without evidence.
-8. Verify the evidence-or-attestation rule: every check of this gate is recorded in `HARNESS_REPORT.md` citing evidence or declaring `claim_class` (`verified` requires evidence; `attested`/`inference` are declared explicitly). Judgment items (`[agent]`) without citable evidence — for example, the verification summary of what was verified — are recorded as `attested`, never as verification.
+7. Verify the test evidence: for every `[[test_results]]` entry in `## Test Results` whose `result` is not `SKIPPED`, verify that when an `evidence` field is declared it references an existing file (or a command string recorded in the session's `SESSION_LOG.md`), and that when `evidence` is absent the command string in `test` appears in the session's `SESSION_LOG.md`. For entries with `claim_class: verified` (or non-empty `evidence`), additionally verify a matching `[[evidence]]` entry with class other than `attestation`. Cite each command without evidence.
+8. Verify the evidence-or-attestation rule: every check of this gate is recorded in `HARNESS_REPORT.md` citing evidence with a class per `.agents/standards/quality/EVIDENCE.md` or declaring `claim_class` (`verified` requires a non-attestation evidence entry; `attested`/`inference` are declared explicitly). Judgment items (`[agent]`) without citable evidence — for example, the verification summary of what was verified — are recorded as `attested`, never as verification.
 9. Verify the deferred-items rule: `## Deferred Items` is present (an empty
    list when nothing is deferred), its TOML block is parseable, every entry
    carries `deferred: true` with a non-empty `confirmed_by`, and no deferred
@@ -88,6 +93,15 @@ The Orchestrator evaluates each item below by judgment when the gate fires and M
    structural validator additionally fails when no `REVIEW_REPORT.md` exists in
    the iteration (review gate over the report, §State dimensions of
    `.agents/harness/INDEX.md`); cite the validator output.
+10. Verify the evidence rule of `## Evidence`: every `[[evidence]]` entry has
+    `class` in {`observation`, `measurement`, `attestation`, `assertion`,
+    `reference`} and non-empty `claim_id`/`ref`; `measurement` entries declare a
+    non-negative integer `exit_code` when present; `attestation` entries declare
+    non-empty `actor` and `statement`. For every acceptance criterion with
+    `result = PASS`/`PARTIAL` and `claim_class: verified` (or non-empty
+    `evidence`), at least one entry references its `claim_id` with a class other
+    than `attestation`; a criterion without such evidence MUST declare
+    `claim_class: attested`/`inference`. Cite each offending criterion or entry.
 
 ## Recovery Decision Table
 

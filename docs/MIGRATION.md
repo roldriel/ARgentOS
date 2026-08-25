@@ -190,3 +190,32 @@ convierte el lifecycle de los artefactos en un estado derivado.
   para el modelo completo de dimensiones e invariantes. Los artefactos
   existentes no requieren acción: los reportes nuevos no declaran campos de
   estado manuales e incluyen `Deferred Items` (vacío si no hay diferidos).
+
+## 8. Modelo de evidencia y verificación — 7.0.0 (plan 79, RFC-65)
+
+Cambio **MAJOR** del modelo conceptual: define qué cuenta como evidencia y
+cuándo un claim puede declararse VERIFIED.
+
+- **Cinco clases de evidencia.** `observation`, `measurement`, `attestation`,
+  `assertion` y `reference` (`.agents/standards/quality/EVIDENCE.md`). Toda
+  entrada de evidencia lleva `class`, `claim_id` y `ref`; una atestación lleva
+  además `actor` y `statement`.
+- **Bloques `[[evidence]]`.** `VERIFICATION_REPORT.md` gana la sección
+  `## Evidence` y sus criterios/resultados declaran `claim_id` (schema
+  `3.0.0`); los ENTRY de `HARNESS_REPORT.md` pueden registrar el array
+  `evidence` con clase por check.
+- **"Verificado" exige evidencia no-atestación.** Un claim se declara
+  `verified` solo con una entrada de evidencia de clase distinta de
+  `attestation`; sin ella el término es `attested` (o `inference` declarado
+  explícitamente). Un ítem `[gate]` se satisface con
+  observación/medición/referencia, o con desviación documentada; la atestación
+  nunca lo satisface sola.
+- **Detección de atestaciones sin marca.** `gate_validator.py` (H06) rechaza un
+  criterio PASS sin evidencia con clase válida; `audit_gates.py` (dev) marca
+  atestaciones sin etiquetar en los PASS registrados.
+- **Trazas históricas.** Las sesiones previas a 7.0.0 son registros inmutables
+  bajo la semántica previa (RFC-46): no se reescriben ni se re-reportan.
+- **Adopción.** Los reportes nuevos de `VERIFICATION_REPORT.md` incluyen
+  `## Evidence` y `claim_id`; los checks de `HARNESS_REPORT.md` citan evidencia
+  con clase o declaran `claim_class`. Los reportes 6.0.0 que declaraban
+  "verificado" con evidencia solo en texto libre dejan de ser conformes.

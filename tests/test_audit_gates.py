@@ -96,3 +96,44 @@ def test_no_project_dir_is_ok(tmp_path):
     violations, summary = audit_gates.audit(tmp_path)
     assert violations == []
     assert summary["entries"] == 0
+
+
+def test_verified_without_evidence_entry_flagged(tmp_path, monkeypatch):
+    make_report(
+        tmp_path,
+        '{"timestamp": "t", "trigger": "H00", "transition": "A -> B", '
+        '"result": "PASS", "checks": [{"id": "c", "result": "PASS", '
+        '"claim_class": "verified"}], '
+        '"artifact": ".project/uuid/00/01-TASK_ANALYSIS.md"}',
+    )
+    monkeypatch.setattr(audit_gates, "_run_validator", lambda *a, **k: fake_result(0))
+    violations, summary = audit_gates.audit(tmp_path)
+    assert any("verified without non-attestation evidence" in x for x in violations)
+
+
+def test_verified_with_reference_evidence_ok(tmp_path, monkeypatch):
+    make_report(
+        tmp_path,
+        '{"timestamp": "t", "trigger": "H00", "transition": "A -> B", '
+        '"result": "PASS", "checks": [{"id": "c", "result": "PASS", '
+        '"claim_class": "verified"}], '
+        '"evidence": [{"class": "reference", "claim_id": "c", '
+        '"ref": "01-TASK_ANALYSIS.md"}], '
+        '"artifact": ".project/uuid/00/01-TASK_ANALYSIS.md"}',
+    )
+    monkeypatch.setattr(audit_gates, "_run_validator", lambda *a, **k: fake_result(0))
+    violations, summary = audit_gates.audit(tmp_path)
+    assert violations == []
+    assert summary["audited"] == 1
+
+
+def test_unmarked_attestation_flagged(tmp_path, monkeypatch):
+    make_report(
+        tmp_path,
+        '{"timestamp": "t", "trigger": "H00", "transition": "A -> B", '
+        '"result": "PASS", "checks": [{"id": "c", "result": "PASS"}], '
+        '"artifact": ".project/uuid/00/01-TASK_ANALYSIS.md"}',
+    )
+    monkeypatch.setattr(audit_gates, "_run_validator", lambda *a, **k: fake_result(0))
+    violations, summary = audit_gates.audit(tmp_path)
+    assert any("unmarked attestation" in x for x in violations)

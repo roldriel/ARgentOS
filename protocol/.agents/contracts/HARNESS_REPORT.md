@@ -58,12 +58,18 @@ The report follows a fixed declarative structure that the Orchestrator must resp
    - `Timestamp`: ISO-8601 timestamp of the invocation.
    - `Artifact checked`: present only when the trigger validates an artifact.
    - `Checks`: one bullet per check, formatted as `` `<check-id>`: <result> — <evidence> `` with an optional `` `claim_class` `` marker. Every check cites its evidence or declares an explicit `claim_class`: with non-empty `evidence` the implicit class is `verified`; without `evidence`, the check MUST declare `claim_class: attested` or `claim_class: inference` (`verified` requires `evidence`). A skipped gate records a single check `gate_required_for_profile` with result `SKIP`, evidence `skipped: profile — …` and no claim class.
+   - `Evidence entries` (optional): when the entry cites structured evidence, an
+     `evidence` array at the entry level records one item per supported check:
+     `{"class": "...", "claim_id": "<check-id>", "ref": "..."}`, with optional
+     `command`/`exit_code` for `measurement` and `actor`/`statement` for
+     `attestation`. Classes and sufficiency rules follow
+     `.agents/standards/quality/EVIDENCE.md`.
    - `Alert` (optional): one `- Alert: <message>` line per post-hoc audit alert (for example, a suspected enforcement-hook bypass detected by `.agents/harness/runner_state.py` when files were modified before the plan gate PASS). Alerts never change the gate result.
 
    Each entry ends with a machine-readable HTML comment so history is preserved across updates:
 
    ```markdown
-   <!-- ENTRY: {"timestamp": "...", "clock": "utc", "trigger": "...", "transition": "...", "result": "...", "checks": [{"id": "...", "result": "...", "evidence": "...", "claim_class": "verified"}], "artifact": "...", "duration_ms": 0, "rubric_scores": {...}, "alerts": [...]} -->
+   <!-- ENTRY: {"timestamp": "...", "clock": "utc", "trigger": "...", "transition": "...", "result": "...", "checks": [{"id": "...", "result": "...", "evidence": "...", "claim_class": "verified"}], "evidence": [{"class": "reference", "claim_id": "<check-id>", "ref": "..."}], "artifact": "...", "duration_ms": 0, "rubric_scores": {...}, "alerts": [...]} -->
    ```
 
    The `alerts` array is optional (absent or empty when no alert was raised).
@@ -73,6 +79,11 @@ The report follows a fixed declarative structure that the Orchestrator must resp
    (`verified` | `attested` | `inference`) is optional in the JSON only when
    the check carries non-empty `evidence`; a check without `evidence` MUST
    carry an explicit `claim_class` of `attested` or `inference` (G-002/G-003).
+   A check with `claim_class: verified` (or with non-empty `evidence`, which
+   implies `verified`) requires at least one item in the entry's `evidence`
+   array whose `claim_id` equals the check id and whose `class` is other than
+   `attestation` (EV-004); a check supported only by `attestation` items MUST
+   declare `claim_class: attested`.
    The `deviation` field is optional: when the Orchestrator records a `PASS`
    on a gate whose structural validator returned FAIL, the entry MUST carry a
    `deviation` object `{"cause": "<short reason>", "evidence": "<citation of
@@ -99,6 +110,10 @@ Rules:
 
 - A deviation is never silent: every override is recorded in the same entry it
   affects, with cause and evidence.
+- The deviation `evidence` is a `reference` citation (an artifact path or a
+  session-log entry), never an unmarked attestation of the Orchestrator; it is
+  the only way a `[gate]` item supported only by attestation is recorded as
+  `PASS` (EV-001).
 - A deviation never changes the fail-open behavior of the enforcement hooks
   (`.agents/harness/INDEX.md`, §Enforcement model).
 - A deviation is auditable post-hoc: recorded `PASS` entries are recomputed

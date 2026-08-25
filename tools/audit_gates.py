@@ -21,6 +21,13 @@ The tool is dev-only and not part of the distributed protocol. The runtime
 gate decision remains the Orchestrator's judgment; this tool only checks the
 declared structural subset against the artifacts.
 
+Independently of the structural re-run, every recorded ``PASS`` entry is
+checked for the evidence-or-attestation rule: a check with ``claim_class:
+verified`` (or with non-empty ``evidence``, which implies verified) requires an
+``evidence`` array item of class other than ``attestation`` for its check id,
+and a check with neither evidence nor ``claim_class`` is reported as an
+unmarked attestation.
+
 Usage:
   python tools/audit_gates.py [--root REPO_ROOT]
 
@@ -39,6 +46,16 @@ from pathlib import Path
 
 
 ENTRY_RE = re.compile(r"<!-- ENTRY: (.*?) -->", re.DOTALL)
+
+EVIDENCE_CLASSES = {
+    "observation",
+    "measurement",
+    "attestation",
+    "assertion",
+    "reference",
+}
+
+NON_ATTESTATION_EVIDENCE = EVIDENCE_CLASSES - {"attestation"}
 
 SUPPORTED = {
     "H00", "H01", "H02", "H03", "H04", "H05", "H06", "H07",
@@ -105,6 +122,7 @@ def audit(root: Path) -> tuple[list[str], dict]:
             trigger = data.get("trigger")
             if data.get("result") != "PASS":
                 continue
+            violations.extend(_evidence_violations(report, root, idx, data))
             if trigger not in SUPPORTED:
                 summary["skipped"] += 1
                 continue
@@ -141,6 +159,49 @@ def audit(root: Path) -> tuple[list[str], dict]:
                 "and no deviation is recorded"
             )
     return violations, summary
+
+
+def _evidence_violations(
+    report: Path, root: Path, idx: int, data: dict
+) -> list[str]:
+    """Report unmarked attestations and verified checks without evidence."""
+    violations: list[str] = []
+    checks = data.get("checks")
+    if not isinstance(checks, list):
+        return violations
+    entries = data.get("evidence")
+    if entries is not None and not isinstance(entries, list):
+        violations.append(
+            f"{report.relative_to(root)}#{idx}: evidence is not a list"
+        )
+        entries = []
+    evidence = entries if isinstance(entries, list) else []
+    for check in checks:
+        if not isinstance(check, dict):
+            continue
+        check_id = check.get("id")
+        claim_class = check.get("claim_class")
+        evidence_str = check.get("evidence")
+        has_evidence = isinstance(evidence_str, str) and bool(evidence_str.strip())
+        claims_verified = claim_class == "verified" or (
+            claim_class is None and has_evidence
+        )
+        if claim_class is None and not has_evidence:
+            violations.append(
+                f"{report.relative_to(root)}#{idx} check {check_id!r}: "
+                "unmarked attestation (no evidence and no claim_class)"
+            )
+        elif claims_verified and not any(
+            isinstance(e, dict)
+            and e.get("class") in NON_ATTESTATION_EVIDENCE
+            and e.get("claim_id") == check_id
+            for e in evidence
+        ):
+            violations.append(
+                f"{report.relative_to(root)}#{idx} check {check_id!r}: "
+                "verified without non-attestation evidence"
+            )
+    return violations
 
 
 def main(argv: list[str] | None = None) -> int:

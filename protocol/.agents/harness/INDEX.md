@@ -85,7 +85,7 @@ exactly one of five classes, and the class determines who verifies it (see
 | Gate registration (gate, result, when) | Mechanically enforced | `runner_state` (state) + agent (review) |
 | `state.json` ↔ HARNESS coherence (bidirectional, timings) | Verifiable | Runtime (dev tool) |
 | Artifact structure (sections, ENTRY/METRIC, EARS) | Verifiable | `gate_validator` (structural) + agent |
-| Evidence associated with claims (class + reference) | Verifiable | agent + dev tool (class semantics detailed in the evidence model) |
+| Evidence associated with claims (class + reference) | Verifiable | agent + dev tool (class semantics in `.agents/standards/quality/EVIDENCE.md`) |
 | Determinable authorization for out-of-boundary effects | Verifiable | agent + human (authorization model) |
 | Knowledge freshness/invalidation | Verifiable | agent + dev tool (knowledge model) |
 | Budget compliance (declared/consumed pair) | Verifiable | runtime + agent |
@@ -111,7 +111,7 @@ Runtime/External and is optional in declarative mode.
 | Presence of root records | produces | checks (`[gate]` item) | — | verifies | — |
 | Gate registration | judges | — | registers in `state.json` | reconciles (bidirectional) | — |
 | Artifact structure | produces | evaluates with `gate_validator` | — | verifies post-hoc | — |
-| Evidence with class and association | cites | evaluates (H05/H06) | — | detects unmarked attestations | — |
+| Evidence with class and association | cites (class per EVIDENCE.md) | evaluates (H05/H06) | — | detects unmarked attestations | — |
 | Canonical timestamps | marks source | — | writes UTC (`runner_state`) | compares | — |
 | Effect authorization | declares (effects) | verifies (H01/H04) | — | audits | confirms/denies |
 | Budget (declared/consumed) | declares | — | measures (optional) | verifies presence | — |
@@ -138,7 +138,8 @@ class other than attestation; without citable evidence the permitted term is
 "attested". Gate records and reports implement this distinction per claim (see
 `.agents/contracts/HARNESS_REPORT.md`, §"Required structure", and
 `.agents/orchestrators/core/contracts/VERIFICATION_REPORT.md`, §"Acceptance
-Criteria Evaluation").
+Criteria Evaluation"). Evidence classes and sufficiency rules are defined in
+`.agents/standards/quality/EVIDENCE.md`.
 
 ## Who Invokes the Harness
 

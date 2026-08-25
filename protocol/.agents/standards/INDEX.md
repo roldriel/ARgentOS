@@ -111,6 +111,10 @@ The technical-practice flags map each flag to the rubric that scores it and the 
 - `quality/RUBRICS.md` — rubric evaluation format and scoring levels.
 - `quality/PREFLIGHT_CHECKLIST.md` — pre-flight self-checklist for workers.
 - `quality/CONFIDENCE.md` — general confidence model (HIGH/MEDIUM/LOW) with falsable level definitions and the anti-inflation rule, applied to verification reports, recovery analyses and KB recommendations; includes the recommendation-confidence specialization for Orchestrator accept-or-override decisions.
+- `quality/EVIDENCE.md` — evidence model: five evidence classes
+  (`observation`/`measurement`/`attestation`/`assertion`/`reference`),
+  `[[evidence]]` entries, sufficiency rules per `[gate]`/`[agent]` item, and the
+  VERIFIED invariant (non-attestation evidence or the term "attested").
 
 ## Context
 

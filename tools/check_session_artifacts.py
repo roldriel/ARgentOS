@@ -29,6 +29,13 @@ transition gate PASS (plus a REVIEW gate PASS in ``HARNESS_REPORT.md`` for
 ``complex`` tasks), and ``Deferred Items`` entries must carry ``deferred: true``
 with user confirmation.
 
+For sessions that declare ``protocol_version >= 7.0.0`` it additionally
+enforces the evidence model: ENTRY ``evidence`` array items carry
+``class``/``claim_id``/``ref`` (with ``actor``/``statement`` on attestations),
+a check with ``claim_class: verified`` requires a non-attestation evidence
+entry for its check id, and ``VERIFICATION_REPORT.md`` ``[[evidence]]`` blocks
+support every criterion/test result that declares ``verified``.
+
 The task is a dev-only safety net: the runtime aggregation reads these blocks
 by judgment. A missing ``.project/`` is not a violation (exit 0).
 
@@ -71,7 +78,18 @@ CLOCK_VALUES = {"utc", "agent_clock"}
 SESSION_SKIP = {"knowledge", "skills"}
 NEW_PROTOCOL = (4, 0, 0)
 LIFECYCLE_PROTOCOL = (5, 0, 0)
+EVIDENCE_PROTOCOL = (7, 0, 0)
 SEMVER_RE = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
+
+EVIDENCE_CLASSES = {
+    "observation",
+    "measurement",
+    "attestation",
+    "assertion",
+    "reference",
+}
+
+NON_ATTESTATION_EVIDENCE = EVIDENCE_CLASSES - {"attestation"}
 
 CORE_ARTIFACTS = (
     "TASK_ANALYSIS.md",
@@ -200,12 +218,17 @@ def scan(root: Path) -> list[str]:
                 text = report_file.read_text(encoding="utf-8", errors="replace")
                 for issue in _deferred_items_issues(text):
                     out.append(f"REPORT {report_file.relative_to(root)}: {issue}")
+        if version >= EVIDENCE_PROTOCOL:
+            for report_file in sorted(session.rglob("*VERIFICATION_REPORT.md")):
+                text = report_file.read_text(encoding="utf-8", errors="replace")
+                for issue in _verification_evidence_issues(text):
+                    out.append(f"REPORT {report_file.relative_to(root)}: {issue}")
 
     for report in sorted(project.rglob("HARNESS_REPORT.md")):
         text = report.read_text(encoding="utf-8", errors="replace")
-        new_protocol = (
-            session_protocol_version(report.parent) or ()
-        ) >= NEW_PROTOCOL
+        version = session_protocol_version(report.parent)
+        new_protocol = (version or ()) >= NEW_PROTOCOL
+        evidence_protocol = (version or ()) >= EVIDENCE_PROTOCOL
         for idx, raw in enumerate(re.finditer(r"<!-- ENTRY: (.*?) -->", text, re.DOTALL), 1):
             payload = raw.group(1).strip()
             try:
@@ -264,12 +287,46 @@ def scan(root: Path) -> list[str]:
                         f"check {check_idx} has no evidence and no claim_class "
                         f"in {sorted(CLAIM_CLASSES)} (unmarked attestation)"
                     )
-                elif claim_class == "verified":
+                elif claim_class == "verified" and not evidence_protocol:
                     out.append(
                         f"ENTRY {report.relative_to(root)}#{idx}: "
                         f"check {check_idx} declares claim_class 'verified' "
                         "without evidence"
                     )
+            if evidence_protocol:
+                entries = data.get("evidence")
+                if entries is not None and not isinstance(entries, list):
+                    out.append(
+                        f"ENTRY {report.relative_to(root)}#{idx}: evidence is not a list"
+                    )
+                    entries = []
+                entries = entries if isinstance(entries, list) else []
+                for e_idx, entry in enumerate(entries, 1):
+                    for issue in _evidence_entry_issues(entry, e_idx):
+                        out.append(f"ENTRY {report.relative_to(root)}#{idx}: {issue}")
+                for check_idx, check in enumerate(checks, 1):
+                    if not isinstance(check, dict):
+                        continue
+                    check_id = check.get("id")
+                    claim_class = check.get("claim_class")
+                    evidence = check.get("evidence")
+                    has_evidence = isinstance(evidence, str) and bool(
+                        evidence.strip()
+                    )
+                    claims_verified = claim_class == "verified" or (
+                        claim_class is None and has_evidence
+                    )
+                    if claims_verified and not any(
+                        isinstance(e, dict)
+                        and e.get("class") in NON_ATTESTATION_EVIDENCE
+                        and e.get("claim_id") == check_id
+                        for e in entries
+                    ):
+                        out.append(
+                            f"ENTRY {report.relative_to(root)}#{idx}: "
+                            f"check {check_idx} declares 'verified' without "
+                            "non-attestation evidence entry"
+                        )
             deviation = data.get("deviation")
             if deviation is not None:
                 if not isinstance(deviation, dict):
@@ -533,6 +590,112 @@ def _review_gate_passed(session: Path) -> bool:
         ):
             return True
     return False
+
+
+def _evidence_entry_issues(entry: object, index: int) -> list[str]:
+    """EV-002/EV-003: shape of one evidence entry (ENTRY JSON or TOML)."""
+    if not isinstance(entry, dict):
+        return [f"evidence entry {index} is not an object"]
+    issues: list[str] = []
+    cls = entry.get("class")
+    if cls not in EVIDENCE_CLASSES:
+        issues.append(f"evidence entry {index}: bad class {cls!r}")
+    claim_id = entry.get("claim_id")
+    if not isinstance(claim_id, str) or not claim_id.strip():
+        issues.append(f"evidence entry {index}: missing claim_id")
+    ref = entry.get("ref")
+    if not isinstance(ref, str) or not ref.strip():
+        issues.append(f"evidence entry {index}: missing ref")
+    if cls == "measurement":
+        exit_code = entry.get("exit_code")
+        if exit_code is not None and (
+            not isinstance(exit_code, int) or exit_code < 0
+        ):
+            issues.append(
+                f"evidence entry {index}: measurement exit_code must be a "
+                "non-negative integer"
+            )
+    if cls == "attestation":
+        actor = entry.get("actor")
+        statement = entry.get("statement")
+        if not isinstance(actor, str) or not actor.strip():
+            issues.append(f"evidence entry {index}: attestation missing actor")
+        if not isinstance(statement, str) or not statement.strip():
+            issues.append(
+                f"evidence entry {index}: attestation missing statement"
+            )
+    return issues
+
+
+def _toml_blocks(text: str) -> list[str]:
+    """Return the bodies of every ```toml fenced block."""
+    return [m.group(1) for m in re.finditer(r"```toml\n(.*?)\n```", text, re.DOTALL)]
+
+
+def _toml_scalar(raw: str):
+    """Parse a minimal TOML scalar (string, bool, int)."""
+    raw = raw.strip()
+    if raw.startswith('"') and raw.endswith('"'):
+        return raw[1:-1]
+    if raw in ("true", "false"):
+        return raw == "true"
+    try:
+        return int(raw)
+    except ValueError:
+        return raw
+
+
+def _array_entries(text: str, section: str, key: str) -> list[dict]:
+    """Collect ``[[key]]`` entries from the TOML blocks of a section."""
+    entries: list[dict] = []
+    body = _section_text(text, section)
+    current: dict | None = None
+    for block in _toml_blocks(body):
+        for line in block.splitlines():
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            m = re.match(r"^\[\[([^\]]+)\]\]$", line)
+            if m:
+                current = {} if m.group(1) == key else None
+                if current is not None:
+                    entries.append(current)
+                continue
+            m = re.match(r"^([A-Za-z0-9_]+)\s*=\s*(.+)$", line)
+            if m and current is not None:
+                current[m.group(1)] = _toml_scalar(m.group(2))
+    return entries
+
+
+def _verification_evidence_issues(text: str) -> list[str]:
+    """EV-004: VERIFICATION_REPORT [[evidence]] shape and verified rule."""
+    issues: list[str] = []
+    entries = _array_entries(text, "Evidence", "evidence")
+    for i, entry in enumerate(entries, 1):
+        issues.extend(_evidence_entry_issues(entry, i))
+    claims = _array_entries(
+        text, "Acceptance Criteria Evaluation", "acceptance_criteria"
+    ) + _array_entries(text, "Test Results", "test_results")
+    for claim in claims:
+        if claim.get("result") not in ("PASS", "PARTIAL"):
+            continue
+        claim_class = claim.get("claim_class")
+        evidence = claim.get("evidence")
+        claims_verified = claim_class == "verified" or (
+            claim_class is None
+            and isinstance(evidence, str)
+            and bool(evidence.strip())
+        )
+        if claims_verified and not any(
+            e.get("class") in NON_ATTESTATION_EVIDENCE
+            and e.get("claim_id") == claim.get("claim_id")
+            for e in entries
+        ):
+            issues.append(
+                f"claim {claim.get('claim_id')!r} declares 'verified' without "
+                "non-attestation evidence"
+            )
+    return issues
 
 
 def main(argv: list[str] | None = None) -> int:

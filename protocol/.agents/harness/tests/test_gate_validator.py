@@ -53,7 +53,8 @@ def h06_sections(extra: dict | None = None) -> dict:
         "Execution Plan Reference": "- plan",
         "Verification Objective": "- v",
         "Acceptance Criteria Evaluation": (
-            "```toml\n[[acceptance_criteria]]\ncriterion = \"c\"\nresult = \"PASS\"\n```"
+            "```toml\n[[acceptance_criteria]]\nclaim_id = \"AC-01\"\n"
+            'criterion = "c"\nresult = "PASS"\nclaim_class = "attested"\n```'
         ),
         "Test Results": "- none",
         "Issues Found": "- none",
@@ -300,6 +301,7 @@ def make_h06_report(
     test_results_toml: str,
     session_log: str | None = None,
     evidence: str | None = None,
+    evidence_toml: str | None = None,
 ) -> Path:
     """Build a VERIFICATION_REPORT with a test_results TOML block."""
     session = tmp_path / ".project" / f"test-{uuid.uuid4()}" / "00"
@@ -314,7 +316,8 @@ def make_h06_report(
         "Execution Plan Reference": "- plan",
         "Verification Objective": "- v",
         "Acceptance Criteria Evaluation": (
-            "```toml\n[[acceptance_criteria]]\ncriterion = \"c\"\nresult = \"PASS\"\n```"
+            "```toml\n[[acceptance_criteria]]\nclaim_id = \"AC-01\"\n"
+            'criterion = "c"\nresult = "PASS"\nclaim_class = "attested"\n```'
         ),
         "Test Results": test_results_toml,
         "Issues Found": "- none",
@@ -323,6 +326,8 @@ def make_h06_report(
         "State Transition": "- x",
         "Rubric Evaluation": rubric_block(),
     }
+    if evidence_toml is not None:
+        sections["Evidence"] = evidence_toml
     parts = ["# Report"]
     for heading, body in sections.items():
         parts.append(f"## {heading}")
@@ -335,9 +340,13 @@ def make_h06_report(
 def test_h06_test_results_evidence_passes(tmp_path):
     artifact = make_h06_report(
         tmp_path,
-        "```toml\n[[test_results]]\ntest = \"pytest -q\"\nresult = \"PASS\"\n"
-        'details = ""\nevidence = "results.log"\n```',
+        "```toml\n[[test_results]]\nclaim_id = \"TR-01\"\ntest = \"pytest -q\"\n"
+        'result = "PASS"\ndetails = ""\nevidence = "results.log"\n```',
         evidence="results.log",
+        evidence_toml=(
+            "```toml\n[[evidence]]\nclass = \"reference\"\nclaim_id = \"TR-01\"\n"
+            'ref = "results.log"\n```'
+        ),
     )
     checks, decision = gate_validator.validate("H06", artifact)
     assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]
@@ -347,8 +356,8 @@ def test_h06_test_results_evidence_passes(tmp_path):
 def test_h06_test_results_session_log_fallback_passes(tmp_path):
     artifact = make_h06_report(
         tmp_path,
-        "```toml\n[[test_results]]\ntest = \"pytest -q\"\nresult = \"PASS\"\n"
-        'details = ""\n```',
+        "```toml\n[[test_results]]\nclaim_id = \"TR-01\"\ntest = \"pytest -q\"\n"
+        'result = "PASS"\ndetails = ""\nclaim_class = "attested"\n```',
         session_log="ran: pytest -q\n",
     )
     checks, decision = gate_validator.validate("H06", artifact)
@@ -640,3 +649,162 @@ def test_h06_standard_review_report_skips(tmp_path):
     checks, decision = gate_validator.validate("H06", artifact)
     assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]
     assert any(c["id"] == "review_report" and c["result"] == "SKIP" for c in checks)
+
+
+def test_h06_verified_criterion_without_evidence_fails(tmp_path):
+    set_rubrics(tmp_path, False)
+    artifact = make_artifact(
+        tmp_path,
+        "VERIFICATION_REPORT.md",
+        h06_sections(
+            {
+                "Acceptance Criteria Evaluation": (
+                    "```toml\n[[acceptance_criteria]]\nclaim_id = \"AC-01\"\n"
+                    'criterion = "c"\nresult = "PASS"\nclaim_class = "verified"\n```'
+                ),
+                "Rubric Evaluation": rubric_block(),
+            }
+        ),
+    )
+    checks, decision = gate_validator.validate("H06", artifact)
+    assert decision == "FAIL"
+    assert any(
+        "verified criterion without non-attestation evidence" in c["evidence"]
+        for c in checks
+    )
+
+
+def test_h06_verified_criterion_with_measurement_passes(tmp_path):
+    set_rubrics(tmp_path, False)
+    artifact = make_artifact(
+        tmp_path,
+        "VERIFICATION_REPORT.md",
+        h06_sections(
+            {
+                "Acceptance Criteria Evaluation": (
+                    "```toml\n[[acceptance_criteria]]\nclaim_id = \"AC-01\"\n"
+                    'criterion = "c"\nresult = "PASS"\nclaim_class = "verified"\n```'
+                ),
+                "Rubric Evaluation": rubric_block(),
+                "Evidence": (
+                    "```toml\n[[evidence]]\nclass = \"measurement\"\n"
+                    'claim_id = "AC-01"\nref = "results.log"\n'
+                    'command = "pytest -q"\nexit_code = 0\n```'
+                ),
+            }
+        ),
+    )
+    checks, decision = gate_validator.validate("H06", artifact)
+    assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]
+    assert any(c["id"] == "evidence" and c["result"] == "PASS" for c in checks)
+
+
+def test_h06_attestation_only_for_verified_fails(tmp_path):
+    set_rubrics(tmp_path, False)
+    artifact = make_artifact(
+        tmp_path,
+        "VERIFICATION_REPORT.md",
+        h06_sections(
+            {
+                "Acceptance Criteria Evaluation": (
+                    "```toml\n[[acceptance_criteria]]\nclaim_id = \"AC-01\"\n"
+                    'criterion = "c"\nresult = "PASS"\nclaim_class = "verified"\n```'
+                ),
+                "Rubric Evaluation": rubric_block(),
+                "Evidence": (
+                    "```toml\n[[evidence]]\nclass = \"attestation\"\n"
+                    'claim_id = "AC-01"\nref = "-"\nactor = "executor"\n'
+                    'statement = "wrote the code"\n```'
+                ),
+            }
+        ),
+    )
+    checks, decision = gate_validator.validate("H06", artifact)
+    assert decision == "FAIL"
+    assert any(
+        "verified criterion without non-attestation evidence" in c["evidence"]
+        for c in checks
+    )
+
+
+def test_h06_attested_criterion_with_marked_attestation_passes(tmp_path):
+    set_rubrics(tmp_path, False)
+    artifact = make_artifact(
+        tmp_path,
+        "VERIFICATION_REPORT.md",
+        h06_sections(
+            {
+                "Rubric Evaluation": rubric_block(),
+                "Evidence": (
+                    "```toml\n[[evidence]]\nclass = \"attestation\"\n"
+                    'claim_id = "AC-01"\nref = "-"\nactor = "executor"\n'
+                    'statement = "wrote the code"\n```'
+                )
+            }
+        ),
+    )
+    checks, decision = gate_validator.validate("H06", artifact)
+    assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]
+
+
+def test_h06_unmarked_criterion_fails(tmp_path):
+    set_rubrics(tmp_path, False)
+    artifact = make_artifact(
+        tmp_path,
+        "VERIFICATION_REPORT.md",
+        h06_sections(
+            {
+                "Acceptance Criteria Evaluation": (
+                    "```toml\n[[acceptance_criteria]]\nclaim_id = \"AC-01\"\n"
+                    'criterion = "c"\nresult = "PASS"\n```'
+                ),
+                "Rubric Evaluation": rubric_block(),
+            }
+        ),
+    )
+    checks, decision = gate_validator.validate("H06", artifact)
+    assert decision == "FAIL"
+    assert any(
+        "criterion without evidence and without claim_class" in c["evidence"]
+        for c in checks
+    )
+
+
+def test_h06_evidence_bad_class_fails(tmp_path):
+    set_rubrics(tmp_path, False)
+    artifact = make_artifact(
+        tmp_path,
+        "VERIFICATION_REPORT.md",
+        h06_sections(
+            {
+                "Rubric Evaluation": rubric_block(),
+                "Evidence": (
+                    "```toml\n[[evidence]]\nclass = \"hearsay\"\n"
+                    'claim_id = "AC-01"\nref = "x"\n```'
+                )
+            }
+        ),
+    )
+    checks, decision = gate_validator.validate("H06", artifact)
+    assert decision == "FAIL"
+    assert any("bad class" in c["evidence"] for c in checks)
+
+
+def test_h06_evidence_missing_ref_fails(tmp_path):
+    set_rubrics(tmp_path, False)
+    artifact = make_artifact(
+        tmp_path,
+        "VERIFICATION_REPORT.md",
+        h06_sections(
+            {
+                "Rubric Evaluation": rubric_block(),
+                "Evidence": (
+                    "```toml\n[[evidence]]\nclass = \"observation\"\n"
+                    'claim_id = "AC-01"\n```'
+                )
+            }
+        ),
+    )
+    checks, decision = gate_validator.validate("H06", artifact)
+    assert decision == "FAIL"
+    assert any("missing ref" in c["evidence"] for c in checks)

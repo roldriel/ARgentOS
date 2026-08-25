@@ -38,6 +38,10 @@ Validate that the execution phase completed all planned steps and left the proje
 ## Checklist
 
 **Evaluation audience:** the harness runner no longer exists; every item in this policy is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` are structurally checkable and are restated as numbered instructions in §"Gate Checklist", where the Orchestrator MUST cite evidence per item. Items marked `[agent]` are declared judgment.
+Evidence is cited per item with a class from the evidence standard
+(`.agents/standards/quality/EVIDENCE.md`): `observation`/`measurement`/
+`reference` when the evidence is citable; `attestation` only with actor and
+statement.
 
 1. Every step in `EXECUTION_PLAN.md` has been executed or explicitly documented as skipped with justification. `[gate]` (see §"Gate Checklist", item 3: every step is `COMPLETED` or `SKIPPED` with notes)
 2. No project files outside the plan scope were modified. `[agent]`
@@ -65,7 +69,7 @@ The Orchestrator must:
 
 ## Gate Checklist
 
-The Orchestrator evaluates each item below by judgment when the gate fires and MUST cite evidence per item (artifact path, declared value, or offending entry) in `HARNESS_REPORT.md`.
+The Orchestrator evaluates each item below by judgment when the gate fires and MUST cite evidence per item (artifact path, declared value, or offending entry) in `HARNESS_REPORT.md`, with an evidence class per `.agents/standards/quality/EVIDENCE.md` (`observation`/`measurement`/`reference` when citable, marked `attestation` otherwise).
 
 1. Verify that `EXECUTION_SUMMARY.md` exists in the current iteration directory (`.project/<session-uuid>/<iteration>/`). Cite the resolved artifact path as evidence.
 2. Verify that `## Final Project State` contains a parseable TOML block and that `final_state.status` is one of `VERIFIABLE` or `BLOCKED`. The gate FAILS unless the declared status is `VERIFIABLE`. Cite the declared value.

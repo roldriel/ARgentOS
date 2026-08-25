@@ -143,12 +143,29 @@ def _write_session(tmp_path, version: str | None = "4.0.0"):
     (session / "00").mkdir(parents=True)
     if version is not None:
         (session / "SESSION_LOG.md").write_text(_session_log(version), encoding="utf-8")
+    entry = {
+        "timestamp": "2026-08-25T10:05:00Z",
+        "clock": "utc",
+        "trigger": "H04",
+        "transition": "PLANNING -> PLAN_READY",
+        "result": "PASS",
+        "checks": [
+            {"id": "c", "result": "PASS", "evidence": "05-EXECUTION_PLAN.md"}
+        ],
+    }
+    if (
+        version is not None
+        and csa._parse_version(version) >= csa.EVIDENCE_PROTOCOL
+    ):
+        entry["evidence"] = [
+            {
+                "class": "reference",
+                "claim_id": "c",
+                "ref": "05-EXECUTION_PLAN.md",
+            }
+        ]
     (session / "HARNESS_REPORT.md").write_text(
-        '<!-- ENTRY: {"timestamp": "2026-08-25T10:05:00Z", "clock": "utc", '
-        '"trigger": "H04", "transition": "PLANNING -> PLAN_READY", '
-        '"result": "PASS", "checks": [{"id": "c", "result": "PASS", '
-        '"evidence": "05-EXECUTION_PLAN.md"}]} -->\n',
-        encoding="utf-8",
+        f"<!-- ENTRY: {json.dumps(entry)} -->\n", encoding="utf-8"
     )
     metric = (
         '<!-- METRIC: {"timestamp": "2026-08-25T10:01:00Z", "clock": "utc", '
@@ -411,6 +428,84 @@ def test_deferred_items_with_confirmation_passes(tmp_path):
         "# Report\n\n## Deferred Items\n\n```toml\n"
         '[[deferred_items]]\nitem = "sign-off"\ndeferred = true\n'
         'confirmed_by = "user"\nconfirmation_date = "2026-08-25"\n```\n',
+        encoding="utf-8",
+    )
+    assert csa.scan(tmp_path) == []
+
+
+def test_evidence_protocol_session_passes(tmp_path):
+    _write_session(tmp_path, version="7.0.0")
+    assert csa.scan(tmp_path) == []
+
+
+def test_evidence_entry_bad_class_flagged(tmp_path):
+    session = _write_session(tmp_path, version="7.0.0")
+    (session / "HARNESS_REPORT.md").write_text(
+        '<!-- ENTRY: {"timestamp": "2026-08-25T10:05:00Z", "clock": "utc", '
+        '"trigger": "H04", "transition": "PLANNING -> PLAN_READY", '
+        '"result": "PASS", "checks": [{"id": "c", "result": "PASS", '
+        '"claim_class": "verified"}], '
+        '"evidence": [{"class": "hearsay", "claim_id": "c", "ref": "x"}]} -->\n',
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any("bad class 'hearsay'" in x for x in v)
+
+
+def test_verified_without_non_attestation_evidence_flagged(tmp_path):
+    session = _write_session(tmp_path, version="7.0.0")
+    (session / "HARNESS_REPORT.md").write_text(
+        '<!-- ENTRY: {"timestamp": "2026-08-25T10:05:00Z", "clock": "utc", '
+        '"trigger": "H04", "transition": "PLANNING -> PLAN_READY", '
+        '"result": "PASS", "checks": [{"id": "c", "result": "PASS", '
+        '"claim_class": "verified"}], '
+        '"evidence": [{"class": "attestation", "claim_id": "c", "ref": "-", '
+        '"actor": "executor", "statement": "did it"}]} -->\n',
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any("without non-attestation evidence" in x for x in v)
+
+
+def test_attested_with_marked_attestation_passes(tmp_path):
+    session = _write_session(tmp_path, version="7.0.0")
+    (session / "HARNESS_REPORT.md").write_text(
+        '<!-- ENTRY: {"timestamp": "2026-08-25T10:05:00Z", "clock": "utc", '
+        '"trigger": "H04", "transition": "PLANNING -> PLAN_READY", '
+        '"result": "PASS", "checks": [{"id": "c", "result": "PASS", '
+        '"claim_class": "attested"}], '
+        '"evidence": [{"class": "attestation", "claim_id": "c", "ref": "-", '
+        '"actor": "executor", "statement": "did it"}]} -->\n',
+        encoding="utf-8",
+    )
+    assert csa.scan(tmp_path) == []
+
+
+def test_verification_report_verified_without_evidence_flagged(tmp_path):
+    session = _write_session(tmp_path, version="7.0.0")
+    (session / "00" / "07-VERIFICATION_REPORT.md").write_text(
+        "# Report\n\n"
+        "## Acceptance Criteria Evaluation\n\n```toml\n"
+        '[[acceptance_criteria]]\nclaim_id = "AC-01"\ncriterion = "c"\n'
+        'result = "PASS"\nclaim_class = "verified"\n```\n',
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any(
+        "REPORT" in x and "without non-attestation evidence" in x for x in v
+    )
+
+
+def test_verification_report_measurement_evidence_passes(tmp_path):
+    session = _write_session(tmp_path, version="7.0.0")
+    (session / "00" / "07-VERIFICATION_REPORT.md").write_text(
+        "# Report\n\n"
+        "## Acceptance Criteria Evaluation\n\n```toml\n"
+        '[[acceptance_criteria]]\nclaim_id = "AC-01"\ncriterion = "c"\n'
+        'result = "PASS"\nclaim_class = "verified"\n```\n\n'
+        "## Evidence\n\n```toml\n"
+        '[[evidence]]\nclass = "measurement"\nclaim_id = "AC-01"\n'
+        'ref = "results.log"\ncommand = "pytest -q"\nexit_code = 0\n```\n',
         encoding="utf-8",
     )
     assert csa.scan(tmp_path) == []

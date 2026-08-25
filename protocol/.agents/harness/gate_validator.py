@@ -29,7 +29,10 @@ Checks per trigger:
   evaluations);
 - profile-aware review gate (H06: a `complex` task requires a
   ``REVIEW_REPORT.md`` in the iteration) and the ``Deferred Items`` TOML
-  structure when present (H06).
+  structure when present (H06);
+- evidence model (H06: ``[[evidence]]`` entries with ``class``/``claim_id``/
+  ``ref`` and the VERIFIED rule — every PASS claim needs non-attestation
+  evidence or an explicit ``claim_class``).
 
 Usage:
   python .agents/harness/gate_validator.py --trigger <HXX> --artifact <path>
@@ -78,6 +81,16 @@ BASE_RUBRICS = (
     "EXECUTION_SUMMARY_RUBRIC",
     "VERIFICATION_REPORT_RUBRIC",
 )
+
+EVIDENCE_CLASSES = {
+    "observation",
+    "measurement",
+    "attestation",
+    "assertion",
+    "reference",
+}
+
+NON_ATTESTATION_EVIDENCE = EVIDENCE_CLASSES - {"attestation"}
 
 TRIGGERS = {
     "H00": {
@@ -495,6 +508,7 @@ def validate(trigger: str, artifact: Path, root: Path | None = None) -> tuple[li
         checks.extend(_check_test_results(text, roots))
         checks.extend(_check_deferred_items(text))
         checks.append(_check_review_report(artifact))
+        checks.extend(_check_evidence(text))
     checks.extend(check_citations(text, roots))
 
     failed = any(c["result"] == "FAIL" for c in checks)
@@ -557,6 +571,7 @@ def _check_toml(toml_key: str, text: str) -> list[dict]:
                                "evidence": "acceptance_criteria is not a list"})
                 continue
             bad = []
+            evidence_entries = _evidence_entries(text)
             for criterion in value:
                 if not isinstance(criterion, dict):
                     bad.append("non-object criterion")
@@ -564,11 +579,29 @@ def _check_toml(toml_key: str, text: str) -> list[dict]:
                 result = criterion.get("result")
                 if result not in ("PASS", "FAIL", "PARTIAL"):
                     bad.append(f"bad criterion result {result!r}")
+                    continue
                 elif result == "PARTIAL" and not criterion.get("action_plan"):
                     bad.append("PARTIAL criterion without action_plan")
+                if result == "FAIL":
+                    continue
+                claim_class = criterion.get("claim_class")
+                evidence = criterion.get("evidence")
+                claims_verified = claim_class == "verified" or (
+                    claim_class is None
+                    and isinstance(evidence, str)
+                    and bool(evidence.strip())
+                )
+                if claim_class is None and not claims_verified:
+                    bad.append("criterion without evidence and without claim_class")
+                elif claims_verified and not _has_non_attestation_evidence(
+                    evidence_entries, criterion.get("claim_id")
+                ):
+                    bad.append(
+                        "verified criterion without non-attestation evidence"
+                    )
             if bad:
                 checks.append({"id": "acceptance_criteria", "result": "FAIL",
-                               "evidence": f"{len(bad)} offending criterion/criteria"})
+                               "evidence": "; ".join(bad[:5])})
             else:
                 checks.append({"id": "acceptance_criteria", "result": "PASS",
                                "evidence": f"{len(value)} valid criterion/criteria"})
@@ -614,6 +647,80 @@ def _evidence_resolves(evidence: str, roots: tuple) -> bool:
         for base in base_dirs:
             candidates.append(base / fp)
     return any(c.is_file() for c in candidates)
+
+
+def _evidence_entries(text: str) -> list[dict]:
+    """Collect ``[[evidence]]`` entries from the ``## Evidence`` section."""
+    body = section_text(text, "Evidence")
+    entries: list[dict] = []
+    for block in toml_blocks(body):
+        parsed = parse_toml(block)
+        value = parsed.get("evidence")
+        if isinstance(value, list):
+            entries.extend(x for x in value if isinstance(x, dict))
+    return entries
+
+
+def _has_non_attestation_evidence(entries: list[dict], claim_id: object) -> bool:
+    """True when an evidence entry supports the claim with class != attestation."""
+    return any(
+        e.get("class") in NON_ATTESTATION_EVIDENCE and e.get("claim_id") == claim_id
+        for e in entries
+    )
+
+
+def _check_evidence(text: str) -> list[dict]:
+    """H06: validate the ``[[evidence]]`` entries of ``## Evidence``."""
+    entries = _evidence_entries(text)
+    if not entries:
+        return [
+            {
+                "id": "evidence",
+                "result": "SKIP",
+                "evidence": "no [[evidence]] entries",
+            }
+        ]
+    bad: list[str] = []
+    for i, entry in enumerate(entries, 1):
+        cls = entry.get("class")
+        if cls not in EVIDENCE_CLASSES:
+            bad.append(f"entry {i}: bad class {cls!r}")
+        claim_id = entry.get("claim_id")
+        if not isinstance(claim_id, str) or not claim_id.strip():
+            bad.append(f"entry {i}: missing claim_id")
+        ref = entry.get("ref")
+        if not isinstance(ref, str) or not ref.strip():
+            bad.append(f"entry {i}: missing ref")
+        if cls == "measurement":
+            exit_code = entry.get("exit_code")
+            if exit_code is not None and (
+                not isinstance(exit_code, int) or exit_code < 0
+            ):
+                bad.append(
+                    f"entry {i}: measurement exit_code must be a non-negative integer"
+                )
+        if cls == "attestation":
+            actor = entry.get("actor")
+            statement = entry.get("statement")
+            if not isinstance(actor, str) or not actor.strip():
+                bad.append(f"entry {i}: attestation missing actor")
+            if not isinstance(statement, str) or not statement.strip():
+                bad.append(f"entry {i}: attestation missing statement")
+    if bad:
+        return [
+            {
+                "id": "evidence",
+                "result": "FAIL",
+                "evidence": "; ".join(bad[:5]),
+            }
+        ]
+    return [
+        {
+            "id": "evidence",
+            "result": "PASS",
+            "evidence": f"{len(entries)} valid evidence entr(y/ies)",
+        }
+    ]
 
 
 def _check_test_results(text: str, roots: tuple) -> list[dict]:
@@ -663,6 +770,20 @@ def _check_test_results(text: str, roots: tuple) -> list[dict]:
                 bad.append(f"entry {i}: evidence does not resolve to an existing file")
         elif not (isinstance(test, str) and test and test in log_text):
             bad.append(f"entry {i}: no evidence and test command not found in SESSION_LOG.md")
+        claim_class = entry.get("claim_class")
+        claims_verified = claim_class == "verified" or (
+            claim_class is None
+            and isinstance(evidence, str)
+            and bool(evidence.strip())
+        )
+        if claim_class is None and not claims_verified:
+            bad.append(f"entry {i}: result without evidence and without claim_class")
+        elif claims_verified and not _has_non_attestation_evidence(
+            _evidence_entries(text), entry.get("claim_id")
+        ):
+            bad.append(
+                f"entry {i}: verified result without non-attestation evidence"
+            )
     if bad:
         return [
             {

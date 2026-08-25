@@ -45,6 +45,51 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [7.0.0] — 2026-08-25
+
+### Added
+
+- **Clases de evidencia y estándar EVIDENCE** (plan 79, RFC-65):
+  `.agents/standards/quality/EVIDENCE.md` define las cinco clases
+  (`observation`/`measurement`/`attestation`/`assertion`/`reference`), el
+  esquema `[[evidence]]` (`class`/`claim_id`/`ref`) y los invariantes
+  EV-001…EV-004 / REL-001…REL-003; `standards/INDEX.md` y `harness/INDEX.md`
+  lo referencian.
+- **Bloques `[[evidence]]` en el payload** (plan 79, RFC-65):
+  `VERIFICATION_REPORT.md` gana la sección `## Evidence` y `claim_id` en
+  criterios/resultados (`schema_version` 3.0.0); los ENTRY de
+  `HARNESS_REPORT.md` pueden registrar el array `evidence` con clase por check.
+- **Checks mecánicos de evidencia** (plan 79, RFC-65): `gate_validator.py`
+  (H06) valida las entries y rechaza un criterio PASS sin evidencia con clase
+  válida; `audit_gates.py` marca atestaciones sin etiquetar y checks `verified`
+  sin evidencia no-atestación; `check_session_artifacts.py` aplica los checks a
+  sesiones `>= 7.0.0`.
+
+### Changed
+
+- **Policies H05/H06/H07 con evidencia con clase por ítem** (plan 79, RFC-65,
+  MAJOR): los checklists citan evidencia con clase por ítem; H06 agrega el ítem
+  `[gate]` de `## Evidence`/VERIFIED; H07 exige `reference`/`assertion` para la
+  autorización escrita de la Rama B.
+- **Significado de PASS/"verificado"** (plan 79, RFC-65, MAJOR): un claim es
+  `verified` solo con una entrada de evidencia de clase distinta de
+  `attestation`; un ítem `[gate]` se satisface con observación/medición/
+  referencia o desviación documentada; `docs/MIGRATION.md` §8 documenta la
+  migración y las trazas históricas.
+
+### Removed
+
+- **"Verificado" sin entrada de evidencia** (plan 79, RFC-65, MAJOR): la
+  declaración "verificado" sin entrada de evidencia con clase deja de ser
+  válida en reportes nuevos; el término permitido es "atestado".
+
+### Modelo conceptual
+
+RFC-65 aceptada (plan 79, 2026-08-25): clases de evidencia y regla VERIFIED
+(D4, D12).
+
+---
+
 ## [5.0.0] — 2026-08-25
 
 ### Added

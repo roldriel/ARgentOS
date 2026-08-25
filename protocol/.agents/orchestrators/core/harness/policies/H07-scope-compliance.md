@@ -39,6 +39,10 @@ Validate that the executed work stayed within the task assigned by the user — 
 ## Checklist
 
 **Evaluation audience:** the harness runner no longer exists; every item in this policy is evaluated by the Orchestrator's judgment when the gate fires. Items marked `[gate]` are structurally checkable and are restated as numbered instructions in §"Gate Checklist", where the Orchestrator MUST cite evidence per item. Items marked `[agent]` are declared judgment.
+Evidence is cited per item with a class from the evidence standard
+(`.agents/standards/quality/EVIDENCE.md`): `observation`/`measurement`/
+`reference`/`assertion` when the evidence is citable; `attestation` only with
+actor and statement.
 
 1. The artifact contains a `Scope Compliance` section. `[gate]` (see §"Gate Checklist", item 2)
 2. The section declares whether the work respected the assigned scope. `[gate]` (see §"Gate Checklist", item 3, which verifies the declared `scope_respected` value)
@@ -71,7 +75,7 @@ The Orchestrator evaluates each item below by judgment when the gate fires and M
 4. Verify that `scope_compliance.unplanned_changes` is present. When `scope_compliance.user_authorized_extra_work` is `false` (Branch A), the list MUST be empty; when it is `true` (Branch B), the list may be non-empty and the written authorization MUST be cited in the report. Cite the declared value and the evidence.
 5. Verify the declared `scope_compliance.user_authorized_extra_work` value. For Branch B (`true`), the Orchestrator MUST judge the written authorization evidence (the report references `SESSION_LOG.md` or a session artifact) and MAY activate the `decision-extractor` skill to recover the confirmed user decision; the evidence citation is recorded in `HARNESS_REPORT.md`. Cite the declared value and the evidence.
 6. Verify the branch is coherent: `scope_respected = true` with a non-empty `unplanned_changes` requires `user_authorized_extra_work = true` with cited evidence; a mixed declaration is a FAIL. Cite the declared values.
-7. Verify the evidence-or-attestation rule: every check of this gate is recorded in `HARNESS_REPORT.md` citing evidence or declaring `claim_class` (`verified` requires evidence; `attested`/`inference` are declared explicitly). For Branch B, the written authorization is cited as evidence; if the Orchestrator cannot cite it, the PASS is recorded as `attested`, not as external verification.
+7. Verify the evidence-or-attestation rule: every check of this gate is recorded in `HARNESS_REPORT.md` citing evidence with a class per `.agents/standards/quality/EVIDENCE.md` or declaring `claim_class` (`verified` requires a non-attestation evidence entry; `attested`/`inference` are declared explicitly). For Branch B, the written authorization is cited as `reference` (a `SESSION_LOG.md` entry or session artifact) or `assertion` (a user decision recovered via the `decision-extractor` skill); if the Orchestrator cannot cite it, the PASS is recorded as `attested`, not as external verification.
 8. Verify dimension coherence: `scope_compliance` records approval/scope
    decisions (Approval/Gate State), never the artifact lifecycle; when citing
    each check, indicate the state dimension it belongs to (ST-004).

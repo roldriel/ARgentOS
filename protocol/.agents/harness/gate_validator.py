@@ -36,6 +36,9 @@ Checks per trigger:
 - authorization model (H01: ``[[effects]]`` shape and enums of the ``Effects``
   section; H04: the EXECUTION_PLAN must not declare its own ``Effects``
   section).
+- knowledge lifecycle (H05: ``[[invalidated_facts]]`` shape when the
+  ``Invalidated Facts`` section is present; H10: ``kind``/``path`` of the
+  embedded ``recommended_entries`` JSON when present).
 
 Usage:
   python .agents/harness/gate_validator.py --trigger <HXX> --artifact <path>
@@ -106,6 +109,8 @@ EFFECT_KINDS = {
 AUTHORIZED_BY = {"user", "unattended_default"}
 
 EFFECT_STATUSES = {"authorized", "not_authorized", "pending_user_confirmation"}
+
+KNOWLEDGE_KINDS = {"discovery", "knowledge", "lesson"}
 
 TRIGGERS = {
     "H00": {
@@ -302,6 +307,19 @@ def toml_blocks(text: str) -> list[str]:
     return [m.group(1) for m in re.finditer(r"```toml\n(.*?)\n```", text, re.DOTALL)]
 
 
+def json_blocks(text: str) -> list[dict]:
+    """Return the parsed objects of every ```json fenced block."""
+    blocks: list[dict] = []
+    for m in re.finditer(r"```json\n(.*?)\n```", text, re.DOTALL):
+        try:
+            data = json.loads(m.group(1))
+        except json.JSONDecodeError:
+            continue
+        if isinstance(data, dict):
+            blocks.append(data)
+    return blocks
+
+
 def features(root: Path) -> dict:
     """Read .agents/features.toml boolean flags (best-effort)."""
     data: dict = {}
@@ -493,6 +511,12 @@ def validate(trigger: str, artifact: Path, root: Path | None = None) -> tuple[li
 
     if trigger == "H04":
         checks.extend(_check_no_plan_effects(text))
+
+    if trigger == "H05":
+        checks.extend(_check_invalidated_facts(text))
+
+    if trigger == "H10":
+        checks.extend(_check_recommendation(text))
 
     if spec.get("technical_approach"):
         body = section_text(text, "Technical Approach")
@@ -1017,6 +1041,113 @@ def _check_no_plan_effects(text: str) -> list[dict]:
             "id": "effects",
             "result": "PASS",
             "evidence": "no Effects section in the plan",
+        }
+    ]
+
+
+def _check_invalidated_facts(text: str) -> list[dict]:
+    """H05: validate the ``[[invalidated_facts]]`` block when present.
+
+    The ``Invalidated Facts`` section is required-when-applicable (KN-004):
+    an execution that changed discovered facts must declare them. A missing
+    section is a SKIP (the applicability is executor judgment); a present
+    section without entries or with empty fields is a FAIL.
+    """
+    body = section_text(text, "Invalidated Facts")
+    if not body.strip():
+        return [
+            {
+                "id": "invalidated_facts",
+                "result": "SKIP",
+                "evidence": "no Invalidated Facts section",
+            }
+        ]
+    entries: list[dict] = []
+    for block in toml_blocks(body):
+        parsed = parse_toml(block)
+        value = parsed.get("invalidated_facts")
+        if isinstance(value, list):
+            entries.extend(x for x in value if isinstance(x, dict))
+    if not entries:
+        return [
+            {
+                "id": "invalidated_facts",
+                "result": "FAIL",
+                "evidence": (
+                    "Invalidated Facts section present without "
+                    "[[invalidated_facts]] entries"
+                ),
+            }
+        ]
+    bad: list[str] = []
+    for i, entry in enumerate(entries, 1):
+        for field in ("fact", "entry", "reason"):
+            value = entry.get(field)
+            if not isinstance(value, str) or not value.strip():
+                bad.append(f"entry {i}: missing {field}")
+    if bad:
+        return [
+            {
+                "id": "invalidated_facts",
+                "result": "FAIL",
+                "evidence": "; ".join(bad[:5]),
+            }
+        ]
+    return [
+        {
+            "id": "invalidated_facts",
+            "result": "PASS",
+            "evidence": f"{len(entries)} valid invalidated fact(s)",
+        }
+    ]
+
+
+def _check_recommendation(text: str) -> list[dict]:
+    """H10: validate the embedded JSON of KB_RECOMMENDATION.md.
+
+    When a ``recommended_entries`` list exists in the embedded JSON, every
+    item must declare ``kind`` (discovery | knowledge | lesson) and a
+    non-empty ``path`` (KN-002). Without a JSON block the check is a SKIP: the
+    prose ``Recommended Entries`` section is agent judgment.
+    """
+    bad: list[str] = []
+    seen = False
+    for data in json_blocks(text):
+        entries = data.get("recommended_entries")
+        if not isinstance(entries, list):
+            continue
+        seen = True
+        for i, entry in enumerate(entries, 1):
+            if not isinstance(entry, dict):
+                bad.append(f"item {i}: not an object")
+                continue
+            kind = entry.get("kind")
+            if kind not in KNOWLEDGE_KINDS:
+                bad.append(f"item {i}: bad kind {kind!r}")
+            path = entry.get("path")
+            if not isinstance(path, str) or not path.strip():
+                bad.append(f"item {i}: missing path")
+    if not seen:
+        return [
+            {
+                "id": "recommendation",
+                "result": "SKIP",
+                "evidence": "no recommended_entries JSON block",
+            }
+        ]
+    if bad:
+        return [
+            {
+                "id": "recommendation",
+                "result": "FAIL",
+                "evidence": "; ".join(bad[:5]),
+            }
+        ]
+    return [
+        {
+            "id": "recommendation",
+            "result": "PASS",
+            "evidence": "recommended entries declare kind and path",
         }
     ]
 

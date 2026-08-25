@@ -41,9 +41,10 @@ discovery) están implementados; sus versiones históricas viven en `archive/`.
 RFCs de modelo conceptual derivadas de `ARCHITECTURAL_DECISION_MODEL.md` (basado en
 `ARCHITECTURAL_PROBLEM_MODEL.md`). RFC-62 `Accepted` (plan 76); RFC-63
 `Accepted` (plan 77); RFC-64 tiene plan de ejecución redactado (plan 78, gated
-a `Accepted` — Clase A de RFC-56); RFC-65 `Accepted` (plan 79); RFC-66…67
-`Proposal`; ninguna RFC habilita modificar `protocol/.agents/` hasta su plan de
-ejecución con la vía de autorización completa.
+a `Accepted` — Clase A de RFC-56); RFC-65 `Accepted` (plan 79); RFC-66
+`Accepted` (plan 80); RFC-67 `Accepted` (plan 81); ninguna RFC habilita
+modificar `protocol/.agents/` hasta su plan de ejecución con la vía de
+autorización completa.
 
 | RFC | Status | Descripción |
 |---|---|---|
@@ -52,7 +53,7 @@ ejecución con la vía de autorización completa.
 | `rfc/64-execution-record-model.md` | Proposal (plan 78) | Identidad, registros, temporalidad y observabilidad de la ejecución (D5, D6, D7, D10). |
 | `rfc/65-evidence-and-verification-model.md` | Accepted (plan 79) | Clases de evidencia y regla VERIFIED (D4, D12). |
 | `rfc/66-authorization-and-capability-model.md` | Accepted (plan 80) | Frontera de efectos y bloque `effects` (D8, D11). |
-| `rfc/67-knowledge-lifecycle-model.md` | Proposal | Lifecycle mínimo de conocimiento (D9). |
+| `rfc/67-knowledge-lifecycle-model.md` | Accepted (plan 81) | Lifecycle mínimo de conocimiento (D9). |
 
 ## Duodécima serie: modelo de garantías y fronteras de enforcement (25 ago 2026)
 
@@ -83,6 +84,12 @@ ejecución con la vía de autorización completa.
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
 | `80-authorization-and-capability-model.md` | RFC-66 | Executed | Distinción formal de Capability/Permission/Authorization/Execution/Effect, frontera por defecto (red/HTTP, git remoto, instalaciones, cambios destructivos y escrituras fuera del proyecto requieren autorización), bloque `effects` en TASK_SPECIFICATION con `authorized_by`/`evidence_ref`/`status`, checks de autorización en H01/H04/H05, registro de efectos ejecutados en EXECUTION_SUMMARY, estados AUTHORIZED/UNAUTHORIZED/AUTHORIZATION_UNDETERMINED sin inferir UNAUTHORIZED por ausencia de registro. Versión 8.0.0 (MAJOR). |
+
+## Decimoséptima serie: modelo de lifecycle de conocimiento (25 ago 2026)
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `81-knowledge-lifecycle-model.md` | RFC-67 | Executed | Tipos de conocimiento (`snapshot`/`claim`/`lesson`), frescura por claim con proveniencia resoluble, invalidación post-ejecución (`invalidated_facts` en EXECUTION_SUMMARY) con revalidación scoped por pipeline, lessons del cierre con `session_id`/`protocol_version`/evidencia, y `kind`/`path` en KB_RECOMMENDATION. Versión 9.0.0 (MAJOR). |
 
 ## Serie de RFCs (documentos canónicos)
 
@@ -155,7 +162,7 @@ ejecución con la vía de autorización completa.
 | RFC-64 | `rfc/64-execution-record-model.md` | Proposal (plan 78) | ¿Cómo se registra y reconstruye una ejecución sin Event Sourcing? |
 | RFC-65 | `rfc/65-evidence-and-verification-model.md` | Accepted (plan 79, 2026-08-25) | ¿Qué cuenta como evidencia y cuándo un artefacto puede declararse VERIFIED? |
 | RFC-66 | `rfc/66-authorization-and-capability-model.md` | Accepted (plan 80) | ¿Cuándo una capability está autorizada para producir un efecto? |
-| RFC-67 | `rfc/67-knowledge-lifecycle-model.md` | Proposal | ¿Qué ciclo mínimo necesita el conocimiento para ser reutilizable y revalidable? |
+| RFC-67 | `rfc/67-knowledge-lifecycle-model.md` | Accepted (plan 81) | ¿Qué ciclo mínimo necesita el conocimiento para ser reutilizable y revalidable? |
 
 ## Roadmap de implementación (planes activos)
 

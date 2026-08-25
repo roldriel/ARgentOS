@@ -149,7 +149,10 @@ See `.agents/roles/reviewer.md` for the reviewer role details and `.agents/stand
 
 When `knowledge_base` is enabled and `.project/knowledge/entries/` is non-empty, the Orchestrator invokes the `context_discoverer` worker before delegating the real phase worker. The discoverer produces `KB_RECOMMENDATION.md` with recommended KB entries and a context budget.
 
-The Orchestrator then reads the discovery report, selects the recommended entries (or overrides the selection and records the reason in `SESSION_LOG.md`), and includes the selected `knowledge_entries` and `context_budget` in the delegation payload to the phase worker. If the discoverer reports no relevant entries, the Orchestrator omits `knowledge_entries` from the payload.
+Each recommendation declares `kind` and `path` per the `KB_RECOMMENDATION.md`
+contract; the Orchestrator resolves the recommended entries by their `path`.
+
+The Orchestrator then reads the discovery report, selects the recommended entries (or overrides the selection and records the reason in `SESSION_LOG.md`), and includes the selected `knowledge_entries` and `context_budget` in the delegation payload to the phase worker. It never includes a claim that is expired or whose provenance does not resolve (`.agents/standards/context/KNOWLEDGE_LIFECYCLE.md` §Freshness per claim). If the discoverer reports no relevant entries, the Orchestrator omits `knowledge_entries` from the payload.
 
 See `.agents/roles/context_discoverer.md` and `.agents/standards/context/CONTEXT.md` for details.
 
@@ -166,6 +169,8 @@ When the `discovery_orchestrator` feature flag is enabled, the Orchestrator main
 5. The user requested an explicit refresh.
 6. An execution worker reports an inconsistency.
 7. The environment TTL (`discovery_environment_ttl_hours`, default 6h) expired and the scope is `env`.
+8. An execution declared `invalidated_facts` in `EXECUTION_SUMMARY.md`: the
+   affected entries are revalidated with the scope that owns each entry.
 
 Both TTLs are configured in `.agents/features.toml`.
 
@@ -362,6 +367,10 @@ When the workflow reaches `COMPLETED` (after harness triggers H06 and H07 pass o
 Rules:
 
 - **The agent curates.** The Orchestrator decides which learnings deserve persistence, applying the existing curation filter; the user neither chooses entry by entry nor approves persistence.
+- **Provenance.** Every persisted learning is a `lesson` claim: it carries
+  `kind: lesson`, `session_id`, `protocol_version` and an evidence reference
+  (`.agents/standards/quality/EVIDENCE.md`). The Orchestrator never persists a
+  lesson without provenance.
 - **Informative, not transactional.** The section reports what was already persisted ("Persisted in `entries/...`: ..."). It requires no user action. If the user detects an error, they request the correction as with any other protocol output; if nothing is said, nothing happens.
 - **Conditional.** If the session produced no learnings that pass the filter, the section is omitted (the empty result is not reported).
 - `VERIFICATION_REPORT.md` is not modified; the verifier's responsibilities do not change.

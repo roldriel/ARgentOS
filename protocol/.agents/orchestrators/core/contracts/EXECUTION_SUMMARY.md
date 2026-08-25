@@ -1,12 +1,12 @@
 +++
-schema_version = "3.0.0"
+schema_version = "4.0.0"
 artifact = "EXECUTION_SUMMARY.md"
 phase = "06"
 produced_by = "executor"
 enforcement = "gated"
 gated_by = ["H05"]
 +++
-schema_version = "3.0.0"
+schema_version = "4.0.0"
 
 
 ---
@@ -186,6 +186,27 @@ CRITICAL
 
 ---
 
+## Invalidated Facts
+
+Discovered facts (claims of discovery snapshots) that this execution changed.
+Required when the execution changed discovered facts; omitted otherwise. The
+discovery pipeline revalidates the affected entries with the scope that owns
+each entry (see `.agents/orchestrators/discovery/states/DISCOVERY_STATE_MACHINE.md`
+§Invocation Conditions).
+
+```toml
+[[invalidated_facts]]
+fact = ""
+entry = ""
+reason = ""
+```
+
+- `fact`: the claim (discovered fact) that the execution changed.
+- `entry`: the originating entry (e.g. `.project/knowledge/discovery/environment.md`).
+- `reason`: what the execution changed and why the discovered fact is no longer current.
+
+---
+
 ## Effects Executed
 
 Record of out-of-frontier effects executed during the task, with a reference
@@ -283,6 +304,15 @@ executed = true # or false
 authorization_ref = "string"
 ```
 
+### `## Invalidated Facts`
+
+```toml
+[[invalidated_facts]]
+fact = "string"
+entry = "string"
+reason = "string"
+```
+
 ---
 
 # Completion Criteria
@@ -295,3 +325,4 @@ The execution summary is valid when:
 * Intermediate validations are recorded.
 * The final project state is explicit.
 * A confidence level is provided.
+* If the execution changed discovered facts, `invalidated_facts` is declared.

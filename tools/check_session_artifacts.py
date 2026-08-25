@@ -43,6 +43,14 @@ enforces the authorization model: the ``[[effects]]`` block of
 the trace classifies each executed effect as AUTHORIZED, UNAUTHORIZED (recorded
 denial only) or AUTHORIZATION_UNDETERMINED (never UNAUTHORIZED by absence).
 
+For sessions that declare ``protocol_version >= 9.0.0`` it additionally
+enforces the knowledge lifecycle: ``[[invalidated_facts]]`` entries of
+``EXECUTION_SUMMARY.md`` carry ``fact``/``entry``/``reason``, the embedded
+``recommended_entries`` of ``KB_RECOMMENDATION.md`` declare ``kind`` and
+``path``, and knowledge entries declaring ``kind: lesson`` carry
+``session_id``/``protocol_version``/evidence (lessons without the ``kind`` tag
+are historical and not reported).
+
 The task is a dev-only safety net: the runtime aggregation reads these blocks
 by judgment. A missing ``.project/`` is not a violation (exit 0).
 
@@ -87,6 +95,7 @@ NEW_PROTOCOL = (4, 0, 0)
 LIFECYCLE_PROTOCOL = (5, 0, 0)
 EVIDENCE_PROTOCOL = (7, 0, 0)
 AUTHORIZATION_PROTOCOL = (8, 0, 0)
+KNOWLEDGE_PROTOCOL = (9, 0, 0)
 SEMVER_RE = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
 
 EVIDENCE_CLASSES = {
@@ -110,6 +119,8 @@ EFFECT_KINDS = {
 AUTHORIZED_BY = {"user", "unattended_default"}
 
 EFFECT_STATUSES = {"authorized", "not_authorized", "pending_user_confirmation"}
+
+KNOWLEDGE_KINDS = {"discovery", "knowledge", "lesson"}
 
 CORE_ARTIFACTS = (
     "TASK_ANALYSIS.md",
@@ -260,6 +271,29 @@ def scan(root: Path) -> list[str]:
                     )
                     for issue in _effects_executed_issues(spec_text, summary_text):
                         out.append(f"SUMMARY {summary.relative_to(root)}: {issue}")
+        if version >= KNOWLEDGE_PROTOCOL:
+            for iteration in sorted(session.glob("*")):
+                if not iteration.is_dir() or not re.fullmatch(r"\d+", iteration.name):
+                    continue
+                for summary in sorted(iteration.glob("*EXECUTION_SUMMARY.md")):
+                    summary_text = summary.read_text(
+                        encoding="utf-8", errors="replace"
+                    )
+                    for issue in _invalidated_facts_issues(summary_text):
+                        out.append(f"SUMMARY {summary.relative_to(root)}: {issue}")
+                for rec in sorted(iteration.glob("*KB_RECOMMENDATION.md")):
+                    rec_text = rec.read_text(encoding="utf-8", errors="replace")
+                    for issue in _recommendation_issues(rec_text):
+                        out.append(
+                            f"RECOMMENDATION {rec.relative_to(root)}: {issue}"
+                        )
+
+    entries_dir = project / "knowledge" / "entries"
+    if entries_dir.is_dir():
+        for entry_file in sorted(entries_dir.glob("*.md")):
+            entry_text = entry_file.read_text(encoding="utf-8", errors="replace")
+            for issue in _lesson_issues(entry_text):
+                out.append(f"LESSON {entry_file.relative_to(root)}: {issue}")
 
     for report in sorted(project.rglob("HARNESS_REPORT.md")):
         text = report.read_text(encoding="utf-8", errors="replace")
@@ -807,6 +841,102 @@ def _effects_executed_issues(spec_text: str, summary_text: str) -> list[str]:
                 f"effects_executed entry {i}: effect {name!r} executed with "
                 "status not_authorized (UNAUTHORIZED)"
             )
+    return issues
+
+
+def _front_matter(text: str) -> dict:
+    """Parse the TOML front matter (``+++`` ... ``+++``) of a KB entry file."""
+    m = re.match(r"^\+\+\+\n(.*?)\n\+\+\+", text, re.DOTALL)
+    if not m:
+        return {}
+    data: dict = {}
+    current: dict | None = None
+    for line in m.group(1).splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        tm = re.match(r"^\[([^\]]+)\]$", line)
+        if tm:
+            current = {}
+            data[tm.group(1)] = current
+            continue
+        km = re.match(r"^([A-Za-z0-9_]+)\s*=\s*(.+)$", line)
+        if not km:
+            continue
+        if current is not None:
+            current[km.group(1)] = _toml_scalar(km.group(2))
+        else:
+            data[km.group(1)] = _toml_scalar(km.group(2))
+    return data
+
+
+def _invalidated_facts_issues(text: str) -> list[str]:
+    """KN-004: shape of the [[invalidated_facts]] block of EXECUTION_SUMMARY."""
+    body = _section_text(text, "Invalidated Facts")
+    if not body.strip():
+        return []
+    entries = _array_entries(text, "Invalidated Facts", "invalidated_facts")
+    if not entries:
+        return [
+            "Invalidated Facts section present without "
+            "[[invalidated_facts]] entries"
+        ]
+    issues: list[str] = []
+    for i, entry in enumerate(entries, 1):
+        for field in ("fact", "entry", "reason"):
+            value = entry.get(field)
+            if not isinstance(value, str) or not value.strip():
+                issues.append(f"invalidated_facts entry {i}: missing {field}")
+    return issues
+
+
+def _recommendation_issues(text: str) -> list[str]:
+    """KN-002: kind/path shape of the embedded recommended_entries JSON."""
+    issues: list[str] = []
+    for m in re.finditer(r"```json\n(.*?)\n```", text, re.DOTALL):
+        try:
+            data = json.loads(m.group(1))
+        except json.JSONDecodeError:
+            continue
+        entries = (
+            data.get("recommended_entries")
+            if isinstance(data, dict)
+            else None
+        )
+        if not isinstance(entries, list):
+            continue
+        for i, entry in enumerate(entries, 1):
+            if not isinstance(entry, dict):
+                issues.append(f"recommended_entries item {i} is not an object")
+                continue
+            kind = entry.get("kind")
+            if kind not in KNOWLEDGE_KINDS:
+                issues.append(
+                    f"recommended_entries item {i}: bad kind {kind!r}"
+                )
+            path = entry.get("path")
+            if not isinstance(path, str) or not path.strip():
+                issues.append(f"recommended_entries item {i}: missing path")
+    return issues
+
+
+def _lesson_issues(text: str) -> list[str]:
+    """KN-002: provenance of lessons in the front matter of knowledge entries."""
+    fm = _front_matter(text)
+    if fm.get("kind") != "lesson":
+        return []
+    issues: list[str] = []
+    for field in ("session_id", "protocol_version"):
+        value = fm.get(field)
+        if not isinstance(value, str) or not value.strip():
+            issues.append(f"lesson missing {field}")
+    evidence = fm.get("evidence")
+    if isinstance(evidence, dict):
+        ref = evidence.get("ref")
+        if not isinstance(ref, str) or not ref.strip():
+            issues.append("lesson evidence missing ref")
+    elif not isinstance(evidence, str) or not evidence.strip():
+        issues.append("lesson missing evidence")
     return issues
 
 

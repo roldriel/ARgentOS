@@ -257,3 +257,40 @@ hace verificable la frontera de efectos externos.
 - **Adopción.** Las task specifications nuevas con efectos fuera de frontera
   incluyen `## Effects`; los execution summaries registran
   `## Effects Executed`; los planes no declaran autorizaciones propias.
+
+## 10. Modelo de lifecycle de conocimiento — 9.0.0 (plan 81, RFC-67)
+
+Cambio **MAJOR** del modelo conceptual: define el ciclo mínimo del
+conocimiento (tipos, frescura por claim, invalidación post-ejecución y
+revalidación scoped).
+
+- **Tipos de conocimiento.** `snapshot` (entrada de discovery point-in-time con
+  TTL y hashes, `kind: snapshot` en `KB_DISCOVERY_ENTRY.md`, schema `2.0.0`),
+  `claim` (unidad dentro de una entrada; objeto de frescura e invalidación) y
+  `lesson` (claim de aprendizaje de sesión con `session_id`,
+  `protocol_version` y evidencia RFC-65). El modelo vive en
+  `.agents/standards/context/KNOWLEDGE_LIFECYCLE.md`.
+- **Frescura por claim.** Una claim es reutilizable si está fresca (TTL por
+  claim; por defecto hereda el de su entrada) y su proveniencia resuelve
+  (`source_files`/`source_sessions` existen). Una claim vencida o sin
+  proveniencia no se recomienda ni se consume.
+- **Invalidación post-ejecución.** `EXECUTION_SUMMARY.md` gana la sección
+  `## Invalidated Facts` (schema `4.0.0`, `fact`/`entry`/`reason`), obligatoria
+  cuando la ejecución cambió hechos descubiertos; el pipeline de discovery
+  revalida las entradas afectadas con el scope que las posee (condición de
+  invocación nueva del state machine), nunca un rediscovery full por defecto.
+- **Recomendaciones.** `KB_RECOMMENDATION.md` (schema `2.0.0`) resuelve la
+  ubicación de cada entrada con `kind` + `path`; `session_uuid` queda como
+  proveniencia, no como ubicación (P12).
+- **Lessons del cierre.** El Closing Feedback persiste lessons con
+  `kind: lesson`, `session_id`, `protocol_version` y evidencia; sin
+  proveniencia no se registran.
+- **TTL.** Cambiar un TTL exige medición previa del costo de rediscovery
+  (D-201); sin medición se mantienen los valores vigentes.
+- **Trazas históricas.** Las sesiones previas a 9.0.0 son registros inmutables
+  bajo la semántica previa (RFC-46): no se reescriben ni se re-reportan; las
+  lessons previas sin `kind` no se reclasifican.
+- **Adopción.** Los discovery entries nuevos declaran `kind: snapshot`; los
+  execution summaries que cambian hechos descubiertos declaran
+  `invalidated_facts`; las recomendaciones nuevas llevan `kind`/`path`; los
+  reportes previos siguen siendo válidos como traza.

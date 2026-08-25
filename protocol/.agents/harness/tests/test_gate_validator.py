@@ -213,6 +213,182 @@ def test_h05_bad_final_state_fails(tmp_path):
     assert any("bad status" in c["evidence"] for c in checks)
 
 
+def h05_sections(extra: dict | None = None) -> dict:
+    """Build a minimal valid H05 section set."""
+    sections = {
+        "Metadata": "- x",
+        "Task Reference": "- spec",
+        "Execution Plan Reference": "- plan",
+        "Summary of Changes": "- changed",
+        "Steps Executed": (
+            "```toml\n[[steps_executed]]\norder = 1\naction = \"a\"\n"
+            'status = "COMPLETED"\n```'
+        ),
+        "Project Files Modified": "- none",
+        "Intermediate Validations": "- none",
+        "Issues or Deviations": "- none",
+        "Final Project State": (
+            '```toml\n[final_state]\nstatus = "VERIFIABLE"\n```'
+        ),
+        "Confidence": "- high",
+    }
+    if extra:
+        sections.update(extra)
+    return sections
+
+
+def test_h05_invalidated_facts_valid_passes(tmp_path):
+    artifact = make_artifact(
+        tmp_path,
+        "EXECUTION_SUMMARY.md",
+        h05_sections(
+            {
+                "Invalidated Facts": (
+                    "```toml\n[[invalidated_facts]]\n"
+                    'fact = "stack is Django"\n'
+                    'entry = ".project/knowledge/discovery/stack.md"\n'
+                    'reason = "migrated to FastAPI"\n```'
+                )
+            }
+        ),
+    )
+    checks, decision = gate_validator.validate("H05", artifact)
+    assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]
+    assert any(
+        c["id"] == "invalidated_facts" and c["result"] == "PASS"
+        for c in checks
+    )
+
+
+def test_h05_invalidated_facts_missing_reason_fails(tmp_path):
+    artifact = make_artifact(
+        tmp_path,
+        "EXECUTION_SUMMARY.md",
+        h05_sections(
+            {
+                "Invalidated Facts": (
+                    "```toml\n[[invalidated_facts]]\n"
+                    'fact = "stack is Django"\n'
+                    'entry = ".project/knowledge/discovery/stack.md"\n'
+                    'reason = ""\n```'
+                )
+            }
+        ),
+    )
+    checks, decision = gate_validator.validate("H05", artifact)
+    assert decision == "FAIL"
+    assert any(
+        c["id"] == "invalidated_facts" and "missing reason" in c["evidence"]
+        for c in checks
+    )
+
+
+def test_h05_without_invalidated_facts_skips(tmp_path):
+    artifact = make_artifact(
+        tmp_path, "EXECUTION_SUMMARY.md", h05_sections()
+    )
+    checks, decision = gate_validator.validate("H05", artifact)
+    assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]
+    assert any(
+        c["id"] == "invalidated_facts" and c["result"] == "SKIP"
+        for c in checks
+    )
+
+
+def h10_sections(extra: dict | None = None) -> dict:
+    """Build a minimal valid H10 section set."""
+    sections = {
+        "Discovery Objective": "- find relevant knowledge",
+        "Recommended Entries": "- none",
+        "Context Budget Recommendation": "- 4000",
+        "Notes": "- none",
+    }
+    if extra:
+        sections.update(extra)
+    return sections
+
+
+def recommendation_json(body: str) -> str:
+    return "```json\n" + body + "\n```"
+
+
+def test_h10_valid_recommendation_passes(tmp_path):
+    artifact = make_artifact(
+        tmp_path,
+        "KB_RECOMMENDATION.md",
+        h10_sections(
+            {
+                "Recommended Entries": recommendation_json(
+                    '{"discovery_objective": "x", "recommended_entries": ['
+                    '{"session_uuid": "s", "kind": "discovery", '
+                    '"path": ".project/knowledge/discovery/environment.md", '
+                    '"priority": 1, "confidence": "HIGH"}]}'
+                )
+            }
+        ),
+    )
+    checks, decision = gate_validator.validate("H10", artifact)
+    assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]
+    assert any(
+        c["id"] == "recommendation" and c["result"] == "PASS"
+        for c in checks
+    )
+
+
+def test_h10_recommendation_bad_kind_fails(tmp_path):
+    artifact = make_artifact(
+        tmp_path,
+        "KB_RECOMMENDATION.md",
+        h10_sections(
+            {
+                "Recommended Entries": recommendation_json(
+                    '{"recommended_entries": [{"kind": "snapshot", '
+                    '"path": "x"}]}'
+                )
+            }
+        ),
+    )
+    checks, decision = gate_validator.validate("H10", artifact)
+    assert decision == "FAIL"
+    assert any(
+        c["id"] == "recommendation" and "bad kind" in c["evidence"]
+        for c in checks
+    )
+
+
+def test_h10_recommendation_missing_path_fails(tmp_path):
+    artifact = make_artifact(
+        tmp_path,
+        "KB_RECOMMENDATION.md",
+        h10_sections(
+            {
+                "Recommended Entries": recommendation_json(
+                    '{"recommended_entries": [{"kind": "lesson", '
+                    '"path": ""}]}'
+                )
+            }
+        ),
+    )
+    checks, decision = gate_validator.validate("H10", artifact)
+    assert decision == "FAIL"
+    assert any(
+        c["id"] == "recommendation" and "missing path" in c["evidence"]
+        for c in checks
+    )
+
+
+def test_h10_without_json_skips(tmp_path):
+    artifact = make_artifact(
+        tmp_path, "KB_RECOMMENDATION.md", h10_sections()
+    )
+    checks, decision = gate_validator.validate("H10", artifact)
+    assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]
+    assert any(
+        c["id"] == "recommendation" and c["result"] == "SKIP"
+        for c in checks
+    )
+
+
 def test_h06_bad_decision_fails(tmp_path):
     set_rubrics(tmp_path, False)
     artifact = make_artifact(

@@ -45,6 +45,55 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [9.0.0] — 2026-08-25
+
+### Added
+
+- **Modelo de lifecycle de conocimiento** (plan 81, RFC-67):
+  `.agents/standards/context/KNOWLEDGE_LIFECYCLE.md` define los tipos
+  `snapshot`/`claim`/`lesson`, la frescura por claim con proveniencia
+  resoluble, los disparadores de invalidación (incluida la post-ejecución) y
+  la revalidación scoped por el pipeline de discovery; `standards/INDEX.md` lo
+  referencia.
+- **`kind`/`path` en KB_RECOMMENDATION** (plan 81, RFC-67): cada entrada
+  recomendada declara `kind` (`discovery`|`knowledge`|`lesson`) y `path`
+  resoluble (schema `2.0.0`); `session_uuid` queda como proveniencia, no como
+  ubicación.
+- **`invalidated_facts` en EXECUTION_SUMMARY** (plan 81, RFC-67): sección
+  `## Invalidated Facts` con `fact`/`entry`/`reason` (schema `4.0.0`),
+  obligatoria cuando la ejecución cambió hechos descubiertos; el pipeline
+  revalida las entradas afectadas con el scope que las posee.
+- **Checks mecánicos de conocimiento** (plan 81, RFC-67): `gate_validator.py`
+  valida la forma de `invalidated_facts` (H05) y de `kind`/`path` (H10);
+  `check_session_artifacts.py` aplica los checks a sesiones `>= 9.0.0` y
+  valida la provenance de lessons (`kind: lesson`).
+
+### Changed
+
+- **Frescura por claim con proveniencia resoluble** (plan 81, RFC-67, MAJOR):
+  `KB_DISCOVERY_ENTRY.md` declara `kind: snapshot` y semántica de claims por
+  hecho; la Freshness Rule del discovery evalúa por claim y excluye de
+  recomendaciones/consumo las claims vencidas o sin proveniencia;
+  `DISCOVERY_STATE_MACHINE.md` agrega la condición de invocación
+  post-ejecución y la medición previa para cambios de TTL; `docs/MIGRATION.md`
+  §10 documenta la migración y las trazas históricas.
+- **Lessons con proveniencia en el cierre** (plan 81, RFC-67, MAJOR): el
+  Closing Feedback persiste lessons con `kind: lesson`, `session_id`,
+  `protocol_version` y evidencia (RFC-65); `KNOWLEDGE_CURATION.md` y
+  `context_discoverer.md` alineados.
+
+### Removed
+
+- **Reutilización de claims vencidas o con proveniencia no resoluble** (plan 81,
+  RFC-67, MAJOR): deja de ser válida en entradas y recomendaciones nuevas; sin
+  etiqueta de tipo no se mezclan snapshot/current/historical knowledge.
+
+### Modelo conceptual
+
+RFC-67 aceptada (plan 81, 2026-08-25): lifecycle mínimo de conocimiento (D9).
+
+---
+
 ## [8.0.0] — 2026-08-25
 
 ### Added

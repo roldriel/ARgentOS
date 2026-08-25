@@ -10,7 +10,7 @@ An entry is only justified when it records knowledge that **cannot be inferred f
 
 - **Decisions**: an entry about a decision is valid only if an alternative was discarded for a stated technical reason. Without an alternative, it is not a decision — it is a chronicle.
 - **Explorations**: an entry about an open question is valid only if the question is concrete and its answer is not yet in the codebase or docs.
-- **Lessons**: an entry about a lesson is valid only if the lesson is non-obvious. The test: "does the agent now know something it could not have derived from `git log`, the code, or existing docs?"
+- **Lessons**: an entry about a lesson is valid only if the lesson is non-obvious. The test: "does the agent now know something it could not have derived from `git log`, the code, or existing docs?" A lesson is a claim with its own provenance: it carries `kind: lesson`, `session_id`, `protocol_version` and an evidence reference (see `.agents/standards/context/KNOWLEDGE_LIFECYCLE.md` §Knowledge types). A lesson without provenance is not recorded.
 
 The following MUST NOT be recorded:
 
@@ -40,8 +40,16 @@ Transitions:
 - An entry moves to `retired` when its knowledge is superseded or no longer true; the superseding entry (if any) is referenced.
 - Default status for new entries is `active`.
 
+Lessons are claims: the same freshness rule applies per claim. A lesson that is
+expired or whose evidence reference does not resolve is not recommended, even
+when its `curation_status` is `active`.
+
 ## Curation duties of the `context_discoverer`
 
 - When selecting entries for a phase, `noisy` entries are recommended only with explicit justification; `retired` entries are never recommended.
 - When refining entries copied into `.project/knowledge/entries/`, apply the inclusion rules and the conciseness limit.
 - Record every curation action (status change, merge, refusal to create) in the `## Notes` section of `KB_RECOMMENDATION.md`.
+- Every recommendation declares `kind` and `path` per the `KB_RECOMMENDATION.md`
+  contract; a claim that is expired or whose provenance does not resolve is
+  never recommended, and snapshot/current/historical knowledge is never mixed
+  without the type tag.

@@ -616,3 +616,129 @@ def test_legacy_session_effects_not_flagged(tmp_path):
     v = csa.scan(tmp_path)
     assert all("AUTHORIZATION_UNDETERMINED" not in x for x in v)
     assert all("UNAUTHORIZED" not in x for x in v)
+
+
+def _invalidated_facts_summary(entries: str) -> str:
+    return (
+        "# Summary\n\n## Invalidated Facts\n\n```toml\n"
+        + entries
+        + "```\n"
+    )
+
+
+def _recommendation_report(json_body: str) -> str:
+    return (
+        "# Recommendation\n\n## Recommended Entries\n\n```json\n"
+        + json_body
+        + "\n```\n"
+    )
+
+
+def _lesson_file(front_matter: str) -> str:
+    return "+++\n" + front_matter + "\n+++\n\n# Lesson\n"
+
+
+def test_knowledge_protocol_session_passes(tmp_path):
+    _write_session(tmp_path, version="9.0.0")
+    assert csa.scan(tmp_path) == []
+
+
+def test_invalidated_facts_missing_reason_flagged(tmp_path):
+    session = _write_session(tmp_path, version="9.0.0")
+    (session / "00" / "06-EXECUTION_SUMMARY.md").write_text(
+        _invalidated_facts_summary(
+            '[[invalidated_facts]]\nfact = "stack is Django"\n'
+            'entry = ".project/knowledge/discovery/stack.md"\n'
+            'reason = ""\n'
+        ),
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any("SUMMARY" in x and "missing reason" in x for x in v)
+
+
+def test_invalidated_facts_without_entries_flagged(tmp_path):
+    session = _write_session(tmp_path, version="9.0.0")
+    (session / "00" / "06-EXECUTION_SUMMARY.md").write_text(
+        "# Summary\n\n## Invalidated Facts\n\nnone.\n",
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any("without [[invalidated_facts]] entries" in x for x in v)
+
+
+def test_recommendation_missing_path_flagged(tmp_path):
+    session = _write_session(tmp_path, version="9.0.0")
+    (session / "00" / "04-KB_RECOMMENDATION.md").write_text(
+        _recommendation_report(
+            '{"recommended_entries": [{"kind": "discovery", "path": ""}]}'
+        ),
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any("RECOMMENDATION" in x and "missing path" in x for x in v)
+
+
+def test_recommendation_bad_kind_flagged(tmp_path):
+    session = _write_session(tmp_path, version="9.0.0")
+    (session / "00" / "04-KB_RECOMMENDATION.md").write_text(
+        _recommendation_report(
+            '{"recommended_entries": [{"kind": "snapshot", "path": "x"}]}'
+        ),
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any("RECOMMENDATION" in x and "bad kind" in x for x in v)
+
+
+def test_recommendation_valid_passes(tmp_path):
+    session = _write_session(tmp_path, version="9.0.0")
+    (session / "00" / "04-KB_RECOMMENDATION.md").write_text(
+        _recommendation_report(
+            '{"recommended_entries": [{"kind": "lesson", '
+            '"path": ".project/knowledge/entries/lesson-01.md"}]}'
+        ),
+        encoding="utf-8",
+    )
+    assert csa.scan(tmp_path) == []
+
+
+def test_lesson_missing_provenance_flagged(tmp_path):
+    _write_session(tmp_path, version="9.0.0")
+    entries = tmp_path / ".project" / "knowledge" / "entries"
+    entries.mkdir(parents=True)
+    (entries / "lesson-01.md").write_text(
+        _lesson_file('kind = "lesson"\nprotocol_version = "9.0.0"\n'),
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any("LESSON" in x and "missing session_id" in x for x in v)
+    assert any("LESSON" in x and "missing evidence" in x for x in v)
+
+
+def test_lesson_valid_passes(tmp_path):
+    _write_session(tmp_path, version="9.0.0")
+    entries = tmp_path / ".project" / "knowledge" / "entries"
+    entries.mkdir(parents=True)
+    (entries / "lesson-01.md").write_text(
+        _lesson_file(
+            'kind = "lesson"\nsession_id = "uuid"\n'
+            'protocol_version = "9.0.0"\n'
+            "[evidence]\nclass = \"reference\"\n"
+            'ref = "00/00-SESSION_LOG.md"\n'
+        ),
+        encoding="utf-8",
+    )
+    assert csa.scan(tmp_path) == []
+
+
+def test_legacy_session_knowledge_not_flagged(tmp_path):
+    session = _write_session(tmp_path, version="8.0.0")
+    (session / "00" / "06-EXECUTION_SUMMARY.md").write_text(
+        _invalidated_facts_summary(
+            '[[invalidated_facts]]\nfact = "x"\nentry = "y"\nreason = ""\n'
+        ),
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert all("invalidated_facts" not in x for x in v)

@@ -31,7 +31,11 @@ The context discoverer curates Knowledge Base entries for the current phase. It 
 ## Outputs
 
 - Curated entries written or refined in `.project/knowledge/entries/`.
-- An artifact named `<order>-KB_RECOMMENDATION.md` in the current iteration. The artifact structure is defined in `.agents/orchestrators/core/contracts/KB_RECOMMENDATION.md`.
+- An artifact named `<order>-KB_RECOMMENDATION.md` in the current iteration.
+  The artifact structure is defined in
+  `.agents/orchestrators/core/contracts/KB_RECOMMENDATION.md`; every
+  recommended entry declares `kind` (`discovery`|`knowledge`|`lesson`) and a
+  resolvable `path`.
 - A list of selected entries and a `context_budget` recommendation included in the Orchestrator's delegation payload to the phase worker.
 
 ## Decision rules
@@ -41,6 +45,10 @@ The context discoverer curates Knowledge Base entries for the current phase. It 
 - Respect the context budget: if N entries are selected, each should receive at most `budget / N` characters, with a minimum of 500 characters per entry.
 - If no entry is relevant, explicitly state that no entries are recommended.
 - Apply the curation rules in `.agents/standards/context/KNOWLEDGE_CURATION.md`: `retired` entries are never recommended, `noisy` entries only with explicit justification, and each recommended entry declares a relevance confidence level (`HIGH`/`MEDIUM`/`LOW`) per `.agents/standards/quality/CONFIDENCE.md`.
+- Never recommend a claim that is expired or whose provenance does not resolve
+  (`.agents/standards/context/KNOWLEDGE_LIFECYCLE.md` §Freshness per claim).
+- Never mix types without a label: every recommendation carries `kind` and
+  `path`.
 
 ## Responsibilities
 

@@ -89,7 +89,10 @@ DISCOVERY_READY    DISCOVERY_FAILED
 Initialize the discovery run: read the previous KB
 (`.project/knowledge/discovery/`) and the relevant session artifacts, compute
 hash-based invalidations, mark legacy entries, and prepare the structured input
-for the workers.
+for the workers. The `init_worker` also reads the current session's
+`EXECUTION_SUMMARY.md` and includes post-execution invalidations
+(`invalidated_facts`) in `invalidation_report.json`, alongside the hash and TTL
+invalidations.
 
 ### Worker
 
@@ -568,6 +571,9 @@ The core Orchestrator detects a discovery need when:
 5. The user requested an explicit refresh.
 6. An execution worker reports an inconsistency.
 7. The environment TTL (6h) expired and the scope is `env`.
+8. An execution declared `invalidated_facts` in `EXECUTION_SUMMARY.md`: the
+   affected entries are revalidated with the scope that owns each entry
+   (`env`, `stack`, `patterns` or `business`).
 
 Detection does not imply invocation: with `discovery_require_consent` enabled
 (default), a detected need produces a consent consultation with the user (see
@@ -635,18 +641,25 @@ in `invalidation_report.json`.
 | Business | 24h | Re-invoke `business_worker` if the README or main services changed. |
 
 The TTL values are configured in `.agents/features.toml`
-(`discovery_project_ttl_hours`, `discovery_environment_ttl_hours`).
+(`discovery_project_ttl_hours`, `discovery_environment_ttl_hours`). Changing a
+TTL requires measuring the rediscovery cost first (time, tokens, entries
+rewritten); without that measurement the configured values remain.
 
 # Freshness Rule
 
-KB entries are consumed only while fresh. Before delegating any phase that
-consumes `environment.md` or `development_patterns.md`, the Orchestrator
-verifies the entry's freshness against its TTL (via `.last_discovery` and the
-manifest's provenance fields). An expired entry is marked `[entries] stale`
-in the manifest, is excluded from recommendations, and is revalidated through
+KB entries are consumed only while their claims are fresh. Before delegating
+any phase that consumes `environment.md` or `development_patterns.md`, the
+Orchestrator verifies freshness per claim against the TTL (via
+`.last_discovery` and the manifest's provenance fields) and that the claim's
+provenance resolves (`source_files`/`source_sessions` exist; see
+`.agents/standards/context/KNOWLEDGE_LIFECYCLE.md`). A claim that is expired or
+whose provenance does not resolve marks the entry `[entries] stale` in the
+manifest, excludes it from recommendations, and triggers revalidation through
 the pipeline (scope `env` or the corresponding scope) before the delegation.
 KB entries are updated **only** through the discovery pipeline: manual edits
 are recorded as deviations and trigger `init_worker` for formal revalidation.
+Post-execution invalidations (`invalidated_facts` in `EXECUTION_SUMMARY.md`)
+revalidate only the affected entries, with the scope that owns each entry.
 
 ---
 

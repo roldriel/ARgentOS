@@ -219,3 +219,41 @@ cuándo un claim puede declararse VERIFIED.
   `## Evidence` y `claim_id`; los checks de `HARNESS_REPORT.md` citan evidencia
   con clase o declaran `claim_class`. Los reportes 6.0.0 que declaraban
   "verificado" con evidencia solo en texto libre dejan de ser conformes.
+
+## 9. Modelo de autorización y capacidades — 8.0.0 (plan 80, RFC-66)
+
+Cambio **MAJOR** del modelo conceptual: distingue capability de autorización y
+hace verificable la frontera de efectos externos.
+
+- **Vocabulario.** Capability (disponibilidad de herramienta/skill),
+  Permission (regla del protocolo), Authorization (registro que vincula una
+  capability con un efecto permitido para una ejecución), Execution (uso
+  efectivo) y Effect (cambio observable). La capability nunca es autorización.
+- **Frontera por defecto.** Lectura/ejecución dentro del proyecto y del
+  protocolo y escritura planificada no requieren autorización explícita;
+  red/HTTP, operaciones git remotas, instalaciones, cambios destructivos y
+  escrituras fuera del proyecto sí (`AUTHORIZATION.md`).
+- **Bloque `effects`.** `TASK_SPECIFICATION.md` gana la sección `## Effects`
+  (schema `3.0.0`) con `name`/`kind`/`authorized_by`/`evidence_ref`/`status`,
+  obligatoria cuando hay efectos fuera de frontera; `EXECUTION_SUMMARY.md` gana
+  `## Effects Executed` (schema `3.0.0`) con `effect`/`executed`/
+  `authorization_ref`; `SESSION_BRIEF.md` registra `[[effects]]` cuando la
+  autorización proviene de una clarificación o de un default desatendido.
+- **Quién autoriza.** Solo el usuario (clarificación/confirmación de plan) o un
+  default declarado en modo desatendido con `status:
+  pending_user_confirmation`; `user_confirmed: false` nunca constituye
+  autorización.
+- **Estados.** AUTHORIZED / UNAUTHORIZED (denegación registrada) /
+  AUTHORIZATION_UNDETERMINED (sin registro suficiente); nunca se infiere
+  UNAUTHORIZED por ausencia de registro.
+- **Policies.** H01/H04 exigen autorización registrada para efectos fuera de
+  frontera; H05 verifica el registro de efectos ejecutados. El validador
+  estructural valida la forma del bloque (H01) y rechaza autorizaciones propias
+  del plan (H04).
+- **Trazas históricas.** Las sesiones previas a 8.0.0 son registros inmutables
+  bajo la semántica previa (RFC-46): no se reescriben ni se re-reportan. El
+  caso BeaconRBX se clasifica por semántica como AUTHORIZATION_UNDETERMINED,
+  sin re-juzgar la sesión.
+- **Adopción.** Las task specifications nuevas con efectos fuera de frontera
+  incluyen `## Effects`; los execution summaries registran
+  `## Effects Executed`; los planes no declaran autorizaciones propias.

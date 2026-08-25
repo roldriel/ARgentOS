@@ -179,6 +179,7 @@ Specialized worker profiles live in `.agents/roles/profiles/` and are enabled by
 ## Runtime
 
 - `runtime/PROTOCOL_BOUNDARIES.md` — file-system boundaries, artifact locations, and agent autonomy rules.
+- `runtime/AUTHORIZATION.md` — authorization and capability model: default frontier, `effects` block, who can authorize, and the AUTHORIZED / UNAUTHORIZED / AUTHORIZATION_UNDETERMINED states.
 - `runtime/PROTOCOL_TAXONOMY.md` — master dictionary of the protocol: domains, lifecycles, states, artifacts, harness policies, actors, roles and workers, with `<domain>:<state>` references. Every state machine, workflow, harness policy, contract and role carries a YAML metadata block pointing to it (`taxonomy`, `kind`, `domain` as minimum). Files that already start with a TOML front matter block (`+++`) — policies and contracts — carry the YAML block immediately after the TOML block; all other files carry it at the top. Coherence is validated by the Orchestrator's judgment against harness policy `.agents/harness/policies/H13-protocol-taxonomy.md` (cross-cutting; `H08`, `H12` and `H14` are intentionally absent).
 - `runtime/EXTERNAL_DEPENDENCIES.md` — `.agents/` must not depend on project-specific technologies or third-party runtime dependencies.
 - `runtime/PYTHON_DEPENDENCIES.md` — concrete application of the external-dependencies policy for the current Python runtime.

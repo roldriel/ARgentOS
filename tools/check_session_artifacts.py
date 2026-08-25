@@ -36,6 +36,13 @@ a check with ``claim_class: verified`` requires a non-attestation evidence
 entry for its check id, and ``VERIFICATION_REPORT.md`` ``[[evidence]]`` blocks
 support every criterion/test result that declares ``verified``.
 
+For sessions that declare ``protocol_version >= 8.0.0`` it additionally
+enforces the authorization model: the ``[[effects]]`` block of
+``TASK_SPECIFICATION.md`` is well-formed, every executed effect in
+``EXECUTION_SUMMARY.md`` references a task-specification effects entry, and
+the trace classifies each executed effect as AUTHORIZED, UNAUTHORIZED (recorded
+denial only) or AUTHORIZATION_UNDETERMINED (never UNAUTHORIZED by absence).
+
 The task is a dev-only safety net: the runtime aggregation reads these blocks
 by judgment. A missing ``.project/`` is not a violation (exit 0).
 
@@ -79,6 +86,7 @@ SESSION_SKIP = {"knowledge", "skills"}
 NEW_PROTOCOL = (4, 0, 0)
 LIFECYCLE_PROTOCOL = (5, 0, 0)
 EVIDENCE_PROTOCOL = (7, 0, 0)
+AUTHORIZATION_PROTOCOL = (8, 0, 0)
 SEMVER_RE = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
 
 EVIDENCE_CLASSES = {
@@ -90,6 +98,18 @@ EVIDENCE_CLASSES = {
 }
 
 NON_ATTESTATION_EVIDENCE = EVIDENCE_CLASSES - {"attestation"}
+
+EFFECT_KINDS = {
+    "network",
+    "remote_git",
+    "install",
+    "destructive",
+    "write_outside_project",
+}
+
+AUTHORIZED_BY = {"user", "unattended_default"}
+
+EFFECT_STATUSES = {"authorized", "not_authorized", "pending_user_confirmation"}
 
 CORE_ARTIFACTS = (
     "TASK_ANALYSIS.md",
@@ -223,6 +243,23 @@ def scan(root: Path) -> list[str]:
                 text = report_file.read_text(encoding="utf-8", errors="replace")
                 for issue in _verification_evidence_issues(text):
                     out.append(f"REPORT {report_file.relative_to(root)}: {issue}")
+        if version >= AUTHORIZATION_PROTOCOL:
+            for iteration in sorted(session.glob("*")):
+                if not iteration.is_dir() or not re.fullmatch(r"\d+", iteration.name):
+                    continue
+                specs = sorted(iteration.glob("*TASK_SPECIFICATION.md"))
+                if not specs:
+                    continue
+                spec_file = specs[-1]
+                spec_text = spec_file.read_text(encoding="utf-8", errors="replace")
+                for issue in _effects_issues(spec_text):
+                    out.append(f"SPEC {spec_file.relative_to(root)}: {issue}")
+                for summary in sorted(iteration.glob("*EXECUTION_SUMMARY.md")):
+                    summary_text = summary.read_text(
+                        encoding="utf-8", errors="replace"
+                    )
+                    for issue in _effects_executed_issues(spec_text, summary_text):
+                        out.append(f"SUMMARY {summary.relative_to(root)}: {issue}")
 
     for report in sorted(project.rglob("HARNESS_REPORT.md")):
         text = report.read_text(encoding="utf-8", errors="replace")
@@ -694,6 +731,81 @@ def _verification_evidence_issues(text: str) -> list[str]:
             issues.append(
                 f"claim {claim.get('claim_id')!r} declares 'verified' without "
                 "non-attestation evidence"
+            )
+    return issues
+
+
+def _effects_issues(text: str) -> list[str]:
+    """AUTH-001: shape of the [[effects]] block of a TASK_SPECIFICATION."""
+    issues: list[str] = []
+    entries = _array_entries(text, "Effects", "effects")
+    if not entries:
+        return issues
+    names: list[str] = []
+    for i, entry in enumerate(entries, 1):
+        name = entry.get("name")
+        if not isinstance(name, str) or not name.strip():
+            issues.append(f"effects entry {i}: missing name")
+        else:
+            names.append(name)
+        if entry.get("kind") not in EFFECT_KINDS:
+            issues.append(
+                f"effects entry {i}: bad kind {entry.get('kind')!r}"
+            )
+        if entry.get("authorized_by") not in AUTHORIZED_BY:
+            issues.append(
+                f"effects entry {i}: bad authorized_by "
+                f"{entry.get('authorized_by')!r}"
+            )
+        if entry.get("status") not in EFFECT_STATUSES:
+            issues.append(
+                f"effects entry {i}: bad status {entry.get('status')!r}"
+            )
+        evidence_ref = entry.get("evidence_ref")
+        if not isinstance(evidence_ref, str) or not evidence_ref.strip():
+            issues.append(f"effects entry {i}: missing evidence_ref")
+    if len(names) != len(set(names)):
+        issues.append("effects entries with duplicate names")
+    return issues
+
+
+def _effects_executed_issues(spec_text: str, summary_text: str) -> list[str]:
+    """AUTH-003/AUTH-004: pairing of executed effects with their authorization."""
+    issues: list[str] = []
+    declared = _array_entries(spec_text, "Effects", "effects")
+    declared_by_name = {
+        e.get("name"): e
+        for e in declared
+        if isinstance(e.get("name"), str)
+    }
+    executed = _array_entries(
+        summary_text, "Effects Executed", "effects_executed"
+    )
+    for i, entry in enumerate(executed, 1):
+        name = entry.get("effect")
+        if not isinstance(name, str) or not name.strip():
+            issues.append(
+                f"effects_executed entry {i}: missing effect name"
+            )
+            continue
+        if entry.get("executed") is not True:
+            continue
+        authorization_ref = entry.get("authorization_ref")
+        if not isinstance(authorization_ref, str) or not authorization_ref.strip():
+            issues.append(
+                f"effects_executed entry {i}: missing authorization_ref"
+            )
+        spec_entry = declared_by_name.get(name)
+        if spec_entry is None:
+            issues.append(
+                f"effects_executed entry {i}: effect {name!r} executed without "
+                "a task-specification effects entry "
+                "(AUTHORIZATION_UNDETERMINED, never UNAUTHORIZED by absence)"
+            )
+        elif spec_entry.get("status") == "not_authorized":
+            issues.append(
+                f"effects_executed entry {i}: effect {name!r} executed with "
+                "status not_authorized (UNAUTHORIZED)"
             )
     return issues
 

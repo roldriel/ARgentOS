@@ -33,6 +33,9 @@ Checks per trigger:
 - evidence model (H06: ``[[evidence]]`` entries with ``class``/``claim_id``/
   ``ref`` and the VERIFIED rule — every PASS claim needs non-attestation
   evidence or an explicit ``claim_class``).
+- authorization model (H01: ``[[effects]]`` shape and enums of the ``Effects``
+  section; H04: the EXECUTION_PLAN must not declare its own ``Effects``
+  section).
 
 Usage:
   python .agents/harness/gate_validator.py --trigger <HXX> --artifact <path>
@@ -91,6 +94,18 @@ EVIDENCE_CLASSES = {
 }
 
 NON_ATTESTATION_EVIDENCE = EVIDENCE_CLASSES - {"attestation"}
+
+EFFECT_KINDS = {
+    "network",
+    "remote_git",
+    "install",
+    "destructive",
+    "write_outside_project",
+}
+
+AUTHORIZED_BY = {"user", "unattended_default"}
+
+EFFECT_STATUSES = {"authorized", "not_authorized", "pending_user_confirmation"}
 
 TRIGGERS = {
     "H00": {
@@ -472,6 +487,12 @@ def validate(trigger: str, artifact: Path, root: Path | None = None) -> tuple[li
 
     if trigger == "H03":
         checks.extend(_check_h03_conflicts(text))
+
+    if trigger == "H01":
+        checks.extend(_check_effects(text))
+
+    if trigger == "H04":
+        checks.extend(_check_no_plan_effects(text))
 
     if spec.get("technical_approach"):
         body = section_text(text, "Technical Approach")
@@ -911,6 +932,93 @@ def _check_h00_conflicts(text: str) -> list[dict]:
             }
         )
     return checks
+
+
+def _check_effects(text: str) -> list[dict]:
+    """H01: validate the ``[[effects]]`` entries of the ``## Effects`` section."""
+    body = section_text(text, "Effects")
+    if not body.strip():
+        return [
+            {
+                "id": "effects",
+                "result": "SKIP",
+                "evidence": "no Effects section (no out-of-frontier effects declared)",
+            }
+        ]
+    entries: list[dict] = []
+    for block in toml_blocks(body):
+        parsed = parse_toml(block)
+        value = parsed.get("effects")
+        if isinstance(value, list):
+            entries.extend(x for x in value if isinstance(x, dict))
+    if not entries:
+        return [
+            {
+                "id": "effects",
+                "result": "SKIP",
+                "evidence": "Effects section present without [[effects]] entries",
+            }
+        ]
+    bad: list[str] = []
+    names: list[str] = []
+    for i, entry in enumerate(entries, 1):
+        name = entry.get("name")
+        if not isinstance(name, str) or not name.strip():
+            bad.append(f"entry {i}: missing name")
+        else:
+            names.append(name)
+        kind = entry.get("kind")
+        if kind not in EFFECT_KINDS:
+            bad.append(f"entry {i}: bad kind {kind!r}")
+        authorized_by = entry.get("authorized_by")
+        if authorized_by not in AUTHORIZED_BY:
+            bad.append(f"entry {i}: bad authorized_by {authorized_by!r}")
+        status = entry.get("status")
+        if status not in EFFECT_STATUSES:
+            bad.append(f"entry {i}: bad status {status!r}")
+        evidence_ref = entry.get("evidence_ref")
+        if not isinstance(evidence_ref, str) or not evidence_ref.strip():
+            bad.append(f"entry {i}: missing evidence_ref")
+    if len(names) != len(set(names)):
+        bad.append("duplicate effect names")
+    if bad:
+        return [
+            {
+                "id": "effects",
+                "result": "FAIL",
+                "evidence": "; ".join(bad[:5]),
+            }
+        ]
+    return [
+        {
+            "id": "effects",
+            "result": "PASS",
+            "evidence": f"{len(entries)} valid effects entr(y/ies)",
+        }
+    ]
+
+
+def _check_no_plan_effects(text: str) -> list[dict]:
+    """H04: the EXECUTION_PLAN must not declare its own authorizations."""
+    body = section_text(text, "Effects")
+    if body.strip():
+        return [
+            {
+                "id": "effects",
+                "result": "FAIL",
+                "evidence": (
+                    "EXECUTION_PLAN must not declare an Effects section: plan "
+                    "approval covers only task-specification effects"
+                ),
+            }
+        ]
+    return [
+        {
+            "id": "effects",
+            "result": "PASS",
+            "evidence": "no Effects section in the plan",
+        }
+    ]
 
 
 def _check_h03_conflicts(text: str) -> list[dict]:

@@ -509,3 +509,110 @@ def test_verification_report_measurement_evidence_passes(tmp_path):
         encoding="utf-8",
     )
     assert csa.scan(tmp_path) == []
+
+
+def _authorization_spec(entries: str) -> str:
+    return (
+        "# Spec\n\n## Effects\n\n```toml\n" + entries + "```\n"
+    )
+
+
+def _authorization_summary(entries: str) -> str:
+    return (
+        "# Summary\n\n## Effects Executed\n\n```toml\n" + entries + "```\n"
+    )
+
+
+def test_authorization_protocol_session_passes(tmp_path):
+    _write_session(tmp_path, version="8.0.0")
+    assert csa.scan(tmp_path) == []
+
+
+def test_effects_executed_undetermined_flagged(tmp_path):
+    session = _write_session(tmp_path, version="8.0.0")
+    (session / "00" / "02-TASK_SPECIFICATION.md").write_text(
+        _authorization_spec(
+            '[[effects]]\nname = "fetch"\nkind = "network"\n'
+            'authorized_by = "user"\nevidence_ref = "SESSION_BRIEF.md"\n'
+            'status = "authorized"\n'
+        ),
+        encoding="utf-8",
+    )
+    (session / "00" / "06-EXECUTION_SUMMARY.md").write_text(
+        _authorization_summary(
+            '[[effects_executed]]\neffect = "clone"\nexecuted = true\n'
+            'authorization_ref = "SESSION_BRIEF.md"\n'
+        ),
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any("AUTHORIZATION_UNDETERMINED" in x for x in v)
+    assert all("UNAUTHORIZED)" not in x for x in v)
+
+
+def test_effects_executed_unauthorized_flagged(tmp_path):
+    session = _write_session(tmp_path, version="8.0.0")
+    (session / "00" / "02-TASK_SPECIFICATION.md").write_text(
+        _authorization_spec(
+            '[[effects]]\nname = "fetch"\nkind = "network"\n'
+            'authorized_by = "user"\nevidence_ref = "SESSION_BRIEF.md"\n'
+            'status = "not_authorized"\n'
+        ),
+        encoding="utf-8",
+    )
+    (session / "00" / "06-EXECUTION_SUMMARY.md").write_text(
+        _authorization_summary(
+            '[[effects_executed]]\neffect = "fetch"\nexecuted = true\n'
+            'authorization_ref = "SESSION_BRIEF.md"\n'
+        ),
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any("UNAUTHORIZED" in x for x in v)
+
+
+def test_effects_executed_authorized_passes(tmp_path):
+    session = _write_session(tmp_path, version="8.0.0")
+    (session / "00" / "02-TASK_SPECIFICATION.md").write_text(
+        _authorization_spec(
+            '[[effects]]\nname = "fetch"\nkind = "network"\n'
+            'authorized_by = "user"\nevidence_ref = "SESSION_BRIEF.md"\n'
+            'status = "authorized"\n'
+        ),
+        encoding="utf-8",
+    )
+    (session / "00" / "06-EXECUTION_SUMMARY.md").write_text(
+        _authorization_summary(
+            '[[effects_executed]]\neffect = "fetch"\nexecuted = true\n'
+            'authorization_ref = "SESSION_BRIEF.md"\n'
+        ),
+        encoding="utf-8",
+    )
+    assert csa.scan(tmp_path) == []
+
+
+def test_effects_bad_shape_flagged(tmp_path):
+    session = _write_session(tmp_path, version="8.0.0")
+    (session / "00" / "02-TASK_SPECIFICATION.md").write_text(
+        _authorization_spec(
+            '[[effects]]\nname = "fetch"\nkind = "ssh"\n'
+            'authorized_by = "user"\nevidence_ref = "x"\nstatus = "authorized"\n'
+        ),
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any("bad kind 'ssh'" in x for x in v)
+
+
+def test_legacy_session_effects_not_flagged(tmp_path):
+    session = _write_session(tmp_path, version="7.0.0")
+    (session / "00" / "06-EXECUTION_SUMMARY.md").write_text(
+        _authorization_summary(
+            '[[effects_executed]]\neffect = "clone"\nexecuted = true\n'
+            'authorization_ref = "x"\n'
+        ),
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert all("AUTHORIZATION_UNDETERMINED" not in x for x in v)
+    assert all("UNAUTHORIZED" not in x for x in v)

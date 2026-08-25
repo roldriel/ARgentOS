@@ -1,12 +1,12 @@
 +++
-schema_version = "2.0.0"
+schema_version = "3.0.0"
 artifact = "EXECUTION_SUMMARY.md"
 phase = "06"
 produced_by = "executor"
 enforcement = "gated"
 gated_by = ["H05"]
 +++
-schema_version = "2.0.0"
+schema_version = "3.0.0"
 
 
 ---
@@ -186,6 +186,28 @@ CRITICAL
 
 ---
 
+## Effects Executed
+
+Record of out-of-frontier effects executed during the task, with a reference
+to their authorization (`.agents/standards/runtime/AUTHORIZATION.md`).
+Required when authorized out-of-frontier effects were executed; omitted
+otherwise.
+
+```toml
+[[effects_executed]]
+effect = ""
+executed = true
+authorization_ref = ""
+```
+
+- `effect`: the `name` of the corresponding entry in the task specification's
+  `Effects` section (or in `SESSION_BRIEF.md` for `trivial`-profile tasks).
+- `executed`: `true` if the effect was executed, `false` if it was authorized
+  but not executed.
+- `authorization_ref`: the `evidence_ref` of the authorized entry.
+
+---
+
 ## Final Project State
 
 Indication of whether the project is ready for verification.
@@ -250,6 +272,15 @@ order = 1
 action = "string"
 status = "COMPLETED" # or "SKIPPED" or "BLOCKED"
 notes = "string" # required when status is SKIPPED or BLOCKED
+```
+
+### `## Effects Executed`
+
+```toml
+[[effects_executed]]
+effect = "string"
+executed = true # or false
+authorization_ref = "string"
 ```
 
 ---

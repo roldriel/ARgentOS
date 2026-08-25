@@ -45,6 +45,52 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [8.0.0] — 2026-08-25
+
+### Added
+
+- **Estándar de autorización** (plan 80, RFC-66):
+  `.agents/standards/runtime/AUTHORIZATION.md` define el vocabulario
+  Capability/Permission/Authorization/Execution/Effect, la frontera por
+  defecto, quién autoriza y los estados AUTHORIZED/UNAUTHORIZED/
+  AUTHORIZATION_UNDETERMINED; `standards/INDEX.md` lo referencia.
+- **Bloque `effects` en el payload** (plan 80, RFC-66):
+  `TASK_SPECIFICATION.md` gana la sección `## Effects`
+  (`name`/`kind`/`authorized_by`/`evidence_ref`/`status`, schema `3.0.0`)
+  obligatoria cuando hay efectos fuera de frontera; `EXECUTION_SUMMARY.md` gana
+  `## Effects Executed` (`effect`/`executed`/`authorization_ref`, schema
+  `3.0.0`); `SESSION_BRIEF.md` registra `[[effects]]` para autorizaciones de
+  clarificación o default desatendido.
+- **Checks mecánicos de autorización** (plan 80, RFC-66): `gate_validator.py`
+  valida la forma del bloque `effects` (H01) y rechaza una sección `Effects`
+  propia en EXECUTION_PLAN (H04); `check_session_artifacts.py` clasifica los
+  efectos ejecutados para sesiones `>= 8.0.0`.
+
+### Changed
+
+- **Policies H01/H04/H05 con autorización** (plan 80, RFC-66, MAJOR): H01/H04
+  exigen autorización registrada para efectos fuera de frontera y rechazan
+  suposiciones no confirmadas como autorización; H05 verifica el registro de
+  efectos ejecutados; `NO_ASSUMPTIONS.md` y `PROTOCOL_BOUNDARIES.md` usan el
+  vocabulario del estándar.
+- **Frontera verificable** (plan 80, RFC-66, MAJOR): la frontera por defecto se
+  mantiene pero cada efecto fuera de frontera se vincula a una entrada de
+  autorización; `docs/MIGRATION.md` §9 documenta la migración y las trazas
+  históricas.
+
+### Removed
+
+- **Efectos fuera de frontera con suposición no confirmada sin registro**
+  (plan 80, RFC-66, MAJOR): dejan de ser válidos en specs nuevos; sin registro
+  la traza es AUTHORIZATION_UNDETERMINED, nunca UNAUTHORIZED por ausencia.
+
+### Modelo conceptual
+
+RFC-66 aceptada (plan 80, 2026-08-25): modelo de autorización y capacidades
+(D8, D11).
+
+---
+
 ## [7.0.0] — 2026-08-25
 
 ### Added

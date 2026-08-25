@@ -112,6 +112,97 @@ def test_non_ears_bullet_fails(tmp_path):
     assert any(c["id"] == "ears" for c in checks)
 
 
+def h01_sections(extra: dict | None = None) -> dict:
+    """Build a minimal valid H01 section set."""
+    sections = {
+        "Objective": "Build X.",
+        "Expected Outcome": "X works.",
+        "Scope": "Only X.",
+        "Constraints": "None.",
+        "Acceptance Criteria": "- The API shall return HTTP 200.",
+        "Assumptions": "- none",
+        "Unknowns": "- none",
+        "Validation": "- pending",
+    }
+    if extra:
+        sections.update(extra)
+    return sections
+
+
+def effects_toml(entries: str) -> str:
+    return "```toml\n" + entries + "```"
+
+
+def test_h01_valid_effects_passes(tmp_path):
+    artifact = make_artifact(
+        tmp_path,
+        "TASK_SPECIFICATION.md",
+        h01_sections(
+            {
+                "Effects": effects_toml(
+                    '[[effects]]\nname = "fetch_remote_sources"\n'
+                    'kind = "network"\nauthorized_by = "user"\n'
+                    'evidence_ref = "SESSION_BRIEF.md clarification 5A"\n'
+                    'status = "authorized"\n'
+                )
+            }
+        ),
+    )
+    checks, decision = gate_validator.validate("H01", artifact)
+    assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]
+    assert any(c["id"] == "effects" and c["result"] == "PASS" for c in checks)
+
+
+def test_h01_effects_missing_authorized_by_fails(tmp_path):
+    artifact = make_artifact(
+        tmp_path,
+        "TASK_SPECIFICATION.md",
+        h01_sections(
+            {
+                "Effects": effects_toml(
+                    '[[effects]]\nname = "fetch"\nkind = "network"\n'
+                    'evidence_ref = "x"\nstatus = "authorized"\n'
+                )
+            }
+        ),
+    )
+    checks, decision = gate_validator.validate("H01", artifact)
+    assert decision == "FAIL"
+    assert any(
+        c["id"] == "effects" and "bad authorized_by" in c["evidence"]
+        for c in checks
+    )
+
+
+def test_h01_effects_bad_kind_fails(tmp_path):
+    artifact = make_artifact(
+        tmp_path,
+        "TASK_SPECIFICATION.md",
+        h01_sections(
+            {
+                "Effects": effects_toml(
+                    '[[effects]]\nname = "fetch"\nkind = "ssh"\n'
+                    'authorized_by = "user"\nevidence_ref = "x"\n'
+                    'status = "authorized"\n'
+                )
+            }
+        ),
+    )
+    checks, decision = gate_validator.validate("H01", artifact)
+    assert decision == "FAIL"
+    assert any(
+        c["id"] == "effects" and "bad kind 'ssh'" in c["evidence"]
+        for c in checks
+    )
+
+
+def test_h01_effects_missing_section_skips(tmp_path):
+    artifact = make_artifact(tmp_path, "TASK_SPECIFICATION.md", h01_sections())
+    checks, decision = gate_validator.validate("H01", artifact)
+    assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]
+    assert any(c["id"] == "effects" and c["result"] == "SKIP" for c in checks)
+
+
 def test_h05_bad_final_state_fails(tmp_path):
     artifact = make_artifact(tmp_path, "EXECUTION_SUMMARY.md", {
         "Final Project State": "```toml\n[final_state]\nstatus = \"BROKEN\"\n```",
@@ -294,6 +385,22 @@ def test_h04_trivial_with_context_reference_passes(tmp_path):
     artifact = make_h04_plan(tmp_path, "trivial", with_context_reference=True)
     checks, decision = gate_validator.validate("H04", artifact)
     assert decision == "PASS", [c for c in checks if c["result"] == "FAIL"]
+
+
+def test_h04_plan_with_effects_section_fails(tmp_path):
+    artifact = make_h04_plan(tmp_path, "standard", with_context_reference=True)
+    artifact.write_text(
+        artifact.read_text(encoding="utf-8")
+        + "\n## Effects\n\n```toml\n[[effects]]\nname = \"x\"\n```\n",
+        encoding="utf-8",
+    )
+    checks, decision = gate_validator.validate("H04", artifact)
+    assert decision == "FAIL"
+    assert any(
+        c["id"] == "effects"
+        and "must not declare an Effects section" in c["evidence"]
+        for c in checks
+    )
 
 
 def make_h06_report(

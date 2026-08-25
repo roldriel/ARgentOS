@@ -59,6 +59,10 @@ specification = ""
 For `trivial`-profile tasks (no `TASK_SPECIFICATION.md` is produced), this
 field cites the iteration's `TASK_ANALYSIS.md`.
 
+For `trivial`-profile tasks that include out-of-frontier effects, the
+authorization is recorded in `SESSION_BRIEF.md` (`Authorized Effects`) and
+referenced by this plan.
+
 ---
 
 ## Context Reference
@@ -203,6 +207,11 @@ Final planning decision. Plan approval is an Approval/Gate State derived from
 the harness gate record: this plan is approved when gate H04 records PASS in
 `state.json`. The planner does not declare approval.
 
+Plan approval authorizes only the effects declared in `TASK_SPECIFICATION.md`
+(`## Effects`) and the planned writes within the default frontier
+(`.agents/standards/runtime/AUTHORIZATION.md`); it never authorizes implicit
+out-of-frontier effects.
+
 ```toml
 [decision]
 reasoning = ""
@@ -248,3 +257,6 @@ The execution plan is valid when:
 * Risks are identified.
 * Validation criteria exist.
 * The next workflow transition is defined.
+* The plan does not authorize effects beyond those declared in the task
+  specification's `Effects` section (for `trivial`-profile tasks,
+  `SESSION_BRIEF.md`).

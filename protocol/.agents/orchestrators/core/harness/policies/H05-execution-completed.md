@@ -80,6 +80,12 @@ The Orchestrator evaluates each item below by judgment when the gate fires and M
    artifact lifecycle is derived from the gate record (this artifact is
    `validated` by the H05 PASS), never written by the executor (AL-001). Cite
    any offending field.
+6. Verify the executed-effects record. When the task executed out-of-frontier
+   effects, verify that `## Effects Executed` exists, that every
+   `[[effects_executed]]` entry with `executed: true` has an `effect` name
+   declared in the task specification's `Effects` section (or in
+   `SESSION_BRIEF.md` for `trivial`-profile tasks) and a non-empty
+   `authorization_ref`. Cite each offending entry.
 
 ## Recovery Decision Table
 

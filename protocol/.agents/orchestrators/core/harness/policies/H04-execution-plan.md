@@ -51,6 +51,7 @@ Validate that `EXECUTION_PLAN.md` defines an executable, safe, and scope-respect
 9. The plan does not exceed the task scope. `[agent]`
 10. The plan is compatible with the existing architecture and conventions. `[agent]`
 11. Every citation in the artifact (`` `path:section` ``, `` `path` §section ``, and TOML citation fields) resolves against the filesystem. `[gate]` (see §"Gate Checklist", item 2; paths naming files to be created are not citations and are not checked)
+12. The plan does not declare out-of-frontier effects beyond those covered by the task specification's `Effects` section (or, for `trivial`-profile tasks, by `SESSION_BRIEF.md`). `[agent]`
 
 The presence of the sections required by the artifact contract is `[gate]` even though it is not restated as a numbered item; the Orchestrator verifies it against the contract cited in §"Input".
 
@@ -60,6 +61,7 @@ The Orchestrator evaluates each item below by judgment when the gate fires and M
 
 1. Verify that `EXECUTION_PLAN.md` exists in the current iteration directory (`.project/<session-uuid>/<iteration>/`). Cite the resolved artifact path as evidence.
 2. Verify that every citation in the artifact resolves against the filesystem. Recognized citation forms: backtick-quoted `` `path:section` ``, backtick-quoted path followed by `§section`, and the string values of the TOML keys `specification` and `execution_plan` inside ` ```toml ` blocks. A citation resolves when its path exists relative to the project root, the session directory, or any of the session's iteration directories; when the target is a `.md` file and the anchor is not numeric-only, the cited section MUST exist as an ATX heading in the target (normalized, case-insensitive comparison). Paths containing `<`/`>` placeholders are skipped. On failure, cite each broken citation (line, path, reason); on success, cite the number of citations verified. For `trivial`-profile tasks, the `specification` citation field references the iteration's `TASK_ANALYSIS.md`.
+3. Verify the authorization boundary of the plan: the plan must not contain its own `Effects` section or otherwise declare new authorizations; every out-of-frontier effect the plan requires must be covered by the task specification's `Effects` section (or, for `trivial`-profile tasks, by `SESSION_BRIEF.md`). Cite the covered effects and any undeclared effect.
 
 ## Decision Criteria
 **Structural validator:** the Orchestrator MUST run `python .agents/harness/gate_validator.py --trigger H04 --artifact <path>` before judging PASS; a structural FAIL blocks PASS unless recorded as a documented deviation.

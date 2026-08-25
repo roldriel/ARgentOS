@@ -51,7 +51,7 @@ ejecución con la vía de autorización completa.
 | `rfc/63-state-and-artifact-lifecycle-model.md` | Accepted (plan 77) | Dimensiones de estado, lifecycle de artefactos y semántica de COMPLETED (D1, D2, D3). |
 | `rfc/64-execution-record-model.md` | Proposal (plan 78) | Identidad, registros, temporalidad y observabilidad de la ejecución (D5, D6, D7, D10). |
 | `rfc/65-evidence-and-verification-model.md` | Accepted (plan 79) | Clases de evidencia y regla VERIFIED (D4, D12). |
-| `rfc/66-authorization-and-capability-model.md` | Proposal | Frontera de efectos y bloque `effects` (D8, D11). |
+| `rfc/66-authorization-and-capability-model.md` | Accepted (plan 80) | Frontera de efectos y bloque `effects` (D8, D11). |
 | `rfc/67-knowledge-lifecycle-model.md` | Proposal | Lifecycle mínimo de conocimiento (D9). |
 
 ## Duodécima serie: modelo de garantías y fronteras de enforcement (25 ago 2026)
@@ -77,6 +77,12 @@ ejecución con la vía de autorización completa.
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
 | `79-evidence-and-verification-model.md` | RFC-65 | Executed | Clases de evidencia mínimas (`observation`/`measurement`/`attestation`/`assertion`/`reference`), bloques `[[evidence]]` con `class`/`claim_id`/`ref` en VERIFICATION_REPORT y en los ENTRY de HARNESS_REPORT, reglas de suficiencia por ítem `[gate]`/`[agent]`, invariante VERIFIED (evidencia distinta de atestación o término ATESTADO) y detección de atestaciones sin marca en `audit_gates.py` y el validador estructural H06. Versión 7.0.0 (MAJOR). |
+
+## Decimosexta serie: modelo de autorización y capacidades (25 ago 2026)
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `80-authorization-and-capability-model.md` | RFC-66 | Executed | Distinción formal de Capability/Permission/Authorization/Execution/Effect, frontera por defecto (red/HTTP, git remoto, instalaciones, cambios destructivos y escrituras fuera del proyecto requieren autorización), bloque `effects` en TASK_SPECIFICATION con `authorized_by`/`evidence_ref`/`status`, checks de autorización en H01/H04/H05, registro de efectos ejecutados en EXECUTION_SUMMARY, estados AUTHORIZED/UNAUTHORIZED/AUTHORIZATION_UNDETERMINED sin inferir UNAUTHORIZED por ausencia de registro. Versión 8.0.0 (MAJOR). |
 
 ## Serie de RFCs (documentos canónicos)
 
@@ -148,7 +154,7 @@ ejecución con la vía de autorización completa.
 | RFC-63 | `rfc/63-state-and-artifact-lifecycle-model.md` | Accepted (plan 77, 2026-08-25) | ¿Qué dimensiones de estado existen y cuál es el lifecycle de los artefactos? |
 | RFC-64 | `rfc/64-execution-record-model.md` | Proposal (plan 78) | ¿Cómo se registra y reconstruye una ejecución sin Event Sourcing? |
 | RFC-65 | `rfc/65-evidence-and-verification-model.md` | Accepted (plan 79, 2026-08-25) | ¿Qué cuenta como evidencia y cuándo un artefacto puede declararse VERIFIED? |
-| RFC-66 | `rfc/66-authorization-and-capability-model.md` | Proposal | ¿Cuándo una capability está autorizada para producir un efecto? |
+| RFC-66 | `rfc/66-authorization-and-capability-model.md` | Accepted (plan 80) | ¿Cuándo una capability está autorizada para producir un efecto? |
 | RFC-67 | `rfc/67-knowledge-lifecycle-model.md` | Proposal | ¿Qué ciclo mínimo necesita el conocimiento para ser reutilizable y revalidable? |
 
 ## Roadmap de implementación (planes activos)

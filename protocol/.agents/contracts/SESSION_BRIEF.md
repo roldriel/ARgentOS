@@ -62,6 +62,13 @@ item = ""
 deferred = true
 confirmed_by = ""
 confirmation_date = ""
+
+[[effects]]
+name = ""
+kind = "network" # network | remote_git | install | destructive | write_outside_project
+authorized_by = "" # user | unattended_default
+evidence_ref = ""
+status = "" # authorized | not_authorized | pending_user_confirmation
 ```
 
 `source` records where the answer came from: `user` for a direct user answer, or `unattended_default` for a default applied under unattended mode (such entries stay `PENDING_USER_CONFIRMATION` until the user reviews them).
@@ -87,6 +94,15 @@ carries `deferred: true` and the user confirmation (`confirmed_by` /
 `confirmation_date`); entries stay `PENDING_USER_CONFIRMATION` until confirmed
 and are never presented as completed. The Approval State of the session derives
 from this section together with the `Deferred Items` of the verification report.
+
+### Authorized Effects
+
+Optional authorization records for out-of-frontier effects when the
+authorization originates in a clarification (`source: user`) or in an
+unattended default (`source: unattended_default`). The schema mirrors the
+`Effects` section of `TASK_SPECIFICATION.md`
+(`.agents/standards/runtime/AUTHORIZATION.md`); the task specification's
+`evidence_ref` may cite the corresponding clarification entry.
 
 ### Constraints
 

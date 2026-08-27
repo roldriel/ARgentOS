@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Verify ruta:sección citations in the repository documentation (RFC-69).
 
-Scans every .md file under docs/plans/ and docs/rfc/ recursively, plus the
-canonical documents listed in ROOT_DOCS (root docs, policies and component
-docs such as runtime/README.md), and extracts citations in the two forms used
-by the repository convention (docs/CONVENTIONS.md:Convenciones):
+Scans every .md file under docs/plans/, docs/rfc/ and docs/adr/ recursively,
+plus the canonical documents listed in ROOT_DOCS (root docs, policies and
+component docs such as runtime/README.md), and extracts citations in the two
+forms used by the repository convention (docs/CONVENTIONS.md:Convenciones):
 
 1. Backtick-quoted `` `path:section` `` (e.g. `` `plans/INDEX.md:Convenciones` ``).
 2. Backtick-quoted path followed by § and a section reference
@@ -181,7 +181,7 @@ def scan_documents(root: Path) -> list[Citation]:
     """Extract citations from docs/plans/ + docs/rfc/ and the root docs."""
     citations: list[Citation] = []
     sources: list[Path] = []
-    for sub in ("docs/plans", "docs/rfc"):
+    for sub in ("docs/plans", "docs/rfc", "docs/adr"):
         sub_dir = root / sub
         if sub_dir.is_dir():
             sources.extend(sorted(sub_dir.rglob("*.md")))

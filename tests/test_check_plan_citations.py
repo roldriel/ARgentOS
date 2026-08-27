@@ -53,12 +53,17 @@ def test_scan_is_recursive(tmp_path):
     make_repo(tmp_path, {
         "docs/plans/a.md": "`plans/b.md:Sec`\n",
         "docs/rfc/c.md": "`plans/b.md` §Sec\n",
+        "docs/adr/d.md": "`docs/plans/b.md:Sec`\n",
         "docs/plans/INDEX.md": "sin citas\n",
         "other/d.md": "`plans/b.md:Sec`\n",  # outside governance dirs: ignored
     })
     found = cpc.scan_documents(tmp_path)
     sources = {c.source for c in found}
-    assert sources == {Path("docs/plans/a.md"), Path("docs/rfc/c.md")}
+    assert sources == {
+        Path("docs/plans/a.md"),
+        Path("docs/rfc/c.md"),
+        Path("docs/adr/d.md"),
+    }
 
 
 def test_ignores_non_citation_backticks(tmp_path):

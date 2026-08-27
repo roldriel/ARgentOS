@@ -47,6 +47,13 @@
   qué plan). Todo plan con dependencias abiertas declara su **criterio de
   entrada verificable** (qué archivos/estados deben existir antes de
   ejecutarlo).
+- **Ciclo de status (ADRs)**: `Proposal` (decisión en consideración) →
+  `Accepted` (decisión adoptada y registrada) → `Superseded` (reemplazada; el
+  header indica por cuál ADR). El status del ADR refleja la **decisión
+  registrada**, no el estado de formalización de su RFC: la matriz de
+  `docs/adr/INDEX.md` muestra cada artefacto con su propio status, y un ADR
+  `Accepted` no habilita cambios de payload (la vía sigue siendo RFC `Accepted`
+  + plan, RFC-56).
 - **Trazas históricas (RFC-46)**: los artefactos de sesión son registros
   inmutables de la versión del protocolo vigente al momento de la sesión; no
   se reescriben ni se "reproducen" con una versión nueva. Las entradas de
@@ -60,13 +67,14 @@
   mutables, y referencias a documentos inexistentes. Criterio de aceptación de
   todo documento nuevo en `docs/plans/` y `docs/rfc/`: cada referencia
   resuelve contra el repo.
-- **Plantillas**: todo plan nuevo nace de `docs/plans/_TEMPLATE.md` y toda RFC
-  nueva de `docs/rfc/_TEMPLATE.md` (estructura completa; las secciones marcadas
-  como opcionales pueden omitirse). Los templates no se numeran ni se registran
-  en los INDEX; el resto de los documentos referencia la estructura, no la
-  duplica. El cumplimiento estructural (nombre de archivo, status dentro del
-  ciclo vigente, ausencia de placeholders, Amendment Log en RFCs, registro en
-  el INDEX correspondiente) se verifica mecánicamente con
+- **Plantillas**: todo plan nuevo nace de `docs/plans/_TEMPLATE.md`, toda RFC
+  nueva de `docs/rfc/_TEMPLATE.md` y todo ADR nuevo de `docs/adr/_TEMPLATE.md`
+  (estructura completa; las secciones marcadas como opcionales pueden omitirse).
+  Los templates no se numeran ni se registran en los INDEX; el resto de los
+  documentos referencia la estructura, no la duplica. El cumplimiento estructural
+  (nombre de archivo, status dentro del ciclo vigente, ausencia de placeholders,
+  Amendment Log en RFCs, registro en el INDEX correspondiente) se verifica
+  mecánicamente con
   `python tools/check_plan_structure.py`.
 - **Amendment log**: toda RFC lleva una sección `## Amendment Log` (fecha →
   qué cambió → origen). Cuando una RFC posterior desfasa a una anterior, la
@@ -81,7 +89,7 @@
   08–14 están definidos en `docs/plans/analisis-explicitud.md`. Se cita el
   catálogo por ruta; ningún documento referencia IDs de gap que no existan
   allí.
-- **Numeración de archivos**: hay dos secuencias independientes y cada una es
+- **Numeración de archivos**: hay tres secuencias independientes y cada una es
   única dentro de su espacio:
   - `docs/rfc/`: solo RFCs, numeración incremental (`00`–`15` existentes — los
     `07`–`15` reservados por el roadmap EC ya fueron asignados a
@@ -93,6 +101,9 @@
     jul); `04`–`07` primera serie (Execution Context); `08`–`14` segunda serie
     (explicitud de decisiones); `15`–`20` tercera serie (protocolo operativo),
     mapeada el 28 jul.
+  - `docs/adr/`: solo ADRs, numeración incremental (`01`–`14` existentes); la
+    identidad estable es `ADR-N` y el archivo es `NN-slug.md`. Un plan o una RFC
+    nunca vive aquí.
   - Los identificadores internos de la serie (RFC-00XX … RFC-00YM) se
     mantienen como IDs conceptuales dentro de los documentos; el número de
     archivo es solo orden físico.

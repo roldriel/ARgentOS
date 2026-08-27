@@ -48,6 +48,12 @@ La política de versionado, changelog, tags y estados de planes vive en
   a ser registro/navegación, los checkers se migran al layout nuevo y los
   working docs quedan contenidos y versionados. Cambio docs-only: sin `VERSION`
   bump ni tag (ver `docs/VERSIONING.md` §3).
+- **Gobernanza ADR del repo fuente** (plan 83, RFC-69): `docs/adr/` materializado
+  con 14 ADRs individuales (ADR-01…ADR-14 ↔ D0–D13 preservadas como identidad
+  histórica), matriz `D# ↔ ADR ↔ RFC ↔ plan` en `docs/adr/INDEX.md`, template
+  `_TEMPLATE.md`, ciclo de status ADR en `docs/CONVENTIONS.md` y cobertura de
+  `docs/adr/` en los checkers de estructura y citas. Cambio docs-only: sin
+  `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3).
 
 (los cambios docs-only se registran aquí bajo `[Unreleased]`; ver
 `docs/VERSIONING.md` §3)

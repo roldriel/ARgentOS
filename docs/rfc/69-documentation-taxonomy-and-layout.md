@@ -406,3 +406,9 @@ automatización de la promoción working → canonical.
   untracked); layout incluye `docs/architecture/ARCHITECTURAL_DECISION_MODEL.md`
   pendiente de conversión; clasificación de support docs. Aceptada con
   autorización del mantenedor para ejecutar el Plan A.
+- 2026-08-27 — Plan B ejecutado (plan 83): `docs/adr/` materializado con 14 ADRs
+  individuales (ADR-01…ADR-14 ↔ D0–D13 preservadas como identidad histórica),
+  matriz many-to-many en `docs/adr/INDEX.md`, template `_TEMPLATE.md`, ciclo de
+  status ADR en `docs/CONVENTIONS.md` y cobertura de `docs/adr/` en
+  `tools/check_plan_structure.py` y `tools/check_plan_citations.py`. El modelo
+  ADR de esta RFC no cambia.

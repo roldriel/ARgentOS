@@ -1,9 +1,9 @@
 """Tests for tools/check_plan_structure.py.
 
-Covers the structural rules enforced on numbered docs/plans/ and docs/rfc/
-documents (docs/CONVENTIONS.md:Convenciones, bullet "Plantillas"): filename,
-status cycle, template placeholders, RFC Amendment Log and the per-kind
-governance INDEX mirror.
+Covers the structural rules enforced on numbered docs/plans/, docs/rfc/ and
+docs/adr/ documents (docs/CONVENTIONS.md:Convenciones, bullet "Plantillas"):
+filename, status cycle, template placeholders, RFC Amendment Log and the
+per-kind governance INDEX mirror.
 """
 
 from __future__ import annotations
@@ -36,6 +36,12 @@ RFC_OK = (
     "## Amendment Log\n\n- 2026-08-12 — Creación.\n"
 )
 
+ADR_OK = (
+    "# ADR-01 — Sample\n\n"
+    "**Status:** Accepted\n\n"
+    "## Contexto\n\nTexto.\n"
+)
+
 
 def make_repo(tmp_path: Path, files: dict[str, str]) -> Path:
     for rel, content in files.items():
@@ -46,29 +52,36 @@ def make_repo(tmp_path: Path, files: dict[str, str]) -> Path:
 
 
 def base_repo(tmp_path: Path) -> Path:
-    """A minimal conforming repo: one plan, one RFC, per-kind INDEXes."""
+    """A minimal conforming repo: one plan, one RFC, one ADR, per-kind INDEXes."""
     return make_repo(tmp_path, {
         "docs/plans/01-sample-plan.md": PLAN_OK,
         "docs/rfc/01-sample-rfc.md": RFC_OK,
+        "docs/adr/01-sample-adr.md": ADR_OK,
         "docs/plans/INDEX.md": "# INDEX\n\n01-sample-plan.md\n",
         "docs/rfc/INDEX.md": "# INDEX\n\n01-sample-rfc.md\n",
+        "docs/adr/INDEX.md": "# INDEX\n\n01-sample-adr.md\n",
     })
 
 
 # --- Scope -----------------------------------------------------------------
 
-def test_scan_covers_plans_and_rfc_recursively(tmp_path):
+def test_scan_covers_plans_rfc_and_adr_recursively(tmp_path):
     make_repo(tmp_path, {
         "docs/plans/01-a.md": "",
         "docs/rfc/02-b.md": "",
+        "docs/adr/03-c.md": "",
         "docs/plans/INDEX.md": "",
+        "docs/adr/INDEX.md": "",
         "docs/plans/_TEMPLATE.md": "",
         "docs/rfc/_TEMPLATE.md": "",
+        "docs/adr/_TEMPLATE.md": "",
         "docs/plans/analisis-explicitud.md": "",
         "other/03-c.md": "",
     })
     found = {rel.as_posix() for rel, _ in cps.scan_documents(tmp_path)}
-    assert found == {"docs/plans/01-a.md", "docs/rfc/02-b.md"}
+    assert found == {
+        "docs/plans/01-a.md", "docs/rfc/02-b.md", "docs/adr/03-c.md",
+    }
 
 
 def test_annexes_are_excluded(tmp_path):
@@ -147,6 +160,31 @@ def test_rfc_status_cycle_accepted(tmp_path, status):
     assert not [v for v in cps.verify_all(tmp_path) if v.rule == "status"]
 
 
+@pytest.mark.parametrize("status", [
+    "Proposal",
+    "Accepted",
+    "Accepted (decisión registrada; formalización pendiente).",
+    "Superseded",
+])
+def test_adr_status_cycle_accepted(tmp_path, status):
+    make_repo(tmp_path, {
+        "docs/adr/01-sample-adr.md": ADR_OK.replace("Accepted", status),
+        "docs/adr/INDEX.md": "01-sample-adr.md\n",
+    })
+    assert not [v for v in cps.verify_all(tmp_path) if v.rule == "status"]
+
+
+def test_adr_rejects_plan_statuses(tmp_path):
+    make_repo(tmp_path, {
+        "docs/adr/01-sample-adr.md": ADR_OK.replace(
+            "Accepted", "Aprobado para ejecución"
+        ),
+        "docs/adr/INDEX.md": "01-sample-adr.md\n",
+    })
+    violations = cps.verify_all(tmp_path)
+    assert any(v.rule == "status" for v in violations)
+
+
 def test_rfc_rejects_plan_statuses(tmp_path):
     make_repo(tmp_path, {
         "docs/rfc/01-sample-rfc.md": RFC_OK.replace(
@@ -217,6 +255,15 @@ def test_rfc_missing_from_rfc_index_reported(tmp_path):
     make_repo(tmp_path, {
         "docs/rfc/02-ghost-rfc.md": RFC_OK,
         "docs/rfc/INDEX.md": "# INDEX\n",
+    })
+    violations = cps.verify_all(tmp_path)
+    assert any(v.rule == "index-mirror" for v in violations)
+
+
+def test_adr_missing_from_adr_index_reported(tmp_path):
+    make_repo(tmp_path, {
+        "docs/adr/02-ghost-adr.md": ADR_OK,
+        "docs/adr/INDEX.md": "# INDEX\n",
     })
     violations = cps.verify_all(tmp_path)
     assert any(v.rule == "index-mirror" for v in violations)

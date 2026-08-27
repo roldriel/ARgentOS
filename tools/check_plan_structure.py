@@ -4,21 +4,22 @@
 Documents created from docs/plans/_TEMPLATE.md / docs/rfc/_TEMPLATE.md must be
 born conforming (docs/CONVENTIONS.md:Convenciones, bullet "Plantillas"). This
 checker turns that convention into mechanical enforcement. For every
-numbered document — ``docs/plans/NN-slug.md`` and ``docs/rfc/NN-slug.md``,
-excluding auxiliary annexes (``-anexo-``) — it verifies:
+numbered document — ``docs/plans/NN-slug.md``, ``docs/rfc/NN-slug.md`` and
+``docs/adr/NN-slug.md``, excluding auxiliary annexes (``-anexo-``) — it
+verifies:
 
 1. Filename: ``NN-slug.md``, lowercase slug with hyphens.
 2. Header: a ``**Status:**`` field whose base value belongs to the closed
    status cycle (plans: Aprobado para redacción / Aprobado para ejecución /
-   Executed / Superseded; RFCs: Proposal / Accepted / Superseded). Suffixes
-   after the base value ("Executed (parcial: ...)", "Accepted (fecha)") are
-   allowed.
+   Executed / Superseded; RFCs and ADRs: Proposal / Accepted / Superseded).
+   Suffixes after the base value ("Executed (parcial: ...)", "Accepted
+   (fecha)") are allowed.
 3. No leftover template placeholders: ``Plan NN``, ``RFC-NN``, ``NN-slug``,
    ``YYYY-MM-DD``.
 4. RFCs only: an ``## Amendment Log`` section exists.
 5. INDEX mirror: the document's basename appears in the corresponding
    governance INDEX (``docs/plans/INDEX.md`` for plans,
-   ``docs/rfc/INDEX.md`` for RFCs).
+   ``docs/rfc/INDEX.md`` for RFCs, ``docs/adr/INDEX.md`` for ADRs).
 
 Generic angle-bracket placeholders (``<session-uuid>`` and similar) are NOT
 flagged: the corpus uses them legitimately as schema placeholders.
@@ -70,7 +71,7 @@ class Violation:
 
 
 def is_numbered_document(path: Path) -> bool:
-    """True for plans/NN-slug.md and plans/rfc/NN-slug.md, excluding annexes."""
+    """True for NN-slug.md under governance folders, excluding annexes."""
     return (
         bool(re.match(r"^\d{2,}-", path.name))
         and "-anexo-" not in path.name
@@ -78,11 +79,13 @@ def is_numbered_document(path: Path) -> bool:
 
 
 # (subdirectory, kind) pairs scanned by this checker (RFC-69 layout).
-_SCAN_ROOTS = (("docs/plans", "plan"), ("docs/rfc", "rfc"))
+_SCAN_ROOTS = (("docs/plans", "plan"), ("docs/rfc", "rfc"), ("docs/adr", "adr"))
+
+_ADR_STATUSES = frozenset({"Proposal", "Accepted", "Superseded"})
 
 
 def scan_documents(root: Path) -> list[tuple[Path, str]]:
-    """Return (relative path, kind) for numbered docs under docs/plans + docs/rfc."""
+    """Return (relative path, kind) for numbered governance docs."""
     docs: list[tuple[Path, str]] = []
     for sub, kind in _SCAN_ROOTS:
         sub_dir = root / sub
@@ -112,7 +115,9 @@ def check_status(rel: Path, kind: str, text: str) -> Violation | None:
         if char in base:
             base = base.split(char, 1)[0]
     base = base.strip()
-    allowed = _RFC_STATUSES if kind == "rfc" else _PLAN_STATUSES
+    allowed = _ADR_STATUSES if kind == "adr" else (
+        _RFC_STATUSES if kind == "rfc" else _PLAN_STATUSES
+    )
     if base not in allowed:
         return Violation(
             rel, 1, "status",

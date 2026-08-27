@@ -65,7 +65,7 @@ registry global de IDs: los INDEX cumplen el rol de mapa ID → path → status.
 | Carpeta | Clase |
 |---|---|
 | `docs/rfc/` | Governance / RFC |
-| `docs/adr/` | Governance / ADR (futuro, Plan B) |
+| `docs/adr/` | Governance / ADR |
 | `docs/plans/` | Governance / Plan (+ support docs) |
 | `docs/architecture/` | Inventory / Architecture models |
 | `docs/working/` | Working (`audits/`, `research/`, `proposals/`) |
@@ -107,18 +107,20 @@ clase de referencia. Las referencias nuevas no usan paths legacy.
 
 **INDEX = registro/navegación** (ID → path → status → relaciones).
 **CONVENTIONS = normativa.** No se duplican responsabilidades. Los INDEX de
-gobernanza (`docs/plans/INDEX.md`, `docs/rfc/INDEX.md`, y a futuro
-`docs/adr/INDEX.md`) registran todos los artefactos (mirror mecánico
+gobernanza (`docs/plans/INDEX.md`, `docs/rfc/INDEX.md`, `docs/adr/INDEX.md`)
+registran todos los artefactos (mirror mecánico
 verificado por `tools/check_plan_structure.py`); las carpetas de working
 llevan INDEX livianos de navegación/status.
 
-### ADR (declaración futura)
+### ADR
 
-`docs/adr/` (Plan B) alojará ADRs individuales y `docs/adr/INDEX.md` como
-matriz futura `D# ↔ ADR ↔ RFC ↔ plan` (many-to-many, sin relaciones 1:1
-inventadas). `docs/architecture/ARCHITECTURAL_DECISION_MODEL.md` permanece
-como modelo pendiente de conversión mediante el Plan B de gobernanza ADR;
-D0–D13 se preservan como identidades históricas. Esta tarea no crea ADRs.
+`docs/adr/` aloja ADRs individuales (identidad estable `ADR-N`) y
+`docs/adr/INDEX.md` como matriz `D# ↔ ADR ↔ RFC ↔ plan` (many-to-many, sin
+relaciones 1:1 inventadas). El backfill de las decisiones D0–D13 del
+`docs/architecture/ARCHITECTURAL_DECISION_MODEL.md` se ejecutó en el plan 83
+(RFC-69, Plan B); `D#` se preserva como identidad histórica y el modelo permanece
+como registro del análisis que originó las decisiones. Los ADRs nuevos nacen de
+`docs/adr/_TEMPLATE.md` y se registran en el INDEX en el mismo commit.
 
 ### Idiomas y citas
 

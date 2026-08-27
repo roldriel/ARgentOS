@@ -2,23 +2,24 @@
 """Verify architecture traceability invariants AEW-001…004 (RFC-68).
 
 Dev-only safety net for the Architecture Evolution workflow. It scans the
-architecture artifacts (the root problem/decision models and the RFCs of the
-post-audit series) and verifies:
+architecture artifacts (the problem/decision models under docs/architecture/
+and the RFCs of the post-audit series under docs/rfc/) and verifies:
 
 1. REFS — every backticked ``path:section`` citation and every backticked
    path ending in a documentation extension resolves to an existing file (and,
    when a section is given, to an existing ATX heading).
 2. AEW-002 — every problem section (``### P<num>``) in
-   ``ARCHITECTURAL_PROBLEM_MODEL.md`` contains at least one resolvable
+   ``docs/architecture/ARCHITECTURAL_PROBLEM_MODEL.md`` contains at least one resolvable
    reference (evidence / finding).
 3. AEW-003 — every decision section (``## D<num>``) in
-   ``ARCHITECTURAL_DECISION_MODEL.md`` contains at least one resolvable
+   ``docs/architecture/ARCHITECTURAL_DECISION_MODEL.md`` contains at least one resolvable
    reference and mentions at least one problem ID (``P<num>`` / ``CG-<num>``).
 4. AEW-004 — every RFC in scope carries a header block (``**Origen:**``) with
    at least one resolvable reference to its originating decisions.
 
-Scope defaults to the root models and ``plans/rfc/62-*.md`` … ``68-*.md``;
-extra paths can be passed as positional arguments.
+Scope defaults to the models in ``docs/architecture/`` and
+``docs/rfc/62-*.md`` … ``68-*.md``; extra paths can be passed as positional
+arguments.
 
 Usage:
   python tools/check_architecture_traceability.py [--root REPO_ROOT] [FILE ...]
@@ -35,6 +36,8 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
+import legacy_paths
+
 _PATH_RE = r"[A-Za-z0-9_./ÁÉÍÓÚáéíóúñÑ-]+\.(?:md|py|toml|txt|json|yaml|yml)"
 _COLON_RE = re.compile(r"`(" + _PATH_RE + r"):([^`\s][^`]*?)`")
 _SECTION_SIGN_RE = re.compile(
@@ -49,8 +52,8 @@ _PROBLEM_ID_RE = re.compile(r"\b(P\d+|CG-\d+)\b")
 _SKIP_PREFIXES = ("http://", "https://", "www.", "mailto:", "ftp://")
 _ORDER_PREFIX_RE = re.compile(r"^(?:D?\d+|D?<order>)-", re.IGNORECASE)
 _DEFAULT_SCOPE = (
-    "ARCHITECTURAL_PROBLEM_MODEL.md",
-    "ARCHITECTURAL_DECISION_MODEL.md",
+    "docs/architecture/ARCHITECTURAL_PROBLEM_MODEL.md",
+    "docs/architecture/ARCHITECTURAL_DECISION_MODEL.md",
 )
 
 # Session and knowledge-base artifacts live under the project evidence area
@@ -190,8 +193,16 @@ def resolve_citation(
         root / "protocol" / citation.path,
         root / "docs" / citation.path,
         root / "tools" / citation.path,
+        root / "docs" / "architecture" / citation.path,
+        root / "docs" / "working" / "audits" / citation.path,
+        root / "docs" / "working" / "research" / citation.path,
+        root / "docs" / "working" / "proposals" / citation.path,
     ]
     target = next((p for p in candidates if p.is_file()), None)
+    if target is None:
+        mapped = legacy_paths.resolve_legacy(citation.path)
+        if mapped is not None:
+            target = root / mapped
     if target is None:
         base = citation.path.replace("\\", "/").split("/")[-1]
         if _ORDER_PREFIX_RE.sub("", base) in _EVIDENCE_ARTIFACTS:
@@ -287,9 +298,9 @@ def verify_file(path: Path, root: Path) -> list[Violation]:
 
 
 def default_scope(root: Path) -> list[Path]:
-    """Root models plus the post-audit RFC series."""
+    """Architecture models plus the post-audit RFC series (RFC-69 layout)."""
     files = [root / name for name in _DEFAULT_SCOPE]
-    rfc_dir = root / "plans" / "rfc"
+    rfc_dir = root / "docs" / "rfc"
     if rfc_dir.is_dir():
         files.extend(sorted(rfc_dir.glob("6[2-8]-*.md")))
     return [p for p in files if p.is_file()]

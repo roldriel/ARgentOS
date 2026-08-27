@@ -72,7 +72,7 @@ Reglas:
    promoción, `python tools/check_dist_sync.py` — es decir, la **batería
    canónica** de §4.1. Si algo falla, no se versiona ni se promueve.
 4. **Estados:** plan → `Executed` (con `Nota de ejecución`), Amendment Log de la
-   RFC, `plans/INDEX.md` como espejo.
+   RFC, `docs/plans/INDEX.md` como espejo.
 5. **Changelog + versión:** nueva sección `## [X.Y.Z] — fecha` con el ítem
    `(plan N, RFC-N)`, bump de `protocol/.agents/VERSION` y la nota de tag.
 6. **Commit del plan en `dev`:** atómico, Conventional Commit en inglés
@@ -87,7 +87,7 @@ Reglas:
 ### 4.1 Batería canónica de verificación
 
 La batería que define "verde" en este repo es la siguiente — única definición;
-`AGENTS.md` raíz y `plans/INDEX.md` §Convenciones la referencian, no la
+`AGENTS.md` raíz y `docs/CONVENTIONS.md:Convenciones` la referencian, no la
 duplican:
 
 ```bash
@@ -162,7 +162,7 @@ RFCs:
 - `Proposal` → `Accepted` (decisión explícita o regularización) → `Superseded`.
 - Ejecutar un plan por vía plan **no** cambia la RFC: queda `Proposal` con
   entrada en su Amendment Log (precedente planes 31–36).
-- `plans/INDEX.md` es un espejo descriptivo: se actualiza en el commit del plan,
+- `docs/plans/INDEX.md` es un espejo descriptivo: se actualiza en el commit del plan,
   después de los archivos fuente, y nunca es fuente de verdad.
 
 ## 8. Ejecución en paralelo

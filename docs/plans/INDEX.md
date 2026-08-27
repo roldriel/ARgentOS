@@ -105,78 +105,9 @@ autorización completa.
 
 ## Serie de RFCs (documentos canónicos)
 
-| RFC | Archivo | Status | Pregunta que responde |
-|---|---|---|---|
-| RFC-00XX | `rfc/00-skill-capability-model.md` | Accepted | ¿Qué es una Skill? (capacidad reutilizable, independiente del mecanismo) |
-| RFC-00XY | `rfc/01-execution-context-model.md` | Accepted | ¿Qué es un Execution Context? |
-| RFC-00XZ | `rfc/02-execution-context-assembly-process.md` | Accepted (enmiendas 00YB/00YC aplicadas 5 ago 2026, plan 04) | ¿Cómo se construye conceptualmente? |
-| RFC-00YA | `rfc/03-context-budget-model.md` | Accepted ⚠ (alcance ampliado por 00YC — banner en el documento) | ¿Qué restricciones limitan su composición? |
-| RFC-00YB | `rfc/04-context-candidate-prioritization-model.md` | Accepted (regularizado 2 ago 2026: ya estaba aplicado en `.agents/`) | ¿Qué candidatos parecen más importantes? |
-| RFC-00YC | `rfc/05-context-resolution-model.md` | Accepted (regularizado 2 ago 2026: ya estaba aplicado en `.agents/`) | ¿Qué conjunto consistente puede componerse? |
-| RFC-00YD | `rfc/06-context-composition-model.md` | Accepted (plan 04, 5 ago 2026) | ¿Cómo se construye el Execution Context a partir del conjunto resuelto? |
-| RFC-00YE | `rfc/07-context-conflict-classification-model.md` | Accepted (plan 05, 5 ago 2026) | ¿Qué tipos de conflicto existen conceptualmente entre candidatos? |
-| RFC-00YF | `rfc/08-context-tie-breaking-model.md` | Accepted (plan 05, 5 ago 2026) | ¿Cómo se decide entre candidatos equivalentes en prioridad? |
-| RFC-00YG | `rfc/09-context-merge-model.md` | Accepted (plan 05, 5 ago 2026) | ¿Cuándo dos candidatos compatibles se fusionan en uno? |
-| RFC-00YH | `rfc/10-context-deduplication-model.md` | Accepted (plan 05, 5 ago 2026) | ¿Cómo se eliminan redundancias conceptuales del conjunto? |
-| RFC-00YI | `rfc/11-context-compression-model.md` | Accepted (plan 06, 5 ago 2026) | ¿Cómo se reduce el costo de representación de un conjunto ya resuelto? |
-| RFC-00YJ | `rfc/12-context-optimization-model.md` | Accepted (plan 06, 5 ago 2026) | ¿Cómo se optimiza la representación final del Execution Context bajo las restricciones del Budget? |
-| RFC-00YK | `rfc/13-execution-context-materialization-model.md` | Accepted (plan 07, 5 ago 2026) | ¿Cómo se define conceptualmente la transformación de un Execution Context en una representación propia de un runtime? |
-| RFC-00YL | `rfc/14-prompt-rendering-model.md` | Accepted (plan 07, 5 ago 2026) | ¿Cómo materializa un runtime basado en prompts el Execution Context? |
-| RFC-00YM | `rfc/15-skill-materialization-model.md` | Accepted (plan 07, 5 ago 2026) | ¿Cómo se materializa una Skill en un runtime concreto? |
-| RFC-16 | `rfc/16-core-skills-catalog-model.md` | Accepted | ¿Qué Skills forman el núcleo del protocolo, qué función cumple cada una y qué criterios deciden la membresía? |
-| RFC-17 | `rfc/17-orchestrator-decision-model.md` | Accepted (plan 09, 5 ago 2026) | ¿Qué decisiones toma el Orchestrator, sobre qué inputs y con qué autoridad? |
-| RFC-18 | `rfc/18-failure-recovery-taxonomy.md` | Accepted (plan 10, 5 ago 2026) | ¿Qué clases de fallo existen conceptualmente y qué destino conceptual tiene cada una? |
-| RFC-19 | `rfc/19-delegation-validity-model.md` | Accepted (plan 11, 5 ago 2026) | ¿Qué condiciones conceptuales debe cumplir una delegación (y su return report) para ser válida? |
-| RFC-20 | `rfc/20-profile-selection-model.md` | Accepted (plan 12, 5 ago 2026) | ¿Qué hace a una tarea candidata a un perfil especializado y cómo se selecciona? |
-| RFC-21 | `rfc/21-skill-activation-model.md` | Accepted (plan 12, 5 ago 2026) | ¿Qué hace a una skill candidata a activarse para una tarea? |
-| RFC-22 | `rfc/22-session-iteration-lifecycle-model.md` | Accepted (plan 13, 5 ago 2026) | ¿Qué es una sesión, qué es una iteración, y qué reglas conceptuales gobiernan su ciclo de vida? |
-| RFC-23 | `rfc/23-declarative-flag-compliance-model.md` | Accepted (plan 14, 5 ago 2026) | ¿Qué obliga conceptualmente un flag que el harness no puede forzar, y cómo se evidencia su cumplimiento? |
-| RFC-24 | `rfc/24-skill-lifecycle-model.md` | Accepted (retroactiva 11 ago 2026; plan 23 Executed) | ¿Qué es una skill integrada y qué destino tienen las skills sin consumidor (cable-or-kill)? |
-| RFC-25 | `rfc/25-single-source-required-sections.md` | Accepted (retroactiva 11 ago 2026; plan 24 Executed) | ¿De dónde debe resolver el runner las `required_sections` para que no existan copias desincronizables? |
-| RFC-26 | `rfc/26-task-profile-model.md` | Accepted (retroactiva 11 ago 2026; plan 25 Executed) | ¿Cómo se clasifica una tarea por peso (trivial/standard/complex) y qué subconjunto del ciclo obliga cada perfil? |
-| RFC-27 | `rfc/27-hook-enforcement-model.md` | Accepted (retroactiva 11 ago 2026; plan 26 Executed) | ¿Cómo pasa el enforcement de voluntario (prompt) a obligatorio (estado persistido + hooks bloqueantes)? |
-| RFC-28 | `rfc/28-harness-coverage-closure-model.md` | Accepted (retroactiva 11 ago 2026; plan 27 Executed) | ¿Cómo se declara el nivel de enforcement de cada contrato y qué validación semántica mecánica mínima gana el harness? |
-| RFC-29 | `rfc/29-h07-user-authorized-extra-work.md` | Accepted (plan 28 Executed, 11 ago 2026) | ¿Cómo expresa el protocolo el trabajo extra autorizado por el usuario sin que H07 lo convierta en fallo? |
-| RFC-30 | `rfc/30-recovery-to-early-phases.md` | Accepted (plan 29 Executed, 11 ago 2026) | ¿Qué transiciones legales corrigen artefactos de fases tempranas desde RECOVERY? |
-| RFC-31 | `rfc/31-abort-artifact-flow.md` | Accepted (plan 30 Executed, 11 ago 2026) | ¿Cómo se registra y cierra una sesión que termina en ABORT? |
-| RFC-32 | `rfc/32-phase-02-profile-unification.md` | Accepted (12 ago 2026, revisión RFC-56; plan 31, 11 ago 2026) | ¿Quién redacta la TASK_SPECIFICATION y qué skills activa? |
-| RFC-33 | `rfc/33-execution-summary-steps-schema.md` | Accepted (12 ago 2026, revisión RFC-56; plan 32, 11 ago 2026) | ¿Cuál es el nombre canónico de la lista de pasos de EXECUTION_SUMMARY? |
-| RFC-34 | `rfc/34-ears-criteria-canonical-form.md` | Accepted (12 ago 2026, revisión RFC-56; plan 33, 11 ago 2026) | ¿Cuál es la forma canónica de los criterios de aceptación EARS? |
-| RFC-35 | `rfc/35-verify-workflow-inputs.md` | Accepted (12 ago 2026, revisión RFC-56; plan 34 Executed, 11 ago 2026) | ¿Qué inputs consume la fase 07 y con qué valores decide? |
-| RFC-36 | `rfc/36-plan-workflow-inputs.md` | Accepted (12 ago 2026, revisión RFC-56; plan 35 Executed, 11 ago 2026) | ¿Qué inputs recibe el worker de planificación? |
-| RFC-37 | `rfc/37-gather-context-h10-declaration.md` | Accepted (12 ago 2026, revisión RFC-56; plan 36 Executed, 11 ago 2026) | ¿Qué transición protege H10 y cómo se declara en la fase 03? |
-| RFC-38 | `rfc/38-task-analysis-confidence-blocks.md` | Accepted (12 ago 2026, revisión RFC-56; plan 37, 11 ago 2026) | ¿Qué significa cada bloque de confianza del TASK_ANALYSIS? |
-| RFC-39 | `rfc/39-discovery-context-budget.md` | Accepted (12 ago 2026, revisión RFC-56; plan 38, 11 ago 2026) | ¿Dónde se configuran los límites de muestreo y presupuesto de discovery? |
-| RFC-40 | `rfc/40-kb-discovery-entry-produced-by.md` | Accepted (12 ago 2026, revisión RFC-56; plan 39, 11 ago 2026) | ¿Qué estados producen las entradas de la KB de discovery? |
-| RFC-41 | `rfc/41-discovery-artifact-boundaries.md` | Accepted (12 ago 2026, revisión RFC-56; plan 40, 11 ago 2026) | ¿Dónde viven los intermedios de discovery y cómo se numeran sus artefactos? |
-| RFC-42 | `rfc/42-rfc-plan-status-governance.md` | Accepted (12 ago 2026, revisión RFC-56; plan 41, 11 ago 2026) | ¿Qué relación de status habilita a un plan a modificar `.agents/`? |
-| RFC-43 | `rfc/43-h13-planned-cleanup.md` | Accepted (12 ago 2026, revisión RFC-56; plan 42, 11 ago 2026) | ¿Qué tratamiento reciben las entidades `planned` inexistentes en H13? |
-| RFC-44 | `rfc/44-intent-reflection-auto-confirm.md` | Accepted (12 ago 2026, revisión RFC-56; plan 43, 11 ago 2026) | ¿En qué estado se produce la INTENT_REFLECTION con confianza HIGH? |
-| RFC-45 | `rfc/45-unattended-clarification.md` | Accepted (12 ago 2026, revisión RFC-56; plan 44, 11 ago 2026) | ¿Cómo resuelve el protocolo la clarificación sin usuario en línea? |
-| RFC-46 | `rfc/46-historical-trace-policy.md` | Accepted (12 ago 2026, revisión RFC-56; plan 45, 11 ago 2026) | ¿Cómo se interpretan trazas producidas por un harness que ya no existe? |
-| RFC-47 | `rfc/47-enforced-mode-dogfooding.md` | Accepted (12 ago 2026, revisión RFC-56; plan 46, 11 ago 2026) | ¿Cómo se valida empíricamente el modo enforced? |
-| RFC-48 | `rfc/48-discovery-per-entry-contracts.md` | Accepted (12 ago 2026, revisión RFC-56; plan 47, 11 ago 2026) | ¿Dónde se definen las secciones requeridas de cada entrada de discovery? |
-| RFC-49 | `rfc/49-protocol-skill-mechanical-validation.md` | Accepted (12 ago 2026, revisión RFC-56; plan 48, 11 ago 2026) | ¿Cómo se garantiza estructuralmente la validez de las skills del protocolo? |
-| RFC-50 | `rfc/50-delegation-single-instance-model.md` | Accepted (12 ago 2026, revisión RFC-56; plan 49, 11 ago 2026) | ¿Cómo se mantiene la separación de roles en una sola instancia? |
-| RFC-51 | `rfc/51-discovery-kb-freshness.md` | Accepted (12 ago 2026, revisión RFC-56; plan 50, 11 ago 2026) | ¿Cómo se evita consumir entradas de KB vencidas o revalidadas fuera del pipeline? |
-| RFC-52 | `rfc/52-worker-role-phase-catalog.md` | Accepted (12 ago 2026, revisión RFC-56; plan 51, 11 ago 2026) | ¿Coincide el catálogo de roles de fase y sus skills con la tabla de activación? |
-| RFC-53 | `rfc/53-tooling-profile-candidacy.md` | Accepted (12 ago 2026, revisión RFC-56; plan 52, 11 ago 2026) | ¿Cómo clasifican las 7 preguntas las tareas de tooling/CLI? |
-| RFC-54 | `rfc/54-discovery-contract-wording.md` | Accepted (12 ago 2026, revisión RFC-56; plan 53, 11 ago 2026) | ¿Cómo se redactan sin ambigüedad el project_shape y el cálculo de hashes? |
-| RFC-55 | `rfc/55-protocol-source-containment.md` | Accepted (12 ago 2026) | ¿Cómo se desarrolla ARgentOS sin que el protocolo gobierne el repo fuente? |
-| RFC-56 | `rfc/56-governance-fast-track.md` | Accepted (12 ago 2026) | ¿Qué cambios del payload requieren RFC y cuáles pasan por vía plan con verificación mecánica? |
-| RFC-57 | `rfc/57-harness-structural-validator.md` | Accepted (15 ago 2026) | ¿Cómo se da soporte mecánico opcional a los ítems `[gate]` sin cambiar el modelo de juicio? |
-| RFC-58 | `rfc/58-mandatory-structural-validator.md` | Accepted (15 ago 2026) | ¿Cómo se vuelve obligatorio el validador estructural a nivel de gate sin tocar el fail-open de los hooks? |
-| RFC-59 | `rfc/59-recovery-context-session-continuity.md` | Accepted (16 ago 2026) | ¿Cómo se derivan, registran y ordenan las decisiones de recovery (variables de contexto, destinos múltiples) y cómo se reanuda una sesión desde su último artefacto intacto? |
-| RFC-60 | `rfc/60-budget-accounting-metrics-trust.md` | Accepted (17 ago 2026) | ¿Cómo se hace mecánicamente verificable la contabilidad del Context Budget (declared vs consumed) y cómo se clasifica la confianza de los datos de métricas auto-reportados? |
-| RFC-61 | `rfc/61-kb-transparency-consent-lifecycle.md` | Accepted (2026-08-24) | ¿Cómo hace ARgentOS que el discovery — trabajo no pedido explícitamente — sea consentido y visible para el usuario? |
-| RFC-62 | `rfc/62-guarantee-model-and-enforcement-boundaries.md` | Accepted (plan 76, 2026-08-25) | ¿Qué garantiza ARgentOS, qué no, y quién verifica cada garantía? |
-| RFC-63 | `rfc/63-state-and-artifact-lifecycle-model.md` | Accepted (plan 77, 2026-08-25) | ¿Qué dimensiones de estado existen y cuál es el lifecycle de los artefactos? |
-| RFC-64 | `rfc/64-execution-record-model.md` | Proposal (plan 78) | ¿Cómo se registra y reconstruye una ejecución sin Event Sourcing? |
-| RFC-65 | `rfc/65-evidence-and-verification-model.md` | Accepted (plan 79, 2026-08-25) | ¿Qué cuenta como evidencia y cuándo un artefacto puede declararse VERIFIED? |
-| RFC-66 | `rfc/66-authorization-and-capability-model.md` | Accepted (plan 80) | ¿Cuándo una capability está autorizada para producir un efecto? |
-| RFC-67 | `rfc/67-knowledge-lifecycle-model.md` | Accepted (plan 81) | ¿Qué ciclo mínimo necesita el conocimiento para ser reutilizable y revalidable? |
-| RFC-68 | `rfc/68-architecture-evolution-workflow.md` | Accepted (plan 82) | ¿Cómo convierte ARgentOS evidencia de ejecución real en evolución arquitectónica trazable, incremental y versionada? |
-| RFC-69 | `rfc/69-documentation-taxonomy-and-layout.md` | Proposal | ¿Cómo se organiza la documentación del repo fuente bajo `docs/` para que la raíz quede limpia, la navegación escale con RFC + ADR + plan y los documentos de trabajo no acoplen la batería de verificación? |
+> Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en
+> `docs/rfc/`; esta sección se conserva como ancla de navegación para
+> referencias históricas.
 
 ## Roadmap de implementación (planes activos)
 
@@ -396,33 +327,9 @@ Anunciadas en RFCs aprobadas pero fuera del roadmap actual (decidir destino):
 
 ## Convenciones
 
-- **Verificación**: la batería canónica es la de `docs/VERSIONING.md` §4.1
-  (`python tools/check_protocol_invariants.py --payload protocol .`,
-  `python tools/check_plan_citations.py`, `python tools/check_plan_structure.py`,
-  `python -m pytest tests/`, H13 por juicio). `python tools/check_dist_sync.py`
-  es local-only y se espera verde solo en `master` (CI no la fetchea);
-  `python protocol/.agents/harness/health_check.py` es la sonda del producto
-  (adoptantes, modo enforced), no parte de la batería del repo. Los tests del
-  harness (`protocol/.agents/harness/tests/`) no corren en la batería del repo:
-  son tests del producto, se ejecutan en proyectos adoptantes.
-- **Idioma**: inglés en el protocolo (`protocol/.agents/`), en su entry file (`protocol/_AGENTS.md`) y en el `AGENTS.md` raíz de desarrollo (es lo que leen los agentes), en el código y en los commits (Conventional Commits en inglés); español en la documentación de adopción (`docs/ADOPTION.md`, `docs/MIGRATION.md`, `CHANGELOG.md`), en `plans/` y en la documentación del tooling (`tools/`, `runtime/`, `docs/` — el código en inglés); `README.md` en inglés (público). Los documentos nuevos siguen esta regla; los existentes se alinean de forma incremental.
-- **Inmutabilidad y clases de cambio (RFC-56)**: `protocol/.agents/` solo se modifica por la vía que corresponde a la clase del cambio. **Clase A** (modelo conceptual, contratos, breaking): requiere RFC `Accepted`; una RFC en `Proposal` NO habilita tocar el payload. **Clase B** (mejora documental compatible, sin cambio de significado): plan `Aprobado para ejecución` con justificación documentada + batería en verde. **Clase C** (corrección mecánica: typos, formato, links; cero cambio de significado): commit directo en `dev` con la batería en verde, registrado en el changelog de la próxima versión. Reglas de borde: ante la duda se elige la clase más estricta; la clase se declara en el plan (A/B) o en el commit (C) y es revisable; la batería de verificación corre en las tres clases.
-- **Ciclo de status (RFCs)**: `Proposal` (borrador) → `Accepted` (aprobada) → `Superseded` (reemplazada; el header indica por cuál RFC). No existe `Approved`: los documentos que lo usaban se normalizaron a `Accepted` (2 ago 2026).
-- **Ciclo de status (planes)**: `Aprobado para redacción` (entregables documentales: RFCs, estándares), `Aprobado para ejecución` (entregables de implementación o cambios en el repo), `Executed` (todos los criterios de salida verificados; si alguno quedó incumplido: `Executed (parcial: <qué falta>)`), `Superseded` (reemplazado; indicar por qué plan). Todo plan con dependencias abiertas declara su **criterio de entrada verificable** (qué archivos/estados deben existir antes de ejecutarlo).
-- **Trazas históricas (RFC-46)**: los artefactos de sesión son registros inmutables de la versión del protocolo vigente al momento de la sesión; no se reescriben ni se "reproducen" con una versión nueva. Las entradas de gates previas a 2.0.0 fueron evaluadas por runner (checks machine); las posteriores, por juicio del agente contra checklists en prosa. Los contratos de sesión declaran `protocol_version` desde 3.4.1.
-- **Citas verificables**: toda afirmación sobre el estado actual del repo ("hoy X") se ancla a `ruta:sección` (encabezado Markdown) existente al momento de la redacción. Prohibidos: rangos aproximados (p. ej. "H01–H13"), ordinales ("5ª responsabilidad"), números de línea absolutos sobre archivos mutables, y referencias a documentos inexistentes. Criterio de aceptación de todo documento nuevo en `plans/`: cada referencia resuelve contra el repo.
-- **Plantillas**: todo plan nuevo nace de `plans/_TEMPLATE.md` y toda RFC nueva de `plans/rfc/_TEMPLATE.md` (estructura completa; las secciones marcadas como opcionales pueden omitirse). Los templates no se numeran ni se registran en este INDEX; el resto de los documentos referencia la estructura, no la duplica. El cumplimiento estructural (nombre de archivo, status dentro del ciclo vigente, ausencia de placeholders, Amendment Log en RFCs, registro en este INDEX) se verifica mecánicamente con `python tools/check_plan_structure.py`.
-- **Amendment log**: toda RFC lleva una sección `## Amendment Log` (fecha → qué cambió → origen). Cuando una RFC posterior desfasa a una anterior, la anterior recibe además un banner bajo el header: `> ⚠ Enmienda pendiente: <qué cambió y dónde está el modelo vigente>`. Este log es el único registro de "qué decía antes" para documentos sin historia previa.
-- **Verificación contra el repo**: este INDEX es un índice descriptivo, no una fuente de verdad. Todo plan nuevo verifica sus premisas contra `.agents/` y git como paso 0, nunca contra este INDEX.
-- **Catálogo de gaps**: los "gaps de explicitud" referenciados por los planes 08–14 están definidos en `plans/analisis-explicitud.md`. Se cita el catálogo por ruta; ningún documento referencia IDs de gap que no existan allí.
-- **Numeración de archivos**: hay dos secuencias independientes y cada una es única dentro de su espacio:
-  - `plans/rfc/`: solo RFCs, numeración incremental (`00`–`15` existentes — los `07`–`15` reservados por el roadmap EC ya fueron asignados a RFC-00YE…00YM; los RFCs fuera del roadmap EC numeran a partir de `16`). Un implementation plan nunca vive aquí.
-  - `plans/` (raíz): solo planes de ejecución, numerados por **orden cronológico de ejecución** — esa es la prioridad ante cualquier conflicto. `01`–`03` son los implementation plans de los RFCs base (ejecutados 25–26 jul); `04`–`07` primera serie (Execution Context); `08`–`14` segunda serie (explicitud de decisiones); `15`–`20` tercera serie (protocolo operativo), mapeada el 28 jul.
-  - Los identificadores internos de la serie (RFC-00XX … RFC-00YM) se mantienen como IDs conceptuales dentro de los documentos; el número de archivo es solo orden físico.
-- **Versionado**: `plans/` completo está versionado en git (política adoptada el 2 ago 2026; antes figuraba como ignorado pese a estar trackeado de facto, y hubo una pérdida y restauración). Los planes ejecutados se conservan como traza histórica: no se borran; si quedan desfasados se marcan `Superseded`. Lo efímero del proyecto son los artefactos de sesión (`.project/`), no los documentos de diseño. `plans/archive/` fue eliminado del working tree; su contenido sigue disponible en la historia de git.
-- **Política de versionado, changelog, tags y estados**: definida en `docs/VERSIONING.md`. Resumen: trabajo e integración en `dev` con detalle por plan; releases estables solo en `master` vía tags; modelo por plan (cada plan ejecutado = una versión, atada a su RFC); invariante versión ↔ changelog ↔ tag; los estados de planes y RFCs cambian en el commit del plan y se reflejan en este INDEX.
-- **Frontera documental**: `.agents/` (versionado, permanente) no referencia `plans/` ni RFCs. Los conceptos que `.agents/` necesita se definen inline, de forma autocontenida. Ningún plan debe instruir referencias `.agents/` → `plans/`; la instrucción correcta es siempre "definir el concepto inline, sin mencionar la RFC".
-- **Layout fuente (RFC-55)**: el payload del producto vive en `protocol/` (`protocol/.agents/` + `protocol/_AGENTS.md`); el layout adoptado (`dist`) mantiene `.agents/` + `AGENTS.md` en la raíz. Los docs del payload describen el layout adoptado; los links a `AGENTS.md` rotos en fuente son intencionales y se documentan en `docs/source-layout.md`.
+> Normativa migrada a `docs/CONVENTIONS.md` (RFC-69). Esta sección se
+> conserva como ancla de navegación para referencias históricas; no contiene
+> contenido normativo duplicado.
 
 ## Archivo
 
@@ -438,4 +345,4 @@ Nota (2 ago 2026): `plans/archive/` fue eliminado del working tree; estos archiv
 
 ## Documento de visión
 
-`plans/ec-pipeline-vision.md` es el documento de visión del Execution Context Pipeline — ni un plan de ejecución ni un RFC. Vivió en la raíz como `feature.md` hasta el 12 ago 2026, cuando se movió a `plans/` con banner de cierre (visión completada: los 4 niveles ejecutados; el modelo vigente vive en las RFCs 00XX–00YM). Los planes `04`–`07` y las RFCs lo citan como `feature.md`; `check_plan_citations.py` resuelve ese path histórico con un mapeo legacy (`feature.md` → `plans/ec-pipeline-vision.md`). **No reescribir las citas históricas**: son traza.
+`docs/plans/ec-pipeline-vision.md` es el documento de visión del Execution Context Pipeline — ni un plan de ejecución ni un RFC. Vivió en la raíz como `feature.md` hasta el 12 ago 2026, cuando se movió a `plans/` con banner de cierre (visión completada: los 4 niveles ejecutados; el modelo vigente vive en las RFCs 00XX–00YM). Los planes `04`–`07` y las RFCs lo citan como `feature.md`; `check_plan_citations.py` resuelve ese path histórico con un mapeo legacy (`feature.md` → `docs/plans/ec-pipeline-vision.md`). **No reescribir las citas históricas**: son traza.

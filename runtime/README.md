@@ -45,4 +45,4 @@ El Budget del runtime prompt se materializa en tokens estimados con la regla `ce
 
 ## Ejercicio comparativo
 
-El plan 18 ejecutó un ejercicio comparativo entre ambas materializaciones (misma tarea, Execution Context construido desde skills reales de `protocol/.agents/skills/`, reporte de costo en tokens estimados, latencia y equivalencia de la capacidad activada). Resultados y veredicto de la tesis en `plans/18-anexo-b-reporte-verificacion-tesis.md`; el script del ejercicio se descartó una vez congelada la evidencia.
+El plan 18 ejecutó un ejercicio comparativo entre ambas materializaciones (misma tarea, Execution Context construido desde skills reales de `protocol/.agents/skills/`, reporte de costo en tokens estimados, latencia y equivalencia de la capacidad activada). Resultados y veredicto de la tesis en `docs/plans/18-anexo-b-reporte-verificacion-tesis.md`; el script del ejercicio se descartó una vez congelada la evidencia.

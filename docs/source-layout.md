@@ -30,13 +30,13 @@ fuente; en fuente, "AGENTS.md" es ambiguo (el de la raíz es el dev):
   `AGENTS.md` at the project root".
 - `protocol/.agents/roles/profiles/tech_writer.md` — mención de `AGENTS.md`.
 
-## Citas históricas de `plans/`
+## Citas históricas de `docs/plans/`
 
 Los planes y RFCs existentes citan `.agents/...` y `AGENTS.md` con rutas del
 layout viejo, y `feature.md` (documento de visión que vivió en la raíz hasta
 el 12 ago 2026). `check_plan_citations.py` las resuelve con un mapeo legacy
 (`.agents/...` → `protocol/.agents/...`, `AGENTS.md` → `protocol/_AGENTS.md`,
-`feature.md` → `plans/ec-pipeline-vision.md`).
+`feature.md` → `docs/plans/ec-pipeline-vision.md`).
 **No reescribir planes históricos**: son traza.
 
 ## Guarda

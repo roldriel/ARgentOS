@@ -60,7 +60,7 @@ protocol (adopters get only `.agents/` + `AGENTS.md` from the `dist` branch).
 
 ## Implementation plans
 
-All implementation plans generated for this project by agents (or otherwise) must be placed in the `plans/` directory at the repository root. The plans and RFCs are the design history of the protocol; they are **not** part of what adopters copy (see `docs/ADOPTION.md`).
+All implementation plans generated for this project by agents (or otherwise) must be placed in the `docs/plans/` directory at the repository root. The plans and RFCs are the design history of the protocol; they are **not** part of what adopters copy (see `docs/ADOPTION.md`).
 
 ## License
 

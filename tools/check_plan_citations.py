@@ -1,22 +1,20 @@
 #!/usr/bin/env python3
-"""Verify ruta:sección citations in plans/ and root Markdown documents.
+"""Verify ruta:sección citations in the repository documentation (RFC-69).
 
-Scans every .md file under plans/ recursively, plus the canonical documents
-listed in ROOT_DOCS (root docs and component docs such as runtime/README.md),
-and extracts citations in the
-two forms used by the repository convention (plans/INDEX.md §Convenciones):
+Scans every .md file under docs/plans/ and docs/rfc/ recursively, plus the
+canonical documents listed in ROOT_DOCS (root docs, policies and component
+docs such as runtime/README.md), and extracts citations in the two forms used
+by the repository convention (docs/CONVENTIONS.md:Convenciones):
 
 1. Backtick-quoted `` `path:section` `` (e.g. `` `plans/INDEX.md:Convenciones` ``).
 2. Backtick-quoted path followed by § and a section reference
    (e.g. `` `plans/INDEX.md` §Convenciones ``).
 
 For each citation it verifies that the cited file exists (resolved relative
-to the repository root, with a legacy mapping for pre-containment citations:
-``.agents/...`` → ``protocol/.agents/...``, ``AGENTS.md`` →
-``protocol/_AGENTS.md`` and bare payload filenames cited from historical
-root documents, e.g. ``ORCHESTRATION_GUIDE.md`` →
-``protocol/.agents/standards/orchestration/ORCHESTRATION_GUIDE.md``) and that
-the cited section exists as an ATX heading
+to the repository root, with the legacy mapping of tools/legacy_paths.py for
+pre-migration citations: ``plans/`` → ``docs/plans/``, ``plans/rfc/`` →
+``docs/rfc/``, bare root docs → their canonical home) and that the cited
+section exists as an ATX heading
 in that file, comparing both sides normalized (trimmed, case-insensitive,
 leading '#' removed, trailing punctuation removed). A citation that is a
 prefix of a real heading followed by '.', '—', '-', ')' or whitespace also
@@ -27,6 +25,11 @@ heading (line numbers, line ranges) are reported as "non-heading anchor".
 Citations under ``.project/`` are exempt: session artifacts and knowledge-base
 state are ephemeral (docs/MIGRATION.md §4) and are not part of the repository, so
 historical plans may cite them without a persistent target.
+
+Additionally, it flags citations that use a legacy path from a live
+(non-historical) source: historical archives (docs/plans/, docs/rfc/) and
+CHANGELOG.md may keep legacy references; every other source must use
+canonical paths (RFC-69 invariant I5).
 
 Usage: python tools/check_plan_citations.py [--root REPO_ROOT]
 
@@ -42,6 +45,8 @@ import string
 import sys
 from dataclasses import dataclass
 from pathlib import Path
+
+import legacy_paths
 
 # A path token: contains at least one '/' or ends in a known docs extension.
 _PATH_RE = r"[A-Za-z0-9_./ÁÉÍÓÚáéíóúñÑ-]+\.(?:md|py|toml|txt|json|yaml|yml)"
@@ -77,17 +82,10 @@ ROOT_DOCS = (
     "docs/ADOPTION.md",
     "docs/AUDITORIA_DOCUMENTACION.md",
     "docs/AGENTS.md",
+    "docs/CONVENTIONS.md",
     "runtime/README.md",
     "docs/source-layout.md",
 )
-
-# Bare payload filenames cited from historical documents before source
-# containment (RFC-55), mapped to their current location under protocol/.
-_LEGACY_BARE_PATHS = {
-    "ORCHESTRATION_GUIDE.md": (
-        "protocol/.agents/standards/orchestration/ORCHESTRATION_GUIDE.md"
-    ),
-}
 
 
 @dataclass
@@ -180,12 +178,13 @@ def section_exists(section: str, markdown_text: str) -> bool:
 
 
 def scan_documents(root: Path) -> list[Citation]:
-    """Extract citations from plans/ (recursively) and the canonical root docs."""
-    plans_dir = root / "plans"
+    """Extract citations from docs/plans/ + docs/rfc/ and the root docs."""
     citations: list[Citation] = []
     sources: list[Path] = []
-    if plans_dir.is_dir():
-        sources.extend(sorted(plans_dir.rglob("*.md")))
+    for sub in ("docs/plans", "docs/rfc"):
+        sub_dir = root / sub
+        if sub_dir.is_dir():
+            sources.extend(sorted(sub_dir.rglob("*.md")))
     sources.extend(
         root / name for name in ROOT_DOCS if (root / name).is_file()
     )
@@ -216,26 +215,45 @@ def verify_citation(citation: Citation, root: Path) -> BrokenCitation | None:
 
 
 def legacy_target(path: str, root: Path) -> Path | None:
-    """Map a legacy citation path to the source-containment layout.
+    """Map a legacy citation path to its single canonical target (RFC-69).
 
-    Historical documents cite the product payload at the old root
-    layout (``.agents/...`` and ``AGENTS.md``) or by bare payload filename
-    (``ORCHESTRATION_GUIDE.md``). Since the payload now lives
-    under ``protocol/`` (RFC-55), those citations resolve via this mapping.
-    Returns None when the path is not a legacy payload citation.
+    Resolution is delegated to tools/legacy_paths.py: an ordered table where
+    more specific prefixes (``plans/rfc/``) resolve before generic ones
+    (``plans/``) and every legacy path maps to exactly one canonical target.
+    Returns None when the path is not a legacy path.
     """
-    if path == "AGENTS.md":
-        return root / "protocol" / "_AGENTS.md"
-    if path == "feature.md":
-        return root / "plans" / "ec-pipeline-vision.md"
-    if path in ("VERSIONING.md", "MIGRATION.md", "ADOPTION.md",
-                "AUDITORIA_DOCUMENTACION.md"):
-        return root / "docs" / path
-    if path.startswith(".agents/"):
-        return root / "protocol" / path
-    if path in _LEGACY_BARE_PATHS:
-        return root / _LEGACY_BARE_PATHS[path]
-    return None
+    target = legacy_paths.resolve_legacy(path)
+    if target is None:
+        return None
+    return root / target
+
+
+# Live sources exempt from the "no new legacy references" rule. CHANGELOG.md is
+# a historical record by nature; docs/plans/ and docs/rfc/ are the historical
+# archive where legacy references are preserved via mapping (RFC-69 I4/I5).
+_LIVE_SOURCE_EXEMPT = frozenset({"CHANGELOG.md"})
+
+
+def is_historical_source(source: Path) -> bool:
+    """True when the source document is a historical archive or record."""
+    posix = source.as_posix()
+    return posix.startswith(("docs/plans/", "docs/rfc/")) or posix in _LIVE_SOURCE_EXEMPT
+
+
+def find_new_legacy_references(citations: list[Citation]) -> list[BrokenCitation]:
+    """Flag citations that use a legacy path from a live source (RFC-69 I5)."""
+    broken: list[BrokenCitation] = []
+    for citation in citations:
+        if is_historical_source(citation.source):
+            continue
+        if legacy_paths.matches_legacy(citation.path):
+            broken.append(
+                BrokenCitation(
+                    citation,
+                    "new reference to legacy path (migration-only mapping)",
+                )
+            )
+    return broken
 
 
 def verify_all(root: Path) -> list[BrokenCitation]:
@@ -273,9 +291,19 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-    broken = verify_all(args.root.resolve())
+    root = args.root.resolve()
+    broken = verify_all(root)
+    legacy = find_new_legacy_references(scan_documents(root))
     print(format_report(broken))
-    return 1 if broken else 0
+    if legacy:
+        print(f"Legacy references from live sources: {len(legacy)}")
+        for item in legacy:
+            c = item.citation
+            print(
+                f"- {c.source.as_posix()}:{c.line} -> `{c.path}` "
+                "[new legacy reference]"
+            )
+    return 1 if (broken or legacy) else 0
 
 
 if __name__ == "__main__":

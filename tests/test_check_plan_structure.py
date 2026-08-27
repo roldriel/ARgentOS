@@ -1,9 +1,9 @@
 """Tests for tools/check_plan_structure.py.
 
-Covers the five structural rules enforced on numbered plans/ and
-plans/rfc/ documents (plans/INDEX.md §Convenciones, bullet "Plantillas"):
-filename, status cycle, template placeholders, RFC Amendment Log and the
-plans/INDEX.md mirror.
+Covers the structural rules enforced on numbered docs/plans/ and docs/rfc/
+documents (docs/CONVENTIONS.md:Convenciones, bullet "Plantillas"): filename,
+status cycle, template placeholders, RFC Amendment Log and the per-kind
+governance INDEX mirror.
 """
 
 from __future__ import annotations
@@ -46,13 +46,12 @@ def make_repo(tmp_path: Path, files: dict[str, str]) -> Path:
 
 
 def base_repo(tmp_path: Path) -> Path:
-    """A minimal conforming repo: one plan, one RFC, INDEX mentioning both."""
+    """A minimal conforming repo: one plan, one RFC, per-kind INDEXes."""
     return make_repo(tmp_path, {
-        "plans/01-sample-plan.md": PLAN_OK,
-        "plans/rfc/01-sample-rfc.md": RFC_OK,
-        "plans/INDEX.md": (
-            "# INDEX\n\n01-sample-plan.md\n01-sample-rfc.md\n"
-        ),
+        "docs/plans/01-sample-plan.md": PLAN_OK,
+        "docs/rfc/01-sample-rfc.md": RFC_OK,
+        "docs/plans/INDEX.md": "# INDEX\n\n01-sample-plan.md\n",
+        "docs/rfc/INDEX.md": "# INDEX\n\n01-sample-rfc.md\n",
     })
 
 
@@ -60,23 +59,23 @@ def base_repo(tmp_path: Path) -> Path:
 
 def test_scan_covers_plans_and_rfc_recursively(tmp_path):
     make_repo(tmp_path, {
-        "plans/01-a.md": "",
-        "plans/rfc/02-b.md": "",
-        "plans/INDEX.md": "",
-        "plans/_TEMPLATE.md": "",
-        "plans/rfc/_TEMPLATE.md": "",
-        "plans/analisis-explicitud.md": "",
+        "docs/plans/01-a.md": "",
+        "docs/rfc/02-b.md": "",
+        "docs/plans/INDEX.md": "",
+        "docs/plans/_TEMPLATE.md": "",
+        "docs/rfc/_TEMPLATE.md": "",
+        "docs/plans/analisis-explicitud.md": "",
         "other/03-c.md": "",
     })
     found = {rel.as_posix() for rel, _ in cps.scan_documents(tmp_path)}
-    assert found == {"plans/01-a.md", "plans/rfc/02-b.md"}
+    assert found == {"docs/plans/01-a.md", "docs/rfc/02-b.md"}
 
 
 def test_annexes_are_excluded(tmp_path):
     make_repo(tmp_path, {
-        "plans/18-anexo-a-reporte.md": "",
-        "plans/18-plan.md": "",
-        "plans/INDEX.md": "18-plan.md\n",
+        "docs/plans/18-anexo-a-reporte.md": "",
+        "docs/plans/18-plan.md": "",
+        "docs/plans/INDEX.md": "18-plan.md\n",
     })
     found = {rel.name for rel, _ in cps.scan_documents(tmp_path)}
     assert found == {"18-plan.md"}
@@ -86,8 +85,8 @@ def test_annexes_are_excluded(tmp_path):
 
 def test_bad_filename_reported(tmp_path):
     make_repo(tmp_path, {
-        "plans/01-Bad_Name.md": PLAN_OK,
-        "plans/INDEX.md": "01-Bad_Name.md\n",
+        "docs/plans/01-Bad_Name.md": PLAN_OK,
+        "docs/plans/INDEX.md": "01-Bad_Name.md\n",
     })
     violations = cps.verify_all(tmp_path)
     assert any(v.rule == "filename" for v in violations)
@@ -97,8 +96,8 @@ def test_bad_filename_reported(tmp_path):
 
 def test_missing_status_field_reported(tmp_path):
     make_repo(tmp_path, {
-        "plans/01-sample-plan.md": "# Plan 01\n\n## Objetivo\n\nX\n",
-        "plans/INDEX.md": "01-sample-plan.md\n",
+        "docs/plans/01-sample-plan.md": "# Plan 01\n\n## Objetivo\n\nX\n",
+        "docs/plans/INDEX.md": "01-sample-plan.md\n",
     })
     violations = cps.verify_all(tmp_path)
     assert any(v.rule == "status" and "missing" in v.detail for v in violations)
@@ -106,10 +105,10 @@ def test_missing_status_field_reported(tmp_path):
 
 def test_unknown_status_reported(tmp_path):
     make_repo(tmp_path, {
-        "plans/01-sample-plan.md": PLAN_OK.replace(
+        "docs/plans/01-sample-plan.md": PLAN_OK.replace(
             "Aprobado para redacción", "Approved"
         ),
-        "plans/INDEX.md": "01-sample-plan.md\n",
+        "docs/plans/INDEX.md": "01-sample-plan.md\n",
     })
     violations = cps.verify_all(tmp_path)
     assert any(v.rule == "status" and "Approved" in v.detail for v in violations)
@@ -126,10 +125,10 @@ def test_unknown_status_reported(tmp_path):
 ])
 def test_plan_status_cycle_accepted(tmp_path, status):
     make_repo(tmp_path, {
-        "plans/01-sample-plan.md": PLAN_OK.replace(
+        "docs/plans/01-sample-plan.md": PLAN_OK.replace(
             "Aprobado para redacción", status
         ),
-        "plans/INDEX.md": "01-sample-plan.md\n",
+        "docs/plans/INDEX.md": "01-sample-plan.md\n",
     })
     assert not [v for v in cps.verify_all(tmp_path) if v.rule == "status"]
 
@@ -142,18 +141,18 @@ def test_plan_status_cycle_accepted(tmp_path, status):
 ])
 def test_rfc_status_cycle_accepted(tmp_path, status):
     make_repo(tmp_path, {
-        "plans/rfc/01-sample-rfc.md": RFC_OK.replace("Proposal", status),
-        "plans/INDEX.md": "01-sample-rfc.md\n",
+        "docs/rfc/01-sample-rfc.md": RFC_OK.replace("Proposal", status),
+        "docs/rfc/INDEX.md": "01-sample-rfc.md\n",
     })
     assert not [v for v in cps.verify_all(tmp_path) if v.rule == "status"]
 
 
 def test_rfc_rejects_plan_statuses(tmp_path):
     make_repo(tmp_path, {
-        "plans/rfc/01-sample-rfc.md": RFC_OK.replace(
+        "docs/rfc/01-sample-rfc.md": RFC_OK.replace(
             "Proposal", "Aprobado para redacción"
         ),
-        "plans/INDEX.md": "01-sample-rfc.md\n",
+        "docs/rfc/INDEX.md": "01-sample-rfc.md\n",
     })
     violations = cps.verify_all(tmp_path)
     assert any(v.rule == "status" for v in violations)
@@ -166,8 +165,8 @@ def test_rfc_rejects_plan_statuses(tmp_path):
 ])
 def test_leftover_placeholder_reported(tmp_path, placeholder):
     make_repo(tmp_path, {
-        "plans/01-sample-plan.md": PLAN_OK + f"\nVer {placeholder}.\n",
-        "plans/INDEX.md": "01-sample-plan.md\n",
+        "docs/plans/01-sample-plan.md": PLAN_OK + f"\nVer {placeholder}.\n",
+        "docs/plans/INDEX.md": "01-sample-plan.md\n",
     })
     violations = cps.verify_all(tmp_path)
     assert any(
@@ -179,8 +178,8 @@ def test_leftover_placeholder_reported(tmp_path, placeholder):
 def test_schema_angle_brackets_are_not_placeholders(tmp_path):
     """Legitimate schema placeholders like <session-uuid> must not flag."""
     make_repo(tmp_path, {
-        "plans/01-sample-plan.md": PLAN_OK + "\n`<session-uuid>` y `<order>`.\n",
-        "plans/INDEX.md": "01-sample-plan.md\n",
+        "docs/plans/01-sample-plan.md": PLAN_OK + "\n`<session-uuid>` y `<order>`.\n",
+        "docs/plans/INDEX.md": "01-sample-plan.md\n",
     })
     assert not [v for v in cps.verify_all(tmp_path) if v.rule == "placeholder"]
 
@@ -189,8 +188,8 @@ def test_schema_angle_brackets_are_not_placeholders(tmp_path):
 
 def test_rfc_without_amendment_log_reported(tmp_path):
     make_repo(tmp_path, {
-        "plans/rfc/01-sample-rfc.md": RFC_OK.replace("## Amendment Log", "## Otro"),
-        "plans/INDEX.md": "01-sample-rfc.md\n",
+        "docs/rfc/01-sample-rfc.md": RFC_OK.replace("## Amendment Log", "## Otro"),
+        "docs/rfc/INDEX.md": "01-sample-rfc.md\n",
     })
     violations = cps.verify_all(tmp_path)
     assert any(v.rule == "amendment-log" for v in violations)
@@ -207,8 +206,17 @@ def test_plan_without_amendment_log_is_fine(tmp_path):
 
 def test_document_missing_from_index_reported(tmp_path):
     make_repo(tmp_path, {
-        "plans/02-ghost-plan.md": PLAN_OK,
-        "plans/INDEX.md": "# INDEX\n",
+        "docs/plans/02-ghost-plan.md": PLAN_OK,
+        "docs/plans/INDEX.md": "# INDEX\n",
+    })
+    violations = cps.verify_all(tmp_path)
+    assert any(v.rule == "index-mirror" for v in violations)
+
+
+def test_rfc_missing_from_rfc_index_reported(tmp_path):
+    make_repo(tmp_path, {
+        "docs/rfc/02-ghost-rfc.md": RFC_OK,
+        "docs/rfc/INDEX.md": "# INDEX\n",
     })
     violations = cps.verify_all(tmp_path)
     assert any(v.rule == "index-mirror" for v in violations)
@@ -232,8 +240,8 @@ def test_clean_repo_exits_0(tmp_path):
 
 def test_dirty_repo_exits_1_and_lists_violation(tmp_path):
     make_repo(tmp_path, {
-        "plans/01-sample-plan.md": PLAN_OK + "\nFecha: YYYY-MM-DD\n",
-        "plans/INDEX.md": "# INDEX\n",
+        "docs/plans/01-sample-plan.md": PLAN_OK + "\nFecha: YYYY-MM-DD\n",
+        "docs/plans/INDEX.md": "# INDEX\n",
     })
     res = run_tool(tmp_path)
     assert res.returncode == 1

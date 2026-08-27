@@ -3,8 +3,8 @@
 Cómo adoptar el protocolo ARgentOS en otro proyecto. ARgentOS es un protocolo
 **documental**: no se instala como paquete; adoptarlo es vendorizar el directorio
 del protocolo y configurar lo mínimo (fuera de alcance declarado:
-`plans/20-release-adoption.md` §Fuera de alcance). Origen de esta guía:
-`plans/20-release-adoption.md` §B.
+`docs/plans/20-release-adoption.md` §Fuera de alcance). Origen de esta guía:
+`docs/plans/20-release-adoption.md` §B.
 
 La versión adoptada queda declarada en `.agents/VERSION`. Para actualizaciones
 posteriores, seguir §1.2 y [`MIGRATION.md`](MIGRATION.md).
@@ -54,8 +54,8 @@ Sin subtree no hay mecanismo de actualización: cada upgrade es una copia nueva
 (seguir `MIGRATION.md` entre versiones).
 
 No hace falta copiar nada más: `.agents/` es autocontenido y no referencia
-`plans/` ni RFCs (frontera documental, `plans/INDEX.md` §Convenciones). Los
-documentos de diseño (`plans/`) son historia del desarrollo del
+`docs/plans/` ni RFCs (frontera documental, `docs/CONVENTIONS.md:Convenciones`). Los
+documentos de diseño (`docs/plans/`) son historia del desarrollo del
 protocolo, no parte del producto adoptado. `CHANGELOG.md` y `MIGRATION.md`
 conviene conservarlos como referencia de versionado, pero no son requeridos por
 el runtime.
@@ -141,7 +141,7 @@ Para entender el protocolo adoptado, en este orden:
 
 ## 5. Qué NO forma parte de la adopción
 
-- No se adopta `plans/` ni las RFCs: son el proceso de diseño del protocolo, no
+- No se adopta `docs/plans/` ni las RFCs: son el proceso de diseño del protocolo, no
   el protocolo.
 - No se adopta `tools/` ni `runtime/` (ni el histórico `dev/`, disuelto el 12
   ago 2026): son herramientas e implementaciones de referencia del desarrollo.

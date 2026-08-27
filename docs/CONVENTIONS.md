@@ -1,7 +1,7 @@
 # Convenciones — Repositorio ARgentOS
 
 > Normativa de gobernanza del repo, migrada desde
-> `plans/INDEX.md` §Convenciones (RFC-69, Plan A). Los INDEX son
+> `plans/INDEX.md` (sección Convenciones) (RFC-69, Plan A). Los INDEX son
 > registro/navegación; esta carta es normativa. La taxonomía documental
 > (naturaleza, lifecycle, identidad, referencias) vive en `docs/AGENTS.md`.
 

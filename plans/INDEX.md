@@ -1,5 +1,11 @@
 # Índice de planes — ARgentOS
 
+> **Migración (RFC-69, Plan A):** este registro vive ahora en
+> `docs/plans/INDEX.md`. Las convenciones normativas se migraron a
+> `docs/CONVENTIONS.md`; el registro de RFCs vive en `docs/rfc/INDEX.md`.
+> Las secciones `## Convenciones` y `## Serie de RFCs (documentos canónicos)`
+> se conservan como anclas de navegación para referencias históricas.
+
 Estado al 2026-08-16. La **serie de remediación de la auditoría 2.0.1** está
 completa: RFC-29…56 `Accepted` (las 23 RFCs de la serie 32…54 se revisaron una
 por una vía RFC-56, plan 57) y todos los planes numerados `Executed`. El
@@ -170,6 +176,7 @@ autorización completa.
 | RFC-66 | `rfc/66-authorization-and-capability-model.md` | Accepted (plan 80) | ¿Cuándo una capability está autorizada para producir un efecto? |
 | RFC-67 | `rfc/67-knowledge-lifecycle-model.md` | Accepted (plan 81) | ¿Qué ciclo mínimo necesita el conocimiento para ser reutilizable y revalidable? |
 | RFC-68 | `rfc/68-architecture-evolution-workflow.md` | Accepted (plan 82) | ¿Cómo convierte ARgentOS evidencia de ejecución real en evolución arquitectónica trazable, incremental y versionada? |
+| RFC-69 | `rfc/69-documentation-taxonomy-and-layout.md` | Proposal | ¿Cómo se organiza la documentación del repo fuente bajo `docs/` para que la raíz quede limpia, la navegación escale con RFC + ADR + plan y los documentos de trabajo no acoplen la batería de verificación? |
 
 ## Roadmap de implementación (planes activos)
 

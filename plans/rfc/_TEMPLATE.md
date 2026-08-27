@@ -1,8 +1,9 @@
 # RFC-NN — <Título en forma de tema, no de acción>
 
 <!-- Antes de crear el archivo:
-     - Numeración: consultar plans/INDEX.md; la secuencia de plans/rfc/ es
-       independiente de la de plans/ e incremental.
+     - Numeración: consultar docs/CONVENTIONS.md (Numeración de archivos); la
+       secuencia de docs/rfc/ es independiente de la de docs/plans/ e
+       incremental.
      - Nombre de archivo: NN-slug-descriptivo.md en minúsculas con guiones.
      - Este template no se numera ni se registra en el INDEX. -->
 
@@ -14,8 +15,8 @@
 **Afectados:** <rutas del payload que tocaría si se acepta; "—" si ninguna>
 
 <!-- Una RFC en Proposal NO habilita tocar protocol/.agents/ (regla de
-inmutabilidad en plans/INDEX.md §Convenciones). Al crear la RFC, registrarla
-en plans/INDEX.md en el mismo commit. -->
+inmutabilidad en docs/CONVENTIONS.md:Convenciones). Al crear la RFC,
+registrarla en docs/rfc/INDEX.md en el mismo commit. -->
 
 ## Problema
 

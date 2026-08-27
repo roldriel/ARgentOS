@@ -44,6 +44,10 @@ domains:
   cross-cutting:
     root: .agents/
     harness_prefix: null
+  architecture:
+    root: .agents/orchestrators/architecture/
+    harness_prefix: null
+    orchestrator_role: architecture_evolver
 
 lifecycles:
   system:
@@ -70,6 +74,9 @@ lifecycles:
   discovery:
     domain: discovery
     description: Knowledge-base discovery run.
+  architecture:
+    domain: architecture
+    description: Architecture evolution run (evidence ingestion to change set).
 
 entities:
 
@@ -2620,12 +2627,281 @@ entities:
       - discovery:DISCOVERY_MERGE
     file: .agents/orchestrators/discovery/contracts/INTER_WORKER_MESSAGE.md
 
+  # -------------------------------------------------------------------------
+  # States — domain: architecture
+  # -------------------------------------------------------------------------
+  "architecture:DISCOVER":
+    kind: state
+    domain: architecture
+    lifecycle: architecture
+    name: Discover
+    description: Detect the base architecture state and the new evidence available for the run.
+    previous: []
+    next:
+      - architecture:EVIDENCE_INGESTION
+    artifacts_input:
+      - ARCHITECTURE_MANIFEST.md
+    artifacts_output: []
+    workflow: null
+    harness: []
+    actor: architecture_evolver
+    profile: null
+
+  "architecture:EVIDENCE_INGESTION":
+    kind: state
+    domain: architecture
+    lifecycle: architecture
+    name: Evidence Ingestion
+    description: Fingerprint sessions in the import workspace and seal evidence snapshots and the evidence set.
+    previous:
+      - architecture:DISCOVER
+    next:
+      - architecture:PROJECT_ANALYSIS
+    artifacts_input:
+      - ARCHITECTURE_MANIFEST.md
+    artifacts_output:
+      - PROJECT_REGISTRY.md
+      - SESSION_REGISTRY.md
+      - EVIDENCE_SNAPSHOT.md
+      - EVIDENCE_SET.md
+    workflow: null
+    harness: []
+    actor: architecture_evolver
+    profile: null
+
+  "architecture:PROJECT_ANALYSIS":
+    kind: state
+    domain: architecture
+    lifecycle: architecture
+    name: Project Analysis
+    description: Produce per-project findings and project problems from the sealed evidence set.
+    previous:
+      - architecture:EVIDENCE_INGESTION
+    next:
+      - architecture:CROSS_PROJECT_CORRELATION
+    artifacts_input:
+      - EVIDENCE_SET.md
+      - EVIDENCE_SNAPSHOT.md
+    artifacts_output: []
+    workflow: null
+    harness: []
+    actor: architecture_evolver
+    profile: null
+
+  "architecture:CROSS_PROJECT_CORRELATION":
+    kind: state
+    domain: architecture
+    lifecycle: architecture
+    name: Cross-Project Correlation
+    description: Compare findings across projects and consolidate them with explicit confidence.
+    previous:
+      - architecture:PROJECT_ANALYSIS
+    next:
+      - architecture:PROBLEM_MODEL
+    artifacts_input:
+      - PROJECT_REGISTRY.md
+      - SESSION_REGISTRY.md
+    artifacts_output: []
+    workflow: null
+    harness: []
+    actor: architecture_evolver
+    profile: null
+
+  "architecture:PROBLEM_MODEL":
+    kind: state
+    domain: architecture
+    lifecycle: architecture
+    name: Problem Model
+    description: Formalize architectural problems from correlated evidence with status and confidence.
+    previous:
+      - architecture:CROSS_PROJECT_CORRELATION
+    next:
+      - architecture:DEPENDENCY_MODEL
+    artifacts_input: []
+    artifacts_output: []
+    workflow: null
+    harness: []
+    actor: architecture_evolver
+    profile: null
+
+  "architecture:DEPENDENCY_MODEL":
+    kind: state
+    domain: architecture
+    lifecycle: architecture
+    name: Dependency Model
+    description: Model resolvable dependencies between problems, decisions and concepts.
+    previous:
+      - architecture:PROBLEM_MODEL
+    next:
+      - architecture:DECISION_MODEL
+    artifacts_input: []
+    artifacts_output: []
+    workflow: null
+    harness: []
+    actor: architecture_evolver
+    profile: null
+
+  "architecture:DECISION_MODEL":
+    kind: state
+    domain: architecture
+    lifecycle: architecture
+    name: Decision Model
+    description: Decide or provisionally decide from confirmed problems using the decision status vocabulary.
+    previous:
+      - architecture:DEPENDENCY_MODEL
+    next:
+      - architecture:RFC_IMPACT
+    artifacts_input: []
+    artifacts_output: []
+    workflow: null
+    harness: []
+    actor: architecture_evolver
+    profile: null
+
+  "architecture:RFC_IMPACT":
+    kind: state
+    domain: architecture
+    lifecycle: architecture
+    name: RFC Impact
+    description: Assess which RFCs are affected or unaffected by the decisions.
+    previous:
+      - architecture:DECISION_MODEL
+    next:
+      - architecture:RFC_GENERATION
+    artifacts_input: []
+    artifacts_output: []
+    workflow: null
+    harness: []
+    actor: architecture_evolver
+    profile: null
+
+  "architecture:RFC_GENERATION":
+    kind: state
+    domain: architecture
+    lifecycle: architecture
+    name: RFC Generation
+    description: Draft or amend RFCs from decisions following the canonical RFC cycle.
+    previous:
+      - architecture:RFC_IMPACT
+    next:
+      - architecture:CHANGE_SET
+    artifacts_input: []
+    artifacts_output: []
+    workflow: null
+    harness: []
+    actor: architecture_evolver
+    profile: null
+
+  "architecture:CHANGE_SET":
+    kind: state
+    domain: architecture
+    lifecycle: architecture
+    name: Change Set
+    description: Seal exactly one architecture change set (CHANGE or NO_CHANGE) and update the manifest.
+    previous:
+      - architecture:RFC_GENERATION
+    next: []
+    artifacts_input: []
+    artifacts_output:
+      - ARCHITECTURAL_CHANGE_SET.md
+      - ARCHITECTURE_MANIFEST.md
+    workflow: null
+    harness: []
+    actor: architecture_evolver
+    profile: null
+
+  # -------------------------------------------------------------------------
+  # Contracts — domain: architecture
+  # -------------------------------------------------------------------------
+  contract:PROJECT_REGISTRY.md:
+    kind: contract
+    domain: architecture
+    artifact: PROJECT_REGISTRY.md
+    lifecycle: architecture
+    produced_by:
+      - architecture:EVIDENCE_INGESTION
+      - architecture:CHANGE_SET
+    consumed_by:
+      - architecture:DISCOVER
+      - architecture:EVIDENCE_INGESTION
+      - architecture:PROJECT_ANALYSIS
+      - architecture:CROSS_PROJECT_CORRELATION
+    file: .agents/orchestrators/architecture/contracts/PROJECT_REGISTRY.md
+
+  contract:SESSION_REGISTRY.md:
+    kind: contract
+    domain: architecture
+    artifact: SESSION_REGISTRY.md
+    lifecycle: architecture
+    produced_by:
+      - architecture:EVIDENCE_INGESTION
+    consumed_by:
+      - architecture:PROJECT_ANALYSIS
+      - architecture:CROSS_PROJECT_CORRELATION
+    file: .agents/orchestrators/architecture/contracts/SESSION_REGISTRY.md
+
+  contract:EVIDENCE_SNAPSHOT.md:
+    kind: contract
+    domain: architecture
+    artifact: EVIDENCE_SNAPSHOT.md
+    lifecycle: architecture
+    produced_by:
+      - architecture:EVIDENCE_INGESTION
+    consumed_by:
+      - architecture:PROJECT_ANALYSIS
+    file: .agents/orchestrators/architecture/contracts/EVIDENCE_SNAPSHOT.md
+
+  contract:EVIDENCE_SET.md:
+    kind: contract
+    domain: architecture
+    artifact: EVIDENCE_SET.md
+    lifecycle: architecture
+    produced_by:
+      - architecture:EVIDENCE_INGESTION
+    consumed_by:
+      - architecture:PROJECT_ANALYSIS
+    file: .agents/orchestrators/architecture/contracts/EVIDENCE_SET.md
+
+  contract:ARCHITECTURAL_CHANGE_SET.md:
+    kind: contract
+    domain: architecture
+    artifact: ARCHITECTURAL_CHANGE_SET.md
+    lifecycle: architecture
+    produced_by:
+      - architecture:CHANGE_SET
+    consumed_by: []
+    file: .agents/orchestrators/architecture/contracts/ARCHITECTURAL_CHANGE_SET.md
+
+  contract:ARCHITECTURE_MANIFEST.md:
+    kind: contract
+    domain: architecture
+    artifact: ARCHITECTURE_MANIFEST.md
+    lifecycle: architecture
+    produced_by:
+      - architecture:DISCOVER
+      - architecture:CHANGE_SET
+    consumed_by:
+      - architecture:DISCOVER
+      - architecture:EVIDENCE_INGESTION
+    file: .agents/orchestrators/architecture/contracts/ARCHITECTURE_MANIFEST.md
+
+  # -------------------------------------------------------------------------
+  # Roles — domain: architecture
+  # -------------------------------------------------------------------------
+  role:architecture_evolver:
+    kind: role
+    domain: architecture
+    role_id: architecture_evolver
+    actor: architecture_evolver
+    role_file: .agents/orchestrators/architecture/roles/architecture_evolver.md
+
 tags:
   domain:
     - core
     - discovery
     - system
     - cross-cutting
+    - architecture
   lifecycle:
     - system
     - task
@@ -2635,6 +2911,7 @@ tags:
     - final
     - exception
     - discovery
+    - architecture
   artifact:
     - analysis
     - reflection

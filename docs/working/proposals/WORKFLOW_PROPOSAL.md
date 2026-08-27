@@ -1,3 +1,7 @@
+> **Archivado (RFC-69, Plan A):** propuesta superada por RFC-68 (plan 82);
+> conservada como provenance histórica (las citas de RFC-68 y el plan 82
+> resuelven por mapping).
+
 La idea central sería que **Architecture Evolution Workflow** sea una capability de alto nivel cuyo propósito sea transformar evidencia de uso real de ARgentOS en evolución arquitectónica trazable, incremental y versionada.
 
 ---

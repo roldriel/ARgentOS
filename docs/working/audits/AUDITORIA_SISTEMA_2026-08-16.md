@@ -1,5 +1,9 @@
 # ARgentOS — Exhaustive System Audit 3.1 (2026-08-16)
 
+> **Archivado (RFC-69, Plan A):** remediación de la auditoría de sistema 3.1
+> completada en los planes 69–74; documento conservado como evidencia y
+> provenance histórica (las citas de planes/RFCs resuelven por mapping).
+
 > **Status:** auditoría nueva (remediación en curso). Los ítems y bloques de
 > remediación se listan en la sección "Plan de remediación por bloques"; cada
 > ítem se marca `Resolved` con evidencia (plan/RFC/commit) al cerrarse.

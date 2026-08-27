@@ -294,3 +294,23 @@ revalidación scoped).
   execution summaries que cambian hechos descubiertos declaran
   `invalidated_facts`; las recomendaciones nuevas llevan `kind`/`path`; los
   reportes previos siguen siendo válidos como traza.
+
+## 11. Architecture Evolution Workflow — 9.1.0 (plan 82, RFC-68)
+
+Cambio **MINOR**: capability nueva (aditiva) que no modifica contratos
+existentes.
+
+- **Capability nueva.** `orchestrators/architecture/` define el workflow de
+  evolución arquitectónica en dos niveles (Project Analysis / Architecture
+  Evolution) con diez stages, Change Set con NO_CHANGE y trazabilidad
+  verificable; los contratos nuevos (registries de proyecto/sesión, Evidence
+  Snapshot/Set, ACS, manifest) no rompen los existentes.
+- **Import Workspace.** Los proyectos analizados se importan manualmente a
+  `sessions/<project-key>/.project/` (gitignored salvo `.gitkeep`); el workflow
+  no referencia ubicaciones externas en Fase 1 y nunca versiona el raw.
+- **Material de evidencia.** El `reference/.project/` de BeaconRBX se movió a
+  `sessions/BeaconRBX/.project/` fuera del seguimiento de git; los Evidence
+  Snapshots derivados conservan lo analizado (RFC-46: las trazas no se
+  reescriben).
+- **Adopción.** El workflow corre a nivel del proyecto adoptante o del repo
+  ARgentOS; no exige runtime ni hooks nuevos.

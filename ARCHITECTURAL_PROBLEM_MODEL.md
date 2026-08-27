@@ -48,7 +48,7 @@ arquitectónicas previas.
 
 ### 2.1 Base de evidencia
 
-- Artefactos reales de BeaconRBX: `reference/.project/` (107 archivos: 5 sesiones, knowledge base,
+- Artefactos reales de BeaconRBX: `sessions/BeaconRBX/.project/` (107 archivos: 5 sesiones, knowledge base,
   logs, briefs, harness reports, métricas, `state.json`, artefactos de iteración).
 - Payload ARgentOS actual: `protocol/.agents/` (versión 3.26.0 en `dev`).
 - Payload publicado 3.25.0 (la versión que declaran las sesiones 03–05): verificado vía
@@ -135,7 +135,7 @@ Para cada problema confirmado se separan las cinco capas pedidas. `O`/`I`/`Arq`/
 
 ### P1 — Sesión sin trail y sin versión de protocolo
 
-- **Observation (O):** `reference/.project/246d4da2-4789-40ab-80e3-c4b32a24d060/` contiene solo
+- **Observation (O):** `sessions/BeaconRBX/.project/246d4da2-4789-40ab-80e3-c4b32a24d060/` contiene solo
   `SESSION_LOG.md` y 2 iteraciones de 8 artefactos; no hay `HARNESS_REPORT.md`, `METRICS.md`,
   `state.json`, `SESSION_BRIEF.md`. El `SESSION_LOG.md` no declara `protocol_version` ni registra
   invocaciones de harness. Los artefactos usan un score de intent 65/100 (escala ajena al estándar
@@ -160,7 +160,8 @@ payload 3.25.0 y entonces es un caso de enforcement.
   `state=TASK_READY`; `07-EXECUTION_PLAN.md` declara `approved=false` ("pending H04 gate
   validation") con H04 PASS registrado; `05-CONTEXT_ARTIFACT.md` declara `validation.complete=false`
   con H02/H03 PASS. Los contratos dejan `status = ""` sin enum ni regla de actualización; el
-  validador no los chequea.
+  validador no los chequea. Evidencia: `6bd97320/1/03-TASK_SPECIFICATION.md`,
+  `6bd97320/1/07-EXECUTION_PLAN.md`, `6bd97320/1/05-CONTEXT_ARTIFACT.md`.
 - **Problem (Arq):** los campos existen en artefactos que otros agentes consumen; sin semántica,
   su lectura induce conclusiones erróneas (un lector del plan concluiría que no fue aprobado).
 - **Inference (I):** "el artefacto contradice el gate" es una interpretación; el hecho es que el
@@ -227,7 +228,8 @@ payload 3.25.0 y entonces es un caso de enforcement.
 ### P12 — `session_uuid` en KB_RECOMMENDATION sin semántica de ubicación
 
 - **Observation (O):** el JSON embebido usa `session_uuid` para entradas de discovery (que no son
-  artefactos de sesión) y `"legacy"` para entradas curadas.
+  artefactos de sesión) y `"legacy"` para entradas curadas. Evidencia:
+  `574bdb2f/1/04-KB_RECOMMENDATION.md`.
 - **Problem (Arq):** un consumidor no puede resolver dónde vive la entrada recomendada.
 - **Inference (I):** el agente completó un campo sin semántica definida con valores plausibles.
 - **Root Cause Candidate (Arq):** identidad de entradas de conocimiento sin modelo (CG-04, lado
@@ -253,7 +255,7 @@ payload 3.25.0 y entonces es un caso de enforcement.
 - **Observation (O):** el criterio "kit desde cero" se verifica con evidencia "escritos sin abrir
   sources/ (regla declarada al worker; atestación en kits/hitbox/README.md)". El checker de H06
   resuelve `evidence` a archivos existentes o comandos en SESSION_LOG; no distingue atestación de
-  observación.
+  observación. Evidencia: `246d4da2/2/08-VERIFICATION_REPORT.md`.
 - **Problem (Arq):** un gate PASS puede sustentarse en la afirmación del mismo agente sobre su
   propio proceso, sin clase que lo marque como atestación; la confianza asignable es distinta.
 - **Inference (I):** la atestación probablemente es verdadera; el punto es que el modelo no puede
@@ -312,6 +314,7 @@ payload 3.25.0 y entonces es un caso de enforcement.
 
 - **Observation (O):** F1 en 6bd97320 y 574bdb2f; b21e3a56 entra preventivamente en single-instance;
   el protocolo documenta el modo y sus mitigaciones; "the mode never changes the authority model".
+  Evidencia: `6bd97320/SESSION_LOG.md`, `574bdb2f/SESSION_LOG.md`, `b21e3a56/SESSION_LOG.md`.
 - **Problem (Arq):** no hay una declaración formal de qué garantías degradan en cada modo (p. ej.
   independencia de verificación) ni una marca de modo en los reportes.
 - **Inference (I):** la "separación de roles" en single-instance es nominal. Es una interpretación;
@@ -323,6 +326,7 @@ payload 3.25.0 y entonces es un caso de enforcement.
 
 - **Observation (O):** las sesiones cierran COMPLETED/Executed con pendientes humanos
   explícitamente fuera de alcance; 246d4da2 dice que el gate de cierre no puede declararse formal.
+  Evidencia: `246d4da2/SESSION_LOG.md`.
 - **Problem (Arq):** no hay representación de "cierre técnico con pendientes de gobernanza"; la
   semántica de COMPLETED (¿relativa al alcance?) no está definida.
 - **Inference (I):** en BeaconRBX el comportamiento fue consistente con el alcance confirmado por
@@ -345,7 +349,8 @@ payload 3.25.0 y entonces es un caso de enforcement.
 ### P13 — Aprendizaje de sesiones (residual)
 
 - **Observation (O):** 0 entradas curadas de sesiones en BeaconRBX; 3.25.0 no tenía la vía;
-  3.26.0 agrega el cierre "What we learned" (orchestrator decide y persiste).
+  3.26.0 agrega el cierre "What we learned" (orchestrator decide y persiste). Evidencia:
+  `574bdb2f/1/04-KB_RECOMMENDATION.md`, `.project/knowledge/entries/`.
 - **Problem (Arq):** el workflow de creación de entradas sigue subespecificado (¿quién verifica que
   la entrada se escribió? ¿qué filtro se aplica?). Sin evidencia de fallo en 3.26.0.
 - **Inference (I):** ninguna adicional.
@@ -1036,23 +1041,23 @@ directamente en una RFC.
 
 ## Apéndice A — Rutas de evidencia clave
 
-- `reference/.project/246d4da2-4789-40ab-80e3-c4b32a24d060/SESSION_LOG.md` (sin versión/gates)
-- `reference/.project/246d4da2-4789-40ab-80e3-c4b32a24d060/2/03-TASK_SPECIFICATION.md`
+- `sessions/BeaconRBX/.project/246d4da2-4789-40ab-80e3-c4b32a24d060/SESSION_LOG.md` (sin versión/gates)
+- `sessions/BeaconRBX/.project/246d4da2-4789-40ab-80e3-c4b32a24d060/2/03-TASK_SPECIFICATION.md`
   (`user_confirmed=false`; escala 65/100 en iter 1)
-- `reference/.project/246d4da2-4789-40ab-80e3-c4b32a24d060/2/07-EXECUTION_SUMMARY.md` (fuentes MIT,
+- `sessions/BeaconRBX/.project/246d4da2-4789-40ab-80e3-c4b32a24d060/2/07-EXECUTION_SUMMARY.md` (fuentes MIT,
   clones)
-- `reference/.project/6bd97320-35e2-4349-8e4f-817b0682a13e/1/01-TASK_ANALYSIS.md` (auto-contradicción)
-- `reference/.project/6bd97320-35e2-4349-8e4f-817b0682a13e/1/03-TASK_SPECIFICATION.md`
+- `sessions/BeaconRBX/.project/6bd97320-35e2-4349-8e4f-817b0682a13e/1/01-TASK_ANALYSIS.md` (auto-contradicción)
+- `sessions/BeaconRBX/.project/6bd97320-35e2-4349-8e4f-817b0682a13e/1/03-TASK_SPECIFICATION.md`
   (`status="draft"`)
-- `reference/.project/6bd97320-35e2-4349-8e4f-817b0682a13e/1/07-EXECUTION_PLAN.md`
+- `sessions/BeaconRBX/.project/6bd97320-35e2-4349-8e4f-817b0682a13e/1/07-EXECUTION_PLAN.md`
   (`approved=false`)
-- `reference/.project/6bd97320-35e2-4349-8e4f-817b0682a13e/1/state.json` (sin H07)
-- `reference/.project/6bd97320-35e2-4349-8e4f-817b0682a13e/SESSION_LOG.md` (backfill, corrección de
+- `sessions/BeaconRBX/.project/6bd97320-35e2-4349-8e4f-817b0682a13e/1/state.json` (sin H07)
+- `sessions/BeaconRBX/.project/6bd97320-35e2-4349-8e4f-817b0682a13e/SESSION_LOG.md` (backfill, corrección de
   timestamps)
-- `reference/.project/574bdb2f-1dbf-4d4f-b789-f4e77f659ed4/1/04-KB_RECOMMENDATION.md`
+- `sessions/BeaconRBX/.project/574bdb2f-1dbf-4d4f-b789-f4e77f659ed4/1/04-KB_RECOMMENDATION.md`
   (`session_uuid` mal usado)
-- `reference/.project/6707ffaa-a5bf-4fbb-abf3-fa227533eaf2/HARNESS_REPORT.md` (sin ENTRY)
-- `reference/.project/knowledge/discovery/technical_debt.md`, `executive_summary.md` (stale tras
+- `sessions/BeaconRBX/.project/6707ffaa-a5bf-4fbb-abf3-fa227533eaf2/HARNESS_REPORT.md` (sin ENTRY)
+- `sessions/BeaconRBX/.project/knowledge/discovery/technical_debt.md`, `executive_summary.md` (stale tras
   plan 04)
 - `protocol/.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md` (task profiles, review gate)
 - `protocol/.agents/orchestrators/core/roles/orchestrator.md` (§4.1 reviewer MAY; §5 modos)

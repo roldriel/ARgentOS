@@ -12,6 +12,10 @@ build/
 # Generated session artifacts
 .project/
 
+# Architecture Evolution import workspace (local input/staging; never versioned)
+/sessions/*
+!/sessions/.gitkeep
+
 # examples
 example/
 examples/

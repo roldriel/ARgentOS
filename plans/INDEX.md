@@ -91,6 +91,12 @@ autorización completa.
 |---|---|---|---|
 | `81-knowledge-lifecycle-model.md` | RFC-67 | Executed | Tipos de conocimiento (`snapshot`/`claim`/`lesson`), frescura por claim con proveniencia resoluble, invalidación post-ejecución (`invalidated_facts` en EXECUTION_SUMMARY) con revalidación scoped por pipeline, lessons del cierre con `session_id`/`protocol_version`/evidencia, y `kind`/`path` en KB_RECOMMENDATION. Versión 9.0.0 (MAJOR). |
 
+## Decimoctava serie: workflow de evolución arquitectónica (25 ago 2026)
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `82-architecture-evolution-workflow.md` | RFC-68 | Executed | Fase 1 de la RFC-68: capability de evolución arquitectónica en dos niveles, módulo `orchestrators/architecture/` (state machine + contratos PROJECT_REGISTRY/SESSION_REGISTRY/EVIDENCE_SNAPSHOT/EVIDENCE_SET/ARCHITECTURAL_CHANGE_SET/ARCHITECTURE_MANIFEST), checker de trazabilidad, Import Workspace `sessions/` gitignored y backfill de refs. Versión 9.1.0 (MINOR). |
+
 ## Serie de RFCs (documentos canónicos)
 
 | RFC | Archivo | Status | Pregunta que responde |
@@ -163,6 +169,7 @@ autorización completa.
 | RFC-65 | `rfc/65-evidence-and-verification-model.md` | Accepted (plan 79, 2026-08-25) | ¿Qué cuenta como evidencia y cuándo un artefacto puede declararse VERIFIED? |
 | RFC-66 | `rfc/66-authorization-and-capability-model.md` | Accepted (plan 80) | ¿Cuándo una capability está autorizada para producir un efecto? |
 | RFC-67 | `rfc/67-knowledge-lifecycle-model.md` | Accepted (plan 81) | ¿Qué ciclo mínimo necesita el conocimiento para ser reutilizable y revalidable? |
+| RFC-68 | `rfc/68-architecture-evolution-workflow.md` | Accepted (plan 82) | ¿Cómo convierte ARgentOS evidencia de ejecución real en evolución arquitectónica trazable, incremental y versionada? |
 
 ## Roadmap de implementación (planes activos)
 

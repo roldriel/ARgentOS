@@ -45,6 +45,40 @@ listan; ver `docs/VERSIONING.md` §5)
 
 ---
 
+## [9.1.0] — 2026-08-27
+
+### Added
+
+- **Architecture Evolution Workflow** (plan 82, RFC-68): capability de
+  evolución arquitectónica en dos niveles con frontera de tres capas, cadena
+  canónica y diez stages con contratos; módulo nuevo
+  `orchestrators/architecture/` (state machine, rol `architecture_evolver` y
+  contratos PROJECT_REGISTRY, SESSION_REGISTRY, EVIDENCE_SNAPSHOT,
+  EVIDENCE_SET, ARCHITECTURAL_CHANGE_SET y ARCHITECTURE_MANIFEST).
+- **Trazabilidad verificable** (plan 82, RFC-68): checker dev-only
+  `tools/check_architecture_traceability.py` (AEW-001…004) y refs resolubles en
+  los modelos arquitectónicos y las RFC-62…68.
+- **Import Workspace** (plan 82, RFC-68): `sessions/<project-key>/.project/`
+  como staging de entrada gitignored (salvo `.gitkeep`); los `.project/`
+  importados no se versionan.
+
+### Changed
+
+- **Material de evidencia** (plan 82, RFC-68): el raw de BeaconRBX se movió de
+  `reference/.project/` a `sessions/BeaconRBX/.project/` (gitignored) y las
+  citas de los modelos raíz se actualizaron.
+
+### Modelo conceptual
+
+- RFC-68 `Accepted` (plan 82): Architecture Evolution Workflow — Fase 1.
+
+  `Executed`. Sin cambio de payload; solo estados y traza de gobernanza.
+
+(sin ítems de payload por ahora — los cambios de repo que no tocan el payload no se
+listan; ver `docs/VERSIONING.md` §5)
+
+---
+
 ## [9.0.0] — 2026-08-25
 
 ### Added

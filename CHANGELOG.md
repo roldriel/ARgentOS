@@ -40,8 +40,17 @@ La política de versionado, changelog, tags y estados de planes vive en
   de la serie 32–54 quedaron `Accepted` y sus planes asociados (31–53) están
   `Executed`. Sin cambio de payload; solo estados y traza de gobernanza.
 
-(sin ítems de payload por ahora — los cambios de repo que no tocan el payload no se
-listan; ver `docs/VERSIONING.md` §5)
+### Changed
+
+- **Taxonomía documental y layout del repo fuente** (Plan A, RFC-69): la
+  documentación se reorganiza bajo `docs/` (`rfc/`, `plans/`, `architecture/`,
+  `working/`), se crea `docs/CONVENTIONS.md` con la normativa, los INDEX pasan
+  a ser registro/navegación, los checkers se migran al layout nuevo y los
+  working docs quedan contenidos y versionados. Cambio docs-only: sin `VERSION`
+  bump ni tag (ver `docs/VERSIONING.md` §3).
+
+(los cambios docs-only se registran aquí bajo `[Unreleased]`; ver
+`docs/VERSIONING.md` §3)
 
 ---
 

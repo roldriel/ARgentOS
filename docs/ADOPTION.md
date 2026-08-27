@@ -238,4 +238,24 @@ Resumen operativo:
 - **Modo declarativo:** las garantías verificables se declaran y se verifican
   post-hoc por herramientas del desarrollo (dev-only) o se marcan como
   atestación; no hay requisito de Python. El enforcement mecánico es un
+
+## 7. Architecture Evolution Workflow (Level 1)
+
+El protocolo incluye la capability de evolución arquitectónica
+(`orchestrators/architecture/`) para transformar evidencia de ejecución real
+en cambios arquitectónicos trazables. En Fase 1:
+
+1. **Importar evidencia.** Copiar el directorio `.project/` de un proyecto bajo
+   `sessions/<project-key>/.project/` dentro del repositorio donde corre el
+   workflow. `sessions/` es staging de entrada, está gitignored (salvo
+   `.gitkeep`) y no se versiona.
+2. **Ejecutar.** Correr la ejecución AE: ingesta por fingerprint, sellado de
+   Evidence Snapshots y Evidence Set, análisis por proyecto, correlación,
+   problemas, decisiones, impacto y generación de RFCs.
+3. **Revisar.** La ejecución produce exactamente un Architecture Change Set
+   (CHANGE o NO_CHANGE) con Change Rationale; la aprobación y la aplicación
+   viven en la gobernanza del proyecto, no en el workflow.
+
+El workflow nunca modifica el protocolo directamente: su salida es un change
+set revisable.
   subconjunto finito y declarado, y los hooks siguen siendo fail-open.

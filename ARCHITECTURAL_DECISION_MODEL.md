@@ -681,7 +681,8 @@ DECIDED.
 ### Why
 
 CG-02 agrupa P3/P15/P18/P11 bajo la ausencia de identidad de eventos y de una fuente canónica. Sin
-una unidad de "ocurrencia", los registros no pueden correlacionarse ni reconstruirse.
+una unidad de "ocurrencia", los registros no pueden correlacionarse ni reconstruirse. Evidencia:
+`ARCHITECTURAL_PROBLEM_MODEL.md:3. Problem Inventory`.
 
 ### Affected Problems
 
@@ -1012,6 +1013,7 @@ capacidad disponible?
 
 CG-05/P6: en BeaconRBX la autorización del acceso a red es indeterminable (suposición
 `user_confirmed=false`, ejecución efectiva). No se asume violación; se asume falta de registro.
+Evidencia: `ARCHITECTURAL_PROBLEM_MODEL.md:4. Confirmed Problems`.
 
 ### Affected Problems
 
@@ -1139,7 +1141,8 @@ revalidación, proveniencia, aprendizaje) para ser reutilizable con confianza?
 ### Why
 
 CG-04 agrupa P5 (KB stale post-ejecución), P12 (identidad de entradas), P13 (sin aprendizaje) y P14
-(costo). Sin transiciones formales, la KB es un snapshot sin ciclo.
+(costo). Sin transiciones formales, la KB es un snapshot sin ciclo. Evidencia:
+`ARCHITECTURAL_PROBLEM_MODEL.md:4. Confirmed Problems`.
 
 ### Affected Problems
 
@@ -1467,7 +1470,8 @@ Artifact, State, Evidence, Verification y Gate?
 ### Why
 
 P16/P17 muestran artefactos que declaran estados sin sustento y con secciones en conflicto. La
-relación entre artefacto y evidencia debe ser un invariante, no una convención.
+relación entre artefacto y evidencia debe ser un invariante, no una convención. Evidencia:
+`ARCHITECTURAL_PROBLEM_MODEL.md:4. Confirmed Problems`.
 
 ### Affected Problems
 

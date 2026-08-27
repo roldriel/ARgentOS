@@ -16,6 +16,8 @@ implícita o excepciones no registradas.
 Reglas de rama:
 
 - Todo el trabajo de planes se commitea en `dev`.
+- No se crean ramas por feature: todo el trabajo se integra directamente en
+  `dev` (AGENTS.md raíz).
 - `master` solo recibe promociones de release; nada entra a `master` sin tag.
 - `dev` nunca se taggea; los tags viven exclusivamente en `master`.
 - `dist` se regenera desde `master` en cada tag (workflow `publish-dist.yml`).

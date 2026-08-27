@@ -1,22 +1,25 @@
 #!/usr/bin/env python3
-"""Verify structural conventions of numbered plans/ and plans/rfc/ documents.
+"""Verify structural conventions of numbered governance documents (RFC-69).
 
-Documents created from plans/_TEMPLATE.md / plans/rfc/_TEMPLATE.md must be
-born conforming (plans/INDEX.md §Convenciones, bullet "Plantillas"). This
+Documents created from docs/plans/_TEMPLATE.md / docs/rfc/_TEMPLATE.md must be
+born conforming (docs/CONVENTIONS.md:Convenciones, bullet "Plantillas"). This
 checker turns that convention into mechanical enforcement. For every
-numbered document — ``plans/NN-slug.md`` and ``plans/rfc/NN-slug.md``,
-excluding auxiliary annexes (``-anexo-``) — it verifies:
+numbered document — ``docs/plans/NN-slug.md``, ``docs/rfc/NN-slug.md`` and
+``docs/adr/NN-slug.md``, excluding auxiliary annexes (``-anexo-``) — it
+verifies:
 
 1. Filename: ``NN-slug.md``, lowercase slug with hyphens.
 2. Header: a ``**Status:**`` field whose base value belongs to the closed
    status cycle (plans: Aprobado para redacción / Aprobado para ejecución /
-   Executed / Superseded; RFCs: Proposal / Accepted / Superseded). Suffixes
-   after the base value ("Executed (parcial: ...)", "Accepted (fecha)") are
-   allowed.
+   Executed / Superseded; RFCs and ADRs: Proposal / Accepted / Superseded).
+   Suffixes after the base value ("Executed (parcial: ...)", "Accepted
+   (fecha)") are allowed.
 3. No leftover template placeholders: ``Plan NN``, ``RFC-NN``, ``NN-slug``,
    ``YYYY-MM-DD``.
 4. RFCs only: an ``## Amendment Log`` section exists.
-5. INDEX mirror: the document's basename appears in ``plans/INDEX.md``.
+5. INDEX mirror: the document's basename appears in the corresponding
+   governance INDEX (``docs/plans/INDEX.md`` for plans,
+   ``docs/rfc/INDEX.md`` for RFCs, ``docs/adr/INDEX.md`` for ADRs).
 
 Generic angle-bracket placeholders (``<session-uuid>`` and similar) are NOT
 flagged: the corpus uses them legitimately as schema placeholders.
@@ -68,24 +71,29 @@ class Violation:
 
 
 def is_numbered_document(path: Path) -> bool:
-    """True for plans/NN-slug.md and plans/rfc/NN-slug.md, excluding annexes."""
+    """True for NN-slug.md under governance folders, excluding annexes."""
     return (
         bool(re.match(r"^\d{2,}-", path.name))
         and "-anexo-" not in path.name
     )
 
 
+# (subdirectory, kind) pairs scanned by this checker (RFC-69 layout).
+_SCAN_ROOTS = (("docs/plans", "plan"), ("docs/rfc", "rfc"), ("docs/adr", "adr"))
+
+_ADR_STATUSES = frozenset({"Proposal", "Accepted", "Superseded"})
+
+
 def scan_documents(root: Path) -> list[tuple[Path, str]]:
-    """Return (relative path, kind) for every numbered doc under <root>/plans/."""
+    """Return (relative path, kind) for numbered governance docs."""
     docs: list[tuple[Path, str]] = []
-    plans_dir = root / "plans"
-    if not plans_dir.is_dir():
-        return docs
-    for doc in sorted(plans_dir.rglob("*.md")):
-        if not is_numbered_document(doc):
+    for sub, kind in _SCAN_ROOTS:
+        sub_dir = root / sub
+        if not sub_dir.is_dir():
             continue
-        kind = "rfc" if doc.parent.name == "rfc" else "plan"
-        docs.append((doc.relative_to(root), kind))
+        for doc in sorted(sub_dir.rglob("*.md")):
+            if is_numbered_document(doc):
+                docs.append((doc.relative_to(root), kind))
     return docs
 
 
@@ -107,7 +115,9 @@ def check_status(rel: Path, kind: str, text: str) -> Violation | None:
         if char in base:
             base = base.split(char, 1)[0]
     base = base.strip()
-    allowed = _RFC_STATUSES if kind == "rfc" else _PLAN_STATUSES
+    allowed = _ADR_STATUSES if kind == "adr" else (
+        _RFC_STATUSES if kind == "rfc" else _PLAN_STATUSES
+    )
     if base not in allowed:
         return Violation(
             rel, 1, "status",
@@ -141,10 +151,10 @@ def check_amendment_log(rel: Path, kind: str, text: str) -> Violation | None:
 
 
 def check_index_mirror(rel: Path, index_text: str) -> Violation | None:
-    """Every numbered document must be registered in plans/INDEX.md."""
+    """Every numbered document must be registered in its governance INDEX."""
     if rel.name not in index_text:
         return Violation(
-            rel, 1, "index-mirror", "not registered in plans/INDEX.md"
+            rel, 1, "index-mirror", "not registered in the governance INDEX"
         )
     return None
 
@@ -152,19 +162,21 @@ def check_index_mirror(rel: Path, index_text: str) -> Violation | None:
 def verify_all(root: Path) -> list[Violation]:
     """Run every structural check against every numbered document."""
     violations: list[Violation] = []
-    index_path = root / "plans" / "INDEX.md"
-    index_text = (
-        index_path.read_text(encoding="utf-8", errors="replace")
-        if index_path.is_file()
-        else ""
-    )
+    index_texts: dict[str, str] = {}
+    for sub, kind in _SCAN_ROOTS:
+        index_path = root / sub / "INDEX.md"
+        index_texts[kind] = (
+            index_path.read_text(encoding="utf-8", errors="replace")
+            if index_path.is_file()
+            else ""
+        )
     for rel, kind in scan_documents(root):
         text = (root / rel).read_text(encoding="utf-8", errors="replace")
         for result in (
             check_filename(rel),
             check_status(rel, kind, text),
             check_amendment_log(rel, kind, text),
-            check_index_mirror(rel, index_text),
+            check_index_mirror(rel, index_texts[kind]),
         ):
             if result is not None:
                 violations.append(result)

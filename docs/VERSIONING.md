@@ -16,6 +16,8 @@ implícita o excepciones no registradas.
 Reglas de rama:
 
 - Todo el trabajo de planes se commitea en `dev`.
+- No se crean ramas por feature: todo el trabajo se integra directamente en
+  `dev` (AGENTS.md raíz).
 - `master` solo recibe promociones de release; nada entra a `master` sin tag.
 - `dev` nunca se taggea; los tags viven exclusivamente en `master`.
 - `dist` se regenera desde `master` en cada tag (workflow `publish-dist.yml`).
@@ -50,6 +52,12 @@ Reglas:
 - **Modelo por plan:** cada plan ejecutado que toca `protocol/.agents/` (o el
   layout del payload fuente) produce una versión propia, clasificada según su
   impacto. Un plan = una versión = un tag.
+- **Cambios docs-only (RFC-69):** un plan que modifica solo documentación o
+  estructura fuente — sin tocar `protocol/.agents/` ni el layout del payload
+  fuente — **no produce versión de protocolo**: registra su ítem en
+  `CHANGELOG.md` bajo `[Unreleased]` con `(plan, RFC-N)`, sin bump de
+  `protocol/.agents/VERSION` y sin tag. No existe una "release de gobernanza"
+  con tag sin versión: violaría la invariante versión ↔ changelog ↔ tag.
 - La versión se asigna en el commit del plan (en `dev`); se oficializa cuando la
   promoción la taggea en `master`.
 - La versión siguiente se calcula siempre desde la **última versión publicada en
@@ -72,7 +80,7 @@ Reglas:
    promoción, `python tools/check_dist_sync.py` — es decir, la **batería
    canónica** de §4.1. Si algo falla, no se versiona ni se promueve.
 4. **Estados:** plan → `Executed` (con `Nota de ejecución`), Amendment Log de la
-   RFC, `plans/INDEX.md` como espejo.
+   RFC, `docs/plans/INDEX.md` como espejo.
 5. **Changelog + versión:** nueva sección `## [X.Y.Z] — fecha` con el ítem
    `(plan N, RFC-N)`, bump de `protocol/.agents/VERSION` y la nota de tag.
 6. **Commit del plan en `dev`:** atómico, Conventional Commit en inglés
@@ -87,7 +95,7 @@ Reglas:
 ### 4.1 Batería canónica de verificación
 
 La batería que define "verde" en este repo es la siguiente — única definición;
-`AGENTS.md` raíz y `plans/INDEX.md` §Convenciones la referencian, no la
+`AGENTS.md` raíz y `docs/CONVENTIONS.md:Convenciones` la referencian, no la
 duplican:
 
 ```bash
@@ -162,7 +170,7 @@ RFCs:
 - `Proposal` → `Accepted` (decisión explícita o regularización) → `Superseded`.
 - Ejecutar un plan por vía plan **no** cambia la RFC: queda `Proposal` con
   entrada en su Amendment Log (precedente planes 31–36).
-- `plans/INDEX.md` es un espejo descriptivo: se actualiza en el commit del plan,
+- `docs/plans/INDEX.md` es un espejo descriptivo: se actualiza en el commit del plan,
   después de los archivos fuente, y nunca es fuente de verdad.
 
 ## 8. Ejecución en paralelo
@@ -215,6 +223,8 @@ Un plan está terminado cuando:
 - [ ] Plan `Executed`, RFC con Amendment Log, INDEX actualizado.
 - [ ] Sección del changelog `[X.Y.Z]` con ítem `(plan N, RFC-N)` y `VERSION`
       bumped.
+- [ ] Para cambios docs-only (RFC-69): ítem en `[Unreleased]` del changelog
+      con `(plan, RFC-N)`; sin `VERSION` bump ni tag.
 - [ ] Commit atómico en `dev`.
 
 Una versión está publicada cuando, además:

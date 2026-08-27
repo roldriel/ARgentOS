@@ -2,7 +2,7 @@
 
 Cómo migrar un proyecto que adoptó el protocolo ARgentOS (`.agents/` + `AGENTS.md`)
 de una versión a otra. Este archivo vive **fuera de `.agents/`** a propósito
-(origen: `plans/20-release-adoption.md` §A): una migración no debe modificar su
+(origen: `docs/plans/20-release-adoption.md` §A): una migración no debe modificar su
 propia política.
 
 La versión vigente está declarada en `.agents/VERSION` (una línea semver). El
@@ -13,7 +13,7 @@ inicial está en [`ADOPTION.md`](ADOPTION.md).
 
 ## 1. Esquema de versión
 
-Semver conceptual (`plans/20-release-adoption.md` §A):
+Semver conceptual (`docs/plans/20-release-adoption.md` §A):
 
 | Componente | Cuándo sube | Ejemplo |
 |---|---|---|
@@ -47,7 +47,7 @@ Para pasar un proyecto adoptante de la versión `X` a la versión `Y`:
    los flags nuevos llegan con default seguro (deshabilitado salvo indicación del
    changelog).
 6. **Sincronizar el directorio**: reemplazar `.agents/` y `AGENTS.md` por los de
-   la versión `Y`. `.agents/` es autocontenido: no referencia `plans/` ni RFCs, así
+   la versión `Y`. `.agents/` es autocontenido: no referencia `docs/plans/` ni RFCs, así
    que no hace falta copiar nada más del repo de origen.
 7. **Validar**: la checklist documental de
    `.agents/standards/runtime/PROTOCOL_HEALTH.md` (la aplica el system agent en
@@ -131,7 +131,7 @@ histórica (no se renombran); la regla aplica a ejecuciones futuras.
 
 Se soporta una sola línea de versión: la vigente. No hay ramas de mantenimiento
 de versiones anteriores (fuera de alcance declarado en
-`plans/20-release-adoption.md` §Fuera de alcance).
+`docs/plans/20-release-adoption.md` §Fuera de alcance).
 
 ## 6. Modelo de garantías y fronteras de enforcement — 4.0.0 (plan 76, RFC-62)
 

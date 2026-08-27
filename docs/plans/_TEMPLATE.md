@@ -1,22 +1,22 @@
 # Plan NN — <Título corto y operativo>
 
 <!-- Antes de crear el archivo:
-     - Numeración: consultar plans/INDEX.md para el próximo número libre; los
+     - Numeración: consultar docs/plans/INDEX.md para el próximo número libre; los
        planes numeran por orden cronológico de ejecución, nunca se reusan.
      - Nombre de archivo: NN-slug-descriptivo.md en minúsculas con guiones.
      - Este template no se numera ni se registra en el INDEX. -->
 
 **Status:** Aprobado para redacción | Aprobado para ejecución
 **Fecha:** YYYY-MM-DD
-**RFC:** RFC-NN (`plans/rfc/NN-slug.md`) | —
+**RFC:** RFC-NN (`docs/rfc/NN-slug.md`) | —
 **Clase:** A | B (solo si el plan toca `protocol/.agents/`; ver RFC-56)
 **Depende de:** plan NN | —
 **Origen:** <auditoría, bitácora, decisión — con referencia verificable>
 
 <!-- El Status inicial define la clase de entregable (ciclo de status de
-planes en plans/INDEX.md §Convenciones). La RFC puede ser "—" solo por vía
+planes en docs/CONVENTIONS.md:Convenciones). La RFC puede ser "—" solo por vía
 plan, con justificación documentada en este archivo. Al crear el plan,
-registrarlo en plans/INDEX.md (tabla + serie) en el mismo commit. -->
+registrarlo en docs/plans/INDEX.md (tabla + serie) en el mismo commit. -->
 
 ## Objetivo
 

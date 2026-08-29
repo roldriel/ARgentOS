@@ -67,6 +67,18 @@ La política de versionado, changelog, tags y estados de planes vive en
   `docs/adr/` en los checkers de estructura y citas. Cambio docs-only: sin
   `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3).
 
+### Fixed
+
+- **Guía de adopción sin `git subtree --prefix=.`** (plan 85): `docs/ADOPTION.md`
+  ya no recomienda `git subtree` con prefijo raíz — el `dist` solo trae el
+  payload (`.agents/` + `AGENTS.md`) y un `subtree pull` con `--prefix=.`
+  genera conflictos modify/delete sobre el proyecto adoptante; se documenta la
+  copia del payload desde `dist` vía git o sin git, con manejo de archivos
+  eliminados entre versiones. Además, `check_plan_citations.py` exime las citas
+  históricas a artefactos eliminados (`PROJECT_ARTIFACTS.md`, plan 84),
+  restaurando la batería tras 10.0.0. Cambio docs-only: sin `VERSION` bump ni
+  tag (ver `docs/VERSIONING.md` §3).
+
 (los cambios docs-only se registran aquí bajo `[Unreleased]`; ver
 `docs/VERSIONING.md` §3)
 

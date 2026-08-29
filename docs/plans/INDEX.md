@@ -115,6 +115,12 @@ autorización completa.
 |---|---|---|---|
 | `84-remove-project-context-artifacts.md` | RFC-70 | Executed | Elimina `project-map.md` y `technical-analysis.md` como artefactos del protocolo y `PROJECT_ARTIFACTS.md` por completo (incluidas las plantillas de dominio): su contenido ya vive en la KB de discovery; consumidores y adopción realineados. Versión 10.0.0 (MAJOR). |
 
+## Vigésima primera serie: corrección de la guía de adopción (29 ago 2026)
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `85-adopcion-sin-subtree.md` | — (vía plan) | Executed | Reemplaza el flujo `git subtree --prefix=.` de `docs/ADOPTION.md` (incompatible con un `dist` que solo trae `.agents/` + `AGENTS.md`) por la copia del payload desde `dist` vía git (fetch + `git checkout FETCH_HEAD`) o sin git, con manejo de archivos eliminados entre versiones; `check_plan_citations.py` exime citas históricas a artefactos eliminados (restaura la batería tras 10.0.0). Cambio docs-only: ítem en `[Unreleased]`, sin `VERSION` bump ni tag (RFC-69). |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

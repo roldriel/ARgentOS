@@ -24,7 +24,10 @@ heading (line numbers, line ranges) are reported as "non-heading anchor".
 
 Citations under ``.project/`` are exempt: session artifacts and knowledge-base
 state are ephemeral (docs/MIGRATION.md §4) and are not part of the repository, so
-historical plans may cite them without a persistent target.
+historical plans may cite them without a persistent target. Citations from
+historical sources (docs/plans/, docs/rfc/, CHANGELOG.md) to artifacts removed
+by a published release (``REMOVED_ARTIFACTS``) are also exempt: historical trace
+is preserved (RFC-46/RFC-69), while live docs must not cite removed artifacts.
 
 Additionally, it flags citations that use a legacy path from a live
 (non-historical) source: historical archives (docs/plans/, docs/rfc/) and
@@ -86,6 +89,15 @@ ROOT_DOCS = (
     "runtime/README.md",
     "docs/source-layout.md",
 )
+
+# Payload files removed by a published release whose historical references are
+# preserved as trace. The exemption applies only to historical sources
+# (docs/plans/, docs/rfc/, CHANGELOG.md); live docs must not cite them.
+# PROJECT_ARTIFACTS.md was removed in plan 84 (RFC-70, protocol 10.0.0).
+REMOVED_ARTIFACTS = frozenset({
+    ".agents/standards/context/PROJECT_ARTIFACTS.md",
+    "protocol/.agents/standards/context/PROJECT_ARTIFACTS.md",
+})
 
 
 @dataclass
@@ -204,6 +216,11 @@ def verify_citation(citation: Citation, root: Path) -> BrokenCitation | None:
     if not target.is_file():
         mapped = legacy_target(citation.path, root)
         if mapped is None or not mapped.is_file():
+            if (
+                citation.path in REMOVED_ARTIFACTS
+                and is_historical_source(citation.source)
+            ):
+                return None
             return BrokenCitation(citation, "file not found")
         target = mapped
     text = target.read_text(encoding="utf-8", errors="replace")

@@ -32,6 +32,18 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [10.0.0] — 2026-08-28
+
+### Removed
+
+- **Artefactos de contexto del proyecto manuales** (plan 84, RFC-70):
+  `project-map.md` y `technical-analysis.md` dejan de ser artefactos del
+  protocolo y el estándar `PROJECT_ARTIFACTS.md` se elimina (incluidas sus
+  plantillas de dominio); el contexto estructural y técnico del proyecto se
+  obtiene de la Knowledge Base de discovery
+  (`.project/knowledge/discovery/`, `executive_summary.md` como entrada
+  read-first), con frescura por claim y provenance.
+
 ## [Unreleased]
 
 ### Modelo conceptual

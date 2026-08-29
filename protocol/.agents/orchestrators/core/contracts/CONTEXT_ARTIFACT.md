@@ -188,9 +188,15 @@ notes = [""]
 
 ## Relationship to project artifacts
 
-The `Project Context` section may reference the project's persistent context artifacts:
+The `Project Context` section may reference the discovery Knowledge Base
+entries (`.project/knowledge/discovery/`):
 
-- `project-map.md`
-- `technical-analysis.md`
+- `executive_summary.md` — read-first orientation entry.
+- The per-type entries relevant to the task (`file_map.md`, `entrypoint.md`,
+  `architecture.md`, `stack.md`, `dependencies.md`, `technical_debt.md`,
+  `business_rules.md`, etc.).
 
-The structure of these artifacts is defined in `.agents/standards/context/PROJECT_ARTIFACTS.md`. This artifact does not replace them; it may summarize or cite them as evidence.
+Their format is defined in
+`.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md`. This
+artifact does not replace the Knowledge Base; it may summarize or cite it as
+evidence, respecting per-claim freshness.

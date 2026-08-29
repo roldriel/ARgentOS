@@ -314,3 +314,26 @@ existentes.
   reescriben).
 - **Adopción.** El workflow corre a nivel del proyecto adoptante o del repo
   ARgentOS; no exige runtime ni hooks nuevos.
+
+## 12. Eliminación de artefactos de contexto manuales — 10.0.0 (plan 84, RFC-70)
+
+Cambio **MAJOR**: remoción de artefactos y de un estándar.
+
+- **Qué se elimina.** `project-map.md` y `technical-analysis.md` dejan de ser
+  artefactos del protocolo y el estándar
+  `.agents/standards/context/PROJECT_ARTIFACTS.md` (incluidas sus plantillas
+  de dominio) se elimina. No se crean ni se mantienen documentos de contexto
+  manuales.
+- **Qué lo reemplaza.** La Knowledge Base de discovery
+  (`.project/knowledge/discovery/`) contiene el contexto estructural y técnico
+  del proyecto: `executive_summary.md` es la entrada read-first y las entradas
+  por tipo (`file_map.md`, `entrypoint.md`, `architecture.md`, `stack.md`,
+  `dependencies.md`, `technical_debt.md`, `known_errors.md`, `project_flow.md`,
+  `business_rules.md`, `glossary.md`, etc.) cubren el contenido de los
+  artefactos eliminados, con frescura por claim y provenance.
+- **Migración para adoptantes.** 1) Ejecutar una corrida de discovery (sujeta
+  a `discovery_require_consent`) si la KB no está poblada. 2) Eliminar
+  `project-map.md` y `technical-analysis.md` de la raíz del proyecto. 3)
+  Actualizar las referencias locales (README, scripts, hooks) a las entradas
+  de la KB. Los archivos existentes dejan de ser normativos; si se conservan,
+  son copias locales no mantenidas.

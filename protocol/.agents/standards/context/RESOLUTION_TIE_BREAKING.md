@@ -16,8 +16,10 @@ Apply the criteria top-down; the first criterion that discriminates decides.
 2. **Source precedence.** A candidate from a more authoritative source prevails:
    - current-session artifacts (task specification, artifacts of the current iteration) >
    - protocol standards (`.agents/standards/`) >
-   - project-level context artifacts (`project-map.md`, `technical-analysis.md`) >
-   - Knowledge Base entries from previous sessions (`.project/knowledge/`, summaries only) >
+   - discovery Knowledge Base entries (`.project/knowledge/discovery/`, with
+     freshness) >
+   - accumulated Knowledge Base entries from previous sessions
+     (`.project/knowledge/entries/`, summaries only) >
    - any other external source.
 3. **Recency.** Between candidates from the same source tier, the one produced or confirmed more recently prevails (a stale summary loses to a fresh artifact).
 4. **Coverage.** If still tied, the candidate that strictly covers more of the task's acceptance criteria prevails.

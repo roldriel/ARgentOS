@@ -78,4 +78,5 @@
 | RFC-67 | `docs/rfc/67-knowledge-lifecycle-model.md` | Accepted (plan 81) | ¿Qué ciclo mínimo necesita el conocimiento para ser reutilizable y revalidable? |
 | RFC-68 | `docs/rfc/68-architecture-evolution-workflow.md` | Accepted (plan 82) | ¿Cómo convierte ARgentOS evidencia de ejecución real en evolución arquitectónica trazable, incremental y versionada? |
 | RFC-69 | `docs/rfc/69-documentation-taxonomy-and-layout.md` | Accepted (Plan A, 2026-08-27) | ¿Cómo se organiza la documentación del repo fuente bajo `docs/` para que la raíz quede limpia, la navegación escale con RFC + ADR + plan y los documentos de trabajo no acoplen la batería de verificación? |
+| RFC-70 | `docs/rfc/70-project-context-in-discovery-kb.md` | Accepted (plan 84, 2026-08-28) | ¿Son necesarios `project-map.md` y `technical-analysis.md` como artefactos propios si su contenido ya vive en la KB de discovery? |
 

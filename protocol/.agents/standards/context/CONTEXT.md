@@ -121,10 +121,12 @@ Use **reference** for:
 
 - Standards already documented in `.agents/standards/` or the Knowledge Base.
 - Naming conventions, architecture rules, or dependency rules.
-- `project-map.md`, `technical-analysis.md`, or similar stable project artifacts.
+- Discovery Knowledge Base entries (`.project/knowledge/discovery/`, led by
+  `executive_summary.md`).
 - Content that is reusable across tasks.
 
-The structure of `project-map.md` and `technical-analysis.md` is defined in `PROJECT_ARTIFACTS.md`.
+The discovery Knowledge Base provides the project's structural and technical
+context; `executive_summary.md` is its read-first orientation entry.
 
 Threshold rule: if the content exceeds 10 % of the KB budget for the current phase, use reference instead of inline. For example, in the execution phase the KB budget is 4000 characters, so the threshold is 400 characters.
 

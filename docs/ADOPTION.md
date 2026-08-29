@@ -85,12 +85,11 @@ Requisitos de entorno, por modo de adopción (§6):
    (`.agents/standards/runtime/PROTOCOL_HEALTH.md`) valida sus estándares;
    `architecture_contract` viene deshabilitado. Cada flag puede apagarse por
    variable de entorno `AGENTS_FEATURE_<FLAG>` sin editar el archivo.
-3. **Artefactos de contexto del proyecto**: crear en la raíz del proyecto
-   `project-map.md` y `technical-analysis.md` siguiendo el estándar
-   `.agents/standards/context/PROJECT_ARTIFACTS.md` (plantillas en su §9). Si el
-   proyecto tiene un dominio de negocio propio, usar además las plantillas de
-   dominio del mismo §9 (overview + cheatsheet) para dar a los workers contexto
-   funcional.
+3. **Contexto del proyecto**: el protocolo no requiere crear documentos de
+   contexto a mano. La estructura y el análisis técnico del proyecto los
+   produce el discovery en la Knowledge Base (`.project/knowledge/discovery/`),
+   con `executive_summary.md` como entrada de orientación; su generación está
+   sujeta al consentimiento de la flag `discovery_require_consent`.
 4. **Nada de IDE ni de runtime**: el protocolo no requiere configuración de
    IDE ni de herramientas externas; cualquier agente que lea `AGENTS.md` puede
    operarlo. En modo declarativo (§6) tampoco requiere Python.

@@ -24,7 +24,7 @@ This checklist is a mental self-evaluation. The worker reviews it before acting 
 
 ## 5. Context Awareness
 
-- [ ] I have read the relevant context files (`README.md`, `project-map.md`, `technical-analysis.md`) when they exist. → [OPERATIONAL_RULES.md](../conduct/OPERATIONAL_RULES.md)
+- [ ] I have read the discovery Knowledge Base (`executive_summary.md` and the relevant entries under `.project/knowledge/discovery/`) when it exists. → [OPERATIONAL_RULES.md](../conduct/OPERATIONAL_RULES.md)
 - [ ] I will follow existing patterns and will not introduce parallel abstractions or alternative architectures. → [OPERATIONAL_RULES.md](../conduct/OPERATIONAL_RULES.md)
 
 ## 6. Error Handling

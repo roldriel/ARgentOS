@@ -30,6 +30,6 @@ Do **not** merge candidates that merely share a topic but answer different quest
 
 ## 4. Examples
 
-- The task needs a domain rule whose statement lives in a standard and whose project-specific values live in `technical-analysis.md`. Merge: one element stating the rule once with the project values attached, citing both sources.
+- The task needs a domain rule whose statement lives in a standard and whose project-specific values live in the discovery Knowledge Base (`business_rules.md`). Merge: one element stating the rule once with the project values attached, citing both sources.
 - Two KB excerpts quote overlapping halves of the same architecture decision. Merge: one element with the decision stated once and the non-overlapping rationale from both excerpts.
 - A task-specification constraint and a KB note give *different* values for the same parameter. This is not mergeable overlap (they are not compatible): the situation belongs to `RESOLUTION_UNRESOLVABLE_CONFLICTS.md`.

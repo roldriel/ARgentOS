@@ -30,5 +30,5 @@ Treat a candidate as redundant when any of these holds:
 ## 4. Examples
 
 - The payload references `NO_ASSUMPTIONS.md` via the `[NO_ASSUME]` tag and also pastes the standard's clarification rule inline. The inline paste is redundant (criterion 3): remove it; the tag preserves the information by reference.
-- A KB entry summarizes `technical-analysis.md`, and the current phase includes the relevant section of `technical-analysis.md` itself. The KB entry is redundant (criterion 2): remove it.
+- A Knowledge Base entry from a previous session summarizes `executive_summary.md`, and the current phase includes `executive_summary.md` itself. The accumulated entry is redundant (criterion 2): remove it; the discovery entry preserves the information with provenance.
 - Two KB entries from different sessions each restate the same project constraint, with identical content. One is kept (the more recent, per `RESOLUTION_TIE_BREAKING.md` §2 criterion 3); the other is removed and logged.

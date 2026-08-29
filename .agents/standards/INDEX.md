@@ -126,7 +126,6 @@ The technical-practice flags map each flag to the rubric that scores it and the 
 - `context/RESOLUTION_UNRESOLVABLE_CONFLICTS.md` — Resolution policy: behavior before incompatibility, mutual exclusion, and budget conflicts (report as F3/F4/F1, never guess).
 - `context/COMPOSITION_COMPRESSION.md` — Composition policy: closed set of compression techniques (integrates `CONTEXT.md` §8.2/§8.4), lossless rule, and order before Optimization.
 - `context/COMPOSITION_OPTIMIZATION.md` — Composition policy: criteria for adapting the payload's final form to the execution purpose, applied after Compression.
-- `context/PROJECT_ARTIFACTS.md` — standard for project-level context artifacts `project-map.md` and `technical-analysis.md`.
 - `context/ENVIRONMENT_PROBE.md` — rules for probing the execution environment (OS, shell, tools) before acting.
 - `context/USING_PATTERNS.md` — how workers consume the discovery knowledge base (detected environment and development patterns).
 - `context/KNOWLEDGE_CURATION.md` — anti-noise inclusion rules and `curation_status` lifecycle (`active`/`noisy`/`retired`) for KB entries under `.project/knowledge/entries/`.

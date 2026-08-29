@@ -7,7 +7,7 @@ del protocolo y configurar lo mínimo (fuera de alcance declarado:
 `docs/plans/20-release-adoption.md` §B.
 
 La versión adoptada queda declarada en `.agents/VERSION`. Para actualizaciones
-posteriores, seguir §1.2 y [`MIGRATION.md`](MIGRATION.md).
+posteriores, seguir §1.1 (o §1.2 sin git) y [`MIGRATION.md`](MIGRATION.md).
 
 ---
 
@@ -19,39 +19,54 @@ consumo soportado. (En el repo fuente el payload vive en `protocol/` con el
 entry file renombrado a `_AGENTS.md`; la adopción siempre se hace desde
 `dist`.) Hay dos métodos:
 
-### 1.1. Git subtree (recomendado)
+### 1.1. Copia del payload desde `dist` con git (recomendado)
 
-Vendoriza `dist` dentro del proyecto adoptante, con sincronización posterior por
-`pull`:
+`dist` trae solo el payload, así que **no uses `git subtree` con `--prefix=.`**:
+al poner la raíz de `dist` como raíz del subtree, un `subtree pull` interpreta
+cada archivo del proyecto adoptante que no vive en `dist` como eliminado y
+genera conflictos modify/delete sobre todo el proyecto. El mecanismo soportado
+es copiar el payload desde la rama `dist`:
 
 ```bash
 # Instalación (una vez, desde la raíz del proyecto adoptante)
-git subtree add --prefix=. https://github.com/roldriel/ARgentOS.git dist --squash
+git fetch https://github.com/roldriel/ARgentOS.git dist
+git checkout FETCH_HEAD -- .agents AGENTS.md
 
 # Actualización a la última versión publicada
-git subtree pull --prefix=. https://github.com/roldriel/ARgentOS.git dist --squash
+git fetch https://github.com/roldriel/ARgentOS.git dist
+git checkout FETCH_HEAD -- .agents AGENTS.md
 ```
 
-- `--prefix=.` coloca `.agents/` y `AGENTS.md` en la raíz del proyecto (la
-  estructura de `dist` ya viene así).
-- El repo es privado: el `pull` usa las credenciales git habituales.
+- `git checkout FETCH_HEAD -- .agents AGENTS.md` copia y staged el payload en
+  la raíz del proyecto sin tocar ningún otro archivo del adoptante.
+- Si la versión nueva **elimina** archivos del payload (sección *Removed* del
+  `CHANGELOG.md`), borrarlos del árbol adoptante (p. ej. `git rm <ruta>`) y
+  seguir `MIGRATION.md` entre versiones; para detectarlos:
+  `git diff --name-status FETCH_HEAD -- .agents AGENTS.md` (entradas `D`).
+- El repo es privado: el `fetch` usa las credenciales git habituales.
 - **`.agents/` es read-only en el adoptante**: los cambios se hacen en el repo
-  fuente (rama `dev` → `master` → CI publica en `dist`); el próximo
-  `subtree pull` pisa cualquier edición local.
-- Para pinearse a una versión en vez de seguir `dist`, usar el tag publicado:
-  `git subtree pull --prefix=. <url> 3.0.7 --squash`.
+  fuente (rama `dev` → `master` → CI publica en `dist`); la actualización pisa
+  cualquier edición local del payload.
+- Para fijar una versión exacta en vez de seguir `dist`, copiarla desde el tag
+  de release en `master` del repo fuente (`protocol/.agents/` +
+  `protocol/_AGENTS.md`, renombrado a `AGENTS.md`); `.agents/VERSION` y
+  `CHANGELOG.md` identifican la versión.
 
-### 1.2. Copia manual (alternativa sin git)
+### 1.2. Copia sin git (alternativa)
 
-Copiar desde la rama `dist` del repositorio de origen al proyecto adoptante:
+Descargar (o clonar) la rama `dist` del repositorio de origen y copiar al
+proyecto adoptante:
 
 | Copiar | Destino | Obligatorio |
 |---|---|---|
 | `.agents/` (completo) | `<proyecto>/.agents/` | Sí |
 | `AGENTS.md` (raíz) | `<proyecto>/AGENTS.md` | Sí |
 
-Sin subtree no hay mecanismo de actualización: cada upgrade es una copia nueva
-(seguir `MIGRATION.md` entre versiones).
+Actualizar es reemplazar ambos por los de la versión nueva, eliminar los
+archivos declarados como *Removed* en la sección correspondiente del
+`CHANGELOG.md` y seguir `MIGRATION.md` entre versiones. Con cualquiera de los
+dos métodos, verificar la versión adoptada (`.agents/VERSION`) y la validación
+del §3.
 
 No hace falta copiar nada más: `.agents/` es autocontenido y no referencia
 `docs/plans/` ni RFCs (frontera documental, `docs/CONVENTIONS.md:Convenciones`). Los

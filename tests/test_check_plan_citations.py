@@ -283,6 +283,30 @@ def test_project_session_citations_are_exempt(tmp_path):
     assert cpc.verify_all(tmp_path) == []
 
 
+def test_historical_citation_to_removed_artifact_exempt(tmp_path):
+    """Historical citations to PROJECT_ARTIFACTS.md (removed in plan 84) pass."""
+    make_repo(tmp_path, {
+        "docs/plans/a.md": (
+            "`protocol/.agents/standards/context/PROJECT_ARTIFACTS.md:3. Location of Actual Artifacts`\n"
+        ),
+        "CHANGELOG.md": "(`.agents/standards/context/PROJECT_ARTIFACTS.md` §9)\n",
+    })
+    assert cpc.verify_all(tmp_path) == []
+
+
+def test_live_doc_citation_to_removed_artifact_still_flagged(tmp_path):
+    """The removed-artifact exemption is historical-only; live docs are flagged."""
+    make_repo(tmp_path, {
+        "docs/ADOPTION.md": (
+            "`protocol/.agents/standards/context/PROJECT_ARTIFACTS.md:3. Location`\n"
+        ),
+    })
+    broken = cpc.verify_all(tmp_path)
+    assert len(broken) == 1
+    assert broken[0].reason == "file not found"
+    assert broken[0].citation.source == Path("docs/ADOPTION.md")
+
+
 def test_runs_from_other_cwd(tmp_path):
     make_repo(tmp_path, {
         "docs/plans/a.md": "`plans/b.md:Real`\n",

@@ -32,6 +32,29 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [10.1.0] — 2026-08-29
+
+### Added
+
+- **Context Persistence & Cacheability — materialización normativa** (plan 88,
+  RFC-71): clasificación estable/dinámico del Execution Context, segmentos
+  Core/Project/Worker como dominios semánticos, identidades compuestas
+  (`SegmentContentIdentity`/`SegmentIdentity`/`SemanticContextIdentity`),
+  scope, aislamiento semántico, separación de invalidación
+  semántica/frescura/almacenamiento, frontera persistence ≠ provider prompt
+  cache y no-modificación del Context Budget por caching/persistence (I-010),
+  en `CONTEXT.md`, `KNOWLEDGE_LIFECYCLE.md`, `PROTOCOL_BOUNDARIES.md` y
+  `BUDGET_MATERIALIZATION.md`. MINOR: adiciones compatibles; sin cambios de
+  contratos, state machines ni workflows. Las RFCs 72–74 permanecen en
+  `Proposal` y fuera de alcance.
+
+### Modelo conceptual
+
+- **RFC-71 implementada parcialmente** (plan 88): la RFC-71 pasa de fuente
+  conceptual a materialización normativa parcial en la versión 10.1.0; la
+  implementación de materialización/provider (RFC-72), persistence de proyecto
+  (RFC-73) y telemetría/economía (RFC-74) sigue en `Proposal`.
+
 ## [10.0.0] — 2026-08-28
 
 ### Removed

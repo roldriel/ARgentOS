@@ -101,6 +101,20 @@ Rules:
 - Persistent state follows its own contracts (knowledge-base contracts, `.agents/skills/README.md`), not the `<order>-ARTIFACT_NAME.md` naming convention.
 - `.project/skills/` carries an in-situ `README.md` so any agent discovering the folder finds the format instructions there.
 
+Semantic isolation and cache frontier:
+
+- Context MUST NOT be reused across incompatible semantic scopes. Content
+  equality does not imply reuse authorization. The concrete isolation
+  mechanism (project, database or filesystem namespace; storage keys) is an
+  implementation concern outside the protocol scope.
+- Persistence and cacheability semantics do not implement provider cache
+  behavior: the protocol implements no provider prompt cache. Materialization
+  and provider caching are runtime/provider concerns (semantic context →
+  materialization → provider prompt cache). Persistence and provider prompt
+  cache are conceptually related through that chain but keep separate
+  ownership: persistence semantics belong to the protocol; provider cache
+  behavior belongs to the provider side.
+
 ## Skill coexistence
 
 External user skills (installed in the user's CLI) are injected by the CLI itself; the protocol cannot pause them technically. The rules are therefore normative. Key distinction: **tool vs. rule**.

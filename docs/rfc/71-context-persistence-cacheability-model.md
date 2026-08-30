@@ -476,7 +476,16 @@ Esta RFC **no define**:
 - implementación concreta de observabilidad;
 - formato concreto de materialización ni la elección concreta del orden canónico.
 
-**Impacto en el protocolo:** ninguno. Es una RFC conceptual: no modifica `protocol/.agents/`, no cambia contratos, no cambia state machines, no produce bump de `VERSION` ni entrada de changelog. En `Proposal` no habilita tocar el payload (RFC-56; `docs/CONVENTIONS.md:Convenciones`).
+**Impacto en el protocolo:** materialización normativa parcial (plan 88, versión
+10.1.0 MINOR): la clasificación estable/dinámico, los segmentos
+Core/Project/Worker, la semántica de identidad, el scope, el aislamiento
+semántico, la separación de invalidación semántica/frescura/almacenamiento, la
+frontera persistence ≠ provider prompt cache y la no-modificación del Context
+Budget se incorporan a standards existentes (`CONTEXT.md`,
+`KNOWLEDGE_LIFECYCLE.md`, `PROTOCOL_BOUNDARIES.md`, `BUDGET_MATERIALIZATION.md`).
+No cambian contratos, state machines, workflows ni el Delegation Payload; la
+implementación de materialización/provider, persistence de proyecto y telemetría
+permanece en las RFCs 72–74.
 
 ## Criterios de aceptación
 
@@ -497,3 +506,8 @@ Esta RFC **no define**:
 - 2026-08-29 — Surgical revision after architectural consistency review: ancla de versión de composición aclarada (I-012); `SegmentContentIdentity` vs `SegmentIdentity` distinguidas con ejemplo; elegibilidad semántica vs admisión/provider capability/uso efectivo separadas; memoization de Discovery downgraded a condicional; frontera de determinismo de materialización explicitada; elegibilidad de persistence separada del estado actual; configuración de worker acotada por rol semántico; participación de dominios acotada; roles owner/consumer/implementer aclarados.
 - 2026-08-29 — Finalización: semántica de igualdad de `SemanticContextIdentity` y `project_identity` como ancla de namespace de composición explicitadas; sin cambios arquitectónicos.
 - 2026-08-29 — Aceptada (plan 86): modelo semántico de Context Persistence y Cacheability formalizado como fuente de verdad; cambio docs-only, sin impacto en `protocol/.agents/`; la implementación de persistence, materialización y telemetría queda en las RFCs 72–74.
+- 2026-08-29 — Implementada parcialmente (plan 88): materialización normativa de
+  clasificación estable/dinámico, segmentos, identidades, scope, aislamiento
+  semántico, separación de invalidación y frontera de cache en standards
+  existentes (versión 10.1.0, MINOR); la implementación de materialización/
+  provider, persistence de proyecto y telemetría permanece en las RFCs 72–74.

@@ -1,6 +1,6 @@
 # Plan 88 — Implementación de RFC-71 (Context Persistence & Cacheability)
 
-**Status:** Aprobado para ejecución
+**Status:** Executed
 **Fecha:** 2026-08-29
 **RFC:** RFC-71 (`docs/rfc/71-context-persistence-cacheability-model.md`)
 **Clase:** A (vía RFC `Accepted`; la clase es la vía de autorización de
@@ -669,5 +669,21 @@ nuevo.
 
 ## Nota de ejecución
 
-<!-- Se completa al ejecutar: fecha, verificación realizada, resultado y
-desviaciones si las hubiera (status Executed o Executed parcial). -->
+**2026-08-29** — Ejecutado en `dev` (commit atómico del plan; la serie
+pendiente RFCs 71–74 + planes 86–88 se commiteó previamente como base en
+`f9e43b1`). U1–U5 aplicados: `CONTEXT.md` con dos secciones nuevas
+(clasificación Stable/Dynamic; segmentos, identidad, scope e isolation),
+`KNOWLEDGE_LIFECYCLE.md` con `Invalidation` en tres dominios,
+`PROTOCOL_BOUNDARIES.md` con aislamiento semántico y frontera de cache,
+`BUDGET_MATERIALIZATION.md` con §8 (I-010) y `standards/INDEX.md` actualizado.
+U6 aplicado: RFC-71 con Amendment Log e "Impacto en el protocolo" corregido,
+`docs/rfc/INDEX.md` actualizado, `CHANGELOG.md` con `[10.1.0]` e ítem
+`(plan 88, RFC-71)`, `protocol/.agents/VERSION` → `10.1.0`,
+`docs/plans/INDEX.md` con el plan 88 → `Executed`. Batería canónica en verde
+(`check_protocol_invariants` 9631 refs, `check_plan_citations`,
+`check_plan_structure`, `check_taxonomy_coherence`, `check_session_artifacts`,
+`check_version_state` — warnings de tags esperados en `dev`). pytest: 53
+passed; los errores restantes son ambientales de sandbox (`PermissionError` en
+basetemp), idénticos al baseline previo al plan. Checklist semántico completo
+PASS. RFCs 72–74 intactas en `Proposal`; sin cambios en `runtime/`, `tests/`,
+contratos, state machines, workflows, roles, harness ni `features.toml`.

@@ -118,8 +118,8 @@ The technical-practice flags map each flag to the rubric that scores it and the 
 
 ## Context
 
-- `context/CONTEXT.md` — context engineering, the determinism model, knowledge-base budgets, context compression techniques, and compact tags.
-- `context/BUDGET_MATERIALIZATION.md` — materialization of the Context Budget for the prompt-based runtime: unit (estimated tokens), estimation rule, and conversion from the character-denominated KB budgets.
+- `context/CONTEXT.md` — context engineering, the determinism model, knowledge-base budgets, context compression techniques, and compact tags. Also defines stable/dynamic context classification, context segments (Core/Project/Worker), semantic identity, scope and semantic isolation.
+- `context/BUDGET_MATERIALIZATION.md` — materialization of the Context Budget for the prompt-based runtime: unit (estimated tokens), estimation rule, and conversion from the character-denominated KB budgets. Also declares that persistence and cacheability do not change the semantic limits of the Context Budget.
 - `context/RESOLUTION_TIE_BREAKING.md` — Resolution policy: ordered criteria for deciding between equivalent context candidates (explicit directive, source precedence, recency, coverage, first-fit).
 - `context/RESOLUTION_DEDUPLICATION.md` — Resolution policy: detection of fully-contained (redundant) candidates and their lossless removal.
 - `context/RESOLUTION_MERGE.md` — Resolution policy: when partially overlapping compatible candidates are fused, and the form of the merged result.
@@ -129,7 +129,7 @@ The technical-practice flags map each flag to the rubric that scores it and the 
 - `context/ENVIRONMENT_PROBE.md` — rules for probing the execution environment (OS, shell, tools) before acting.
 - `context/USING_PATTERNS.md` — how workers consume the discovery knowledge base (detected environment and development patterns).
 - `context/KNOWLEDGE_CURATION.md` — anti-noise inclusion rules and `curation_status` lifecycle (`active`/`noisy`/`retired`) for KB entries under `.project/knowledge/entries/`.
-- `context/KNOWLEDGE_LIFECYCLE.md` — knowledge lifecycle model: `snapshot`/`claim`/`lesson` types, per-claim freshness with resolvable provenance, post-execution invalidation (`invalidated_facts`) and pipeline-scoped revalidation.
+- `context/KNOWLEDGE_LIFECYCLE.md` — knowledge lifecycle model: `snapshot`/`claim`/`lesson` types, per-claim freshness with resolvable provenance, post-execution invalidation (`invalidated_facts`) and pipeline-scoped revalidation. Separates semantic invalidation, freshness expiration and physical deletion into distinct domains.
 
 ## Testing
 

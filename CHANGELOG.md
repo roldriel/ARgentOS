@@ -51,6 +51,15 @@ La política de versionado, changelog, tags y estados de planes vive en
 - **Revisión de la serie Proposal completada** (plan 57, RFC-56): las 23 RFCs
   de la serie 32–54 quedaron `Accepted` y sus planes asociados (31–53) están
   `Executed`. Sin cambio de payload; solo estados y traza de gobernanza.
+- **Modelo de Context Persistence y Cacheability** (plan 86, RFC-71): la RFC-71
+  pasa a `Accepted` como modelo semántico de reutilización del Execution
+  Context (vocabulario normativo, segmentos Core/Project/Worker, identidades
+  compuestas, ortogonalidad de scope/persistence/cacheability/memoization/
+  isolation/lifecycle, invalidación por identidad e invariantes I-001…I-012);
+  formaliza la fuente de verdad previa a las RFCs 72–74 (provider prompt
+  cache, persistence de proyecto y telemetría/economía), que siguen en
+  `Proposal`. Cambio docs-only: sin `VERSION` bump ni tag (ver
+  `docs/VERSIONING.md` §3).
 
 ### Changed
 

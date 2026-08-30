@@ -121,6 +121,19 @@ autorización completa.
 |---|---|---|---|
 | `85-adopcion-sin-subtree.md` | — (vía plan) | Executed | Reemplaza el flujo `git subtree --prefix=.` de `docs/ADOPTION.md` (incompatible con un `dist` que solo trae `.agents/` + `AGENTS.md`) por la copia del payload desde `dist` vía git (fetch + `git checkout FETCH_HEAD`) o sin git, con manejo de archivos eliminados entre versiones; `check_plan_citations.py` exime citas históricas a artefactos eliminados (restaura la batería tras 10.0.0). Cambio docs-only: ítem en `[Unreleased]`, sin `VERSION` bump ni tag (RFC-69). |
 
+## Vigésima segunda serie: modelo de context persistence y cacheability (29 ago 2026)
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `86-context-persistence-cacheability-model.md` | RFC-71 | Executed | Formaliza la RFC-71 como modelo semántico de Context Persistence y Cacheability (vocabulario, segmentos Core/Project/Worker, identidades compuestas, ortogonalidad de atributos, invalidación por identidad, invariantes I-001…I-012): RFC-71 pasa a `Accepted`, con Amendment Log, INDEX de RFCs y changelog. Cambio docs-only: sin `VERSION` bump ni tag (RFC-69); RFCs 72–74 y la implementación quedan fuera. **Resolución (2026-08-29):** aceptación docs-only conservada como histórico; la implementación normativa de la RFC-71 es el plan 88 (`88-rfc71-implementation.md`). |
+| `87-provider-prompt-cache-capability.md` | RFC-72 | Aprobado para ejecución | Formaliza la RFC-72 como modelo de la capacidad de Provider Prompt Cache (frontera `SemanticContextIdentity`/`MaterializationIdentity`/`ProviderCacheReference`, dimensiones de `MaterializationIdentity`, Canonical Materialization e I-MAT-001, Ordering Contract con orden OPEN/DEFERRED, Stable Prefix, capacidad abstracta del provider, Provider Adapter Boundary, hit/miss, invalidación en tres dominios, admisión e invariantes I-MAT-001…I-MAT-012): RFC-72 pasa a `Accepted`, con Amendment Log, INDEX de RFCs y changelog. Cambio docs-only: sin `VERSION` bump ni tag (RFC-69); RFCs 73–74 y la implementación quedan fuera. **Resolución (2026-08-29):** sin operación aplicable según el ciclo de status de planes (`docs/VERSIONING.md:7. Estados de planes y RFCs`): no existe `delete`/`cancel` y `Superseded` exige un plan reemplazante que no existe; se conserva `Aprobado para ejecución` con su dependencia (plan 86) válida. |
+
+## Vigésima tercera serie: implementación normativa de RFC-71 (29 ago 2026)
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `88-rfc71-implementation.md` | RFC-71 | Aprobado para ejecución | Materializa en `protocol/.agents/` la parte normativa de la RFC-71 sobre standards existentes: clasificación estable/dinámico, segmentos Core/Project/Worker, identidades compuestas (`SegmentContentIdentity`/`SegmentIdentity`/`SemanticContextIdentity`), scope, separación correctness/lifecycle/almacenamiento, isolation-first y frontera de cache en `CONTEXT.md`, `KNOWLEDGE_LIFECYCLE.md`, `PROTOCOL_BOUNDARIES.md` y `BUDGET_MATERIALIZATION.md`; el resto de la RFC-71 permanece RFC-only y las RFCs 72–74 (Proposal) quedan fuera. Clase A (RFC-71 `Accepted`); versión 10.1.0 (MINOR, requiere confirmación del usuario al ejecutar). |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

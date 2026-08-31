@@ -105,6 +105,34 @@ La política de versionado, changelog, tags y estados de planes vive en
   cache, persistence de proyecto y telemetría/economía), que siguen en
   `Proposal`. Cambio docs-only: sin `VERSION` bump ni tag (ver
   `docs/VERSIONING.md` §3).
+- **Modelo de la capacidad de Provider Prompt Cache** (plan 87, RFC-72): la
+  RFC-72 pasa a `Accepted` como modelo de la capacidad de materialización y
+  prompt caching del provider (`MaterializationIdentity` con sus reglas
+  condicionales, Canonical Materialization e I-MAT-001, Ordering Contract con
+  orden OPEN/DEFERRED, Stable Prefix como propiedad de la materialización,
+  Provider Prompt Cache Capability, Provider Adapter Boundary,
+  `ProviderCacheReference` opaca, semántica de hit/miss, invalidación en tres
+  dominios, admisión como policy e invariantes I-MAT-001…I-MAT-012); formaliza
+  la frontera de materialización sobre el modelo semántico de la RFC-71; las
+  RFCs 73–74 (persistence de proyecto y telemetría/economía) siguen en
+  `Proposal`. Cambio docs-only: sin `VERSION` bump ni tag (ver
+  `docs/VERSIONING.md` §3).
+- **Modelo de persistence del contexto de proyecto y Discovery** (plan 92,
+  RFC-73): la RFC-73 pasa a `Accepted` como modelo de persistence del contexto
+  de proyecto y Discovery (Project Knowledge como abstracción arquitectónica,
+  isolation por `ProjectIdentity`, hashes de discovery ≠ `SegmentContentIdentity`,
+  frescura/revalidación, provenance e invariantes I-PROJ-001…I-PROJ-012);
+  formaliza la fuente de verdad de persistence previa a la implementación
+  (plan 90, gated a RFC-73 `Accepted`); la RFC-74 sigue en `Proposal`. Cambio
+  docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3).
+- **Modelo de economía del cache, telemetría y evidencia de admisión** (plan 93,
+  RFC-74): la RFC-74 pasa a `Accepted` como fuente de verdad de medición (capas
+  de economía no confluibles, avoided work, vocabulario de eventos de reuse,
+  taxonomía de misses, experimentos e invariantes I-ECO-001…I-ECO-006; sin
+  thresholds ni pricing); formaliza la capa de medición de las RFCs 71–73 sin
+  redefinirlas. Aceptación docs-only: sin `VERSION` bump ni tag (ver
+  `docs/VERSIONING.md` §3); no implica implementación — la implementación
+  (eventos/catálogo/agregador) queda en el plan 91, `Aprobado para ejecución`.
 
 ### Changed
 

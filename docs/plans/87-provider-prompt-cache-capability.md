@@ -1,6 +1,6 @@
 # Plan 87 — Modelo de la capacidad de Provider Prompt Cache (RFC-72)
 
-**Status:** Aprobado para ejecución
+**Status:** Executed
 **Fecha:** 2026-08-29
 **RFC:** RFC-72 (`docs/rfc/72-provider-prompt-cache-capability.md`)
 **Clase:** — (cambio docs-only; sin cambios en `protocol/.agents/`; versionado docs-only según RFC-69)
@@ -157,3 +157,20 @@ los INDEX reflejan exactamente lo que el plan ejecuta.
 1–5. La frontera semántica la provee la RFC-71 (plan 86 `Executed`); la
 implementación de provider adapters, telemetría y economía queda en las RFCs
 73–74 (fuera de alcance).
+
+## Nota de ejecución
+
+- 2026-08-31 — Ejecutado en el working tree sobre `dev` (pendiente de commit por
+  el mantenedor). Entregables 1–5 completados: RFC-72 pasa a
+  `Accepted (plan 87, 2026-08-29)` con entrada de aceptación en su
+  `## Amendment Log`; `docs/rfc/INDEX.md` refleja el status nuevo; ítem
+  `(plan 87, RFC-72)` agregado bajo `[Unreleased]` → `### Modelo conceptual`
+  del changelog; plan 87 registrado en la Vigésima segunda serie de
+  `docs/plans/INDEX.md` y marcado `Executed`. Sin cambios en
+  `protocol/.agents/`; RFCs 73–74 intactas en `Proposal`. Verificación: los
+  seis checkers de la batería canónica en verde (`check_protocol_invariants`,
+  `check_plan_citations`, `check_plan_structure`, `check_taxonomy_coherence`,
+  `check_session_artifacts`, `check_version_state`) y `python -m pytest tests/`
+  con 243 passed (basetemp fresco por ACL del `pytest-of-rolda` por defecto en
+  sandbox Windows; no reproduce el entorno normal). `check_dist_sync` rojo por
+  diseño en `dev`.

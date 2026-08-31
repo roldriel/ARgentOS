@@ -1,6 +1,6 @@
 # RFC-73 — Modelo de persistence del contexto de proyecto y Discovery
 
-**Status:** Proposal
+**Status:** Accepted (plan 92, 2026-08-30)
 **Fecha:** 2026-08-29
 **Serie:** Context Persistence & Prompt Cache (RFC-A…RFC-D)
 **Origen:** RFC-71 (Modelo de Context Persistence y Cacheability), RFC-72 (Provider Prompt Cache Capability) y estado actual de Discovery/KB: `protocol/.agents/orchestrators/discovery/states/DISCOVERY_STATE_MACHINE.md:TTL and Cache`, `protocol/.agents/standards/context/KNOWLEDGE_LIFECYCLE.md:Freshness per claim`, `protocol/.agents/orchestrators/discovery/contracts/DISCOVERY_MANIFEST.md:Required sections`.
@@ -475,6 +475,13 @@ cambios en Discovery ni en state machines.
 - 2026-08-29 — Final correction: definición central de Project Knowledge (abstracción arquitectónica ≠ KB Entry ≠ Project Segment; CURRENT/FUTURE explícito); entry key como addressing y no identidad semántica (sin `ProjectKnowledgeIdentity`/`KnowledgeIdentity`/`EntryIdentity`); formulación de unidad reemplazada por tabla concern/mechanism; GC reformulado como "deletion ≠ semantic mutation"; source fingerprint scoped a claims afectados; Matrix D "different project" sin decisión de recomputation; dimensiones separadas de semantic validity / freshness / reuse eligibility; I-PROJ-012 reformulado; criterio de batería reemplazado por verificación reportada por separado; sin cambios arquitectónicos.
 - 2026-08-29 — Final surgical correction: cardinalidad entre Project Knowledge, KB Entry y Project Segment declarada **no definida** por RFC-73 (sin 1:1/1:N/N:1/N:M); ownership aclarado (RFC-71: identidad del Project Segment; RFC-73: relación de persistence; Discovery: artifacts/contratos; RFC-73 no es owner de la estructura interna del segmento); Matrix C corregida para no inferir transiciones de `SegmentIdentity` que RFC-71 no defina (governed by RFC-71 / not determined here), con reparto de gobierno explícito; propiedad testable negativa de cardinalidad agregada; sin cambios arquitectónicos.
 - 2026-08-29 — Final closure patch: eliminada la implicación de que una KB Entry está contenida dentro de un Project Segment (la KB entry se direcciona por entry key en el namespace; la relación con representaciones futuras de Project Segments no está definida por RFC-73); `SegmentContentIdentity` ya no se asigna directamente a la abstracción Project Knowledge (aplica cuando la representación usa un Project Segment de RFC-71); Matrix A corregida: `Fresh + Valid` no implica automáticamente `Eligible` (columna de Reuse Eligibility separada, sujeta a scope/policy/Context Budget); sin cambios arquitectónicos.
+- 2026-08-30 — Aceptada (plan 92): modelo de
+  persistence del contexto de proyecto y Discovery formalizado como fuente de
+  verdad (Project Knowledge como abstracción; isolation por `ProjectIdentity`;
+  hashes de discovery ≠ `SegmentContentIdentity`; frescura/revalidación;
+  invariantes I-PROJ-001…I-PROJ-012); cambio docs-only, sin impacto en
+  `protocol/.agents/`; la implementación (store derivado del Project Segment)
+  queda en el plan 90.
 - 2026-08-31 — Implementada (plan 90): el
   runtime de referencia deriva el Project Segment sobre la KB de discovery
   existente (namespace = `ProjectIdentity` desde `PROJECT_REGISTRY.project_id`,

@@ -1,6 +1,6 @@
 # RFC-72 — Modelo de la capacidad de Provider Prompt Cache
 
-**Status:** Proposal
+**Status:** Accepted (plan 87, 2026-08-29)
 **Fecha:** 2026-08-29
 **Serie:** Context Persistence & Prompt Cache (RFC-A…RFC-D)
 **Origen:** RFC-71 (Modelo de Context Persistence y Cacheability) y cierre de arquitectura 2026-08-29, sobre `docs/rfc/13-execution-context-materialization-model.md:Abstract`, `docs/rfc/14-prompt-rendering-model.md:Conceptual Model` y `runtime/README.md:Materializaciones implementadas`.
@@ -428,3 +428,11 @@ Esta RFC **no define**:
 
 - 2026-08-29 — Creación.
 - 2026-08-29 — Finalización: identidad de representación separada del aislamiento y del estado del cache del provider; dimensiones de `MaterializationIdentity` revisadas (provider/model/model_version condicionales según evidencia; serialización y ordering contract siempre representación); tokenizer ya no se deriva de model_version; métricas del contrato abstracto aclaradas como observabilidad (RFC-D); `ProviderCacheReference` como metadata de observabilidad/diagnóstico/correlación; no-equivalencias de invalidación explicitadas; sin cambios arquitectónicos.
+- 2026-08-29 — Aceptada (plan 87): modelo de la
+  capacidad de Provider Prompt Cache formalizado como fuente de verdad
+  (`MaterializationIdentity`, Canonical Materialization, Ordering Contract,
+  Stable Prefix, Provider Prompt Cache Capability, Provider Adapter Boundary,
+  `ProviderCacheReference`, semántica de hit/miss, invalidación en tres
+  dominios, admisión; invariantes I-MAT-001…I-MAT-012); cambio docs-only, sin
+  impacto en `protocol/.agents/`; la implementación de adapters, la telemetría
+  y la economía quedan en las RFCs 73–74.

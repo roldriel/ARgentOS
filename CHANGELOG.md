@@ -32,6 +32,28 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [10.2.0] — 2026-08-31
+
+### Added
+
+- **Persistence semántica de proyecto — Project Segment derivado** (plan 90,
+  RFC-73): el runtime de referencia deriva el Project Segment de RFC-71 sobre
+  la KB de discovery existente (namespace = `ProjectIdentity` desde
+  `PROJECT_REGISTRY.project_id`, sin identidad nueva ni fallback path-derived),
+  con `SegmentContentIdentity`/`SegmentIdentity(project)`, reuse eligibility
+  (`FRESH`/`STALE`/`UNKNOWN`; stale ≠ invalid; hashes de discovery ≠ content
+  identity) y store derivado `.project/knowledge/project_segment.json`
+  (filesystem, escritura atómica, rebuildable, nunca autoritativo), más la
+  regla operativa aditiva en `PROTOCOL_BOUNDARIES.md`. MINOR: adiciones
+  compatibles; sin cambios en Discovery, state machines ni RFC-72/74.
+
+### Modelo conceptual
+
+- **RFC-73 implementada** (plan 90): la RFC-73 pasa de modelo formal a
+  materialización parcial de la persistence de proyecto (Project Segment
+  derivado + store) en el runtime de referencia, versión 10.2.0; la
+  telemetría/economía del cache (RFC-74) sigue en `Proposal`.
+
 ## [10.1.0] — 2026-08-29
 
 ### Added

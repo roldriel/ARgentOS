@@ -115,6 +115,14 @@ Semantic isolation and cache frontier:
   ownership: persistence semantics belong to the protocol; provider cache
   behavior belongs to the provider side.
 
+Derived project segment store: `.project/knowledge/project_segment.json` MAY
+hold the derived Project Segment of the persistence model (identity and
+freshness metadata over the knowledge base). It is derived and rebuildable,
+never authoritative: the discovery manifest and its entries remain the
+source of truth. It is scoped by the project namespace and MUST NOT be
+reused across projects. Deleting it is storage cleanup, not a semantic
+mutation of the knowledge it described.
+
 ## Skill coexistence
 
 External user skills (installed in the user's CLI) are injected by the CLI itself; the protocol cannot pause them technically. The rules are therefore normative. Key distinction: **tool vs. rule**.

@@ -226,3 +226,127 @@ Given a task to modify a service method, the Orchestrator should:
 - Reference `OUTPUT_EFFICIENCY.md` for the output mode instead of repeating its rules.
 
 The inline fragment is small and task-specific. The standards are stable and already documented, so they are referenced, not duplicated.
+
+## Context classification (Stable / Dynamic)
+
+Context classification assigns each element of the composed Execution Context
+to **Stable Context** or **Dynamic Context**. It occurs after context
+composition and does not feed back into composition.
+
+- **Stable Context**: content whose canonical representation is deterministic
+  given its identity and whose semantics do not depend on per-execution
+  mutable state. Under the current composition categories: Identity Context and
+  Capability Context (bootstrap, state machines, policies, workflow, role,
+  profile, activated skills), and persistent, fresh Knowledge (the discovery
+  knowledge base as the project segment).
+- **Dynamic Context**: Task (task summary rewritten per delegation),
+  re-derived knowledge excerpts, Execution Metadata, session artifacts, state,
+  observations and results.
+
+Classification is determined by the semantic nature of the content, not by its
+attributes: persistence or freshness are not sufficient conditions for
+stability. A tool result is persistable and dynamic; stale knowledge is not
+stable-eligible until revalidated. Stable/Dynamic, Persistence, Freshness,
+Cacheability, Lifecycle, Scope and Isolation remain distinct, orthogonal
+dimensions.
+
+Non-equivalences:
+
+```text
+stable ≠ persisted
+dynamic ≠ ephemeral
+stable ≠ provider prompt cache
+```
+
+The protocol does not define provider cache behavior; the last non-equivalence
+is a boundary statement, not a provider mechanism.
+
+## Context segments, identity, scope and isolation
+
+### Segments
+
+A **Segment** is the minimum identifiable semantic unit of context; where a
+persistence policy applies, it is the unit of persistence. Core, Project and
+Worker segments are semantic domains of a single persistence model, not
+independent cache mechanisms:
+
+- **Core**: protocol bootstrap (entry file, index, system role, state machines,
+  orchestrator role).
+- **Project**: discovery knowledge base (entries, `executive_summary.md`
+  read-first, manifest), curated knowledge and lessons, project skills.
+- **Worker**: phase workflow module, gate policy, role/profile, activated
+  skills.
+
+### Identity
+
+- **SegmentContentIdentity** is the content-addressed identity of a segment's
+  canonical content: SHA-256 of the canonical content, computed with
+  deterministic hashing over fixed encoding, ordering and byte serialization.
+  It follows the same SHA-256 convention as discovery hashes and adds no
+  cryptographic guarantees beyond that mechanism. Two identical canonical
+  contents produce the same identity.
+- **SegmentIdentity** is the scoped semantic identity of a segment:
+
+  ```text
+  SegmentIdentity = { semantic_version, content_identity, namespace }
+  ```
+
+  - `semantic_version`: the protocol version governing the contractual meaning
+    of the content.
+  - `content_identity`: the `SegmentContentIdentity`.
+  - `namespace`: the isolation scope (`protocol-global` or a project identity).
+
+  The same canonical content under a different semantic version or a different
+  namespace produces a different `SegmentIdentity`. `SegmentIdentity` is never
+  reduced to a content hash.
+
+- **SemanticContextIdentity** is derived from the composed context and is
+  invariant to materialization:
+
+  ```text
+  SemanticContextIdentity = {
+      protocol_version,   // composition anchor; must be consistent with the
+                          // semantic_version of every participating segment
+      project_identity,   // composition namespace anchor (null for core)
+      segments: { core: SegmentIdentity, worker: SegmentIdentity,
+                  project: SegmentIdentity, ... }  // participating segments
+  }
+  ```
+
+  It is deterministic: the same participating `SegmentIdentity` set produces
+  the same `SemanticContextIdentity`. It is independent of provider, model,
+  serialization, ordering and cache internals. Equality is by comparison of its
+  components; no hash algorithm or serialization is defined. If
+  `protocol_version` is inconsistent with a participating segment's
+  `semantic_version`, or the composition namespace is inconsistent with the
+  participating segment namespaces, the `SemanticContextIdentity` is invalid.
+
+### Scope
+
+Scope designates the semantic domain of provenance of content:
+`core`, `project`, `worker`, `session`, `execution`. It is not lifetime,
+persistence, cacheability, memoization, isolation, a security boundary or TTL.
+It is distinct from the task scope expressed by the `[SCOPE:...]` compact tag,
+which constrains the allowed work of a delegation.
+
+### Isolation
+
+Isolation is a dimension of scope: each semantic scope is an isolation
+namespace, and equal content in different scopes is not the same context. The
+operational reuse boundary is defined in
+`.agents/standards/runtime/PROTOCOL_BOUNDARIES.md` (Persistent project state).
+
+### Correctness
+
+Semantic invalidation occurs exclusively by identity change:
+
+```text
+content_identity change  →  semantic invalidation
+semantic_version change  →  semantic invalidation
+```
+
+A namespace inconsistency is expressed as a difference or invalidity of
+`SegmentIdentity` (namespace is a component) or of `SemanticContextIdentity`
+(inconsistent composition anchors); it is not an independent category. TTL and
+freshness govern lifecycle, never correctness; physical deletion (garbage
+collection) is storage cleanup and does not redefine semantic identity.

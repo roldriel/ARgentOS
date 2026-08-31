@@ -32,6 +32,80 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [10.3.0] — 2026-08-31
+
+### Added
+
+- **Observabilidad y economía del cache — eventos de reuse/provider** (plan 91,
+  RFC-74): el contrato `METRICS.md` pasa a `schema_version` 1.2.0 con los tipos
+  de evento `reuse_event` (vocabulario lookup/eligibility/reuse/lifecycle por
+  capa; hit/miss nunca implica validez semántica) y `provider_cache_event`
+  (estado del cache del provider reportado por el adapter; sin pricing ni costo
+  monetario — dimensión `Unavailable`); `PROTOCOL_METRICS.md` agrega el
+  catálogo `Reuse and cache` con clases de evidencia
+  (Observed/Estimated/Derived/Unavailable), métricas por capa y la sección de
+  economía con los invariantes I-ECO-001…I-ECO-006 sin umbrales; el agregador
+  dev `tools/aggregate_metrics.py` procesa los eventos nuevos con agregación
+  layer-specific y sin doble conteo, y deriva las oportunidades de Discovery
+  reuse (clase Derived) desde `.last_discovery` + manifest; los productores del
+  runtime (planes 89/90) quedan expuestos como metadata/estado; el registro de
+  los eventos en `METRICS.md` es responsabilidad del Orchestrator/host (seam
+  arquitectónico documentado; sin writer de referencia en este repositorio).
+  MINOR: adiciones compatibles (los eventos desconocidos siguen ignorados por
+  agregadores viejos); sin thresholds, sin pricing, sin telemetry backend, sin
+  cambios en Discovery ni en state machines.
+
+### Modelo conceptual
+
+- **RFC-74 implementada** (plan 91): la RFC-74 pasa de modelo aceptado
+  (plan 93) a materialización parcial de la medición/economía del cache
+  (eventos de reuse/cache, catálogo y agregador), versión 10.3.0.
+
+## [10.2.0] — 2026-08-31
+
+### Added
+
+- **Persistence semántica de proyecto — Project Segment derivado** (plan 90,
+  RFC-73): el runtime de referencia deriva el Project Segment de RFC-71 sobre
+  la KB de discovery existente (namespace = `ProjectIdentity` desde
+  `PROJECT_REGISTRY.project_id`, sin identidad nueva ni fallback path-derived),
+  con `SegmentContentIdentity`/`SegmentIdentity(project)`, reuse eligibility
+  (`FRESH`/`STALE`/`UNKNOWN`; stale ≠ invalid; hashes de discovery ≠ content
+  identity) y store derivado `.project/knowledge/project_segment.json`
+  (filesystem, escritura atómica, rebuildable, nunca autoritativo), más la
+  regla operativa aditiva en `PROTOCOL_BOUNDARIES.md`. MINOR: adiciones
+  compatibles; sin cambios en Discovery, state machines ni RFC-72/74.
+
+### Modelo conceptual
+
+- **RFC-73 implementada** (plan 90): la RFC-73 pasa de modelo formal a
+  materialización parcial de la persistence de proyecto (Project Segment
+  derivado + store) en el runtime de referencia, versión 10.2.0; la
+  telemetría/economía del cache (RFC-74) sigue en `Proposal`.
+
+## [10.1.0] — 2026-08-29
+
+### Added
+
+- **Context Persistence & Cacheability — materialización normativa** (plan 88,
+  RFC-71): clasificación estable/dinámico del Execution Context, segmentos
+  Core/Project/Worker como dominios semánticos, identidades compuestas
+  (`SegmentContentIdentity`/`SegmentIdentity`/`SemanticContextIdentity`),
+  scope, aislamiento semántico, separación de invalidación
+  semántica/frescura/almacenamiento, frontera persistence ≠ provider prompt
+  cache y no-modificación del Context Budget por caching/persistence (I-010),
+  en `CONTEXT.md`, `KNOWLEDGE_LIFECYCLE.md`, `PROTOCOL_BOUNDARIES.md` y
+  `BUDGET_MATERIALIZATION.md`. MINOR: adiciones compatibles; sin cambios de
+  contratos, state machines ni workflows. Las RFCs 72–74 permanecen en
+  `Proposal` y fuera de alcance.
+
+### Modelo conceptual
+
+- **RFC-71 implementada parcialmente** (plan 88): la RFC-71 pasa de fuente
+  conceptual a materialización normativa parcial en la versión 10.1.0; la
+  implementación de materialización/provider (RFC-72), persistence de proyecto
+  (RFC-73) y telemetría/economía (RFC-74) sigue en `Proposal`.
+
 ## [10.0.0] — 2026-08-28
 
 ### Removed
@@ -51,6 +125,43 @@ La política de versionado, changelog, tags y estados de planes vive en
 - **Revisión de la serie Proposal completada** (plan 57, RFC-56): las 23 RFCs
   de la serie 32–54 quedaron `Accepted` y sus planes asociados (31–53) están
   `Executed`. Sin cambio de payload; solo estados y traza de gobernanza.
+- **Modelo de Context Persistence y Cacheability** (plan 86, RFC-71): la RFC-71
+  pasa a `Accepted` como modelo semántico de reutilización del Execution
+  Context (vocabulario normativo, segmentos Core/Project/Worker, identidades
+  compuestas, ortogonalidad de scope/persistence/cacheability/memoization/
+  isolation/lifecycle, invalidación por identidad e invariantes I-001…I-012);
+  formaliza la fuente de verdad previa a las RFCs 72–74 (provider prompt
+  cache, persistence de proyecto y telemetría/economía), que siguen en
+  `Proposal`. Cambio docs-only: sin `VERSION` bump ni tag (ver
+  `docs/VERSIONING.md` §3).
+- **Modelo de la capacidad de Provider Prompt Cache** (plan 87, RFC-72): la
+  RFC-72 pasa a `Accepted` como modelo de la capacidad de materialización y
+  prompt caching del provider (`MaterializationIdentity` con sus reglas
+  condicionales, Canonical Materialization e I-MAT-001, Ordering Contract con
+  orden OPEN/DEFERRED, Stable Prefix como propiedad de la materialización,
+  Provider Prompt Cache Capability, Provider Adapter Boundary,
+  `ProviderCacheReference` opaca, semántica de hit/miss, invalidación en tres
+  dominios, admisión como policy e invariantes I-MAT-001…I-MAT-012); formaliza
+  la frontera de materialización sobre el modelo semántico de la RFC-71; las
+  RFCs 73–74 (persistence de proyecto y telemetría/economía) siguen en
+  `Proposal`. Cambio docs-only: sin `VERSION` bump ni tag (ver
+  `docs/VERSIONING.md` §3).
+- **Modelo de persistence del contexto de proyecto y Discovery** (plan 92,
+  RFC-73): la RFC-73 pasa a `Accepted` como modelo de persistence del contexto
+  de proyecto y Discovery (Project Knowledge como abstracción arquitectónica,
+  isolation por `ProjectIdentity`, hashes de discovery ≠ `SegmentContentIdentity`,
+  frescura/revalidación, provenance e invariantes I-PROJ-001…I-PROJ-012);
+  formaliza la fuente de verdad de persistence previa a la implementación
+  (plan 90, gated a RFC-73 `Accepted`); la RFC-74 sigue en `Proposal`. Cambio
+  docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3).
+- **Modelo de economía del cache, telemetría y evidencia de admisión** (plan 93,
+  RFC-74): la RFC-74 pasa a `Accepted` como fuente de verdad de medición (capas
+  de economía no confluibles, avoided work, vocabulario de eventos de reuse,
+  taxonomía de misses, experimentos e invariantes I-ECO-001…I-ECO-006; sin
+  thresholds ni pricing); formaliza la capa de medición de las RFCs 71–73 sin
+  redefinirlas. Aceptación docs-only: sin `VERSION` bump ni tag (ver
+  `docs/VERSIONING.md` §3); no implica implementación — la implementación
+  (eventos/catálogo/agregador) queda en el plan 91, `Aprobado para ejecución`.
 
 ### Changed
 

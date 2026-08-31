@@ -60,3 +60,23 @@ log a deviation (class F2) and record the true consumed value. The protocol
 does not truncate or block at delegation time; compliance is measured and
 auditable, never silent. A "Budget respected" claim is falsifiable against the
 recorded `declared`/`consumed` pair.
+
+## 8. Interaction with caching and persistence
+
+Persistence and cacheability do not change the semantic limits defined by the
+Context Budget. A retrieved, persisted or cached context remains subject to the
+composition and materialization constraints that already govern the Budget.
+This rule does not mean:
+
+```text
+cached context is free
+persisted context consumes no budget
+reused context bypasses budget
+```
+
+Three magnitudes are distinct and are not interchangeable: the **semantic
+budget** (what composition may include), the **physical / provider / storage
+cost** (where content lives and how it is read), and the **prompt
+materialization cost** (how the composed context is represented). The Budget
+constrains semantic composition; a cached prefix does not make the semantic
+context smaller. No second budget is defined.

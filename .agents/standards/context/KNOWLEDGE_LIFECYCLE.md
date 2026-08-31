@@ -46,14 +46,26 @@ revalidated through the pipeline before any further consumption.
 
 ## Invalidation
 
-Invalidation marks a claim or snapshot as not reusable. Triggers:
+Invalidation is separated into three distinct domains that are not
+interchangeable:
 
-- TTL expiry.
-- Hash change (configuration, code sample, environment).
-- User request.
-- Executor inconsistency report.
-- **Post-execution invalidation**: the execution declares `invalidated_facts`
-  in `EXECUTION_SUMMARY.md` when it changed discovered facts.
+1. **Semantic invalidation (correctness).** Occurs exclusively by identity
+   change: a change of `content_identity` or of `semantic_version`. A namespace
+   inconsistency is expressed as a difference or invalidity of the
+   corresponding identity, not as an independent category. TTL/freshness
+   expiration and physical deletion are never correctness mechanisms.
+2. **Freshness expiration (lifecycle / reuse eligibility).** TTL expiry or
+   unresolvable provenance marks a claim as not reusable until the required
+   revalidation succeeds (KN-005); stale does not imply semantically invalid.
+3. **Physical deletion (storage).** Garbage collection or manual deletion
+   affects availability, not the semantic identity of the knowledge it
+   represented.
+
+The operational triggers that mark a claim or snapshot as not reusable remain:
+TTL expiry, hash change (configuration, code sample, environment), user
+request, executor inconsistency report, and **post-execution invalidation**
+(the execution declares `invalidated_facts` in `EXECUTION_SUMMARY.md` when it
+changed discovered facts).
 
 No execution may modify the knowledge base without passing through this
 transition (`invalidated_facts` → pipeline revalidation) (KN-004, KN-006).

@@ -74,6 +74,12 @@ boundary). Concretely (`runtime/toolcalls/canonical.py`):
   compatible invocations (same SCI + same MI) is computed as a property of
   the materialization — not a segment, not an identity
   (`docs/rfc/72-provider-prompt-cache-capability.md:5. Stable Prefix`).
+- **Protocol version anchor**: the runtime's `PROTOCOL_VERSION`
+  (`runtime/toolcalls/canonical.py`) is the semantic anchor of derived
+  identities (RFC-71: `semantic_version` = protocol version governing the
+  content under block versioning). It MUST equal `protocol/.agents/VERSION`
+  and is enforced by `tools/check_version_state.py`; `materialization_version`
+  and contract `schema_version` remain independent.
 
 The existing materializations remain a runtime choice ("ninguna es la
 correcta"); the canonical materialization is the RFC-72 contract that names

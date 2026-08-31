@@ -27,10 +27,14 @@ from .identity import (
     semantic_context_identity_from_context,
 )
 
-# Protocol version this reference runtime implements: protocol/.agents/VERSION
-# at plan 88 (10.1.0, RFC-71 materialized). Kept as a module constant so the
-# runtime and its tests are self-contained and never read the payload.
-PROTOCOL_VERSION = "10.1.0"
+# Protocol version this reference runtime implements. RFC-71 defines
+# `semantic_version` as the protocol version governing the segment content
+# under the current block-versioning model, so this anchor MUST equal
+# `protocol/.agents/VERSION`. It is kept as a module constant so the runtime
+# never reads the payload at import or use time (self-contained runtime, plan
+# 89); `tools/check_version_state.py` enforces the equality so the anchor
+# cannot silently drift on future version bumps.
+PROTOCOL_VERSION = "10.3.0"
 
 # Canonical serialization version of the envelope (RFC-72 section 2:
 # serialization is always part of MaterializationIdentity).

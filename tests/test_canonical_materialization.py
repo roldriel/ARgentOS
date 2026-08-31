@@ -215,6 +215,19 @@ def test_segment_identity_is_not_reduced_to_content_hash():
     assert "namespace" in s.serialize()
 
 
+def test_semantic_version_change_invalidates_context_identity():
+    # RFC-71 I-003 at the SemanticContextIdentity level: the same composed
+    # content under different protocol versions yields different identities
+    # (no new invalidation rule; the semantic version already participates).
+    ctx = make_context()
+    assert semantic_context_identity_from_context(
+        ctx, "10.2.0"
+    ) != semantic_context_identity_from_context(ctx, "10.3.0")
+    assert semantic_context_identity_from_context(
+        ctx, "10.3.0"
+    ) == semantic_context_identity_from_context(ctx, "10.3.0")
+
+
 def test_semantic_context_identity_derivation_is_deterministic():
     ctx = make_context()
     sci1 = semantic_context_identity_from_context(ctx, PROTOCOL_VERSION)

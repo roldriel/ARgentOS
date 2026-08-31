@@ -5,6 +5,12 @@ Per ``docs/VERSIONING.md`` §2, every version in ``protocol/.agents/VERSION``
 must have a section in ``CHANGELOG.md`` and a tag on ``master``; every tag
 corresponds to a published version with a changelog section.
 
+It also verifies the runtime semantic anchor: ``runtime/toolcalls/canonical.py``
+``PROTOCOL_VERSION`` must equal ``protocol/.agents/VERSION`` (RFC-71: under
+block versioning, ``semantic_version`` is the protocol version governing the
+segment content). This prevents the reference runtime from silently freezing
+an outdated semantic identity anchor on future version bumps.
+
 This dev-only checker implements that invariant with the declared ``dev``
 exception: on ``dev``, changelog sections and the current ``VERSION`` without a
 matching tag are expected (in-progress releases, tagged only at promotion), so
@@ -28,6 +34,9 @@ from pathlib import Path
 
 SEMVER = re.compile(r"^\d+\.\d+\.\d+$")
 SECTION = re.compile(r"^## \[(\d+\.\d+\.\d+)\]", re.MULTILINE)
+RUNTIME_ANCHOR = re.compile(
+    r'^PROTOCOL_VERSION\s*=\s*"(\d+\.\d+\.\d+)"', re.MULTILINE
+)
 
 
 def get_tags(root: Path) -> list[str]:
@@ -44,6 +53,16 @@ def get_tags(root: Path) -> list[str]:
     return sorted(
         {line.strip() for line in result.stdout.splitlines() if SEMVER.match(line.strip())}
     )
+
+
+def _runtime_protocol_version(canonical_file: Path) -> str | None:
+    """Return the PROTOCOL_VERSION literal declared by canonical.py, if any."""
+    try:
+        text = canonical_file.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return None
+    match = RUNTIME_ANCHOR.search(text)
+    return match.group(1) if match else None
 
 
 def verify(root: Path) -> tuple[list[str], list[str]]:
@@ -64,6 +83,22 @@ def verify(root: Path) -> tuple[list[str], list[str]]:
     if not SEMVER.match(version):
         errors.append(f"VERSION is not semver: {version!r}")
         return errors, warnings
+
+    canonical_file = root / "runtime" / "toolcalls" / "canonical.py"
+    if not canonical_file.is_file():
+        errors.append("missing runtime/toolcalls/canonical.py")
+        return errors, warnings
+    anchor = _runtime_protocol_version(canonical_file)
+    if anchor is None:
+        errors.append(
+            "runtime/toolcalls/canonical.py declares no parseable PROTOCOL_VERSION"
+        )
+        return errors, warnings
+    if anchor != version:
+        errors.append(
+            f"runtime semantic anchor PROTOCOL_VERSION ({anchor}) does not "
+            f"match protocol/.agents/VERSION ({version})"
+        )
 
     changelog = changelog_file.read_text(encoding="utf-8", errors="replace")
     sections = set(SECTION.findall(changelog))

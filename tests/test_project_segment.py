@@ -22,11 +22,14 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 
 from runtime.toolcalls import budget as runtime_budget  # noqa: E402
+from runtime.toolcalls.canonical import PROTOCOL_VERSION  # noqa: E402
 from runtime.toolcalls import identity as identity_mod  # noqa: E402
 from runtime.toolcalls import project_segment  # noqa: E402
 from runtime.toolcalls import project_store  # noqa: E402
 
-PROTOCOL_VERSION = "10.2.0"
+# PROTOCOL_VERSION is the single runtime semantic anchor (RFC-71): the canonical
+# materialization suite shares it, and tools/check_version_state.py pins it to
+# protocol/.agents/VERSION so it cannot silently drift on future bumps.
 NOW = datetime(2026, 8, 31, 12, 0, 0, tzinfo=timezone.utc)
 
 

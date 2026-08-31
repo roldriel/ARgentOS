@@ -61,6 +61,36 @@ def test_invalid_artifacts_flagged(tmp_path):
     assert any("missing fields" in x and "STATE" in x for x in v)
 
 
+def test_reuse_and_provider_cache_events_pass(tmp_path):
+    _write_session(tmp_path)
+    session = tmp_path / ".project" / "uuid"
+    (session / "METRICS.md").write_text(
+        (session / "METRICS.md").read_text(encoding="utf-8")
+        + '<!-- METRIC: {"timestamp": "2026-08-31T10:00:00Z", "clock": "utc", '
+        '"type": "reuse_event", "layer": "knowledge", "operation": "eligibility", '
+        '"eligibility_decision": "REJECTED", "reason": "availability"} -->\n'
+        '<!-- METRIC: {"timestamp": "2026-08-31T10:00:01Z", "clock": "utc", '
+        '"type": "provider_cache_event", "result": "unavailable"} -->\n',
+        encoding="utf-8",
+    )
+    assert csa.scan(tmp_path) == []
+
+
+def test_reuse_event_missing_required_flagged(tmp_path):
+    _write_session(tmp_path)
+    session = tmp_path / ".project" / "uuid"
+    (session / "METRICS.md").write_text(
+        (session / "METRICS.md").read_text(encoding="utf-8")
+        + '<!-- METRIC: {"timestamp": "2026-08-31T10:00:00Z", "clock": "utc", '
+        '"type": "reuse_event", "operation": "lookup"} -->\n',
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any(
+        "METRIC" in x and "missing fields" in x and "layer" in x for x in v
+    )
+
+
 def test_budget_accounting_flagged(tmp_path):
     session = tmp_path / ".project" / "uuid" / "00"
     session.mkdir(parents=True)

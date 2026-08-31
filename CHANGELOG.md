@@ -32,6 +32,35 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [10.3.0] — 2026-08-31
+
+### Added
+
+- **Observabilidad y economía del cache — eventos de reuse/provider** (plan 91,
+  RFC-74): el contrato `METRICS.md` pasa a `schema_version` 1.2.0 con los tipos
+  de evento `reuse_event` (vocabulario lookup/eligibility/reuse/lifecycle por
+  capa; hit/miss nunca implica validez semántica) y `provider_cache_event`
+  (estado del cache del provider reportado por el adapter; sin pricing ni costo
+  monetario — dimensión `Unavailable`); `PROTOCOL_METRICS.md` agrega el
+  catálogo `Reuse and cache` con clases de evidencia
+  (Observed/Estimated/Derived/Unavailable), métricas por capa y la sección de
+  economía con los invariantes I-ECO-001…I-ECO-006 sin umbrales; el agregador
+  dev `tools/aggregate_metrics.py` procesa los eventos nuevos con agregación
+  layer-specific y sin doble conteo, y deriva las oportunidades de Discovery
+  reuse (clase Derived) desde `.last_discovery` + manifest; los productores del
+  runtime (planes 89/90) quedan expuestos como metadata/estado; el registro de
+  los eventos en `METRICS.md` es responsabilidad del Orchestrator/host (seam
+  arquitectónico documentado; sin writer de referencia en este repositorio).
+  MINOR: adiciones compatibles (los eventos desconocidos siguen ignorados por
+  agregadores viejos); sin thresholds, sin pricing, sin telemetry backend, sin
+  cambios en Discovery ni en state machines.
+
+### Modelo conceptual
+
+- **RFC-74 implementada** (plan 91): la RFC-74 pasa de modelo aceptado
+  (plan 93) a materialización parcial de la medición/economía del cache
+  (eventos de reuse/cache, catálogo y agregador), versión 10.3.0.
+
 ## [10.2.0] — 2026-08-31
 
 ### Added

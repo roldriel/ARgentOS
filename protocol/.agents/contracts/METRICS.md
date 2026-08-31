@@ -1,11 +1,11 @@
 +++
-schema_version = "1.1.0"
+schema_version = "1.2.0"
 artifact = "METRICS.md"
 phase = "all"
 produced_by = "orchestrator"
 enforcement = "informational"
 +++
-schema_version = "1.1.0"
+schema_version = "1.2.0"
 
 
 ---
@@ -64,16 +64,30 @@ Every event carries `timestamp` (ISO-8601) and `type`. Required fields per type:
 | `context_budget` | `phase`, `declared`, `consumed` | Context Budget declared vs. consumed for one delegation, in estimated tokens (`.agents/standards/context/BUDGET_MATERIALIZATION.md`). |
 | `context_candidates` | `prioritized`, `resolved`, `composed` | Candidate counts across the context pipeline of one delegation. |
 | `discovery_consent` | `condition`, `options`, `decision` | A discovery consent gate presented by the Orchestrator: the detection condition that triggered it, the options offered, and the decision (chosen scope, rejection, or non-interactive bypass). |
+| `reuse_event` | `layer` (`discovery` \| `knowledge` \| `materialization`), `operation` (`lookup` \| `eligibility` \| `reuse_attempt` \| `post_use`) | A reuse/cache-layer observation. Optional fields per operation: `lookup_result` (`HIT`\|`MISS`), `eligibility_decision` (`ACCEPTED`\|`REJECTED`), `reason` (`semantic`\|`policy`\|`budget`\|`identity`\|`provider`\|`availability`), `reuse_outcome` (`SUCCESSFUL`\|`FAILED`), `invalidated` (bool). A lookup result is never semantic validity, eligibility or a reuse decision, and vice versa. |
+| `provider_cache_event` | `result` (`hit`\|`miss`\|`unavailable`) | Provider prompt-cache state observed through the provider adapter. Optional: `tokens_cached` (int), `tokens_uncached` (int), `latency_ms` (int), `reference_present` (bool). Provider-dependent; a hit or a miss never determines semantic validity. |
 
 Every event MAY carry `clock` (`utc` | `agent_clock`): mechanically written
 records default to `utc`; agent-written timestamps produced without a reliable
 clock MUST declare `clock: agent_clock` (G-004). `utc` requires a UTC-normalized
 timestamp (`Z` or `+00:00`); `agent_clock` accepts any ISO-8601 timestamp.
 
+Notes:
+
+- Session identity and project scope are implicit to the artifact (one
+  `METRICS.md` per session). A knowledge identity, where applicable, uses the
+  existing entry key (`title`/path + `kind`) — persistence addressing, never a
+  new semantic identity type.
+- Cost metrics are not recorded: monetary pricing, provider billing and a
+  universal monetary cost model are not observable by the protocol; the cost
+  dimension is `Unavailable`. No price table or hardcoded price exists.
+
 ## Constraints
 
 - Events are append-only and recorded when they occur, never reconstructed retroactively. A wrong event is corrected by a later event, not by editing the recorded one.
 - Events record identifiers and quantities only — never artifact prose, user text, or task content (privacy rule of `.agents/standards/runtime/PROTOCOL_METRICS.md`).
+- Reuse and cache events record identifiers and quantities only — never prompt
+  content or knowledge content (privacy rule above).
 - Unknown event types and unknown extra fields are ignored by aggregation, never errors.
 - The artifact must not include credentials, tokens, or personal data.
 - Events are self-reported by the Orchestrator; the verifiability class of

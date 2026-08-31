@@ -82,6 +82,91 @@ Metrics are grouped by what they measure. The `Source` column states where the d
 | `flags.evidenced` | Declarative flags with a recorded consumption declaration | `event:flag_evidence` |
 | `flags.unevidenced` | Expected flags with no recorded evidence | computed |
 
+### Reuse and cache
+
+Metrics of the reuse/cache layers. They are layer-specific, dimension-specific
+and attribution-aware: there is no global `cache_hit`, no global `savings` and
+no cross-layer total; Discovery reuse, Project Knowledge reuse, Materialization
+reuse and Provider Prompt Cache are never summed as the same benefit.
+
+| Metric | Definition | Source | Evidence class | Availability | Scope | Provider dependency | Invariant |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `reuse.lookup_hits` / `reuse.lookup_misses` | Lookup outcomes per layer (`discovery`/`knowledge`/`materialization`) | `event:reuse_event` | Recorded (Observed) | PARCIAL (until producers) | session/project | NO | I-ECO-002, I-ECO-006 |
+| `reuse.eligibility_accepted` / `reuse.eligibility_rejected` | Eligibility decisions per layer | `event:reuse_event` | Recorded (Observed) | PARCIAL | session/project | NO | I-ECO-001 |
+| `reuse.outcome_successful` / `reuse.outcome_failed` | Reuse attempt outcomes per layer | `event:reuse_event` | Recorded (Observed) | PARCIAL | session/project | NO | I-ECO-001 |
+| `reuse.invalidated` | Post-reuse lifecycle invalidations per layer | `event:reuse_event` | Recorded (Observed) | PARCIAL | session/project | NO | I-ECO-001 |
+| `reuse.materialization_*` | Materialization slice of the per-layer reuse metrics (`layer=materialization`) | `event:reuse_event` | Recorded (Observed) | NOT AVAILABLE until producers | session/project | NO | I-ECO-002, I-ECO-004 |
+| `cache.provider_hits` / `cache.provider_misses` / `cache.provider_unavailable` | Provider prompt-cache state observed through the adapter | `event:provider_cache_event` | Recorded (Observed, provider-reported) | NOT AVAILABLE until a real adapter | session/project | YES | I-ECO-003, I-ECO-006 |
+| `cache.tokens_cached` / `cache.tokens_uncached` | Tokens reported by the provider | `event:provider_cache_event` | Recorded when provider-reported; Verified (Estimated, `ceil(chars/4)` rule) when recomputable against a captured payload; Unavailable otherwise | NOT AVAILABLE | session/project | YES | I-ECO-005, I-ECO-006 |
+| `cache.latency_ms` | Provider request latency | `event:provider_cache_event` | Recorded (Observed) | NOT AVAILABLE | session/project | YES | I-ECO-005 |
+| `discovery.reuse_opportunities` | Derived state-based estimate of currently reusable active discovery knowledge entries within the configured freshness window (`.last_discovery` + manifest `ttl_hours` + `[entries] active`); NOT a lookup, reuse-attempt, reuse-success, cache-hit or observed-event count | `fs` | Derived | DISPONIBLE with valid evidence; NOT AVAILABLE when discovery artifacts/metadata are missing or invalid | project | NO | I-ECO-004, I-ECO-005 |
+
+`discovery.reuse_opportunities` is a Derived state-based metric. It estimates
+the number of currently reusable active discovery knowledge entries within the
+configured freshness window. It is NOT: a lookup count; a reuse-attempt count;
+a reuse-success count; a cache-hit count; or an observed event count. The same
+knowledge may contribute to this derived value in more than one aggregation or
+session if the underlying discovery state remains fresh. The metric MUST NOT be
+interpreted as cumulative reuse activity or economic savings.
+
+#### Evidence classes
+
+Every metric above carries an evidence class and an availability annotation:
+
+- **Observed** (the runtime or provider reports the value) → **Recorded**
+  (single report) or **Verified** (corroborated by a second artifact the
+  reporter does not control).
+- **Estimated** (local estimation, e.g. the `ceil(chars/4)` rule of
+  `BUDGET_MATERIALIZATION.md`) → **Verified** when the rule is mechanically
+  recomputable against the captured payload (precedent:
+  `context.budget_consumed`), otherwise **Recorded**. Local estimation is never
+  billing and never monetary savings.
+- **Derived** (computed from other data) → **Derived**.
+- **Unavailable** (not obtainable) → no data point is fabricated; the metric's
+  Availability column declares it.
+
+#### Unavailable dimensions
+
+The following measurement dimensions are not instrumented by this catalog and
+are declared **Unavailable**; no instrumentation is added to make them
+disappear:
+
+- Latency: baseline, reuse, cache lookup, validation and materialization
+  latency, and latency saved/overhead/net benefit (only provider request
+  latency is instrumented as `cache.latency_ms`).
+- Tokens: baseline input, reused input, output, avoided, and validation/
+  retrieval tokens (only `tokens_cached`/`tokens_uncached` are instrumented,
+  provider-reported).
+- Cost: monetary cost, pricing and provider billing (no pricing model exists;
+  no price table or hardcoded price is introduced).
+- Context budget: `budget_rejected` (only `budget_declared`/`budget_consumed`
+  exist in this catalog).
+- Storage: artifact size, retention, storage growth and GC (not instrumented).
+
+### Reuse and cache economics
+
+Rules of the measurement layer. No thresholds are defined and no metric gates
+anything ("No metric gates anything", `## Aggregation`):
+
+- **I-ECO-001 — Economy does not override validity:** economic metrics never
+  override semantic validity; an invalid artifact is never admitted for
+  economic value.
+- **I-ECO-002 — Hit rate ≠ economic value:** a high hit rate is not economic
+  value by itself.
+- **I-ECO-003 — Provider cache ≠ Project Knowledge:** provider cache state is
+  never Project Knowledge.
+- **I-ECO-004 — No double counting:** the same avoided work is never attributed
+  to two layers; layer attributions stay separate and are never summed as the
+  same benefit.
+- **I-ECO-005 — Evidence quality:** conclusions distinguish observed from
+  estimated/derived data; every metric reports its class.
+- **I-ECO-006 — Provider dependency:** provider-dependent measurements are
+  never generalized as provider-independent facts.
+
+Economic evaluation is an observational layer: it does not admit or reject
+persistence or reuse at runtime, and it never trades away correctness,
+freshness, provenance or isolation.
+
 ## Registration rules
 
 - If a data point already passes through a harness trigger, it is recorded in `HARNESS_REPORT.md` by the Orchestrator as part of the gate evaluation; no duplicate event is recorded.

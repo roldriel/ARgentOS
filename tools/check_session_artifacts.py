@@ -84,6 +84,8 @@ METRIC_REQUIRED = {
     "flag_evidence": ["flag"],
     "context_budget": ["phase", "declared", "consumed"],
     "context_candidates": ["prioritized", "resolved", "composed"],
+    "reuse_event": ["layer", "operation"],
+    "provider_cache_event": ["result"],
 }
 
 STATE_STATUSES = {"no_gates_passed", "in_progress", "ABORT", "COMPLETED"}

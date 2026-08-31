@@ -5,6 +5,7 @@ from __future__ import annotations
 import sys
 import json
 from pathlib import Path
+from datetime import datetime, timedelta, timezone
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "tools"))
@@ -139,6 +140,368 @@ def test_budget_overruns_counted(tmp_path):
     assert report["context.budget_overruns"] == 1
     assert report["context.budget_declared"] == 300
     assert report["context.budget_consumed"] == 200
+
+
+def build_reuse_session(tmp_path: Path) -> Path:
+    """A session with reuse/provider-cache events (plan 91 fixtures)."""
+    session = tmp_path / ".project" / "s1"
+    (session / "00").mkdir(parents=True)
+    (session / "00" / "state.json").write_text("{}", encoding="utf-8")
+    (session / "METRICS.md").write_text(
+        '<!-- METRIC: {"timestamp": "2026-08-31T10:00:00Z", "type": "reuse_event", '
+        '"layer": "discovery", "operation": "lookup", "lookup_result": "HIT"} -->\n'
+        '<!-- METRIC: {"timestamp": "2026-08-31T10:00:01Z", "type": "reuse_event", '
+        '"layer": "knowledge", "operation": "eligibility", '
+        '"eligibility_decision": "REJECTED", "reason": "availability"} -->\n'
+        '<!-- METRIC: {"timestamp": "2026-08-31T10:00:02Z", "type": "reuse_event", '
+        '"layer": "materialization", "operation": "reuse_attempt", '
+        '"reuse_outcome": "SUCCESSFUL"} -->\n'
+        '<!-- METRIC: {"timestamp": "2026-08-31T10:00:03Z", "type": '
+        '"provider_cache_event", "result": "hit", "tokens_cached": 500, '
+        '"latency_ms": 120} -->\n',
+        encoding="utf-8",
+    )
+    return tmp_path
+
+
+def test_reuse_events_aggregated_by_layer(tmp_path):
+    build_reuse_session(tmp_path)
+    report = am.aggregate(tmp_path)
+    assert report["reuse.lookup_hits"] == {"discovery": 1}
+    assert report["reuse.lookup_misses"] == {}
+    assert report["reuse.eligibility_rejected"] == {"knowledge": 1}
+    assert report["reuse.outcome_successful"] == {"materialization": 1}
+    assert report["reuse.outcome_failed"] == {}
+    assert report["reuse.invalidated"] == {}
+    assert report["corrupt"] == {"entry": 0, "metric": 0}
+
+
+def test_provider_cache_events_aggregated(tmp_path):
+    build_reuse_session(tmp_path)
+    report = am.aggregate(tmp_path)
+    assert report["cache.provider_hits"] == 1
+    assert report["cache.provider_misses"] == 0
+    assert report["cache.provider_unavailable"] == 0
+    assert report["cache.tokens_cached"] == 500
+    assert report["cache.latency_ms"] == [120]
+
+
+def test_provider_tokens_unavailable_not_fabricated(tmp_path):
+    session = tmp_path / ".project" / "s1"
+    (session / "00").mkdir(parents=True)
+    (session / "00" / "state.json").write_text("{}", encoding="utf-8")
+    (session / "METRICS.md").write_text(
+        '<!-- METRIC: {"timestamp": "2026-08-31T10:00:00Z", "type": '
+        '"provider_cache_event", "result": "hit"} -->\n',
+        encoding="utf-8",
+    )
+    report = am.aggregate(tmp_path)
+    assert report["cache.provider_hits"] == 1
+    assert report["cache.tokens_cached"] is None
+    assert report["cache.tokens_uncached"] is None
+    assert report["cache.latency_ms"] is None
+    assert report["evidence.availability"]["cache.tokens_cached"] == "NOT AVAILABLE"
+
+
+def test_no_global_cache_hit_or_savings(tmp_path):
+    build_reuse_session(tmp_path)
+    report = am.aggregate(tmp_path)
+    assert "cache_hit" not in report
+    assert "savings" not in report
+    assert "hit_rate" not in report
+    assert not any(key.startswith("economics") for key in report)
+
+
+def test_no_double_counting_provider_cache_hit(tmp_path):
+    # A provider cache HIT and a materialization reuse event must not be summed
+    # as one generic economic benefit: each layer keeps its own attribution.
+    session = tmp_path / ".project" / "s1"
+    (session / "00").mkdir(parents=True)
+    (session / "00" / "state.json").write_text("{}", encoding="utf-8")
+    (session / "METRICS.md").write_text(
+        '<!-- METRIC: {"timestamp": "2026-08-31T10:00:00Z", "type": '
+        '"provider_cache_event", "result": "hit", "tokens_cached": 500} -->\n'
+        '<!-- METRIC: {"timestamp": "2026-08-31T10:00:01Z", "type": "reuse_event", '
+        '"layer": "materialization", "operation": "lookup", '
+        '"lookup_result": "HIT"} -->\n',
+        encoding="utf-8",
+    )
+    report = am.aggregate(tmp_path)
+    assert report["cache.provider_hits"] == 1
+    assert report["cache.tokens_cached"] == 500
+    assert report["reuse.lookup_hits"] == {"materialization": 1}
+    assert not any(key in report for key in ("reuse.savings", "cache.savings", "savings"))
+
+
+def test_freshness_not_lookup_result(tmp_path):
+    # FRESH/STALE/UNKNOWN are freshness metadata (reason=availability), never
+    # HIT/MISS lookup results: the knowledge eligibility event below must not
+    # create a lookup hit or miss, and a lookup event without a result must not
+    # fabricate one.
+    session = tmp_path / ".project" / "s1"
+    (session / "00").mkdir(parents=True)
+    (session / "00" / "state.json").write_text("{}", encoding="utf-8")
+    (session / "METRICS.md").write_text(
+        '<!-- METRIC: {"timestamp": "2026-08-31T10:00:00Z", "type": "reuse_event", '
+        '"layer": "knowledge", "operation": "eligibility", '
+        '"eligibility_decision": "REJECTED", "reason": "availability"} -->\n'
+        '<!-- METRIC: {"timestamp": "2026-08-31T10:00:01Z", "type": "reuse_event", '
+        '"layer": "knowledge", "operation": "lookup"} -->\n',
+        encoding="utf-8",
+    )
+    report = am.aggregate(tmp_path)
+    assert report["reuse.lookup_hits"] == {}
+    assert report["reuse.lookup_misses"] == {}
+    assert report["reuse.eligibility_rejected"] == {"knowledge": 1}
+
+
+def test_unknown_events_and_fields_ignored(tmp_path):
+    session = tmp_path / ".project" / "s1"
+    (session / "00").mkdir(parents=True)
+    (session / "00" / "state.json").write_text("{}", encoding="utf-8")
+    (session / "METRICS.md").write_text(
+        '<!-- METRIC: {"timestamp": "t", "type": "future_event_type"} -->\n'
+        '<!-- METRIC: {"timestamp": "t", "type": "delegation", "phase": "06", '
+        '"profile": null, "skills": [], "h15": "PASS", '
+        '"unknown_extra_field": "ignored"} -->\n',
+        encoding="utf-8",
+    )
+    report = am.aggregate(tmp_path)
+    assert report["delegation.count"] == 1
+    assert report["corrupt"] == {"entry": 0, "metric": 0}
+    assert "future_event_type" not in report
+
+
+def test_evidence_classification_reported(tmp_path):
+    build_reuse_session(tmp_path)
+    # Valid discovery evidence: fresh marker + active entries -> Derived value
+    # with DISPONIBLE availability (the no-evidence case is covered by the
+    # C-3 Unavailable tests).
+    marker = tmp_path / ".project" / ".last_discovery"
+    marker.write_text(
+        json.dumps({"timestamp": datetime.now(timezone.utc).isoformat()}),
+        encoding="utf-8",
+    )
+    manifest_dir = tmp_path / ".project" / "knowledge" / "discovery"
+    manifest_dir.mkdir(parents=True)
+    (manifest_dir / ".discovery_manifest").write_text(
+        json.dumps(
+            {
+                "knowledge_base": {"ttl_hours": 24},
+                "entries": {"active": ["stack.md"], "stale": []},
+            }
+        ),
+        encoding="utf-8",
+    )
+    report = am.aggregate(tmp_path)
+    assert report["evidence.classes"]["reuse.lookup_hits"] == "Recorded"
+    assert report["evidence.classes"]["discovery.reuse_opportunities"] == "Derived"
+    assert report["evidence.availability"]["cache.provider_hits"] == "NOT AVAILABLE"
+    assert (
+        report["evidence.availability"]["discovery.reuse_opportunities"]
+        == "DISPONIBLE"
+    )
+    assert report["discovery.reuse_opportunities"] == 1
+
+
+def test_append_only_artifacts_unchanged(tmp_path):
+    build_reuse_session(tmp_path)
+    metrics_file = tmp_path / ".project" / "s1" / "METRICS.md"
+    before = metrics_file.read_bytes()
+    am.aggregate(tmp_path)
+    am.aggregate_session(tmp_path / ".project" / "s1")
+    assert metrics_file.read_bytes() == before
+
+
+def test_corrupt_reuse_event_counted(tmp_path):
+    session = tmp_path / ".project" / "s1"
+    (session / "00").mkdir(parents=True)
+    (session / "00" / "state.json").write_text("{}", encoding="utf-8")
+    (session / "METRICS.md").write_text(
+        '<!-- METRIC: {"timestamp": "t", "type": "reuse_event", '
+        '"operation": "lookup", "lookup_result": "HIT"} -->\n'
+        '<!-- METRIC: {"timestamp": "t", "type": "provider_cache_event", '
+        '"tokens_cached": 1} -->\n',
+        encoding="utf-8",
+    )
+    report = am.aggregate(tmp_path)
+    assert report["corrupt"]["metric"] == 2
+    assert report["reuse.lookup_hits"] == {}
+    assert report["cache.provider_hits"] == 0
+
+
+def test_no_economic_admission(tmp_path):
+    build_reuse_session(tmp_path)
+    report = am.aggregate(tmp_path)
+    assert not any("admission" in key or "gate" in key for key in report)
+
+
+def test_discovery_reuse_opportunities_derived(tmp_path):
+    session = tmp_path / ".project" / "s1"
+    (session / "00").mkdir(parents=True)
+    (session / "00" / "state.json").write_text("{}", encoding="utf-8")
+    (session / "METRICS.md").write_text(
+        '<!-- METRIC: {"timestamp": "2026-08-31T10:00:00Z", "type": "session_start", '
+        '"declarative_flags": [], "protocol_version": "10.3.0"} -->\n',
+        encoding="utf-8",
+    )
+    now = datetime.now(timezone.utc)
+    marker = tmp_path / ".project" / ".last_discovery"
+    marker.write_text(
+        json.dumps({"timestamp": now.isoformat()}), encoding="utf-8"
+    )
+    manifest_dir = tmp_path / ".project" / "knowledge" / "discovery"
+    manifest_dir.mkdir(parents=True)
+    (manifest_dir / ".discovery_manifest").write_text(
+        json.dumps(
+            {
+                "knowledge_base": {"ttl_hours": 24},
+                "entries": {
+                    "active": ["stack.md", "env.md"],
+                    "stale": ["old.md"],
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    report = am.aggregate(tmp_path)
+    assert report["discovery.reuse_opportunities"] == 2
+    assert report["evidence.availability"]["discovery.reuse_opportunities"] == "DISPONIBLE"
+
+
+def test_discovery_reuse_opportunities_stale_zero(tmp_path):
+    session = tmp_path / ".project" / "s1"
+    (session / "00").mkdir(parents=True)
+    (session / "00" / "state.json").write_text("{}", encoding="utf-8")
+    marker = tmp_path / ".project" / ".last_discovery"
+    old = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
+    marker.write_text(json.dumps({"timestamp": old}), encoding="utf-8")
+    manifest_dir = tmp_path / ".project" / "knowledge" / "discovery"
+    manifest_dir.mkdir(parents=True)
+    (manifest_dir / ".discovery_manifest").write_text(
+        json.dumps(
+            {
+                "knowledge_base": {"ttl_hours": 24},
+                "entries": {"active": ["stack.md"], "stale": []},
+            }
+        ),
+        encoding="utf-8",
+    )
+    report = am.aggregate(tmp_path)
+    assert report["discovery.reuse_opportunities"] == 0
+    assert report["evidence.availability"]["discovery.reuse_opportunities"] == "DISPONIBLE"
+
+
+def test_discovery_reuse_opportunities_missing_artifacts_unavailable(tmp_path):
+    # Case A: missing .last_discovery / manifest -> Unavailable (None), never 0.
+    session = tmp_path / ".project" / "s1"
+    (session / "00").mkdir(parents=True)
+    (session / "00" / "state.json").write_text("{}", encoding="utf-8")
+    report = am.aggregate(tmp_path)
+    assert report["discovery.reuse_opportunities"] is None
+    assert report["evidence.availability"]["discovery.reuse_opportunities"] == "NOT AVAILABLE"
+
+
+def test_discovery_reuse_opportunities_invalid_metadata_unavailable(tmp_path):
+    # Case D: invalid discovery metadata -> Unavailable, never 0.
+    session = tmp_path / ".project" / "s1"
+    (session / "00").mkdir(parents=True)
+    (session / "00" / "state.json").write_text("{}", encoding="utf-8")
+    marker = tmp_path / ".project" / ".last_discovery"
+    manifest_dir = tmp_path / ".project" / "knowledge" / "discovery"
+    manifest_dir.mkdir(parents=True)
+
+    # D1: malformed marker JSON.
+    marker.write_text("{not json", encoding="utf-8")
+    (manifest_dir / ".discovery_manifest").write_text(
+        json.dumps(
+            {
+                "knowledge_base": {"ttl_hours": 24},
+                "entries": {"active": ["stack.md"], "stale": []},
+            }
+        ),
+        encoding="utf-8",
+    )
+    report = am.aggregate(tmp_path)
+    assert report["discovery.reuse_opportunities"] is None
+    assert report["evidence.availability"]["discovery.reuse_opportunities"] == "NOT AVAILABLE"
+
+    # D2: manifest without a parseable TTL.
+    marker.write_text(
+        json.dumps({"timestamp": datetime.now(timezone.utc).isoformat()}),
+        encoding="utf-8",
+    )
+    (manifest_dir / ".discovery_manifest").write_text(
+        json.dumps({"knowledge_base": {}, "entries": {"active": ["stack.md"]}}),
+        encoding="utf-8",
+    )
+    report = am.aggregate(tmp_path)
+    assert report["discovery.reuse_opportunities"] is None
+
+
+def test_discovery_reuse_opportunities_valid_zero_fresh(tmp_path):
+    # Case B: valid evidence, zero fresh active entries -> 0 (not Unavailable).
+    session = tmp_path / ".project" / "s1"
+    (session / "00").mkdir(parents=True)
+    (session / "00" / "state.json").write_text("{}", encoding="utf-8")
+    marker = tmp_path / ".project" / ".last_discovery"
+    marker.write_text(
+        json.dumps({"timestamp": datetime.now(timezone.utc).isoformat()}),
+        encoding="utf-8",
+    )
+    manifest_dir = tmp_path / ".project" / "knowledge" / "discovery"
+    manifest_dir.mkdir(parents=True)
+    (manifest_dir / ".discovery_manifest").write_text(
+        json.dumps(
+            {
+                "knowledge_base": {"ttl_hours": 24},
+                "entries": {"active": [], "stale": ["old.md"]},
+            }
+        ),
+        encoding="utf-8",
+    )
+    report = am.aggregate(tmp_path)
+    assert report["discovery.reuse_opportunities"] == 0
+    assert report["evidence.availability"]["discovery.reuse_opportunities"] == "DISPONIBLE"
+
+
+def test_reuse_opportunities_not_observed_events(tmp_path):
+    # C-2 semantics: the derived discovery estimate must not feed observed
+    # counters. A fresh KB yields N derived opportunities with no reuse_event
+    # or provider_cache_event present, and N never increments lookup/miss/
+    # outcome/provider counters.
+    session = tmp_path / ".project" / "s1"
+    (session / "00").mkdir(parents=True)
+    (session / "00" / "state.json").write_text("{}", encoding="utf-8")
+    (session / "METRICS.md").write_text(
+        '<!-- METRIC: {"timestamp": "2026-08-31T10:00:00Z", "type": "session_start", '
+        '"declarative_flags": [], "protocol_version": "10.3.0"} -->\n',
+        encoding="utf-8",
+    )
+    marker = tmp_path / ".project" / ".last_discovery"
+    marker.write_text(
+        json.dumps({"timestamp": datetime.now(timezone.utc).isoformat()}),
+        encoding="utf-8",
+    )
+    manifest_dir = tmp_path / ".project" / "knowledge" / "discovery"
+    manifest_dir.mkdir(parents=True)
+    (manifest_dir / ".discovery_manifest").write_text(
+        json.dumps(
+            {
+                "knowledge_base": {"ttl_hours": 24},
+                "entries": {"active": ["stack.md", "env.md"], "stale": []},
+            }
+        ),
+        encoding="utf-8",
+    )
+    report = am.aggregate(tmp_path)
+    assert report["discovery.reuse_opportunities"] == 2
+    assert report["reuse.lookup_hits"] == {}
+    assert report["reuse.lookup_misses"] == {}
+    assert report["reuse.outcome_successful"] == {}
+    assert report["reuse.outcome_failed"] == {}
+    assert report["cache.provider_hits"] == 0
+    assert report["corrupt"] == {"entry": 0, "metric": 0}
 
 
 def test_audit_matching_gates_no_alerts(tmp_path):

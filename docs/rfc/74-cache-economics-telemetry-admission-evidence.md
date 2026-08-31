@@ -1,6 +1,6 @@
 # RFC-74 — Modelo de economía del cache, telemetría y evidencia de admisión
 
-**Status:** Proposal
+**Status:** Accepted (plan 93, 2026-08-31)
 **Fecha:** 2026-08-29
 **Serie:** Context Persistence & Prompt Cache (RFC-A…RFC-D)
 **Origen:** RFC-71 (Context Persistence & Cacheability), RFC-72 (Provider Prompt Cache Capability), RFC-73 (Project & Discovery Context Persistence) y estado actual de telemetría del repo: `protocol/.agents/standards/runtime/PROTOCOL_METRICS.md:Purpose`, `docs/working/research/INVESTIGACION_COSTO_RECOMPUTACION_2026-08-25.md:O. Final Assessment`, `docs/rfc/68-architecture-evolution-workflow.md:G. Cache vs Source of Truth`.
@@ -554,7 +554,12 @@ FUTURO:  eventos de telemetría de capas de reuse/cache (requisito de implementa
 
 **OUT OF SCOPE:** cache implementation, provider adapters, provider pricing, cache key design, Project Knowledge persistence, Context Budget redesign, Discovery redesign, nuevas State Machines, telemetry implementation framework, thresholds.
 
-**Impacto en el protocolo:** ninguno. RFC-74 no modifica `protocol/.agents/`, no cambia contratos ni versiones; en `Proposal` no habilita cambios de payload (RFC-56; `docs/CONVENTIONS.md:Convenciones`).
+**Impacto en el protocolo:** materialización parcial por plan 91 (versión
+10.3.0, MINOR): tipos de evento `reuse_event`/`provider_cache_event` en el
+contrato `METRICS.md` (schema 1.2.0) y catálogo `Reuse and cache` + economía
+(I-ECO-001…I-ECO-006) en `PROTOCOL_METRICS.md`, con agregador dev y productores
+del runtime consumidos sin duplicarlos; sin thresholds, sin pricing, sin
+telemetry backend, sin cambios en contratos existentes ni en state machines.
 
 ## Criterios de aceptación
 
@@ -577,3 +582,24 @@ FUTURO:  eventos de telemetría de capas de reuse/cache (requisito de implementa
 
 - 2026-08-29 — Creación.
 - 2026-08-29 — Final correction patch: `Economic admissibility` sustituida por `Economic evaluation` (capa observacional/evaluativa; sin economic admission gate; semantic validity precede); modelo de costo normalizado (Baseline Cost / Avoided Cost / Reuse Overhead / Net Benefit dimension-specific; `C_cache` eliminado como bolsa ambigua); sin unidades mezcladas ni pricing universal; vocabulario de eventos normalizado (Lookup HIT/MISS; Eligibility ACCEPTED/REJECTED; Reuse SUCCESSFUL/FAILED; Lifecycle INVALIDATED); materialization reuse hereda RFC-72 sin redefinir sus conceptos; metric hierarchy flexible (experiment-specific primary metric; safety constraints no se sacrifican); propiedades de hit/reuse movidas a future testable; retry count clasificado como derivable de HARNESS; matrices B/C actualizadas; sin cambios arquitectónicos.
+- 2026-08-31 — Aceptada (plan 93): el modelo de economía del cache, telemetría
+  y evidencia de admisión queda formalmente aceptado como fuente de verdad de
+  medición (capas de economía, avoided work, eventos de reuse, taxonomía de
+  misses, experimentos, invariantes I-ECO-001…I-ECO-006; sin thresholds ni
+  pricing). Aceptación docs-only: sin impacto en `protocol/.agents/`, sin bump
+  de `VERSION` ni tag; NO implica implementación automática — la implementación
+  (eventos/catálogo/agregador) queda en el plan 91; sin cambios en `runtime/`
+  mediante este plan.
+- 2026-08-31 — Implementada (plan 91): materialización parcial de la medición/
+  economía del cache — eventos `reuse_event` y `provider_cache_event` en el
+  contrato `METRICS.md` (schema 1.2.0, aditivo; compatibilidad preservada por
+  la regla de eventos desconocidos ignorados), catálogo `### Reuse and cache`
+  y sección de economía (invariantes I-ECO-001…I-ECO-006 sin umbrales) en
+  `PROTOCOL_METRICS.md`, agregación en `tools/aggregate_metrics.py` con
+  derivación de Discovery reuse (clase Derived) y productores del runtime
+  (planes 89/90) expuestos como metadata/estado; el registro de telemetría en
+  `METRICS.md` permanece como responsabilidad del Orchestrator/host (seam
+  arquitectónico documentado; sin writer de referencia en este repositorio).
+  Distingue Observed/Estimated/Derived/Unavailable; sin pricing, sin
+  thresholds, sin telemetry backend; no redefine RFC-71/72/73. Aceptada por
+  plan 93; implementada por plan 91. Versión 10.3.0 (MINOR).

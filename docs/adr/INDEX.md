@@ -5,6 +5,9 @@
 > `docs/AGENTS.md:Rules`. Las decisiones D0–D13 del modelo arquitectónico se
 > convirtieron en ADRs individuales (plan 83, RFC-69); `D#` se preserva como
 > identidad histórica (`docs/rfc/69-documentation-taxonomy-and-layout.md:Modelo ADR`).
+> ADR-15/16 registran decisiones del lifecycle de cambios del repo fuente
+> (autorizadas por el mantenedor, 2026-08-31; docs-only, sin `VERSION` bump ni
+> tag).
 
 ## Matriz D# ↔ ADR ↔ RFC ↔ plan
 
@@ -32,6 +35,8 @@ plan (`docs/CONVENTIONS.md:Convenciones`).
 | [ADR-12](12-enforcement-boundaries.md) | D11 | Enforcement Boundaries | Accepted | [RFC-62](docs/rfc/62-guarantee-model-and-enforcement-boundaries.md), [RFC-66](docs/rfc/66-authorization-and-capability-model.md) | [plan 76](docs/plans/76-guarantee-model-enforcement-boundaries.md), [plan 80](docs/plans/80-authorization-and-capability-model.md) | 4.0.0 + 8.0.0 |
 | [ADR-13](13-artifact-state-evidence-relationship.md) | D12 | Artifact / State / Evidence Relationship | Accepted | [RFC-63](docs/rfc/63-state-and-artifact-lifecycle-model.md), [RFC-65](docs/rfc/65-evidence-and-verification-model.md) | [plan 77](docs/plans/77-state-artifact-lifecycle-model.md), [plan 79](docs/plans/79-evidence-and-verification-model.md) | 5.0.0 + 7.0.0 |
 | [ADR-14](14-implementation-priority.md) | D13 | Implementation Priority | Accepted | [RFC-62](docs/rfc/62-guarantee-model-and-enforcement-boundaries.md) … [RFC-68](docs/rfc/68-architecture-evolution-workflow.md) | [plan 76](docs/plans/76-guarantee-model-enforcement-boundaries.md) … [plan 82](docs/plans/82-architecture-evolution-workflow.md) | serie ejecutada (planes 76–82) |
+| [ADR-15](15-change-lifecycle-continuity.md) | — | Change Lifecycle — Continuity & Git Checkpoint Semantics | Accepted | — | — | — |
+| [ADR-16](16-change-lifecycle-authority.md) | — | Change Lifecycle — Authority & Decision Model | Accepted | — | — | — |
 
 ## Notas
 

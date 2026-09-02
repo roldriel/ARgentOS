@@ -177,6 +177,15 @@ La política de versionado, changelog, tags y estados de planes vive en
   `_TEMPLATE.md`, ciclo de status ADR en `docs/CONVENTIONS.md` y cobertura de
   `docs/adr/` en los checkers de estructura y citas. Cambio docs-only: sin
   `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3).
+- **Change Lifecycle de ARgentOS DEV — Master Action Plan** (plan 94, RFC-75):
+  define la estrategia incremental del Change Lifecycle del repo fuente
+  (seis incrementos conceptuales 0–5 de RFC-75 agrupados en unidades de
+  implementación iniciales A: 0; B: 1+3 en batch operacional; C: 2; D: 4, con
+  el Incremento 5 deferido), derivada de RFC-75 `Accepted` y de los ADR-15/16:
+  semántica de Verified/Executed/Committed/Closed/Promoted/Released, modelo de
+  Change Levels, frontera DEV/Protocol, dogfooding y roadmap para los planes de
+  implementación 95+. Plan docs-only: sin `VERSION` bump ni tag (ver
+  `docs/VERSIONING.md` §3).
 
 ### Fixed
 

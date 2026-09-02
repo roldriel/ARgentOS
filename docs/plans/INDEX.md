@@ -294,6 +294,39 @@ bump ni tag.
 |---|---|---|---|
 | `98-change-lifecycle-unit-d-increment-4.md` | RFC-75 | Executed | Plan de implementación de la Unidad D (Incremento 4) del Change Lifecycle DEV: especifica la primera automatización operativa del lifecycle como mínimo viable C-1 (lifecycle anchor checker propuesto `tools/check_lifecycle_anchor.py` + `tests/test_check_lifecycle_anchor.py`: forma/completitud de anchors v1, distinción GAP advisory vs anomalía, sin autoridad normativa) y C-2 (lifecycle checkpoint checker propuesto `tools/check_lifecycle_checkpoint.py` + `tests/test_check_lifecycle_checkpoint.py`: relación closure↔estado Git con tree identity, consistencia GC-1 contra el anchor del estado de cierre, modelo A1/A2 de la Decisión B, SHA = locator, sin reachability desde `dev`); población del régimen nuevo por señales estructurales del artifact (secciones del template `## Validation anchor`/`## Checkpoint / cierre`) sin registry global ni entidad Change; legacy excluido sin backfill automático (RFC-75 Mec. 15); testing determinista con pytest `tmp_path` y git temporales (19 escenarios C-1 + 21 escenarios C-2); dogfooding sobre el repo real; commits C1/C2 separados; recovery/stop conditions; AC-01…AC-21; sin `VERSION` bump ni tag, sin CI y sin tocar `protocol/.agents/` ni `.agents/` raíz. **Creación (2026-09-02):** artifact creado y registrado sin ejecutar (Status `Aprobado para ejecución`, PLANNED / OPEN; veredicto GO WITH CONDITIONS C1–C4); checkers documentales en verde; sin commits; Plan 98 NO `Executed`/`Closed`. **Ejecución (2026-09-02):** C-1/C-2 implementados y verificados — pytest `359 passed` (GATE C-1) y `380 passed` (GATE C-2), checkers canónicos PASS (warnings esperados de `dev`), `git diff --check` limpio; commits C1 `669a576` y C2 `9b5b8a1` en `dev`; dogfooding C-1/C-2: planes 96/97 `VALID` (tree de C1 == T1 declarado), plan 98 `N/A` en PLANNED, legacy 01–95 `EXCLUDED`, GAP=0, ANOMALY=0; validación adversarial PASS (tree identity, A1→A2, no-reachability, legacy, GAP/anomalía); Validation Anchor V1 (state identity T1 `1a3e93e9…`; delta `9d523cce…`) y Checkpoint con revalidación V2 sobre el estado final antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release). Dogfooding del propio plan: `No findings detected / N/A`; resolución documentada de OQ-7 (variante de encabezado `## Checkpoint` del corpus 96). Sin cambios en `protocol/`, `runtime/`, VERSION, ADRs/RFCs, `docs/AGENTS.md` ni planes 94–97. |
 
+## Trigésima primera serie: Change Lifecycle DEV — Corrección post-close F-1 (C-2/GC-1) (02 sep 2026)
+
+Primer correction Plan post-close de la serie Change Lifecycle DEV (RFC-75),
+derivado del **C1/C2 Read-Only Audit Report** posterior a la ejecución/cierre
+de Plan 98. Corrige exclusivamente el defecto de materialización **F-1**
+(MAJOR) en C-2 (`tools/check_lifecycle_checkpoint.py`): la selección del
+Validation Anchor aplicable de GC-1 usa recencia ("latest A2 wins") y
+pertenencia genérica del tree entre los commits de cierre, en lugar de
+identificar el estado de cierre y seleccionar el anchor de la validación cuyo
+estado validado corresponde a ese estado. La ejecución futura corrige
+únicamente C-2 + los tests relacionados (`tests/test_check_lifecycle_checkpoint.py`)
+con regresiones obligatorias (Casos A/B/C adversariales y 10 casos adicionales),
+preservando tree identity ≠ SHA, no-reachability, GAP advisory ≠ ANOMALY,
+A1 inmutable y A2 con lineage hacia A1, sin tocar C-1, F-2…F-9, `C-n`,
+RFC-75/ADR-15/16 ni Plan 98 (que permanece CLOSED). Cambio DEV-only sin
+`VERSION` bump ni tag (RFC-69); plan creado y registrado sin ejecutar
+(2026-09-02, Status `Aprobado para ejecución`, PLANNED / OPEN; veredicto GO
+WITH CONDITIONS); checkers documentales en verde; sin commits; sin implementar
+F-1. **Ejecución (2026-09-02):** F-1 corregido en C-2
+(`tools/check_lifecycle_checkpoint.py` + `tests/test_check_lifecycle_checkpoint.py`)
+con selección del anchor por correspondencia de estado (sin "latest A2 wins"
+ni pertenencia genérica del tree) y regresiones permanentes (Casos A/B/C +
+T1–T12); commit C1 `42da250`; pytest `388 passed, 0 failed`; checkers
+canónicos PASS; dogfooding 96/97/98 `VALID` y `ANOMALY=0`; Validation Anchor
+V1 (T1 `e9b47b1c…`; delta `dfb76a4d…`) y Checkpoint con revalidación V2 antes
+de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin
+release); `<PLAN-99>:C-1` registrado; sin cambios en `protocol/`, `runtime/`,
+C-1, VERSION, ADRs/RFCs ni Plan 98.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `99-change-lifecycle-f1-c2-gc1-correction.md` | RFC-75 | Executed | Correction Plan post-close de F-1 (C1/C2 Read-Only Audit Report posterior a Plan 98): corrige la materialización de GC-1 en C-2 (`tools/check_lifecycle_checkpoint.py` + `tests/test_check_lifecycle_checkpoint.py`) para seleccionar el anchor de la validación cuyo estado validado corresponde al estado de cierre (Tier 1 por tree identity; Tier 2 por revalidación declarada única sobre el cierre para el patrón corpus 96–98; sin recencia, sin pertenencia genérica del tree, sin SHA/reachability como identidad); reglas R-99-1…R-99-10; regresiones obligatorias Casos A/B/C + escenarios T1–T12; conserva GAP advisory ≠ ANOMALY, A1/A2 (Decisión B), anti-circularidad (estados validados solo desde la sección `## Validation anchor`), dogfooding sin regresiones sobre planes 96/97/98; `C-n` (`<PLAN-99>:C-1`) especificado y registrado al cerrar; anchor/checkpoint propios; cierre docs-only sin release; sin modificar RFC-75/ADR-15/16, C-1, Plan 98 (CLOSED), `protocol/.agents/` ni `.agents/`. **Creación (2026-09-02):** artifact creado y registrado sin ejecutar (Status `Aprobado para ejecución`, PLANNED / OPEN; veredicto GO WITH CONDITIONS C1–C4); checkers documentales en verde; sin commits; F-1 registrado como `<PLAN-99>:F-1` (open); Plan 99 NO `Executed`/`Closed`. **Ejecución (2026-09-02):** C-2 corregido y verificado — pytest `388 passed, 0 failed` (29 tests C-2: 21 existentes + 8 regresiones F-1), checkers canónicos PASS, `git diff --check` limpio; commit C1 `42da250` en `dev` (2 archivos; tree `e9b47b1c…`); dogfooding C-1/C-2: planes 96/97/98 `VALID` (anchor aplicable A2 declarado), plan 99 `N/A` pre-cierre y `VALID` tras su cierre, legacy 01–95 `EXCLUDED`, GAP=0, ANOMALY=0; adversarial review PASS (los 3 casos del bug original fallan sobre la implementación anterior y pasan sobre la corregida); Validation Anchor V1 (state identity T1 `e9b47b1c…`; delta `dfb76a4d…`) y Checkpoint con revalidación V2 sobre el estado final antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); `<PLAN-99>:C-1` registrado (F-1 `resolved`). Sin cambios en `protocol/`, `runtime/`, C-1, VERSION, ADRs/RFCs, `docs/CONVENTIONS.md`, `docs/VERSIONING.md` ni Plan 98; sin push. |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

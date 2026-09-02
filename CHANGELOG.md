@@ -251,6 +251,18 @@ La política de versionado, changelog, tags y estados de planes vive en
   históricas a artefactos eliminados (`PROJECT_ARTIFACTS.md`, plan 84),
   restaurando la batería tras 10.0.0. Cambio docs-only: sin `VERSION` bump ni
   tag (ver `docs/VERSIONING.md` §3).
+- **Corrección post-close de F-1 — selección del anchor aplicable en C-2
+  (GC-1)** (plan 99, RFC-75): `tools/check_lifecycle_checkpoint.py` selecciona
+  ahora el Validation Anchor de la validación cuyo estado validado corresponde
+  al estado de cierre (tree del commit de cierre final o literal declarado;
+  Tier 1 por tree identity; Tier 2 por revalidación declarada única sobre el
+  cierre, patrón del corpus 96–98), eliminando la selección por recencia
+  ("latest A2 wins") y la pertenencia genérica del tree entre los commits de
+  cierre; GAP/ANOMALY, A1/A2 (Decisión B), tree identity ≠ SHA y
+  no-reachability se preservan y el reporte identifica el anchor aplicable;
+  regresiones F-1 permanentes en `tests/test_check_lifecycle_checkpoint.py`
+  (Casos A/B/C adversariales y escenarios T1–T12). DEV-only: sin `VERSION`
+  bump ni tag (RFC-69; ver `docs/VERSIONING.md` §3).
 
 (los cambios docs-only se registran aquí bajo `[Unreleased]`; ver
 `docs/VERSIONING.md` §3)

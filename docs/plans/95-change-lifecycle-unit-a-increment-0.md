@@ -829,14 +829,18 @@ La Unidad A está completa cuando:
 | # | Pregunta / decisión | Clasificación | Resolución |
 |---|---|---|---|
 | OPEN-1 | Commit del plan 94 como condición de entrada para el commit atómico de la Unidad A | RESUELTO (2026-09-02) | Commit atómico `3acf439` creado (plan 94 + registro en INDEX + ítem `[Unreleased]`), sin incluir este plan; ya no es gate |
-| OPEN-2 | Aceptación de la desviación documentada de pytest (`339 passed, 1 failed`) para cerrar la unidad | DECISION (humano) | Aplicar la política §24.1 del plan 94 (aceptación explícita) o resolver el test como deuda Clase C antes del cierre |
+| OPEN-2 | Aceptación de la desviación documentada de pytest (`339 passed, 1 failed`) para cerrar la unidad | RESUELTO (2026-09-02) | Decisión explícita del mantenedor (2026-09-02): OPEN-2 se resuelve por la vía alternativa prevista por este OPEN (resolver el test como deuda independiente antes del cierre, en lugar de aceptar la desviación). Corrección commiteada en `865e3ad`; pytest `340 passed, 0 failed`; checkers PASS; no se aceptó ninguna desviación de la suite. La validación original (`339 passed, 1 failed`) permanece como evidencia histórica (§15, §19, Nota de ejecución), sin reescribirse. |
 | OPEN-3 | Wording final (lenguaje exacto) de los textos nuevos de U1–U4 | CAN DECIDE IN PLAN | El agente redacta en el idioma de cada doc (español en CONVENTIONS/VERSIONING/docs-AGENTS; inglés en AGENTS.md raíz) según los requerimientos de §9 |
 | OPEN-4 | Posición exacta del ítem del plan 95 dentro de `[Unreleased]` | CAN DECIDE IN PLAN | Subsección de gobernanza docs-only (precedente plan 83 en `### Changed`) |
 
-Ningún OPEN impide redactar ni ejecutar la Unidad A; OPEN-1 quedó resuelto y
-OPEN-2 es el único gate de cierre restante, con precedente. No se convierte una
-preferencia del agente en decisión del proyecto: si el mantenedor no acepta la
-desviación documentada (OPEN-2), la unidad no se cierra.
+Ningún OPEN impide redactar ni ejecutar la Unidad A; OPEN-1 y OPEN-2 quedaron
+resueltos (2026-09-02), este último por decisión explícita del mantenedor y por
+la vía alternativa prevista en el propio OPEN-2 (resolver el test como deuda
+independiente antes del cierre: commit `865e3ad`; pytest `340 passed, 0
+failed`; checkers PASS). No se convirtió una preferencia del agente en decisión
+del proyecto, no se aceptó desviación vigente alguna y no se declaró cierre:
+Plan 95 permanece `Executed` + commiteado, sin `Closed` — el mecanismo formal
+de checkpoint (GC-1) pertenece al Incremento 3 y sigue pendiente.
 
 ## 24. Trazabilidad
 
@@ -925,3 +929,11 @@ resuelto.
   de checkpoint pertenece al Incremento 3 y OPEN-2 (aceptación del mantenedor
   de la desviación documentada de pytest) queda pendiente para el cierre
   formal de la unidad.
+- 2026-09-02 — Disposición formal (Governance Disposition Pass, decisión
+  explícita del mantenedor): OPEN-2 queda RESUELTO por la vía alternativa
+  prevista en §23 — resolución del test como deuda independiente antes del
+  cierre (commit `865e3ad`; pytest `340 passed, 0 failed`; checkers PASS); no
+  se aceptó desviación vigente alguna. La ejecución original de esta unidad
+  (pytest `339 passed, 1 failed`) permanece como registro histórico, sin
+  reescribirse. Plan 95 sigue `Executed` + commiteado, sin `Closed` (el
+  mecanismo formal de checkpoint del Incremento 3 sigue pendiente).

@@ -27,9 +27,19 @@ only locators resolved through local read-only git primitives
 verifiable (docs/plans/98-change-lifecycle-unit-d-increment-4.md §11).
 
 GC-1 compares the closure state with the anchor of the validation whose
-validated state is the closure state: A1 when the closure state is A1's, A2
-when a revalidation (A2) covers the closure state. A revalidation never
-replaces A1; it references it (Decision B).
+validated state is the closure state (Plan 99 / F-1 correction): the
+applicable anchor is selected by **correspondence of validated state to
+closure state**, never by recency ("latest A2 wins"), never by generic tree
+membership among the closing commits. A1 applies when the closure state is
+A1's; the A2 whose validated state matches the closure state applies when a
+revalidation covers it; a revalidation never replaces A1 and references it
+(Decision B). Closure state is the tree of the **final** closing commit of the
+plan (or the declared closure tree when the final commit locator is not
+embedded, per the anti-self-reference convention of the corpus). A
+revalidation declared in the Validation Anchor whose validated-state subject
+references the closure state (corpus v1 pattern of plans 96-98) is accepted as
+declared evidence only when no embedded state identity resolves the
+correspondence (Tier 2); ambiguity is GAP, never an invented tie-break.
 
 This checker has no normative authority (ADR-16): GAPs are advisory and never
 turn the exit code non-zero by themselves; only ANOMALYs do.
@@ -58,6 +68,7 @@ _COMMENT_RE = re.compile(r"<!--.*?-->", re.DOTALL)
 
 _HEX40_RE = re.compile(r"\b[0-9a-f]{40}\b")
 _SHA_RE = re.compile(r"\b[0-9a-f]{7,40}\b")
+_ENTRY_RE = re.compile(r"^\s*[-*]\s+(C\d+)\b")
 
 _ANCHOR_HEADING = "validation anchor"
 _CHECKPOINT_HEADING_PREFIX = "checkpoint"
@@ -90,6 +101,17 @@ _REVAL_RE = re.compile(r"\b(?:A2|V2|revalidad\w*|revalidaci[oó]n)\b",
 _A1_REF_RE = re.compile(r"\b(?:A1|V1)\b|anchor original", re.IGNORECASE)
 _PASS_RE = re.compile(r"\bPASS\b")
 _FAIL_RE = re.compile(r"\bFAIL\b")
+
+# Validated-state subjects that refer to the closure state of the plan
+# (Tier 2, corpus v1 pattern; R-99-5 of Plan 99).
+_CLOSURE_SUBJECT_TERMS = (
+    "contenido final",
+    "estado final",
+    "estado de cierre",
+    "antes del cierre",
+    "registros de cierre",
+    "estado staged",
+)
 
 
 @dataclass
@@ -243,6 +265,86 @@ def resolve_tree(root: Path, sha: str) -> str | None:
     return value if _HEX40_RE.fullmatch(value) else None
 
 
+def ordered_closing_commits(commits_block: str) -> list[tuple[str, list[str]]]:
+    """Ordered (label, shas) pairs of the closing-commit bullets.
+
+    The list is ordered by document position: the last entry is the **final**
+    closing commit of the plan (R-99-1). A closing commit whose identity is
+    declared by message only (no embedded SHA, anti-circularity convention)
+    carries an empty sha list.
+    """
+    entries: list[tuple[str, list[str]]] = []
+    for line in commits_block.splitlines():
+        match = _ENTRY_RE.match(line)
+        if match is not None:
+            entries.append(
+                (match.group(1), sorted(set(_SHA_RE.findall(line))))
+            )
+    return entries
+
+
+def anchor_segments(anchor_text: str) -> list[str]:
+    """Split the Validation Anchor section into bullet/paragraph segments.
+
+    A new segment starts at every bullet line or after a blank line; wrapped
+    continuation lines stay with their bullet. Used by Tier 2 to count
+    declared revalidation statements (anti-circularity: only the validation
+    record is read for validated-state subjects).
+    """
+    lines = anchor_text.splitlines()
+    segments: list[str] = []
+    current: list[str] = []
+    for line in lines:
+        stripped = line.strip()
+        if not stripped:
+            if current:
+                segments.append("\n".join(current))
+                current = []
+            continue
+        if stripped.startswith(("- ", "* ")) or stripped.startswith("**"):
+            if current:
+                segments.append("\n".join(current))
+                current = []
+            current.append(stripped)
+        else:
+            current.append(stripped)
+    if current:
+        segments.append("\n".join(current))
+    return segments
+
+
+def _segment_references_closure(
+    segment: str, final_label: str | None
+) -> bool:
+    """True when a declaration segment names the closure state as its
+    validated-state subject (final-state terms or the final closing commit
+    label)."""
+    folded = segment.casefold()
+    if any(term in folded for term in _CLOSURE_SUBJECT_TERMS):
+        return True
+    if final_label is not None:
+        return (
+            re.search(rf"\b{re.escape(final_label.casefold())}\b", folded)
+            is not None
+        )
+    return False
+
+
+def anchor_closure_revalidation_segments(
+    anchor_text: str, final_label: str | None
+) -> list[str]:
+    """Segments of the Validation Anchor declaring a revalidation (A2/V2)
+    whose validated-state subject references the closure state (Tier 2,
+    R-99-5)."""
+    result: list[str] = []
+    for segment in anchor_segments(anchor_text):
+        if _REVAL_RE.search(segment) and _segment_references_closure(
+            segment, final_label
+        ):
+            result.append(segment)
+    return result
+
+
 def classify_checkpoint(root: Path, rel: Path, text: str) -> CheckpointFinding:
     """Run C-2 rules over one numbered plan artifact (R-C2-1..R-C2-7)."""
     headings = level2_headings(text)
@@ -320,19 +422,40 @@ def classify_checkpoint(root: Path, rel: Path, text: str) -> CheckpointFinding:
     # Locators: every declared closing-commit SHA must resolve in the local
     # object database (R-C2-5); self-referencing registry entries without an
     # explicit SHA (anti-circularity convention) are intentionally absent.
-    closing_trees: list[str] = []
+    # Closing commits form an ordered list; the LAST entry is the final
+    # closing commit (R-99-1).
+    closing_entries = ordered_closing_commits(commits_block)
     unresolved: list[str] = []
     for sha in sorted(set(_SHA_RE.findall(commits_block))):
-        tree = resolve_tree(root, sha)
-        if tree is None:
+        if resolve_tree(root, sha) is None:
             unresolved.append(sha)
-        else:
-            closing_trees.append(tree)
     if unresolved:
         reasons.append(
             "commit locator(s) not resolvable in local object database: "
             + ", ".join(unresolved)
         )
+
+    # Closure state (R-99-2): tree of the final closing commit when its
+    # locator resolves; otherwise the declared "Estado de cierre" literal
+    # when present; otherwise UNKNOWN (final commit identified by message).
+    final_label: str | None = None
+    final_tree: str | None = None
+    if closing_entries:
+        final_label = closing_entries[-1][0]
+        for sha in closing_entries[-1][1]:
+            final_tree = resolve_tree(root, sha)
+            if final_tree is not None:
+                break
+    closure_state: str | None = final_tree
+    closure_literal = _HEX40_RE.findall(closure_block)
+    if closure_literal:
+        if closure_state is not None and closure_literal[0] != closure_state:
+            reasons.append(
+                "declared closure tree differs from the tree of the final "
+                "closing commit"
+            )
+        elif closure_state is None:
+            closure_state = closure_literal[0]
 
     # Anchor state identities (A1 first; later ones are A2 revalidation
     # records when the artifact declares one).
@@ -359,51 +482,95 @@ def classify_checkpoint(root: Path, rel: Path, text: str) -> CheckpointFinding:
             "anchor (A1)"
         )
 
-    # Declared closure tree literal vs closing commits (R-C2-3/R-C2-4).
-    closure_literal = _HEX40_RE.findall(closure_block)
-    if closure_literal and closing_trees and closure_literal[0] not in closing_trees:
-        reasons.append(
-            "declared closure tree differs from the tree of the declared "
-            "closing commit(s)"
-        )
+    # GC-1 (R-C2-1; R-99-4): the applicable anchor belongs to the validation
+    # whose validated state corresponds to the closure state. Selection is by
+    # state equality in registration order (A1 first), never by recency,
+    # document position or generic tree membership among the closing commits.
+    applicable_label: str | None = None
+    if closure_state is not None:
+        for index, tree in enumerate(state_trees):
+            if tree == closure_state:
+                applicable_label = "A1" if index == 0 else "A2"
+                break
 
-    # GC-1: closure state vs the anchor whose validated state corresponds to
-    # the closure state (A2 when its identity is embedded; otherwise A1).
-    applicable: str | None = None
-    applicable_label = "A1"
-    if state_trees:
-        if revalidation_declared and len(state_trees) >= 2:
-            applicable = state_trees[-1]
-            applicable_label = "A2"
-        else:
-            applicable = state_trees[0]
-    if closing_trees and applicable is not None and applicable not in closing_trees:
-        if declared_pass:
+    # Tier 2 (R-99-5, corpus v1): when no embedded state identity matches the
+    # closure state, a UNIQUE revalidation declared in the Validation Anchor
+    # whose validated-state subject references the closure state is the
+    # applicable validation (plans 96-98 pattern). Ambiguity is never broken
+    # by an invented tie-break: it is GAP (R-99-6).
+    tier2_candidates: list[str] = []
+    tier2_contradictions: list[str] = []
+    if applicable_label is None:
+        for segment in anchor_closure_revalidation_segments(
+            anchor_text, final_label
+        ):
+            segment_tree = _HEX40_RE.search(segment)
+            if (
+                segment_tree is not None
+                and closure_state is not None
+                and segment_tree.group(0) != closure_state
+            ):
+                tier2_contradictions.append(segment)
+            else:
+                tier2_candidates.append(segment)
+        if tier2_contradictions:
             reasons.append(
-                f"closure state inconsistent with the applicable anchor "
-                f"({applicable_label}) while consistency declares PASS"
+                "declared revalidation covers the closure state but its "
+                "embedded validated state differs from the closure state"
             )
+        if not tier2_contradictions:
+            if len(tier2_candidates) == 1:
+                if declared_pass:
+                    applicable_label = "A2 (declared)"
+                else:
+                    reasons.append(
+                        "declared revalidation over the closure state without "
+                        "PASS evidence"
+                    )
+            elif len(tier2_candidates) > 1:
+                reasons.append(
+                    "multiple declared revalidations could correspond to the "
+                    "closure state; ambiguity, evidence insufficient"
+                )
+
+    # No applicable validation (R-99-6): never a false VALID. A declared PASS
+    # for a closure state with no corresponding validation is a demonstrated
+    # contradiction (ANOMALY); absent or ambiguous evidence is GAP (advisory).
+    if (
+        applicable_label is None
+        and not tier2_candidates
+        and not tier2_contradictions
+    ):
+        if closure_state is not None:
+            if not state_trees:
+                if closing_entries or closure_literal:
+                    reasons.append(
+                        "no resolvable state identity in the Validation "
+                        "Anchor to compare with the closure state"
+                    )
+            elif declared_pass:
+                reasons.append(
+                    "closure state has no corresponding validation while "
+                    "consistency declares PASS"
+                )
+            else:
+                reasons.append(
+                    "closure state does not match any registered validation; "
+                    "evidence insufficient"
+                )
         else:
             reasons.append(
-                f"closure state inconsistent with the applicable anchor "
-                f"({applicable_label}); evidence insufficient"
-            )
-    if not state_trees and closing_trees:
-        reasons.append(
-            "no resolvable state identity in the Validation Anchor to compare "
-            "with the closure state"
-        )
-    if not closing_trees and not unresolved and closure_literal and applicable:
-        if closure_literal[0] != applicable:
-            reasons.append(
-                "declared closure tree inconsistent with the applicable anchor"
+                "closure state not resolvable and no declared revalidation "
+                "covers it; evidence insufficient"
             )
 
     anomaly_prefixes = (
         "condition declares Closed while consistency declares FAIL",
         "declared closure tree differs",
-        "declared closure tree inconsistent",
-        "closure state inconsistent",
+        "declared revalidation covers the closure state but its embedded "
+        "validated state differs",
+        "closure state has no corresponding validation while consistency "
+        "declares PASS",
         "revalidation (A2) declared without reference",
     )
     if reasons:
@@ -411,10 +578,19 @@ def classify_checkpoint(root: Path, rel: Path, text: str) -> CheckpointFinding:
             reason.startswith(anomaly_prefixes) for reason in reasons
         ) else "GAP"
         return CheckpointFinding(rel, classification, reasons)
+    if applicable_label is not None:
+        return CheckpointFinding(
+            rel,
+            "VALID",
+            [
+                "checkpoint consistent with the applicable validation anchor "
+                f"(GC-1): {applicable_label}"
+            ],
+        )
     return CheckpointFinding(
         rel,
-        "VALID",
-        ["checkpoint consistent with the applicable validation anchor (GC-1)"],
+        "GAP",
+        ["no applicable validation evidence; evidence insufficient"],
     )
 
 

@@ -253,13 +253,41 @@ Distinciones obligatorias:
 - Locator (commit SHA, path) localiza un estado u objeto; **nunca** es identidad
   semántica.
 - Identidad semántica = Scoped Content Identity (algoritmo abajo).
-- `anchor changed ≠ semantic validity changed` (CL-2): si el estado cambia, se
-  evalúa la aplicabilidad; si sigue aplicando sin revalidación, la validación
-  se marca `stale`; si se re-ejecuta, se registra un anchor nuevo (o se
-  actualiza el existente con nota) y la validación queda `revalidada`.
+- `anchor changed ≠ semantic validity changed` (CL-2): la validez de una
+  validación es relativa al estado identificado por su anchor (V1 es vigente
+  para S1). Si aparece un estado posterior S2 con cambios relevantes para el
+  contrato y no existe una revalidación aplicable, V1 **no es evidencia de
+  validación para S2**: se marca `stale` respecto de S2 y, antes de `Closed`,
+  debe existir una revalidación PASS sobre S2. Ningún cambio del repo invalida
+  automáticamente una validación: aplican los límites de aplicabilidad y de
+  factores no declarados (CL-2; RFC-75 Mecanismo 6).
 - Límite declarado: dependencias ambientales desconocidas nunca detectadas no
   son verificables por el lifecycle; es responsabilidad del autor de la
   validación y la revalidación es el backstop (RFC-75 Mecanismo 6).
+
+**Revalidación (mismo contrato, estado nuevo).** Una revalidación es la
+re-ejecución de un **mismo contrato de validación** sobre un nuevo estado Git
+relevante (S2) cuando cambió el estado scoped del contrato (CL-2/GC-1). Es una
+**validación registrada**: produce un resultado propio y un **Validation Anchor
+propio (A2)** sobre S2. Propiedades:
+
+- A2 puede referenciar A1 como origen de la cadena (lineage), pero **no
+  reemplaza ni muta A1**: A1 conserva su significado histórico (valida S1) y
+  nunca se reescribe ni se reinterpreta retrospectivamente. La cadena es
+  histórica (`A1 → A2`), no una mutación (`A1 becomes A2`).
+- **Registro mínimo de una revalidación (A2):** referencia al anchor original
+  (A1), estado revalidado (locator + nueva Scoped Content Identity),
+  command-set (puede referenciar el de A1 cuando es idéntico, sin duplicarlo),
+  cambios relevantes de factores ambientales (con confirmación de que los
+  demás permanecen sin cambio) y resultado de la revalidación. Los campos del
+  contrato no modificados se heredan de A1 por referencia.
+- La re-ejecución sobre el mismo estado (sin cambio scoped relevante) se
+  registra como nota de la misma validación, sin crear A2; la nota no modifica
+  el significado de A1.
+- No existe entidad, registry ni state machine de revalidación: es una relación
+  de evidencia entre validaciones del mismo contrato; el lineage formal con
+  refs calificadas pertenece al Incremento 2 (RFC-75
+  `docs/rfc/75-change-lifecycle.md:Mecanismo 8 — Findings / Corrections / Revalidation`).
 
 **Scoped Content Identity (algoritmo v1)** — identidad de contenido
 determinista sobre los effective inputs repo
@@ -307,13 +335,21 @@ determinista sobre los effective inputs repo
   estado de cierre (tree id), consistencia, governance aplicada y condición
   derivada.
 - **Consistencia checkpoint↔anchor (GC-1)**: `Closed` exige que la identidad
-  scoped del estado de cierre sea igual a la del anchor y que los factores
+  scoped del estado de cierre sea igual a la del anchor **de la validación cuyo
+  estado validado corresponde al estado de cierre** y que los factores
   ambientales declarados no hayan cambiado; si difiere cualquiera →
-  **revalidación antes de `Closed`**. Factores irrelevantes (no consumidos) y
-  desconocidos no invalidan automáticamente; un factor relevante consumido pero
-  no declarado es una anomalía auditable.
-- `Closed` = `Executed` + governance aplicable + checkpoint + consistencia
-  (condición derivada, no status). `Committed` = estado del repositorio, no
+  **revalidación antes de `Closed`**. Si existe una revalidación A2 sobre el
+  estado de cierre, la consistencia se evalúa contra A2; si el estado de cierre
+  sigue siendo el estado de A1, contra A1. La existencia de A2 no elimina A1.
+  Factores irrelevantes (no consumidos) y desconocidos no invalidan
+  automáticamente; un factor relevante consumido pero no declarado es una
+  anomalía auditable.
+- `Closed` = `Executed` + governance aplicable + checkpoint + consistencia +
+  evidencia de validación PASS para el estado de cierre (condición derivada, no
+  status). Si el estado de cierre difiere del estado validado inicialmente, esa
+  evidencia es una revalidación PASS anclada al estado de cierre (A2). `Closed`
+  no deriva de `Committed` ni de "HEAD == commit esperado": el commit es
+  evidencia factual, no la condición. `Committed` = estado del repositorio, no
   status de Plan. `Closed ≠ Released`; un Plan docs-only se cierra sin release
   (RFC-69).
 - Multi-commit: el checkpoint lista todos los commits del Plan y la
@@ -324,3 +360,8 @@ determinista sobre los effective inputs repo
 - Cambios posteriores al cierre no invalidan el checkpoint: generan artifacts
   nuevos que referencian al cerrado (RFC-46; RFC-75
   `docs/rfc/75-change-lifecycle.md:Mecanismo 12 — Post-close Changes`).
+- Relación temporal acíclica: `state → validation → validation evidence
+  (anchor) → closure/checkpoint → derivación de Closed`. El anchor describe la
+  validación realizada sobre un estado Git; el checkpoint relaciona
+  posteriormente el closure con ese estado; `Closed` nunca es prerrequisito de
+  un anchor ni de una revalidación.

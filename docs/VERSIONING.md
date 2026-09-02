@@ -184,10 +184,14 @@ Condiciones derivadas del Change Lifecycle (semántica; RFC-75
   closure↔estado Git verificable (mecanismo materializado en el Incremento 3,
   plan 96).
 - `Closed` es una condición derivada: `Executed` + governance aplicable +
-  checkpoint + consistencia checkpoint↔anchor (GC-1). Con el Incremento 1+3
-  (plan 96) el mecanismo está materializado: los planes nacidos bajo las reglas
-  nuevas registran su Validation Anchor (VC-1) y su checkpoint al cerrar. Los
-  planes previos (94/95 y anteriores) conservan su registro histórico como
+  checkpoint + consistencia checkpoint↔anchor (GC-1) + evidencia de validación
+  PASS para el estado de cierre. Con el Incremento 1+3 (plan 96) el mecanismo
+  está materializado: los planes nacidos bajo las reglas nuevas registran su
+  Validation Anchor (VC-1) y su checkpoint al cerrar. La consistencia de
+  cierre se evalúa contra el anchor de la validación cuyo estado validado
+  corresponde al estado de cierre: si hubo una revalidación (A2) sobre ese
+  estado, contra A2; el anchor original (A1) conserva su significado histórico.
+  Los planes previos (94/95 y anteriores) conservan su registro histórico como
   legacy (la ausencia de campos no implica invalidez) y su cierre operativo
   sigue el DoD de §10 sin exigir los campos nuevos.
 - `Promoted` = merge `dev → master` verificado; `Released` = tag inmutable;
@@ -256,8 +260,11 @@ Un plan está terminado cuando:
       Identity).
 - [ ] Checkpoint registrado con consistencia (GC-1, Incremento 3): el cierre
       registra los commits de cierre y la consistencia checkpoint↔anchor
-      (scoped identity + factores) antes de declarar la condición derivada
-      `Closed`; `Closed ≠ Released` y un plan docs-only se cierra sin release.
+      (scoped identity + factores) contra el anchor de la validación cuyo
+      estado validado corresponde al estado de cierre (revalidación A2 si el
+      estado de cierre difiere del estado inicial) antes de declarar la
+      condición derivada `Closed`; `Closed ≠ Released` y un plan docs-only se
+      cierra sin release.
 - [ ] Sección del changelog `[X.Y.Z]` con ítem `(plan N, RFC-N)` y `VERSION`
       bumped.
 - [ ] Para cambios docs-only (RFC-69): ítem en `[Unreleased]` del changelog

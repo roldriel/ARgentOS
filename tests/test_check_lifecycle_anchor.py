@@ -288,13 +288,17 @@ def test_deterministic_report(tmp_path):
 
 
 def test_real_repo_expected_classifications():
-    """Dogfooding expectations on the real repo (Plan 98 §17.2 step 9):
-    plans 96/97 VALID, plan 98 N/A (PLANNED), legacy plans EXCLUDED."""
+    """Dogfooding expectations on the real repo (Plan 98 §17.2/§36):
+    plans 96/97 VALID, legacy plans EXCLUDED, plan 98 is a regime member —
+    N/A while PLANNED and VALID once its own anchor is registered (self-
+    dogfooding); never EXCLUDED/GAP/ANOMALY."""
     res = run_tool(REPO_ROOT)
     assert res.returncode == 0, res.stdout
     assert "96-change-lifecycle-unit-b-increments-1-3.md: VALID" in res.stdout
     assert "97-change-lifecycle-unit-c-increment-2.md: VALID" in res.stdout
-    assert "98-change-lifecycle-unit-d-increment-4.md: N/A" in res.stdout
+    assert re.search(
+        r"98-change-lifecycle-unit-d-increment-4\.md: (?:N/A|VALID)", res.stdout
+    )
     assert "94-change-lifecycle-master-action-plan.md: EXCLUDED" in res.stdout
     assert "95-change-lifecycle-unit-a-increment-0.md: EXCLUDED" in res.stdout
     assert "ANOMALY=0" in res.stdout

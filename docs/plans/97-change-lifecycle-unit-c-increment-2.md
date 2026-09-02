@@ -32,9 +32,8 @@
 > Released = NO
 > ```
 
-**Status:** Aprobado para ejecución (plan creado y registrado; ejecución NO
-iniciada — gates de autorización humana y aceptación de cierre pendientes, ver
-§26)
+**Status:** Executed (2026-09-02; Unidad C implementada y validada; condición
+derivada `Closed` docs-only registrada en `## Checkpoint / cierre`)
 **Fecha:** 2026-09-02
 **RFC:** RFC-75 (`docs/rfc/75-change-lifecycle.md`)
 **Clase:** — (no toca `protocol/.agents/`; cambio docs-only según
@@ -977,31 +976,139 @@ ni se crea el Plan 98 en esta tarea.
 
 ## Validation anchor
 
-Pendiente — se completa al ejecutar la Unidad C (Fase F5 de §22; regla
-operacional VC-1 del Incremento 1,
-`docs/CONVENTIONS.md:Change Lifecycle — Validation anchors y Scoped Content Identity (regla operacional; VC-1, Incremento 1)`):
-declared scope, validation command-set, effective inputs, observed
-dependencies, environmental factors y Scoped Content Identity (state identity
-por `git write-tree` y delta scoped identity) sobre el contenido validado de
-C1. Esta iteración de creación no valida implementación alguna.
+Registrado al ejecutar la Unidad C (Fases F5/F6 de §22). La validación **V1**
+corrió sobre el contenido de implementación de la Unidad C (commit de contenido
+C1 `236735b4f4518c5063cdf8006f8002e7ea75b826`) **antes** de agregar los
+registros de cierre de esta sección (anti-circularidad, §19).
+
+- Declared scope: batería canónica del repo (checkers dev + pytest) + suite de
+  escenarios documentales de §18 sobre el contenido de implementación de la
+  Unidad C (templates de Plan/RFC, CONVENTIONS, VERSIONING §10/§11, AGENTS.md
+  raíz, Amendment Log de RFC-75, este plan y su registro en INDEX).
+- Validation command-set:
+  - `python tools/check_protocol_invariants.py --payload protocol .`
+  - `python tools/check_plan_citations.py`
+  - `python tools/check_plan_structure.py`
+  - `python tools/check_taxonomy_coherence.py`
+  - `python tools/check_session_artifacts.py`
+  - `python tools/check_version_state.py`
+  - `python -m pytest tests/`
+- Effective inputs (repo content): contenido completo del repo en el estado
+  validado (los checkers escanean `docs/`, `protocol/`, `tools/`, `tests/`,
+  `runtime/` y la raíz; pytest consume `tests/` + `tools/` + `runtime/`);
+  representado por el State identity (tree id).
+- Observed dependencies: `no instrumentado` (sin tooling de instrumentación en
+  esta Unidad); el consumo por comando se observa de la documentación de cada
+  checker y de la batería (`docs/VERSIONING.md:4.1 Batería canónica de verificación`).
+- Environmental factors: OS Windows; Python 3.14.3; git 2.55.0.windows.5;
+  pytest 9.0.3; `protocol/.agents/VERSION` = 10.3.0; pytest ejecutado fuera
+  del sandbox por ACL del basetemp `pytest-of-rolda` (ruido ambiental
+  documentado); sin red.
+- Scoped Content Identity:
+  - State identity (estado validado = árbol de C1): T1 =
+    `0df8920cf5a08789ae163b2fcdcdb9b79ccabff6` (tree id; igual a
+    `git write-tree` del estado staged y a `git rev-parse C1^{tree}`).
+  - Delta scoped identity (scope S = 8 archivos del cambio de C1, orden
+    ordinal; serialización `scoped-v1` + pares `path NUL blob NUL`):
+    `5d5ca643d31701a3b9924910ffc0ba70f1f53abd728deeb5d1c71fc6c0a69df3`.
+    Pares path → blob (C1): `AGENTS.md` →
+    `a15863504ab475f59422773108a43cc1e694bd3b`; `docs/CONVENTIONS.md` →
+    `4f5af8f1cde21c8be651d8c39c67fd4f77e18f3d`; `docs/VERSIONING.md` →
+    `4ee9d291c056fa8d01867e496cfce4e1d60ee79c`;
+    `docs/plans/97-change-lifecycle-unit-c-increment-2.md` →
+    `7e7b7034f9a386680f024c52e9aeebeea43f0fd0`; `docs/plans/INDEX.md` →
+    `a9fd2d8c3e5d8b2019f0b20b680e4e692b91da9e`; `docs/plans/_TEMPLATE.md` →
+    `e3c8ddd1574516f69932fde414e51a15d7b97baa`;
+    `docs/rfc/75-change-lifecycle.md` →
+    `2bc3b4e279dbfa93f8125f61248704c76e82faae`; `docs/rfc/_TEMPLATE.md` →
+    `9a4afec58b5875ff647354c9a0cc29bf90cf98eb`.
+- Validity / stale: `vigente` (V1); revalidada por **V2** (batería completa)
+  sobre el contenido final C2 antes del cierre (ver `## Checkpoint`).
 
 ## Checkpoint / cierre
 
-Pendiente — se completa al cerrar (Fase F6 de §22; regla operacional GC-1 del
-Incremento 3,
-`docs/CONVENTIONS.md:Change Lifecycle — Checkpoint y cierre Git (regla operacional; GC-1, Incremento 3)`):
-commits de cierre C1/C2, estado validado (ref al Validation anchor), estado de
-cierre (tree id), consistencia checkpoint↔anchor, governance aplicada y
-condición derivada `Closed` (docs-only, sin release). Esta iteración **no**
-cierra el plan.
+Registro de la relación closure↔estado Git (RFC-75 Mecanismo 7; §22/§23 de este
+plan). Se registra en el commit de registro C2, posterior al commit de
+contenido C1.
+
+- Commits de cierre:
+  - C1 `236735b4f4518c5063cdf8006f8002e7ea75b826` —
+    `docs(repo): implement change lifecycle unit C semantics (plan 97, RFC-75)`
+    (contenido de implementación validado por V1).
+  - C2 — este commit de registro
+    (`docs(plans): record plan 97 validation anchor and checkpoint (plan 97,
+    RFC-75)`); su SHA se identifica por el mensaje y el árbol no embebe su
+    propia identidad (auto-referencia).
+- Estado validado: `## Validation anchor` de este plan (V1); State identity T1
+  = `0df8920cf5a08789ae163b2fcdcdb9b79ccabff6`; Delta scoped identity =
+  `5d5ca643d31701a3b9924910ffc0ba70f1f53abd728deeb5d1c71fc6c0a69df3`.
+- Estado de cierre: tree id del último commit de cierre (C2) =
+  `git rev-parse C2^{tree}` (no embebido por auto-referencia; verificable en
+  git tras el commit).
+- Consistencia checkpoint↔anchor:
+  - V1 ↔ C1: `git rev-parse C1^{tree}` == T1 (`0df8920c…`) → **PASS**.
+  - Estado final (C2): difiere de C1 únicamente en los registros de cierre
+    (anchor/checkpoint de este plan, INDEX y changelog); **revalidación V2**
+    (batería canónica completa sobre el contenido de C2, ejecutada antes del
+    commit) → PASS. GC-1 queda satisfecho por revalidación antes de `Closed`
+    (la consistencia del estado de cierre se evalúa contra A2).
+- Governance aplicada: Plan `Executed` (header + espejo en INDEX); ítem
+  `(plan 97, RFC-75)` en `CHANGELOG.md:[Unreleased]`; Amendment Log de RFC-75
+  (entrada de materialización del Incremento 2); docs-only, sin `VERSION` bump
+  ni tag.
+- Condición derivada: **`Closed` (docs-only, sin release)**.
+  `Executed ≠ Committed ≠ Closed ≠ Released`: `Executed` (status del plan),
+  `Committed` (C1 + C2 en `dev`), `Closed` (condición derivada con checkpoint
+  y consistencia), `Released` (no aplica: sin promoción ni tag).
 
 ## Nota de ejecución
 
-Pendiente — se agrega al ejecutar (convención del template). Registro de esta
-iteración (2026-09-02): Plan 97 creado y registrado en `docs/plans/INDEX.md`
-(Vigésima novena serie; Status `Aprobado para ejecución`) a partir del Planning
-Report v2 aprobado, sin ejecutar la Unidad C, sin commits y sin cambios fuera
-del artifact del plan y su espejo en el INDEX. Resultado de los checkers
-existentes al crear/registrar el plan: ver el reporte de creación entregado al
-mantenedor.
-
+- 2026-09-02 — **Creación/registro.** Plan 97 creado y registrado en
+  `docs/plans/INDEX.md` (Vigésima novena serie; Status inicial `Aprobado para
+  ejecución`) a partir del Planning Report v2 aprobado, sin ejecutar la Unidad
+  C y sin commits (estado previo del working tree: `fc52c88` + los dos cambios
+  de creación). Checkers existentes en verde al registrar.
+- 2026-09-02 — **Ejecución de la Unidad C sobre `dev`.** Estado previo: HEAD
+  `fc52c88`, árbol con los cambios de creación del plan; pytest `340 passed,
+  0 failed`; checkers PASS. **Implementación (P2–P8):**
+  `docs/CONVENTIONS.md` (subsecciones operativas `Change Lifecycle — Findings y
+  correcciones (regla operacional; LC-1, Incremento 2)` y `Change Lifecycle —
+  Pending decisions (regla operacional; PC-1, Incremento 2)`; mapa de
+  aplicabilidad de la regla transversal actualizado: LC-1/PC-1 operativos para
+  artifacts nuevos; lineage formal operativo en la subsección de revalidación),
+  `docs/plans/_TEMPLATE.md` (sección opcional `## Findings / Correcciones /
+  Pending`), `docs/rfc/_TEMPLATE.md` (guía de refs calificadas en el Amendment
+  Log), `docs/VERSIONING.md` (§10 DoD con bullet LC-1/PC-1 para artifacts
+  nuevos; §11 schema de métricas: campos de refs/pending existentes desde el
+  Incremento 2, medición → Incremento 4), `AGENTS.md` raíz (`Task lifecycle`
+  con findings/corrections/pending operativos) y `docs/rfc/75-change-lifecycle.md`
+  (Amendment Log: entrada de materialización del Incremento 2; header intacto,
+  OPEN-4 sin tocar). Sin cambios en `protocol/`, `runtime/`, `tests/`,
+  `tools/`, VERSION, ADR-15/16, RFC-46/56/69, `docs/AGENTS.md` ni Planes
+  94/95/96.
+  **Verificación V1 (contenido de C1):** checkers en verde
+  (`check_protocol_invariants`, `check_plan_citations`, `check_plan_structure`,
+  `check_taxonomy_coherence`, `check_session_artifacts`, `check_version_state`
+  con warnings esperados de `dev`); pytest `340 passed, 0 failed` (fuera del
+  sandbox por ACL del basetemp); escenarios documentales de §18 ejecutados por
+  revisión (positivos/negativos/boundary sobre los textos resultantes).
+  **Commit C1:** `236735b4f4518c5063cdf8006f8002e7ea75b826` (8 archivos;
+  contenido de implementación + plan 97/INDEX ya registrados).
+  **Registros de cierre (C2):** Validation Anchor y Checkpoint de este plan,
+  espejo de INDEX a `Executed`, ítem docs-only en
+  `CHANGELOG.md:[Unreleased]`; revalidación V2 (batería completa sobre el
+  contenido de C2) PASS antes del commit.
+  **Dogfooding (registros lifecycle del propio plan):** findings reales —
+  `No findings detected / N/A` (no se fabricó `PLAN-97:F-01`); correcciones —
+  ninguna (`N/A`); pending decisions — las decisiones humanas abiertas
+  documentadas en §26 (OQ-1…OQ-5: backfill G1/plan 91, OPEN-4, registro de la
+  Decisión B en el Amendment Log de RFC-75, ADR candidates, tracker
+  condicional) quedan registradas como **pending no-bloqueantes**, owner:
+  mantenedor, sin impedir la derivación de `Closed`; OQ-6 (autorización de
+  ejecución y commits) resuelta por el encargo del mantenedor (2026-09-02).
+  **Estado final según el mecanismo implementado:** `Executed` (status);
+  `Committed` (C1 + C2); `Verified` (V1 + V2 PASS, anclados); `Closed`
+  (condición derivada: Executed + governance + checkpoint + consistencia con
+  revalidación, ver `## Checkpoint`); `Released` NO aplica (docs-only, sin
+  `VERSION` bump, tag ni promoción). Legacy intacto (planes 94/95 y anteriores
+  sin campos nuevos, válidos); Plan 96 permanece `Closed` e intacto.

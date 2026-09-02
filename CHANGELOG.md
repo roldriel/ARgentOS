@@ -211,6 +211,18 @@ La política de versionado, changelog, tags y estados de planes vive en
   templates de Plan/RFC. El propio plan 96 registró el primer anchor y el
   primer checkpoint reales (dogfooding). Cambio docs-only: sin `VERSION` bump
   ni tag (ver `docs/VERSIONING.md` §3).
+- **Change Lifecycle de ARgentOS DEV — Unidad C / Incremento 2** (plan 97,
+  RFC-75): la gobernanza DEV operacionaliza para artifacts nuevos findings y
+  corrections con refs calificadas `<artifact>:F-<n>`/`C-<n>` (LC-1) y pending
+  decisions per-artifact (PC-1): subsecciones operativas en
+  `docs/CONVENTIONS.md` (findings/corrections, pending, mapa de aplicabilidad),
+  sección opcional en el template de Plan y guía de refs en el template de RFC,
+  DoD y schema de métricas actualizados en `docs/VERSIONING.md` (§10/§11),
+  `AGENTS.md` raíz alineado y Amendment Log de RFC-75 con la entrada de
+  materialización del Incremento 2. El propio plan 97 registró su Validation
+  Anchor y Checkpoint (dogfooding: `No findings detected / N/A`) y cerró
+  docs-only. Sin machinery nueva (checkers/automatización → Incremento 4).
+  Cambio docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3).
 
 ### Fixed
 

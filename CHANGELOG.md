@@ -197,6 +197,20 @@ La política de versionado, changelog, tags y estados de planes vive en
   (anchors, checkpoints, findings, pending y checkers quedan para los
   Incrementos 1–4). Cambio docs-only: sin `VERSION` bump ni tag (ver
   `docs/VERSIONING.md` §3).
+- **Change Lifecycle de ARgentOS DEV — Unidad B / Incrementos 1+3** (plan 96,
+  RFC-75): la gobernanza DEV materializa los mecanismos operativos de los
+  Incrementos 1 y 3 — Validation Anchor (VC-1) con campos (declared scope,
+  validation command-set, effective inputs, observed dependencies,
+  environmental factors y Scoped Content Identity v1 por primitivas git) en el
+  template de Plan y el Amendment Log de RFC; intake fallback con `Change
+  Level` en el primer artifact (L0 provisional y triggers); serie como
+  identidad derivada (declaración + relaciones RFC↔Plan); checkpoint de cierre
+  (GC-1) con consistencia anchor↔checkpoint antes de `Closed`,
+  multi-commit/multi-RFC y docs-only sin release — en `docs/CONVENTIONS.md`,
+  `docs/VERSIONING.md` (§7/§10/§11), `AGENTS.md`, `docs/AGENTS.md` y los
+  templates de Plan/RFC. El propio plan 96 registró el primer anchor y el
+  primer checkpoint reales (dogfooding). Cambio docs-only: sin `VERSION` bump
+  ni tag (ver `docs/VERSIONING.md` §3).
 
 ### Fixed
 

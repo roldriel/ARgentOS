@@ -266,6 +266,34 @@ condición derivada `Closed` (docs-only, sin release) con Validation Anchor
 |---|---|---|---|
 | `97-change-lifecycle-unit-c-increment-2.md` | RFC-75 | Executed | Plan de implementación de la Unidad C (Incremento 2) del Change Lifecycle DEV: operacionaliza para artifacts nuevos findings (`<artifact>:F-<n>`, estados open/partially-resolved/resolved/deferred/superseded y reapertura por finding nuevo o metadata), corrections como registro de provenance (`C-<n>` ≠ fuente normativa; CL-6/CL-7), lineage formal por artifact sin registries globales, revalidación integrada a A1/A2 (A2 referencia A1 sin mutarlo; Decisión B `fc52c88`), pending per-artifact con metadata PC-1 (blocking/no-blocking, owner, escalación, resolución, evidencia, efecto downstream, ADR-worthiness), condiciones no resueltas, post-close por referencia (RFC-75 Mec. 12) y formatos deterministas que consumirá el Incremento 4. Cambio docs-only: `docs/CONVENTIONS.md` (subsecciones operativas LC-1/PC-1 y mapa de aplicabilidad), templates de Plan y RFC, `docs/VERSIONING.md` (§10 DoD + §11 campos de la métrica finding lineage coverage), `AGENTS.md` raíz, Amendment Log de RFC-75, ítem `(plan 97, RFC-75)` en `CHANGELOG.md:[Unreleased]` y espejo final en este INDEX; sin `VERSION` bump ni tag (RFC-69); sin checkers/tests/entidades/registries/state machines (Incrementos 4/5 diferidos). Derivado de RFC-75 `Accepted` y ADR-15/16 (plan 94 Unidad C; plan 95; plan 96 `Closed`); Change Level L2. **Creación (2026-09-02):** artifact creado y registrado sin ejecutar (Status `Aprobado para ejecución`, PLANNED / OPEN). **Ejecución (2026-09-02):** P2–P8 aplicados y verificados — CONVENTIONS, templates de Plan/RFC, VERSIONING §10/§11, AGENTS.md, Amendment Log de RFC-75, changelog e INDEX — checkers PASS (warnings esperados de `dev`); pytest `340 passed, 0 failed`; commits C1 `236735b` (contenido) y C2 (registros de cierre): Validation Anchor V1 (state identity T1 `0df8920c…`; delta `5d5ca643…`) y Checkpoint con revalidación V2 sobre C2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release). Dogfooding del propio plan: `No findings detected / N/A`; pending no-bloqueantes OQ-1…OQ-5 (owner mantenedor) documentados en §26 del plan. Sin cambios en `protocol/`, `runtime/`, `tests/`, `tools/`, VERSION, ADRs, RFC-46/56/69, `docs/AGENTS.md` ni planes 94/95/96. |
 
+## Trigésima serie: Change Lifecycle DEV — Unidad D / Incremento 4 (02 sep 2026)
+
+Cuarto Implementation Plan ejecutable derivado del Master Action Plan 94.
+Implementa la **Unidad D = Incremento conceptual 4** de RFC-75 con el mínimo
+viable demostrado por el corpus actual: automatización segura determinista y
+factual (advisory) de **C-1 — lifecycle anchor validation** y **C-2 —
+lifecycle checkpoint validation**, DEV-only sobre `tools/` + `tests/` (sin
+incorporación inicial a la batería canónica, sin CI, sin F-n/C-n/stale/series/
+métricas, sin registries, sin entidades, sin estado machine global). Consume
+los campos de anchor/checkpoint v1 materializados por las unidades B/C
+(planes 96/97) y respeta tree identity ≠ commit SHA, no-reachability desde
+`dev`, GAP ≠ invalidación y la frontera DEV/Protocol. Plan creado y registrado
+el 2026-09-02 (Status inicial `Aprobado para ejecución`, PLANNED / OPEN) y
+**ejecutado y cerrado el 2026-09-02**: C-1 (`tools/check_lifecycle_anchor.py`
++ `tests/test_check_lifecycle_anchor.py`) y C-2
+(`tools/check_lifecycle_checkpoint.py` +
+`tests/test_check_lifecycle_checkpoint.py`) implementados con commits C1
+`669a576` y C2 `9b5b8a1` en `dev`; pytest `380 passed, 0 failed`; checkers
+canónicos PASS (warnings esperados de `dev`); dogfooding sobre planes 96/97/98
+sin falsos positivos; Validation Anchor (V1 sobre C1) y Checkpoint
+(revalidación V2 sobre el estado final antes del cierre) registrados; Status
+`Executed`; condición derivada `Closed` (docs-only, sin release); sin `VERSION`
+bump ni tag.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `98-change-lifecycle-unit-d-increment-4.md` | RFC-75 | Executed | Plan de implementación de la Unidad D (Incremento 4) del Change Lifecycle DEV: especifica la primera automatización operativa del lifecycle como mínimo viable C-1 (lifecycle anchor checker propuesto `tools/check_lifecycle_anchor.py` + `tests/test_check_lifecycle_anchor.py`: forma/completitud de anchors v1, distinción GAP advisory vs anomalía, sin autoridad normativa) y C-2 (lifecycle checkpoint checker propuesto `tools/check_lifecycle_checkpoint.py` + `tests/test_check_lifecycle_checkpoint.py`: relación closure↔estado Git con tree identity, consistencia GC-1 contra el anchor del estado de cierre, modelo A1/A2 de la Decisión B, SHA = locator, sin reachability desde `dev`); población del régimen nuevo por señales estructurales del artifact (secciones del template `## Validation anchor`/`## Checkpoint / cierre`) sin registry global ni entidad Change; legacy excluido sin backfill automático (RFC-75 Mec. 15); testing determinista con pytest `tmp_path` y git temporales (19 escenarios C-1 + 21 escenarios C-2); dogfooding sobre el repo real; commits C1/C2 separados; recovery/stop conditions; AC-01…AC-21; sin `VERSION` bump ni tag, sin CI y sin tocar `protocol/.agents/` ni `.agents/` raíz. **Creación (2026-09-02):** artifact creado y registrado sin ejecutar (Status `Aprobado para ejecución`, PLANNED / OPEN; veredicto GO WITH CONDITIONS C1–C4); checkers documentales en verde; sin commits; Plan 98 NO `Executed`/`Closed`. **Ejecución (2026-09-02):** C-1/C-2 implementados y verificados — pytest `359 passed` (GATE C-1) y `380 passed` (GATE C-2), checkers canónicos PASS (warnings esperados de `dev`), `git diff --check` limpio; commits C1 `669a576` y C2 `9b5b8a1` en `dev`; dogfooding C-1/C-2: planes 96/97 `VALID` (tree de C1 == T1 declarado), plan 98 `N/A` en PLANNED, legacy 01–95 `EXCLUDED`, GAP=0, ANOMALY=0; validación adversarial PASS (tree identity, A1→A2, no-reachability, legacy, GAP/anomalía); Validation Anchor V1 (state identity T1 `1a3e93e9…`; delta `9d523cce…`) y Checkpoint con revalidación V2 sobre el estado final antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release). Dogfooding del propio plan: `No findings detected / N/A`; resolución documentada de OQ-7 (variante de encabezado `## Checkpoint` del corpus 96). Sin cambios en `protocol/`, `runtime/`, VERSION, ADRs/RFCs, `docs/AGENTS.md` ni planes 94–97. |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

@@ -223,6 +223,22 @@ La política de versionado, changelog, tags y estados de planes vive en
   Anchor y Checkpoint (dogfooding: `No findings detected / N/A`) y cerró
   docs-only. Sin machinery nueva (checkers/automatización → Incremento 4).
   Cambio docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3).
+- **Change Lifecycle de ARgentOS DEV — Unidad D / Incremento 4** (plan 98,
+  RFC-75): primera automatización operativa determinista y advisory del Change
+  Lifecycle DEV — `tools/check_lifecycle_anchor.py` (C-1: verifica forma y
+  completitud de los Validation Anchors v1 en artifacts del régimen nuevo,
+  distinguiendo GAP advisory de anomalía, población por señales estructurales
+  sin registry y legacy excluido sin backfill) y `tools/check_lifecycle_checkpoint.py`
+  (C-2: verifica la relación closure↔estado Git del checkpoint contra el
+  anchor aplicable — GC-1 con A1/A2 — usando tree identity como identidad
+  material, commit SHA como locator y sin exigir reachability desde `dev`), con
+  sus suites deterministas en `tests/` (19 + 21 tests, pytest `tmp_path` y git
+  temporales). DEV-only / local invocation: no se incorporan a la batería
+  canónica, no hay CI ni pre-commit; sin F-n/C-n/stale/series/métricas,
+  registries, entidades ni state machine globales. El propio plan 98 registró
+  su Validation Anchor y Checkpoint (dogfooding: planes 96/97 `VALID`, legacy
+  `EXCLUDED`, `No findings detected / N/A`) y cerró sin `VERSION` bump ni tag
+  (tooling DEV + registros docs-only; RFC-69; ver `docs/VERSIONING.md` §3).
 
 ### Fixed
 

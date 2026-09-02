@@ -208,6 +208,33 @@ Incremento 3).
 |---|---|---|---|
 | `95-change-lifecycle-unit-a-increment-0.md` | RFC-75 | Executed | Plan de implementación de la Unidad A (Incremento 0) del Change Lifecycle DEV: escribe en las fuentes de verdad la semántica del lifecycle (condiciones derivadas y vocabulario Verified/Executed/Committed/Closed/Promoted/Released/Abandoned), el modelo de Change Levels (ejes + `Level = max(...)` + L0 provisional, independiente de la clase RFC-56), la frontera DEV/Protocol, la serie como identidad derivada y el observability schema baseline de las cuatro métricas permanentes de RFC-75 (validation anchor coverage, finding lineage coverage, stale validation rate, Git closure anomalies) sin fingir medición; preserva la regla transversal target semantics vs operationalización (VC-1/GC-1/LC-1/PC-1 exigibles solo desde sus incrementos 1/3/2). Cambio docs-only: `docs/CONVENTIONS.md` (subsecciones de alcance DEV-only, Change Levels y regla transversal), `docs/VERSIONING.md` (§7 semántica de condiciones derivadas + §11 métricas), `AGENTS.md` raíz (`Task lifecycle`, frontera en `Do NOT`), `docs/AGENTS.md` (`Identity`: serie derivada), ítem `(plan 95, RFC-75)` en `CHANGELOG.md:[Unreleased]`; sin `VERSION` bump ni tag (RFC-69); sin campos de template, checkers, anchors, checkpoints, findings, pending, skills ni state machines. Derivado de RFC-75 `Accepted` y ADR-15/16 (plan 94 como mapa maestro, Unidad A); veredicto PLAN 95 READY FOR IMPLEMENTATION. **Ejecución (2026-09-02):** U1–U5 aplicados y verificados (checkers en verde; pytest `339 passed, 1 failed` con el fallo temporal preexistente reportado como desviación documentada, sin modificarlo); status `Executed` sin `Closed` (mecanismo de checkpoint del Incremento 3; OPEN-2 resuelto el 2026-09-02 por decisión explícita del mantenedor vía la corrección independiente del test — commit `865e3ad`, pytest `340 passed, 0 failed` — sin aceptar desviación vigente; cierre formal pendiente del mecanismo de checkpoint del Incremento 3). Sin cambios en `protocol/`, `runtime/`, `tests/`, `tools/`, VERSION, ADRs ni RFCs. |
 
+## Vigésima octava serie: Change Lifecycle DEV — Unidad B / Incrementos 1+3 (02 sep 2026)
+
+Segundo Implementation Plan ejecutable derivado del Master Action Plan 94.
+Implementa la **Unidad B = Incremento conceptual 1 + Incremento conceptual 3**
+de RFC-75 como una única unidad de ejecución planificada (el Incremento 3 no
+se renumera ni se absorbe dentro del 1): Validation Anchors operativos (VC-1)
+con campos de anchor y algoritmo de Scoped Content Identity v1 (tree id +
+delta identity por primitivas git), intake fallback con `Change Level` en el
+primer artifact (L0 provisional y triggers), serie como identidad derivada
+(declaración `Serie:` + relaciones verificables, sin registry) y Git
+closure/checkpoint operativo (GC-1) con registro de checkpoint, consistencia
+anchor↔checkpoint antes de `Closed`, multi-commit/multi-RFC y docs-only sin
+release. Cambio docs-only (ejecución futura) sobre
+`docs/plans/_TEMPLATE.md`, `docs/rfc/_TEMPLATE.md`, `docs/CONVENTIONS.md`,
+`docs/VERSIONING.md`, `AGENTS.md`, `docs/AGENTS.md`, Amendment Log de RFC-75,
+`CHANGELOG.md:[Unreleased]` e INDEX; sin `VERSION` bump ni tag (RFC-69); sin
+checkers, tests, skills, entidades, registries ni state machines (Incrementos
+2/4/5 quedan diferidos). Plan redactado y registrado (2026-09-02) con status
+`Aprobado para ejecución`, Change Level L2 (prospectivo, dogfooding) y
+veredicto PLAN 96 READY FOR IMPLEMENTATION; la presente iteración es solo de
+planificación, sin ejecución. El propio plan será el primer dogfooding del
+mecanismo (anchor + checkpoint reales al ejecutar).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `96-change-lifecycle-unit-b-increments-1-3.md` | RFC-75 | Aprobado para ejecución | Plan de implementación de la Unidad B (Incrementos 1+3) del Change Lifecycle DEV: materializa VC-1 (Validation Anchors con campos de anchor — declared scope, command-set, effective inputs, observed dependencies, environmental factors, Scoped Content Identity v1 por `git write-tree`/`ls-files`/`hash-object` — en template de Plan y Amendment Log de RFC) y GC-1 (Git closure/checkpoint: registro de la relación closure↔estado Git con commits de cierre, tree id, consistencia anchor↔checkpoint y condición derivada `Closed`; `Committed ≠ Closed ≠ Released`; multi-commit/multi-RFC; docs-only sin release); intake fallback con `Change Level` en el primer artifact (L0 provisional, triggers, downgrade justificado) y serie como identidad derivada (declaración + relaciones; sin registry). Cambio docs-only al ejecutar: templates (`_TEMPLATE.md` de planes y RFCs), `docs/CONVENTIONS.md` (reglas operativas), `docs/VERSIONING.md` (§7/§10/§11), `AGENTS.md`, `docs/AGENTS.md`, Amendment Log de RFC-75, ítem `(plan 96, RFC-75)` en `CHANGELOG.md:[Unreleased]` y espejo en este INDEX; sin `VERSION` bump ni tag (RFC-69); sin checkers/tests/skills/entidades/registries/state machines (Incrementos 2/4/5 diferidos). Derivado de RFC-75 `Accepted` y ADR-15/16 (plan 94 Unidad B; plan 95 Incremento 0); Change Level L2 (coordinación 1, scope 1, impacto arquitectónico 1, release 1, duración 2); dogfooding: primer anchor y primer checkpoint reales; veredicto PLAN 96 READY FOR IMPLEMENTATION. Sin cambios en `protocol/`, `runtime/`, `tests/`, `tools/`, VERSION, ADRs ni RFCs en la planificación; ejecución pendiente de autorización del mantenedor. |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

@@ -84,15 +84,20 @@ with user authorization; CI regenerates `dist`).
 Change lifecycle semantics (RFC-75): `Executed` is a plan status meaning
 implementation plus validation, and may exist before the change is committed.
 `Committed` is repository state (the atomic `dev` commit), not a plan status.
-`Closed` is a derived condition — plan `Executed` + applicable governance + a
-Git checkpoint + checkpoint↔anchor consistency — defined as target semantics:
-the formal checkpoint mechanism arrives in a later Change Lifecycle increment
-(Increment 3), so today's closure record is plan `Executed` plus INDEX /
-changelog state, and the atomic commit is a factual Git state, not a checkpoint
-registration. `Released` means promoted to `master` and tagged. Therefore
-`Executed ≠ Committed`, `Committed ≠ Closed`, `Closed ≠ Released`; a docs-only
-plan closes without a release (RFC-69). Detailed semantics live in
-`docs/VERSIONING.md` §7 and `docs/CONVENTIONS.md:Convenciones`.
+Since Increments 1+3 (plan 96) the mechanisms are operational: every
+registered validation records a **Validation Anchor** (declared scope,
+validation command-set, effective inputs, environmental factors, Scoped
+Content Identity), and closing a plan records a **Git checkpoint** linking
+closure to the validated committed state (closure commits + anchor↔checkpoint
+consistency) before `Closed` is derived. `Closed` is a derived condition —
+plan `Executed` + applicable governance + a Git checkpoint +
+checkpoint↔anchor consistency — not a plan status. Plans closed before these
+increments (94/95 and earlier) keep their historical records as legacy;
+absence of the new fields is not invalidity. `Released` means promoted to
+`master` and tagged. Therefore `Executed ≠ Committed`, `Committed ≠ Closed`,
+`Closed ≠ Released`; a docs-only plan closes without a release (RFC-69).
+Detailed semantics live in `docs/VERSIONING.md` §7 and
+`docs/CONVENTIONS.md:Convenciones`.
 
 A plan is done when all of that is verified and committed; a version is
 published when it is also tagged on `master`. Sources of truth:

@@ -10,6 +10,8 @@
 **Status:** Proposal
 **Fecha:** YYYY-MM-DD
 **Serie:** <serie a la que pertenece> | —
+**Change Level:** L0–L3 | — (opcional; solo si esta RFC es el primer artifact
+del cambio / intake fallback; si no, se declara en el Plan)
 **Origen:** <auditoría, bitácora, fricción — con referencia verificable>
 **Pregunta:** ¿<la decisión que esta RFC resuelve, formulada como pregunta>?
 **Afectados:** <rutas del payload que tocaría si se acepta; "—" si ninguna>
@@ -52,6 +54,11 @@ en el plan que la ejecute. -->
 
 <!-- Obligatoria aunque nazca vacía. Formato: fecha → qué cambió → origen.
 Cuando una RFC posterior desfasa a esta, se agrega además el banner
-"⚠ Enmienda pendiente" bajo el header. -->
+"⚠ Enmienda pendiente" bajo el header. Las entradas que registran rondas de
+auditoría/validación (CL-1/CL-2, Incremento 1) incluyen su Validation Anchor:
+declared scope, validation command-set, effective inputs, environmental
+factors y Scoped Content Identity
+(docs/CONVENTIONS.md:Change Lifecycle — Validation anchors y Scoped Content
+Identity (regla operacional; VC-1, Incremento 1)). -->
 
 - YYYY-MM-DD — Creación.

@@ -168,9 +168,10 @@ los checkers dev. No gobierna automáticamente la evolución del Protocol
   (`docs/plans/94-change-lifecycle-master-action-plan.md:9. Economía de Change Levels`),
   no se duplican aquí.
 - La clasificación operacional (registro del Level en el primer artifact del
-  cambio / intake fallback) se materializa en el Incremento 1; en esta etapa
-  (Incremento 0) queda fijado el modelo, sin exigencia operacional (regla
-  transversal, sección siguiente).
+  cambio / intake fallback) está vigente desde el Incremento 1 (plan 96): todo
+  Plan nuevo declara su Change Level en el header; la regla operacional de
+  intake y clasificación se define en la subsección «Change Lifecycle — Intake
+  y clasificación (regla operacional; Incremento 1)» de esta misma sección.
 
 ### Regla transversal — target semantics vs operationalización
 
@@ -181,12 +182,145 @@ materializa su mecanismo es aceptado
 (`docs/plans/94-change-lifecycle-master-action-plan.md:18. Planificación incremental`,
 `docs/rfc/75-change-lifecycle.md:Rollout incremental`).
 
-- Mapa de aplicabilidad: VC-1 (toda validación registrada con anchor) →
-  Incremento 1; GC-1 (checkpoint para `Closed`) → Incremento 3; LC-1/PC-1
-  (lineage de findings / pending decisions) → Incremento 2.
+- Mapa de aplicabilidad: VC-1 (toda validación registrada con anchor) y GC-1
+  (checkpoint para `Closed`) quedaron materializados por el Incremento 1+3
+  (Unidad B, plan 96) y son operacionalmente exigibles para artifacts nuevos;
+  LC-1/PC-1 (lineage de findings / pending decisions) siguen siendo semántica
+  objetivo hasta el Incremento 2.
 - Ningún incremento anterior invalida artifacts legacy ni impone requisitos sin
   mecanismo; la ausencia de campos nuevos indica legacy, no invalidez
   (`docs/rfc/75-change-lifecycle.md:Mecanismo 15 — Migration / Legacy`).
 - El output de un checker es evidencia factual, no autoridad normativa;
   "anchor missing" es un GAP, no una invalidación
   (`docs/rfc/75-change-lifecycle.md:Mecanismo 14 — Automation`).
+
+### Change Lifecycle — Intake y clasificación (regla operacional; Incremento 1)
+
+Todo cambio declara su clasificación en el **primer artifact del cambio**
+cuando no existe tracker de origen (RFC-75 `docs/rfc/75-change-lifecycle.md:Mecanismo 1 — Intake`).
+Reglas operativas:
+
+- El artifact principal de clasificación es el **Plan**: el header declara
+  `**Change Level:**` (L0–L3). Origen/tipo, clase RFC-56, scope, riesgo y
+  coordinación se declaran en los campos y secciones existentes (`Origen`,
+  `Clase`, `RFC`, `Depende de`, alcance y riesgos del cuerpo).
+- Cuando la RFC es el primer artifact del cambio, su header puede declarar el
+  Change Level de forma **opcional** (intake fallback); al crearse el Plan, el
+  nivel del Plan es la declaración vigente y puede corregir la provisional.
+- Para cambios sin Plan (Clase C / acción directa), la clasificación se
+  registra en el mensaje de commit y/o en la Nota correspondiente, con el
+  formato de Conventional Commits existente.
+- `Level = max(coordination, scope, architectural impact, release impact,
+  duration/complexity)` (RFC-75 `docs/rfc/75-change-lifecycle.md:Mecanismo 2 — Change Levels`);
+  el número de commits no es dimensión; Change Level y clase RFC-56 son ejes
+  independientes.
+- **L0 es provisional**: al activarse un trigger (finding, revalidación
+  requerida, decisión ADR-worthy, múltiples RFCs, impacto release-critical o
+  arquitectónico), el Level se recomputa antes de continuar; si el cambio deja
+  de ser L0, pasa por la vía de Plan correspondiente.
+- La clasificación es mutable: upgrade obligatorio al descubrir complejidad;
+  downgrade con justificación documentada en el artifact que la posee.
+- No existe entidad `Change`, ni tracker obligatorio, ni workflow de intake
+  paralelo: el fallback es solo el registro en el primer artifact.
+
+### Change Lifecycle — Validation anchors y Scoped Content Identity (regla operacional; VC-1, Incremento 1)
+
+**Validación registrada**: toda validación citada como evidencia en un artifact
+de gobernanza DEV (resultado PASS/FAIL de checkers, pytest o juicio H13 en una
+Nota de ejecución, en una ronda de auditoría de una RFC o en el cierre de un
+Plan) debe poder anclarse a un estado reproducible (CL-1/VC-1).
+
+El **Validation Anchor** se registra en el artifact que posee la validación:
+sección `## Validation anchor` del Plan (template) o entrada del
+`## Amendment Log` de una RFC. Campos (RFC-75
+`docs/rfc/75-change-lifecycle.md:Mecanismo 6 — Validation Anchors`; formato v1
+del Plan 96, `docs/plans/96-change-lifecycle-unit-b-increments-1-3.md:12. Modelo de anchor (formato v1)`):
+
+- Declared scope (qué afirma cubrir la validación).
+- Validation command-set (comandos exactos ejecutados).
+- Effective inputs (repo content) (qué contenido del repo consume el
+  command-set).
+- Observed dependencies (cuando exista instrumentación; si no, `no
+  instrumentado`).
+- Environmental factors (inputs fuera del repo consumidos y declarados).
+- Scoped Content Identity (identidad semántica del contenido evaluado).
+- Validity / stale (aplicabilidad actual del anchor).
+
+Distinciones obligatorias:
+
+- Metadata (fecha/autor/sesión, ID local del artifact) no forma parte de la
+  identidad semántica.
+- Locator (commit SHA, path) localiza un estado u objeto; **nunca** es identidad
+  semántica.
+- Identidad semántica = Scoped Content Identity (algoritmo abajo).
+- `anchor changed ≠ semantic validity changed` (CL-2): si el estado cambia, se
+  evalúa la aplicabilidad; si sigue aplicando sin revalidación, la validación
+  se marca `stale`; si se re-ejecuta, se registra un anchor nuevo (o se
+  actualiza el existente con nota) y la validación queda `revalidada`.
+- Límite declarado: dependencias ambientales desconocidas nunca detectadas no
+  son verificables por el lifecycle; es responsabilidad del autor de la
+  validación y la revalidación es el backstop (RFC-75 Mecanismo 6).
+
+**Scoped Content Identity (algoritmo v1)** — identidad de contenido
+determinista sobre los effective inputs repo
+(`docs/plans/96-change-lifecycle-unit-b-increments-1-3.md:13. Scoped Content Identity (algoritmo v1)`):
+
+- Primitivas Git ya usadas por los checkers: `git ls-files -s`,
+  `git hash-object --path=<path> <path>`, `git write-tree`,
+  `git rev-parse <commit>^{tree}` y `git ls-tree`.
+- **Delta scoped identity**: para el scope set `S` (paths repo-relative
+  ordenados), blob id por path (index tras `git add`, o `git hash-object`) y
+  `sha256` de la serialización canónica `scoped-v1` + pares
+  `path <0x00> blob <0x00>`.
+- **State identity**: cuando el command-set consume el repo completo (p. ej.,
+  la batería canónica), tree id de `git write-tree` sobre el estado staged; los
+  tree objects de git son content-addressed: contenido idéntico → tree id
+  idéntico, independiente de la historia.
+- Rebase/cherry-pick/amend con contenido scoped idéntico no invalida la
+  identidad; contenido distinto → evaluar aplicabilidad / revalidar (stale).
+- Un cambio fuera del scope no altera el delta identity; el tree id puede
+  cambiar → evaluación de aplicabilidad (CL-2), no invalidación automática.
+
+### Change Lifecycle — Serie e identidad derivada (regla operacional; Incremento 1)
+
+- La serie es identidad **derivada**: `Serie(RFC)` = declaración `Serie:` del
+  header; `Serie(Plan)` = declaración propia si existe, ∪ series de la(s)
+  RFC(s) referenciada(s) en su campo `RFC` (relación verificable RFC↔Plan).
+- La coincidencia textual aislada no basta: la membresía exige la relación
+  RFC↔Plan resuelta y la coherencia de los artifacts (INDEX espejo).
+- Sin entidad ni registry de series; INDEX = vista descriptiva, nunca
+  autoritativa (AU-4, ADR-16).
+- La identidad es repo-scoped, derivada y estable: renombrado con historia;
+  supersession de miembros no disuelve la serie; legacy sin declaración no es
+  inválido.
+- Las secciones "Vigésima X serie" del INDEX de planes son la vista descriptiva
+  de batches de planes (numeración/registro), un eje distinto de la serie
+  conceptual `Serie:`; ninguna es autoritativa.
+
+### Change Lifecycle — Checkpoint y cierre Git (regla operacional; GC-1, Incremento 3)
+
+- **Checkpoint** = relación closure↔estado Git verificable (RFC-75
+  `docs/rfc/75-change-lifecycle.md:Mecanismo 7 — Git Checkpoints`); no es un
+  artifact, no es "tener un commit" y no es el SHA.
+- Registro del checkpoint en la sección de cierre/Nota del Plan al cerrar:
+  commits de cierre (lista; multi-commit), estado validado (ref al anchor),
+  estado de cierre (tree id), consistencia, governance aplicada y condición
+  derivada.
+- **Consistencia checkpoint↔anchor (GC-1)**: `Closed` exige que la identidad
+  scoped del estado de cierre sea igual a la del anchor y que los factores
+  ambientales declarados no hayan cambiado; si difiere cualquiera →
+  **revalidación antes de `Closed`**. Factores irrelevantes (no consumidos) y
+  desconocidos no invalidan automáticamente; un factor relevante consumido pero
+  no declarado es una anomalía auditable.
+- `Closed` = `Executed` + governance aplicable + checkpoint + consistencia
+  (condición derivada, no status). `Committed` = estado del repositorio, no
+  status de Plan. `Closed ≠ Released`; un Plan docs-only se cierra sin release
+  (RFC-69).
+- Multi-commit: el checkpoint lista todos los commits del Plan y la
+  consistencia se evalúa sobre el estado validado (con revalidación si el
+  estado de cierre difiere). Multi-RFC: la governance aplica por RFC
+  (Amendment Log cuando corresponda). Multi-Plan: cada Plan cierra con su
+  propio checkpoint; sin registry.
+- Cambios posteriores al cierre no invalidan el checkpoint: generan artifacts
+  nuevos que referencian al cerrado (RFC-46; RFC-75
+  `docs/rfc/75-change-lifecycle.md:Mecanismo 12 — Post-close Changes`).

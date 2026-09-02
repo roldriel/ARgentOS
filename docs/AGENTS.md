@@ -65,8 +65,11 @@ registry: en el modelo objetivo es una identidad derivada de declaraciones en
 headers + relaciones verificables entre artifacts, y los INDEX la reflejan como
 vista descriptiva, nunca autoritativa. No existe entidad ni registry de Series
 (`docs/rfc/75-change-lifecycle.md:Mecanismo 11 — Series / Continuity`); la regla
-operacional de declaración y verificación pertenece a un incremento posterior
-del Change Lifecycle (Incremento 1), no a esta carta.
+operacional de declaración y verificación está vigente desde el Incremento 1
+(plan 96): la membresía se deriva de la declaración `Serie:` del header y de
+relaciones verificables RFC↔Plan. El detalle normativo vive en
+`docs/CONVENTIONS.md:Change Lifecycle — Serie e identidad derivada (regla
+operacional; Incremento 1)`, no en esta carta.
 
 ### Folder → class map
 

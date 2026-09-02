@@ -180,12 +180,16 @@ Condiciones derivadas del Change Lifecycle (semántica; RFC-75
   Change Lifecycle son **derivadas**, no una state machine.
 - `Executed` = implementación + validación (CL-4); puede existir sin commit.
 - `Committed` es estado del repositorio (commit atómico en `dev`), no un status
-  de Plan (CL-5). `Committed` no es un checkpoint: el mecanismo formal de
-  checkpoint pertenece al Incremento 3.
+  de Plan (CL-5). `Committed` no es un checkpoint: el checkpoint es la relación
+  closure↔estado Git verificable (mecanismo materializado en el Incremento 3,
+  plan 96).
 - `Closed` es una condición derivada: `Executed` + governance aplicable +
-  checkpoint + consistencia checkpoint↔anchor (GC-1). Como semántica objetivo,
-  el mecanismo de checkpoint se materializa en el Incremento 3; hasta entonces
-  el cierre operativo vigente sigue el DoD de §10 y no se exige checkpoint.
+  checkpoint + consistencia checkpoint↔anchor (GC-1). Con el Incremento 1+3
+  (plan 96) el mecanismo está materializado: los planes nacidos bajo las reglas
+  nuevas registran su Validation Anchor (VC-1) y su checkpoint al cerrar. Los
+  planes previos (94/95 y anteriores) conservan su registro histórico como
+  legacy (la ausencia de campos no implica invalidez) y su cierre operativo
+  sigue el DoD de §10 sin exigir los campos nuevos.
 - `Promoted` = merge `dev → master` verificado; `Released` = tag inmutable;
   `Abandoned` = Plan `Superseded` con motivo.
 - Cadena de implicación (semántica objetivo): `Verified ⊆ Executed ⊆ Closed ⊆
@@ -245,6 +249,15 @@ Un plan está terminado cuando:
 - [ ] Cambios de `protocol/.agents/` aplicados según los pasos del plan.
 - [ ] Batería canónica de §4.1 en verde y H13 aplicado por juicio.
 - [ ] Plan `Executed`, RFC con Amendment Log, INDEX actualizado.
+- [ ] Validación anclada (VC-1, Incremento 1): para planes nacidos bajo las
+      reglas del Incremento 1 (plan 96), la validación registrada en la Nota de
+      ejecución incluye su `Validation anchor` (declared scope, command-set,
+      effective inputs, factores ambientales declarados y Scoped Content
+      Identity).
+- [ ] Checkpoint registrado con consistencia (GC-1, Incremento 3): el cierre
+      registra los commits de cierre y la consistencia checkpoint↔anchor
+      (scoped identity + factores) antes de declarar la condición derivada
+      `Closed`; `Closed ≠ Released` y un plan docs-only se cierra sin release.
 - [ ] Sección del changelog `[X.Y.Z]` con ítem `(plan N, RFC-N)` y `VERSION`
       bumped.
 - [ ] Para cambios docs-only (RFC-69): ítem en `[Unreleased]` del changelog
@@ -261,25 +274,27 @@ Una versión está publicada cuando, además:
 
 Esta sección define el **schema baseline** de las métricas del Change Lifecycle
 de ARgentOS DEV (Incremento 0): nombres, semántica, condiciones de medición y
-dependencia de datos. No produce medición operacional: las cuatro métricas
-dependen de campos que materializan los Incrementos 1/3/2 (anchors,
-checkpoints/closure, findings). Sin backend, sin writer obligatorio, sin
-thresholds y sin gate de release
+dependencia de datos. Los campos que alimentan las métricas de anchor y
+checkpoint existen desde los Incrementos 1+3 (plan 96) y comienzan a producir
+registros manuales; la medición operacional (queries/agregación) y la
+automatización pertenecen al Incremento 4. Sin backend, sin writer
+obligatorio, sin thresholds y sin gate de release
 (`docs/rfc/75-change-lifecycle.md:Mecanismo 13 — Observability`;
 `docs/plans/94-change-lifecycle-master-action-plan.md:17. Estrategia de telemetría`).
 
-| Métrica | Definición | Datos que la alimentarán | Habilita | Estado en el Incremento 0 |
+| Métrica | Definición | Datos que la alimentarán | Habilita | Estado tras Incrementos 1+3 (plan 96) |
 |---|---|---|---|---|
-| Validation anchor coverage | % de validaciones registradas con anchor reproducible sobre el total de validaciones con campos registrables | Campos de anchor en notas de ejecución / templates / Amendment Log | Incremento 1 | Schema definido; sin medición |
-| Finding lineage coverage | % de correcciones con lineage trazable origen → corrección → revalidación | Refs calificadas `artifact:F-n` | Incremento 2 | Schema definido; sin medición |
-| Stale validation rate | % de validaciones ancladas cuyo anchor cambió sin revalidación ni marca de stale | Anchor + estados de revalidación | Incrementos 1+2 | Schema definido; sin medición |
-| Git closure anomalies | Conteo/% de cierres o planes con anomalías de closure (p. ej. `Executed` sin commit, `Promoted` sin `Closed`) | Checkpoint + estados derivados | Incremento 3 | Schema definido; sin medición |
+| Validation anchor coverage | % de validaciones registradas con anchor reproducible sobre el total de validaciones con campos registrables | Campos de anchor en notas de ejecución / templates / Amendment Log | Incremento 1 | Campos existentes (Incremento 1); sin medición operacional hasta el Incremento 4 |
+| Finding lineage coverage | % de correcciones con lineage trazable origen → corrección → revalidación | Refs calificadas `artifact:F-n` | Incremento 2 | Schema definido; campos → Incremento 2 |
+| Stale validation rate | % de validaciones ancladas cuyo anchor cambió sin revalidación ni marca de stale | Anchor + estados de revalidación | Incrementos 1+2 | Campo `Validity/stale` del anchor existe (Incremento 1); revalidación formal → Incremento 2; medición → Incremento 4 |
+| Git closure anomalies | Conteo/% de cierres o planes con anomalías de closure (p. ej. `Executed` sin commit, `Promoted` sin `Closed`) | Checkpoint + estados derivados | Incremento 3 | Registro de checkpoint existente (Incremento 3); medición/agregación → Incremento 4 |
 
 Reglas:
 
-- **Schema ≠ medición**: el Incremento 0 no produce datos operacionales de
-  estas métricas; 0 registros = `not applicable / insufficient sample`, no
-  "0% compliance".
+- **Schema ≠ medición**: los Incrementos producen campos y registros manuales
+  (anchor y checkpoint desde los Incrementos 1+3); la medición operacional
+  (queries/agregación) y la automatización se habilitan en el Incremento 4;
+  0 registros = `not applicable / insufficient sample`, no "0% compliance".
 - **Legacy excluido del denominador**: los artifacts sin los campos nuevos no
   se cuentan salvo backfill explícito posterior
   (`docs/rfc/75-change-lifecycle.md:Mecanismo 15 — Migration / Legacy`).

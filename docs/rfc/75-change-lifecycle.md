@@ -525,3 +525,14 @@ produce bump de `VERSION` ni tag; cambio docs-only (RFC-69).
 - 2026-09-01 — Creación y registro formal (RFC-75) tras la auditoría final de
   diseño (READY FOR FORMAL REGISTRATION; BLOCKER=0, MAJOR=0, RFC-level
   MINOR=0); status Accepted con implementación pendiente.
+- 2026-09-02 — Incrementos 1 y 3 materializados (plan 96, Unidad B): campos y
+  registro operativos de Validation Anchor (declared scope, command-set,
+  effective inputs, observed dependencies, environmental factors, Scoped
+  Content Identity v1) en el template de Plan y el Amendment Log de RFC;
+  intake fallback con Change Level en el primer artifact (L0 provisional y
+  triggers); serie como identidad derivada (declaración `Serie:` + relaciones
+  RFC↔Plan); checkpoint de cierre con consistencia anchor↔checkpoint antes de
+  `Closed` (multi-commit/multi-RFC/docs-only sin release). VC-1/GC-1 quedan
+  operacionalmente exigibles para artifacts nuevos; legacy intacto (ausencia
+  de campos = legacy, no invalidez). Cambio docs-only: sin `VERSION` bump ni
+  tag (RFC-69).

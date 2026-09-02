@@ -60,6 +60,14 @@ es ubicación. Mover un archivo no cambia la identidad ni el significado de una
 cita: cambia su resolución (path nuevo o mapping histórico). No existe
 registry global de IDs: los INDEX cumplen el rol de mapa ID → path → status.
 
+Una **serie** (p. ej. la serie «Change Lifecycle») no es un artifact ni un
+registry: en el modelo objetivo es una identidad derivada de declaraciones en
+headers + relaciones verificables entre artifacts, y los INDEX la reflejan como
+vista descriptiva, nunca autoritativa. No existe entidad ni registry de Series
+(`docs/rfc/75-change-lifecycle.md:Mecanismo 11 — Series / Continuity`); la regla
+operacional de declaración y verificación pertenece a un incremento posterior
+del Change Lifecycle (Incremento 1), no a esta carta.
+
 ### Folder → class map
 
 | Carpeta | Clase |

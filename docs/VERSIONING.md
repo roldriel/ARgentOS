@@ -173,6 +173,30 @@ RFCs:
 - `docs/plans/INDEX.md` es un espejo descriptivo: se actualiza en el commit del plan,
   después de los archivos fuente, y nunca es fuente de verdad.
 
+Condiciones derivadas del Change Lifecycle (semántica; RFC-75
+`docs/rfc/75-change-lifecycle.md:Modelo de lifecycle`, ADR-15):
+
+- Los únicos status son los existentes de Plan/RFC/ADR; las condiciones del
+  Change Lifecycle son **derivadas**, no una state machine.
+- `Executed` = implementación + validación (CL-4); puede existir sin commit.
+- `Committed` es estado del repositorio (commit atómico en `dev`), no un status
+  de Plan (CL-5). `Committed` no es un checkpoint: el mecanismo formal de
+  checkpoint pertenece al Incremento 3.
+- `Closed` es una condición derivada: `Executed` + governance aplicable +
+  checkpoint + consistencia checkpoint↔anchor (GC-1). Como semántica objetivo,
+  el mecanismo de checkpoint se materializa en el Incremento 3; hasta entonces
+  el cierre operativo vigente sigue el DoD de §10 y no se exige checkpoint.
+- `Promoted` = merge `dev → master` verificado; `Released` = tag inmutable;
+  `Abandoned` = Plan `Superseded` con motivo.
+- Cadena de implicación (semántica objetivo): `Verified ⊆ Executed ⊆ Closed ⊆
+  Promoted ⊆ Released`. Anomalías: `Closed` sin `Verified` es inválido;
+  `Promoted` sin `Closed` es anomalía; `Released` sin `Verified` es violación
+  de gobernanza. `Closed ≠ Released`; un plan docs-only se cierra sin release
+  (RFC-69).
+- `Aprobado para ejecución` (RFC-75 `docs/rfc/75-change-lifecycle.md:Mecanismo 5 — Plan lifecycle`):
+  autorizado a ejecutar cuando los criterios de entrada se cumplen; el gate
+  pendiente se documenta como aclaración, sin status nuevo.
+
 ## 8. Ejecución en paralelo
 
 - La asignación de versiones es serial: cada versión la ocupa un único plan.
@@ -232,3 +256,38 @@ Una versión está publicada cuando, además:
 - [ ] Promovida a `master` con tag anotado `X.Y.Z`.
 - [ ] `publish-dist` regeneró `dist`.
 - [ ] Invariante versión ↔ changelog ↔ tag verificado.
+
+## 11. Métricas del Change Lifecycle (observability schema baseline)
+
+Esta sección define el **schema baseline** de las métricas del Change Lifecycle
+de ARgentOS DEV (Incremento 0): nombres, semántica, condiciones de medición y
+dependencia de datos. No produce medición operacional: las cuatro métricas
+dependen de campos que materializan los Incrementos 1/3/2 (anchors,
+checkpoints/closure, findings). Sin backend, sin writer obligatorio, sin
+thresholds y sin gate de release
+(`docs/rfc/75-change-lifecycle.md:Mecanismo 13 — Observability`;
+`docs/plans/94-change-lifecycle-master-action-plan.md:17. Estrategia de telemetría`).
+
+| Métrica | Definición | Datos que la alimentarán | Habilita | Estado en el Incremento 0 |
+|---|---|---|---|---|
+| Validation anchor coverage | % de validaciones registradas con anchor reproducible sobre el total de validaciones con campos registrables | Campos de anchor en notas de ejecución / templates / Amendment Log | Incremento 1 | Schema definido; sin medición |
+| Finding lineage coverage | % de correcciones con lineage trazable origen → corrección → revalidación | Refs calificadas `artifact:F-n` | Incremento 2 | Schema definido; sin medición |
+| Stale validation rate | % de validaciones ancladas cuyo anchor cambió sin revalidación ni marca de stale | Anchor + estados de revalidación | Incrementos 1+2 | Schema definido; sin medición |
+| Git closure anomalies | Conteo/% de cierres o planes con anomalías de closure (p. ej. `Executed` sin commit, `Promoted` sin `Closed`) | Checkpoint + estados derivados | Incremento 3 | Schema definido; sin medición |
+
+Reglas:
+
+- **Schema ≠ medición**: el Incremento 0 no produce datos operacionales de
+  estas métricas; 0 registros = `not applicable / insufficient sample`, no
+  "0% compliance".
+- **Legacy excluido del denominador**: los artifacts sin los campos nuevos no
+  se cuentan salvo backfill explícito posterior
+  (`docs/rfc/75-change-lifecycle.md:Mecanismo 15 — Migration / Legacy`).
+- Las métricas son **SHOULD** (informan, no bloquean); ninguna es gate de
+  release.
+- Las métricas de coordinación (cross-agent, handoffs, pending count,
+  frecuencia de revalidación) son EXPERIMENTAL/DEFERRED y dependen del track
+  del Incremento 5.
+- El gate del Incremento 4 (automatización) se evalúa con los datos de
+  lifecycle producidos por las unidades B/C (Incrementos 1/3/2), no con este
+  schema baseline: no hay gate circular.

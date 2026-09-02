@@ -49,6 +49,11 @@ While developing ARgentOS you work on the protocol itself. Therefore:
   (`docs/source-layout.md`).
 - Commit `.project/` artifacts — session state is ephemeral.
 - Edit `dist` by hand — CI regenerates it from `master` on tags.
+- Implement Change Lifecycle mechanisms (anchors, checkpoints, findings,
+  pending decisions, series registries, lifecycle state machines) inside
+  `protocol/.agents/`, or share lifecycle machinery between DEV and the
+  Protocol. RFC-75 governs how this DEV repository evolves;
+  `protocol/.agents/` is product data with its own RFC-56 authorization path.
 
 ## Development workflow
 
@@ -75,6 +80,19 @@ mechanical fixes commit directly) → **execute** on `dev` → **verify**
 changelog `(plan N, RFC-N)`, VERSION bump) → **commit** (atomic, Conventional
 Commit in English, on `dev`) → **promote** (merge to `master` + annotated tag,
 with user authorization; CI regenerates `dist`).
+
+Change lifecycle semantics (RFC-75): `Executed` is a plan status meaning
+implementation plus validation, and may exist before the change is committed.
+`Committed` is repository state (the atomic `dev` commit), not a plan status.
+`Closed` is a derived condition — plan `Executed` + applicable governance + a
+Git checkpoint + checkpoint↔anchor consistency — defined as target semantics:
+the formal checkpoint mechanism arrives in a later Change Lifecycle increment
+(Increment 3), so today's closure record is plan `Executed` plus INDEX /
+changelog state, and the atomic commit is a factual Git state, not a checkpoint
+registration. `Released` means promoted to `master` and tagged. Therefore
+`Executed ≠ Committed`, `Committed ≠ Closed`, `Closed ≠ Released`; a docs-only
+plan closes without a release (RFC-69). Detailed semantics live in
+`docs/VERSIONING.md` §7 and `docs/CONVENTIONS.md:Convenciones`.
 
 A plan is done when all of that is verified and committed; a version is
 published when it is also tagged on `master`. Sources of truth:

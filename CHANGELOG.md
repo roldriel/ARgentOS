@@ -186,6 +186,17 @@ La política de versionado, changelog, tags y estados de planes vive en
   Change Levels, frontera DEV/Protocol, dogfooding y roadmap para los planes de
   implementación 95+. Plan docs-only: sin `VERSION` bump ni tag (ver
   `docs/VERSIONING.md` §3).
+- **Change Lifecycle de ARgentOS DEV — Unidad A / Incremento 0** (plan 95,
+  RFC-75): la gobernanza DEV incorpora la semántica aprobada del Change
+  Lifecycle (condiciones derivadas y vocabulario
+  Verified/Executed/Committed/Closed/Promoted/Released/Abandoned, modelo de
+  Change Levels con ejes independientes de RFC-56 y L0 provisional, frontera
+  DEV/Protocol, serie como identidad derivada) y el observability schema
+  baseline de las métricas de lifecycle en `docs/CONVENTIONS.md`,
+  `docs/VERSIONING.md`, `AGENTS.md` y `docs/AGENTS.md`. Sin machinery nueva
+  (anchors, checkpoints, findings, pending y checkers quedan para los
+  Incrementos 1–4). Cambio docs-only: sin `VERSION` bump ni tag (ver
+  `docs/VERSIONING.md` §3).
 
 ### Fixed
 

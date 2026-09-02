@@ -182,6 +182,29 @@ incorpora tooling y tests).
 |---|---|---|---|
 | `94-change-lifecycle-master-action-plan.md` | RFC-75 | Executed | Master Action Plan del Change Lifecycle de ARgentOS DEV: estado real contrastado con git/checkers; modelo de lifecycle y condiciones derivadas (Verified/Executed/Committed/Closed/Promoted/Released); frontera DEV vs Protocol; inventario del workflow actual; mapeo RFC-75 → mecanismos; modelo de autoridad (ADR-16); economía de Change Levels L0–L3; decisión de no-state-machine; estrategias de skills/artifacts/policies/checkers/Git/telemetría; continuidad entre agentes (handoff fuera de alcance); roadmap incremental con seis incrementos conceptuales (0–5) agrupados en unidades de implementación A–D (1+3 en batch operacional) y "usable at every phase"; dogfooding; grafo de dependencias; riesgos; ADR candidates; deuda no bloqueante; validación (incluye política de "batería verde" §24.1); criterios de salida; retrospectiva RFC-71..74; preguntas abiertas; auditoría adversarial; veredicto READY FOR IMPLEMENTATION PLANNING. Entregable producido, corregido y verificado (checkers en verde; fallo de pytest preexistente como desviación documentada) sin ejecutar incrementos; `Executed` sin `Closed` (checkpoint/commit pendiente del mantenedor). |
 
+## Vigésima séptima serie: Change Lifecycle DEV — Unidad A / Incremento 0 (02 sep 2026)
+
+Primer Implementation Plan ejecutable derivado del Master Action Plan 94.
+Implementa exclusivamente la **Unidad A = Incremento conceptual 0** de RFC-75:
+semántica y vocabulario del Change Lifecycle DEV (condiciones derivadas
+Verified/Executed/Committed/Closed/Promoted/Released), modelo de Change Levels
+(ejes + `max` + L0 provisional, independiente de la clase RFC-56), frontera
+DEV/Protocol, serie como identidad derivada y observability schema baseline de
+las cuatro métricas permanentes (sin medición operacional ni machinery nueva).
+Cambio docs-only sobre `docs/CONVENTIONS.md`, `docs/VERSIONING.md`,
+`AGENTS.md`, `docs/AGENTS.md`, `CHANGELOG.md:[Unreleased]` y el registro del
+plan en este INDEX; sin `VERSION` bump ni tag (RFC-69). No implementa anchors,
+checkpoints, findings, pending, checkers ni series registries (Incrementos 1–5
+quedan para las unidades B/C/D y el track deferido). Plan redactado, registrado
+y ejecutado (2026-09-02) con verificación de checkers en verde y pytest
+`339 passed, 1 failed` (fallo temporal preexistente como desviación
+documentada); `Executed` sin `Closed` (OPEN-2: aceptación del mantenedor de la
+desviación documentada de pytest, pendiente para el cierre formal).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `95-change-lifecycle-unit-a-increment-0.md` | RFC-75 | Executed | Plan de implementación de la Unidad A (Incremento 0) del Change Lifecycle DEV: escribe en las fuentes de verdad la semántica del lifecycle (condiciones derivadas y vocabulario Verified/Executed/Committed/Closed/Promoted/Released/Abandoned), el modelo de Change Levels (ejes + `Level = max(...)` + L0 provisional, independiente de la clase RFC-56), la frontera DEV/Protocol, la serie como identidad derivada y el observability schema baseline de las cuatro métricas permanentes de RFC-75 (validation anchor coverage, finding lineage coverage, stale validation rate, Git closure anomalies) sin fingir medición; preserva la regla transversal target semantics vs operationalización (VC-1/GC-1/LC-1/PC-1 exigibles solo desde sus incrementos 1/3/2). Cambio docs-only: `docs/CONVENTIONS.md` (subsecciones de alcance DEV-only, Change Levels y regla transversal), `docs/VERSIONING.md` (§7 semántica de condiciones derivadas + §11 métricas), `AGENTS.md` raíz (`Task lifecycle`, frontera en `Do NOT`), `docs/AGENTS.md` (`Identity`: serie derivada), ítem `(plan 95, RFC-75)` en `CHANGELOG.md:[Unreleased]`; sin `VERSION` bump ni tag (RFC-69); sin campos de template, checkers, anchors, checkpoints, findings, pending, skills ni state machines. Derivado de RFC-75 `Accepted` y ADR-15/16 (plan 94 como mapa maestro, Unidad A); veredicto PLAN 95 READY FOR IMPLEMENTATION. **Ejecución (2026-09-02):** U1–U5 aplicados y verificados (checkers en verde; pytest `339 passed, 1 failed` con el fallo temporal preexistente reportado como desviación documentada, sin modificarlo); status `Executed` sin `Closed` (mecanismo de checkpoint del Incremento 3; OPEN-2 pendiente del mantenedor para el cierre formal). Sin cambios en `protocol/`, `runtime/`, `tests/`, `tools/`, VERSION, ADRs ni RFCs. |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

@@ -131,3 +131,62 @@
   mantiene `.agents/` + `AGENTS.md` en la raíz. Los docs del payload describen
   el layout adoptado; los links a `AGENTS.md` rotos en fuente son intencionales
   y se documentan en `docs/source-layout.md`.
+
+### Change Lifecycle DEV — alcance y frontera
+
+El Change Lifecycle (RFC-75) gobierna la evolución de **ARgentOS DEV**: el
+`AGENTS.md` raíz, `docs/CONVENTIONS.md`, `docs/VERSIONING.md`, los templates y
+los checkers dev. No gobierna automáticamente la evolución del Protocol
+(`protocol/.agents/`): un cambio con efecto payload sigue la vía de RFC-56
+(clases A/B/C y autorización).
+
+- No se crean workflow/policy/state machine/artifact/skill compartidos entre
+  DEV y Protocol; no hay herencia automática.
+- Principios potencialmente transferibles (revalidación ante continuidad;
+  persistir ≠ materializar; separación entre evidencia factual y autoridad
+  normativa) quedan como principios, no como mecanismos
+  (`docs/rfc/75-change-lifecycle.md:Dev vs Protocol`).
+
+### Change Lifecycle — Change Levels (modelo objetivo)
+
+- `Level = max(coordination, scope, architectural impact, release impact,
+  duration/complexity)`; el número de commits no es dimensión. Los ejes y los
+  umbrales coarse (0–3) son decisión de RFC-75
+  (`docs/rfc/75-change-lifecycle.md:Mecanismo 2 — Change Levels`); esta carta
+  los referencia sin duplicar la tabla.
+- Change Level y clase RFC-56 son **ejes independientes**: una Clase A pequeña
+  puede ser L2; una Clase C grande puede ser L2/L3 por scope; un cambio
+  runtime-only tiene Level sin clase.
+- **L0** es el nivel mínimo (1 agente, 1 sesión, superficie de 1 archivo, sin
+  cambio estructural, sin versión, <1 sesión) y es **provisional**: al
+  activarse un trigger (finding, revalidación requerida, decisión ADR-worthy,
+  múltiples RFCs, impacto release-critical o arquitectónico), el Level se
+  recomputa antes de continuar
+  (`docs/rfc/75-change-lifecycle.md:Mecanismo 1 — Intake`).
+- La maquinaria del lifecycle escala con el Level (CL-10); la matriz operacional
+  L0–L3 y el reparto de decisiones viven en el Master Action Plan
+  (`docs/plans/94-change-lifecycle-master-action-plan.md:9. Economía de Change Levels`),
+  no se duplican aquí.
+- La clasificación operacional (registro del Level en el primer artifact del
+  cambio / intake fallback) se materializa en el Incremento 1; en esta etapa
+  (Incremento 0) queda fijado el modelo, sin exigencia operacional (regla
+  transversal, sección siguiente).
+
+### Regla transversal — target semantics vs operationalización
+
+Una regla definida por RFC-75 puede formar parte del modelo normativo objetivo
+antes de que exista su mecanismo de enforcement; una regla del lifecycle se
+vuelve operacionalmente exigible solo después de que el incremento que
+materializa su mecanismo es aceptado
+(`docs/plans/94-change-lifecycle-master-action-plan.md:18. Planificación incremental`,
+`docs/rfc/75-change-lifecycle.md:Rollout incremental`).
+
+- Mapa de aplicabilidad: VC-1 (toda validación registrada con anchor) →
+  Incremento 1; GC-1 (checkpoint para `Closed`) → Incremento 3; LC-1/PC-1
+  (lineage de findings / pending decisions) → Incremento 2.
+- Ningún incremento anterior invalida artifacts legacy ni impone requisitos sin
+  mecanismo; la ausencia de campos nuevos indica legacy, no invalidez
+  (`docs/rfc/75-change-lifecycle.md:Mecanismo 15 — Migration / Legacy`).
+- El output de un checker es evidencia factual, no autoridad normativa;
+  "anchor missing" es un GAP, no una invalidación
+  (`docs/rfc/75-change-lifecycle.md:Mecanismo 14 — Automation`).

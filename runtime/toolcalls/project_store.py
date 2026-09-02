@@ -210,6 +210,8 @@ def rebuild(
     entries: list[dict],
     namespace: str | None,
     protocol_version: str,
+    *,
+    now: datetime | None = None,
 ) -> dict:
     """Reconstruct the full store payload from the KB (derived, never authoritative).
 
@@ -221,6 +223,10 @@ def rebuild(
     unregistered projects) and ``protocol_version`` the semantic version of
     the payload governing the segment. The manifest and its entries remain
     the source of truth; this payload is identity/freshness metadata only.
+    ``now`` is the evaluation clock in UTC (default: current UTC time); when
+    provided it fixes the instant used for both freshness and ``generated_at``,
+    mirroring the injectable ``now`` seam of ``reuse_eligibility`` so rebuilds
+    can be evaluated deterministically at a controlled instant.
 
     Raising ``ValueError`` for a missing namespace is a defensive runtime
     decision, not an explicit normative obligation of RFC-73: for an
@@ -241,17 +247,15 @@ def rebuild(
     content_identity = segment_content_identity(content)
     segment_id = project_segment_identity(protocol_version, content_identity, ns)
     last_discovery = _load_last_discovery(kb_root)
+    clock = now if now is not None else datetime.now(timezone.utc)
     freshness = reuse_eligibility(
         manifest,
         last_discovery,
         entries,
         _default_provenance_resolver(kb_root, manifest),
+        now=clock,
     )
-    generated_at = (
-        datetime.now(timezone.utc)
-        .isoformat(timespec="seconds")
-        .replace("+00:00", "Z")
-    )
+    generated_at = clock.isoformat(timespec="seconds").replace("+00:00", "Z")
     return {
         "schema_version": STORE_SCHEMA_VERSION,
         "project_namespace": ns,

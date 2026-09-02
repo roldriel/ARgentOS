@@ -184,9 +184,11 @@ materializa su mecanismo es aceptado
 
 - Mapa de aplicabilidad: VC-1 (toda validación registrada con anchor) y GC-1
   (checkpoint para `Closed`) quedaron materializados por el Incremento 1+3
-  (Unidad B, plan 96) y son operacionalmente exigibles para artifacts nuevos;
-  LC-1/PC-1 (lineage de findings / pending decisions) siguen siendo semántica
-  objetivo hasta el Incremento 2.
+  (Unidad B, plan 96); LC-1 (lineage de findings/corrections con refs
+  calificadas) y PC-1 (persistencia de pending decisions bloqueantes) quedaron
+  materializados por el Incremento 2 (Unidad C, plan 97). Los cuatro son
+  operacionalmente exigibles para artifacts nuevos; los artifacts previos son
+  legacy y no se reescriben.
 - Ningún incremento anterior invalida artifacts legacy ni impone requisitos sin
   mecanismo; la ausencia de campos nuevos indica legacy, no invalidez
   (`docs/rfc/75-change-lifecycle.md:Mecanismo 15 — Migration / Legacy`).
@@ -286,7 +288,9 @@ propio (A2)** sobre S2. Propiedades:
   el significado de A1.
 - No existe entidad, registry ni state machine de revalidación: es una relación
   de evidencia entre validaciones del mismo contrato; el lineage formal con
-  refs calificadas pertenece al Incremento 2 (RFC-75
+  refs calificadas está operativo desde el Incremento 2 (Unidad C, plan 97;
+  ver «Change Lifecycle — Findings y correcciones (regla operacional; LC-1,
+  Incremento 2)» en esta sección; RFC-75
   `docs/rfc/75-change-lifecycle.md:Mecanismo 8 — Findings / Corrections / Revalidation`).
 
 **Scoped Content Identity (algoritmo v1)** — identidad de contenido
@@ -365,3 +369,90 @@ determinista sobre los effective inputs repo
   validación realizada sobre un estado Git; el checkpoint relaciona
   posteriormente el closure con ese estado; `Closed` nunca es prerrequisito de
   un anchor ni de una revalidación.
+
+### Change Lifecycle — Findings y correcciones (regla operacional; LC-1, Incremento 2)
+
+**Finding (registro factual en su artifact).** Un finding es una relación de
+lineage (origin → observation → correction → revalidation → result) registrada
+en el artifact que la detecta/posee; no existe entidad arquitectónica `Finding`
+(RFC-75 `docs/rfc/75-change-lifecycle.md:Mecanismo 8 — Findings / Corrections / Revalidation`).
+Para artifacts nuevos:
+
+- Formato: ref calificada `<artifact>:F-<n>`; el namespace pertenece al
+  artifact del registro. No existe namespace ni registry global; el número es
+  locator del registro, nunca autoridad normativa (ADR-16 AU-4/AU-5). Refs
+  cross-artifact son posibles y legítimas.
+- Elementos inmutables del finding: identidad (ref), observación original,
+  evidencia original (ref a validación/anchor, estado Git y cita
+  `ruta:sección` cuando aplique), estado Git donde fue observado y provenance
+  original. No se reescriben ni se reinterpretan retrospectivamente (CL-8;
+  RFC-46).
+- La metadata de lifecycle (estado y resolución) puede evolucionar preservando
+  el histórico de transiciones. Estados válidos: `open`,
+  `partially-resolved`, `resolved`, `deferred` (con owner/destino) y
+  `superseded` (sustituido/duplicado; ≠ `resolved`; nunca borrado silencioso).
+  Reapertura: finding nuevo que referencia al original **o** metadata/historial
+  `reopened` (ambas permitidas). El mecanismo concreto de preservación del
+  histórico (metadata actual con histórico, append-only u otra representación
+  compatible) es decisión de implementación del artifact, sin contradecir
+  CL-8.
+- Cardinalidades N:M: 1 finding → N corrections; N findings → 1 correction;
+  1 correction → N revalidaciones.
+- Un finding sobre un artifact cerrado se registra en un artifact nuevo con ref
+  al cerrado (post-close por referencia; RFC-75
+  `docs/rfc/75-change-lifecycle.md:Mecanismo 12 — Post-close Changes`); el
+  artifact cerrado no se reabre.
+- Los `F-xx` bare de bitácoras/auditorías históricas (bitácora del plan 19,
+  auditorías F1–F7, backlog) son namespaces distintos y legítimos; no se
+  migran ni se mezclan con el lineage lifecycle.
+
+**Correction (registro de provenance).** La acción de corregir está autorizada
+normativamente por el Plan aprobado (o por la vía RFC-56 / Clase C según
+corresponda); el registro `C-<n>` documenta la corrección realizada y es
+**FACTUAL / TRACEABILITY**, no una fuente normativa. Para artifacts nuevos:
+
+- Formato: `<artifact>:C-<n>`, namespace del artifact que posee el registro;
+  sin registry global; el número no otorga autoridad.
+- Toda corrección preserva provenance hacia su origen/finding y declara su
+  **alcance de revalidación** (CL-6); el resultado de la revalidación es
+  trazable a la corrección y a su origen (CL-7).
+- Cadena cuando corresponde: finding → correction → estado posterior S2 →
+  revalidación V2 (anchor A2) → evidencia → resolución/elegibilidad de cierre.
+  No toda corrección requiere revalidación (solo si cambia el estado scoped
+  relevante; CL-2 + Decisión B) y no toda revalidación requiere finding.
+- La resolución de un finding (`resolved`/`partially-resolved`/`deferred`/
+  `superseded`) es decisión humana con evidencia (CL-8; ADR-16 AU-3); el
+  agente detecta, registra, propone y escala, no resuelve unilateralmente.
+- Corrections y findings se registran en el artifact que los posee; no existe
+  entidad global de Correction ni de Finding.
+
+### Change Lifecycle — Pending decisions (regla operacional; PC-1, Incremento 2)
+
+**Pending** es una decisión pendiente registrada en el **artifact que posee la
+decisión** (el que requiere la resolución), con refs a los artifacts
+bloqueados; no es un lifecycle state global, no es un finding ni un checker
+output, y no existe entidad `Decision` (RFC-75
+`docs/rfc/75-change-lifecycle.md:Mecanismo 9 — Pending Decisions`). Para
+artifacts nuevos:
+
+- Metadata requerida: `blocking/no-blocking`, `owner`, `escalación`,
+  `resolución`, `evidencia`, `efecto downstream` y `ADR-worthiness`.
+- **PC-1**: toda decisión pendiente **bloqueante** persiste en el artifact que
+  bloquea; nunca desaparece. Las no-bloqueantes se registran con su metadata;
+  no todo pending es bloqueante.
+- Ownership: si el owner se supersede/elimina/cierra → transferir al sucesor o
+  escalar al humano; si dos artifacts reclaman ownership → el humano decide con
+  refs a todos los reclamantes (AU-3).
+- La determinación de blocking/materialidad es decisión humana cuando la
+  normativa la requiere (ADR-16 AU-3; Plan 94 §8); la resolución se registra
+  con decisión + evidencia + artifacts afectados en el artifact dueño y en el
+  registro del pendiente.
+- No confundir modelos: **Pending** (decisión per-artifact) ≠ **finding open**
+  (estado de metadata de un finding) ≠ **Warning** (salida informativa de
+  checkers) ≠ **GAP** (evidencia faltante; no invalidación, RFC-75 Mecanismo
+  14) ≠ **FAIL** (violación mecánica) ≠ **Observation** (finding no bloqueante
+  registrado como observación).
+- Implicación operacional (derivada de PC-1 + matriz de governance, no regla
+  nueva): al intentar derivar `Closed`, los findings deben estar resueltos o
+  diferidos con destino/ownership y no debe existir pending bloqueante sin
+  resolución ni escalación con dueño.

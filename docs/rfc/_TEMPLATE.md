@@ -59,6 +59,11 @@ auditoría/validación (CL-1/CL-2, Incremento 1) incluyen su Validation Anchor:
 declared scope, validation command-set, effective inputs, environmental
 factors y Scoped Content Identity
 (docs/CONVENTIONS.md:Change Lifecycle — Validation anchors y Scoped Content
-Identity (regla operacional; VC-1, Incremento 1)). -->
+Identity (regla operacional; VC-1, Incremento 1)). Las entradas que registran
+findings/correcciones/revalidaciones (Incremento 2, LC-1) referencian refs
+calificadas `<RFC-NN>:F-<n>`/`C-<n>` cuando corresponda, con su provenance y
+alcance de revalidación
+(docs/CONVENTIONS.md:Change Lifecycle — Findings y correcciones (regla
+operacional; LC-1, Incremento 2)). -->
 
 - YYYY-MM-DD — Creación.

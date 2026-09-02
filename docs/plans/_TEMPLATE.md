@@ -94,6 +94,46 @@ operacional; GC-1, Incremento 3)):
 - Condición derivada: Closed (docs-only) | Closed (con release pendiente) |
   no cerrado (motivo) -->
 
+## Findings / Correcciones / Pending
+
+<!-- Opcional: se completa solo cuando el artifact posee registros reales
+(regla operacional del Incremento 2;
+docs/CONVENTIONS.md:Change Lifecycle — Findings y correcciones (regla
+operacional; LC-1, Incremento 2) y docs/CONVENTIONS.md:Change Lifecycle —
+Pending decisions (regla operacional; PC-1, Incremento 2)). Los artifacts
+legacy (creados antes del Incremento 2) o sin registros no necesitan esta
+sección: la ausencia no es invalidez (RFC-75 Mecanismo 15). Los escenarios
+sintéticos de verificación no se registran aquí. Si no hay registros reales al
+cerrar: "No findings detected / N/A". -->
+
+### Findings
+
+<!-- Formato: ref calificada `<artifact>:F-<n>` con namespace del artifact.
+Inmutables: identidad, observación original, evidencia original, estado Git
+observado y provenance original. Evolucionable: metadata de estado preservando
+histórico. Estados: open | partially-resolved | resolved | deferred
+(owner/destino) | superseded. Reapertura: finding nuevo con ref al original o
+metadata reopened. N:M con corrections/revalidaciones. -->
+
+- `<PLAN-NN>:F-01` — estado: ...; observación: ...; evidencia original: ...
+
+### Correcciones
+
+<!-- Formato: ref calificada `<artifact>:C-<n>`. Registro FACTUAL/TRACEABILITY
+(no fuente normativa; la acción la autoriza el Plan aprobado). Provenance a
+finding(s) de origen y alcance de revalidación (CL-6). -->
+
+- `<PLAN-NN>:C-01` — refs origen: ...; alcance de revalidación: ...; evidencia
+  (Git/commit/estado): ...
+
+### Pending decisions
+
+<!-- Pending per-artifact (PC-1). Metadata: blocking/no-blocking, owner,
+escalación, resolución, evidencia, efecto downstream y ADR-worthiness. -->
+
+- `<PLAN-NN>` — decisión: ...; blocking: sí/no; owner: ...; escalación: ...;
+  resolución: ...; evidencia: ...
+
 ## Riesgos
 
 <!-- Opcional en planes chicos. Qué puede salir mal y mitigación. -->

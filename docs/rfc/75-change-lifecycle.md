@@ -536,3 +536,12 @@ produce bump de `VERSION` ni tag; cambio docs-only (RFC-69).
   operacionalmente exigibles para artifacts nuevos; legacy intacto (ausencia
   de campos = legacy, no invalidez). Cambio docs-only: sin `VERSION` bump ni
   tag (RFC-69).
+- 2026-09-02 — Incremento 2 materializado (plan 97, Unidad C): reglas
+  operativas de findings (`<artifact>:F-<n>`, estados, N:M, post-close por
+  referencia), corrections como registro de provenance (`C-<n>`; registro
+  factual/traceability, no fuente normativa) y pending decisions per-artifact
+  (PC-1), para artifacts nuevos, con guías en `docs/CONVENTIONS.md` y en los
+  templates de Plan y RFC. LC-1/PC-1 pasan de semántica objetivo a
+  operacionalmente exigibles para artifacts nuevos; legacy intacto (ausencia de
+  campos = legacy, no invalidez). Cambio docs-only: sin `VERSION` bump ni tag
+  (RFC-69).

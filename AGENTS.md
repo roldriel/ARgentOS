@@ -89,7 +89,13 @@ registered validation records a **Validation Anchor** (declared scope,
 validation command-set, effective inputs, environmental factors, Scoped
 Content Identity), and closing a plan records a **Git checkpoint** linking
 closure to the validated committed state (closure commits + anchor↔checkpoint
-consistency) before `Closed` is derived. `Closed` is a derived condition —
+consistency) before `Closed` is derived. Since Increment 2 (plan 97),
+findings, corrections and pending decisions are operational for new artifacts:
+findings use qualified refs `<artifact>:F-<n>` with per-artifact namespaces,
+corrections record provenance as `C-<n>` traceability records (never a
+normative source by themselves), and blocking pending decisions persist in the
+artifact that owns them (PC-1). Absence of these fields in artifacts created
+before Increment 2 is legacy, not invalidity. `Closed` is a derived condition —
 plan `Executed` + applicable governance + a Git checkpoint +
 checkpoint↔anchor consistency — not a plan status. Plans closed before these
 increments (94/95 and earlier) keep their historical records as legacy;

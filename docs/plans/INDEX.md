@@ -372,6 +372,54 @@ RFC-75/ADR-15/16, VERSION ni Planes 94–99; sin push.
 |---|---|---|---|
 | `100-change-lifecycle-lineage-integrity.md` | RFC-75 | Executed | Plan de implementación de la continuación post-roadmap A–D del Change Lifecycle DEV: selecciona con evidencia la capacidad de integridad de lineage findings/corrections/revalidación (LC-1/CL-6/CL-7) y especifica C-3 — lifecycle lineage checker (`tools/check_lifecycle_lineage.py` + `tests/test_check_lifecycle_lineage.py` propuestos): población estructural del dominio del Incremento 2 (contenedor `## Findings / Correcciones / Pending`; subsecciones `### Findings`/`### Correcciones`; `### Pending decisions` fuera de v1), contrato de registros y refs calificadas `<artifact>:F-<n>`/`C-<n>` con namespace del artifact, vocabulario de estados (open/partially-resolved/resolved/deferred/superseded), elementos inmutables del finding (CL-8), provenance a origen y alcance de revalidación de corrections (CL-6), soporte declarado de claims de revalidación en el `## Validation anchor`/checkpoint del mismo artifact (CL-7), marcadores de ausencia (`No findings detected / N/A`) y contradicciones de resolución; clasificaciones EXCLUDED/BOUNDARY/N/A/VALID/GAP/ANOMALY con GAP advisory ≠ ANOMALY y sin autoridad normativa (ADR-16); read-only, stdlib-only, sin Git en v1, exit 0 salvo ANOMALY; matriz de tests T01–T28 (happy path, missing, malformed, conflicting, legacy, boundary `reopened`, no-retroactivity, determinismo, ejecución repetida, adversarial, dogfooding real, stdlib-only); dogfooding esperado Plan 98 `N/A`, Plan 99 `VALID`, planes 96/97 y legacy `EXCLUDED`, `ANOMALY=0`; sin F-3 (no bloqueante; GAP sin tie-break ante duplicados), sin F-2…F-9, sin pending/PC-1, sin C-1/C-2, sin RFC/ADR nuevos, sin incorporación a batería canónica/CI; commits C1/C2 al ejecutar; anchor/checkpoint propios; cierre docs-only sin release; RFC-75/ADR-15/16 y Planes 94–99 intactos. **Creación (2026-09-02):** artifact creado y registrado sin ejecutar (Status `Aprobado para ejecución`, PLANNED / OPEN; veredicto GO WITH CONDITIONS C1–C4); checkers documentales en verde; sin commits; Plan 100 NO `Executed`/`Closed`. **Ejecución (2026-09-02):** C-3 implementado y verificado — pytest suite C-3 `40 passed` (matriz T01–T28 + 12 adversariales permanentes) y pytest global `428 passed, 0 failed`; checkers canónicos PASS; commit C1 `1ffe24c` (contenido: tool + suite) en `dev`; dogfooding C-3: planes 96/97 `EXCLUDED`, plan 98 `N/A`, plan 99 `VALID` (cadena `<PLAN-99>:F-1` → `<PLAN-99>:C-1`), legacy 01–95 `EXCLUDED`, plan 100 `BOUNDARY` pre-C2 → `N/A` tras su cierre, GAP=0, ANOMALY=0; Validation Anchor V1 (T1 `2f348f37…`; delta `e4f715ec…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); sin cambios en `protocol/`, `runtime/`, C-1/C-2, RFC-75/ADR-15/16, VERSION ni Planes 94–99; sin push. |
 
+## Trigésima tercera serie: Change Lifecycle DEV — Capa operacional `.agents/` (Plan 101) (02 sep 2026)
+
+Implementation Plan **posterior al cierre de la serie A–D** del Change
+Lifecycle DEV (RFC-75): formaliza la materialización futura de la **capa
+operacional `.agents/` de ARgentOS DEV** en la raíz del repo fuente como
+interfaz operacional permanente que un agente LLM lee para ejecutar el Change
+Lifecycle (entry point `.agents/AGENTS.md` + workflow
+`.agents/workflows/change-lifecycle.md` + policies de authority,
+validation-closure y lifecycle-checkers), con integración mínima de
+descubrimiento/taxonomía/frontera en `AGENTS.md` raíz, `docs/AGENTS.md` y
+`docs/CONVENTIONS.md`; fuente de diseño = staging temporal gitignored
+`sessions/agents-dev-layer/` (no versionado, no operacional), con transición
+explícita staging → `/.agents/` y eliminación del staging tras materialización
+verificada (sin duplicación operacional permanente). Reutiliza RFC-75,
+ADR-15/16, C1/C2/C3, templates y convenciones sin crear autoridad normativa
+nueva, sin state machines/registries/databases/tracker globales, sin copiar
+`protocol/.agents/` (frontera DEV/Protocol intacta; `protocol/`, `dist/`,
+`runtime/`, `tools/`, `tests/` excluidos), sin checkers nuevos ni modificación
+de C1/C2/C3 salvo necesidad factual estrictamente imprescindible autorizada
+por el propio alcance, sin F-3/F-2…F-9, sin RFC/ADR nuevos ni modificación de
+RFC-75/ADR-15/16 ni Planes 94–100; gates G0–G7, criterios AC-101-01…AC-101-18,
+dogfooding operacional, recovery con Git, commits C1/C2 al ejecutar, cierre
+docs-only sin release (RFC-69). **Creación (2026-09-02):** artifact creado y
+registrado sin ejecutar (Status `Aprobado para ejecución`, PLANNED / OPEN;
+Planned YES; Executed NO; Committed NO; Verified NO; Closed NO; Released NO;
+veredicto GO — CREATION ONLY; ejecución futura GO WITH CONDITIONS C1–C4);
+checkers documentales en verde; C1/C2/C3 sin ANOMALY; sin commits; Plan 101 NO
+`Executed`/`Closed`; `.agents/` NO materializado; staging intacto.
+**Ejecución (2026-09-03):** Plan 101 ejecutado con autorización explícita del
+mantenedor — capa `.agents/` materializada en la raíz (5 archivos: AGENTS.md +
+workflow + 3 policies, 1:1 con el diseño staged verificado por hash),
+integración mínima aplicada (`AGENTS.md` raíz con puntero de descubrimiento;
+`docs/AGENTS.md` con taxonomía de la capa operacional; `docs/CONVENTIONS.md`
+con frontera documental Producto vs DEV), dogfooding G7 PASS (cadena
+`AGENTS.md` → `.agents/AGENTS.md` → workflow → policies sin cargar todo
+`docs/`); pytest `428 passed, 0 failed`; checkers canónicos PASS; C1/C2/C3
+GAP=0, ANOMALY=0; commit C1 `3706570` (contenido) + C2 (registro) en `dev`;
+Validation Anchor V1 (T1 `74f96b14…`; delta `47c95eee…`) y Checkpoint con
+revalidación V2 antes de `Closed`; status `Executed`; condición derivada
+`Closed` (docs-only, sin release); staging `sessions/agents-dev-layer/`
+eliminado tras materialización verificada; sin findings/corrections reales;
+sin cambios en `protocol/`, `runtime/`, C-1/C-2/C-3, RFC-75/ADR-15/16,
+VERSION ni Planes 94–100; sin push.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `101-change-lifecycle-agents-operational-layer.md` | RFC-75 | Executed | Plan de implementación posterior al roadmap A–D del Change Lifecycle DEV: autoriza la **materialización futura** de la capa operacional `.agents/` de ARgentOS DEV en la raíz del repo fuente (ubicación canónica `/.agents/`), como interfaz operacional permanente del agente LLM para ejecutar el Change Lifecycle — `.agents/AGENTS.md` (entry point operacional DEV; descubrible desde el `AGENTS.md` raíz), `.agents/workflows/change-lifecycle.md` (intake → estado Git → detección/clasificación → autorización → Plan → ejecución → evidencia → validación → findings/corrections/revalidation → checkpoint → Closed → post-close), `.agents/policies/authority.md` (FACTUAL/NORMATIVE/DECISION/RELEASE/DESCRIPTIVE + detect → classify → escalate → human decision → correct artifact → revalidate), `.agents/policies/validation-closure.md` (A1/A2/revalidation/anchor/closure state/checkpoint/Executed/Committed/Verified/Closed/Released/GAP/ANOMALY/stop conditions; GC-1 por correspondencia de estado validado→cierre, semántica corregida F-1 en C-2, sin latest A2 wins ni generic tree membership) y `.agents/policies/lifecycle-checkers.md` (C1/C2/C3: cuándo/input/VALID/GAP/ANOMALY/acción; deterministas, no normativos; sin copiar algoritmos) — más integración mínima de descubribilidad, entry point, taxonomía (`docs/AGENTS.md`) y frontera documental Product/Protocol vs DEV (`docs/CONVENTIONS.md`); fuente de diseño = staging temporal `sessions/agents-dev-layer/` (gitignored, no versionado, no operacional) con transición y eliminación del staging tras materialización exitosa (AC-101-09); sin autoridad normativa nueva (`.agents/` = operación sobre contratos existentes; `docs/` = autoridad/historia; `tools/` = verificación determinista); frontera DEV/Protocol intacta (sin copias de `protocol/.agents/`; `protocol/`, `dist/`, `runtime/`, `tools/`, `tests/` excluidos); sin checkers nuevos, sin modificación de C1/C2/C3 salvo necesidad factual imprescindible autorizada, sin F-3/F-2…F-9, sin pending/PC-1 nuevos, sin RFC/ADR, sin state machines/registries/databases/trackers; gates G0–G7 y criterios AC-101-01…AC-101-18 verificables; dogfooding operacional (AGENTS.md → `.agents/AGENTS.md` → workflow → clasificación → autoridad → Plan → ejecución → C1/C2/C3 → validation → checkpoint → Closed) sin cargar todo `docs/`; recovery con Git (materialización parcial, paths incorrectos, divergencia staging/`.agents/`, modificación accidental de `protocol/.agents/`, root AGENTS incorrecto, docs incoherente, validación fallida, rollback); commits C1 (materialización/integración) y C2 (registro/cierre) al ejecutar en `dev`, sin push/tag/release/VERSION bump; anchor/checkpoint propios (V1/V2) al cerrar; cierre docs-only sin release (RFC-69); RFC-75/ADR-15/16 y Planes 94–100 intactos. **Creación (2026-09-02):** artifact creado y registrado sin ejecutar (Status `Aprobado para ejecución`, PLANNED / OPEN; Planned YES; Executed NO; Committed NO; Verified NO; Closed NO; Released NO; veredicto GO — CREATION ONLY; ejecución futura GO WITH CONDITIONS C1–C4); checkers documentales en verde (estructura, citas; C1/C2/C3 GAP=0, ANOMALY=0); sin commits; Plan 101 NO `Executed`/`Closed`; `.agents/` NO materializado en la raíz; staging `sessions/agents-dev-layer/` intacto. **Ejecución (2026-09-03):** capa `.agents/` materializada e integrada — commit C1 `3706570` (5 archivos `.agents/` + `AGENTS.md` + `docs/AGENTS.md` + `docs/CONVENTIONS.md`) y commit C2 (registro/cierre) en `dev`; pytest `428 passed, 0 failed`; checkers canónicos PASS; dogfooding C1/C2/C3 GAP=0, ANOMALY=0 (plan 101 `VALID` C-1/C-2, `N/A` C-3); Validation Anchor V1 (T1 `74f96b14…`; delta `47c95eee…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); staging eliminado; sin findings/corrections; sin cambios en `protocol/`, `runtime/`, C-1/C-2/C-3, RFC-75/ADR-15/16, VERSION ni Planes 94–100; sin push. |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

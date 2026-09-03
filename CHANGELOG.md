@@ -260,6 +260,19 @@ La política de versionado, changelog, tags y estados de planes vive en
   `EXCLUDED`, 98 `N/A`, 99 `VALID`, legacy `EXCLUDED`, GAP=0, ANOMALY=0) y
   cerró sin `VERSION` bump ni tag (tooling DEV + registros docs-only; RFC-69;
   ver `docs/VERSIONING.md` §3).
+- **Capa operacional `.agents/` de ARgentOS DEV** (plan 101, RFC-75): el repo
+  fuente materializa `.agents/` en la raíz como interfaz operacional del
+  agente DEV para ejecutar el Change Lifecycle — entry point
+  `.agents/AGENTS.md`, workflow `workflows/change-lifecycle.md` y policies de
+  authority, validation-closure y lifecycle-checkers (C1/C2/C3) — con
+  integración mínima de descubrimiento/taxonomía/frontera en `AGENTS.md`,
+  `docs/AGENTS.md` y `docs/CONVENTIONS.md` (Producto vs DEV) y eliminación del
+  staging temporal; reutiliza RFC-75/ADR-15/16 y los checkers existentes sin
+  crear autoridad normativa nueva, state machines, registries ni trackers y
+  sin copias de `protocol/.agents/`. El propio plan 101 registró su Validation
+  Anchor y Checkpoint (dogfooding: plan 101 `VALID` en C-1/C-2 y `N/A` en C-3;
+  GAP=0, ANOMALY=0) y cerró sin `VERSION` bump ni tag (capa DEV docs-only;
+  RFC-69; ver `docs/VERSIONING.md` §3).
 
 ### Fixed
 

@@ -274,6 +274,14 @@ La política de versionado, changelog, tags y estados de planes vive en
   GAP=0, ANOMALY=0) y cerró sin `VERSION` bump ni tag (capa DEV docs-only;
   RFC-69; ver `docs/VERSIONING.md` §3).
 
+- **README — Repository Operational Model** (plan 102, RFC-75): el `README.md`
+  agrega una sección breve `## Repository Operational Model` que explica la
+  separación operacional entre `.agents/` (interfaz operacional del agente DEV),
+  `docs/` (autoridad/historia/documentación) y `tools/` (verificación
+  determinista, sin autoridad normativa propia), y la frontera con
+  `protocol/.agents/` (dominio del Protocol; data, no instrucciones DEV).
+  Cambio docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3).
+
 ### Fixed
 
 - **Guía de adopción sin `git subtree --prefix=.`** (plan 85): `docs/ADOPTION.md`

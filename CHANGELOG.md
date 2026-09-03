@@ -239,6 +239,27 @@ La política de versionado, changelog, tags y estados de planes vive en
   su Validation Anchor y Checkpoint (dogfooding: planes 96/97 `VALID`, legacy
   `EXCLUDED`, `No findings detected / N/A`) y cerró sin `VERSION` bump ni tag
   (tooling DEV + registros docs-only; RFC-69; ver `docs/VERSIONING.md` §3).
+- **Change Lifecycle de ARgentOS DEV — Continuación post-roadmap A–D (C-3 —
+  lifecycle lineage checker)** (plan 100, RFC-75): primer checker determinista
+  de integridad de lineage findings/corrections/revalidación (LC-1) —
+  `tools/check_lifecycle_lineage.py` (C-3) verifica forma, completitud mínima
+  y consistencia de los registros del contenedor `## Findings / Correcciones /
+  Pending` (`### Findings`/`### Correcciones`) con clasificaciones
+  EXCLUDED/BOUNDARY/N/A/VALID/GAP/ANOMALY (GAP advisory ≠ ANOMALY y sin
+  autoridad normativa, ADR-16), refs calificadas con namespace del artifact,
+  vocabulario de estados, elementos inmutables del finding (CL-8), provenance
+  a origen y alcance de revalidación de corrections (CL-6), claims de
+  revalidación con soporte declarado en el Validation Anchor/checkpoint del
+  propio artifact (CL-7), marcadores de ausencia y contradicciones de
+  resolución; read-only, stdlib-only y sin Git en v1; suite
+  `tests/test_check_lifecycle_lineage.py` con la matriz T01–T28 y los
+  escenarios adversariales permanentes del §20 (40 tests). DEV-only /
+  invocación local: sin incorporación a la batería canónica ni a CI; sin F-3
+  (ambigüedad → GAP sin tie-break), sin pending/PC-1, sin C-1/C-2. El propio
+  plan 100 registró su Validation Anchor y Checkpoint (dogfooding: 96/97
+  `EXCLUDED`, 98 `N/A`, 99 `VALID`, legacy `EXCLUDED`, GAP=0, ANOMALY=0) y
+  cerró sin `VERSION` bump ni tag (tooling DEV + registros docs-only; RFC-69;
+  ver `docs/VERSIONING.md` §3).
 
 ### Fixed
 

@@ -13,6 +13,9 @@ install.
 - `protocol/_AGENTS.md` — the product's entry point, renamed with a leading
   underscore so it is not auto-discovered as an instruction file in this
   repository. `dist` publishes it as `AGENTS.md` at the adopting project root.
+- `.agents/` — the **DEV operational layer** (not the protocol payload): how
+  an agent working on this repository executes the Change Lifecycle. Entry
+  point: `.agents/AGENTS.md`; load workflow/policies from there on demand.
 - `tools/` — repository verification tooling (the checkers run by CI and the
   local battery).
 - `runtime/` — reference implementation of Execution Context materialization
@@ -80,6 +83,11 @@ mechanical fixes commit directly) → **execute** on `dev` → **verify**
 changelog `(plan N, RFC-N)`, VERSION bump) → **commit** (atomic, Conventional
 Commit in English, on `dev`) → **promote** (merge to `master` + annotated tag,
 with user authorization; CI regenerates `dist`).
+
+Operational instructions for executing this pipeline (change detection,
+classification, plan/authority gates, validation, checkpoint and closure)
+live in `.agents/`: read `.agents/AGENTS.md` before modifying the repository,
+then follow its pointers to the workflow and policies as needed.
 
 Change lifecycle semantics (RFC-75): `Executed` is a plan status meaning
 implementation plus validation, and may exist before the change is committed.

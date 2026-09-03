@@ -121,11 +121,19 @@
   plan ejecutado que toca el payload produce una versión, atada a su RFC);
   invariante versión ↔ changelog ↔ tag; los estados de planes y RFCs cambian
   en el commit del plan y se reflejan en los INDEX.
-- **Frontera documental**: `.agents/` (versionado, permanente) no referencia
-  `docs/plans/`, `docs/rfc/` ni ADRs. Los conceptos que `.agents/` necesita se
-  definen inline, de forma autocontenida. Ningún plan debe instruir referencias
-  `.agents/` → `docs/plans/`; la instrucción correcta es siempre "definir el
-  concepto inline, sin mencionar la RFC".
+- **Frontera documental (Producto)**: en el layout del Producto (`.agents/`
+  adoptado en `dist`; `protocol/.agents/` como data en fuente), `.agents/`
+  (versionado, permanente) no referencia `docs/plans/`, `docs/rfc/` ni ADRs.
+  Los conceptos que `.agents/` necesita se definen inline, de forma
+  autocontenida. Ningún plan debe instruir referencias `.agents/` →
+  `docs/plans/`; la instrucción correcta es siempre "definir el concepto
+  inline, sin mencionar la RFC".
+- **Frontera operacional (DEV)**: `.agents/` en la raíz del repo fuente es la
+  capa operacional del agente DEV (Plan 101): instrucciones de operación del
+  Change Lifecycle que referencian la autoridad de `docs/` sin duplicarla ni
+  reemplazarla. No crea autoridad normativa nueva, no es fuente superior de
+  verdad y no importa mecanismos del Producto (`protocol/.agents/` es data de
+  otro dominio; RFC-75 `docs/rfc/75-change-lifecycle.md:Dev vs Protocol`).
 - **Layout fuente (RFC-55)**: el payload del producto vive en `protocol/`
   (`protocol/.agents/` + `protocol/_AGENTS.md`); el layout adoptado (`dist`)
   mantiene `.agents/` + `AGENTS.md` en la raíz. Los docs del payload describen
@@ -142,6 +150,10 @@ los checkers dev. No gobierna automáticamente la evolución del Protocol
 
 - No se crean workflow/policy/state machine/artifact/skill compartidos entre
   DEV y Protocol; no hay herencia automática.
+- `.agents/` (raíz) es la interfaz operacional del agente DEV para ejecutar el
+  Change Lifecycle: la operación vive ahí, la autoridad/historia en `docs/`
+  (RFC/ADR/Plan) y la verificación determinista en `tools/`. La capa no se
+  convierte en gobernanza ni en fuente superior de verdad.
 - Principios potencialmente transferibles (revalidación ante continuidad;
   persistir ≠ materializar; separación entre evidencia factual y autoridad
   normativa) quedan como principios, no como mecanismos

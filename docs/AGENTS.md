@@ -29,6 +29,11 @@ del repositorio con data y código. Product = `protocol/.agents/` +
 `protocol/_AGENTS.md`; Tooling = `tools/`, `runtime/`, `tests/`. No se fuerza
 clasificación documental sobre artefactos de otras capas.
 
+**Operational** tampoco es una naturaleza documental: `.agents/` en la raíz
+es la capa operacional del agente DEV (interfaz de operación del Change
+Lifecycle; instrucciones, no autoridad normativa). `docs/` es
+autoridad/historia/documentación; `tools/` es verificación determinista.
+
 **Historical** no es una naturaleza: es un lifecycle aplicable a cualquier
 clase (un Policy archivado, un Working archivado, un Governance superseded).
 
@@ -89,7 +94,7 @@ de verdad. Support docs clasificados explícitamente:
 
 Excepciones que no son documentación fuente normal: `sessions/` (staging),
 `.project/` (efímero), `tests/fixtures/` (fixtures), `protocol/.agents/`
-(Product).
+(Product), `.agents/` (capa operacional DEV; raíz del repo fuente).
 
 ### References
 
@@ -140,3 +145,6 @@ español en `docs/`, `docs/plans/` y `docs/rfc/`; `README.md` en inglés. Las
 afirmaciones sobre el estado actual del repo se anclan con `ruta:sección`
 (`docs/CONVENTIONS.md:Convenciones`). Los documentos de esta carta son
 canónicos; el resto del repo referencia, nunca duplica (`docs/CONVENTIONS.md:Convenciones`).
+
+La capa operacional `.agents/` de la raíz (DEV) se escribe en inglés, igual que
+el `AGENTS.md` raíz de desarrollo: es lo que leen los agentes.

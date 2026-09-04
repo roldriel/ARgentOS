@@ -1,10 +1,10 @@
 # ADR-06 — Execution Identity (D5)
 
-**Status:** Accepted (decisión registrada; formalización pendiente: RFC-64 `Proposal`, plan 78 gated)
+**Status:** Accepted (decisión registrada; formalización por RFC-64 `Accepted` (plan 103, 2026-09-03); implementación pendiente: plan 78 sin ejecutar)
 **Fecha:** 2026-08-27
 **Decisión original:** D5 (2026-08-25)
-**RFC:** [RFC-64](docs/rfc/64-execution-record-model.md) (`Proposal`, plan 78 gated)
-**Plan:** [plan 78](docs/plans/78-execution-record-model.md) (`Aprobado para ejecución`, gated)
+**RFC:** [RFC-64](docs/rfc/64-execution-record-model.md) (`Accepted` (plan 103, 2026-09-03); plan 78 sin ejecutar)
+**Plan:** [plan 78](docs/plans/78-execution-record-model.md) (`Aprobado para ejecución`, sin ejecutar)
 **Clase de cambio:** MAJOR (contratos de registros; RFC-56)
 **Problemas que resuelve:** P3, P15, P18 (CG-02)
 
@@ -63,6 +63,7 @@ y la instancia de worker no se persiste
 
 ## Estado de implementación
 
-Decisión `DECIDED` en el modelo (2026-08-25). RFC-64 permanece `Proposal` y el plan
-78 está `Aprobado para ejecución` gated a la aceptación de la RFC (Clase A, RFC-56);
-el ADR registra la decisión, no habilita cambios de payload.
+Decisión `DECIDED` en el modelo (2026-08-25). RFC-64 `Accepted` (plan 103,
+2026-09-03); el plan 78 permanece `Aprobado para ejecución` sin ejecutar (la
+aceptación de la RFC no autoriza por sí sola la implementación; Clase A,
+RFC-56); el ADR registra la decisión, no habilita cambios de payload.

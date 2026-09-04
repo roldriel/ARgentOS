@@ -1,10 +1,10 @@
 # ADR-11 — Observability / Budget (D10)
 
-**Status:** Accepted (decisión registrada; formalización por RFC-64 `Accepted` (plan 103, 2026-09-03); implementación pendiente: plan 78 sin ejecutar)
+**Status:** Accepted (decisión registrada; formalización por RFC-64 `Accepted` (plan 103, 2026-09-03); implementación materializada en 11.0.0 por plan 78 (2026-09-04))
 **Fecha:** 2026-08-27
 **Decisión original:** D10 (2026-08-25)
-**RFC:** [RFC-64](docs/rfc/64-execution-record-model.md) (`Accepted` (plan 103, 2026-09-03); plan 78 sin ejecutar)
-**Plan:** [plan 78](docs/plans/78-execution-record-model.md) (`Aprobado para ejecución`, sin ejecutar)
+**RFC:** [RFC-64](docs/rfc/64-execution-record-model.md) (`Accepted` (plan 103, 2026-09-03); implementada en 11.0.0 por plan 78)
+**Plan:** [plan 78](docs/plans/78-execution-record-model.md) (`Executed`, 2026-09-04; cierre en `dev`, release pendiente)
 **Clase de cambio:** MAJOR (contratos de métricas; RFC-56)
 **Problemas que resuelve:** P4 (CG-03/CG-02; NBI-1)
 
@@ -64,7 +64,7 @@ se corrige para usar una sola fuente temporal (D7, NBI-1)
 ## Estado de implementación
 
 Decisión `DECIDED` en el modelo (2026-08-25). RFC-64 `Accepted` (plan 103,
-2026-09-03); el plan 78 permanece `Aprobado para ejecución` sin ejecutar (la
-aceptación de la RFC no autoriza por sí sola la implementación; Clase A,
-RFC-56); el ADR registra la decisión, no habilita cambios de payload. La parte
+2026-09-03); implementación materializada en `11.0.0` por el plan 78
+(2026-09-04, `Executed`/`Closed` en `dev`, release pendiente de promoción).
+El ADR registra la decisión; no habilita cambios de payload (RFC-56). La parte
 de confianza de métricas ya publicada (3.25.0/plan 74, RFC-60) no se modifica.

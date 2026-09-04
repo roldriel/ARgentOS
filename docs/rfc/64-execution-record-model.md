@@ -262,3 +262,25 @@ session.duration_ms usa una sola fuente temporal.
   `reuse_event` y `provider_cache_event`; integrar la declaración de
   `state.json` en lugar de duplicarla; resolver las condiciones C3–C6
   identificadas en la revisión.
+- 2026-09-04 — Implementada (plan 78, versión `11.0.0`; `Closed` en `dev`,
+  release pendiente). El payload materializa el modelo: alcance de `state.json`
+  limitado a gates de transición H00–H07/H11 + status terminal con enforcement
+  mecánico en `runner_state.py` (`TRANSITION_TRIGGERS`; timestamps UTC con
+  `Z`; `detect_bypass` con flag de confiabilidad); sección `## Execution
+  records` e integración del alcance en `harness/INDEX.md` (ST-005); contratos
+  HARNESS_REPORT/METRICS/SESSION_LOG con `schema_version` 2.0.0 (ENTRY con
+  `iteration`/`clock` obligatorios y `timestamp_divergence.cause`; METRICS con
+  `seq`/`iteration`/`clock` en todo evento, incluidos `reuse_event` y
+  `provider_cache_event`, y `delegation` con `context_budget`/`attempt`;
+  SESSION_LOG con `Execution` y marcador `Clock`); pairing obligatorio de
+  `context_budget` en H15, contrato de delegación y `PROTOCOL_METRICS.md`;
+  `aggregate_metrics.py --audit` con correlación `(iteration, trigger)` y
+  tolerancia de 60 s (TR-002) para sesiones `>= 11.0.0`;
+  `check_session_artifacts.py` con guard `>= 11.0.0` (banda legacy
+  7.0.0–10.3.0 no re-reportada, RFC-46); `measure_context_budget.py` con
+  `--phase`/`--iteration`; `docs/MIGRATION.md` §13; `VERSION` `11.0.0` y
+  changelog `[11.0.0]`. Las tres lecturas Accepted se preservan sin
+  reinterpretación. Corrección registrada `<PLAN-78>:C-1` (ancla semántica
+  `PROTOCOL_VERSION` del runtime alineada a `11.0.0`). Validado con la batería
+  canónica (checkers PASS), pytest (`445 passed`), tests del harness del
+  producto (`109 passed`) y gates C-1/C-2/C-3 sin ANOMALY. Sin push ni tag.

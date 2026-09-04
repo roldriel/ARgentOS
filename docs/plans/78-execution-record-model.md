@@ -1,6 +1,6 @@
 # Plan 78 — Modelo de registro de ejecución (RFC-64)
 
-**Status:** Aprobado para ejecución
+**Status:** Executed
 **Fecha:** 2026-08-25 (creación); rebasado 2026-09-04 contra el estado 10.3.0
 (ver `## Nota de rebase`)
 **RFC:** RFC-64 (`docs/rfc/64-execution-record-model.md`)
@@ -523,3 +523,179 @@ Registro documental del rebase de este plan contra el estado real del repo
 - **Gate pendiente de la ejecución:** confirmación humana de la clasificación
   MAJOR y de la versión objetivo `11.0.0` + nota de migración (criterio de
   entrada; `docs/VERSIONING.md:3. Versionado`).
+
+## Nota de ejecución
+
+- 2026-09-04 — **Ejecutado el Plan 78 sobre `dev`** (autorización explícita
+  del mantenedor: «Execute Plan 78 — RFC-64 Execution Record Model», con
+  confirmación del MAJOR `11.0.0`; RFC-64 `Accepted` por plan 103). Estado
+  inicial: branch `dev`, HEAD `8f0d339` (rebase), working tree limpio,
+  `protocol/.agents/VERSION` = `10.3.0`; batería canónica en verde (checkers
+  PASS; pytest `428 passed`).
+  Clasificación: origen = ejecución autorizada del plan; clase RFC-56 = A
+  (payload); Change Level = L3 (header); dominio = payload + tooling dev +
+  tests + docs/versioning.
+  Implementación (commit C1 `d94f33a`, contenido validado por V1): contratos
+  HARNESS_REPORT/METRICS/SESSION_LOG con `schema_version` 2.0.0 (ENTRY con
+  `iteration`/`clock`/`timestamp_divergence`, METRICS con `seq`/`iteration`/
+  `clock` incluidos `reuse_event`/`provider_cache_event`, SESSION_LOG con
+  `Execution`/`Clock`); `harness/INDEX.md` con alcance integrado de
+  `state.json` (ST-005) y subsección `## Execution records`; `runner_state.py`
+  con `TRANSITION_TRIGGERS`, rechazo de triggers no transicionales,
+  timestamps UTC-`Z` y `detect_bypass` con flag de confiabilidad; H15 +
+  contrato de delegación + `PROTOCOL_METRICS.md` con la obligación y el
+  pairing de `context_budget`; `aggregate_metrics.py --audit` con correlación
+  `(iteration, trigger)` y comparación de timestamps (tolerancia 60 s) para
+  sesiones `>= 11.0.0`; `check_session_artifacts.py` con guard
+  `RECORD_PROTOCOL = (11, 0, 0)`; `measure_context_budget.py` con
+  `--phase`/`--iteration`; tests dev y del producto; MIGRATION §13; VERSION
+  → `11.0.0`; CHANGELOG `[11.0.0]`; ancla semántica del runtime
+  (`canonical.py PROTOCOL_VERSION`) alineada por `<PLAN-78>:C-1`.
+  Registro/cierre: este artifact (nota, anchor V1, checkpoint), espejo en
+  `docs/plans/INDEX.md`, Amendment Log de RFC-64 y metadatos de estado de
+  ADR-06/07/08/11 + `docs/adr/INDEX.md`; revalidación V2 (batería canónica
+  completa + pytest sobre el estado final) y gates C-1/C-2/C-3 sin ANOMALY
+  antes de `Closed`; `git diff --check` limpio; commit C2 de registro en
+  `dev`. Sin push, sin tag, sin release: versión `11.0.0` queda en `dev`
+  hasta la promoción autorizada por el mantenedor.
+
+## Validation anchor
+
+Registrado al ejecutar el Plan 78 (2026-09-04). La validación **V1** corrió
+sobre el contenido del commit de contenido C1, **antes** de agregar los
+registros de cierre de esta sección (anti-circularidad; precedente Planes
+96–103).
+
+- Declared scope: contenido del commit C1 del Plan 78 — contratos
+  HARNESS_REPORT/METRICS/SESSION_LOG (schema 2.0.0), `harness/INDEX.md`
+  (alcance de `state.json` + `## Execution records`), `runner_state.py`,
+  H15-delegation-validity, WORKER_DELEGATION_CONTRACT, PROTOCOL_METRICS,
+  `protocol/.agents/VERSION` (11.0.0), `runtime/toolcalls/canonical.py`
+  (ancla), `tools/aggregate_metrics.py`, `tools/check_session_artifacts.py`,
+  `tools/measure_context_budget.py`, tests dev (3) y del producto
+  (`test_runner_state.py`), `docs/MIGRATION.md` (§13), `CHANGELOG.md`
+  (`[11.0.0]`) — + batería canónica del repo (checkers dev + pytest) y tests
+  del producto sobre ese estado.
+- Validation command-set:
+  - `python tools/check_protocol_invariants.py --payload protocol .`
+  - `python tools/check_plan_citations.py`
+  - `python tools/check_plan_structure.py`
+  - `python tools/check_taxonomy_coherence.py`
+  - `python tools/check_session_artifacts.py`
+  - `python tools/check_version_state.py`
+  - `python -m pytest tests/ -q --basetemp .pytest_cache\basetemp`
+  - `python -m pytest protocol/.agents/harness/tests/ -q --basetemp .pytest_cache\basetemp`
+  - `git diff --check`
+- Effective inputs (repo content): contenido completo del repo en el estado
+  validado (los checkers escanean `docs/`, `protocol/`, `tools/`, `tests/`,
+  `runtime/` y la raíz; pytest consume `tests/` + `tools/` + `runtime/` +
+  `protocol/.agents/harness/tests/`); representado por el State identity
+  (tree id).
+- Observed dependencies: `no instrumentado` (sin tooling de instrumentación
+  en esta ejecución); el consumo por comando se observa de la documentación
+  de cada checker y de la batería (`docs/VERSIONING.md:4.1 Batería canónica
+  de verificación`).
+- Environmental factors: OS Windows; Python 3.14.3; git 2.55.0.windows.5;
+  pytest 9.0.3; `protocol/.agents/VERSION` = 11.0.0 (versión objetivo del
+  plan); pytest ejecutado con basetemp local `.pytest_cache\basetemp` por ACL
+  del basetemp `pytest-of-rolda` (ruido ambiental documentado en planes
+  96–102); sin red.
+- Scoped Content Identity:
+  - State identity (estado validado = árbol de C1): T1 =
+    `3e016ed1ad58ad43deb9d87bae30f8844b98ccf1` (tree id; igual a
+    `git write-tree` del estado staged y a `git rev-parse C1^{tree}`).
+  - Delta scoped identity (scope S = 19 archivos del commit C1, orden
+    lexicográfico; serialización `scoped-v1` + pares `path NUL blob NUL`):
+    `d1fd0f468a4cb5a2bf0eb2a913176e88e908601dc847540110dbc44f9b1bd12e`.
+- Validity / stale: `vigente` (V1); revalidada por **V2** (batería canónica
+  completa + pytest sobre el estado final de la ejecución, incluidos los
+  registros de cierre) antes de `Closed` (ver `## Checkpoint / cierre`).
+
+## Checkpoint / cierre
+
+Registro de la relación closure↔estado Git (RFC-75 Mecanismo 7;
+`docs/CONVENTIONS.md:Change Lifecycle — Checkpoint y cierre Git (regla
+operacional; GC-1, Incremento 3)`). Se registra en el commit de registro C2,
+posterior al commit de contenido C1 (multi-commit del plan).
+
+- Commits de cierre:
+  - C1 `d94f33aac69fb10cf197a706ac75d3b18f7406bb` — `feat(protocol):
+    implement execution record model (plan 78, RFC-64)` (contenido validado
+    por V1).
+  - C2 — este commit de registro (`docs(plans): close plan 78 execution
+    record model (plan 78, RFC-64)`); su SHA se identifica por el mensaje y el
+    árbol no embebe su propia identidad (auto-referencia).
+- Estado validado: `## Validation anchor` de este plan (V1); State identity
+  T1 = `3e016ed1ad58ad43deb9d87bae30f8844b98ccf1`.
+- Estado de cierre: tree id del último commit de cierre (C2) =
+  `git rev-parse C2^{tree}` (no embebido por auto-referencia; verificable en
+  git tras el commit). En la validación V2 se registró el tree id del estado
+  staged antes del commit (`git write-tree`), que debe coincidir con
+  `C2^{tree}` post-commit.
+- Consistencia checkpoint↔anchor:
+  - V1 ↔ C1: `git rev-parse C1^{tree}` == T1 (`3e016ed…`) → **PASS**.
+  - Estado final (C2): difiere de C1 únicamente en los registros de cierre
+    (este artifact, INDEX de planes, Amendment Log de RFC-64 y metadatos de
+    estado de ADR-06/07/08/11 + ADR INDEX); **revalidación V2** (batería
+    canónica completa + pytest sobre el contenido final, ejecutada antes del
+    commit) → PASS. GC-1 queda satisfecho por revalidación antes de `Closed`.
+- Governance aplicada: Plan `Executed` (header + espejo en INDEX); RFC-64 con
+  entrada de implementación en su Amendment Log; ADR-06/07/08/11 + ADR INDEX
+  con metadatos de estado alineados (sin contenido normativo nuevo); VERSION
+  `11.0.0` + changelog `[11.0.0]` + MIGRATION §13; corrección `<PLAN-78>:C-1`
+  con revalidación declarada.
+- Condición derivada: **`Closed` (version-producing, con release pendiente)**.
+  `Executed ≠ Committed ≠ Closed ≠ Released`: `Executed` (status del plan),
+  `Committed` (C1 + C2 en `dev`), `Closed` (condición derivada con checkpoint
+  y consistencia), `Released` (no aplica: sin promoción ni tag).
+
+## Findings / Correcciones / Pending
+
+Registros reales de esta ejecución (el plan adopta las reglas del Incremento
+2 al cerrar; RFC-75 Mecanismo 15).
+
+### Findings
+
+- `<PLAN-78>:F-1` — estado: `resolved` (2026-09-04; resuelto por la
+  corrección `<PLAN-78>:C-1` con evidencia V1/V2 y checkpoint de este
+  artifact); estado previo: `open` (registrado durante la ejecución del paso
+  8, 2026-09-04); observación: el paso 8 del plan (versión objetivo
+  `11.0.0`) no lista `runtime/toolcalls/canonical.py`, pero la invariante de
+  anclaje semántico del runtime exige `PROTOCOL_VERSION ==
+  protocol/.agents/VERSION` (`tools/check_version_state.py`; RFC-71/G1); sin
+  el ajuste, la batería canónica falla tras el bump; clasificación: GAP de
+  inventario del plan (corrección mecánica); tipo: execution finding;
+  origin: Plan 78 (paso 8); source: ejecución del Plan 78 (2026-09-04);
+  evidencia original: `runtime/toolcalls/canonical.py` (constante
+  `PROTOCOL_VERSION`) = `"10.3.0"` frente a `protocol/.agents/VERSION` →
+  `11.0.0`, invariante de `tools/check_version_state.py`; estado Git
+  observado: `dev` @ `8f0d339`, working tree con los cambios del paso 8 sin
+  commitear; provenance original: ejecutor del Plan 78 (2026-09-04);
+  resolución: actualización mecánica de la constante implementada y
+  verificada (`<PLAN-78>:C-1`; `check_version_state` PASS y batería completa
+  sobre el estado final, V2).
+
+### Correcciones
+
+- `<PLAN-78>:C-1` — refs origen: `<PLAN-78>:F-1`; origen: Plan 78 (paso 8);
+  autorización: ejecución del Plan 78 autorizada por el mantenedor
+  («Correcciones menores estrictamente necesarias para completar Plan 78…
+  dentro del alcance autorizado»; este registro es FACTUAL/TRACEABILITY, no
+  fuente normativa); qué se corrigió: actualización mecánica de
+  `PROTOCOL_VERSION = "11.0.0"` en `runtime/toolcalls/canonical.py` (sin
+  cambio de comportamiento; la constante declara la versión del protocolo que
+  el runtime implementa y debe igualar `protocol/.agents/VERSION`);
+  alcance de revalidación (CL-6): invariante versión ↔ changelog ↔ tag y
+  ancla runtime (`python tools/check_version_state.py`), batería canónica
+  completa y pytest sobre el estado final (V2); evidencia (Git/commit/estado):
+  commit C1 `d94f33a` (ancla `11.0.0`), `check_version_state` OK (warning
+  esperado de `dev`: sin tag), pytest `445 passed`, checkers canónicos PASS,
+  gates C-1/C-2/C-3 sin ANOMALY sobre el estado de cierre; resultado:
+  `<PLAN-78>:F-1` `resolved`.
+
+### Pending decisions
+
+- `N/A` (no hay decisiones pendientes de este artifact: la confirmación del
+  MAJOR `11.0.0` fue provista por el mantenedor en la autorización de
+  ejecución; la promoción/release queda como acción futura del mantenedor,
+  no como pending de este plan).

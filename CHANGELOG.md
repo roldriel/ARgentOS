@@ -162,6 +162,23 @@ La política de versionado, changelog, tags y estados de planes vive en
   redefinirlas. Aceptación docs-only: sin `VERSION` bump ni tag (ver
   `docs/VERSIONING.md` §3); no implica implementación — la implementación
   (eventos/catálogo/agregador) queda en el plan 91, `Aprobado para ejecución`.
+- **Modelo de registro de ejecución** (plan 103, RFC-64): la RFC-64 pasa a
+  `Accepted` como modelo de identidad de ejecución por composición
+  (`execution_id = (session_id, iteration)`), roles disjuntos de los cuatro
+  registros (state.json, HARNESS_REPORT, SESSION_LOG, METRICS), alcance de
+  `state.json` (gates de transición H00–H07, H11 + status terminal), semántica
+  temporal UTC con fuente declarada (`clock`), correlación por event keys
+  (`trigger`/`seq`) y registro obligatorio de `context_budget` por delegación
+  con budget (invariantes EI-001…EI-003, TR-001…TR-005, TM-001…TM-003,
+  OBS-001…OBS-003). La decisión humana de aceptación incorpora tres lecturas de
+  implementación que forman parte de la decisión: `clock` implementa la fuente
+  `agent_clock` (sin renombrar a `source`); `seq` estrictamente monótono por
+  sesión para EI-003/TR-004; TR-002 con tolerancia de 60 segundos y
+  divergencias que deben registrar `timestamp_divergence.cause`. Aceptación
+  docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3); no
+  implica implementación — el plan 78 permanece `Aprobado para ejecución` sin
+  ejecutar (sus condiciones conocidas de ejecución futura quedan preservadas
+  como contexto, no ejecutadas).
 
 ### Changed
 

@@ -439,6 +439,24 @@ bump ni tag (RFC-69). Sin cambios en `.agents/`, `protocol/`, `runtime/`,
 |---|---|---|---|
 | `102-readme-repository-operational-model.md` | RFC-75 | Executed | Agrega a `README.md` la sección `## Repository Operational Model` (breve, en inglés, orientada a agentes/desarrolladores nuevos): `.agents/` es la interfaz operacional que un agente consulta para orientarse y ejecutar trabajo en DEV (instrucciones operacionales; la autoridad normativa vive en `docs/`); `docs/` contiene documentación, convenciones, decisiones y evidencia documental según su autoridad; `tools/` contiene mecanismos de verificación/chequeo y su output es evidencia factual, nunca autoridad normativa por sí mismo; `protocol/.agents/` pertenece al dominio del Protocol (entry `protocol/_AGENTS.md`) y no debe confundirse con el `.agents/` operacional de DEV. Cambio DEV docs-only: clase RFC-56 —, Change Level L1, sin `VERSION` bump ni tag (RFC-69); commits C1 `f6cf0a8` (contenido) + C2 (registro/cierre) en `dev`; Validation Anchor V1 (T1 `7da67a2f…`; delta `82b2e799…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); sin findings/corrections; sin cambios en `.agents/`, `protocol/`, `runtime/`, `tests/`, `tools/`, `dist/`, VERSION ni Planes 94–101; sin push. |
 
+## Trigésima quinta serie: aceptación de la RFC-64 (03 sep 2026)
+
+Plan de aceptación/formalización docs-only de la RFC-64 (Execution Record
+Model), siguiendo el patrón normativo de los planes 92/93 (RFC-73/74) bajo el
+régimen del Change Lifecycle DEV (RFC-75; anchors/checkpoints de los
+incrementos 1+3/2). No implementa ninguna capacidad: solo `Proposal →
+Accepted` (status, cuerpo `## Status`, Amendment Log con las tres lecturas de
+implementación de la decisión humana, INDEX de RFCs, alineación de metadatos de
+estado de ADR-06/07/08/11 + ADR INDEX, changelog bajo `[Unreleased]` y registro
+del plan). Sin `VERSION` bump ni tag (RFC-69). La aceptación NO autoriza la
+ejecución del plan 78 (permanece `Aprobado para ejecución` sin ejecutar; las
+condiciones C3–C6 de su ejecución futura quedan preservadas como contexto en el
+Amendment Log de la RFC-64).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `103-rfc64-acceptance.md` | RFC-64 | Executed | Formaliza la aceptación de la RFC-64 (Execution Record Model): identidad de ejecución por composición, roles disjuntos de los registros, alcance de `state.json`, semántica temporal UTC con fuente declarada y observabilidad de budget. RFC-64 pasa a `Accepted (plan 103, 2026-09-03)` con entrada en su `## Amendment Log` que preserva las tres lecturas de implementación de la decisión humana (`clock` implementa `agent_clock` sin renombrar a `source`; `seq` estrictamente monótono por sesión; TR-002 con tolerancia de 60 s y `timestamp_divergence.cause`) y las condiciones futuras del plan 78 como contexto (versión 11.0.0, guard/fixtures legacy, METRICS schema 1.2.0, declaración de `state.json`, C3–C6; NO ejecutadas); INDEX de RFCs actualizado; ADR-06/07/08/11 + ADR INDEX con metadatos de estado alineados (sin contenido normativo nuevo). Cambio docs-only: sin `VERSION` bump ni tag (RFC-69); commits C1 `5d1c8e0` (contenido) + C2 (registro/cierre) en `dev`; Validation Anchor V1 (T1 `fd0a3db8…`; delta `8e72e9b4…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); sin findings/corrections; sin cambios en `protocol/.agents/`, `runtime/`, `tests/`, `tools/`, `dist/`, VERSION ni Planes 94–102; Plan 78 intacto y NO ejecutado; sin push. |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

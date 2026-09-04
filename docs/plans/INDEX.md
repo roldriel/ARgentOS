@@ -77,7 +77,7 @@ autorización completa.
 
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
-| `78-execution-record-model.md` | RFC-64 | Aprobado para ejecución | Identidad de ejecución por composición (`execution_id = (session_id, iteration)`), roles disjuntos de los cuatro registros, alcance de `state.json` (gates de transición H00–H07, H11 + status terminal), semántica temporal UTC con `clock` declarado, event keys en ENTRY/METRIC (`iteration`/`seq`), reconciliación bidireccional y de timestamps en `--audit`, y registro obligatorio de `context_budget` por delegación con budget. Gated a RFC-64 `Accepted` (Clase A, RFC-56). Versión 6.0.0 (MAJOR). |
+| `78-execution-record-model.md` | RFC-64 | Aprobado para ejecución | Identidad de ejecución por composición (`execution_id = (session_id, iteration)`), roles disjuntos de los cuatro registros, alcance de `state.json` (gates de transición H00–H07, H11 + status terminal), semántica temporal UTC con `clock` declarado, event keys en ENTRY/METRIC (`iteration`/`seq`), reconciliación bidireccional y de timestamps en `--audit`, y registro obligatorio de `context_budget` por delegación con budget. Gated a RFC-64 `Accepted` (plan 103, 2026-09-03; Clase A, RFC-56). Versión objetivo 11.0.0 (MAJOR; baseline 10.3.0). **Rebase 2026-09-04:** plan actualizado contra el estado 10.3.0 (condiciones C-3…C-6: versión 11.0.0, guard `>= 11.0.0` + fixtures legacy 7.0.0–10.3.0, METRICS schema 1.2.0 → 2.0.0 con `reuse_event`/`provider_cache_event`, MIGRATION §13 e integración de la declaración de `state.json`); sin ejecutar. |
 
 ## Decimoquinta serie: modelo de evidencia y verificación (25 ago 2026)
 

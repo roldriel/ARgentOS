@@ -32,6 +32,61 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [11.0.0] — 2026-09-04
+
+### Added
+
+- **Modelo de registro de ejecución — identidad y event keys** (plan 78,
+  RFC-64): identidad de ejecución por composición
+  (`execution_id = (session_id, iteration)`) sin UUIDs nuevos; roles disjuntos
+  de `state.json`, `HARNESS_REPORT.md`, `SESSION_LOG.md` y `METRICS.md`;
+  correlación de gates por `(execution_id, trigger)`, de métricas por
+  `(execution_id, seq)` y de delegaciones por `(execution_id, phase,
+  attempt#)`; sección "Execution records" en `.agents/harness/INDEX.md`.
+- **METRICS con `seq`/`iteration`/`clock`** (plan 78, RFC-64): todo evento
+  METRIC lleva `seq` (estrictamente creciente por sesión), `timestamp` y
+  `clock`; los eventos por ejecución llevan `iteration`, incluidos
+  `reuse_event` y `provider_cache_event` del catálogo 1.2.0 (10.3.0);
+  `delegation` puede declarar `context_budget` y `attempt`; pairing
+  obligatorio delegación ↔ evento `context_budget` (OBS-001).
+
+### Changed
+
+- **Alcance de `state.json` y `gate_ts` canónico** (plan 78, RFC-64):
+  `state.json` registra gates de transición H00–H07/H11 + status terminal
+  únicamente; `runner_state.py` rechaza triggers no transicionales y
+  normaliza los timestamps a UTC con sufijo `Z`; `detect_bypass` devuelve un
+  flag de confiabilidad y avisa cuando el `gate_ts` no es UTC-normalizado.
+- **ENTRY con `iteration`/`clock` obligatorios** (plan 78, RFC-64):
+  `HARNESS_REPORT.md` declara `timestamp` como `event_ts` del trail y
+  `timestamp_divergence.cause` para divergencias con el `gate_ts` (TR-002,
+  tolerancia 60 s); `SESSION_LOG.md` registra `Execution` y el marcador
+  `Clock` cuando el heading no es UTC-normalizado.
+- **`schema_version` 2.0.0** (plan 78, RFC-64): los contratos
+  `HARNESS_REPORT.md`, `METRICS.md` y `SESSION_LOG.md` pasan a
+  `schema_version` 2.0.0 (obligaciones nuevas para sesiones nuevas).
+- **Reconciliación dev** (plan 78, RFC-64): `--audit` correlaciona por
+  `(iteration, trigger)` para sesiones `>= 11.0.0` y compara timestamps con
+  tolerancia de 60 s; las trazas previas sin `iteration` mantienen la
+  correlación por `trigger` (RFC-46); `check_session_artifacts.py` aplica el
+  modelo de registro solo a sesiones `>= 11.0.0`.
+- **Medidor de budget** (plan 78, RFC-64): `measure_context_budget.py` acepta
+  `--phase`/`--iteration` opcionales en el reporte JSON.
+
+### Removed
+
+- **Registro de gates no transicionales en `state.json`** (plan 78, RFC-64):
+  D*/H09/H10/H15/S00/REVIEW dejan de ser registrables en `state.json`
+  (solo `HARNESS_REPORT.md`); las trazas históricas no se reescriben.
+
+### Modelo conceptual
+
+- **RFC-64 implementada** (plan 78): el Execution Record Model pasa de modelo
+  aceptado (plan 103) a materialización en `11.0.0`, preservando las tres
+  lecturas Accepted (`clock` implementa `agent_clock` sin renombrar; `seq`
+  estrictamente monótono por sesión; TR-002 con tolerancia de 60 s y
+  `timestamp_divergence.cause`).
+
 ## [10.3.0] — 2026-08-31
 
 ### Added

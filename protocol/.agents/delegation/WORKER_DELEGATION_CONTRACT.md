@@ -74,7 +74,12 @@ The Orchestrator MUST record the computed consumed figure in the
 `CONTEXT.md` (§8.4) or reduce the entries, and a delegation that still exceeds
 the ceiling MUST be logged as a deviation (class F2) with the true consumed
 value. The protocol does not truncate or block at delegation time; compliance
-is measured and auditable, never silent.
+is measured and auditable, never silent. The `context_budget` metric event is
+recorded alongside the `delegation` metric event of the same delegation,
+sharing its `iteration` and `phase` and carrying the declared
+`context_budget`, so every budget-carrying delegation is paired with its
+budget event; without the declared/consumed pair, a budget-compliance claim
+is an attestation.
 
 `communication_style` is optional. It is populated by the Orchestrator when the `caveman` feature flag is enabled. The `enabled` field is a boolean, and `level` is one of `lite`, `full`, or `ultra` (default: `full`). When present, the Worker MUST apply `.agents/standards/communication/CAVEMAN.md` at the specified level to all natural-language output, including the artifact and the return report.
 

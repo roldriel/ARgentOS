@@ -1,11 +1,11 @@
 +++
-schema_version = "1.1.0"
+schema_version = "2.0.0"
 artifact = "SESSION_LOG.md"
 phase = "all"
 produced_by = "orchestrator"
 enforcement = "informational"
 +++
-schema_version = "1.1.0"
+schema_version = "2.0.0"
 
 
 ---
@@ -33,6 +33,9 @@ Each entry should include as many of the following fields as applicable:
 - **State transition**: source state → target state.
 - **Trigger**: harness trigger executed, if any.
 - **Harness result**: `PASS` or `FAIL`.
+- **Execution**: the numeric iteration folder (`<iteration>`) of the
+  execution the entry belongs to (entries at session level that describe an
+  execution carry it; `execution_id` is shared with `state.json`).
 - **Worker**: role adopted by the worker.
 - **Knowledge entries consulted**: UUIDs of KB entries used, or `none`.
 - **Decision**: orchestrator decision (`proceed`, `retry`, `recovery`, `needs_clarification`, `abort`).
@@ -42,6 +45,12 @@ Each entry should include as many of the following fields as applicable:
   claim is evidence-cited or explicitly marked as attestation/inference).
 - **Pending confirmation**: any default applied under unattended mode is recorded as `PENDING_USER_CONFIRMATION` with the ambiguity, the applied default, and the policy entry that covered it.
 - **Feature flags active**: list of enabled feature flags at session start.
+
+When the entry heading `## <timestamp>` is not UTC-normalized (no `Z` or
+`+00:00`), the entry MUST additionally declare `- **Clock**: agent_clock` and
+is treated as non-canonical (TM-001); headings are the `event_ts` of the
+narrative, never the `gate_ts` of a transition gate (the canonical `gate_ts`
+lives in `state.json`).
 
 ## Initial entry template
 

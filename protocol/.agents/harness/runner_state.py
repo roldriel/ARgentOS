@@ -15,22 +15,31 @@ Layout:
   "session": "<uuid>",
   "iteration": "00",
   "task_profile": "standard",
-  "gates": {"H04": {"result": "PASS", "timestamp": "..."}},
+  "gates": {"H04": {"result": "PASS", "timestamp": "<ISO-8601 UTC with Z>"}},
   "last_gate": "H04",
   "status": "in_progress",   # or ABORT / COMPLETED (terminal)
   "updated": "<ISO-8601>"
 }
 ```
 
+Scope: `state.json` records transition gates of the core state machine and
+the terminal status only. The accepted transition triggers are H00–H07 and
+H11 (`TRANSITION_TRIGGERS`); every other gate (D*, H09/H10, H15, S00, REVIEW)
+is recorded in `HARNESS_REPORT.md` only and is rejected by the `pass` action.
+`gates[HXX].timestamp` is the canonical `gate_ts` of the transition (UTC,
+normalized with a `Z` suffix).
+
 CLI (state recording only):
 
     python .agents/harness/runner_state.py \
         --session <uuid> --trigger <HXX> [--iteration <N>] pass
 
-Records the PASS for the trigger in state.json. `--iteration` defaults to
-the session's latest iteration folder. For trigger H04 it additionally runs
-the post-hoc bypass scan and prints any alert to stderr without blocking.
-Exit 0 on success; exit 2 with a clear message on stderr on error.
+Records the PASS for a transition trigger (H00–H07, H11) in state.json.
+`--iteration` defaults to the session's latest iteration folder. Any other
+trigger is rejected with exit 2 (non-transition gates live in
+`HARNESS_REPORT.md` only). For trigger H04 it additionally runs the post-hoc
+bypass scan and prints any alert to stderr without blocking. Exit 0 on
+success; exit 2 with a clear message on stderr on error.
 
     python .agents/harness/runner_state.py \
         --session <uuid> --state ABORT terminal
@@ -81,6 +90,13 @@ _BYPASS_SCAN_MAX_FILES = 20
 # Valid task profiles; anything else resolves to "standard" (full cycle).
 _VALID_PROFILES = ("trivial", "standard", "complex")
 TERMINAL_STATES = ("ABORT", "COMPLETED")
+
+# Transition triggers of the core state machine recorded in state.json
+# (D-005). Every other gate (D*, H09/H10, H15, S00, REVIEW) is recorded in
+# HARNESS_REPORT.md only.
+TRANSITION_TRIGGERS = frozenset(
+    {"H00", "H01", "H02", "H03", "H04", "H05", "H06", "H07", "H11"}
+)
 
 _PROFILE_SECTION_RE = re.compile(
     r"^##\s+Task Profile\s*\n(.*?)(?=^##\s|\Z)", re.MULTILINE | re.DOTALL
@@ -290,7 +306,9 @@ def record_gate_pass(
     file plus atomic rename, so readers never observe a partial file.
     """
     state = load_state(session_uuid, iteration)
-    now = timestamp or datetime.now(timezone.utc).isoformat()
+    now = (timestamp or datetime.now(timezone.utc).isoformat()).replace(
+        "+00:00", "Z"
+    )
     state["session"] = session_uuid
     state["iteration"] = iteration
     try:
@@ -318,7 +336,9 @@ def record_terminal_state(
     if state not in TERMINAL_STATES:
         raise ValueError(f"invalid terminal state: {state!r}")
     data = load_state(session_uuid, iteration)
-    now = timestamp or datetime.now(timezone.utc).isoformat()
+    now = (timestamp or datetime.now(timezone.utc).isoformat()).replace(
+        "+00:00", "Z"
+    )
     data["session"] = session_uuid
     data["iteration"] = iteration
     data["status"] = state
@@ -328,25 +348,28 @@ def record_terminal_state(
 
 def detect_bypass(
     session_uuid: str, iteration: str, gate_timestamp: str
-) -> list[str]:
+) -> tuple[list[str], bool]:
     """Post-hoc bypass scan run when the plan gate (H04) passes.
 
-    Returns paths of would-be deliverables (project files outside the
+    Returns ``(suspects, reliable)``: paths of would-be deliverables (project files outside the
     protocol and cache directories) modified after the session directory was
     created but before the H04 PASS timestamp: writes that happened during a
     window where no plan was approved — e.g. while the enforcement hook was
     fail-open (crash/timeout) or not installed (declarative mode). The result
-    is an audit alert, never a gate failure.
+    is an audit alert, never a gate failure. ``reliable`` is ``False`` when the
+    gate timestamp is not UTC-normalized (the scan consumes the canonical
+    `gate_ts`; a non-canonical timestamp makes the scan unreliable).
     """
     try:
-        gate_dt = datetime.fromisoformat(gate_timestamp)
+        gate_dt = datetime.fromisoformat(gate_timestamp.replace("Z", "+00:00"))
     except ValueError:
-        return []
+        return [], False
+    reliable = gate_timestamp.endswith("Z") or gate_timestamp.endswith("+00:00")
     session_dir = ARTIFACTS_DIR / session_uuid
     try:
         window_start = session_dir.stat().st_mtime
     except OSError:
-        return []
+        return [], reliable
     suspects: list[str] = []
     root = PROJECT_ROOT
     for dirpath, dirnames, filenames in os.walk(root):
@@ -362,8 +385,8 @@ def detect_bypass(
             if window_start <= mtime <= gate_dt.timestamp():
                 suspects.append(str(path.relative_to(root)))
                 if len(suspects) >= _BYPASS_SCAN_MAX_FILES:
-                    return suspects
-    return suspects
+                    return suspects, reliable
+    return suspects, reliable
 
 
 def latest_iteration(session_uuid: str) -> str:
@@ -474,6 +497,12 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.action == "pass" and not args.trigger:
         return _cli_error("the 'pass' action requires --trigger")
+    if args.action == "pass" and args.trigger not in TRANSITION_TRIGGERS:
+        return _cli_error(
+            f"trigger {args.trigger!r} is not a transition trigger "
+            "(allowed: H00-H07, H11); non-transition gates (D*, H10, H15, "
+            "S00, REVIEW) are recorded in HARNESS_REPORT.md only"
+        )
 
     if args.action == "link":
         if not args.cli_session:
@@ -510,13 +539,21 @@ def main(argv: list[str] | None = None) -> int:
         timestamp = state.get("gates", {}).get(args.trigger, {}).get("timestamp")
         if isinstance(timestamp, str):
             try:
-                suspects = detect_bypass(args.session, iteration, timestamp)
+                suspects, reliable = detect_bypass(
+                    args.session, iteration, timestamp
+                )
             except Exception as exc:  # noqa: BLE001 - audit scan never blocks
                 print(
                     f"runner_state: bypass scan failed (non-blocking): {exc}",
                     file=sys.stderr,
                 )
             else:
+                if not reliable:
+                    print(
+                        "runner_state: bypass scan not reliable (gate_ts is "
+                        "not UTC-normalized)",
+                        file=sys.stderr,
+                    )
                 if suspects:
                     print(
                         "runner_state: BYPASS ALERT - files modified between "

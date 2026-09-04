@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -73,3 +74,31 @@ def test_cli_exit_codes(tmp_path):
     )
     assert res_ok.returncode == 0
     assert res_bad.returncode == 1
+
+
+def test_cli_phase_and_iteration_in_report(tmp_path):
+    payload = tmp_path / "delegation.json"
+    payload.write_text(
+        '{"context_budget": 100, "knowledge_entries": ["abcd"]}',
+        encoding="utf-8",
+    )
+    res = subprocess.run(
+        [
+            sys.executable,
+            str(REPO_ROOT / "tools" / "measure_context_budget.py"),
+            "--payload",
+            str(payload),
+            "--phase",
+            "06",
+            "--iteration",
+            "00",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert res.returncode == 0
+    report = json.loads(res.stdout)
+    assert report["phase"] == "06"
+    assert report["iteration"] == "00"
+    assert report["declared"] == 100
+    assert report["consumed"] == 1

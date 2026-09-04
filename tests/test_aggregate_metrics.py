@@ -567,3 +567,177 @@ def test_audit_legacy_entry_without_state_ok(tmp_path):
         encoding="utf-8",
     )
     assert am.audit_cross_checks(tmp_path) == []
+
+
+# --- Execution record model audit (>= 11.0.0; plan 78, RFC-64) --------------
+
+
+def _record_session(tmp_path, version="11.0.0"):
+    """Write a session declaring a protocol version (no gate records yet)."""
+    session = tmp_path / ".project" / "s1"
+    (session / "00").mkdir(parents=True)
+    (session / "01").mkdir()
+    (session / "METRICS.md").write_text(
+        '<!-- METRIC: {"timestamp": "2026-08-14T11:00:00+00:00", "type": '
+        '"session_start", "declarative_flags": [], "protocol_version": "'
+        + version
+        + '"} -->\n',
+        encoding="utf-8",
+    )
+    return session
+
+
+def test_audit_iteration_correlation_no_alerts(tmp_path):
+    session = _record_session(tmp_path)
+    (session / "00" / "state.json").write_text(
+        json.dumps(
+            {
+                "gates": {
+                    "H04": {
+                        "result": "PASS",
+                        "timestamp": "2026-08-14T10:00:00+00:00",
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    (session / "HARNESS_REPORT.md").write_text(
+        '<!-- ENTRY: {"timestamp": "2026-08-14T10:00:30+00:00", '
+        '"iteration": "00", "trigger": "H04", "transition": "A -> B", '
+        '"result": "PASS", "checks": []} -->\n',
+        encoding="utf-8",
+    )
+    assert am.audit_cross_checks(tmp_path) == []
+
+
+def test_audit_iteration_disparity_alerted(tmp_path):
+    session = _record_session(tmp_path)
+    (session / "00" / "state.json").write_text(
+        json.dumps(
+            {
+                "gates": {
+                    "H04": {
+                        "result": "PASS",
+                        "timestamp": "2026-08-14T10:00:00+00:00",
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    (session / "HARNESS_REPORT.md").write_text(
+        '<!-- ENTRY: {"timestamp": "2026-08-14T10:00:30+00:00", '
+        '"iteration": "01", "trigger": "H04", "transition": "A -> B", '
+        '"result": "PASS", "checks": []} -->\n',
+        encoding="utf-8",
+    )
+    alerts = am.audit_cross_checks(tmp_path)
+    assert any(
+        "H04" in a
+        and "in iteration 00" in a
+        and "without a matching PASS entry" in a
+        for a in alerts
+    )
+
+
+def test_audit_timestamp_divergence_without_cause_alerted(tmp_path):
+    session = _record_session(tmp_path)
+    (session / "00" / "state.json").write_text(
+        json.dumps(
+            {
+                "gates": {
+                    "H04": {
+                        "result": "PASS",
+                        "timestamp": "2026-08-14T10:00:00+00:00",
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    (session / "HARNESS_REPORT.md").write_text(
+        '<!-- ENTRY: {"timestamp": "2026-08-14T10:05:00+00:00", '
+        '"iteration": "00", "trigger": "H04", "transition": "A -> B", '
+        '"result": "PASS", "checks": []} -->\n',
+        encoding="utf-8",
+    )
+    alerts = am.audit_cross_checks(tmp_path)
+    assert any(
+        "diverges more than 60s" in a
+        and "without timestamp_divergence.cause" in a
+        for a in alerts
+    )
+
+
+def test_audit_timestamp_divergence_with_cause_ok(tmp_path):
+    session = _record_session(tmp_path)
+    (session / "00" / "state.json").write_text(
+        json.dumps(
+            {
+                "gates": {
+                    "H04": {
+                        "result": "PASS",
+                        "timestamp": "2026-08-14T10:00:00+00:00",
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    (session / "HARNESS_REPORT.md").write_text(
+        '<!-- ENTRY: {"timestamp": "2026-08-14T10:05:00+00:00", '
+        '"iteration": "00", "trigger": "H04", "transition": "A -> B", '
+        '"result": "PASS", "checks": [], "timestamp_divergence": '
+        '{"cause": "retroactive reconstruction reviewed"}} -->\n',
+        encoding="utf-8",
+    )
+    assert am.audit_cross_checks(tmp_path) == []
+
+
+def test_audit_60s_tolerance_no_alert(tmp_path):
+    session = _record_session(tmp_path)
+    (session / "00" / "state.json").write_text(
+        json.dumps(
+            {
+                "gates": {
+                    "H04": {
+                        "result": "PASS",
+                        "timestamp": "2026-08-14T10:00:00+00:00",
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    (session / "HARNESS_REPORT.md").write_text(
+        '<!-- ENTRY: {"timestamp": "2026-08-14T10:00:50+00:00", '
+        '"iteration": "00", "trigger": "H04", "transition": "A -> B", '
+        '"result": "PASS", "checks": []} -->\n',
+        encoding="utf-8",
+    )
+    assert am.audit_cross_checks(tmp_path) == []
+
+
+def test_audit_legacy_band_without_iteration_keeps_trigger_correlation(tmp_path):
+    session = _record_session(tmp_path, version="10.3.0")
+    (session / "00" / "state.json").write_text(
+        json.dumps(
+            {
+                "gates": {
+                    "H04": {
+                        "result": "PASS",
+                        "timestamp": "2026-08-14T10:00:00+00:00",
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    (session / "HARNESS_REPORT.md").write_text(
+        '<!-- ENTRY: {"timestamp": "2026-08-14T10:00:30+00:00", '
+        '"trigger": "H04", "transition": "A -> B", '
+        '"result": "PASS", "checks": []} -->\n',
+        encoding="utf-8",
+    )
+    assert am.audit_cross_checks(tmp_path) == []

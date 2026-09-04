@@ -8,11 +8,14 @@ of a delegation payload with the protocol estimation rule
 (`.agents/delegation/WORKER_DELEGATION_CONTRACT.md`, ``knowledge_entries``).
 
 Usage:
-  python tools/measure_context_budget.py --payload delegation.json
+  python tools/measure_context_budget.py --payload delegation.json \
+      [--phase <phase>] [--iteration <iteration>]
   python tools/measure_context_budget.py --entries "text" --budget 1000
 
 Exit code: 0 when consumed <= declared, 1 otherwise (overrun). Prints a JSON
-report with declared, consumed and the overrun flag. Standard library only.
+report with declared, consumed and the overrun flag; `--phase` and
+`--iteration` are included in the report when provided, so the output can
+feed the `context_budget` metric event directly. Standard library only.
 """
 
 from __future__ import annotations
@@ -63,6 +66,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--payload", type=Path, default=None)
     parser.add_argument("--entries", default=None, help="single excerpt string")
     parser.add_argument("--budget", type=float, default=None)
+    parser.add_argument(
+        "--phase",
+        default=None,
+        help="delegation phase to include in the JSON report",
+    )
+    parser.add_argument(
+        "--iteration",
+        default=None,
+        help="execution iteration to include in the JSON report",
+    )
     args = parser.parse_args(argv)
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -84,6 +97,10 @@ def main(argv: list[str] | None = None) -> int:
         parser.print_usage(sys.stderr)
         return 2
     report = measure(payload)
+    if args.phase is not None:
+        report["phase"] = args.phase
+    if args.iteration is not None:
+        report["iteration"] = args.iteration
     print(json.dumps(report, indent=2))
     return 1 if report["overrun"] else 0
 

@@ -230,6 +230,17 @@ La política de versionado, changelog, tags y estados de planes vive en
   `protocol/.agents/` (dominio del Protocol; data, no instrucciones DEV).
   Cambio docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3).
 
+- **Determinación DEV del estado terminal por ejecución** (plan 107):
+  `tools/determine_execution_state.py` determina desde los Execution Records
+  existentes el estado terminal de cada ejecución (`state.json` `status`
+  `ABORT`/`COMPLETED`, verdad mecánica del estado del protocolo por
+  ejecución, RFC-64/RFC-63) sin modificar el modelo del Protocol ni agregar
+  campos/estados/artifacts/categorías; cuando el registro no declara un estado
+  terminal, `state.json` falta o está corrupto, reporta no determinación con
+  razón (sin inferencia); 13 tests en `tests/test_determine_execution_state.py`.
+  Cambio DEV tooling + registros docs-only: sin `VERSION` bump ni tag (ver
+  `docs/VERSIONING.md` §3).
+
 ### Fixed
 
 - **Guía de adopción sin `git subtree --prefix=.`** (plan 85): `docs/ADOPTION.md`

@@ -85,6 +85,7 @@ operacional; Incremento 1)`, no en esta carta.
 | `docs/plans/` | Governance / Plan (+ support docs) |
 | `docs/architecture/` | Inventory / Architecture models |
 | `docs/working/` | Working (`audits/`, `research/`, `proposals/`) |
+| `docs/glossary/` | Inventory / Terminology registry (DESCRIPTIVE; no normativo) |
 
 La clase se deriva de esta carta; la carpeta es convención física, no fuente
 de verdad. Support docs clasificados explícitamente:
@@ -95,6 +96,29 @@ de verdad. Support docs clasificados explícitamente:
 Excepciones que no son documentación fuente normal: `sessions/` (staging),
 `.project/` (efímero), `tests/fixtures/` (fixtures), `protocol/.agents/`
 (Product), `.agents/` (capa operacional DEV; raíz del repo fuente).
+
+### Glosario y semántica de archivos AGENTS / INDEX / ENTRYPOINT
+
+`docs/glossary/INDEX.md` + `docs/glossary/terms.md` forman el **registro
+descriptivo de terminología** de ARgentOS (clase: Inventory/registro). No es
+fuente normativa: cada entrada enruta a su `Authority Reference`
+(`ruta:sección`) y no duplica definiciones. Las reglas normativas de
+terminología viven en
+`docs/CONVENTIONS.md:Convenciones de terminología y nomenclatura (decisiones
+D1–D5, 2026-09-05)`.
+
+Semántica de nombres de archivo (decisión D3, 2026-09-05; no se renombra nada):
+
+- `AGENTS.md` = **instrucciones de agente** por capa: `AGENTS.md` raíz (DEV),
+  `.agents/AGENTS.md` (capa operacional DEV), `AGENTS.md` del adoptante
+  (publicado desde `protocol/_AGENTS.md`).
+- `protocol/.agents/INDEX.md` = **bootstrap + navegación** del Protocol (rol
+  dual; no es un mero registro).
+- Los `INDEX.md` de `docs/` e internos = **registro/navegación**; nunca
+  autoridad (AU-4).
+- `orchestrators/discovery/contracts/ENTRYPOINT.md` = **contrato de discovery**
+  de la KB entry `entrypoint.md`; no es una convención de capa (no se crea
+  `.agents/ENTRYPOINT.md`).
 
 ### References
 

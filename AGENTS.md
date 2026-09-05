@@ -33,6 +33,8 @@ install.
     `docs/plans/INDEX.md`).
   - `docs/architecture/`, `docs/working/` — architecture models and working
     documents.
+  - `docs/glossary/` — descriptive terminology registry (DEV/Protocol bridge,
+    non-normative; rules in `docs/CONVENTIONS.md`).
 - `README.md`, `CHANGELOG.md`, `ROADMAP.md` — entry point and release
   documentation at the repository root.
 

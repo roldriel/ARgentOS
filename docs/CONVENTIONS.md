@@ -141,6 +141,50 @@
   el layout adoptado; los links a `AGENTS.md` rotos en fuente son intencionales
   y se documentan en `docs/source-layout.md`.
 
+### Convenciones de terminología y nomenclatura (decisiones D1–D5, 2026-09-05)
+
+Decisiones humanas del mantenedor aprobadas el 2026-09-05 (D1–D5 del
+«Terminology Architecture Decision Report»; ejecutadas por el Plan 105). Esta
+subsección es la regla operacional; el registro descriptivo vive en
+`docs/glossary/`.
+
+- **Vocabularios DEV/Protocol separados + puente descriptivo (D1).** DEV y
+  Protocol mantienen vocabularios propios con sus definiciones normativas
+  vigentes; no existe vocabulario global normativo. `docs/glossary/` es el
+  puente **descriptivo** entre ambos: registra término → scope → status →
+  autoridad; no redefine conceptos y no es fuente normativa. El payload del
+  Protocol no referencia `docs/glossary/` (boundary DEV/Protocol).
+- **Glosario descriptivo (D2).** `docs/glossary/INDEX.md` +
+  `docs/glossary/terms.md` son registro/inventario descriptivo (clase
+  Inventory/registro; `docs/AGENTS.md:Folder → class map`). Prohibido
+  duplicar definiciones normativas; cada entrada exige `Authority Reference`
+  (`ruta:sección`) resoluble. El glosario nunca prevalece sobre una
+  RFC/ADR/estándar.
+- **Convención AGENTS/INDEX/ENTRYPOINT (D3).** Se preserva la arquitectura
+  actual: `AGENTS.md` = instrucciones de agente por capa; el INDEX del
+  Protocol (`protocol/.agents/INDEX.md`) = bootstrap + navegación (no se
+  renombra); los INDEX de `docs/` e internos = registro/navegación (nunca
+  autoridad, AU-4); `ENTRYPOINT.md` = contrato de discovery existente (no
+  convención de capa). No se introduce `.agents/ENTRYPOINT.md` ni
+  `BOOTSTRAP.md` sin nueva decisión.
+- **Regla SCI (D4).** Nombres completos preferentes en todo texto nuevo:
+  `Scoped Content Identity` (DEV) y `SemanticContextIdentity` (Protocol).
+  `SCI` desnudo prohibido en texto cross-layer nuevo; primera aparición
+  expandida; calificación de capa obligatoria ante ambigüedad
+  (`SCI (DEV)` / `SCI (Protocol)`). No se renombra ninguna identidad; los
+  históricos no se reescriben (RFC-46).
+- **Calificación de términos overloaded (D5).** En contexto cross-layer o
+  ambiguo, el término debe calificarse. Formas canónicas: `DEV Plan` /
+  `EXECUTION_PLAN artifact`; `Validation Anchor` / `composition anchor`;
+  `product payload` / `delegation payload` / `materialization payload`;
+  `execution (iteration)` / `capability execution` / `EXECUTING state`;
+  `lifecycle finding` / `architecture finding`; `correction record` /
+  `corrective action`; `protocol session` / `CLI session`. El mapeo completo
+  por término vive en `docs/glossary/terms.md`. Si el dominio no puede
+  inferirse con seguridad, el agente **no debe asumir semántica**: registrar
+  la ambigüedad (BOUNDARY / NEEDS_CLARIFICATION) antes de usarla en una
+  decisión.
+
 ### Change Lifecycle DEV — alcance y frontera
 
 El Change Lifecycle (RFC-75) gobierna la evolución de **ARgentOS DEV**: el

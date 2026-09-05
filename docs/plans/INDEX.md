@@ -486,6 +486,23 @@ findings/corrections.
 |---|---|---|---|
 | `104-documentation-operational-alignment.md` | — | Executed | Alineación documental y operacional post-Plan-78 (decisión humana 2026-09-05): root `AGENTS.md` como entrypoint/puntero a la batería canónica de `docs/VERSIONING.md` §4.1 con layout de `docs/` corregido (RFCs/ADRs/planes diferenciados); `.agents/AGENTS.md` intacto como entrypoint operacional (alineación factual mínima del `## Verification battery`: puntero, no espejo; sin `INDEX.md`); `README.md` sin batería parcial (puntero canónico); `docs/VERSIONING.md` §9 snapshot 2026-09-05 (master/dist `10.3.0`; dev `11.0.0` pre-release; tags hasta `10.3.0`) y §4.1 con ownership único; `docs/CONVENTIONS.md` con rangos actualizados (RFC-75/ADR-16); `docs/MIGRATION.md` link `../CHANGELOG.md` corregido; `CHANGELOG.md` con `[Unreleased]` reubicado arriba; banners históricos mínimos en `ARCHITECTURAL_PROBLEM_MODEL.md` y `ARCHITECTURAL_DECISION_MODEL.md` (contenido original preservado; materialización posterior respaldada por la matriz `docs/adr/INDEX.md:Matriz D# ↔ ADR ↔ RFC ↔ plan`). Cambio DEV docs-only: clase RFC-56 —, Change Level L2, sin `VERSION` bump ni tag (RFC-69); commits C1 `a2c9c43` (contenido) + C2 (registro/cierre) en `dev`; Validation Anchor V1 (T1 `639c4fce…`; delta `792e1507…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); sin findings/corrections; sin cambios en `protocol/.agents/`, `runtime/`, `tests/`, `tools/`, `dist/`, `protocol/.agents/VERSION` (11.0.0), Deferred ni Planes 94–103; sin push, sin merge, sin tag; `11.0.0` sigue sin release. |
 
+## Trigésima séptima serie: arquitectura terminológica y glosario (Plan 105) (05 sep 2026)
+
+Plan 105 (cambio DEV docs-only autorizado por decisiones humanas del
+mantenedor D1–D5, 2026-09-05; régimen RFC-69/RFC-75; sin RFC/ADR nuevo, clase
+RFC-56 —): materializa la arquitectura terminológica aprobada: vocabularios
+DEV/Protocol separados con puente descriptivo (`docs/glossary/`), glosario
+`docs/glossary/INDEX.md` + `terms.md` como registro Inventory/DESCRIPTIVE no
+normativo, reglas operacionales D1–D5 en `docs/CONVENTIONS.md`, semántica
+AGENTS/INDEX/ENTRYPOINT y mapa de clase en `docs/AGENTS.md`, punteros de
+descubrimiento en root `AGENTS.md` y `.agents/AGENTS.md`. Sin cambios en
+`protocol/.agents/`, `runtime/`, `tools/`, `tests/`, `dist/`,
+`protocol/.agents/VERSION` (11.0.0) ni tags; sin renames; sin checker nuevo.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `105-terminology-architecture-materialization.md` | — | Aprobado para ejecución | Materialización docs-only de las decisiones humanas D1–D5 (terminología: vocabularios separados + puente descriptivo; glosario Inventory no normativo; convención AGENTS/INDEX/ENTRYPOINT preservada; regla SCI; reglas de calificación). |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

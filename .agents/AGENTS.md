@@ -33,6 +33,7 @@ Everything else is **on demand**:
 | Task classification / authority doubt / conflict | `policies/authority.md` |
 | Before validation or closure of a plan | `policies/validation-closure.md` |
 | At lifecycle gates (anchor / checkpoint / lineage) | `policies/lifecycle-checkers.md` |
+| Terminology questions / registry | `docs/glossary/INDEX.md` + `docs/CONVENTIONS.md:Convenciones de terminología y nomenclatura (decisiones D1–D5, 2026-09-05)` |
 
 ## Fundamental operating rules (always in force)
 

@@ -523,7 +523,8 @@ Ejecución en `dev`: commit C1 `922931a` (contenido) y C2 (registro/cierre);
 Validation Anchor V1 (T1 `b4a6c860…`; delta `24adc65f…`) y Checkpoint con
 revalidación V2 antes de `Closed`; C1/C2/C3 GAP=0, ANOMALY=0; status
 `Executed`; condición derivada `Closed` (docs-only, sin release); findings
-`<PLAN-106>:F-1..F-5` resueltos vía `<PLAN-106>:C-1..C-5`.
+`<PLAN-106>:F-1..F-5` resueltos vía `<PLAN-106>:C-1..C-5`; corrección residual
+de referencias malformadas en `terms.md` (misma clase F1/F3) cubierta por V2.
 
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|

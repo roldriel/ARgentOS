@@ -159,9 +159,10 @@ posterior al commit de contenido C1 (multi-commit del plan).
   - V1 ↔ C1: `git rev-parse C1^{tree}` == T1 (`b4a6c860…`) → **PASS**.
   - Estado final (C2): difiere de C1 únicamente en los registros de cierre
     (este artifact, `docs/plans/INDEX.md` y `CHANGELOG.md`); **revalidación
-    V2** (batería canónica completa sobre el contenido final, ejecutada antes
-    del commit) → PASS. GC-1 queda satisfecho por revalidación antes de
-    `Closed`.
+    V2** (batería canónica completa sobre el contenido final, incluida la
+    corrección residual de referencias malformadas en `docs/glossary/terms.md`
+    — misma clase F1/F3, detectada en la validación —, ejecutada antes del
+    commit) → PASS. GC-1 queda satisfecho por revalidación antes de `Closed`.
 - Governance aplicada: Plan `Executed` (header + espejo en INDEX); ítem
   `(plan 106)` en `CHANGELOG.md:[Unreleased]`; docs-only, sin `VERSION` bump
   ni tag (RFC-69; `docs/VERSIONING.md:3. Versionado`).
@@ -238,7 +239,10 @@ Plan 105; reglas del Incremento 2).
   `docs/glossary/INDEX.md` (referencias `path:section`) + batería; evidencia:
   commit C1 `922931a`; carácter: FACTUAL/TRACEABILITY; autorización: Plan 106
   aprobado para ejecución (registro FACTUAL/TRACEABILITY, no normativo); qué
-  se corrigió: referencia no determinista reemplazada por heading real (F3).
+  se corrigió: referencia no determinista reemplazada por heading real (F3) y
+  referencias malformadas de la misma clase detectadas en la validación
+  (code spans con espacio dentro del path en `docs/glossary/terms.md`),
+  corregidas en el commit de cierre C2 y cubiertas por V2.
 - `<PLAN-106>:C-4` — refs origen: `<PLAN-106>:F-4`; alcance de revalidación:
   `docs/glossary/INDEX.md` (sección «Cobertura y alta de entradas») + batería;
   evidencia: commit C1 `922931a`; carácter: FACTUAL/TRACEABILITY; autorización:
@@ -294,6 +298,8 @@ autorización del mantenedor (2026-09-05) → Plan 106 (corrección docs-only) �
   nuevo.
   Registro/cierre: este artifact, INDEX (status `Executed`) e ítem
   `(plan 106)` en `CHANGELOG.md:[Unreleased]`; revalidación V2 (batería
-  canónica completa sobre el estado final) y gates C1/C2/C3 sin ANOMALY antes
-  de `Closed`; `git diff --check` limpio; commit C2 de registro en `dev`.
-  Condición derivada: `Closed` (docs-only, sin release).
+  canónica completa sobre el estado final, incluidas las correcciones
+  residuales de referencias malformadas en `terms.md` — misma clase F1/F3,
+  detectadas durante la validación y cubiertas por `<PLAN-106>:C-3`) y gates
+  C1/C2/C3 sin ANOMALY antes de `Closed`; `git diff --check` limpio; commit C2
+  de registro en `dev`. Condición derivada: `Closed` (docs-only, sin release).

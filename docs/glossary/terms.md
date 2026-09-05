@@ -117,7 +117,7 @@
 - **Scope:** Protocol
 - **Status:** current
 - **Authority Reference:** `docs/rfc/64-execution-record-model.md:Terminology`
-  (`execution_id = (session_id, iteration)`); `protocol/.agents/standards/ runtime/AUTHORIZATION.md:Vocabulary` (capability execution);
+  (`execution_id = (session_id, iteration)`); `protocol/.agents/standards/runtime/AUTHORIZATION.md:Vocabulary` (capability execution);
   `protocol/.agents/standards/runtime/PROTOCOL_TAXONOMY.md:Protocol Taxonomy`
   (estado `EXECUTING`)
 - **Qualification Rule:** `execution (iteration)`, `capability execution`,
@@ -171,7 +171,7 @@
 - **Scope:** Cross-cutting
 - **Status:** current
 - **Authority Reference:** `AGENTS.md:Repository layout` (product payload);
-  `protocol/.agents/delegation/WORKER_DELEGATION_CONTRACT.md:Required Invocation Payload` (delegation payload); `docs/rfc/72-provider-prompt-cache- capability.md:3. Canonical Materialization` (materialization payload)
+  `protocol/.agents/delegation/WORKER_DELEGATION_CONTRACT.md:Required Invocation Payload` (delegation payload); `docs/rfc/72-provider-prompt-cache-capability.md:3. Canonical Materialization` (materialization payload)
 - **Qualification Rule:** `product payload` (DEV), `delegation payload`
   (Protocol), `materialization payload` (runtime); prohibido "payload" desnudo
   en docs DEV cuando se refiere al producto
@@ -180,7 +180,7 @@
 
 - **Scope:** Cross-cutting
 - **Status:** current
-- **Authority Reference:** DEV — `docs/VERSIONING.md:7. Estados de planes y RFCs`; Protocol — `protocol/.agents/orchestrators/core/contracts/ EXECUTION_PLAN.md:Purpose`
+- **Authority Reference:** DEV — `docs/VERSIONING.md:7. Estados de planes y RFCs`; Protocol — `protocol/.agents/orchestrators/core/contracts/EXECUTION_PLAN.md:Purpose`
 - **Qualification Rule:** `DEV Plan` vs `EXECUTION_PLAN artifact`; `Plan State` solo como término externo de RFC-63
 - **Related Terms:** EXECUTION_PLAN artifact; Change Lifecycle
 
@@ -190,7 +190,7 @@
 - **Status:** current
 - **Authority Reference:**
   `protocol/.agents/delegation/WORKER_DELEGATION_CONTRACT.md:profile` (nota de
-  desambiguación); `protocol/.agents/orchestrators/core/states/ AGENT_STATE_MACHINE.md:Task Profiles`
+  desambiguación); `protocol/.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md:Task Profiles`
 - **Qualification Rule:** `task profile` (trivial/standard/complex), `phase role` (workflow `profile:`), `worker profile` (payload `profile`)
 - **Related Terms:** Role; Worker
 - **Gloss (no normativo):** token overloaded documentado; no se renombra.
@@ -231,7 +231,7 @@
 
 - **Scope:** Protocol
 - **Status:** current
-- **Authority Reference:** `protocol/.agents/standards/context/CONTEXT.md: Identity`; `docs/rfc/71-context-persistence-cacheability-model.md: SemanticContextIdentity`
+- **Authority Reference:** `protocol/.agents/standards/context/CONTEXT.md:Identity`; `docs/rfc/71-context-persistence-cacheability-model.md:SemanticContextIdentity`
 - **Abbreviation / Expansion:** SCI (Protocol)
 - **Related Terms:** SegmentIdentity; SegmentContentIdentity;
   MaterializationIdentity
@@ -249,7 +249,7 @@
 
 - **Scope:** Cross-cutting
 - **Status:** current
-- **Authority Reference:** `docs/rfc/63-state-and-artifact-lifecycle-model.md: Terminology` y `docs/rfc/63-state-and-artifact-lifecycle-model.md: Significados formales`
+- **Authority Reference:** `docs/rfc/63-state-and-artifact-lifecycle-model.md:Terminology` y `docs/rfc/63-state-and-artifact-lifecycle-model.md:Significados formales`
 - **Qualification Rule:** nombrar siempre la dimensión (`Task State`, `Gate State`, `Artifact Lifecycle`, `Execution State`, …); "state" desnudo solo
   con scope explícito (ST-004)
 - **Related Terms:** Status; Validation; Verification
@@ -269,7 +269,7 @@
 - **Scope:** Cross-cutting
 - **Status:** current
 - **Authority Reference:** Protocol —
-  `protocol/.agents/orchestrators/core/contracts/CONTEXT_VALIDATION_REPORT.md: Purpose` (fase 04) y `protocol/.agents/orchestrators/core/contracts/ EXECUTION_SUMMARY.md:Intermediate Validations`; DEV —
+  `protocol/.agents/orchestrators/core/contracts/CONTEXT_VALIDATION_REPORT.md:Purpose` (fase 04) y `protocol/.agents/orchestrators/core/contracts/EXECUTION_SUMMARY.md:Intermediate Validations`; DEV —
   `docs/CONVENTIONS.md:Change Lifecycle — Validation anchors y Scoped Content Identity (regla operacional; VC-1, Incremento 1)`
 - **Qualification Rule:** `context validation (phase 04)`, `intermediate validation`, `registered validation (DEV, VC-1)`
 - **Related Terms:** Verification; Validation Anchor
@@ -287,6 +287,6 @@
 
 - **Scope:** Cross-cutting
 - **Status:** current
-- **Authority Reference:** Protocol — `docs/rfc/65-evidence-and-verification- model.md:Terminology` y `protocol/.agents/standards/quality/EVIDENCE.md:The VERIFIED invariant`; DEV — `docs/VERSIONING.md:4.1 Batería canónica de verificación`
+- **Authority Reference:** Protocol — `docs/rfc/65-evidence-and-verification-model.md:Terminology` y `protocol/.agents/standards/quality/EVIDENCE.md:The VERIFIED invariant`; DEV — `docs/VERSIONING.md:4.1 Batería canónica de verificación`
 - **Qualification Rule:** `verification (phase 07, RFC-65)` vs `verification battery (DEV)`
 - **Related Terms:** Validation; Evidence; Review

@@ -146,23 +146,28 @@ posterior al commit de contenido C1 (multi-commit del plan).
 - Commits de cierre:
   - C1 `922931a` — `docs: correct post-close glossary findings F1-F5
     (plan 106)` (contenido validado por V1).
-  - C2 — este commit de registro (`docs(plans): close plan 106 with validation
-    anchor and checkpoint (plan 106)`); su SHA se identifica por el mensaje y
-    el árbol no embebe su propia identidad (auto-referencia).
+  - C2 `d0ca838` — `docs(plans): close plan 106 with validation anchor and
+    checkpoint (plan 106)` (registro/cierre inicial).
+  - C3 `de53e29` — `docs(plans): close plan 106 with validation anchor and
+    checkpoint (plan 106)` (corrección residual de referencias malformadas en
+    `docs/glossary/terms.md`; misma clase F1/F3; cubierta por V2).
+  - C4 — este commit de alineación final del registro con la historia real
+    (sin cambios de contenido adicionales); su SHA se identifica por el
+    mensaje y el árbol no embebe su propia identidad (auto-referencia).
 - Estado validado: `## Validation anchor` de este plan (V1); State identity T1
   = `b4a6c860e9f28c344a08a5721c72314b5d63c346`; Delta scoped identity =
   `24adc65fae6d8a93a350cfc57e998a6e1f50c1f9a1d3c0d4b14f696ac7ecc1d1`.
-- Estado de cierre: tree id del último commit de cierre (C2) =
-  `git rev-parse C2^{tree}` (no embebido por auto-referencia; verificable en
+- Estado de cierre: tree id del último commit de cierre (C4) =
+  `git rev-parse C4^{tree}` (no embebido por auto-referencia; verificable en
   git tras el commit).
 - Consistencia checkpoint↔anchor:
   - V1 ↔ C1: `git rev-parse C1^{tree}` == T1 (`b4a6c860…`) → **PASS**.
-  - Estado final (C2): difiere de C1 únicamente en los registros de cierre
-    (este artifact, `docs/plans/INDEX.md` y `CHANGELOG.md`); **revalidación
-    V2** (batería canónica completa sobre el contenido final, incluida la
-    corrección residual de referencias malformadas en `docs/glossary/terms.md`
-    — misma clase F1/F3, detectada en la validación —, ejecutada antes del
-    commit) → PASS. GC-1 queda satisfecho por revalidación antes de `Closed`.
+  - Estado final (C4): difiere de C1 en los registros de cierre (este
+    artifact, `docs/plans/INDEX.md`, `CHANGELOG.md`) y en la corrección
+    residual de referencias malformadas en `docs/glossary/terms.md` (misma
+    clase F1/F3, detectada en la validación); **revalidación V2** (batería
+    canónica completa sobre el contenido final, ejecutada antes del commit
+    final) → PASS. GC-1 queda satisfecho por revalidación antes de `Closed`.
 - Governance aplicada: Plan `Executed` (header + espejo en INDEX); ítem
   `(plan 106)` en `CHANGELOG.md:[Unreleased]`; docs-only, sin `VERSION` bump
   ni tag (RFC-69; `docs/VERSIONING.md:3. Versionado`).
@@ -302,4 +307,5 @@ autorización del mantenedor (2026-09-05) → Plan 106 (corrección docs-only) �
   residuales de referencias malformadas en `terms.md` — misma clase F1/F3,
   detectadas durante la validación y cubiertas por `<PLAN-106>:C-3`) y gates
   C1/C2/C3 sin ANOMALY antes de `Closed`; `git diff --check` limpio; commit C2
-  de registro en `dev`. Condición derivada: `Closed` (docs-only, sin release).
+  `d0ca838` y C3 `de53e29` de registro en `dev`, más commit C4 de alineación
+  final del registro. Condición derivada: `Closed` (docs-only, sin release).

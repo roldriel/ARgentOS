@@ -457,6 +457,35 @@ Amendment Log de la RFC-64).
 |---|---|---|---|
 | `103-rfc64-acceptance.md` | RFC-64 | Executed | Formaliza la aceptación de la RFC-64 (Execution Record Model): identidad de ejecución por composición, roles disjuntos de los registros, alcance de `state.json`, semántica temporal UTC con fuente declarada y observabilidad de budget. RFC-64 pasa a `Accepted (plan 103, 2026-09-03)` con entrada en su `## Amendment Log` que preserva las tres lecturas de implementación de la decisión humana (`clock` implementa `agent_clock` sin renombrar a `source`; `seq` estrictamente monótono por sesión; TR-002 con tolerancia de 60 s y `timestamp_divergence.cause`) y las condiciones futuras del plan 78 como contexto (versión 11.0.0, guard/fixtures legacy, METRICS schema 1.2.0, declaración de `state.json`, C3–C6; NO ejecutadas); INDEX de RFCs actualizado; ADR-06/07/08/11 + ADR INDEX con metadatos de estado alineados (sin contenido normativo nuevo). Cambio docs-only: sin `VERSION` bump ni tag (RFC-69); commits C1 `5d1c8e0` (contenido) + C2 (registro/cierre) en `dev`; Validation Anchor V1 (T1 `fd0a3db8…`; delta `8e72e9b4…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); sin findings/corrections; sin cambios en `protocol/.agents/`, `runtime/`, `tests/`, `tools/`, `dist/`, VERSION ni Planes 94–102; Plan 78 intacto y NO ejecutado; sin push. |
 
+## Trigésima sexta serie: alineación documental y operacional post-Plan-78 (Plan 104) (05 sep 2026)
+
+Plan 104 (cambio DEV docs-only autorizado por decisión humana del mantenedor
+«Plan 104 — Documentation & Operational Alignment», 2026-09-05; régimen
+RFC-69/RFC-75; sin RFC nueva, clase RFC-56 —): alinea la documentación
+operacional/descriptiva con el estado real post-Plan-78 (`11.0.0` pre-release
+en `dev`, sin promover). Scope: root `AGENTS.md` como entrypoint/puntero sin
+espejo de la batería canónica (layout de `docs/` corregido con `docs/rfc/`,
+`docs/adr/` y `docs/plans/` diferenciados); `.agents/AGENTS.md` permanece como
+entrypoint (no `INDEX.md`) con la alineación factual mínima del `## Verification
+battery`; `README.md` sin batería parcial duplicada; `docs/VERSIONING.md` §9
+como snapshot 2026-09-05 coherente con git y §4.1 con ownership único de la
+batería; `docs/CONVENTIONS.md` con rangos actualizados (RFCs hasta RFC-75;
+ADRs hasta ADR-16); `docs/MIGRATION.md` con el link `../CHANGELOG.md` corregido;
+`CHANGELOG.md` con `[Unreleased]` en la posición superior; modelos de
+arquitectura preservados como snapshots históricos con banner mínimo (contenido
+original intacto). Sin cambios en `protocol/.agents/`, `runtime/`, `tools/`,
+`tests/`, `dist/`, `protocol/.agents/VERSION` (11.0.0), Deferred
+(ROADMAP/audits/source-layout/ADOPTION) ni tags; sin promoción de `11.0.0`.
+Ejecución en `dev`: commit C1 `a2c9c43` (contenido) y commit C2
+(registro/cierre); Validation Anchor V1 (T1 `639c4fce…`; delta `792e1507…`) y
+Checkpoint con revalidación V2 antes de `Closed`; C1/C2/C3 GAP=0, ANOMALY=0;
+status `Executed`; condición derivada `Closed` (docs-only, sin release); sin
+findings/corrections.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `104-documentation-operational-alignment.md` | — | Executed | Alineación documental y operacional post-Plan-78 (decisión humana 2026-09-05): root `AGENTS.md` como entrypoint/puntero a la batería canónica de `docs/VERSIONING.md` §4.1 con layout de `docs/` corregido (RFCs/ADRs/planes diferenciados); `.agents/AGENTS.md` intacto como entrypoint operacional (alineación factual mínima del `## Verification battery`: puntero, no espejo; sin `INDEX.md`); `README.md` sin batería parcial (puntero canónico); `docs/VERSIONING.md` §9 snapshot 2026-09-05 (master/dist `10.3.0`; dev `11.0.0` pre-release; tags hasta `10.3.0`) y §4.1 con ownership único; `docs/CONVENTIONS.md` con rangos actualizados (RFC-75/ADR-16); `docs/MIGRATION.md` link `../CHANGELOG.md` corregido; `CHANGELOG.md` con `[Unreleased]` reubicado arriba; banners históricos mínimos en `ARCHITECTURAL_PROBLEM_MODEL.md` y `ARCHITECTURAL_DECISION_MODEL.md` (contenido original preservado; materialización posterior respaldada por la matriz `docs/adr/INDEX.md:Matriz D# ↔ ADR ↔ RFC ↔ plan`). Cambio DEV docs-only: clase RFC-56 —, Change Level L2, sin `VERSION` bump ni tag (RFC-69); commits C1 `a2c9c43` (contenido) + C2 (registro/cierre) en `dev`; Validation Anchor V1 (T1 `639c4fce…`; delta `792e1507…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); sin findings/corrections; sin cambios en `protocol/.agents/`, `runtime/`, `tests/`, `tools/`, `dist/`, `protocol/.agents/VERSION` (11.0.0), Deferred ni Planes 94–103; sin push, sin merge, sin tag; `11.0.0` sigue sin release. |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

@@ -237,6 +237,21 @@ La política de versionado, changelog, tags y estados de planes vive en
   (Casos A/B/C adversariales y escenarios T1–T12). DEV-only: sin `VERSION`
   bump ni tag (RFC-69; ver `docs/VERSIONING.md` §3).
 
+- **Alineación documental y operacional post-Plan-78** (plan 104): el root
+  `AGENTS.md` pasa a puntero/resumen de la batería canónica (definición única
+  en `docs/VERSIONING.md` §4.1) con el layout de `docs/` corregido y
+  diferenciado (`docs/rfc/`, `docs/adr/`, `docs/plans/`); `.agents/AGENTS.md`
+  permanece como entrypoint operacional (alineación factual mínima del
+  `## Verification battery`; sin `INDEX.md`); `README.md` sin batería parcial
+  duplicada; `docs/VERSIONING.md` §9 actualizado al estado real (2026-09-05:
+  master/dist `10.3.0`, dev `11.0.0` pre-release sin promover) y §4.1 con
+  ownership único; `docs/CONVENTIONS.md` con rangos actualizados (RFCs hasta
+  RFC-75; ADRs hasta ADR-16); `docs/MIGRATION.md` con el link `../CHANGELOG.md`
+  corregido; `CHANGELOG.md` con `[Unreleased]` en la posición superior; los
+  modelos históricos de arquitectura preservados con banner de snapshot.
+  Cambio docs-only: sin `VERSION` bump ni tag (RFC-69; ver
+  `docs/VERSIONING.md` §3); sin promoción de `11.0.0`.
+
 (los cambios docs-only se registran aquí bajo `[Unreleased]`; ver
 `docs/VERSIONING.md` §3)
 

@@ -96,6 +96,16 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Changed
 
+- **Arquitectura terminológica y glosario** (plan 105): vocabularios
+  DEV/Protocol separados con puente descriptivo; glosario
+  `docs/glossary/INDEX.md` + `terms.md` como registro Inventory/DESCRIPTIVE no
+  normativo (término → scope → status → autoridad, sin definiciones
+  duplicadas); reglas D1–D5 (convención AGENTS/INDEX/ENTRYPOINT preservada;
+  `SCI` desnudo prohibido en texto cross-layer nuevo; calificación obligatoria
+  de términos overloaded) en `docs/CONVENTIONS.md`; semántica de archivos y
+  mapa de clase en `docs/AGENTS.md`; punteros de descubrimiento en root
+  `AGENTS.md` y `.agents/AGENTS.md`. Cambio docs-only: sin `VERSION` bump ni
+  tag (ver `docs/VERSIONING.md` §3); sin cambios en el payload del Protocol.
 - **Taxonomía documental y layout del repo fuente** (Plan A, RFC-69): la
   documentación se reorganiza bajo `docs/` (`rfc/`, `plans/`, `architecture/`,
   `working/`), se crea `docs/CONVENTIONS.md` con la normativa, los INDEX pasan

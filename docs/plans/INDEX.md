@@ -498,10 +498,15 @@ AGENTS/INDEX/ENTRYPOINT y mapa de clase en `docs/AGENTS.md`, punteros de
 descubrimiento en root `AGENTS.md` y `.agents/AGENTS.md`. Sin cambios en
 `protocol/.agents/`, `runtime/`, `tools/`, `tests/`, `dist/`,
 `protocol/.agents/VERSION` (11.0.0) ni tags; sin renames; sin checker nuevo.
+Ejecución en `dev`: commit C1 `120f44e` (contenido) y C2 (registro/cierre);
+Validation Anchor V1 (T1 `69f16b4f…`; delta `346ab984…`) y Checkpoint con
+revalidación V2 antes de `Closed`; C1/C2/C3 GAP=0, ANOMALY=0; status
+`Executed`; condición derivada `Closed` (docs-only, sin release); sin
+findings/corrections.
 
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
-| `105-terminology-architecture-materialization.md` | — | Aprobado para ejecución | Materialización docs-only de las decisiones humanas D1–D5 (terminología: vocabularios separados + puente descriptivo; glosario Inventory no normativo; convención AGENTS/INDEX/ENTRYPOINT preservada; regla SCI; reglas de calificación). |
+| `105-terminology-architecture-materialization.md` | — | Executed | Materialización docs-only de las decisiones humanas D1–D5 (terminología: vocabularios separados + puente descriptivo; glosario `docs/glossary/INDEX.md` + `terms.md` Inventory/DESCRIPTIVE no normativo; convención AGENTS/INDEX/ENTRYPOINT preservada; regla SCI; reglas de calificación; semántica documentada en `docs/AGENTS.md` y regla operacional en `docs/CONVENTIONS.md`). Cambio DEV docs-only: clase RFC-56 —, Change Level L2, sin `VERSION` bump ni tag (RFC-69); commits C1 `120f44e` (contenido) + C2 (registro/cierre) en `dev`; Validation Anchor V1 (T1 `69f16b4f…`; delta `346ab984…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); pending no bloqueante de elevación ADR futura; sin findings/corrections; sin cambios en `protocol/.agents/`, `runtime/`, `tests/`, `tools/`, `dist/`, `protocol/.agents/VERSION` (11.0.0) ni Planes 94–104; sin push, sin merge, sin tag; `11.0.0` sigue sin release. |
 
 ## Serie de RFCs (documentos canónicos)
 

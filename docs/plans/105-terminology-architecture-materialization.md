@@ -1,6 +1,7 @@
 # Plan 105 — Materialización de la arquitectura terminológica (D1–D5) y glosario
 
-**Status:** Aprobado para ejecución
+**Status:** Executed (2026-09-05; materialización D1–D5 ejecutada y cerrada
+docs-only)
 **Fecha:** 2026-09-05
 **RFC:** — (no implementa ni acepta ninguna RFC; régimen aplicable: RFC-69
 `Accepted` — cambio docs-only sin `VERSION` bump ni tag — y RFC-75 `Accepted`
@@ -129,15 +130,90 @@ internamente consistentes.
 
 ## Validation anchor
 
-<!-- Se completa al validar (VC-1, Incremento 1): declared scope, command-set,
-effective inputs, observed dependencies, environmental factors, Scoped Content
-Identity (state identity + delta) y validity/stale. -->
+Registrado al cerrar el Plan 105 (2026-09-05). La validación **V1** corrió
+sobre el contenido del commit de contenido C1 (archivos de los pasos 2–7)
+**antes** de agregar los registros de cierre de esta sección
+(anti-circularidad; precedente Planes 96–104).
+
+- Declared scope: contenido del commit C1 del Plan 105 — root `AGENTS.md`,
+  `.agents/AGENTS.md`, `docs/AGENTS.md`, `docs/CONVENTIONS.md`,
+  `docs/glossary/INDEX.md` y `docs/glossary/terms.md` — + batería canónica del
+  repo (checkers dev + pytest) sobre ese estado.
+- Validation command-set:
+  - `python tools/check_protocol_invariants.py --payload protocol .`
+  - `python tools/check_plan_citations.py`
+  - `python tools/check_plan_structure.py`
+  - `python tools/check_taxonomy_coherence.py`
+  - `python tools/check_session_artifacts.py`
+  - `python tools/check_version_state.py`
+  - `python -m pytest tests/ -q --basetemp .pytest_cache\basetemp`
+- Effective inputs (repo content): contenido completo del repo en el estado
+  validado (los checkers escanean `docs/`, `protocol/`, `tools/`, `tests/`,
+  `runtime/` y la raíz; pytest consume `tests/` + `tools/` + `runtime/`);
+  representado por el State identity (tree id).
+- Observed dependencies: `no instrumentado` (sin tooling de instrumentación en
+  esta ejecución); el consumo por comando se observa de la documentación de
+  cada checker y de la batería (`docs/VERSIONING.md:4.1 Batería canónica de
+  verificación`).
+- Environmental factors: OS Windows; Python 3.14.3; git 2.55.0.windows.5;
+  pytest 9.0.3; `protocol/.agents/VERSION` = 11.0.0; pytest ejecutado con
+  basetemp local `.pytest_cache\basetemp` por ACL del basetemp
+  `pytest-of-rolda` (ruido ambiental documentado en planes 96–104); sin red.
+- Scoped Content Identity:
+  - State identity (estado validado = árbol de C1): T1 =
+    `69f16b4f99609ef5f89cd0a936676237d67cf959` (tree id; igual a
+    `git rev-parse C1^{tree}`).
+  - Delta scoped identity (scope S = 6 archivos del cambio de C1, orden
+    lexicográfico; serialización `scoped-v1` + pares `path NUL blob NUL`):
+    `346ab984ee92bb70d66d319d0364853f89462cba85d73358ac90d4c2c694da14`.
+    Pares path → blob (C1): `.agents/AGENTS.md` →
+    `acd6cacd219c0c8b7362644dca1b1f7747b43402`; `AGENTS.md` →
+    `7f83e8c48bb21a443dc33817ac8c2d89cbbf1ca6`; `docs/AGENTS.md` →
+    `50bb3470b2c582bda8e616c8e33bf8033362e962`; `docs/CONVENTIONS.md` →
+    `0873b4e34479805ebfb50115788e601695561055`;
+    `docs/glossary/INDEX.md` →
+    `199c03267586d0a6ceef823e6a0e3a5a38ce40b7`; `docs/glossary/terms.md` →
+    `81ba1713a1847a76b46ae2d62bcb1c83d00afe1d`.
+- Validity / stale: `vigente` (V1); revalidada por **V2** (batería canónica
+  completa sobre el estado final de la ejecución, incluidos los registros de
+  cierre) antes de `Closed`. V1 conserva su significado histórico sobre el
+  estado de C1; V2 es la validación aplicable al estado de cierre.
 
 ## Checkpoint / cierre
 
-<!-- Se completa al cerrar (GC-1, Incremento 3): commits de cierre, estado
-validado, estado de cierre (tree id), consistencia checkpoint↔anchor,
-governance aplicada y condición derivada. -->
+Registro de la relación closure↔estado Git (RFC-75 Mecanismo 7;
+`docs/CONVENTIONS.md:Change Lifecycle — Checkpoint y cierre Git (regla
+operacional; GC-1, Incremento 3)`). Se registra en el commit de registro C2,
+posterior al commit de contenido C1 (multi-commit del plan).
+
+- Commits de cierre:
+  - C1 `120f44e` — `docs: materialize terminology architecture and glossary
+    (plan 105)` (contenido validado por V1).
+  - C2 — este commit de registro (`docs(plans): close plan 105 with validation
+    anchor and checkpoint (plan 105)`); su SHA se identifica por el mensaje y
+    el árbol no embebe su propia identidad (auto-referencia).
+- Estado validado: `## Validation anchor` de este plan (V1); State identity T1
+  = `69f16b4f99609ef5f89cd0a936676237d67cf959`; Delta scoped identity =
+  `346ab984ee92bb70d66d319d0364853f89462cba85d73358ac90d4c2c694da14`.
+- Estado de cierre: tree id del último commit de cierre (C2) =
+  `git rev-parse C2^{tree}` (no embebido por auto-referencia; verificable en
+  git tras el commit). En la validación V2 se registró el tree id del estado
+  staged antes del commit (`git write-tree`), que debe coincidir con
+  `C2^{tree}` post-commit.
+- Consistencia checkpoint↔anchor:
+  - V1 ↔ C1: `git rev-parse C1^{tree}` == T1 (`69f16b4f…`) → **PASS**.
+  - Estado final (C2): difiere de C1 únicamente en los registros de cierre
+    (este artifact, `docs/plans/INDEX.md` y `CHANGELOG.md`); **revalidación
+    V2** (batería canónica completa sobre el contenido final, ejecutada antes
+    del commit) → PASS. GC-1 queda satisfecho por revalidación antes de
+    `Closed`.
+- Governance aplicada: Plan `Executed` (header + espejo en INDEX); ítem
+  `(plan 105)` en `CHANGELOG.md:[Unreleased]`; docs-only, sin `VERSION` bump
+  ni tag (RFC-69; `docs/VERSIONING.md:3. Versionado`).
+- Condición derivada: **`Closed` (docs-only, sin release)**.
+  `Executed ≠ Committed ≠ Closed ≠ Released`: `Executed` (status del plan),
+  `Committed` (C1 + C2 en `dev`), `Closed` (condición derivada con checkpoint
+  y consistencia), `Released` (no aplica: sin promoción ni tag).
 
 ## Findings / Correcciones / Pending
 
@@ -146,17 +222,24 @@ artifacts nuevos; la ausencia de registros no es invalidez).
 
 ### Findings
 
-<!-- Si no hay registros reales al cerrar: "No findings detected / N/A". -->
+- `No findings detected / N/A`
 
 ### Correcciones
 
-<!-- Si no hay registros reales al cerrar: "N/A". -->
+- `N/A` (no hubo findings previos; no existe registro `C-<n>`)
 
 ### Pending decisions
 
-<!-- Si no hay decisiones pendientes reales al cerrar: "N/A". Si existe una
-decisión de elevación a ADR de la arquitectura terminológica (ADR-worthiness),
-se registra aquí con metadata PC-1. -->
+- `<PLAN-105>` — decisión: evaluar la elevación de la arquitectura
+  terminológica (D1–D5) a ADR cuando se satisfaga el criterio de
+  ADR-worthiness (`docs/adr/16-change-lifecycle-authority.md`, punto 3):
+  consumo fuera de `docs/`, supersession de esta convención, o invariante
+  arquitectónico con cambio futuro auditable de forma independiente;
+  blocking: no; owner: mantenedor; escalación: mantenedor (decisión
+  diferida); resolución: pendiente (sin plazo); evidencia: este Plan 105 y
+  `docs/CONVENTIONS.md:Convenciones de terminología y nomenclatura
+  (decisiones D1–D5, 2026-09-05)`; efecto downstream: futura gobernanza
+  terminológica; ADR-worthiness: candidata futura (no bloqueante).
 
 ## Riesgos
 
@@ -177,4 +260,29 @@ Planes 101/104 (`Closed`) → Plan 105 (materialización docs-only) →
 
 ## Nota de ejecución
 
-<!-- Se agrega al ejecutar, con fecha, verificación realizada y resultado. -->
+- 2026-09-05 — **Ejecutado el Plan 105 sobre `dev`** (autorización explícita
+  del mantenedor: decisiones humanas D1–D5, 2026-09-05). Estado inicial:
+  branch `dev`, HEAD `9bdcf5a5cfa7880ed330e13520506018c0c453e4`, working tree
+  limpio; batería canónica en verde tras la implementación (checkers PASS;
+  pytest `445 passed, 0 failed`; basetemp local `.pytest_cache\basetemp` por
+  ACL del sandbox). Clasificación: origen = decisiones humanas del mantenedor
+  (D1–D5); clase RFC-56 = — (sin payload); Change Level = L2; dominio =
+  documentación/gobernanza DEV.
+  Implementación (commit C1 `120f44e`, contenido validado por V1):
+  `docs/glossary/INDEX.md` y `docs/glossary/terms.md` creados como registro
+  descriptivo (Inventory/DESCRIPTIVE, no normativo; 28 términos con Scope,
+  Status y Authority Reference); `docs/CONVENTIONS.md` con la subsección
+  normativa D1–D5 (vocabularios separados + puente; glosario no normativo;
+  convención AGENTS/INDEX/ENTRYPOINT; regla SCI; calificación obligatoria);
+  `docs/AGENTS.md` con el mapa folder→clase y la semántica de archivos
+  AGENTS/INDEX/ENTRYPOINT; root `AGENTS.md` y `.agents/AGENTS.md` con
+  punteros de descubrimiento; Plan 105 registrado en `docs/plans/INDEX.md`
+  (Trigésima séptima serie). Sin cambios en `protocol/.agents/`, `runtime/`,
+  `tools/`, `tests/`, `dist/`, `protocol/.agents/VERSION` (11.0.0), ROADMAP,
+  `docs/working/audits/`, `docs/source-layout.md`, `docs/ADOPTION.md` ni
+  tags; sin renames; sin checker nuevo; sin reescritura histórica.
+  Registro/cierre: este artifact, espejo en `docs/plans/INDEX.md` (status
+  `Executed`) e ítem en `CHANGELOG.md:[Unreleased]`; revalidación V2 (batería
+  canónica completa sobre el estado final) y gates C1/C2/C3 sin ANOMALY
+  (GAP=0, ANOMALY=0) antes de `Closed`; `git diff --check` limpio; commit C2
+  de registro en `dev`. Condición derivada: `Closed` (docs-only, sin release).

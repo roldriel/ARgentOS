@@ -96,6 +96,13 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Changed
 
+- **Corrección post-close del glosario — F1–F5** (plan 106): reparadas en
+  `docs/glossary/` las referencias de autoridad malformadas (F1/F2), la
+  referencia `path:section` no determinista (F3); agregada la regla explícita
+  de cobertura selectiva y alta de entradas (F4); normalizado el vocabulario
+  de `Status` con restricciones de uso modeladas por separado (F5). Cambio
+  docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3); sin
+  cambios en el payload del Protocol ni en el Plan 105 (permanece `Closed`).
 - **Arquitectura terminológica y glosario** (plan 105): vocabularios
   DEV/Protocol separados con puente descriptivo; glosario
   `docs/glossary/INDEX.md` + `terms.md` como registro Inventory/DESCRIPTIVE no

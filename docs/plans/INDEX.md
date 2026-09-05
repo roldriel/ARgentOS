@@ -519,10 +519,15 @@ regla de cobertura/alta explícita (F4) y normalización del vocabulario de
 `protocol/.agents/`, `runtime/`, `tools/`, `tests/`, `dist/`,
 `protocol/.agents/VERSION` (11.0.0), sin renames y sin reabrir el Plan 105
 (post-close por referencia, RFC-75 Mecanismo 12).
+Ejecución en `dev`: commit C1 `922931a` (contenido) y C2 (registro/cierre);
+Validation Anchor V1 (T1 `b4a6c860…`; delta `24adc65f…`) y Checkpoint con
+revalidación V2 antes de `Closed`; C1/C2/C3 GAP=0, ANOMALY=0; status
+`Executed`; condición derivada `Closed` (docs-only, sin release); findings
+`<PLAN-106>:F-1..F-5` resueltos vía `<PLAN-106>:C-1..C-5`.
 
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
-| `106-post-close-glossary-correction.md` | — | Aprobado para ejecución | Corrección docs-only F1–F5 (glosario): F1 cita malformada; F2 nombre de campo; F3 path:section no determinista; F4 cobertura/alta; F5 status vs restricción de uso. |
+| `106-post-close-glossary-correction.md` | — | Executed | Corrección docs-only post-close F1–F5 sobre los artifacts del Plan 105 (glosario): F1 cita de autoridad malformada reparada; F2 `Authority Reference` restaurado; F3 referencia `path:section` reemplazada por heading real; F4 sección «Cobertura y alta de entradas» (selectiva; ausencia ≠ defecto; alta por ambigüedad/gobernanza/cross-layer); F5 `current (restricted)` eliminado — restricciones de uso separadas del `Status`. Cambio DEV docs-only: clase RFC-56 —, Change Level L1, sin `VERSION` bump ni tag (RFC-69); commits C1 `922931a` (contenido) + C2 (registro/cierre) en `dev`; Validation Anchor V1 (T1 `b4a6c860…`; delta `24adc65f…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); findings `<PLAN-106>:F-1..F-5` resueltos vía `<PLAN-106>:C-1..C-5` (FACTUAL/TRACEABILITY); sin cambios en `protocol/.agents/`, `runtime/`, `tests/`, `tools/`, `dist/`, `protocol/.agents/VERSION` (11.0.0), Plan 105 (`Closed`) ni documentos históricos; sin push, sin merge, sin tag; `11.0.0` sigue sin release. |
 
 ## Serie de RFCs (documentos canónicos)
 

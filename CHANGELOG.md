@@ -32,147 +32,6 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
-## [11.0.0] — 2026-09-04
-
-### Added
-
-- **Modelo de registro de ejecución — identidad y event keys** (plan 78,
-  RFC-64): identidad de ejecución por composición
-  (`execution_id = (session_id, iteration)`) sin UUIDs nuevos; roles disjuntos
-  de `state.json`, `HARNESS_REPORT.md`, `SESSION_LOG.md` y `METRICS.md`;
-  correlación de gates por `(execution_id, trigger)`, de métricas por
-  `(execution_id, seq)` y de delegaciones por `(execution_id, phase,
-  attempt#)`; sección "Execution records" en `.agents/harness/INDEX.md`.
-- **METRICS con `seq`/`iteration`/`clock`** (plan 78, RFC-64): todo evento
-  METRIC lleva `seq` (estrictamente creciente por sesión), `timestamp` y
-  `clock`; los eventos por ejecución llevan `iteration`, incluidos
-  `reuse_event` y `provider_cache_event` del catálogo 1.2.0 (10.3.0);
-  `delegation` puede declarar `context_budget` y `attempt`; pairing
-  obligatorio delegación ↔ evento `context_budget` (OBS-001).
-
-### Changed
-
-- **Alcance de `state.json` y `gate_ts` canónico** (plan 78, RFC-64):
-  `state.json` registra gates de transición H00–H07/H11 + status terminal
-  únicamente; `runner_state.py` rechaza triggers no transicionales y
-  normaliza los timestamps a UTC con sufijo `Z`; `detect_bypass` devuelve un
-  flag de confiabilidad y avisa cuando el `gate_ts` no es UTC-normalizado.
-- **ENTRY con `iteration`/`clock` obligatorios** (plan 78, RFC-64):
-  `HARNESS_REPORT.md` declara `timestamp` como `event_ts` del trail y
-  `timestamp_divergence.cause` para divergencias con el `gate_ts` (TR-002,
-  tolerancia 60 s); `SESSION_LOG.md` registra `Execution` y el marcador
-  `Clock` cuando el heading no es UTC-normalizado.
-- **`schema_version` 2.0.0** (plan 78, RFC-64): los contratos
-  `HARNESS_REPORT.md`, `METRICS.md` y `SESSION_LOG.md` pasan a
-  `schema_version` 2.0.0 (obligaciones nuevas para sesiones nuevas).
-- **Reconciliación dev** (plan 78, RFC-64): `--audit` correlaciona por
-  `(iteration, trigger)` para sesiones `>= 11.0.0` y compara timestamps con
-  tolerancia de 60 s; las trazas previas sin `iteration` mantienen la
-  correlación por `trigger` (RFC-46); `check_session_artifacts.py` aplica el
-  modelo de registro solo a sesiones `>= 11.0.0`.
-- **Medidor de budget** (plan 78, RFC-64): `measure_context_budget.py` acepta
-  `--phase`/`--iteration` opcionales en el reporte JSON.
-
-### Removed
-
-- **Registro de gates no transicionales en `state.json`** (plan 78, RFC-64):
-  D*/H09/H10/H15/S00/REVIEW dejan de ser registrables en `state.json`
-  (solo `HARNESS_REPORT.md`); las trazas históricas no se reescriben.
-
-### Modelo conceptual
-
-- **RFC-64 implementada** (plan 78): el Execution Record Model pasa de modelo
-  aceptado (plan 103) a materialización en `11.0.0`, preservando las tres
-  lecturas Accepted (`clock` implementa `agent_clock` sin renombrar; `seq`
-  estrictamente monótono por sesión; TR-002 con tolerancia de 60 s y
-  `timestamp_divergence.cause`).
-
-## [10.3.0] — 2026-08-31
-
-### Added
-
-- **Observabilidad y economía del cache — eventos de reuse/provider** (plan 91,
-  RFC-74): el contrato `METRICS.md` pasa a `schema_version` 1.2.0 con los tipos
-  de evento `reuse_event` (vocabulario lookup/eligibility/reuse/lifecycle por
-  capa; hit/miss nunca implica validez semántica) y `provider_cache_event`
-  (estado del cache del provider reportado por el adapter; sin pricing ni costo
-  monetario — dimensión `Unavailable`); `PROTOCOL_METRICS.md` agrega el
-  catálogo `Reuse and cache` con clases de evidencia
-  (Observed/Estimated/Derived/Unavailable), métricas por capa y la sección de
-  economía con los invariantes I-ECO-001…I-ECO-006 sin umbrales; el agregador
-  dev `tools/aggregate_metrics.py` procesa los eventos nuevos con agregación
-  layer-specific y sin doble conteo, y deriva las oportunidades de Discovery
-  reuse (clase Derived) desde `.last_discovery` + manifest; los productores del
-  runtime (planes 89/90) quedan expuestos como metadata/estado; el registro de
-  los eventos en `METRICS.md` es responsabilidad del Orchestrator/host (seam
-  arquitectónico documentado; sin writer de referencia en este repositorio).
-  MINOR: adiciones compatibles (los eventos desconocidos siguen ignorados por
-  agregadores viejos); sin thresholds, sin pricing, sin telemetry backend, sin
-  cambios en Discovery ni en state machines.
-
-### Modelo conceptual
-
-- **RFC-74 implementada** (plan 91): la RFC-74 pasa de modelo aceptado
-  (plan 93) a materialización parcial de la medición/economía del cache
-  (eventos de reuse/cache, catálogo y agregador), versión 10.3.0.
-
-## [10.2.0] — 2026-08-31
-
-### Added
-
-- **Persistence semántica de proyecto — Project Segment derivado** (plan 90,
-  RFC-73): el runtime de referencia deriva el Project Segment de RFC-71 sobre
-  la KB de discovery existente (namespace = `ProjectIdentity` desde
-  `PROJECT_REGISTRY.project_id`, sin identidad nueva ni fallback path-derived),
-  con `SegmentContentIdentity`/`SegmentIdentity(project)`, reuse eligibility
-  (`FRESH`/`STALE`/`UNKNOWN`; stale ≠ invalid; hashes de discovery ≠ content
-  identity) y store derivado `.project/knowledge/project_segment.json`
-  (filesystem, escritura atómica, rebuildable, nunca autoritativo), más la
-  regla operativa aditiva en `PROTOCOL_BOUNDARIES.md`. MINOR: adiciones
-  compatibles; sin cambios en Discovery, state machines ni RFC-72/74.
-
-### Modelo conceptual
-
-- **RFC-73 implementada** (plan 90): la RFC-73 pasa de modelo formal a
-  materialización parcial de la persistence de proyecto (Project Segment
-  derivado + store) en el runtime de referencia, versión 10.2.0; la
-  telemetría/economía del cache (RFC-74) sigue en `Proposal`.
-
-## [10.1.0] — 2026-08-29
-
-### Added
-
-- **Context Persistence & Cacheability — materialización normativa** (plan 88,
-  RFC-71): clasificación estable/dinámico del Execution Context, segmentos
-  Core/Project/Worker como dominios semánticos, identidades compuestas
-  (`SegmentContentIdentity`/`SegmentIdentity`/`SemanticContextIdentity`),
-  scope, aislamiento semántico, separación de invalidación
-  semántica/frescura/almacenamiento, frontera persistence ≠ provider prompt
-  cache y no-modificación del Context Budget por caching/persistence (I-010),
-  en `CONTEXT.md`, `KNOWLEDGE_LIFECYCLE.md`, `PROTOCOL_BOUNDARIES.md` y
-  `BUDGET_MATERIALIZATION.md`. MINOR: adiciones compatibles; sin cambios de
-  contratos, state machines ni workflows. Las RFCs 72–74 permanecen en
-  `Proposal` y fuera de alcance.
-
-### Modelo conceptual
-
-- **RFC-71 implementada parcialmente** (plan 88): la RFC-71 pasa de fuente
-  conceptual a materialización normativa parcial en la versión 10.1.0; la
-  implementación de materialización/provider (RFC-72), persistence de proyecto
-  (RFC-73) y telemetría/economía (RFC-74) sigue en `Proposal`.
-
-## [10.0.0] — 2026-08-28
-
-### Removed
-
-- **Artefactos de contexto del proyecto manuales** (plan 84, RFC-70):
-  `project-map.md` y `technical-analysis.md` dejan de ser artefactos del
-  protocolo y el estándar `PROJECT_ARTIFACTS.md` se elimina (incluidas sus
-  plantillas de dominio); el contexto estructural y técnico del proyecto se
-  obtiene de la Knowledge Base de discovery
-  (`.project/knowledge/discovery/`, `executive_summary.md` como entrada
-  read-first), con frescura por claim y provenance.
-
 ## [Unreleased]
 
 ### Modelo conceptual
@@ -382,6 +241,147 @@ La política de versionado, changelog, tags y estados de planes vive en
 `docs/VERSIONING.md` §3)
 
 ---
+
+## [11.0.0] — 2026-09-04
+
+### Added
+
+- **Modelo de registro de ejecución — identidad y event keys** (plan 78,
+  RFC-64): identidad de ejecución por composición
+  (`execution_id = (session_id, iteration)`) sin UUIDs nuevos; roles disjuntos
+  de `state.json`, `HARNESS_REPORT.md`, `SESSION_LOG.md` y `METRICS.md`;
+  correlación de gates por `(execution_id, trigger)`, de métricas por
+  `(execution_id, seq)` y de delegaciones por `(execution_id, phase,
+  attempt#)`; sección "Execution records" en `.agents/harness/INDEX.md`.
+- **METRICS con `seq`/`iteration`/`clock`** (plan 78, RFC-64): todo evento
+  METRIC lleva `seq` (estrictamente creciente por sesión), `timestamp` y
+  `clock`; los eventos por ejecución llevan `iteration`, incluidos
+  `reuse_event` y `provider_cache_event` del catálogo 1.2.0 (10.3.0);
+  `delegation` puede declarar `context_budget` y `attempt`; pairing
+  obligatorio delegación ↔ evento `context_budget` (OBS-001).
+
+### Changed
+
+- **Alcance de `state.json` y `gate_ts` canónico** (plan 78, RFC-64):
+  `state.json` registra gates de transición H00–H07/H11 + status terminal
+  únicamente; `runner_state.py` rechaza triggers no transicionales y
+  normaliza los timestamps a UTC con sufijo `Z`; `detect_bypass` devuelve un
+  flag de confiabilidad y avisa cuando el `gate_ts` no es UTC-normalizado.
+- **ENTRY con `iteration`/`clock` obligatorios** (plan 78, RFC-64):
+  `HARNESS_REPORT.md` declara `timestamp` como `event_ts` del trail y
+  `timestamp_divergence.cause` para divergencias con el `gate_ts` (TR-002,
+  tolerancia 60 s); `SESSION_LOG.md` registra `Execution` y el marcador
+  `Clock` cuando el heading no es UTC-normalizado.
+- **`schema_version` 2.0.0** (plan 78, RFC-64): los contratos
+  `HARNESS_REPORT.md`, `METRICS.md` y `SESSION_LOG.md` pasan a
+  `schema_version` 2.0.0 (obligaciones nuevas para sesiones nuevas).
+- **Reconciliación dev** (plan 78, RFC-64): `--audit` correlaciona por
+  `(iteration, trigger)` para sesiones `>= 11.0.0` y compara timestamps con
+  tolerancia de 60 s; las trazas previas sin `iteration` mantienen la
+  correlación por `trigger` (RFC-46); `check_session_artifacts.py` aplica el
+  modelo de registro solo a sesiones `>= 11.0.0`.
+- **Medidor de budget** (plan 78, RFC-64): `measure_context_budget.py` acepta
+  `--phase`/`--iteration` opcionales en el reporte JSON.
+
+### Removed
+
+- **Registro de gates no transicionales en `state.json`** (plan 78, RFC-64):
+  D*/H09/H10/H15/S00/REVIEW dejan de ser registrables en `state.json`
+  (solo `HARNESS_REPORT.md`); las trazas históricas no se reescriben.
+
+### Modelo conceptual
+
+- **RFC-64 implementada** (plan 78): el Execution Record Model pasa de modelo
+  aceptado (plan 103) a materialización en `11.0.0`, preservando las tres
+  lecturas Accepted (`clock` implementa `agent_clock` sin renombrar; `seq`
+  estrictamente monótono por sesión; TR-002 con tolerancia de 60 s y
+  `timestamp_divergence.cause`).
+
+## [10.3.0] — 2026-08-31
+
+### Added
+
+- **Observabilidad y economía del cache — eventos de reuse/provider** (plan 91,
+  RFC-74): el contrato `METRICS.md` pasa a `schema_version` 1.2.0 con los tipos
+  de evento `reuse_event` (vocabulario lookup/eligibility/reuse/lifecycle por
+  capa; hit/miss nunca implica validez semántica) y `provider_cache_event`
+  (estado del cache del provider reportado por el adapter; sin pricing ni costo
+  monetario — dimensión `Unavailable`); `PROTOCOL_METRICS.md` agrega el
+  catálogo `Reuse and cache` con clases de evidencia
+  (Observed/Estimated/Derived/Unavailable), métricas por capa y la sección de
+  economía con los invariantes I-ECO-001…I-ECO-006 sin umbrales; el agregador
+  dev `tools/aggregate_metrics.py` procesa los eventos nuevos con agregación
+  layer-specific y sin doble conteo, y deriva las oportunidades de Discovery
+  reuse (clase Derived) desde `.last_discovery` + manifest; los productores del
+  runtime (planes 89/90) quedan expuestos como metadata/estado; el registro de
+  los eventos en `METRICS.md` es responsabilidad del Orchestrator/host (seam
+  arquitectónico documentado; sin writer de referencia en este repositorio).
+  MINOR: adiciones compatibles (los eventos desconocidos siguen ignorados por
+  agregadores viejos); sin thresholds, sin pricing, sin telemetry backend, sin
+  cambios en Discovery ni en state machines.
+
+### Modelo conceptual
+
+- **RFC-74 implementada** (plan 91): la RFC-74 pasa de modelo aceptado
+  (plan 93) a materialización parcial de la medición/economía del cache
+  (eventos de reuse/cache, catálogo y agregador), versión 10.3.0.
+
+## [10.2.0] — 2026-08-31
+
+### Added
+
+- **Persistence semántica de proyecto — Project Segment derivado** (plan 90,
+  RFC-73): el runtime de referencia deriva el Project Segment de RFC-71 sobre
+  la KB de discovery existente (namespace = `ProjectIdentity` desde
+  `PROJECT_REGISTRY.project_id`, sin identidad nueva ni fallback path-derived),
+  con `SegmentContentIdentity`/`SegmentIdentity(project)`, reuse eligibility
+  (`FRESH`/`STALE`/`UNKNOWN`; stale ≠ invalid; hashes de discovery ≠ content
+  identity) y store derivado `.project/knowledge/project_segment.json`
+  (filesystem, escritura atómica, rebuildable, nunca autoritativo), más la
+  regla operativa aditiva en `PROTOCOL_BOUNDARIES.md`. MINOR: adiciones
+  compatibles; sin cambios en Discovery, state machines ni RFC-72/74.
+
+### Modelo conceptual
+
+- **RFC-73 implementada** (plan 90): la RFC-73 pasa de modelo formal a
+  materialización parcial de la persistence de proyecto (Project Segment
+  derivado + store) en el runtime de referencia, versión 10.2.0; la
+  telemetría/economía del cache (RFC-74) sigue en `Proposal`.
+
+## [10.1.0] — 2026-08-29
+
+### Added
+
+- **Context Persistence & Cacheability — materialización normativa** (plan 88,
+  RFC-71): clasificación estable/dinámico del Execution Context, segmentos
+  Core/Project/Worker como dominios semánticos, identidades compuestas
+  (`SegmentContentIdentity`/`SegmentIdentity`/`SemanticContextIdentity`),
+  scope, aislamiento semántico, separación de invalidación
+  semántica/frescura/almacenamiento, frontera persistence ≠ provider prompt
+  cache y no-modificación del Context Budget por caching/persistence (I-010),
+  en `CONTEXT.md`, `KNOWLEDGE_LIFECYCLE.md`, `PROTOCOL_BOUNDARIES.md` y
+  `BUDGET_MATERIALIZATION.md`. MINOR: adiciones compatibles; sin cambios de
+  contratos, state machines ni workflows. Las RFCs 72–74 permanecen en
+  `Proposal` y fuera de alcance.
+
+### Modelo conceptual
+
+- **RFC-71 implementada parcialmente** (plan 88): la RFC-71 pasa de fuente
+  conceptual a materialización normativa parcial en la versión 10.1.0; la
+  implementación de materialización/provider (RFC-72), persistence de proyecto
+  (RFC-73) y telemetría/economía (RFC-74) sigue en `Proposal`.
+
+## [10.0.0] — 2026-08-28
+
+### Removed
+
+- **Artefactos de contexto del proyecto manuales** (plan 84, RFC-70):
+  `project-map.md` y `technical-analysis.md` dejan de ser artefactos del
+  protocolo y el estándar `PROJECT_ARTIFACTS.md` se elimina (incluidas sus
+  plantillas de dominio); el contexto estructural y técnico del proyecto se
+  obtiene de la Knowledge Base de discovery
+  (`.project/knowledge/discovery/`, `executive_summary.md` como entrada
+  read-first), con frescura por claim y provenance.
 
 ## [9.1.0] — 2026-08-27
 

@@ -53,10 +53,11 @@ Start here:
 ## Testing the protocol
 
 The `protocol/.agents/` workflow is exercised by the dev-only test suites and the
-protocol invariant checker listed under "Verifying the protocol" below. There
-is no separate sample application in this repository: `tools/` and `runtime/`
-hold the test tooling and reference implementations, none of which ships to
-adopters.
+protocol invariant checker of the canonical battery (defined in
+[`docs/VERSIONING.md`](docs/VERSIONING.md) §4.1 and referenced from the root
+[`AGENTS.md`](AGENTS.md), `## Verifying the protocol`). There is no separate
+sample application in this repository: `tools/` and `runtime/` hold the test
+tooling and reference implementations, none of which ships to adopters.
 
 ## Verifying the protocol
 
@@ -72,12 +73,11 @@ Running the probe from this repository targets `protocol/.project/` (the probe
 derives its project root from its own location); prefer a scratch adoption
 project for real protocol sessions.
 
-Protocol development only (not needed by adopters):
-
-```bash
-python tools/check_protocol_invariants.py --payload protocol .
-python -m pytest tests/
-```
+Protocol development only (not needed by adopters): the repository's canonical
+verification battery (checkers + tests) is defined once in
+[`docs/VERSIONING.md`](docs/VERSIONING.md) §4.1 and referenced from the root
+[`AGENTS.md`](AGENTS.md) (`## Verifying the protocol`). Run the full command
+set from there when working on this repository.
 
 The `tools/` and `runtime/` directories hold development tooling and the
 reference implementation; project priorities live in `ROADMAP.md`. They are

@@ -86,7 +86,7 @@ Deterministic gates (C1/C2/C3): `policies/lifecycle-checkers.md`.
 ## Verification battery
 
 The canonical battery and its exact commands are defined once in
-`docs/VERSIONING.md:4.1 Batería canónica de verificación` and mirrored in the
-root `AGENTS.md` (`## Verifying the protocol`). Run the battery at every
-validation gate. C1/C2/C3 are lifecycle gates in addition to the battery; see
-`policies/lifecycle-checkers.md`.
+`docs/VERSIONING.md:4.1 Batería canónica de verificación` and referenced from
+the root `AGENTS.md` (`## Verifying the protocol`) as pointer/summary. Run the
+battery at every validation gate. C1/C2/C3 are lifecycle gates in addition to
+the battery; see `policies/lifecycle-checkers.md`.

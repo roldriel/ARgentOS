@@ -1,5 +1,19 @@
 # Architectural Decision Model
 
+> **⚠ Snapshot histórico — decisiones preservadas (2026-08-25).** Este modelo
+> de decisiones se conserva como **provenance** del análisis que precedió a la
+> formalización vigente (serie post-auditoría; estado del repo al que
+> corresponde el análisis: protocolo `3.26.0` en `dev` y `3.25.0` publicado).
+> No es un documento vivo: sus estados históricos (incluidos
+> `PROVISIONALLY_DECIDED` y `OPEN DECISION`) no se actualizan
+> retrospectivamente y su contenido no debe leerse como estado normativo
+> actual. Las decisiones D0–D13 se convirtieron en ADR-01…ADR-14 (RFC-69,
+> plan 83) y fueron formalizadas por las RFCs de la serie correspondiente
+> según la matriz `docs/adr/INDEX.md:Matriz D# ↔ ADR ↔ RFC ↔ plan`; para el
+> estado vigente consultar `docs/rfc/INDEX.md`, `docs/adr/INDEX.md` y
+> `docs/plans/INDEX.md`. El contenido original no fue modificado por esta
+> anotación.
+
 > Modelo de decisiones arquitectónicas de ARgentOS, derivado de
 > `ARCHITECTURAL_PROBLEM_MODEL.md`. Su propósito es llegar al punto inmediatamente anterior a la
 > redacción de RFCs: cada decisión define opciones, una decisión tomada, consecuencias, invariantes,

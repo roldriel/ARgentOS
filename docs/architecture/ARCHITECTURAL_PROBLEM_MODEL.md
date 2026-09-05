@@ -1,5 +1,19 @@
 # Architectural Problem Model
 
+> **⚠ Snapshot histórico — análisis preservado (2026-08-25).** Este documento
+> es un snapshot del análisis arquitectónico que precedió a la formalización
+> vigente (serie post-auditoría; estado del repo al que corresponde el
+> análisis, según el propio documento: protocolo `3.26.0` en `dev` y `3.25.0`
+> publicado). Se conserva como **provenance**: no es un documento vivo, no se
+> actualiza retrospectivamente y su contenido no debe leerse como estado
+> normativo actual. Los problemas/candidatos inventariados (P#, CG#, RC#)
+> fueron materializados posteriormente mediante RFCs/ADRs cuando existe
+> evidencia explícita: las decisiones derivadas D0–D13 se convirtieron en
+> ADR-01…ADR-14 (RFC-69, plan 83) con las RFCs asociadas según la matriz
+> `docs/adr/INDEX.md:Matriz D# ↔ ADR ↔ RFC ↔ plan`; para el estado vigente
+> consultar `docs/rfc/INDEX.md`, `docs/adr/INDEX.md` y `docs/plans/INDEX.md`.
+> El contenido original no fue modificado por esta anotación.
+
 > Modelo formal de problemas, causas conceptuales y dependencias arquitectónicas de ARgentOS,
 > construido a partir de las dos auditorías previas (BeaconRBX + ARgentOS) y de una re-verificación
 > de las afirmaciones contra las fuentes reales.

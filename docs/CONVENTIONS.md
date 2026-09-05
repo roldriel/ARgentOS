@@ -91,9 +91,9 @@
   allí.
 - **Numeración de archivos**: hay tres secuencias independientes y cada una es
   única dentro de su espacio:
-  - `docs/rfc/`: solo RFCs, numeración incremental (`00`–`15` existentes — los
+  - `docs/rfc/`: solo RFCs, numeración incremental (`00`–`75` existentes; los
     `07`–`15` reservados por el roadmap EC ya fueron asignados a
-    RFC-00YE…00YM; los RFCs fuera del roadmap EC numeran a partir de `16`). Un
+    RFC-00YE…00YM y los RFCs fuera del roadmap EC numeran desde `16`). Un
     implementation plan nunca vive aquí.
   - `docs/plans/` (raíz): solo planes de ejecución, numerados por **orden
     cronológico de ejecución** — esa es la prioridad ante cualquier conflicto.
@@ -101,9 +101,10 @@
     jul); `04`–`07` primera serie (Execution Context); `08`–`14` segunda serie
     (explicitud de decisiones); `15`–`20` tercera serie (protocolo operativo),
     mapeada el 28 jul.
-  - `docs/adr/`: solo ADRs, numeración incremental (`01`–`14` existentes); la
-    identidad estable es `ADR-N` y el archivo es `NN-slug.md`. Un plan o una RFC
-    nunca vive aquí.
+  - `docs/adr/`: solo ADRs, numeración incremental (`01`–`16` existentes;
+    ADR-01…ADR-14 ↔ D0–D13 y ADR-15/16 del Change Lifecycle DEV); la identidad
+    estable es `ADR-N` y el archivo es `NN-slug.md`. Un plan o una RFC nunca
+    vive aquí.
   - Los identificadores internos de la serie (RFC-00XX … RFC-00YM) se
     mantienen como IDs conceptuales dentro de los documentos; el número de
     archivo es solo orden físico.

@@ -95,8 +95,9 @@ Reglas:
 ### 4.1 Batería canónica de verificación
 
 La batería que define "verde" en este repo es la siguiente — única definición;
-`AGENTS.md` raíz y `docs/CONVENTIONS.md:Convenciones` la referencian, no la
-duplican:
+el `AGENTS.md` raíz (`## Verifying the protocol`) y
+`docs/CONVENTIONS.md:Convenciones` la referencian como puntero/resumen y nota
+operativa, respectivamente, sin duplicarla:
 
 ```bash
 python tools/check_protocol_invariants.py --payload protocol .
@@ -212,28 +213,28 @@ Condiciones derivadas del Change Lifecycle (semántica; RFC-75
   tocar `VERSION`/changelog, o los ítems se acumulan en `[Unreleased]` y la
   numeración se asigna en la promoción.
 
-## 9. Estado actual (2026-08-17)
+## 9. Estado actual (2026-09-05)
 
-Estado tras la promoción del release `3.25.0`:
+Snapshot del estado al 2026-09-05 (verificado contra git); se actualiza en
+cada release. La fuente inmutable de la verdad son `git tag` +
+`protocol/.agents/VERSION`.
 
-- `master` = `3.25.0` (tags anotados `3.20.0`–`3.25.0`; merge `dev` →
-  `master` con el cierre completo de la remediación de la auditoría de sistema
-  3.1: planes 69–74 y RFCs 59–60).
-- `dist` = pendiente de regeneración por CI (`publish-dist`) desde `master`.
-- `dev` = `3.25.0`, en sync con `master`.
+- `master` = `10.3.0` (promoción de `10.1.0`–`10.3.0`: planes 88–93 y RFCs
+  71–74; tags anotados hasta `10.3.0` inclusive).
+- `dist` = publicado desde `master` (`publish-dist` a partir de la promoción
+  de `10.3.0`).
+- `dev` = `11.0.0` pre-release (plan 78 `Executed` con condición derivada
+  `Closed`; RFC-64 implementada, release pendiente).
 
 Notas:
 
-- Las secciones `[3.7.0]`–`[3.15.0]` del changelog son hitos del batch de
-  remediación en `dev`; no fueron releases individuales y no tienen tag.
-  `3.16.0`, `3.17.0`, `3.18.0` y `3.19.0` son las versiones publicadas del
-  ciclo (ver §5 y §8).
-- `3.20.0`–`3.25.0` se promovieron en un solo merge con un tag anotado por
-  versión (planes 69–74, RFCs 59–60).
-- La regularización del 12 ago 2026 (planes 34–36 y 54; tags `3.0.2`–`3.0.5`)
-  y las versiones `3.0.6`–`3.6.3` quedan como historia. Este §9 es un
-  snapshot que se actualiza en cada release; la fuente inmutable de la verdad
-  son `git tag` + `protocol/.agents/VERSION`.
+- `11.0.0` está implementado y registrado en `dev` (sección del changelog
+  `[11.0.0]` sin tag: release en curso según §5); no está promovido a
+  `master`, no tiene tag y `dist` no fue regenerado con él. La promoción
+  (`dev` → `master` + tag anotado `11.0.0` + regeneración de `dist`) es una
+  decisión independiente y posterior a este snapshot.
+- Mientras `dev` contenga planes sin publicar respecto de `master`/`dist`,
+  `check_dist_sync.py` se espera rojo en `dev` por diseño (ver §4.1).
 - **Branch protection no habilitada (decisión del owner, 15 ago 2026):** el
   repo es privado en el plan gratuito de GitHub, que no incluye protected
   branches ni rulesets (el API responde `Upgrade to GitHub Pro or make this

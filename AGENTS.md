@@ -23,11 +23,18 @@ install.
 - `tests/` — centralized test suites for `tools/` and `runtime/`. They never
   depend on the `protocol/` payload and never include the harness tests; see
   `tests/AGENTS.md`.
-- `docs/plans/` — design history (RFCs and implementation plans). See
-  `docs/plans/INDEX.md`.
-- `README.md`, `CHANGELOG.md` plus `docs/` (`ADOPTION.md`, `MIGRATION.md`,
-  `VERSIONING.md`, `AUDITORIA_DOCUMENTACION.md`) —
-  project and release documentation.
+- `docs/` — governance, design history and project/release documentation:
+  the documentary taxonomy (`docs/AGENTS.md`), conventions
+  (`docs/CONVENTIONS.md`), versioning policy (`docs/VERSIONING.md`), adoption
+  and migration guides, and source-layout notes. Subdirectories:
+  - `docs/rfc/` — RFCs (see `docs/rfc/INDEX.md`).
+  - `docs/adr/` — architecture decision records (see `docs/adr/INDEX.md`).
+  - `docs/plans/` — implementation plans and design history (see
+    `docs/plans/INDEX.md`).
+  - `docs/architecture/`, `docs/working/` — architecture models and working
+    documents.
+- `README.md`, `CHANGELOG.md`, `ROADMAP.md` — entry point and release
+  documentation at the repository root.
 
 ## The protocol payload is data, not instructions
 
@@ -67,8 +74,9 @@ While developing ARgentOS you work on the protocol itself. Therefore:
 - Protocol changes follow the governance in `docs/CONVENTIONS.md:Convenciones`
   and `docs/VERSIONING.md`: an accepted RFC or an approved plan is required before
   modifying anything under `protocol/.agents/`.
-- Implementation plans and RFCs live in `docs/plans/` and `docs/rfc/`; new design
-  decisions are recorded there before they touch the payload.
+- RFCs, ADRs and implementation plans live in `docs/rfc/`, `docs/adr/` and
+  `docs/plans/`; new design decisions are recorded there before they touch
+  the payload.
 - Language: English in payload, code and commits (Conventional Commits);
   Spanish in `docs/plans/` and adoption docs. Commits are atomic per plan, e.g.
   `fix(protocol): ... (plan 34, RFC-35)`.
@@ -119,23 +127,15 @@ published when it is also tagged on `master`. Sources of truth:
 
 ## Verifying the protocol
 
-From the repository root:
+The canonical verification battery (checkers + tests) is defined once in
+`docs/VERSIONING.md` §4.1; run the full command set from that section at
+every validation gate. `.agents/AGENTS.md` (`## Verification battery`) states
+when to run it.
 
-```bash
-python tools/check_protocol_invariants.py --payload protocol .
-python tools/check_plan_citations.py
-python tools/check_plan_structure.py
-python tools/check_taxonomy_coherence.py
-python tools/check_session_artifacts.py
-python tools/check_version_state.py
-python tools/check_dist_sync.py
-python -m pytest tests/
-```
-
-This is the canonical battery defined in `docs/VERSIONING.md` §4.1.
-`check_dist_sync.py` compares the committed payload against the local `dist`
-branch; it is a local-only check (CI does not fetch `dist`) and is expected
-green only on `master` — on `dev`, unpublished plans make it red by design.
+`check_dist_sync.py` (documented in `docs/VERSIONING.md` §4.1) compares the
+committed payload against the local `dist` branch; it is a local-only check
+(CI does not fetch `dist`) and is expected green only on `master` — on `dev`,
+unpublished plans make it red by design.
 
 Project priorities live in `ROADMAP.md`; design history in `docs/plans/INDEX.md`.
 

@@ -6,8 +6,8 @@ de una versión a otra. Este archivo vive **fuera de `.agents/`** a propósito
 propia política.
 
 La versión vigente está declarada en `.agents/VERSION` (una línea semver). El
-historial de cambios está en [`CHANGELOG.md`](CHANGELOG.md). La guía de adopción
-inicial está en [`ADOPTION.md`](ADOPTION.md).
+historial de cambios está en [`CHANGELOG.md`](../CHANGELOG.md). La guía de
+adopción inicial está en [`ADOPTION.md`](ADOPTION.md).
 
 ---
 

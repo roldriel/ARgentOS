@@ -241,6 +241,17 @@ La política de versionado, changelog, tags y estados de planes vive en
   Cambio DEV tooling + registros docs-only: sin `VERSION` bump ni tag (ver
   `docs/VERSIONING.md` §3).
 
+- **Consulta DEV de una ejecución específica por iteración** (plan 108):
+  `tools/determine_execution_state.py` agrega `--iteration` (junto con
+  `--session`) para consultar únicamente la determinación de una ejecución
+  concreta (`execution_id = (session_id, iteration)`, RFC-64), reutilizando la
+  semántica existente de determinación/no determinación y fail-closed (sin
+  inferencia; iteración o sesión inexistente → report vacío, sin fabricar
+  entradas); la consulta de sesión completa conserva su comportamiento actual;
+  22 tests (13 previos + 9 nuevos) en `tests/test_determine_execution_state.py`.
+  Cambio DEV tooling + registros docs-only: sin `VERSION` bump ni tag (ver
+  `docs/VERSIONING.md` §3).
+
 ### Fixed
 
 - **Guía de adopción sin `git subtree --prefix=.`** (plan 85): `docs/ADOPTION.md`

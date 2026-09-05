@@ -555,6 +555,33 @@ sin tag; `11.0.0` sigue sin release.
 |---|---|---|---|
 | `107-determinacion-estado-terminal-ejecucion.md` | — | Executed | Mecanismo DEV de determinación/verificación del estado terminal por ejecución desde los Execution Records existentes: `tools/determine_execution_state.py` (determinismo sobre `state.json` `status`; no determinación declarada con razón para registros no terminales o `state.json` ausente/corrupto; salida JSON ordenada; stdlib-only, read-only) + `tests/test_determine_execution_state.py` (13 tests). Cambio DEV tooling + registros docs-only: clase RFC-56 —, Change Level L2, sin `VERSION` bump ni tag (RFC-69); commits C1 `5dbd5bd` (contenido) + C2 (registro/cierre) en `dev`; Validation Anchor V1 (T1 `bf88ca4c…`; delta `a68ae699…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); sin findings/corrections/pending (`N/A`); sin cambios en `protocol/.agents/`, `runtime/`, `tests/` legacy, `dist/`, `protocol/.agents/VERSION` (11.0.0) ni Planes 94–106; sin push, sin merge, sin tag; `11.0.0` sigue sin release. |
 
+## Cuadragésima serie: consulta DEV de una ejecución específica por iteración (Plan 108) (05 sep 2026)
+
+Plan 108 (cambio DEV de tooling + registros docs-only autorizado por el
+mantenedor, 2026-09-05; régimen RFC-75/RFC-69; sin RFC/ADR nuevo, clase RFC-56
+—): extiende el mecanismo DEV de determinación del estado terminal por
+ejecución con la consulta de **una ejecución específica**: `--iteration`
+(requiere `--session`; identificación inequívoca por `execution_id =
+(session_id, iteration)`, RFC-64) devuelve únicamente la determinación de esa
+ejecución, reutilizando la semántica existente (determinación para `status`
+terminal `ABORT`/`COMPLETED`; no determinación con razón para status no
+terminal o `state.json` ausente/corrupto; fail-closed sin inferencia) y sin
+agregar campos/estados/artifacts/categorías ni mecanismo paralelo. La consulta
+de sesión completa conserva su comportamiento actual; la iteración o sesión
+inexistente produce report vacío (ausencia = no determinación), sin fabricar
+entradas. Sin cambios en `protocol/.agents/`, `runtime/`, `dist/`,
+`protocol/.agents/VERSION` (11.0.0), sin release.
+Ejecución en `dev`: commit C1 `f612d26` (contenido: herramienta + 9 tests
+nuevos; suite total 22), C2 (registro/cierre); Validation Anchor V1 (T1
+`d49f5473…`; delta `6f28624d…`) y Checkpoint con revalidación V2 antes de
+`Closed`; C-1/C-2/C-3 GAP=0, ANOMALY=0; status `Executed`; condición derivada
+`Closed` (docs-only, sin release); sin findings/corrections/pending (`N/A`);
+sin push, sin merge, sin tag; `11.0.0` sigue sin release.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `108-consulta-especifica-de-ejecucion.md` | — | Executed | Consulta DEV de una ejecución específica por iteración sobre el mecanismo de determinación del estado terminal: `tools/determine_execution_state.py` agrega `--iteration` (requiere `--session`; `execution_id = (session_id, iteration)`) y devuelve únicamente la determinación de esa ejecución con la semántica existente (determinación para `ABORT`/`COMPLETED`; no determinación con razón para no terminal o `state.json` ausente/corrupto; iteración/sesión inexistente → report vacío fail-closed sin fabricar entradas; sin `--iteration` la consulta de sesión completa es idéntica) + `tests/test_determine_execution_state.py` (9 tests nuevos; 22 en la suite). Cambio DEV tooling + registros docs-only: clase RFC-56 —, Change Level L2, sin `VERSION` bump ni tag (RFC-69); commits C1 `f612d26` (contenido) + C2 (registro/cierre) en `dev`; Validation Anchor V1 (T1 `d49f5473…`; delta `6f28624d…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); sin findings/corrections/pending (`N/A`); sin cambios en `protocol/.agents/`, `runtime/`, `dist/`, `protocol/.agents/VERSION` (11.0.0) ni Planes 94–107; sin push, sin merge, sin tag; `11.0.0` sigue sin release. |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

@@ -6,6 +6,8 @@ import json
 import sys
 from pathlib import Path
 
+import pytest
+
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "tools"))
 
@@ -173,3 +175,107 @@ def test_cli_prints_json_report(tmp_path, capsys):
     captured = capsys.readouterr()
     report = json.loads(captured.out)
     assert report["summary"] == {"total": 1, "determined": 1, "undetermined": 0}
+
+
+def test_iteration_query_returns_only_the_requested_execution(tmp_path):
+    session = _session_uuid(tmp_path)
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+    _write_state(session, "01", "ABORT", {})
+    report = des.determine(
+        tmp_path, session_filter=session.name, iteration_filter="00"
+    )
+    assert [e["iteration"] for e in report["executions"]] == ["00"]
+    assert report["summary"] == {"total": 1, "determined": 1, "undetermined": 0}
+    entry = report["executions"][0]
+    assert entry["session"] == session.name
+    assert entry["determined"] is True
+    assert entry["terminal_task_state"] == "COMPLETED"
+
+
+def test_iteration_query_distinguishes_same_iteration_across_sessions(tmp_path):
+    first = _session_uuid(tmp_path, "session-a")
+    second = _session_uuid(tmp_path, "session-b")
+    _write_state(first, "00", "COMPLETED", {"H00": {}})
+    _write_state(second, "00", "ABORT", {})
+    report = des.determine(
+        tmp_path, session_filter="session-a", iteration_filter="00"
+    )
+    assert [e["session"] for e in report["executions"]] == ["session-a"]
+    assert report["executions"][0]["terminal_task_state"] == "COMPLETED"
+
+
+def test_iteration_query_non_terminal_execution_is_not_determined(tmp_path):
+    session = _session_uuid(tmp_path)
+    _write_state(session, "00", "in_progress", {})
+    _write_state(session, "01", "ABORT", {})
+    report = des.determine(
+        tmp_path, session_filter=session.name, iteration_filter="00"
+    )
+    assert len(report["executions"]) == 1
+    entry = report["executions"][0]
+    assert entry["determined"] is False
+    assert entry["reason"] == "status_not_terminal"
+    assert report["summary"] == {"total": 1, "determined": 0, "undetermined": 1}
+
+
+def test_iteration_query_missing_state_json_is_fail_closed(tmp_path):
+    session = _session_uuid(tmp_path)
+    (session / "00").mkdir()
+    report = des.determine(
+        tmp_path, session_filter=session.name, iteration_filter="00"
+    )
+    assert len(report["executions"]) == 1
+    entry = report["executions"][0]
+    assert entry["state_json"] == "missing"
+    assert entry["determined"] is False
+    assert entry["reason"] == "state_json_missing"
+
+
+def test_iteration_query_corrupt_state_json_is_fail_closed(tmp_path):
+    session = _session_uuid(tmp_path)
+    iter_dir = session / "00"
+    iter_dir.mkdir(parents=True)
+    (iter_dir / "state.json").write_text("{not json", encoding="utf-8")
+    report = des.determine(
+        tmp_path, session_filter=session.name, iteration_filter="00"
+    )
+    assert len(report["executions"]) == 1
+    entry = report["executions"][0]
+    assert entry["state_json"] == "corrupt"
+    assert entry["determined"] is False
+    assert entry["reason"] == "state_json_corrupt"
+
+
+def test_iteration_query_nonexistent_iteration_is_empty(tmp_path):
+    session = _session_uuid(tmp_path)
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+    report = des.determine(
+        tmp_path, session_filter=session.name, iteration_filter="99"
+    )
+    assert report["executions"] == []
+    assert report["summary"] == {"total": 0, "determined": 0, "undetermined": 0}
+
+
+def test_iteration_query_unknown_session_is_empty(tmp_path):
+    session = _session_uuid(tmp_path)
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+    report = des.determine(
+        tmp_path, session_filter="unknown-session", iteration_filter="00"
+    )
+    assert report["executions"] == []
+    assert report["summary"] == {"total": 0, "determined": 0, "undetermined": 0}
+
+
+def test_iteration_without_session_fails_deterministically(tmp_path):
+    with pytest.raises(SystemExit) as excinfo:
+        des.main(["--root", str(tmp_path), "--iteration", "00"])
+    assert excinfo.value.code == 2
+
+
+def test_full_session_query_keeps_reporting_all_iterations(tmp_path):
+    session = _session_uuid(tmp_path)
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+    _write_state(session, "01", "ABORT", {})
+    report = des.determine(tmp_path, session_filter=session.name)
+    assert [e["iteration"] for e in report["executions"]] == ["00", "01"]
+    assert report["summary"] == {"total": 2, "determined": 2, "undetermined": 0}

@@ -32,8 +32,18 @@ This tool does not replace the session-artifact validator
 validity; this tool only reads the terminal declaration the record actually
 contains.
 
+The session-wide query is the default: every execution of every session (or
+of ``--session``) is reported. A specific execution can be selected with
+``--iteration`` together with ``--session``: the report then contains only
+that execution's determination. ``--iteration`` matches the numeric iteration
+folder name exactly; a requested session/iteration without a record yields an
+empty report (fail-closed absence semantics, no entry fabricated, no state
+inferred), the same way an unknown ``--session`` or an absent ``.project``
+does.
+
 Usage:
   python tools/determine_execution_state.py [--root REPO_ROOT] [--session UUID]
+      [--iteration ITERATION]
 
 Prints a deterministic JSON report and exits 0. Standard library only.
 """
@@ -148,18 +158,35 @@ def determine_iteration(session: Path, iteration: Path) -> dict[str, Any]:
 
 
 def determine(
-    root: Path, session_filter: str | None = None
+    root: Path,
+    session_filter: str | None = None,
+    iteration_filter: str | None = None,
 ) -> dict[str, Any]:
-    """Determine the terminal Task State of every execution under root.
+    """Determine the terminal Task State of executions under root.
 
     Returns a deterministic JSON-ready report with one entry per execution
     (sorted by session and iteration) and a summary. No file is written.
+
+    ``iteration_filter`` narrows the report to the requested execution of the
+    selected session (``execution_id = (session_id, iteration)``) and requires
+    ``session_filter``: a specific execution is identified by both, and the
+    iteration name must match an existing numeric iteration folder exactly. A
+    requested session/iteration without a record yields an empty report
+    (fail-closed absence semantics: no entry is fabricated and no state is
+    inferred).
     """
+    if iteration_filter is not None and session_filter is None:
+        raise ValueError("iteration_filter requires session_filter")
     executions: list[dict[str, Any]] = []
     for session in session_dirs(root):
         if session_filter is not None and session.name != session_filter:
             continue
         for iteration in iteration_dirs(session):
+            if (
+                iteration_filter is not None
+                and iteration.name != iteration_filter
+            ):
+                continue
             executions.append(determine_iteration(session, iteration))
     determined = sum(1 for e in executions if e["determined"])
     return {
@@ -186,11 +213,25 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="only report executions of this protocol session uuid",
     )
+    parser.add_argument(
+        "--iteration",
+        default=None,
+        help=(
+            "only report the requested execution (numeric iteration folder "
+            "name) of --session; requires --session"
+        ),
+    )
     args = parser.parse_args(argv)
+    if args.iteration is not None and args.session is None:
+        parser.error("--iteration requires --session")
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     root = (args.root or Path(__file__).resolve().parents[1]).resolve()
-    report = determine(root, session_filter=args.session)
+    report = determine(
+        root,
+        session_filter=args.session,
+        iteration_filter=args.iteration,
+    )
     print(json.dumps(report, indent=2, ensure_ascii=False))
     return 0
 

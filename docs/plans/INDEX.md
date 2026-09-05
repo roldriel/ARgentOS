@@ -508,6 +508,22 @@ findings/corrections.
 |---|---|---|---|
 | `105-terminology-architecture-materialization.md` | — | Executed | Materialización docs-only de las decisiones humanas D1–D5 (terminología: vocabularios separados + puente descriptivo; glosario `docs/glossary/INDEX.md` + `terms.md` Inventory/DESCRIPTIVE no normativo; convención AGENTS/INDEX/ENTRYPOINT preservada; regla SCI; reglas de calificación; semántica documentada en `docs/AGENTS.md` y regla operacional en `docs/CONVENTIONS.md`). Cambio DEV docs-only: clase RFC-56 —, Change Level L2, sin `VERSION` bump ni tag (RFC-69); commits C1 `120f44e` (contenido) + C2 (registro/cierre) en `dev`; Validation Anchor V1 (T1 `69f16b4f…`; delta `346ab984…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); pending no bloqueante de elevación ADR futura; sin findings/corrections; sin cambios en `protocol/.agents/`, `runtime/`, `tests/`, `tools/`, `dist/`, `protocol/.agents/VERSION` (11.0.0) ni Planes 94–104; sin push, sin merge, sin tag; `11.0.0` sigue sin release. |
 
+## Trigésima octava serie: corrección post-close del glosario (Plan 106) (05 sep 2026)
+
+Plan 106 (cambio DEV docs-only autorizado por el mantenedor, 2026-09-05;
+régimen RFC-69/RFC-75; sin RFC/ADR nuevo, clase RFC-56 —): corrige los
+hallazgos F1–F5 del Fresh Agent Terminology Stress Test sobre los artifacts
+del Plan 105 (glosario): referencias de autoridad malformadas (F1/F2/F3),
+regla de cobertura/alta explícita (F4) y normalización del vocabulario de
+`Status` con restricciones de uso modeladas por separado (F5). Sin cambios en
+`protocol/.agents/`, `runtime/`, `tools/`, `tests/`, `dist/`,
+`protocol/.agents/VERSION` (11.0.0), sin renames y sin reabrir el Plan 105
+(post-close por referencia, RFC-75 Mecanismo 12).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `106-post-close-glossary-correction.md` | — | Aprobado para ejecución | Corrección docs-only F1–F5 (glosario): F1 cita malformada; F2 nombre de campo; F3 path:section no determinista; F4 cobertura/alta; F5 status vs restricción de uso. |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

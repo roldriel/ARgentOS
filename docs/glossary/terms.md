@@ -1,6 +1,6 @@
 # Glossary — Entradas de términos
 
-> Registro descriptivo (no normativo). Cada entrada enruta a su `Authority > Reference`. Gloss = resumen no normativo. Reglas: `docs/glossary/INDEX.md`.
+> Registro descriptivo (no normativo). Cada entrada enruta a su `Authority Reference`. Gloss = resumen no normativo. Reglas: `docs/glossary/INDEX.md`.
 
 ## AGENTS.md
 
@@ -209,7 +209,7 @@
 ## SCI
 
 - **Scope:** Cross-cutting
-- **Status:** current (restricted)
+- **Status:** current
 - **Authority Reference:** `docs/CONVENTIONS.md:Convenciones de terminología y nomenclatura (decisiones D1–D5, 2026-09-05)`
 - **Abbreviation / Expansion:** DEV → `Scoped Content Identity`; Protocol →
   `SemanticContextIdentity`

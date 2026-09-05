@@ -1,7 +1,7 @@
 # Glossary — Registro terminológico de ARgentOS (DEV)
 
 > Clase documental: **Inventory / registro descriptivo** (no normativo).
-> Reglas normativas: `docs/CONVENTIONS.md:Convenciones de terminología y > nomenclatura (decisiones D1–D5, 2026-09-05)`.
+> Reglas normativas: `docs/CONVENTIONS.md:Convenciones de terminología y nomenclatura (decisiones D1–D5, 2026-09-05)`.
 > Taxonomía documental: `docs/AGENTS.md:Folder → class map`.
 
 ## Qué es y qué no es
@@ -15,7 +15,7 @@ define.
 **No es:** fuente normativa, segunda autoridad, definición canónica ni
 ontología. No prevalece sobre RFC/ADR/estándar del payload ni sobre la
 gobernanza DEV. El payload del Protocol **no referencia** `docs/glossary/`
-(boundary DEV/Protocol; `docs/CONVENTIONS.md:Frontera documental (Producto)`).
+(boundary DEV/Protocol; `docs/CONVENTIONS.md:Convenciones de terminología y nomenclatura (decisiones D1–D5, 2026-09-05)`).
 
 ## Uso por agentes
 
@@ -51,6 +51,24 @@ explícitamente como resumen (nunca como definición).
 - `forbidden` — prohibido en texto nuevo (p. ej. `SCI` desnudo en texto
   cross-layer; uso histórico permitido como traza).
 
+Las **restricciones de uso** (p. ej. `SCI` desnudo prohibido en texto
+cross-layer nuevo) **no son `Status`**: se modelan como propiedad separada en
+la entrada (`Forbidden Terms` / `Qualification Rule`) o como nota en el
+registro. El vocabulario de `Status` es `current | historical | deprecated | superseded | forbidden`.
+
+## Cobertura y alta de entradas
+
+- La cobertura inicial del glosario es **selectiva**: no todo término del repo
+  necesita una entrada.
+- Una entrada se agrega cuando el término tiene **ambigüedad material**,
+  **significado de gobernanza** o **valor de enrutamiento cross-layer**.
+- La **ausencia** de un término en el glosario **no es automáticamente un
+  defecto**: puede ser un término sin ambigüedad material o no evaluado aún.
+- Toda entrada debe apuntar a su definición autoritativa (`Authority Reference`, `ruta:sección` resoluble) y no duplicarla.
+- Para proponer una entrada nueva: registrar en `docs/glossary/terms.md` un
+  heading `## <Term>` con los campos mínimos y agregarlo al registro de este
+  INDEX en el mismo cambio, siguiendo la gobernanza de `docs/` (RFC-69/RFC-75).
+
 ## Registro inicial de términos
 
 | Term | Scope | Status | Authority Reference |
@@ -74,7 +92,7 @@ explícitamente como resumen (nunca como definición).
 | Plan | Cross-cutting | current | `docs/VERSIONING.md:7. Estados de planes y RFCs` |
 | Profile | Protocol | current | `protocol/.agents/delegation/WORKER_DELEGATION_CONTRACT.md:profile` |
 | Protocol | Cross-cutting | current | `protocol/_AGENTS.md:Active roles` |
-| SCI | Cross-cutting | current (restricted) | `docs/CONVENTIONS.md:Convenciones de terminología y nomenclatura (decisiones D1–D5, 2026-09-05)` |
+| SCI | Cross-cutting | current | `docs/CONVENTIONS.md:Convenciones de terminología y nomenclatura (decisiones D1–D5, 2026-09-05)` |
 | Scoped Content Identity | DEV | current | `docs/CONVENTIONS.md:Change Lifecycle — Validation anchors y Scoped Content Identity (regla operacional; VC-1, Incremento 1)` |
 | SemanticContextIdentity | Protocol | current | `protocol/.agents/standards/context/CONTEXT.md:Identity` |
 | Session | Protocol | current | `docs/rfc/64-execution-record-model.md:Terminology` |
@@ -83,6 +101,10 @@ explícitamente como resumen (nunca como definición).
 | Validation | Cross-cutting | current | `docs/rfc/65-evidence-and-verification-model.md:Terminology` |
 | Validation Anchor | DEV | current | `docs/CONVENTIONS.md:Change Lifecycle — Validation anchors y Scoped Content Identity (regla operacional; VC-1, Incremento 1)` |
 | Verification | Cross-cutting | current | `docs/rfc/65-evidence-and-verification-model.md:Terminology` |
+
+Nota: `SCI` figura como `current` (lifecycle del término); su **restricción de
+uso** — `SCI` desnudo prohibido en texto cross-layer nuevo — es una propiedad
+separada, no un status (ver `docs/glossary/terms.md:SCI`).
 
 ## Regla SCI (resumen)
 

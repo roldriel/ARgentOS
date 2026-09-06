@@ -582,6 +582,36 @@ sin push, sin merge, sin tag; `11.0.0` sigue sin release.
 |---|---|---|---|
 | `108-consulta-especifica-de-ejecucion.md` | — | Executed | Consulta DEV de una ejecución específica por iteración sobre el mecanismo de determinación del estado terminal: `tools/determine_execution_state.py` agrega `--iteration` (requiere `--session`; `execution_id = (session_id, iteration)`) y devuelve únicamente la determinación de esa ejecución con la semántica existente (determinación para `ABORT`/`COMPLETED`; no determinación con razón para no terminal o `state.json` ausente/corrupto; iteración/sesión inexistente → report vacío fail-closed sin fabricar entradas; sin `--iteration` la consulta de sesión completa es idéntica) + `tests/test_determine_execution_state.py` (9 tests nuevos; 22 en la suite). Cambio DEV tooling + registros docs-only: clase RFC-56 —, Change Level L2, sin `VERSION` bump ni tag (RFC-69); commits C1 `f612d26` (contenido) + C2 (registro/cierre) en `dev`; Validation Anchor V1 (T1 `d49f5473…`; delta `6f28624d…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); sin findings/corrections/pending (`N/A`); sin cambios en `protocol/.agents/`, `runtime/`, `dist/`, `protocol/.agents/VERSION` (11.0.0) ni Planes 94–107; sin push, sin merge, sin tag; `11.0.0` sigue sin release. |
 
+## Cuadragésima primera serie: generador DEV de Scoped Content Identity para Validation Anchors (Plan 109) (05 sep 2026)
+
+Plan 109 (cambio DEV de tooling + registros docs-only autorizado por el
+mantenedor, 2026-09-05 — Dogfooding Test #3 —; régimen RFC-75/RFC-69; sin
+RFC/ADR nuevo, clase RFC-56 —): tool read-only que **genera** la Scoped
+Content Identity v1 que cada Validation Anchor registra (VC-1) y que el
+Checkpoint verifica (GC-1): `tools/scoped_content_identity.py` computa la
+Delta scoped identity (sha256 de la serialización canónica `scoped-v1` +
+pares `path NUL blob NUL` sobre un scope declarado de paths repo-relative
+ordenados) y la State identity (tree del index staged vía `git write-tree`, o
+del ref vía `git rev-parse <ref>^{tree}` con `--ref`), reutilizando el
+algoritmo v1 ya normado (plan 96 §13) y las primitivas git existentes sin
+modificar C-1/C-2/C-3, sin agregar campos/estados/artifacts/categorías ni
+mecanismo paralelo. Fail-closed (path fuera del repo/faltante/directorio, repo
+no git, ref no resoluble → error determinista, exit 1, sin salida parcial);
+salida JSON determinista; sin escrituras al working tree ni al index. Sin
+cambios en `protocol/.agents/`, `runtime/`, `dist/`,
+`protocol/.agents/VERSION` (11.0.0), sin release.
+Ejecución en `dev`: commit C1 `d8bc464` (contenido: herramienta + 15 tests;
+suite total 482), C2 (registro/cierre); Validation Anchor V1 (T1
+`12cff4c9…`; delta `e0b10edb…`, generada con el propio tool — dogfooding —)
+y Checkpoint con revalidación V2 antes de `Closed`; C-1/C-2/C-3 GAP=0,
+ANOMALY=0; status `Executed`; condición derivada `Closed` (docs-only, sin
+release); sin findings/corrections/pending (`N/A`); sin push, sin merge, sin
+tag; `11.0.0` sigue sin release.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `109-scoped-content-identity-generator.md` | — | Executed | Generador DEV determinista de la Scoped Content Identity v1 para Validation Anchors/Checkpoints: `tools/scoped_content_identity.py` (scope de paths repo-relative normalizado/deduplicado/ordenado; blob id por `git ls-files -s` o `git hash-object --path` para untracked; serialización `scoped-v1` + pares `path NUL blob NUL`; sha256 delta; state identity staged `write-tree` o `--ref <ref>^{tree}`; JSON determinista; fail-closed sin salida parcial; stdlib-only, read-only, sin red) + `tests/test_scoped_content_identity.py` (15 tests en repos git aislados). Cambio DEV tooling + registros docs-only: clase RFC-56 —, Change Level L2, sin `VERSION` bump ni tag (RFC-69); commits C1 `d8bc464` (contenido) + C2 (registro/cierre) en `dev`; Validation Anchor V1 (T1 `12cff4c9…`; delta `e0b10edb…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); sin findings/corrections/pending (`N/A`); sin cambios en `protocol/.agents/`, `runtime/`, `dist/`, `protocol/.agents/VERSION` (11.0.0) ni Planes 94–108; sin push, sin merge, sin tag; `11.0.0` sigue sin release. |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

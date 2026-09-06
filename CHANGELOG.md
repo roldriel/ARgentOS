@@ -252,6 +252,20 @@ La política de versionado, changelog, tags y estados de planes vive en
   Cambio DEV tooling + registros docs-only: sin `VERSION` bump ni tag (ver
   `docs/VERSIONING.md` §3).
 
+- **Generador DEV de Scoped Content Identity para Validation Anchors** (plan
+  109): `tools/scoped_content_identity.py` computa la Scoped Content Identity
+  v1 que todo Validation Anchor registra (VC-1) y el Checkpoint verifica
+  (GC-1) — Delta scoped identity (sha256 de la serialización canónica
+  `scoped-v1` + pares `path NUL blob NUL` sobre un scope declarado, ordenado
+  lexicográficamente; blob id por `git ls-files -s` o `git hash-object --path`
+  para untracked) y State identity (tree del index staged vía `git
+  write-tree`, o `git rev-parse <ref>^{tree}` con `--ref`) — reutilizando el
+  algoritmo v1 normado (plan 96 §13) sin reinterpretarlo ni modificar
+  C-1/C-2/C-3; salida JSON determinista y fail-closed sin salida parcial;
+  read-only, stdlib-only; 15 tests en repos git aislados en
+  `tests/test_scoped_content_identity.py`. Cambio DEV tooling + registros
+  docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3).
+
 ### Fixed
 
 - **Guía de adopción sin `git subtree --prefix=.`** (plan 85): `docs/ADOPTION.md`

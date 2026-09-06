@@ -265,6 +265,21 @@ La política de versionado, changelog, tags y estados de planes vive en
   read-only, stdlib-only; 15 tests en repos git aislados en
   `tests/test_scoped_content_identity.py`. Cambio DEV tooling + registros
   docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3).
+- **Inspección DEV de una ejecución concreta con identidad de su contenido**
+  (plan 110): `tools/determine_execution_state.py` agrega `--content-identity`
+  (con `--session` + `--iteration`) a la consulta de una ejecución específica:
+  la entrada de la ejecución relaciona su determinación con la Scoped Content
+  Identity v1 del contenido de su Execution Record
+  (`.project/<session>/<iteration>/`, archivos presentes ordenados), computada
+  por composición con el generador existente (`tools/scoped_content_identity.py`,
+  Plan 109) — importado sin modificar, sin duplicar el algoritmo v1, sin
+  escrituras, sin tracking causal ni relación persistente Execution Record ↔
+  proyecto. Fail-closed: scope vacío, root sin repo git u otro error del
+  generador → `applicable: false` con razón determinista, sin fabricar
+  identidad; sesión/iteración inexistente → report vacío; sin el flag la
+  salida es exactamente la actual (18 tests nuevos; 40 en la suite de
+  `tests/test_determine_execution_state.py`). Cambio DEV tooling + registros
+  docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3).
 
 ### Fixed
 

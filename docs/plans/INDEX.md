@@ -612,6 +612,36 @@ tag; `11.0.0` sigue sin release.
 |---|---|---|---|
 | `109-scoped-content-identity-generator.md` | — | Executed | Generador DEV determinista de la Scoped Content Identity v1 para Validation Anchors/Checkpoints: `tools/scoped_content_identity.py` (scope de paths repo-relative normalizado/deduplicado/ordenado; blob id por `git ls-files -s` o `git hash-object --path` para untracked; serialización `scoped-v1` + pares `path NUL blob NUL`; sha256 delta; state identity staged `write-tree` o `--ref <ref>^{tree}`; JSON determinista; fail-closed sin salida parcial; stdlib-only, read-only, sin red) + `tests/test_scoped_content_identity.py` (15 tests en repos git aislados). Cambio DEV tooling + registros docs-only: clase RFC-56 —, Change Level L2, sin `VERSION` bump ni tag (RFC-69); commits C1 `d8bc464` (contenido) + C2 (registro/cierre) en `dev`; Validation Anchor V1 (T1 `12cff4c9…`; delta `e0b10edb…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); sin findings/corrections/pending (`N/A`); sin cambios en `protocol/.agents/`, `runtime/`, `dist/`, `protocol/.agents/VERSION` (11.0.0) ni Planes 94–108; sin push, sin merge, sin tag; `11.0.0` sigue sin release. |
 
+## Cuadragésima segunda serie: inspección DEV de una ejecución concreta con identidad de su contenido (Plan 110) (06 sep 2026)
+
+Plan 110 (cambio DEV de tooling + registros docs-only autorizado por el
+mantenedor, 2026-09-06 — Dogfooding Test #4, GO H1=1 —; régimen
+RFC-75/RFC-69; sin RFC/ADR nuevo, clase RFC-56 —): extiende la consulta de
+una ejecución específica (`determine_execution_state.py --session S
+--iteration N`, Plan 108) con `--content-identity`: la entrada de la ejecución
+relaciona su determinación con la Scoped Content Identity v1 del contenido de
+su Execution Record (`.project/<session>/<iteration>/`, archivos presentes
+ordenados), computada por composición con el generador existente
+(`tools/scoped_content_identity.py`, Plan 109) — importado sin modificar, sin
+duplicar el algoritmo v1, sin escrituras, sin tracking causal ni relación
+persistente Execution Record ↔ proyecto. Fail-closed: scope vacío, root sin
+repo git u otro error del generador → `applicable: false` con razón
+determinista, sin fabricar identidad; sesión/iteración inexistente → report
+vacío; sin el flag la salida es exactamente la actual. Sin cambios en
+`protocol/.agents/`, `runtime/`, `dist/`, `protocol/.agents/VERSION` (11.0.0),
+sin release.
+Ejecución en `dev`: commit C1 `bccf229` (contenido: herramienta + 18 tests
+nuevos; pytest `500 passed`), C2 (registro/cierre); Validation Anchor V1 (T1
+`416587fc…`; delta `1857802e…`, generada con el propio tool — dogfooding —) y
+Checkpoint con revalidación V2 antes de `Closed`; C-1/C-2/C-3 GAP=0,
+ANOMALY=0; status `Executed`; condición derivada `Closed` (docs-only, sin
+release); sin findings/corrections/pending (`N/A`); sin push, sin merge, sin
+tag; `11.0.0` sigue sin release.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `110-inspeccion-ejecucion-identidad-contenido.md` | — | Executed | Inspección DEV de una ejecución concreta relacionada con la identidad de su contenido: `tools/determine_execution_state.py` agrega `--content-identity` (con `--session` + `--iteration`) a la consulta de una ejecución específica; la entrada agrega `content_identity` = Scoped Content Identity v1 del scope del Execution Record de la iteración (`.project/<session>/<iteration>/`), computada por composición con `tools/scoped_content_identity.py` (import sin modificar; sin duplicar el algoritmo v1; JSON determinista; `applicable: false` con razón para scope vacío / root sin repo git / error del generador; sesión o iteración inexistente → report vacío fail-closed; sin el flag la salida es exactamente la actual) + `tests/test_determine_execution_state.py` (18 tests nuevos; 40 en la suite). Cambio DEV tooling + registros docs-only: clase RFC-56 —, Change Level L2, sin `VERSION` bump ni tag (RFC-69); commits C1 `bccf229` (contenido) + C2 (registro/cierre) en `dev`; Validation Anchor V1 (T1 `416587fc…`; delta `1857802e…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); sin findings/corrections/pending (`N/A`); sin cambios en `protocol/.agents/`, `runtime/`, `dist/`, `protocol/.agents/VERSION` (11.0.0) ni Planes 94–109; sin push, sin merge, sin tag; `11.0.0` sigue sin release. |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

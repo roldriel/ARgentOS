@@ -41,9 +41,24 @@ empty report (fail-closed absence semantics, no entry fabricated, no state
 inferred), the same way an unknown ``--session`` or an absent ``.project``
 does.
 
+For a **specific execution** the report can also relate the determination to
+the identity of the content from which it was produced: ``--content-identity``
+(requires ``--session`` + ``--iteration``) adds a ``content_identity`` field
+to that execution's entry. The field reuses the existing Scoped Content
+Identity v1 generator (``tools/scoped_content_identity.py``, Plan 109) over
+the deterministic record scope of the execution: every file under
+``.project/<session>/<iteration>/`` (repo-relative). It is the identity of the
+Execution Record content that declares the result -- the only content
+relationship determinable from the data ARgentOS already records (RFC-64); it
+is not a causal link to project content. When the record has no applicable
+content (empty iteration folder, not a git repository, or an unavailable
+identity), the field declares ``applicable: false`` with a deterministic
+reason (fail-closed, no fabricated identity). Without ``--content-identity``
+the report is exactly the existing one.
+
 Usage:
   python tools/determine_execution_state.py [--root REPO_ROOT] [--session UUID]
-      [--iteration ITERATION]
+      [--iteration ITERATION] [--content-identity]
 
 Prints a deterministic JSON report and exits 0. Standard library only.
 """
@@ -56,6 +71,8 @@ import re
 import sys
 from pathlib import Path
 from typing import Any
+
+import scoped_content_identity as sci
 
 
 TERMINAL_STATES = ("ABORT", "COMPLETED")
@@ -157,10 +174,43 @@ def determine_iteration(session: Path, iteration: Path) -> dict[str, Any]:
     return entry
 
 
+def content_identity_for(
+    root: Path, session: Path, iteration: Path
+) -> dict[str, Any]:
+    """Scoped Content Identity v1 of the content of one execution record.
+
+    The deterministic record scope is every file under the iteration folder
+    (``.project/<session>/<iteration>/``) present at inspection time, sorted.
+    The computation is delegated to the existing v1 generator
+    (``tools/scoped_content_identity.py``): the delta identity identifies the
+    record content and the state identity is the generator's staged-tree
+    identity of the repository at inspection time. No file is written and no
+    algorithm is duplicated here.
+
+    Fail-closed (``applicable: false`` + deterministic reason), never
+    fabricating an identity: empty record scope (``content_scope_empty``),
+    root outside a git repository (``not_a_git_repository``), or any other
+    generator error (``content_identity_unavailable``).
+    """
+    files = sorted(
+        path.resolve() for path in iteration.rglob("*") if path.is_file()
+    )
+    if not files:
+        return {"applicable": False, "reason": "content_scope_empty"}
+    try:
+        identity = sci.compute(root, [str(path) for path in files])
+    except sci.ToolError as exc:
+        if "not a git repository" in str(exc):
+            return {"applicable": False, "reason": "not_a_git_repository"}
+        return {"applicable": False, "reason": "content_identity_unavailable"}
+    return {"applicable": True, **identity}
+
+
 def determine(
     root: Path,
     session_filter: str | None = None,
     iteration_filter: str | None = None,
+    content_identity: bool = False,
 ) -> dict[str, Any]:
     """Determine the terminal Task State of executions under root.
 
@@ -173,10 +223,19 @@ def determine(
     iteration name must match an existing numeric iteration folder exactly. A
     requested session/iteration without a record yields an empty report
     (fail-closed absence semantics: no entry is fabricated and no state is
-    inferred).
+    inferred). ``content_identity`` (targeted query only: requires both
+    filters) additionally relates the determination to the Scoped Content
+    Identity v1 of the execution record scope (see ``content_identity_for``);
+    without it the report is exactly the existing one.
     """
     if iteration_filter is not None and session_filter is None:
         raise ValueError("iteration_filter requires session_filter")
+    if content_identity and (
+        session_filter is None or iteration_filter is None
+    ):
+        raise ValueError(
+            "content_identity requires session_filter and iteration_filter"
+        )
     executions: list[dict[str, Any]] = []
     for session in session_dirs(root):
         if session_filter is not None and session.name != session_filter:
@@ -187,7 +246,12 @@ def determine(
                 and iteration.name != iteration_filter
             ):
                 continue
-            executions.append(determine_iteration(session, iteration))
+            entry = determine_iteration(session, iteration)
+            if content_identity:
+                entry["content_identity"] = content_identity_for(
+                    root, session, iteration
+                )
+            executions.append(entry)
     determined = sum(1 for e in executions if e["determined"])
     return {
         "executions": executions,
@@ -221,9 +285,22 @@ def main(argv: list[str] | None = None) -> int:
             "name) of --session; requires --session"
         ),
     )
+    parser.add_argument(
+        "--content-identity",
+        action="store_true",
+        help=(
+            "relate the determination of the requested execution to the "
+            "Scoped Content Identity v1 of its Execution Record content "
+            "(requires --session and --iteration)"
+        ),
+    )
     args = parser.parse_args(argv)
     if args.iteration is not None and args.session is None:
         parser.error("--iteration requires --session")
+    if args.content_identity and (
+        args.session is None or args.iteration is None
+    ):
+        parser.error("--content-identity requires --session and --iteration")
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     root = (args.root or Path(__file__).resolve().parents[1]).resolve()
@@ -231,6 +308,7 @@ def main(argv: list[str] | None = None) -> int:
         root,
         session_filter=args.session,
         iteration_filter=args.iteration,
+        content_identity=args.content_identity,
     )
     print(json.dumps(report, indent=2, ensure_ascii=False))
     return 0

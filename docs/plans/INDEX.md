@@ -671,6 +671,21 @@ Sin cambios en `protocol/.agents/`, `runtime/`, `dist/`,
 |---|---|---|---|
 | `112-alcance-s00-health-determinista.md` | — (vía plan, Clase B) | Executed | Alcance determinista del gate S00 sobre el health checklist: el ítem 2 de `protocol/.agents/orchestrators/system/harness/policies/S00-system-ready.md` (`## Checklist`) pasa a declarar como alcance PASS el de la `## Decision` vigente de `protocol/.agents/standards/runtime/PROTOCOL_HEALTH.md` (ítems 1–6, 8–9 y 11–13; ítem 10 sólo con el flag `knowledge_base` habilitado; ítem 7 warning-only), sin duplicar el checklist y sin cambio de significado (single-source policy). Cambio Protocol Clase B (RFC-56), Change Level L1; versión `11.0.1` (PATCH; `protocol/.agents/VERSION` 11.0.0 → 11.0.1); sin RFC ni ADR; sin cambios en `master`/`dist`/tags/push/release. **Creación (2026-09-06):** artifact creado y registrado sin ejecutar (Status `Aprobado para ejecución`, GO del mantenedor registrado en el plan como H1 = 1). **Ejecución y cierre (2026-09-06):** ítem 2 de S00 reformulado (alcance PASS por referencia a la Decision de `PROTOCOL_HEALTH.md`), `protocol/.agents/VERSION` → `11.0.1`, sección `[11.0.1]` en `CHANGELOG.md`, y ancla `PROTOCOL_VERSION` de `runtime/toolcalls/canonical.py` alineada a `11.0.1` (requisito mecánico del checker de versión; fuera del payload); commits A `abe2b37` (registro), C1 `310e974` (contenido) y R2 (registro/cierre) en `dev`; V1 sobre C1 y revalidación A2 sobre el estado final (checkers PASS; pytest `524 passed`; C-1 `VALID`, C-2 `VALID` — A2 declarado, GC-1 —, C-3 `N/A`; GAP=0, ANOMALY=0); status `Executed`; condición derivada `Closed` (con release pendiente); sin findings/corrections/pending (`N/A`); sin cambios en otros archivos del payload ni en `master`/`dist`/tags; sin push, sin merge, sin tag; `11.0.1` y `11.0.0` siguen sin release. |
 
+## Cuadragésima quinta serie: materialización de la brújula de decisiones en el AGENTS.md raíz (Plan 113) (07 sep 2026)
+
+Plan 113 (cambio DEV docs-only autorizado por el mantenedor, 2026-09-07, GO
+registrado en el plan como H1 = 1): materializa la «brújula de decisiones» de
+ARgentOS — claridad sobre crecimiento; separación de responsabilidades
+RFC/Plan/Git/INDEX/Glossary; calidad de decisión sobre volumen documental;
+contención («no change» como resultado válido); calidad de decisión como
+objetivo de evaluación — como sección canónica `## Decision-Making Compass`
+en el `AGENTS.md` raíz (entrypoint de instrucción DEV, primera lectura del
+agente), explícitamente no normativa y sin duplicar autoridades de `docs/`.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `113-decision-making-compass-materialization.md` | — | Aprobado para ejecución | Materialización docs-only de la brújula de decisiones como sección `## Decision-Making Compass` en el `AGENTS.md` raíz (P1–P5: claridad sobre crecimiento; separación RFC/Plan/Git/INDEX/Glossary; calidad de decisión sobre volumen; contención con «no change» válido; calidad de decisión como objetivo no demostrado aún). Cambio DEV docs-only: clase RFC-56 —, Change Level L1, sin `VERSION` bump ni tag (RFC-69); sin RFC/ADR nuevo; sin cambios en `protocol/.agents/`, `runtime/`, `tools/`, `tests/`, `harness`, `dist/` ni `protocol/.agents/VERSION` (11.0.0). **Creación (2026-09-07):** artifact creado y registrado sin ejecutar (Status `Aprobado para ejecución`, GO del mantenedor registrado en el plan como H1 = 1); Plan 113 NO `Executed`/`Closed`. |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

@@ -381,6 +381,201 @@ def test_content_identity_applies_for_completed_execution(tmp_path):
     assert report["summary"] == {"total": 1, "determined": 1, "undetermined": 0}
 
 
+# ── Plan 111 (Etapa 1): --session-summary
+
+
+def _zero_summary(sessions: int = 0) -> dict:
+    return {
+        "sessions": sessions,
+        "executions": 0,
+        "determined": 0,
+        "undetermined": 0,
+        "terminal_abort": 0,
+        "terminal_completed": 0,
+    }
+
+
+def test_session_summary_without_project_is_empty(tmp_path):
+    report = des.session_summaries(tmp_path)
+    assert report["sessions"] == []
+    assert report["summary"] == _zero_summary()
+
+
+def test_session_summary_counts_single_session(tmp_path):
+    session = _session_uuid(tmp_path)
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+    _write_state(session, "01", "ABORT", {})
+    _write_state(session, "02", "in_progress", {})
+    report = des.session_summaries(tmp_path)
+    assert report["sessions"] == [
+        {
+            "session": session.name,
+            "protocol_version": "11.0.0",
+            "executions": 3,
+            "determined": 2,
+            "undetermined": 1,
+            "terminal_abort": 1,
+            "terminal_completed": 1,
+        }
+    ]
+    assert report["summary"] == {
+        "sessions": 1,
+        "executions": 3,
+        "determined": 2,
+        "undetermined": 1,
+        "terminal_abort": 1,
+        "terminal_completed": 1,
+    }
+
+
+def test_session_summary_aggregates_multiple_sessions(tmp_path):
+    first = _session_uuid(tmp_path, "session-a")
+    second = _session_uuid(tmp_path, "session-b")
+    _write_state(first, "00", "COMPLETED", {"H00": {}})
+    _write_state(second, "00", "ABORT", {})
+    _write_state(second, "01", "no_gates_passed", {})
+    report = des.session_summaries(tmp_path)
+    assert [row["session"] for row in report["sessions"]] == [
+        "session-a",
+        "session-b",
+    ]
+    assert report["sessions"][0] == {
+        "session": "session-a",
+        "protocol_version": "11.0.0",
+        "executions": 1,
+        "determined": 1,
+        "undetermined": 0,
+        "terminal_abort": 0,
+        "terminal_completed": 1,
+    }
+    assert report["summary"] == {
+        "sessions": 2,
+        "executions": 3,
+        "determined": 2,
+        "undetermined": 1,
+        "terminal_abort": 1,
+        "terminal_completed": 1,
+    }
+
+
+def test_session_summary_missing_state_json_counts_undetermined(tmp_path):
+    session = _session_uuid(tmp_path)
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+    (session / "01").mkdir()
+    row = des.session_summaries(tmp_path)["sessions"][0]
+    assert row["executions"] == 2
+    assert row["determined"] == 1
+    assert row["undetermined"] == 1
+    assert row["terminal_completed"] == 1
+
+
+def test_session_summary_protocol_version_from_session_log(tmp_path):
+    session = tmp_path / ".project" / "uuid-versioned"
+    _write_session_log(session, "10.3.0")
+    _write_state(session, "00", "ABORT", {})
+    row = des.session_summaries(tmp_path)["sessions"][0]
+    assert row["protocol_version"] == "10.3.0"
+
+
+def test_session_summary_protocol_version_none_without_declaration(tmp_path):
+    session = tmp_path / ".project" / "uuid-no-log"
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+    row = des.session_summaries(tmp_path)["sessions"][0]
+    assert row["protocol_version"] is None
+
+
+def test_session_summary_ignores_knowledge_and_skills_dirs(tmp_path):
+    for name in ("knowledge", "skills"):
+        _write_state(tmp_path / ".project" / name, "00", "COMPLETED", {})
+    report = des.session_summaries(tmp_path)
+    assert report["sessions"] == []
+    assert report["summary"] == _zero_summary()
+
+
+def test_session_summary_session_filter_limits_report(tmp_path):
+    first = _session_uuid(tmp_path, "session-a")
+    _session_uuid(tmp_path, "session-b")
+    _write_state(first, "00", "COMPLETED", {"H00": {}})
+    report = des.session_summaries(tmp_path, session_filter="session-a")
+    assert [row["session"] for row in report["sessions"]] == ["session-a"]
+    assert report["summary"]["sessions"] == 1
+
+
+def test_session_summary_unknown_session_is_fail_closed_empty(tmp_path):
+    session = _session_uuid(tmp_path)
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+    report = des.session_summaries(tmp_path, session_filter="unknown")
+    assert report["sessions"] == []
+    assert report["summary"] == _zero_summary()
+
+
+def test_session_summary_session_without_iterations_is_zero(tmp_path):
+    session = _session_uuid(tmp_path)
+    row = des.session_summaries(tmp_path)["sessions"][0]
+    assert row["session"] == session.name
+    assert row["executions"] == 0
+    assert row["determined"] == 0
+    assert row["undetermined"] == 0
+    assert row["terminal_abort"] == 0
+    assert row["terminal_completed"] == 0
+
+
+def test_session_summary_is_deterministic(tmp_path):
+    session = _session_uuid(tmp_path)
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+    _write_state(session, "01", "in_progress", {})
+    first = des.session_summaries(tmp_path)
+    second = des.session_summaries(tmp_path)
+    assert first == second
+
+
+def test_cli_session_summary_prints_json_report(tmp_path, capsys):
+    session = _session_uuid(tmp_path)
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+    assert des.main(["--root", str(tmp_path), "--session-summary"]) == 0
+    cli = json.loads(capsys.readouterr().out)
+    assert cli == des.session_summaries(tmp_path)
+
+
+def test_session_summary_with_iteration_fails_deterministically(tmp_path):
+    session = _session_uuid(tmp_path)
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+    with pytest.raises(SystemExit) as excinfo:
+        des.main(
+            [
+                "--root",
+                str(tmp_path),
+                "--session",
+                session.name,
+                "--iteration",
+                "00",
+                "--session-summary",
+            ]
+        )
+    assert excinfo.value.code == 2
+
+
+def test_session_summary_with_content_identity_fails_deterministically(
+    tmp_path,
+):
+    session = _session_uuid(tmp_path)
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+    with pytest.raises(SystemExit) as excinfo:
+        des.main(
+            [
+                "--root",
+                str(tmp_path),
+                "--session",
+                session.name,
+                "--iteration",
+                "00",
+                "--content-identity",
+                "--session-summary",
+            ]
+        )
+    assert excinfo.value.code == 2
+
+
 def test_content_identity_applies_for_abort_execution(tmp_path):
     root, session = _git_session(tmp_path)
     _write_state(session, "00", "ABORT", {"H00": {}})

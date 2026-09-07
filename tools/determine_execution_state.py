@@ -56,9 +56,21 @@ identity), the field declares ``applicable: false`` with a deterministic
 reason (fail-closed, no fabricated identity). Without ``--content-identity``
 the report is exactly the existing one.
 
+For a per-session aggregate view of the same records, ``--session-summary``
+reports one entry per protocol session (``session``, ``protocol_version``
+from the existing sources, and the counts ``executions`` / ``determined`` /
+``undetermined`` plus ``terminal_abort`` / ``terminal_completed``, derived
+exclusively with the existing determination semantics of this module) together
+with a global ``summary``. With ``--session`` the report is limited to that
+session; an absent session or an absent ``.project`` yields an empty report
+with zero counts (fail-closed absence semantics: no entry is fabricated and
+no state is inferred). ``--session-summary`` is a distinct report mode,
+exclusive with the targeted query flags (``--iteration`` and
+``--content-identity``).
+
 Usage:
   python tools/determine_execution_state.py [--root REPO_ROOT] [--session UUID]
-      [--iteration ITERATION] [--content-identity]
+      [--iteration ITERATION] [--content-identity] [--session-summary]
 
 Prints a deterministic JSON report and exits 0. Standard library only.
 """
@@ -263,6 +275,78 @@ def determine(
     }
 
 
+def session_summaries(
+    root: Path, session_filter: str | None = None
+) -> dict[str, Any]:
+    """Report the terminal-state determinations aggregated per session.
+
+    Plan 111 (U1, ``--session-summary``). Read-only, deterministic,
+    no-inference view of the same data the per-execution report reads: for
+    each protocol session under ``<root>/.project/`` it aggregates the
+    determinations of its executions using the existing semantics of
+    ``determine_iteration`` (never reinterpreting a record) and the existing
+    per-session ``protocol_version`` sources (``SESSION_LOG.md`` or the
+    ``session_start`` metric event).
+
+    Each session entry carries ``session``, ``protocol_version``,
+    ``executions`` (numeric iteration folders), ``determined`` /
+    ``undetermined`` (by the existing determinability boundary: terminal
+    ``status`` ABORT | COMPLETED vs. missing/corrupt ``state.json`` or a
+    non-terminal status) and ``terminal_abort`` / ``terminal_completed``
+    (counts of the determined executions). The global ``summary`` aggregates
+    the same magnitudes plus the number of sessions.
+
+    Fail-closed absence semantics: an absent ``.project/`` or a
+    ``session_filter`` without a matching session directory yields an empty
+    ``sessions`` list and zero counts; no entry is fabricated and no state is
+    inferred. Sessions without numeric iteration folders are reported with
+    zero counts (the session exists; it has no executions to inspect).
+    """
+    rows: list[dict[str, Any]] = []
+    for session in session_dirs(root):
+        if session_filter is not None and session.name != session_filter:
+            continue
+        determinations = [
+            determine_iteration(session, iteration)
+            for iteration in iteration_dirs(session)
+        ]
+        determined = [
+            entry for entry in determinations if entry["determined"]
+        ]
+        rows.append(
+            {
+                "session": session.name,
+                "protocol_version": protocol_version(session),
+                "executions": len(determinations),
+                "determined": len(determined),
+                "undetermined": len(determinations) - len(determined),
+                "terminal_abort": sum(
+                    1
+                    for entry in determined
+                    if entry["terminal_task_state"] == "ABORT"
+                ),
+                "terminal_completed": sum(
+                    1
+                    for entry in determined
+                    if entry["terminal_task_state"] == "COMPLETED"
+                ),
+            }
+        )
+    return {
+        "sessions": rows,
+        "summary": {
+            "sessions": len(rows),
+            "executions": sum(row["executions"] for row in rows),
+            "determined": sum(row["determined"] for row in rows),
+            "undetermined": sum(row["undetermined"] for row in rows),
+            "terminal_abort": sum(row["terminal_abort"] for row in rows),
+            "terminal_completed": sum(
+                row["terminal_completed"] for row in rows
+            ),
+        },
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     """CLI entry point: print the per-execution terminal-state report."""
     parser = argparse.ArgumentParser(
@@ -294,6 +378,14 @@ def main(argv: list[str] | None = None) -> int:
             "(requires --session and --iteration)"
         ),
     )
+    parser.add_argument(
+        "--session-summary",
+        action="store_true",
+        help=(
+            "report terminal-state determinations aggregated per session "
+            "(cannot be combined with --iteration or --content-identity)"
+        ),
+    )
     args = parser.parse_args(argv)
     if args.iteration is not None and args.session is None:
         parser.error("--iteration requires --session")
@@ -301,15 +393,25 @@ def main(argv: list[str] | None = None) -> int:
         args.session is None or args.iteration is None
     ):
         parser.error("--content-identity requires --session and --iteration")
+    if args.session_summary and (
+        args.iteration is not None or args.content_identity
+    ):
+        parser.error(
+            "--session-summary cannot be combined with --iteration or "
+            "--content-identity"
+        )
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     root = (args.root or Path(__file__).resolve().parents[1]).resolve()
-    report = determine(
-        root,
-        session_filter=args.session,
-        iteration_filter=args.iteration,
-        content_identity=args.content_identity,
-    )
+    if args.session_summary:
+        report = session_summaries(root, session_filter=args.session)
+    else:
+        report = determine(
+            root,
+            session_filter=args.session,
+            iteration_filter=args.iteration,
+            content_identity=args.content_identity,
+        )
     print(json.dumps(report, indent=2, ensure_ascii=False))
     return 0
 

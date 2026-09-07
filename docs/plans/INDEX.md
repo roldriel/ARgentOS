@@ -642,6 +642,29 @@ tag; `11.0.0` sigue sin release.
 |---|---|---|---|
 | `110-inspeccion-ejecucion-identidad-contenido.md` | — | Executed | Inspección DEV de una ejecución concreta relacionada con la identidad de su contenido: `tools/determine_execution_state.py` agrega `--content-identity` (con `--session` + `--iteration`) a la consulta de una ejecución específica; la entrada agrega `content_identity` = Scoped Content Identity v1 del scope del Execution Record de la iteración (`.project/<session>/<iteration>/`), computada por composición con `tools/scoped_content_identity.py` (import sin modificar; sin duplicar el algoritmo v1; JSON determinista; `applicable: false` con razón para scope vacío / root sin repo git / error del generador; sesión o iteración inexistente → report vacío fail-closed; sin el flag la salida es exactamente la actual) + `tests/test_determine_execution_state.py` (18 tests nuevos; 40 en la suite). Cambio DEV tooling + registros docs-only: clase RFC-56 —, Change Level L2, sin `VERSION` bump ni tag (RFC-69); commits C1 `bccf229` (contenido) + C2 (registro/cierre) en `dev`; Validation Anchor V1 (T1 `416587fc…`; delta `1857802e…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); sin findings/corrections/pending (`N/A`); sin cambios en `protocol/.agents/`, `runtime/`, `dist/`, `protocol/.agents/VERSION` (11.0.0) ni Planes 94–109; sin push, sin merge, sin tag; `11.0.0` sigue sin release. |
 
+## Cuadragésima tercera serie: resumen por sesión y filtro de ejecuciones sin determinación terminal (Plan 111) (06 sep 2026)
+
+Plan 111 (cambio DEV de tooling + registros docs-only autorizado por el
+mantenedor, 2026-09-06 — Dogfooding Test #6, GO H1=1 —; régimen
+RFC-75/RFC-69; sin RFC/ADR nuevo, clase RFC-56 —): extiende la consulta DEV
+de Execution Records (`tools/determine_execution_state.py`, Planes 107–110)
+con dos modos aditivos de inspección read-only y determinista sobre la
+semántica existente de `determine_iteration`: `--session-summary` (reporte
+agregado por sesión: `protocol_version` de fuentes existentes, total/
+determinadas/indeterminadas y conteos `ABORT`/`COMPLETED`; con o sin
+`--session`; sesión o `.project/` ausentes → vacío fail-closed sin fabricar
+entradas) y `--undetermined` (restringe el reporte por ejecución a las
+entradas sin determinación con su razón existente; combinable con `--session`;
+incompatible con `--iteration` y con `--session-summary`). Sin flags nuevos la
+salida es exactamente la actual. El plan se ejecuta en dos etapas por agentes
+independientes (Etapa 1: U1 + V1; Etapa 2: U2 + revalidación A2 + cierre).
+Sin cambios en `protocol/.agents/`, `runtime/`, `dist/`,
+`protocol/.agents/VERSION` (11.0.0), sin release.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `111-resumen-por-sesion-ejecuciones-indeterminadas.md` | — | Aprobado para ejecución | Consulta DEV de resumen por sesión y de ejecuciones sin determinación terminal sobre `tools/determine_execution_state.py` (Planes 107–110): U1 `--session-summary` (reporte agregado por sesión con `protocol_version` de fuentes existentes, `executions`/`determined`/`undetermined` y conteos `terminal_abort`/`terminal_completed` derivados de la semántica existente de `determine_iteration`; con o sin `--session`; sesión o `.project/` ausentes → `sessions` vacío y `summary` en cero, fail-closed sin fabricar entradas) y U2 `--undetermined` (reporte por ejecución restringido a `determined: false` con razón `state_json_missing`/`state_json_corrupt`/`status_not_terminal`; combinable con `--session`; incompatible con `--iteration` y con `--session-summary`, error determinista). Sin flags nuevos la salida es exactamente la actual (regresión cero); read-only, stdlib-only, sin red, sin escrituras sobre `.project/`. Cambio DEV tooling + registros docs-only: clase RFC-56 —, Change Level L2, sin `VERSION` bump ni tag (RFC-69); ejecución en dos etapas por agentes independientes (Etapa 1: U1 + tests + V1; Etapa 2: U2 + tests + revalidación A2 + cierre `Closed` docs-only); sin cambios en `protocol/.agents/`, `runtime/`, `dist/`, `protocol/.agents/VERSION` (11.0.0) ni Planes 94–110; sin push, sin merge, sin tag; `11.0.0` sigue sin release. **Creación (2026-09-06):** artifact creado y registrado sin ejecutar (Status `Aprobado para ejecución`, GO del mantenedor registrado en el plan como H1 = 1); Plan 111 NO `Executed`/`Closed`. |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

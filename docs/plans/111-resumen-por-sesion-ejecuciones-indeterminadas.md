@@ -1,6 +1,7 @@
 # Plan 111 — Consulta DEV de resumen por sesión y de ejecuciones sin determinación terminal
 
-**Status:** Aprobado para ejecución
+**Status:** Executed (2026-09-06; Etapa 1 + Etapa 2 ejecutadas y cerradas
+docs-only)
 **Fecha:** 2026-09-06
 **RFC:** — (no implementa ni acepta ninguna RFC; régimen aplicable: RFC-75
 `Accepted` — Change Lifecycle DEV —; RFC-69 `Accepted` — tooling DEV y
@@ -295,13 +296,57 @@ sección (anti-circularidad; precedente Planes 96–110).
     `e635cb7c9cd3524ece0cab0b9c8d40655e2119cd`;
     `tools/determine_execution_state.py` →
     `cf25b04020208f5d76d12155a2e42634212c983c`.
-- Validity / stale: `vigente` (V1, estado de C1); la revalidación A2 sobre el
-  estado final de la ejecución (incluidos los registros de cierre) queda
-  registrada en la Etapa 2, antes de `Closed`.
+- Validity / stale: `vigente` (V1, estado de C1); **revalidada por A2**
+  (2026-09-06, Etapa 2: batería canónica completa + pytest + gates sobre el
+  estado final de la ejecución, incluidos los registros de cierre) antes de
+  `Closed` (ver `## Checkpoint / cierre`).
 
 ## Checkpoint / cierre
 
-<!-- Se completa al cerrar (GC-1). -->
+Registro de la relación closure↔estado Git (GC-1;
+`docs/CONVENTIONS.md:Change Lifecycle — Checkpoint y cierre Git (regla
+operacional; GC-1, Incremento 3)`). Se completa en la Etapa 2 (2026-09-06),
+tras el commit de contenido C2 y antes del commit de registro R2.
+
+- Commits de cierre:
+  - P `0ebd412` — `docs(plans): register plan 111 session summary and
+    undetermined query (plan 111)` (Etapa 1; registro del plan).
+  - C1 `a596f69` — `feat(tools): add per-session summary mode to execution
+    state query (plan 111)` (Etapa 1; contenido U1, validado por V1).
+  - R1 `e77e6e7` — `docs(plans): record plan 111 stage-1 execution and
+    validation anchor (plan 111)` (Etapa 1; registros de Etapa 1).
+  - C2 `c7fd80a` — `feat(tools): add undetermined-only filter to execution
+    state query (plan 111)` (Etapa 2; contenido U2).
+  - R2 — este commit de registro/cierre (`docs(plans): close plan 111 with
+    validation anchor and checkpoint (plan 111)`); su SHA se identifica por el
+    mensaje y el árbol no embebe su propia identidad (auto-referencia).
+- Estado validado: `## Validation anchor` de este plan — V1 sobre el estado de
+  C1 (State identity T1 = `2f1855c3f11dfe88560922a36b71764056f25c54`; Delta
+  scoped identity = `9bd8fa8782216880f7098621860f1ff8f918ca2e0c87c6b1f1b30f262362b279`)
+  y revalidación **A2** (Etapa 2) sobre el estado final de la ejecución
+  (incluidos los registros de cierre).
+- Estado de cierre: tree id del último commit de cierre (R2) =
+  `git rev-parse R2^{tree}` (no embebido por auto-referencia; verificable en
+  git tras el commit). En la validación A2 se registró el tree id del estado
+  staged antes del commit (`git write-tree`), que debe coincidir con
+  `R2^{tree}` post-commit.
+- Consistencia checkpoint↔anchor:
+  - V1 ↔ C1: `git rev-parse C1^{tree}` == T1 (`2f1855c3f11dfe88560922a36b71764056f25c54`)
+    → **PASS**.
+  - Estado final (R2): difiere del estado de C1 únicamente en U2 y los
+    registros de cierre (este artifact, INDEX de planes y changelog);
+    **revalidación A2** (batería canónica completa + pytest + gates sobre el
+    contenido final, ejecutada antes del commit R2) → PASS. GC-1 queda
+    satisfecho por revalidación antes de `Closed` (el checkpoint se evalúa
+    contra A2, que cubre el estado de cierre).
+- Governance aplicada: Plan `Executed` (header + espejo en INDEX); ítem
+  `(plan 111)` en `CHANGELOG.md:[Unreleased]`; tooling DEV + registros
+  docs-only, sin `VERSION` bump ni tag (RFC-69; `docs/VERSIONING.md:3.
+  Versionado`).
+- Condición derivada: **`Closed` (docs-only, sin release)**.
+  `Executed ≠ Committed ≠ Closed ≠ Released`: `Executed` (status del plan),
+  `Committed` (P/C1/R1/C2/R2 en `dev`), `Closed` (condición derivada con
+  checkpoint y consistencia), `Released` (no aplica: sin promoción ni tag).
 
 ## Findings / Correcciones / Pending
 
@@ -391,3 +436,42 @@ sin determinación terminal) → `tools/determine_execution_state.py` + `tests/`
   final, registros de cierre (status `Executed`, espejo del INDEX, ítem en
   `CHANGELOG.md:[Unreleased]`, `## Checkpoint / cierre`) y commit de
   registro/cierre en `dev`, según los `## Pasos` de este plan.
+
+- 2026-09-06 — **Etapa 2 ejecutada sobre `dev` y Plan 111 cerrado**
+  (continuación del trabajo pendiente detectado en el repositorio: plan
+  `Aprobado para ejecución` no `Executed`/`Closed`, commits de Etapa 1
+  presentes, anchor V1 registrado, checkpoint vacío y sin ítem de changelog).
+  Estado inicial de la Etapa 2: branch `dev`, HEAD `e77e6e7`, working tree
+  limpio.
+  Implementación U2 (commit C2 `c7fd80a` en `dev`):
+  `tools/determine_execution_state.py` agrega el modo `--undetermined`
+  (flag aditivo; restringe el reporte por ejecución a las entradas con
+  `determined: false`, conservando sus razones existentes
+  `state_json_missing`/`state_json_corrupt`/`status_not_terminal`; el
+  `summary` del reporte refleja el conjunto filtrado; combinable con
+  `--session`; incompatible con `--iteration` (error determinista de
+  `argparse`, exit 2) y con `--session-summary` (vistas excluyentes, error
+  determinista de `argparse`, exit 2); guard API equivalente
+  (`undetermined_only` rechaza `iteration_filter` con `ValueError`); sin el
+  flag la salida es exactamente la actual; docstring y `usage` actualizados;
+  sin escrituras, read-only, stdlib-only, sin red) y
+  `tests/test_determine_execution_state.py` (10 tests nuevos de U2: filtro
+  sobre reporte completo; razones conservadas; combinación con `--session`;
+  ausencia de indeterminadas → vacío con `summary` en cero; agregación
+  multi-sesión; regresión del default sin el flag; paridad CLI ↔ API;
+  incompatibilidades con `--iteration` y `--session-summary`; guard API;
+  suite del archivo 64 tests).
+  Revalidación A2 (estado final, incluidos los registros de cierre): batería
+  canónica completa en verde (checkers PASS; pytest `524 passed, 0 failed`;
+  basetemp local `.pytest_cache\basetemp-v2` por ACL del sandbox);
+  `git diff --cached --check` limpio; gates C-1/C-2/C-3 sin ANOMALY
+  (C-1 Plan 111 `VALID`; C-2 Plan 111 `VALID` — A2 declarado, GC-1 —; C-3
+  `N/A`; GAP=0, ANOMALY=0); identidad del estado final registrada por el
+  checkpoint (tree staged antes de R2 == `R2^{tree}` post-commit).
+  Cierre: status `Executed` (header), espejo del INDEX en `Executed`, ítem
+  `(plan 111)` en `CHANGELOG.md:[Unreleased]`, `## Checkpoint / cierre`
+  completado; commit de registro R2 en `dev`. Sin cambios en
+  `protocol/.agents/`, `runtime/`, `dist/`, `protocol/.agents/VERSION`
+  (11.0.0), `master`, tags ni release; sin findings/corrections/pending
+  reales (`N/A`); sin push, sin merge. Condición derivada: `Closed`
+  (docs-only, sin release).

@@ -280,6 +280,23 @@ La política de versionado, changelog, tags y estados de planes vive en
   salida es exactamente la actual (18 tests nuevos; 40 en la suite de
   `tests/test_determine_execution_state.py`). Cambio DEV tooling + registros
   docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3).
+- **Resumen por sesión y filtro de ejecuciones sin determinación terminal**
+  (plan 111): `tools/determine_execution_state.py` agrega `--session-summary`
+  (reporte agregado por sesión del estado terminal declarado por cada
+  ejecución — `protocol_version` de fuentes existentes,
+  `executions`/`determined`/`undetermined` y conteos `terminal_abort`/
+  `terminal_completed`, derivados de la semántica existente de
+  `determine_iteration`; con o sin `--session`; sesión o `.project/` ausentes
+  → `sessions` vacío y `summary` en cero, fail-closed sin fabricar entradas)
+  y `--undetermined` (reporte por ejecución restringido a las entradas sin
+  determinación con su razón existente `state_json_missing`/
+  `state_json_corrupt`/`status_not_terminal`; combinable con `--session`;
+  excluyente con `--iteration` y `--session-summary`, error determinista);
+  sin flags nuevos la salida es exactamente la actual (regresión cero);
+  read-only, determinista, fail-closed, sin inferencia; 24 tests nuevos
+  (64 en la suite de `tests/test_determine_execution_state.py`). Cambio DEV
+  tooling + registros docs-only: sin `VERSION` bump ni tag (ver
+  `docs/VERSIONING.md` §3).
 
 ### Fixed
 

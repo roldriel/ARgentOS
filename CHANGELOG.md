@@ -342,6 +342,22 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [11.0.1] — 2026-09-06
+
+### Fixed
+
+- **Alcance determinista del gate S00 sobre el health checklist** (plan 112):
+  el ítem 2 de `protocol/.agents/orchestrators/system/harness/policies/S00-system-ready.md`
+  (`## Checklist`) declara explícitamente que el alcance PASS del gate es el de
+  la `## Decision` vigente de
+  `protocol/.agents/standards/runtime/PROTOCOL_HEALTH.md` (ítems 1–6, 8–9 y
+  11–13; ítem 10 sólo con el flag `knowledge_base` habilitado; ítem 7
+  warning-only), citándola como fuente de verdad sin duplicar el checklist.
+  Clase B (RFC-56): mejora documental compatible; sin cambio de significado
+  del health checklist ni del modelo del Protocol.
+
+---
+
 ## [11.0.0] — 2026-09-04
 
 ### Added

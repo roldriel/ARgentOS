@@ -297,6 +297,16 @@ La política de versionado, changelog, tags y estados de planes vive en
   (64 en la suite de `tests/test_determine_execution_state.py`). Cambio DEV
   tooling + registros docs-only: sin `VERSION` bump ni tag (ver
   `docs/VERSIONING.md` §3).
+- **Brújula de decisiones (Decision-Making Compass)** (plan 113): el
+  `AGENTS.md` raíz incorpora la sección `## Decision-Making Compass` —
+  claridad sobre crecimiento; separación de responsabilidades
+  RFC/Plan/Git/INDEX/Glossary; calidad de decisión sobre volumen documental;
+  contención («no change» como resultado válido); calidad de decisión como
+  objetivo de evaluación (no demostrado aún) — como principios de juicio
+  explícitamente no normativos, sin documento, mecanismo, estado, registry,
+  checker ni regla nuevos y sin duplicar autoridades de `docs/`. Cambio
+  docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3); sin
+  cambios en el payload del Protocol.
 
 ### Fixed
 

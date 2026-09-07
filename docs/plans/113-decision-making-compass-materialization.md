@@ -1,6 +1,7 @@
 # Plan 113 — Materialización de la brújula de decisiones (Decision-Making Compass) en el AGENTS.md raíz
 
-**Status:** Aprobado para ejecución
+**Status:** Executed (2026-09-07; materialización ejecutada y cerrada
+docs-only)
 **Fecha:** 2026-09-07
 **RFC:** — (no implementa ni acepta ninguna RFC; régimen aplicable: RFC-75
 `Accepted` — Change Lifecycle DEV —, RFC-69 `Accepted` — cambio DEV docs-only
@@ -135,7 +136,8 @@ autoridad nueva: declara principios y enruta a las autoridades existentes
 - [ ] Batería canónica en verde; C-1/C-2/C-3 sin ANOMALY; `git diff --check`
       limpio; working tree limpio al final (commits atómicos en `dev`).
 
-**Resultado (2026-09-07):** se completa al cerrar.
+**Resultado (2026-09-07):** todos los criterios cumplidos; ver
+`## Validation anchor`, `## Checkpoint / cierre` y `## Nota de ejecución`.
 
 ## Verificación
 
@@ -163,12 +165,102 @@ intacta (el payload no referencia `AGENTS.md` raíz ni `docs/`).
 
 ## Validation anchor
 
-<!-- Se completa al validar (VC-1). V1 sobre el commit de contenido C1;
-revalidación A2 sobre el estado final antes de `Closed`. -->
+Registrado al validar el Plan 113 (2026-09-07). La validación **V1** corrió
+sobre el estado del commit de contenido C1 (`6ff06f6`), **antes** de agregar
+los registros de esta sección (anti-circularidad; precedente Planes 96–112).
+
+- Declared scope: contenido del commit C1 del Plan 113 — `AGENTS.md` raíz
+  (sección `## Decision-Making Compass`) — + batería canónica del repo
+  (checkers dev + pytest, incluida la suite completa) sobre ese estado.
+- Validation command-set:
+  - `python tools/check_protocol_invariants.py --payload protocol .`
+  - `python tools/check_plan_citations.py`
+  - `python tools/check_plan_structure.py`
+  - `python tools/check_taxonomy_coherence.py`
+  - `python tools/check_session_artifacts.py`
+  - `python tools/check_version_state.py`
+  - `python -m pytest tests/ -q --basetemp .pytest_cache\basetemp-v1` (V1)
+  - `python -m pytest tests/ -q --basetemp .pytest_cache\basetemp-a2` (A2)
+  - `python tools/check_lifecycle_anchor.py` (C-1),
+    `python tools/check_lifecycle_checkpoint.py` (C-2),
+    `python tools/check_lifecycle_lineage.py` (C-3)
+  - `git diff --cached --check`
+- Effective inputs (repo content): contenido completo del repo en el estado
+  validado (los checkers escanean `docs/`, `protocol/`, `tools/`, `tests/`,
+  `runtime/` y la raíz; pytest consume `tests/` + `tools/` + `runtime/`);
+  representado por el State identity (tree id).
+- Observed dependencies: `no instrumentado` (sin tooling de instrumentación
+  en esta ejecución); el consumo por comando se observa de la documentación
+  de cada checker y de la batería (`docs/VERSIONING.md:4.1 Batería canónica
+  de verificación`).
+- Environmental factors: OS Windows; Python 3.14.3; git 2.55.0.windows.5;
+  pytest 9.0.3; `protocol/.agents/VERSION` = 11.0.0 (sin tag, esperado en
+  `dev`); pytest ejecutado con basetemp local `.pytest_cache\basetemp-*` por
+  ACL del basetemp `pytest-of-rolda` (ruido ambiental documentado en planes
+  96–112); los writes de index/objetos del `.git` del repo real (`git add`,
+  `git commit`) se ejecutaron con aprobación por ACL de solo lectura del
+  `.git` (ruido ambiental; no es intervención humana sobre el contenido del
+  cambio); sin red.
+- Scoped Content Identity:
+  - State identity (estado validado = árbol de C1): T1 =
+    `6fe6ec68ca909001b6376ce08989aa31ec2e9448` (verificado con
+    `git rev-parse '6ff06f6^{tree}'` y con el generador vía `--ref 6ff06f6`).
+  - Delta scoped identity (scope S = `AGENTS.md`; serialización `scoped-v1` +
+    pares `path NUL blob NUL`, generada con
+    `tools/scoped_content_identity.py`):
+    `16ea77bdf3eece86c233083a366135c978bc8965644e75cad504390ec38449d5`.
+    Par path → blob (C1): `AGENTS.md` →
+    `bc0ce4adb9da8054b2bf282f2562be3e31678dfb`.
+- Validity / stale: `vigente` (V1, estado de C1); **revalidada por A2**
+  (2026-09-07: batería canónica completa + pytest + gates sobre el estado
+  final, incluidos los registros de cierre) antes de `Closed` (ver
+  `## Checkpoint / cierre`).
 
 ## Checkpoint / cierre
 
-<!-- Se completa al cerrar (GC-1). -->
+Registro de la relación closure↔estado Git (GC-1;
+`docs/CONVENTIONS.md:Change Lifecycle — Checkpoint y cierre Git (regla
+operacional; GC-1, Incremento 3)`). Se completa el 2026-09-07 tras la
+revalidación A2 sobre el estado final y antes del commit de registro de
+cierre R2.
+
+- Commits de cierre:
+  - A `012c7f1` — `docs(plans): register plan 113 decision-making compass
+    materialization (plan 113)` (registro del plan, status `Aprobado para
+    ejecución`).
+  - C1 `6ff06f6` — `docs: materialize decision-making compass in root
+    AGENTS.md (plan 113)` (contenido autorizado, validado por V1).
+  - R2 — este commit de registro/cierre (`docs(plans): close plan 113 with
+    validation anchor and checkpoint (plan 113)`); su SHA se identifica por el
+    mensaje y el árbol no embebe su propia identidad (auto-referencia).
+- Estado validado: `## Validation anchor` de este plan — V1 sobre el estado de
+  C1 (State identity T1 =
+  `6fe6ec68ca909001b6376ce08989aa31ec2e9448`; Delta scoped identity =
+  `16ea77bdf3eece86c233083a366135c978bc8965644e75cad504390ec38449d5`) y
+  revalidación **A2** (2026-09-07) sobre el estado final de la ejecución
+  (incluidos los registros de cierre).
+- Estado de cierre: tree id del último commit de cierre (R2) =
+  `git rev-parse R2^{tree}` (no embebido por auto-referencia; verificable en
+  git tras el commit). En la validación A2 se registró el tree id del estado
+  staged antes del commit (`git write-tree`), que debe coincidir con
+  `R2^{tree}` post-commit.
+- Consistencia checkpoint↔anchor:
+  - V1 ↔ C1: `git rev-parse C1^{tree}` == T1
+    (`6fe6ec68ca909001b6376ce08989aa31ec2e9448`) → **PASS**.
+  - Estado final (R2): difiere del estado de C1 únicamente en los registros de
+    cierre (este artifact, INDEX de planes y changelog); **revalidación A2**
+    (batería canónica completa + pytest + gates sobre el contenido final,
+    ejecutada antes del commit R2) → PASS. GC-1 queda satisfecho por
+    revalidación antes de `Closed` (el checkpoint se evalúa contra A2, que
+    cubre el estado de cierre).
+- Governance aplicada: Plan `Executed` (header + espejo en INDEX); ítem
+  `(plan 113)` en `CHANGELOG.md:[Unreleased]`; docs-only, sin `VERSION` bump
+  ni tag (RFC-69; `docs/VERSIONING.md:3. Versionado`).
+- Condición derivada: **`Closed` (docs-only, sin release)**.
+  `Executed ≠ Committed ≠ Closed ≠ Released`: `Executed` (status del plan),
+  `Committed` (A/C1/R2 en `dev`), `Closed` (condición derivada con checkpoint
+  y consistencia), `Released` (no aplica: sin promoción a `master` ni tag;
+  `dist` no se regenera).
 
 ## Findings / Correcciones / Pending
 
@@ -217,4 +309,35 @@ normativa nueva o conflicto con un RFC/ADR aceptado. Status inicial
 
 ## Nota de ejecución
 
-<!-- Se agrega al ejecutar (2026-09-07). -->
+2026-09-07 — Ejecución completa del Plan 113 bajo el GO del mantenedor
+(2026-09-07, H1 = 1; requerimiento «Materialize the Decision-Making
+Compass»). Clasificación: origen = decisión humana del mantenedor; clase
+RFC-56 = — (sin payload); Change Level = L1; dominio = documentación/
+gobernanza DEV. Estado inicial: branch `dev`, HEAD
+`5ef221ef80da1fe7eede6035b762c5637138fd31`, working tree limpio; batería
+canónica en verde al inicio (checkers PASS; pytest `524 passed`).
+Implementación (commit C1 `6ff06f6`, contenido validado por V1): sección
+`## Decision-Making Compass` insertada en el `AGENTS.md` raíz entre
+`## Do NOT` y `## Development workflow`, con los principios P1–P5 (claridad
+sobre crecimiento; separación de responsabilidades RFC/Plan/Git/INDEX/
+Glossary; calidad de decisión sobre volumen documental; contención con «no
+change» como resultado válido; calidad de decisión como objetivo de
+evaluación, sin afirmar que ARgentOS ya la demuestra), declarada
+explícitamente como guía de juicio no normativa (sin estados, clases,
+registries, checkers, workflows ni reglas nuevas), sin lenguaje MUST/MUST NOT
+artificial, sin documento nuevo y sin duplicar autoridades de `docs/`.
+Verificación: V1 sobre C1 (checkers canónicos PASS; pytest `524 passed`) y
+revalidación A2 sobre el estado final antes del commit R2 (checkers PASS;
+pytest `524 passed`; C-1 `VALID`, C-2 `VALID` — A2 declarado, GC-1 —, C-3
+`N/A`; GAP=0, ANOMALY=0); `git diff --cached --check` limpio. Juicios
+manuales: sin duplicación ni conflicto con RFC-75 (`Principios
+arquitectónicos`, `Dev vs Protocol`), ADR-14 ni documentos existentes;
+terminología existente usada sin definiciones duplicadas; carta documental
+intacta; boundary DEV/Protocol intacta (el payload no referencia el
+`AGENTS.md` raíz ni `docs/`). Registro/cierre: este artifact, espejo en
+`docs/plans/INDEX.md` (status `Executed`) e ítem `(plan 113)` en
+`CHANGELOG.md:[Unreleased]`; condición derivada `Closed` (docs-only, sin
+release). Sin findings/corrections/pending (`N/A`). Sin cambios en
+`protocol/.agents/` (`protocol/.agents/VERSION` 11.0.0), `runtime/`,
+`tools/`, `tests/`, `harness`, `dist/`, `master` ni tags; sin push, sin merge,
+sin tag.

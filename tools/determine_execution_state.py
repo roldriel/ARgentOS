@@ -68,9 +68,19 @@ no state is inferred). ``--session-summary`` is a distinct report mode,
 exclusive with the targeted query flags (``--iteration`` and
 ``--content-identity``).
 
+The per-execution report can also be restricted to executions without a
+terminal determination: ``--undetermined`` keeps only entries with
+``determined: false`` (missing/corrupt ``state.json`` or a non-terminal
+``status``), preserving their deterministic reasons; the report's ``summary``
+reflects the filtered set. The flag combines with ``--session`` and is
+exclusive with the targeted query (``--iteration``) and with the aggregate
+view (``--session-summary``). Without either new flag the report is exactly
+the existing one.
+
 Usage:
   python tools/determine_execution_state.py [--root REPO_ROOT] [--session UUID]
       [--iteration ITERATION] [--content-identity] [--session-summary]
+      [--undetermined]
 
 Prints a deterministic JSON report and exits 0. Standard library only.
 """
@@ -223,6 +233,7 @@ def determine(
     session_filter: str | None = None,
     iteration_filter: str | None = None,
     content_identity: bool = False,
+    undetermined_only: bool = False,
 ) -> dict[str, Any]:
     """Determine the terminal Task State of executions under root.
 
@@ -239,6 +250,12 @@ def determine(
     filters) additionally relates the determination to the Scoped Content
     Identity v1 of the execution record scope (see ``content_identity_for``);
     without it the report is exactly the existing one.
+
+    ``undetermined_only`` restricts the report to executions without a
+    terminal determination (``determined: false`` with their existing
+    reasons); it combines with ``session_filter`` and is incompatible with
+    ``iteration_filter`` (a targeted query already answers for one
+    execution). The ``summary`` reflects the filtered set.
     """
     if iteration_filter is not None and session_filter is None:
         raise ValueError("iteration_filter requires session_filter")
@@ -247,6 +264,10 @@ def determine(
     ):
         raise ValueError(
             "content_identity requires session_filter and iteration_filter"
+        )
+    if undetermined_only and iteration_filter is not None:
+        raise ValueError(
+            "undetermined_only cannot be combined with iteration_filter"
         )
     executions: list[dict[str, Any]] = []
     for session in session_dirs(root):
@@ -264,6 +285,8 @@ def determine(
                     root, session, iteration
                 )
             executions.append(entry)
+    if undetermined_only:
+        executions = [entry for entry in executions if not entry["determined"]]
     determined = sum(1 for e in executions if e["determined"])
     return {
         "executions": executions,
@@ -386,6 +409,14 @@ def main(argv: list[str] | None = None) -> int:
             "(cannot be combined with --iteration or --content-identity)"
         ),
     )
+    parser.add_argument(
+        "--undetermined",
+        action="store_true",
+        help=(
+            "only report executions without a terminal determination "
+            "(cannot be combined with --iteration or --session-summary)"
+        ),
+    )
     args = parser.parse_args(argv)
     if args.iteration is not None and args.session is None:
         parser.error("--iteration requires --session")
@@ -393,6 +424,12 @@ def main(argv: list[str] | None = None) -> int:
         args.session is None or args.iteration is None
     ):
         parser.error("--content-identity requires --session and --iteration")
+    if args.undetermined and args.iteration is not None:
+        parser.error("--undetermined cannot be combined with --iteration")
+    if args.session_summary and args.undetermined:
+        parser.error(
+            "--session-summary and --undetermined are mutually exclusive"
+        )
     if args.session_summary and (
         args.iteration is not None or args.content_identity
     ):
@@ -411,6 +448,7 @@ def main(argv: list[str] | None = None) -> int:
             session_filter=args.session,
             iteration_filter=args.iteration,
             content_identity=args.content_identity,
+            undetermined_only=args.undetermined,
         )
     print(json.dumps(report, indent=2, ensure_ascii=False))
     return 0

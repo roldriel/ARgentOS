@@ -887,3 +887,153 @@ def test_content_identity_over_corrupt_state_json(tmp_path):
     assert ci["scope"] == _record_scope(
         session.name, "00", "EXECUTION_SUMMARY.md", "state.json"
     )
+
+
+# ── Plan 111 (Etapa 2): --undetermined
+
+
+def test_undetermined_filters_report_to_undetermined_entries(tmp_path):
+    session = _session_uuid(tmp_path)
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+    _write_state(session, "01", "in_progress", {})
+    (session / "02").mkdir()
+    report = des.determine(tmp_path, undetermined_only=True)
+    assert [entry["iteration"] for entry in report["executions"]] == [
+        "01",
+        "02",
+    ]
+    assert all(entry["determined"] is False for entry in report["executions"])
+    assert report["summary"] == {
+        "total": 2,
+        "determined": 0,
+        "undetermined": 2,
+    }
+
+
+def test_undetermined_keeps_deterministic_reasons(tmp_path):
+    session = _session_uuid(tmp_path)
+    _write_state(session, "00", "in_progress", {})
+    (session / "01").mkdir()
+    iter_dir = session / "02"
+    iter_dir.mkdir()
+    (iter_dir / "state.json").write_text("{not json", encoding="utf-8")
+    report = des.determine(tmp_path, undetermined_only=True)
+    reasons = {
+        entry["iteration"]: entry["reason"] for entry in report["executions"]
+    }
+    assert reasons == {
+        "00": "status_not_terminal",
+        "01": "state_json_missing",
+        "02": "state_json_corrupt",
+    }
+
+
+def test_undetermined_combines_with_session_filter(tmp_path):
+    first = _session_uuid(tmp_path, "session-a")
+    _session_uuid(tmp_path, "session-b")
+    _write_state(first, "00", "COMPLETED", {"H00": {}})
+    _write_state(first, "01", "in_progress", {})
+    report = des.determine(
+        tmp_path, session_filter="session-a", undetermined_only=True
+    )
+    assert [entry["iteration"] for entry in report["executions"]] == ["01"]
+    assert report["summary"] == {
+        "total": 1,
+        "determined": 0,
+        "undetermined": 1,
+    }
+
+
+def test_undetermined_without_undetermined_entries_is_empty(tmp_path):
+    session = _session_uuid(tmp_path)
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+    _write_state(session, "01", "ABORT", {})
+    report = des.determine(tmp_path, undetermined_only=True)
+    assert report["executions"] == []
+    assert report["summary"] == {"total": 0, "determined": 0, "undetermined": 0}
+
+
+def test_undetermined_across_sessions_aggregates(tmp_path):
+    first = _session_uuid(tmp_path, "session-a")
+    second = _session_uuid(tmp_path, "session-b")
+    _write_state(first, "00", "ABORT", {})
+    _write_state(first, "01", "in_progress", {})
+    _write_state(second, "00", "no_gates_passed", {})
+    report = des.determine(tmp_path, undetermined_only=True)
+    assert [entry["session"] for entry in report["executions"]] == [
+        "session-a",
+        "session-b",
+    ]
+    assert report["summary"] == {
+        "total": 2,
+        "determined": 0,
+        "undetermined": 2,
+    }
+
+
+def test_default_report_unchanged_without_undetermined_flag(tmp_path):
+    session = _session_uuid(tmp_path)
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+    _write_state(session, "01", "in_progress", {})
+    assert des.determine(tmp_path) == des.determine(
+        tmp_path, undetermined_only=False
+    )
+    assert des.determine(tmp_path)["summary"] == {
+        "total": 2,
+        "determined": 1,
+        "undetermined": 1,
+    }
+
+
+def test_cli_undetermined_prints_json_report(tmp_path, capsys):
+    session = _session_uuid(tmp_path)
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+    _write_state(session, "01", "in_progress", {})
+    assert des.main(["--root", str(tmp_path), "--undetermined"]) == 0
+    cli = json.loads(capsys.readouterr().out)
+    assert cli == des.determine(tmp_path, undetermined_only=True)
+
+
+def test_undetermined_with_iteration_fails_deterministically(tmp_path):
+    session = _session_uuid(tmp_path)
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+    with pytest.raises(SystemExit) as excinfo:
+        des.main(
+            [
+                "--root",
+                str(tmp_path),
+                "--session",
+                session.name,
+                "--iteration",
+                "00",
+                "--undetermined",
+            ]
+        )
+    assert excinfo.value.code == 2
+
+
+def test_undetermined_with_session_summary_fails_deterministically(tmp_path):
+    session = _session_uuid(tmp_path)
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+    with pytest.raises(SystemExit) as excinfo:
+        des.main(
+            [
+                "--root",
+                str(tmp_path),
+                "--session-summary",
+                "--undetermined",
+            ]
+        )
+    assert excinfo.value.code == 2
+
+
+def test_undetermined_api_guard_rejects_iteration(tmp_path):
+    session = _session_uuid(tmp_path)
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+    with pytest.raises(ValueError):
+        des.determine(
+            tmp_path,
+            session_filter=session.name,
+            iteration_filter="00",
+            undetermined_only=True,
+        )

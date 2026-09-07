@@ -67,6 +67,41 @@ While developing ARgentOS you work on the protocol itself. Therefore:
   Protocol. RFC-75 governs how this DEV repository evolves;
   `protocol/.agents/` is product data with its own RFC-56 authorization path.
 
+## Decision-Making Compass
+
+The direction for ARgentOS is clarity and decision quality, not growth by
+accumulating mechanisms, artifacts, states, checkers, registries or
+governance ceremony. When a problem appears, prefer making the existing model
+clearer over adding new machinery, and ask first whether the existing model
+can express or solve the need clearly enough.
+
+Each layer has a distinct responsibility, and none should silently take over
+another's:
+
+- **RFC** — where the decision and its rationale become clear.
+- **Plan** — where the decision is materialized: how, where and in what
+  sequence.
+- **Git** — evidence of what actually happened.
+- **INDEX** — navigation for humans and agents; it records, it does not rule.
+- **Glossary** — shared terminology; it describes, it does not create
+  authority.
+
+Possible answers to a discovered problem include clarification, documentation
+correction, a convention, a small tooling improvement, a real architectural
+change, or **no change** — which remains a valid and respected outcome.
+
+Judge ARgentOS not by how much it documents or governs, but by whether it
+helps humans and agents make better engineering decisions: identify the real
+problem, distinguish problems from symptoms, compare alternatives, expose
+assumptions and uncertainty, and recognize when an RFC is unnecessary or a
+proposal should be rejected. That is the direction and the evaluation
+objective — not a claim that ARgentOS has already demonstrated it.
+
+These principles are guidance for judgment and evolution. They create no
+lifecycle state, RFC/ADR class, registry, checker, workflow or governance
+rule, and they do not replace the normative authorities in `docs/`
+(`docs/CONVENTIONS.md`, `docs/VERSIONING.md`).
+
 ## Development workflow
 
 - **Branch policy:** all work happens directly on the `dev` branch; feature

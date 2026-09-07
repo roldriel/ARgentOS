@@ -95,8 +95,9 @@ Reglas:
 ### 4.1 Batería canónica de verificación
 
 La batería que define "verde" en este repo es la siguiente — única definición;
-`AGENTS.md` raíz y `docs/CONVENTIONS.md:Convenciones` la referencian, no la
-duplican:
+el `AGENTS.md` raíz (`## Verifying the protocol`) y
+`docs/CONVENTIONS.md:Convenciones` la referencian como puntero/resumen y nota
+operativa, respectivamente, sin duplicarla:
 
 ```bash
 python tools/check_protocol_invariants.py --payload protocol .
@@ -173,6 +174,38 @@ RFCs:
 - `docs/plans/INDEX.md` es un espejo descriptivo: se actualiza en el commit del plan,
   después de los archivos fuente, y nunca es fuente de verdad.
 
+Condiciones derivadas del Change Lifecycle (semántica; RFC-75
+`docs/rfc/75-change-lifecycle.md:Modelo de lifecycle`, ADR-15):
+
+- Los únicos status son los existentes de Plan/RFC/ADR; las condiciones del
+  Change Lifecycle son **derivadas**, no una state machine.
+- `Executed` = implementación + validación (CL-4); puede existir sin commit.
+- `Committed` es estado del repositorio (commit atómico en `dev`), no un status
+  de Plan (CL-5). `Committed` no es un checkpoint: el checkpoint es la relación
+  closure↔estado Git verificable (mecanismo materializado en el Incremento 3,
+  plan 96).
+- `Closed` es una condición derivada: `Executed` + governance aplicable +
+  checkpoint + consistencia checkpoint↔anchor (GC-1) + evidencia de validación
+  PASS para el estado de cierre. Con el Incremento 1+3 (plan 96) el mecanismo
+  está materializado: los planes nacidos bajo las reglas nuevas registran su
+  Validation Anchor (VC-1) y su checkpoint al cerrar. La consistencia de
+  cierre se evalúa contra el anchor de la validación cuyo estado validado
+  corresponde al estado de cierre: si hubo una revalidación (A2) sobre ese
+  estado, contra A2; el anchor original (A1) conserva su significado histórico.
+  Los planes previos (94/95 y anteriores) conservan su registro histórico como
+  legacy (la ausencia de campos no implica invalidez) y su cierre operativo
+  sigue el DoD de §10 sin exigir los campos nuevos.
+- `Promoted` = merge `dev → master` verificado; `Released` = tag inmutable;
+  `Abandoned` = Plan `Superseded` con motivo.
+- Cadena de implicación (semántica objetivo): `Verified ⊆ Executed ⊆ Closed ⊆
+  Promoted ⊆ Released`. Anomalías: `Closed` sin `Verified` es inválido;
+  `Promoted` sin `Closed` es anomalía; `Released` sin `Verified` es violación
+  de gobernanza. `Closed ≠ Released`; un plan docs-only se cierra sin release
+  (RFC-69).
+- `Aprobado para ejecución` (RFC-75 `docs/rfc/75-change-lifecycle.md:Mecanismo 5 — Plan lifecycle`):
+  autorizado a ejecutar cuando los criterios de entrada se cumplen; el gate
+  pendiente se documenta como aclaración, sin status nuevo.
+
 ## 8. Ejecución en paralelo
 
 - La asignación de versiones es serial: cada versión la ocupa un único plan.
@@ -180,28 +213,28 @@ RFCs:
   tocar `VERSION`/changelog, o los ítems se acumulan en `[Unreleased]` y la
   numeración se asigna en la promoción.
 
-## 9. Estado actual (2026-08-17)
+## 9. Estado actual (2026-09-05)
 
-Estado tras la promoción del release `3.25.0`:
+Snapshot del estado al 2026-09-05 (verificado contra git); se actualiza en
+cada release. La fuente inmutable de la verdad son `git tag` +
+`protocol/.agents/VERSION`.
 
-- `master` = `3.25.0` (tags anotados `3.20.0`–`3.25.0`; merge `dev` →
-  `master` con el cierre completo de la remediación de la auditoría de sistema
-  3.1: planes 69–74 y RFCs 59–60).
-- `dist` = pendiente de regeneración por CI (`publish-dist`) desde `master`.
-- `dev` = `3.25.0`, en sync con `master`.
+- `master` = `10.3.0` (promoción de `10.1.0`–`10.3.0`: planes 88–93 y RFCs
+  71–74; tags anotados hasta `10.3.0` inclusive).
+- `dist` = publicado desde `master` (`publish-dist` a partir de la promoción
+  de `10.3.0`).
+- `dev` = `11.0.0` pre-release (plan 78 `Executed` con condición derivada
+  `Closed`; RFC-64 implementada, release pendiente).
 
 Notas:
 
-- Las secciones `[3.7.0]`–`[3.15.0]` del changelog son hitos del batch de
-  remediación en `dev`; no fueron releases individuales y no tienen tag.
-  `3.16.0`, `3.17.0`, `3.18.0` y `3.19.0` son las versiones publicadas del
-  ciclo (ver §5 y §8).
-- `3.20.0`–`3.25.0` se promovieron en un solo merge con un tag anotado por
-  versión (planes 69–74, RFCs 59–60).
-- La regularización del 12 ago 2026 (planes 34–36 y 54; tags `3.0.2`–`3.0.5`)
-  y las versiones `3.0.6`–`3.6.3` quedan como historia. Este §9 es un
-  snapshot que se actualiza en cada release; la fuente inmutable de la verdad
-  son `git tag` + `protocol/.agents/VERSION`.
+- `11.0.0` está implementado y registrado en `dev` (sección del changelog
+  `[11.0.0]` sin tag: release en curso según §5); no está promovido a
+  `master`, no tiene tag y `dist` no fue regenerado con él. La promoción
+  (`dev` → `master` + tag anotado `11.0.0` + regeneración de `dist`) es una
+  decisión independiente y posterior a este snapshot.
+- Mientras `dev` contenga planes sin publicar respecto de `master`/`dist`,
+  `check_dist_sync.py` se espera rojo en `dev` por diseño (ver §4.1).
 - **Branch protection no habilitada (decisión del owner, 15 ago 2026):** el
   repo es privado en el plan gratuito de GitHub, que no incluye protected
   branches ni rulesets (el API responde `Upgrade to GitHub Pro or make this
@@ -221,6 +254,24 @@ Un plan está terminado cuando:
 - [ ] Cambios de `protocol/.agents/` aplicados según los pasos del plan.
 - [ ] Batería canónica de §4.1 en verde y H13 aplicado por juicio.
 - [ ] Plan `Executed`, RFC con Amendment Log, INDEX actualizado.
+- [ ] Validación anclada (VC-1, Incremento 1): para planes nacidos bajo las
+      reglas del Incremento 1 (plan 96), la validación registrada en la Nota de
+      ejecución incluye su `Validation anchor` (declared scope, command-set,
+      effective inputs, factores ambientales declarados y Scoped Content
+      Identity).
+- [ ] Checkpoint registrado con consistencia (GC-1, Incremento 3): el cierre
+      registra los commits de cierre y la consistencia checkpoint↔anchor
+      (scoped identity + factores) contra el anchor de la validación cuyo
+      estado validado corresponde al estado de cierre (revalidación A2 si el
+      estado de cierre difiere del estado inicial) antes de declarar la
+      condición derivada `Closed`; `Closed ≠ Released` y un plan docs-only se
+      cierra sin release.
+- [ ] Para artifacts nuevos (LC-1/PC-1, Incremento 2): los findings,
+      correcciones y pending decisions se registran **cuando existen** con refs
+      calificadas `<artifact>:F-<n>`/`C-<n>` y metadata de pending
+      (blocking/no-blocking, owner, escalación, resolución, evidencia, efecto
+      downstream, ADR-worthiness); la ausencia de esos campos en legacy es
+      legacy, no invalidez (RFC-75 Mecanismo 15).
 - [ ] Sección del changelog `[X.Y.Z]` con ítem `(plan N, RFC-N)` y `VERSION`
       bumped.
 - [ ] Para cambios docs-only (RFC-69): ítem en `[Unreleased]` del changelog
@@ -232,3 +283,42 @@ Una versión está publicada cuando, además:
 - [ ] Promovida a `master` con tag anotado `X.Y.Z`.
 - [ ] `publish-dist` regeneró `dist`.
 - [ ] Invariante versión ↔ changelog ↔ tag verificado.
+
+## 11. Métricas del Change Lifecycle (observability schema baseline)
+
+Esta sección define el **schema baseline** de las métricas del Change Lifecycle
+de ARgentOS DEV (Incremento 0): nombres, semántica, condiciones de medición y
+dependencia de datos. Los campos que alimentan las métricas de anchor y
+checkpoint existen desde los Incrementos 1+3 (plan 96); los campos de refs de
+findings/corrections (`F-n`/`C-n`) y de pending decisions existen desde el
+Incremento 2 (plan 97) y comienzan a producir registros manuales; la medición
+operacional (queries/agregación) y la automatización pertenecen al Incremento
+4. Sin backend, sin writer obligatorio, sin thresholds y sin gate de release
+(`docs/rfc/75-change-lifecycle.md:Mecanismo 13 — Observability`;
+`docs/plans/94-change-lifecycle-master-action-plan.md:17. Estrategia de telemetría`).
+
+| Métrica | Definición | Datos que la alimentarán | Habilita | Estado tras Incrementos 1+3 y 2 (planes 96/97) |
+|---|---|---|---|---|
+| Validation anchor coverage | % de validaciones registradas con anchor reproducible sobre el total de validaciones con campos registrables | Campos de anchor en notas de ejecución / templates / Amendment Log | Incremento 1 | Campos existentes (Incremento 1); sin medición operacional hasta el Incremento 4 |
+| Finding lineage coverage | % de correcciones con lineage trazable origen → corrección → revalidación | Refs calificadas `artifact:F-n` | Incremento 2 | Campos existentes (Incremento 2); sin medición operacional hasta el Incremento 4 |
+| Stale validation rate | % de validaciones ancladas cuyo anchor cambió sin revalidación ni marca de stale | Anchor + estados de revalidación | Incrementos 1+2 | Campo `Validity/stale` del anchor existe (Incremento 1); revalidación formal con refs de lineage existente (Incremento 2); medición → Incremento 4 |
+| Git closure anomalies | Conteo/% de cierres o planes con anomalías de closure (p. ej. `Executed` sin commit, `Promoted` sin `Closed`) | Checkpoint + estados derivados | Incremento 3 | Registro de checkpoint existente (Incremento 3); medición/agregación → Incremento 4 |
+
+Reglas:
+
+- **Schema ≠ medición**: los Incrementos producen campos y registros manuales
+  (anchor y checkpoint desde los Incrementos 1+3; refs `F-n`/`C-n` y pending
+  desde el Incremento 2); la medición operacional (queries/agregación) y la
+  automatización se habilitan en el Incremento 4; 0 registros = `not
+  applicable / insufficient sample`, no "0% compliance".
+- **Legacy excluido del denominador**: los artifacts sin los campos nuevos no
+  se cuentan salvo backfill explícito posterior
+  (`docs/rfc/75-change-lifecycle.md:Mecanismo 15 — Migration / Legacy`).
+- Las métricas son **SHOULD** (informan, no bloquean); ninguna es gate de
+  release.
+- Las métricas de coordinación (cross-agent, handoffs, pending count,
+  frecuencia de revalidación) son EXPERIMENTAL/DEFERRED y dependen del track
+  del Incremento 5.
+- El gate del Incremento 4 (automatización) se evalúa con los datos de
+  lifecycle producidos por las unidades B/C (Incrementos 1/3/2), no con este
+  schema baseline: no hay gate circular.

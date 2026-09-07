@@ -500,7 +500,9 @@ def test_store_write_leaves_no_temp_files(tmp_path):
 
 def test_store_rebuild_is_derived_and_deterministic(tmp_path):
     kb_root, manifest, entries = build_fake_kb(tmp_path)
-    store = project_store.rebuild(kb_root, manifest, entries, "PRJ-0001", PROTOCOL_VERSION)
+    store = project_store.rebuild(
+        kb_root, manifest, entries, "PRJ-0001", PROTOCOL_VERSION, now=NOW
+    )
     assert store["schema_version"] == project_store.STORE_SCHEMA_VERSION
     assert store["project_namespace"] == "PRJ-0001"
     assert store["semantic_version"] == PROTOCOL_VERSION
@@ -521,7 +523,9 @@ def test_store_rebuild_is_derived_and_deterministic(tmp_path):
             "source_sessions": [],
         }
     ]
-    again = project_store.rebuild(kb_root, manifest, entries, "PRJ-0001", PROTOCOL_VERSION)
+    again = project_store.rebuild(
+        kb_root, manifest, entries, "PRJ-0001", PROTOCOL_VERSION, now=NOW
+    )
     assert again["content_identity"] == store["content_identity"]
     assert again["segment_identity"] == store["segment_identity"]
     assert again["freshness"] == store["freshness"]

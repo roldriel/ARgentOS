@@ -51,6 +51,18 @@ enforces the knowledge lifecycle: ``[[invalidated_facts]]`` entries of
 ``session_id``/``protocol_version``/evidence (lessons without the ``kind`` tag
 are historical and not reported).
 
+For sessions that declare ``protocol_version >= 11.0.0`` it additionally
+enforces the execution record model (RFC-64): ENTRYs carry ``iteration`` and
+``clock`` and declare ``timestamp_divergence.cause`` when diverging from the
+canonical ``gate_ts``; METRIC events carry a strictly increasing ``seq`` and
+``clock``, execution-scoped events carry ``iteration`` (including
+``reuse_event``/``provider_cache_event``), ``delegation`` events validate the
+optional ``context_budget``/``attempt``, and every budget-carrying delegation
+is paired with a ``context_budget`` event (OBS-001); ``state.json`` only
+records transition triggers (H00–H07, H11) with UTC-normalized gate
+timestamps. Sessions of the published band 7.0.0–10.3.0 are historical traces
+and are not re-reported (RFC-46).
+
 The task is a dev-only safety net: the runtime aggregation reads these blocks
 by judgment. A missing ``.project/`` is not a violation (exit 0).
 
@@ -98,7 +110,28 @@ LIFECYCLE_PROTOCOL = (5, 0, 0)
 EVIDENCE_PROTOCOL = (7, 0, 0)
 AUTHORIZATION_PROTOCOL = (8, 0, 0)
 KNOWLEDGE_PROTOCOL = (9, 0, 0)
+RECORD_PROTOCOL = (11, 0, 0)
 SEMVER_RE = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
+
+TRANSITION_TRIGGERS = frozenset(
+    {"H00", "H01", "H02", "H03", "H04", "H05", "H06", "H07", "H11"}
+)
+
+EXECUTION_METRIC_TYPES = frozenset(
+    {
+        "state_transition",
+        "reviewer_retry",
+        "failure",
+        "delegation",
+        "skill_override",
+        "flag_evidence",
+        "context_budget",
+        "context_candidates",
+        "discovery_consent",
+        "reuse_event",
+        "provider_cache_event",
+    }
+)
 
 EVIDENCE_CLASSES = {
     "observation",
@@ -302,6 +335,7 @@ def scan(root: Path) -> list[str]:
         version = session_protocol_version(report.parent)
         new_protocol = (version or ()) >= NEW_PROTOCOL
         evidence_protocol = (version or ()) >= EVIDENCE_PROTOCOL
+        record_protocol = (version or ()) >= RECORD_PROTOCOL
         for idx, raw in enumerate(re.finditer(r"<!-- ENTRY: (.*?) -->", text, re.DOTALL), 1):
             payload = raw.group(1).strip()
             try:
@@ -331,6 +365,36 @@ def scan(root: Path) -> list[str]:
                 issue = _timestamp_issue(data.get("timestamp"), clock)
                 if issue:
                     out.append(f"ENTRY {report.relative_to(root)}#{idx}: {issue}")
+            if record_protocol:
+                if clock is None:
+                    out.append(
+                        f"ENTRY {report.relative_to(root)}#{idx}: clock is "
+                        "required for sessions >= 11.0.0"
+                    )
+                iteration = data.get("iteration")
+                if not isinstance(iteration, str) or not re.fullmatch(
+                    r"\d+", iteration
+                ):
+                    out.append(
+                        f"ENTRY {report.relative_to(root)}#{idx}: iteration "
+                        "must be a numeric string (the iteration folder)"
+                    )
+                divergence = data.get("timestamp_divergence")
+                if divergence is not None:
+                    if not isinstance(divergence, dict):
+                        out.append(
+                            f"ENTRY {report.relative_to(root)}#{idx}: "
+                            "timestamp_divergence is not an object"
+                        )
+                    elif (
+                        not isinstance(divergence.get("cause"), str)
+                        or not divergence["cause"].strip()
+                    ):
+                        out.append(
+                            f"ENTRY {report.relative_to(root)}#{idx}: "
+                            "timestamp_divergence.cause must be a non-empty "
+                            "string"
+                        )
             checks = data.get("checks")
             if not isinstance(checks, list):
                 out.append(f"ENTRY {report.relative_to(root)}#{idx}: checks is not a list")
@@ -447,9 +511,12 @@ def scan(root: Path) -> list[str]:
 
     for metrics in sorted(project.rglob("METRICS.md")):
         text = metrics.read_text(encoding="utf-8", errors="replace")
-        new_protocol = (
-            session_protocol_version(metrics.parent) or ()
-        ) >= NEW_PROTOCOL
+        version = session_protocol_version(metrics.parent)
+        new_protocol = (version or ()) >= NEW_PROTOCOL
+        record_protocol = (version or ()) >= RECORD_PROTOCOL
+        last_seq: int | None = None
+        delegations_with_budget: list[dict] = []
+        budget_events: list[dict] = []
         for idx, raw in enumerate(re.finditer(r"<!-- METRIC: (.*?) -->", text, re.DOTALL), 1):
             payload = raw.group(1).strip()
             try:
@@ -466,6 +533,36 @@ def scan(root: Path) -> list[str]:
                     f"METRIC {metrics.relative_to(root)}#{idx}: bad clock {clock!r} "
                     f"(allowed: {sorted(CLOCK_VALUES)})"
                 )
+            if record_protocol:
+                if clock is None:
+                    out.append(
+                        f"METRIC {metrics.relative_to(root)}#{idx}: clock is "
+                        "required for sessions >= 11.0.0"
+                    )
+                seq = data.get("seq")
+                if isinstance(seq, bool) or not isinstance(seq, int):
+                    out.append(
+                        f"METRIC {metrics.relative_to(root)}#{idx}: seq must "
+                        "be an integer"
+                    )
+                elif last_seq is not None and seq <= last_seq:
+                    out.append(
+                        f"METRIC {metrics.relative_to(root)}#{idx}: seq must "
+                        "be strictly increasing within the session file "
+                        f"(got {seq} after {last_seq})"
+                    )
+                else:
+                    last_seq = seq
+                if data["type"] in EXECUTION_METRIC_TYPES:
+                    iteration = data.get("iteration")
+                    if not isinstance(iteration, str) or not re.fullmatch(
+                        r"\d+", iteration
+                    ):
+                        out.append(
+                            f"METRIC {metrics.relative_to(root)}#{idx} "
+                            f"({data['type']}): iteration must be a numeric "
+                            "string (the iteration folder)"
+                        )
             if new_protocol:
                 issue = _timestamp_issue(data.get("timestamp"), clock)
                 if issue:
@@ -497,6 +594,61 @@ def scan(root: Path) -> list[str]:
                         f"METRIC {metrics.relative_to(root)}#{idx} (context_budget): "
                         f"consumed {consumed} exceeds declared {declared}"
                     )
+                if record_protocol:
+                    budget_events.append(
+                        {
+                            "phase": data.get("phase"),
+                            "iteration": data.get("iteration"),
+                            "declared": declared,
+                        }
+                    )
+            elif data["type"] == "delegation" and record_protocol:
+                context_budget = data.get("context_budget")
+                if context_budget is not None and (
+                    isinstance(context_budget, bool)
+                    or not isinstance(context_budget, (int, float))
+                    or context_budget <= 0
+                ):
+                    out.append(
+                        f"METRIC {metrics.relative_to(root)}#{idx} "
+                        "(delegation): context_budget must be a finite "
+                        f"positive number (got {context_budget!r})"
+                    )
+                attempt = data.get("attempt")
+                if attempt is not None and (
+                    isinstance(attempt, bool)
+                    or not isinstance(attempt, int)
+                    or attempt <= 0
+                ):
+                    out.append(
+                        f"METRIC {metrics.relative_to(root)}#{idx} "
+                        f"(delegation): attempt must be a positive integer "
+                        f"(got {attempt!r})"
+                    )
+                if context_budget is not None:
+                    delegations_with_budget.append(
+                        {
+                            "phase": data.get("phase"),
+                            "iteration": data.get("iteration"),
+                            "declared": context_budget,
+                        }
+                    )
+        if record_protocol:
+            for delegation in delegations_with_budget:
+                paired = any(
+                    event["phase"] == delegation["phase"]
+                    and event["iteration"] == delegation["iteration"]
+                    and event["declared"] == delegation["declared"]
+                    for event in budget_events
+                )
+                if not paired:
+                    out.append(
+                        f"METRIC {metrics.relative_to(root)}: delegation with "
+                        "context_budget has no paired context_budget event "
+                        f"(iteration {delegation['iteration']!r}, phase "
+                        f"{delegation['phase']!r}, declared "
+                        f"{delegation['declared']!r})"
+                    )
 
     for state_file in sorted(project.rglob("state.json")):
         try:
@@ -527,6 +679,25 @@ def scan(root: Path) -> list[str]:
                     )
             session_dir = state_file.parent.parent
             version = session_protocol_version(session_dir)
+            if version is not None and version >= RECORD_PROTOCOL:
+                for trigger in sorted(set(gates) - TRANSITION_TRIGGERS):
+                    out.append(
+                        f"STATE {state_file.relative_to(root)}: gate {trigger} "
+                        "is outside the transition scope (H00-H07, H11); "
+                        "non-transition gates are recorded in "
+                        "HARNESS_REPORT.md only"
+                    )
+                for trigger, entry in gates.items():
+                    if not isinstance(entry, dict):
+                        continue
+                    timestamp = entry.get("timestamp")
+                    if isinstance(timestamp, str):
+                        issue = _timestamp_issue(timestamp, "utc")
+                        if issue:
+                            out.append(
+                                f"STATE {state_file.relative_to(root)}: gate "
+                                f"{trigger} timestamp: {issue}"
+                            )
             if (
                 version is not None
                 and version >= LIFECYCLE_PROTOCOL

@@ -72,7 +72,7 @@
 | RFC-61 | `docs/rfc/61-kb-transparency-consent-lifecycle.md` | Accepted (2026-08-24) | ¿Cómo hace ARgentOS que el discovery — trabajo no pedido explícitamente — sea consentido y visible para el usuario? |
 | RFC-62 | `docs/rfc/62-guarantee-model-and-enforcement-boundaries.md` | Accepted (plan 76, 2026-08-25) | ¿Qué garantiza ARgentOS, qué no, y quién verifica cada garantía? |
 | RFC-63 | `docs/rfc/63-state-and-artifact-lifecycle-model.md` | Accepted (plan 77, 2026-08-25) | ¿Qué dimensiones de estado existen y cuál es el lifecycle de los artefactos? |
-| RFC-64 | `docs/rfc/64-execution-record-model.md` | Proposal (plan 78) | ¿Cómo se registra y reconstruye una ejecución sin Event Sourcing? |
+| RFC-64 | `docs/rfc/64-execution-record-model.md` | Accepted (plan 103, 2026-09-03) | ¿Cómo se registra y reconstruye una ejecución sin Event Sourcing? |
 | RFC-65 | `docs/rfc/65-evidence-and-verification-model.md` | Accepted (plan 79, 2026-08-25) | ¿Qué cuenta como evidencia y cuándo un artefacto puede declararse VERIFIED? |
 | RFC-66 | `docs/rfc/66-authorization-and-capability-model.md` | Accepted (plan 80) | ¿Cuándo una capability está autorizada para producir un efecto? |
 | RFC-67 | `docs/rfc/67-knowledge-lifecycle-model.md` | Accepted (plan 81) | ¿Qué ciclo mínimo necesita el conocimiento para ser reutilizable y revalidable? |
@@ -83,4 +83,5 @@
 | RFC-72 | `docs/rfc/72-provider-prompt-cache-capability.md` | Accepted (plan 87, 2026-08-29) | ¿Cómo se formaliza la capacidad de materialización y prompt caching del provider (MaterializationIdentity, canonical materialization, ordering contract, stable prefix, ProviderCacheReference y su frontera) sin acoplar el protocolo a proveedores? |
 | RFC-73 | `docs/rfc/73-project-discovery-context-persistence.md` | Accepted (plan 92, 2026-08-30; implementada por plan 90) | ¿Cómo se persiste y reutiliza el conocimiento semántico de proyecto (Project Knowledge, Discovery Results, frescura, provenance, lifecycle) entre ejecuciones y cómo lo consume la composición de contexto, sin confundir persistence con Prompt Cache? |
 | RFC-74 | `docs/rfc/74-cache-economics-telemetry-admission-evidence.md` | Accepted (plan 93, 2026-08-31; implementada por plan 91) | ¿Cómo puede ARgentOS medir si persistence, memoization y Provider Prompt Cache realmente reducen costo y latencia sin degradar correctness, freshness, calidad o aislamiento (economía, telemetría, evidencia de admisión y experimentos)? |
+| RFC-75 | `docs/rfc/75-change-lifecycle.md` | Accepted (2026-09-01; registro formal; implementación pendiente) | ¿Cómo debe funcionar el lifecycle de un cambio en ARgentOS DEV — de requerimiento/problema a cierre y eventual release — de forma reproducible, auditable, continuable y escalable por impacto, sin entidades ni máquinas de estados innecesarias? |
 

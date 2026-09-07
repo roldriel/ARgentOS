@@ -1,11 +1,11 @@
 +++
-schema_version = "1.2.0"
+schema_version = "2.0.0"
 artifact = "METRICS.md"
 phase = "all"
 produced_by = "orchestrator"
 enforcement = "informational"
 +++
-schema_version = "1.2.0"
+schema_version = "2.0.0"
 
 
 ---
@@ -58,7 +58,7 @@ Every event carries `timestamp` (ISO-8601) and `type`. Required fields per type:
 | `state_transition` | `from`, `to`, `iteration` | A state-machine transition applied by the Orchestrator. `to` uses the state name (e.g. `RECOVERY`, `NEEDS_CLARIFICATION`). |
 | `reviewer_retry` | `artifact`, `cycle` | One reviewer `REWORK` correction cycle over an artifact; `cycle` is the 1-based retry ordinal. |
 | `failure` | `class` | A reported failure. `class` is one of `F1` (blocker), `F2` (deviation), `F3` (ambiguity), `F4` (inconsistency), `F5` (harness FAIL). Optional: `policy` (e.g. `H15`), `audience` (`machine` or `agent`). |
-| `delegation` | `phase`, `profile`, `skills`, `h15` | One worker delegation. `profile` is the profile name or `null`; `skills` is the activated skill list; `h15` is `PASS`, `FAIL`, or `null` when the gate did not apply. |
+| `delegation` | `phase`, `profile`, `skills`, `h15` | One worker delegation. `profile` is the profile name or `null`; `skills` is the activated skill list; `h15` is `PASS`, `FAIL`, or `null` when the gate did not apply. Optional: `context_budget` (the declared budget of the delegation payload, a finite positive number) and `attempt` (the 1-based ordinal of the delegation attempt, D-003). |
 | `skill_override` | `skill` | A skill activated by judgment override of the activation table. |
 | `flag_evidence` | `flag` | A declarative flag whose consumption was declared in an artifact or log entry. |
 | `context_budget` | `phase`, `declared`, `consumed` | Context Budget declared vs. consumed for one delegation, in estimated tokens (`.agents/standards/context/BUDGET_MATERIALIZATION.md`). |
@@ -67,10 +67,19 @@ Every event carries `timestamp` (ISO-8601) and `type`. Required fields per type:
 | `reuse_event` | `layer` (`discovery` \| `knowledge` \| `materialization`), `operation` (`lookup` \| `eligibility` \| `reuse_attempt` \| `post_use`) | A reuse/cache-layer observation. Optional fields per operation: `lookup_result` (`HIT`\|`MISS`), `eligibility_decision` (`ACCEPTED`\|`REJECTED`), `reason` (`semantic`\|`policy`\|`budget`\|`identity`\|`provider`\|`availability`), `reuse_outcome` (`SUCCESSFUL`\|`FAILED`), `invalidated` (bool). A lookup result is never semantic validity, eligibility or a reuse decision, and vice versa. |
 | `provider_cache_event` | `result` (`hit`\|`miss`\|`unavailable`) | Provider prompt-cache state observed through the provider adapter. Optional: `tokens_cached` (int), `tokens_uncached` (int), `latency_ms` (int), `reference_present` (bool). Provider-dependent; a hit or a miss never determines semantic validity. |
 
-Every event MAY carry `clock` (`utc` | `agent_clock`): mechanically written
-records default to `utc`; agent-written timestamps produced without a reliable
-clock MUST declare `clock: agent_clock` (G-004). `utc` requires a UTC-normalized
-timestamp (`Z` or `+00:00`); `agent_clock` accepts any ISO-8601 timestamp.
+Every event carries `seq` (an integer, strictly increasing per session;
+EI-003/TR-004), `timestamp` (ISO-8601) and `clock` (`utc` | `agent_clock`):
+mechanically written records default to `utc`; agent-written timestamps
+produced without a reliable clock MUST declare `clock: agent_clock` (G-004).
+`utc` requires a UTC-normalized timestamp (`Z` or `+00:00`); `agent_clock`
+accepts any ISO-8601 timestamp. Execution-scoped events additionally carry
+`iteration` (the numeric iteration folder of the execution): `state_transition`,
+`reviewer_retry`, `failure`, `delegation`, `skill_override`, `flag_evidence`,
+`context_budget`, `context_candidates`, `discovery_consent`, `reuse_event`
+and `provider_cache_event`. `session_start` is session-level and does not
+carry `iteration`. The event key of an execution-scoped event is
+`(session_uuid, iteration, seq)` (D-002, EI-003); `session_start` is keyed by
+`(session_uuid, seq)`.
 
 Notes:
 

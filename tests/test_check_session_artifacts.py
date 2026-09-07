@@ -183,9 +183,10 @@ def _write_session(tmp_path, version: str | None = "4.0.0"):
             {"id": "c", "result": "PASS", "evidence": "05-EXECUTION_PLAN.md"}
         ],
     }
+    parsed_version = csa._parse_version(version) if version is not None else None
     if (
-        version is not None
-        and csa._parse_version(version) >= csa.EVIDENCE_PROTOCOL
+        parsed_version is not None
+        and parsed_version >= csa.EVIDENCE_PROTOCOL
     ):
         entry["evidence"] = [
             {
@@ -194,14 +195,21 @@ def _write_session(tmp_path, version: str | None = "4.0.0"):
                 "ref": "05-EXECUTION_PLAN.md",
             }
         ]
+    if parsed_version is not None and parsed_version >= csa.RECORD_PROTOCOL:
+        entry["iteration"] = "00"
     (session / "HARNESS_REPORT.md").write_text(
         f"<!-- ENTRY: {json.dumps(entry)} -->\n", encoding="utf-8"
     )
-    metric = (
-        '<!-- METRIC: {"timestamp": "2026-08-25T10:01:00Z", "clock": "utc", '
-        '"type": "session_start", "declarative_flags": [], '
-        '"protocol_version": "' + (version or "3.26.0") + '"} -->\n'
-    )
+    metric_data = {
+        "timestamp": "2026-08-25T10:01:00Z",
+        "clock": "utc",
+        "type": "session_start",
+        "declarative_flags": [],
+        "protocol_version": version or "3.26.0",
+    }
+    if parsed_version is not None and parsed_version >= csa.RECORD_PROTOCOL:
+        metric_data["seq"] = 1
+    metric = f"<!-- METRIC: {json.dumps(metric_data)} -->\n"
     (session / "METRICS.md").write_text(metric, encoding="utf-8")
     state = {
         "session": "uuid",
@@ -772,3 +780,182 @@ def test_legacy_session_knowledge_not_flagged(tmp_path):
     )
     v = csa.scan(tmp_path)
     assert all("invalidated_facts" not in x for x in v)
+
+
+# --- Execution record model (>= 11.0.0; plan 78, RFC-64) ---------------------
+
+
+def test_record_model_session_passes(tmp_path):
+    session = _write_session(tmp_path, version="11.0.0")
+    (session / "METRICS.md").write_text(
+        (session / "METRICS.md").read_text(encoding="utf-8")
+        + '<!-- METRIC: {"timestamp": "2026-08-25T10:02:00Z", "clock": "utc", '
+        '"seq": 2, "iteration": "00", "type": "delegation", "phase": "06", '
+        '"profile": null, "skills": [], "h15": "PASS"} -->\n'
+        '<!-- METRIC: {"timestamp": "2026-08-25T10:03:00Z", "clock": "utc", '
+        '"seq": 3, "iteration": "00", "type": "reuse_event", "layer": '
+        '"knowledge", "operation": "lookup", "lookup_result": "HIT"} -->\n'
+        '<!-- METRIC: {"timestamp": "2026-08-25T10:04:00Z", "clock": "utc", '
+        '"seq": 4, "iteration": "00", "type": "provider_cache_event", '
+        '"result": "hit"} -->\n',
+        encoding="utf-8",
+    )
+    assert csa.scan(tmp_path) == []
+
+
+def test_record_model_entry_requires_iteration_and_clock(tmp_path):
+    session = _write_session(tmp_path, version="11.0.0")
+    (session / "HARNESS_REPORT.md").write_text(
+        '<!-- ENTRY: {"timestamp": "2026-08-25T10:05:00Z", "trigger": "H04", '
+        '"transition": "PLANNING -> PLAN_READY", "result": "PASS", '
+        '"checks": []} -->\n',
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any("ENTRY" in x and "clock is required" in x for x in v)
+    assert any("ENTRY" in x and "iteration must be a numeric string" in x for x in v)
+
+
+def test_record_model_timestamp_divergence_requires_cause(tmp_path):
+    session = _write_session(tmp_path, version="11.0.0")
+    (session / "HARNESS_REPORT.md").write_text(
+        '<!-- ENTRY: {"timestamp": "2026-08-25T10:06:00Z", "clock": "utc", '
+        '"iteration": "00", "trigger": "H04", '
+        '"transition": "PLANNING -> PLAN_READY", "result": "PASS", '
+        '"checks": [], "timestamp_divergence": {"cause": ""}} -->\n',
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any(
+        "timestamp_divergence.cause must be a non-empty string" in x for x in v
+    )
+
+
+def test_record_model_metric_seq_must_be_strictly_increasing(tmp_path):
+    session = _write_session(tmp_path, version="11.0.0")
+    (session / "METRICS.md").write_text(
+        '<!-- METRIC: {"timestamp": "2026-08-25T10:01:00Z", "clock": "utc", '
+        '"seq": 1, "type": "session_start", "declarative_flags": [], '
+        '"protocol_version": "11.0.0"} -->\n'
+        '<!-- METRIC: {"timestamp": "2026-08-25T10:02:00Z", "clock": "utc", '
+        '"seq": 1, "iteration": "00", "type": "delegation", "phase": "06", '
+        '"profile": null, "skills": [], "h15": "PASS"} -->\n',
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any(
+        "seq must be strictly increasing within the session file" in x for x in v
+    )
+
+
+def test_record_model_metric_requires_iteration_for_execution_events(tmp_path):
+    session = _write_session(tmp_path, version="11.0.0")
+    (session / "METRICS.md").write_text(
+        '<!-- METRIC: {"timestamp": "2026-08-25T10:01:00Z", "clock": "utc", '
+        '"seq": 1, "type": "session_start", "declarative_flags": [], '
+        '"protocol_version": "11.0.0"} -->\n'
+        '<!-- METRIC: {"timestamp": "2026-08-25T10:02:00Z", "clock": "utc", '
+        '"seq": 2, "type": "reuse_event", "layer": "discovery", '
+        '"operation": "lookup", "lookup_result": "MISS"} -->\n',
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any("reuse_event" in x and "iteration must be a numeric string" in x for x in v)
+
+
+def test_record_model_delegation_optional_fields_validated(tmp_path):
+    session = _write_session(tmp_path, version="11.0.0")
+    (session / "METRICS.md").write_text(
+        '<!-- METRIC: {"timestamp": "2026-08-25T10:01:00Z", "clock": "utc", '
+        '"seq": 1, "type": "session_start", "declarative_flags": [], '
+        '"protocol_version": "11.0.0"} -->\n'
+        '<!-- METRIC: {"timestamp": "2026-08-25T10:02:00Z", "clock": "utc", '
+        '"seq": 2, "iteration": "00", "type": "delegation", "phase": "06", '
+        '"profile": null, "skills": [], "h15": "PASS", "context_budget": -1, '
+        '"attempt": 0} -->\n',
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any("context_budget must be a finite positive number" in x for x in v)
+    assert any("attempt must be a positive integer" in x for x in v)
+
+
+def test_record_model_delegation_requires_paired_budget_event(tmp_path):
+    session = _write_session(tmp_path, version="11.0.0")
+    (session / "METRICS.md").write_text(
+        '<!-- METRIC: {"timestamp": "2026-08-25T10:01:00Z", "clock": "utc", '
+        '"seq": 1, "type": "session_start", "declarative_flags": [], '
+        '"protocol_version": "11.0.0"} -->\n'
+        '<!-- METRIC: {"timestamp": "2026-08-25T10:02:00Z", "clock": "utc", '
+        '"seq": 2, "iteration": "00", "type": "delegation", "phase": "06", '
+        '"profile": null, "skills": [], "h15": "PASS", '
+        '"context_budget": 100} -->\n',
+        encoding="utf-8",
+    )
+    v = csa.scan(tmp_path)
+    assert any("no paired context_budget event" in x for x in v)
+
+
+def test_record_model_budget_pair_passes(tmp_path):
+    session = _write_session(tmp_path, version="11.0.0")
+    (session / "METRICS.md").write_text(
+        '<!-- METRIC: {"timestamp": "2026-08-25T10:01:00Z", "clock": "utc", '
+        '"seq": 1, "type": "session_start", "declarative_flags": [], '
+        '"protocol_version": "11.0.0"} -->\n'
+        '<!-- METRIC: {"timestamp": "2026-08-25T10:02:00Z", "clock": "utc", '
+        '"seq": 2, "iteration": "00", "type": "delegation", "phase": "06", '
+        '"profile": null, "skills": [], "h15": "PASS", '
+        '"context_budget": 100} -->\n'
+        '<!-- METRIC: {"timestamp": "2026-08-25T10:03:00Z", "clock": "utc", '
+        '"seq": 3, "iteration": "00", "type": "context_budget", "phase": "06", '
+        '"declared": 100, "consumed": 80} -->\n',
+        encoding="utf-8",
+    )
+    assert csa.scan(tmp_path) == []
+
+
+def test_record_model_state_out_of_scope_flagged(tmp_path):
+    session = _write_session(tmp_path, version="11.0.0")
+    state_path = session / "00" / "state.json"
+    state = json.loads(state_path.read_text(encoding="utf-8"))
+    state["gates"]["H10"] = {
+        "result": "PASS",
+        "timestamp": "2026-08-25T10:10:00Z",
+    }
+    state_path.write_text(json.dumps(state), encoding="utf-8")
+    v = csa.scan(tmp_path)
+    assert any("H10" in x and "outside the transition scope" in x for x in v)
+
+
+def test_legacy_published_band_record_model_not_flagged(tmp_path):
+    session = _write_session(tmp_path, version="10.3.0")
+    (session / "HARNESS_REPORT.md").write_text(
+        '<!-- ENTRY: {"timestamp": "2026-08-25T10:05:00Z", "trigger": "H04", '
+        '"transition": "PLANNING -> PLAN_READY", "result": "PASS", '
+        '"checks": []} -->\n',
+        encoding="utf-8",
+    )
+    (session / "METRICS.md").write_text(
+        '<!-- METRIC: {"timestamp": "2026-08-25T10:01:00Z", "clock": "utc", '
+        '"type": "session_start", "declarative_flags": [], '
+        '"protocol_version": "10.3.0"} -->\n'
+        '<!-- METRIC: {"timestamp": "2026-08-25T10:02:00Z", "clock": "utc", '
+        '"type": "delegation", "phase": "06", "profile": null, "skills": [], '
+        '"h15": "PASS", "context_budget": 100} -->\n',
+        encoding="utf-8",
+    )
+    state_path = session / "00" / "state.json"
+    state = json.loads(state_path.read_text(encoding="utf-8"))
+    state["gates"]["H10"] = {
+        "result": "PASS",
+        "timestamp": "2026-08-25T10:10:00Z",
+    }
+    state_path.write_text(json.dumps(state), encoding="utf-8")
+    v = csa.scan(tmp_path)
+    assert all(
+        "clock is required" not in x
+        and "iteration must be a numeric string" not in x
+        and "outside the transition scope" not in x
+        and "no paired context_budget event" not in x
+        for x in v
+    )

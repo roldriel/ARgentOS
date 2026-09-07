@@ -8,6 +8,32 @@ not by the protocol itself (see `docs/source-layout.md`).
 
 Current protocol version: see [`protocol/.agents/VERSION`](protocol/.agents/VERSION).
 
+## Repository Operational Model
+
+Development work in this repository is organized into three layers with
+distinct roles:
+
+- `.agents/` — the operational interface for agents working on ARgentOS DEV.
+  Its [`.agents/AGENTS.md`](.agents/AGENTS.md) entry point explains how to
+  execute the repository's Change Lifecycle and routes to its workflow and
+  policies on demand. It holds operational instructions, not governance:
+  normative authority lives in `docs/`.
+- `docs/` — documentation, conventions, decisions and documentary evidence,
+  each with its corresponding authority: governance rules
+  ([`docs/CONVENTIONS.md`](docs/CONVENTIONS.md)), versioning policy
+  ([`docs/VERSIONING.md`](docs/VERSIONING.md)), the documentary taxonomy
+  ([`docs/AGENTS.md`](docs/AGENTS.md)) and the design history (RFCs, ADRs,
+  plans). `.agents/` references this layer without duplicating it.
+- `tools/` — deterministic verification tooling: the repository checkers and
+  test suites that validate the documentation contracts. Their output is
+  factual evidence and never constitutes normative authority by itself.
+
+Do not confuse the DEV `.agents/` with [`protocol/.agents/`](protocol/.agents/):
+`protocol/.agents/` belongs to the Protocol domain (its entry point is
+`protocol/_AGENTS.md`). For development in this repository it is data, not
+instructions; only the root `.agents/` layer is the operational interface for
+DEV work.
+
 ## Developing in this repository
 
 The development entry point is the root [`AGENTS.md`](AGENTS.md): it explains
@@ -27,10 +53,11 @@ Start here:
 ## Testing the protocol
 
 The `protocol/.agents/` workflow is exercised by the dev-only test suites and the
-protocol invariant checker listed under "Verifying the protocol" below. There
-is no separate sample application in this repository: `tools/` and `runtime/`
-hold the test tooling and reference implementations, none of which ships to
-adopters.
+protocol invariant checker of the canonical battery (defined in
+[`docs/VERSIONING.md`](docs/VERSIONING.md) §4.1 and referenced from the root
+[`AGENTS.md`](AGENTS.md), `## Verifying the protocol`). There is no separate
+sample application in this repository: `tools/` and `runtime/` hold the test
+tooling and reference implementations, none of which ships to adopters.
 
 ## Verifying the protocol
 
@@ -46,12 +73,11 @@ Running the probe from this repository targets `protocol/.project/` (the probe
 derives its project root from its own location); prefer a scratch adoption
 project for real protocol sessions.
 
-Protocol development only (not needed by adopters):
-
-```bash
-python tools/check_protocol_invariants.py --payload protocol .
-python -m pytest tests/
-```
+Protocol development only (not needed by adopters): the repository's canonical
+verification battery (checkers + tests) is defined once in
+[`docs/VERSIONING.md`](docs/VERSIONING.md) §4.1 and referenced from the root
+[`AGENTS.md`](AGENTS.md) (`## Verifying the protocol`). Run the full command
+set from there when working on this repository.
 
 The `tools/` and `runtime/` directories hold development tooling and the
 reference implementation; project priorities live in `ROADMAP.md`. They are

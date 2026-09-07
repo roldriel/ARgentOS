@@ -1,10 +1,10 @@
 # ADR-08 — Temporal Semantics (D7)
 
-**Status:** Accepted (decisión registrada; formalización pendiente: RFC-64 `Proposal`, plan 78 gated)
+**Status:** Accepted (decisión registrada; formalización por RFC-64 `Accepted` (plan 103, 2026-09-03); implementación materializada en 11.0.0 por plan 78 (2026-09-04))
 **Fecha:** 2026-08-27
 **Decisión original:** D7 (2026-08-25)
-**RFC:** [RFC-64](docs/rfc/64-execution-record-model.md) (`Proposal`, plan 78 gated)
-**Plan:** [plan 78](docs/plans/78-execution-record-model.md) (`Aprobado para ejecución`, gated)
+**RFC:** [RFC-64](docs/rfc/64-execution-record-model.md) (`Accepted` (plan 103, 2026-09-03); implementada en 11.0.0 por plan 78)
+**Plan:** [plan 78](docs/plans/78-execution-record-model.md) (`Executed`, 2026-09-04; cierre en `dev`, release pendiente)
 **Clase de cambio:** MAJOR (semántica temporal de registros; RFC-56)
 **Problemas que resuelve:** P3 (CG-02)
 
@@ -61,6 +61,7 @@ confiable. `session.duration_ms` deja de mezclar relojes (NBI-1)
 
 ## Estado de implementación
 
-Decisión `DECIDED` en el modelo (2026-08-25). RFC-64 `Proposal`, plan 78
-`Aprobado para ejecución` gated (Clase A, RFC-56); el ADR registra la decisión, no
-habilita cambios de payload.
+Decisión `DECIDED` en el modelo (2026-08-25). RFC-64 `Accepted` (plan 103,
+2026-09-03); implementación materializada en `11.0.0` por el plan 78
+(2026-09-04, `Executed`/`Closed` en `dev`, release pendiente de promoción).
+El ADR registra la decisión; no habilita cambios de payload (RFC-56).

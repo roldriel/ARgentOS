@@ -1,6 +1,6 @@
 # RFC-64 — Execution Record Model
 
-**Status:** Proposal
+**Status:** Accepted (plan 103, 2026-09-03)
 **Fecha:** 2026-08-25
 **Serie:** Arquitectura post-auditoría (25 ago 2026)
 **Origen:** `ARCHITECTURAL_DECISION_MODEL.md:D5 — Execution Identity`, `ARCHITECTURAL_DECISION_MODEL.md:D6 — Execution Record / Audit Trail`, `ARCHITECTURAL_DECISION_MODEL.md:D7 — Temporal Semantics`, `ARCHITECTURAL_DECISION_MODEL.md:D10 — Observability / Budget`
@@ -9,7 +9,16 @@
 
 ## Status
 
-PROPOSED
+ACCEPTED
+
+Aceptada el 2026-09-03 por decisión humana del mantenedor (RFC-64 = ACCEPT,
+plan 103). La aceptación incorpora tres lecturas de implementación que forman
+parte de la decisión: (1) `clock` implementa la fuente `agent_clock` — no
+renombrar `clock` a `source`, conservando el contrato existente; (2) `seq`
+estrictamente monótono por sesión para EI-003/TR-004; (3) TR-002 con tolerancia
+de 60 segundos y divergencias que deben registrar `timestamp_divergence.cause`.
+La aceptación NO autoriza la ejecución del plan 78 (implementación pendiente;
+Clase A, RFC-56).
 
 ## Summary
 
@@ -230,3 +239,48 @@ session.duration_ms usa una sola fuente temporal.
 ## Amendment Log
 
 - 2026-08-25 — Creación.
+- 2026-09-03 — Aceptada (plan 103): la RFC-64 queda formalizada como modelo
+  aceptado de identidad de ejecución por composición (`execution_id =
+  (session_id, iteration)`), roles disjuntos de los cuatro registros
+  (state.json, HARNESS_REPORT, SESSION_LOG, METRICS), alcance de `state.json`
+  (gates de transición H00–H07, H11 + status terminal), semántica temporal UTC
+  con fuente declarada, correlación por event keys y observabilidad de budget
+  (invariantes EI-001…EI-003, TR-001…TR-005, TM-001…TM-003, OBS-001…OBS-003).
+  Decisión humana del mantenedor (2026-09-03, RFC-64 = ACCEPT) con tres
+  lecturas de implementación que forman parte de la decisión: (1) `clock`
+  implementa la fuente `agent_clock` — no renombrar `clock` a `source`,
+  conservando el contrato existente de RFC-64; (2) `seq` estrictamente monótono
+  por sesión para EI-003/TR-004; (3) TR-002 con tolerancia de 60 segundos y
+  divergencias que deben registrar `timestamp_divergence.cause`. Cambio
+  docs-only: sin impacto en `protocol/.agents/`, sin `VERSION` bump ni tag
+  (RFC-69). NO autoriza la ejecución del plan 78: permanece `Aprobado para
+  ejecución` sin ejecutar (Clase A, RFC-56; la aceptación de la RFC no habilita
+  por sí sola modificar el payload). Condiciones conocidas para la futura
+  ejecución del plan 78, preservadas como contexto normativo y NO ejecutadas:
+  objetivo de versión 11.0.0 (no 6.0.0); actualizar el guard del checker y los
+  fixtures legacy 7.0.0–10.3.0; integrar METRICS schema 1.2.0, incluyendo
+  `reuse_event` y `provider_cache_event`; integrar la declaración de
+  `state.json` en lugar de duplicarla; resolver las condiciones C3–C6
+  identificadas en la revisión.
+- 2026-09-04 — Implementada (plan 78, versión `11.0.0`; `Closed` en `dev`,
+  release pendiente). El payload materializa el modelo: alcance de `state.json`
+  limitado a gates de transición H00–H07/H11 + status terminal con enforcement
+  mecánico en `runner_state.py` (`TRANSITION_TRIGGERS`; timestamps UTC con
+  `Z`; `detect_bypass` con flag de confiabilidad); sección `## Execution
+  records` e integración del alcance en `harness/INDEX.md` (ST-005); contratos
+  HARNESS_REPORT/METRICS/SESSION_LOG con `schema_version` 2.0.0 (ENTRY con
+  `iteration`/`clock` obligatorios y `timestamp_divergence.cause`; METRICS con
+  `seq`/`iteration`/`clock` en todo evento, incluidos `reuse_event` y
+  `provider_cache_event`, y `delegation` con `context_budget`/`attempt`;
+  SESSION_LOG con `Execution` y marcador `Clock`); pairing obligatorio de
+  `context_budget` en H15, contrato de delegación y `PROTOCOL_METRICS.md`;
+  `aggregate_metrics.py --audit` con correlación `(iteration, trigger)` y
+  tolerancia de 60 s (TR-002) para sesiones `>= 11.0.0`;
+  `check_session_artifacts.py` con guard `>= 11.0.0` (banda legacy
+  7.0.0–10.3.0 no re-reportada, RFC-46); `measure_context_budget.py` con
+  `--phase`/`--iteration`; `docs/MIGRATION.md` §13; `VERSION` `11.0.0` y
+  changelog `[11.0.0]`. Las tres lecturas Accepted se preservan sin
+  reinterpretación. Corrección registrada `<PLAN-78>:C-1` (ancla semántica
+  `PROTOCOL_VERSION` del runtime alineada a `11.0.0`). Validado con la batería
+  canónica (checkers PASS), pytest (`445 passed`), tests del harness del
+  producto (`109 passed`) y gates C-1/C-2/C-3 sin ANOMALY. Sin push ni tag.

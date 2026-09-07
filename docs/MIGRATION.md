@@ -6,8 +6,8 @@ de una versión a otra. Este archivo vive **fuera de `.agents/`** a propósito
 propia política.
 
 La versión vigente está declarada en `.agents/VERSION` (una línea semver). El
-historial de cambios está en [`CHANGELOG.md`](CHANGELOG.md). La guía de adopción
-inicial está en [`ADOPTION.md`](ADOPTION.md).
+historial de cambios está en [`CHANGELOG.md`](../CHANGELOG.md). La guía de
+adopción inicial está en [`ADOPTION.md`](ADOPTION.md).
 
 ---
 
@@ -337,3 +337,42 @@ Cambio **MAJOR**: remoción de artefactos y de un estándar.
   Actualizar las referencias locales (README, scripts, hooks) a las entradas
   de la KB. Los archivos existentes dejan de ser normativos; si se conservan,
   son copias locales no mantenidas.
+
+## 13. Modelo de registro de ejecución — 11.0.0 (plan 78, RFC-64)
+
+Cambio **MAJOR** del modelo conceptual: define la identidad de ejecución por
+composición, los roles disjuntos de los cuatro registros, el alcance de
+`state.json`, la semántica temporal UTC con fuente declarada y la
+observabilidad de budget.
+
+- **`state.json` limitado a gates de transición.** `state.json` registra los
+  gates de transición del core (H00–H07, H11) y el status terminal
+  únicamente; los gates no transicionales (D*, H09/H10, H15, S00, REVIEW) se
+  registran solo en `HARNESS_REPORT.md`. `runner_state.py` rechaza cualquier
+  `--trigger` fuera de ese conjunto (exit 2).
+- **ENTRY con `iteration` y `clock` obligatorios.** Cada ENTRY de
+  `HARNESS_REPORT.md` declara la iteración numérica de la ejecución y su
+  fuente de reloj (`utc` | `agent_clock`); `timestamp` es el `event_ts` del
+  trail y el `gate_ts` canónico vive en `state.json` (UTC, sufijo `Z`).
+  Cuando difieren, el ENTRY declara `timestamp_divergence.cause`.
+- **METRICS con `seq`/`iteration`/`clock`.** Todo evento METRIC lleva `seq`
+  (entero, estrictamente creciente por sesión), `timestamp` y `clock`; los
+  eventos por ejecución llevan además `iteration`, incluidos `reuse_event` y
+  `provider_cache_event` del catálogo 1.2.0 (10.3.0). `delegation` puede
+  declarar `context_budget` y `attempt`. `session_start` es de nivel sesión.
+- **Pairing de `context_budget`.** Toda delegación con `context_budget`
+  registra el evento `context_budget` (declared/consumed) junto al evento
+  `delegation` de la misma delegación; sin el par, la claim de cumplimiento
+  es atestación.
+- **`schema_version` 2.0.0.** `HARNESS_REPORT.md`, `METRICS.md` y
+  `SESSION_LOG.md` pasan su `schema_version` a 2.0.0 (obligaciones nuevas
+  para sesiones nuevas; MAJOR de contrato según §2).
+- **Trazas históricas.** Las sesiones previas a 11.0.0 (incluida la banda
+  publicada 7.0.0–10.3.0) son registros inmutables bajo la semántica previa
+  (RFC-46): no se reescriben, no se re-reportan y no requieren acción de
+  migración. Los checkers de desarrollo aplican las reglas nuevas solo a
+  sesiones `>= 11.0.0`.
+- **Adopción.** Leer `.agents/harness/INDEX.md`, sección "Execution records",
+  para el modelo completo (roles, identidad, semántica temporal e invariantes
+  EI/TR/TM/OBS). Los reportes nuevos deben incluir los campos obligatorios;
+  los artefactos de sesión existentes no se migran.

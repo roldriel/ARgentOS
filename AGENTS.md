@@ -13,6 +13,9 @@ install.
 - `protocol/_AGENTS.md` — the product's entry point, renamed with a leading
   underscore so it is not auto-discovered as an instruction file in this
   repository. `dist` publishes it as `AGENTS.md` at the adopting project root.
+- `.agents/` — the **DEV operational layer** (not the protocol payload): how
+  an agent working on this repository executes the Change Lifecycle. Entry
+  point: `.agents/AGENTS.md`; load workflow/policies from there on demand.
 - `tools/` — repository verification tooling (the checkers run by CI and the
   local battery).
 - `runtime/` — reference implementation of Execution Context materialization
@@ -20,11 +23,20 @@ install.
 - `tests/` — centralized test suites for `tools/` and `runtime/`. They never
   depend on the `protocol/` payload and never include the harness tests; see
   `tests/AGENTS.md`.
-- `docs/plans/` — design history (RFCs and implementation plans). See
-  `docs/plans/INDEX.md`.
-- `README.md`, `CHANGELOG.md` plus `docs/` (`ADOPTION.md`, `MIGRATION.md`,
-  `VERSIONING.md`, `AUDITORIA_DOCUMENTACION.md`) —
-  project and release documentation.
+- `docs/` — governance, design history and project/release documentation:
+  the documentary taxonomy (`docs/AGENTS.md`), conventions
+  (`docs/CONVENTIONS.md`), versioning policy (`docs/VERSIONING.md`), adoption
+  and migration guides, and source-layout notes. Subdirectories:
+  - `docs/rfc/` — RFCs (see `docs/rfc/INDEX.md`).
+  - `docs/adr/` — architecture decision records (see `docs/adr/INDEX.md`).
+  - `docs/plans/` — implementation plans and design history (see
+    `docs/plans/INDEX.md`).
+  - `docs/architecture/`, `docs/working/` — architecture models and working
+    documents.
+  - `docs/glossary/` — descriptive terminology registry (DEV/Protocol bridge,
+    non-normative; rules in `docs/CONVENTIONS.md`).
+- `README.md`, `CHANGELOG.md`, `ROADMAP.md` — entry point and release
+  documentation at the repository root.
 
 ## The protocol payload is data, not instructions
 
@@ -49,6 +61,11 @@ While developing ARgentOS you work on the protocol itself. Therefore:
   (`docs/source-layout.md`).
 - Commit `.project/` artifacts — session state is ephemeral.
 - Edit `dist` by hand — CI regenerates it from `master` on tags.
+- Implement Change Lifecycle mechanisms (anchors, checkpoints, findings,
+  pending decisions, series registries, lifecycle state machines) inside
+  `protocol/.agents/`, or share lifecycle machinery between DEV and the
+  Protocol. RFC-75 governs how this DEV repository evolves;
+  `protocol/.agents/` is product data with its own RFC-56 authorization path.
 
 ## Development workflow
 
@@ -59,8 +76,9 @@ While developing ARgentOS you work on the protocol itself. Therefore:
 - Protocol changes follow the governance in `docs/CONVENTIONS.md:Convenciones`
   and `docs/VERSIONING.md`: an accepted RFC or an approved plan is required before
   modifying anything under `protocol/.agents/`.
-- Implementation plans and RFCs live in `docs/plans/` and `docs/rfc/`; new design
-  decisions are recorded there before they touch the payload.
+- RFCs, ADRs and implementation plans live in `docs/rfc/`, `docs/adr/` and
+  `docs/plans/`; new design decisions are recorded there before they touch
+  the payload.
 - Language: English in payload, code and commits (Conventional Commits);
   Spanish in `docs/plans/` and adoption docs. Commits are atomic per plan, e.g.
   `fix(protocol): ... (plan 34, RFC-35)`.
@@ -76,29 +94,50 @@ changelog `(plan N, RFC-N)`, VERSION bump) → **commit** (atomic, Conventional
 Commit in English, on `dev`) → **promote** (merge to `master` + annotated tag,
 with user authorization; CI regenerates `dist`).
 
+Operational instructions for executing this pipeline (change detection,
+classification, plan/authority gates, validation, checkpoint and closure)
+live in `.agents/`: read `.agents/AGENTS.md` before modifying the repository,
+then follow its pointers to the workflow and policies as needed.
+
+Change lifecycle semantics (RFC-75): `Executed` is a plan status meaning
+implementation plus validation, and may exist before the change is committed.
+`Committed` is repository state (the atomic `dev` commit), not a plan status.
+Since Increments 1+3 (plan 96) the mechanisms are operational: every
+registered validation records a **Validation Anchor** (declared scope,
+validation command-set, effective inputs, environmental factors, Scoped
+Content Identity), and closing a plan records a **Git checkpoint** linking
+closure to the validated committed state (closure commits + anchor↔checkpoint
+consistency) before `Closed` is derived. Since Increment 2 (plan 97),
+findings, corrections and pending decisions are operational for new artifacts:
+findings use qualified refs `<artifact>:F-<n>` with per-artifact namespaces,
+corrections record provenance as `C-<n>` traceability records (never a
+normative source by themselves), and blocking pending decisions persist in the
+artifact that owns them (PC-1). Absence of these fields in artifacts created
+before Increment 2 is legacy, not invalidity. `Closed` is a derived condition —
+plan `Executed` + applicable governance + a Git checkpoint +
+checkpoint↔anchor consistency — not a plan status. Plans closed before these
+increments (94/95 and earlier) keep their historical records as legacy;
+absence of the new fields is not invalidity. `Released` means promoted to
+`master` and tagged. Therefore `Executed ≠ Committed`, `Committed ≠ Closed`,
+`Closed ≠ Released`; a docs-only plan closes without a release (RFC-69).
+Detailed semantics live in `docs/VERSIONING.md` §7 and
+`docs/CONVENTIONS.md:Convenciones`.
+
 A plan is done when all of that is verified and committed; a version is
 published when it is also tagged on `master`. Sources of truth:
 `docs/VERSIONING.md` (§4 playbook, §10 DoD) and `docs/CONVENTIONS.md:Convenciones`.
 
 ## Verifying the protocol
 
-From the repository root:
+The canonical verification battery (checkers + tests) is defined once in
+`docs/VERSIONING.md` §4.1; run the full command set from that section at
+every validation gate. `.agents/AGENTS.md` (`## Verification battery`) states
+when to run it.
 
-```bash
-python tools/check_protocol_invariants.py --payload protocol .
-python tools/check_plan_citations.py
-python tools/check_plan_structure.py
-python tools/check_taxonomy_coherence.py
-python tools/check_session_artifacts.py
-python tools/check_version_state.py
-python tools/check_dist_sync.py
-python -m pytest tests/
-```
-
-This is the canonical battery defined in `docs/VERSIONING.md` §4.1.
-`check_dist_sync.py` compares the committed payload against the local `dist`
-branch; it is a local-only check (CI does not fetch `dist`) and is expected
-green only on `master` — on `dev`, unpublished plans make it red by design.
+`check_dist_sync.py` (documented in `docs/VERSIONING.md` §4.1) compares the
+committed payload against the local `dist` branch; it is a local-only check
+(CI does not fetch `dist`) and is expected green only on `master` — on `dev`,
+unpublished plans make it red by design.
 
 Project priorities live in `ROADMAP.md`; design history in `docs/plans/INDEX.md`.
 

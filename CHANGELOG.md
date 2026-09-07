@@ -32,6 +32,387 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [Unreleased]
+
+### Modelo conceptual
+
+- **Revisión de la serie Proposal completada** (plan 57, RFC-56): las 23 RFCs
+  de la serie 32–54 quedaron `Accepted` y sus planes asociados (31–53) están
+  `Executed`. Sin cambio de payload; solo estados y traza de gobernanza.
+- **Modelo de Context Persistence y Cacheability** (plan 86, RFC-71): la RFC-71
+  pasa a `Accepted` como modelo semántico de reutilización del Execution
+  Context (vocabulario normativo, segmentos Core/Project/Worker, identidades
+  compuestas, ortogonalidad de scope/persistence/cacheability/memoization/
+  isolation/lifecycle, invalidación por identidad e invariantes I-001…I-012);
+  formaliza la fuente de verdad previa a las RFCs 72–74 (provider prompt
+  cache, persistence de proyecto y telemetría/economía), que siguen en
+  `Proposal`. Cambio docs-only: sin `VERSION` bump ni tag (ver
+  `docs/VERSIONING.md` §3).
+- **Modelo de la capacidad de Provider Prompt Cache** (plan 87, RFC-72): la
+  RFC-72 pasa a `Accepted` como modelo de la capacidad de materialización y
+  prompt caching del provider (`MaterializationIdentity` con sus reglas
+  condicionales, Canonical Materialization e I-MAT-001, Ordering Contract con
+  orden OPEN/DEFERRED, Stable Prefix como propiedad de la materialización,
+  Provider Prompt Cache Capability, Provider Adapter Boundary,
+  `ProviderCacheReference` opaca, semántica de hit/miss, invalidación en tres
+  dominios, admisión como policy e invariantes I-MAT-001…I-MAT-012); formaliza
+  la frontera de materialización sobre el modelo semántico de la RFC-71; las
+  RFCs 73–74 (persistence de proyecto y telemetría/economía) siguen en
+  `Proposal`. Cambio docs-only: sin `VERSION` bump ni tag (ver
+  `docs/VERSIONING.md` §3).
+- **Modelo de persistence del contexto de proyecto y Discovery** (plan 92,
+  RFC-73): la RFC-73 pasa a `Accepted` como modelo de persistence del contexto
+  de proyecto y Discovery (Project Knowledge como abstracción arquitectónica,
+  isolation por `ProjectIdentity`, hashes de discovery ≠ `SegmentContentIdentity`,
+  frescura/revalidación, provenance e invariantes I-PROJ-001…I-PROJ-012);
+  formaliza la fuente de verdad de persistence previa a la implementación
+  (plan 90, gated a RFC-73 `Accepted`); la RFC-74 sigue en `Proposal`. Cambio
+  docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3).
+- **Modelo de economía del cache, telemetría y evidencia de admisión** (plan 93,
+  RFC-74): la RFC-74 pasa a `Accepted` como fuente de verdad de medición (capas
+  de economía no confluibles, avoided work, vocabulario de eventos de reuse,
+  taxonomía de misses, experimentos e invariantes I-ECO-001…I-ECO-006; sin
+  thresholds ni pricing); formaliza la capa de medición de las RFCs 71–73 sin
+  redefinirlas. Aceptación docs-only: sin `VERSION` bump ni tag (ver
+  `docs/VERSIONING.md` §3); no implica implementación — la implementación
+  (eventos/catálogo/agregador) queda en el plan 91, `Aprobado para ejecución`.
+- **Modelo de registro de ejecución** (plan 103, RFC-64): la RFC-64 pasa a
+  `Accepted` como modelo de identidad de ejecución por composición
+  (`execution_id = (session_id, iteration)`), roles disjuntos de los cuatro
+  registros (state.json, HARNESS_REPORT, SESSION_LOG, METRICS), alcance de
+  `state.json` (gates de transición H00–H07, H11 + status terminal), semántica
+  temporal UTC con fuente declarada (`clock`), correlación por event keys
+  (`trigger`/`seq`) y registro obligatorio de `context_budget` por delegación
+  con budget (invariantes EI-001…EI-003, TR-001…TR-005, TM-001…TM-003,
+  OBS-001…OBS-003). La decisión humana de aceptación incorpora tres lecturas de
+  implementación que forman parte de la decisión: `clock` implementa la fuente
+  `agent_clock` (sin renombrar a `source`); `seq` estrictamente monótono por
+  sesión para EI-003/TR-004; TR-002 con tolerancia de 60 segundos y
+  divergencias que deben registrar `timestamp_divergence.cause`. Aceptación
+  docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3); no
+  implica implementación — el plan 78 permanece `Aprobado para ejecución` sin
+  ejecutar (sus condiciones conocidas de ejecución futura quedan preservadas
+  como contexto, no ejecutadas).
+
+### Changed
+
+- **Corrección post-close del glosario — F1–F5** (plan 106): reparadas en
+  `docs/glossary/` las referencias de autoridad malformadas (F1/F2), la
+  referencia `path:section` no determinista (F3); agregada la regla explícita
+  de cobertura selectiva y alta de entradas (F4); normalizado el vocabulario
+  de `Status` con restricciones de uso modeladas por separado (F5). Cambio
+  docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3); sin
+  cambios en el payload del Protocol ni en el Plan 105 (permanece `Closed`).
+- **Arquitectura terminológica y glosario** (plan 105): vocabularios
+  DEV/Protocol separados con puente descriptivo; glosario
+  `docs/glossary/INDEX.md` + `terms.md` como registro Inventory/DESCRIPTIVE no
+  normativo (término → scope → status → autoridad, sin definiciones
+  duplicadas); reglas D1–D5 (convención AGENTS/INDEX/ENTRYPOINT preservada;
+  `SCI` desnudo prohibido en texto cross-layer nuevo; calificación obligatoria
+  de términos overloaded) en `docs/CONVENTIONS.md`; semántica de archivos y
+  mapa de clase en `docs/AGENTS.md`; punteros de descubrimiento en root
+  `AGENTS.md` y `.agents/AGENTS.md`. Cambio docs-only: sin `VERSION` bump ni
+  tag (ver `docs/VERSIONING.md` §3); sin cambios en el payload del Protocol.
+- **Taxonomía documental y layout del repo fuente** (Plan A, RFC-69): la
+  documentación se reorganiza bajo `docs/` (`rfc/`, `plans/`, `architecture/`,
+  `working/`), se crea `docs/CONVENTIONS.md` con la normativa, los INDEX pasan
+  a ser registro/navegación, los checkers se migran al layout nuevo y los
+  working docs quedan contenidos y versionados. Cambio docs-only: sin `VERSION`
+  bump ni tag (ver `docs/VERSIONING.md` §3).
+- **Gobernanza ADR del repo fuente** (plan 83, RFC-69): `docs/adr/` materializado
+  con 14 ADRs individuales (ADR-01…ADR-14 ↔ D0–D13 preservadas como identidad
+  histórica), matriz `D# ↔ ADR ↔ RFC ↔ plan` en `docs/adr/INDEX.md`, template
+  `_TEMPLATE.md`, ciclo de status ADR en `docs/CONVENTIONS.md` y cobertura de
+  `docs/adr/` en los checkers de estructura y citas. Cambio docs-only: sin
+  `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3).
+- **Change Lifecycle de ARgentOS DEV — Master Action Plan** (plan 94, RFC-75):
+  define la estrategia incremental del Change Lifecycle del repo fuente
+  (seis incrementos conceptuales 0–5 de RFC-75 agrupados en unidades de
+  implementación iniciales A: 0; B: 1+3 en batch operacional; C: 2; D: 4, con
+  el Incremento 5 deferido), derivada de RFC-75 `Accepted` y de los ADR-15/16:
+  semántica de Verified/Executed/Committed/Closed/Promoted/Released, modelo de
+  Change Levels, frontera DEV/Protocol, dogfooding y roadmap para los planes de
+  implementación 95+. Plan docs-only: sin `VERSION` bump ni tag (ver
+  `docs/VERSIONING.md` §3).
+- **Change Lifecycle de ARgentOS DEV — Unidad A / Incremento 0** (plan 95,
+  RFC-75): la gobernanza DEV incorpora la semántica aprobada del Change
+  Lifecycle (condiciones derivadas y vocabulario
+  Verified/Executed/Committed/Closed/Promoted/Released/Abandoned, modelo de
+  Change Levels con ejes independientes de RFC-56 y L0 provisional, frontera
+  DEV/Protocol, serie como identidad derivada) y el observability schema
+  baseline de las métricas de lifecycle en `docs/CONVENTIONS.md`,
+  `docs/VERSIONING.md`, `AGENTS.md` y `docs/AGENTS.md`. Sin machinery nueva
+  (anchors, checkpoints, findings, pending y checkers quedan para los
+  Incrementos 1–4). Cambio docs-only: sin `VERSION` bump ni tag (ver
+  `docs/VERSIONING.md` §3).
+- **Change Lifecycle de ARgentOS DEV — Unidad B / Incrementos 1+3** (plan 96,
+  RFC-75): la gobernanza DEV materializa los mecanismos operativos de los
+  Incrementos 1 y 3 — Validation Anchor (VC-1) con campos (declared scope,
+  validation command-set, effective inputs, observed dependencies,
+  environmental factors y Scoped Content Identity v1 por primitivas git) en el
+  template de Plan y el Amendment Log de RFC; intake fallback con `Change
+  Level` en el primer artifact (L0 provisional y triggers); serie como
+  identidad derivada (declaración + relaciones RFC↔Plan); checkpoint de cierre
+  (GC-1) con consistencia anchor↔checkpoint antes de `Closed`,
+  multi-commit/multi-RFC y docs-only sin release — en `docs/CONVENTIONS.md`,
+  `docs/VERSIONING.md` (§7/§10/§11), `AGENTS.md`, `docs/AGENTS.md` y los
+  templates de Plan/RFC. El propio plan 96 registró el primer anchor y el
+  primer checkpoint reales (dogfooding). Cambio docs-only: sin `VERSION` bump
+  ni tag (ver `docs/VERSIONING.md` §3).
+- **Change Lifecycle de ARgentOS DEV — Unidad C / Incremento 2** (plan 97,
+  RFC-75): la gobernanza DEV operacionaliza para artifacts nuevos findings y
+  corrections con refs calificadas `<artifact>:F-<n>`/`C-<n>` (LC-1) y pending
+  decisions per-artifact (PC-1): subsecciones operativas en
+  `docs/CONVENTIONS.md` (findings/corrections, pending, mapa de aplicabilidad),
+  sección opcional en el template de Plan y guía de refs en el template de RFC,
+  DoD y schema de métricas actualizados en `docs/VERSIONING.md` (§10/§11),
+  `AGENTS.md` raíz alineado y Amendment Log de RFC-75 con la entrada de
+  materialización del Incremento 2. El propio plan 97 registró su Validation
+  Anchor y Checkpoint (dogfooding: `No findings detected / N/A`) y cerró
+  docs-only. Sin machinery nueva (checkers/automatización → Incremento 4).
+  Cambio docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3).
+- **Change Lifecycle de ARgentOS DEV — Unidad D / Incremento 4** (plan 98,
+  RFC-75): primera automatización operativa determinista y advisory del Change
+  Lifecycle DEV — `tools/check_lifecycle_anchor.py` (C-1: verifica forma y
+  completitud de los Validation Anchors v1 en artifacts del régimen nuevo,
+  distinguiendo GAP advisory de anomalía, población por señales estructurales
+  sin registry y legacy excluido sin backfill) y `tools/check_lifecycle_checkpoint.py`
+  (C-2: verifica la relación closure↔estado Git del checkpoint contra el
+  anchor aplicable — GC-1 con A1/A2 — usando tree identity como identidad
+  material, commit SHA como locator y sin exigir reachability desde `dev`), con
+  sus suites deterministas en `tests/` (19 + 21 tests, pytest `tmp_path` y git
+  temporales). DEV-only / local invocation: no se incorporan a la batería
+  canónica, no hay CI ni pre-commit; sin F-n/C-n/stale/series/métricas,
+  registries, entidades ni state machine globales. El propio plan 98 registró
+  su Validation Anchor y Checkpoint (dogfooding: planes 96/97 `VALID`, legacy
+  `EXCLUDED`, `No findings detected / N/A`) y cerró sin `VERSION` bump ni tag
+  (tooling DEV + registros docs-only; RFC-69; ver `docs/VERSIONING.md` §3).
+- **Change Lifecycle de ARgentOS DEV — Continuación post-roadmap A–D (C-3 —
+  lifecycle lineage checker)** (plan 100, RFC-75): primer checker determinista
+  de integridad de lineage findings/corrections/revalidación (LC-1) —
+  `tools/check_lifecycle_lineage.py` (C-3) verifica forma, completitud mínima
+  y consistencia de los registros del contenedor `## Findings / Correcciones /
+  Pending` (`### Findings`/`### Correcciones`) con clasificaciones
+  EXCLUDED/BOUNDARY/N/A/VALID/GAP/ANOMALY (GAP advisory ≠ ANOMALY y sin
+  autoridad normativa, ADR-16), refs calificadas con namespace del artifact,
+  vocabulario de estados, elementos inmutables del finding (CL-8), provenance
+  a origen y alcance de revalidación de corrections (CL-6), claims de
+  revalidación con soporte declarado en el Validation Anchor/checkpoint del
+  propio artifact (CL-7), marcadores de ausencia y contradicciones de
+  resolución; read-only, stdlib-only y sin Git en v1; suite
+  `tests/test_check_lifecycle_lineage.py` con la matriz T01–T28 y los
+  escenarios adversariales permanentes del §20 (40 tests). DEV-only /
+  invocación local: sin incorporación a la batería canónica ni a CI; sin F-3
+  (ambigüedad → GAP sin tie-break), sin pending/PC-1, sin C-1/C-2. El propio
+  plan 100 registró su Validation Anchor y Checkpoint (dogfooding: 96/97
+  `EXCLUDED`, 98 `N/A`, 99 `VALID`, legacy `EXCLUDED`, GAP=0, ANOMALY=0) y
+  cerró sin `VERSION` bump ni tag (tooling DEV + registros docs-only; RFC-69;
+  ver `docs/VERSIONING.md` §3).
+- **Capa operacional `.agents/` de ARgentOS DEV** (plan 101, RFC-75): el repo
+  fuente materializa `.agents/` en la raíz como interfaz operacional del
+  agente DEV para ejecutar el Change Lifecycle — entry point
+  `.agents/AGENTS.md`, workflow `workflows/change-lifecycle.md` y policies de
+  authority, validation-closure y lifecycle-checkers (C1/C2/C3) — con
+  integración mínima de descubrimiento/taxonomía/frontera en `AGENTS.md`,
+  `docs/AGENTS.md` y `docs/CONVENTIONS.md` (Producto vs DEV) y eliminación del
+  staging temporal; reutiliza RFC-75/ADR-15/16 y los checkers existentes sin
+  crear autoridad normativa nueva, state machines, registries ni trackers y
+  sin copias de `protocol/.agents/`. El propio plan 101 registró su Validation
+  Anchor y Checkpoint (dogfooding: plan 101 `VALID` en C-1/C-2 y `N/A` en C-3;
+  GAP=0, ANOMALY=0) y cerró sin `VERSION` bump ni tag (capa DEV docs-only;
+  RFC-69; ver `docs/VERSIONING.md` §3).
+
+- **README — Repository Operational Model** (plan 102, RFC-75): el `README.md`
+  agrega una sección breve `## Repository Operational Model` que explica la
+  separación operacional entre `.agents/` (interfaz operacional del agente DEV),
+  `docs/` (autoridad/historia/documentación) y `tools/` (verificación
+  determinista, sin autoridad normativa propia), y la frontera con
+  `protocol/.agents/` (dominio del Protocol; data, no instrucciones DEV).
+  Cambio docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3).
+
+- **Determinación DEV del estado terminal por ejecución** (plan 107):
+  `tools/determine_execution_state.py` determina desde los Execution Records
+  existentes el estado terminal de cada ejecución (`state.json` `status`
+  `ABORT`/`COMPLETED`, verdad mecánica del estado del protocolo por
+  ejecución, RFC-64/RFC-63) sin modificar el modelo del Protocol ni agregar
+  campos/estados/artifacts/categorías; cuando el registro no declara un estado
+  terminal, `state.json` falta o está corrupto, reporta no determinación con
+  razón (sin inferencia); 13 tests en `tests/test_determine_execution_state.py`.
+  Cambio DEV tooling + registros docs-only: sin `VERSION` bump ni tag (ver
+  `docs/VERSIONING.md` §3).
+
+- **Consulta DEV de una ejecución específica por iteración** (plan 108):
+  `tools/determine_execution_state.py` agrega `--iteration` (junto con
+  `--session`) para consultar únicamente la determinación de una ejecución
+  concreta (`execution_id = (session_id, iteration)`, RFC-64), reutilizando la
+  semántica existente de determinación/no determinación y fail-closed (sin
+  inferencia; iteración o sesión inexistente → report vacío, sin fabricar
+  entradas); la consulta de sesión completa conserva su comportamiento actual;
+  22 tests (13 previos + 9 nuevos) en `tests/test_determine_execution_state.py`.
+  Cambio DEV tooling + registros docs-only: sin `VERSION` bump ni tag (ver
+  `docs/VERSIONING.md` §3).
+
+- **Generador DEV de Scoped Content Identity para Validation Anchors** (plan
+  109): `tools/scoped_content_identity.py` computa la Scoped Content Identity
+  v1 que todo Validation Anchor registra (VC-1) y el Checkpoint verifica
+  (GC-1) — Delta scoped identity (sha256 de la serialización canónica
+  `scoped-v1` + pares `path NUL blob NUL` sobre un scope declarado, ordenado
+  lexicográficamente; blob id por `git ls-files -s` o `git hash-object --path`
+  para untracked) y State identity (tree del index staged vía `git
+  write-tree`, o `git rev-parse <ref>^{tree}` con `--ref`) — reutilizando el
+  algoritmo v1 normado (plan 96 §13) sin reinterpretarlo ni modificar
+  C-1/C-2/C-3; salida JSON determinista y fail-closed sin salida parcial;
+  read-only, stdlib-only; 15 tests en repos git aislados en
+  `tests/test_scoped_content_identity.py`. Cambio DEV tooling + registros
+  docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3).
+- **Inspección DEV de una ejecución concreta con identidad de su contenido**
+  (plan 110): `tools/determine_execution_state.py` agrega `--content-identity`
+  (con `--session` + `--iteration`) a la consulta de una ejecución específica:
+  la entrada de la ejecución relaciona su determinación con la Scoped Content
+  Identity v1 del contenido de su Execution Record
+  (`.project/<session>/<iteration>/`, archivos presentes ordenados), computada
+  por composición con el generador existente (`tools/scoped_content_identity.py`,
+  Plan 109) — importado sin modificar, sin duplicar el algoritmo v1, sin
+  escrituras, sin tracking causal ni relación persistente Execution Record ↔
+  proyecto. Fail-closed: scope vacío, root sin repo git u otro error del
+  generador → `applicable: false` con razón determinista, sin fabricar
+  identidad; sesión/iteración inexistente → report vacío; sin el flag la
+  salida es exactamente la actual (18 tests nuevos; 40 en la suite de
+  `tests/test_determine_execution_state.py`). Cambio DEV tooling + registros
+  docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3).
+- **Resumen por sesión y filtro de ejecuciones sin determinación terminal**
+  (plan 111): `tools/determine_execution_state.py` agrega `--session-summary`
+  (reporte agregado por sesión del estado terminal declarado por cada
+  ejecución — `protocol_version` de fuentes existentes,
+  `executions`/`determined`/`undetermined` y conteos `terminal_abort`/
+  `terminal_completed`, derivados de la semántica existente de
+  `determine_iteration`; con o sin `--session`; sesión o `.project/` ausentes
+  → `sessions` vacío y `summary` en cero, fail-closed sin fabricar entradas)
+  y `--undetermined` (reporte por ejecución restringido a las entradas sin
+  determinación con su razón existente `state_json_missing`/
+  `state_json_corrupt`/`status_not_terminal`; combinable con `--session`;
+  excluyente con `--iteration` y `--session-summary`, error determinista);
+  sin flags nuevos la salida es exactamente la actual (regresión cero);
+  read-only, determinista, fail-closed, sin inferencia; 24 tests nuevos
+  (64 en la suite de `tests/test_determine_execution_state.py`). Cambio DEV
+  tooling + registros docs-only: sin `VERSION` bump ni tag (ver
+  `docs/VERSIONING.md` §3).
+
+### Fixed
+
+- **Guía de adopción sin `git subtree --prefix=.`** (plan 85): `docs/ADOPTION.md`
+  ya no recomienda `git subtree` con prefijo raíz — el `dist` solo trae el
+  payload (`.agents/` + `AGENTS.md`) y un `subtree pull` con `--prefix=.`
+  genera conflictos modify/delete sobre el proyecto adoptante; se documenta la
+  copia del payload desde `dist` vía git o sin git, con manejo de archivos
+  eliminados entre versiones. Además, `check_plan_citations.py` exime las citas
+  históricas a artefactos eliminados (`PROJECT_ARTIFACTS.md`, plan 84),
+  restaurando la batería tras 10.0.0. Cambio docs-only: sin `VERSION` bump ni
+  tag (ver `docs/VERSIONING.md` §3).
+- **Corrección post-close de F-1 — selección del anchor aplicable en C-2
+  (GC-1)** (plan 99, RFC-75): `tools/check_lifecycle_checkpoint.py` selecciona
+  ahora el Validation Anchor de la validación cuyo estado validado corresponde
+  al estado de cierre (tree del commit de cierre final o literal declarado;
+  Tier 1 por tree identity; Tier 2 por revalidación declarada única sobre el
+  cierre, patrón del corpus 96–98), eliminando la selección por recencia
+  ("latest A2 wins") y la pertenencia genérica del tree entre los commits de
+  cierre; GAP/ANOMALY, A1/A2 (Decisión B), tree identity ≠ SHA y
+  no-reachability se preservan y el reporte identifica el anchor aplicable;
+  regresiones F-1 permanentes en `tests/test_check_lifecycle_checkpoint.py`
+  (Casos A/B/C adversariales y escenarios T1–T12). DEV-only: sin `VERSION`
+  bump ni tag (RFC-69; ver `docs/VERSIONING.md` §3).
+
+- **Alineación documental y operacional post-Plan-78** (plan 104): el root
+  `AGENTS.md` pasa a puntero/resumen de la batería canónica (definición única
+  en `docs/VERSIONING.md` §4.1) con el layout de `docs/` corregido y
+  diferenciado (`docs/rfc/`, `docs/adr/`, `docs/plans/`); `.agents/AGENTS.md`
+  permanece como entrypoint operacional (alineación factual mínima del
+  `## Verification battery`; sin `INDEX.md`); `README.md` sin batería parcial
+  duplicada; `docs/VERSIONING.md` §9 actualizado al estado real (2026-09-05:
+  master/dist `10.3.0`, dev `11.0.0` pre-release sin promover) y §4.1 con
+  ownership único; `docs/CONVENTIONS.md` con rangos actualizados (RFCs hasta
+  RFC-75; ADRs hasta ADR-16); `docs/MIGRATION.md` con el link `../CHANGELOG.md`
+  corregido; `CHANGELOG.md` con `[Unreleased]` en la posición superior; los
+  modelos históricos de arquitectura preservados con banner de snapshot.
+  Cambio docs-only: sin `VERSION` bump ni tag (RFC-69; ver
+  `docs/VERSIONING.md` §3); sin promoción de `11.0.0`.
+
+(los cambios docs-only se registran aquí bajo `[Unreleased]`; ver
+`docs/VERSIONING.md` §3)
+
+---
+
+## [11.0.1] — 2026-09-06
+
+### Fixed
+
+- **Alcance determinista del gate S00 sobre el health checklist** (plan 112):
+  el ítem 2 de `protocol/.agents/orchestrators/system/harness/policies/S00-system-ready.md`
+  (`## Checklist`) declara explícitamente que el alcance PASS del gate es el de
+  la `## Decision` vigente de
+  `protocol/.agents/standards/runtime/PROTOCOL_HEALTH.md` (ítems 1–6, 8–9 y
+  11–13; ítem 10 sólo con el flag `knowledge_base` habilitado; ítem 7
+  warning-only), citándola como fuente de verdad sin duplicar el checklist.
+  Clase B (RFC-56): mejora documental compatible; sin cambio de significado
+  del health checklist ni del modelo del Protocol.
+
+---
+
+## [11.0.0] — 2026-09-04
+
+### Added
+
+- **Modelo de registro de ejecución — identidad y event keys** (plan 78,
+  RFC-64): identidad de ejecución por composición
+  (`execution_id = (session_id, iteration)`) sin UUIDs nuevos; roles disjuntos
+  de `state.json`, `HARNESS_REPORT.md`, `SESSION_LOG.md` y `METRICS.md`;
+  correlación de gates por `(execution_id, trigger)`, de métricas por
+  `(execution_id, seq)` y de delegaciones por `(execution_id, phase,
+  attempt#)`; sección "Execution records" en `.agents/harness/INDEX.md`.
+- **METRICS con `seq`/`iteration`/`clock`** (plan 78, RFC-64): todo evento
+  METRIC lleva `seq` (estrictamente creciente por sesión), `timestamp` y
+  `clock`; los eventos por ejecución llevan `iteration`, incluidos
+  `reuse_event` y `provider_cache_event` del catálogo 1.2.0 (10.3.0);
+  `delegation` puede declarar `context_budget` y `attempt`; pairing
+  obligatorio delegación ↔ evento `context_budget` (OBS-001).
+
+### Changed
+
+- **Alcance de `state.json` y `gate_ts` canónico** (plan 78, RFC-64):
+  `state.json` registra gates de transición H00–H07/H11 + status terminal
+  únicamente; `runner_state.py` rechaza triggers no transicionales y
+  normaliza los timestamps a UTC con sufijo `Z`; `detect_bypass` devuelve un
+  flag de confiabilidad y avisa cuando el `gate_ts` no es UTC-normalizado.
+- **ENTRY con `iteration`/`clock` obligatorios** (plan 78, RFC-64):
+  `HARNESS_REPORT.md` declara `timestamp` como `event_ts` del trail y
+  `timestamp_divergence.cause` para divergencias con el `gate_ts` (TR-002,
+  tolerancia 60 s); `SESSION_LOG.md` registra `Execution` y el marcador
+  `Clock` cuando el heading no es UTC-normalizado.
+- **`schema_version` 2.0.0** (plan 78, RFC-64): los contratos
+  `HARNESS_REPORT.md`, `METRICS.md` y `SESSION_LOG.md` pasan a
+  `schema_version` 2.0.0 (obligaciones nuevas para sesiones nuevas).
+- **Reconciliación dev** (plan 78, RFC-64): `--audit` correlaciona por
+  `(iteration, trigger)` para sesiones `>= 11.0.0` y compara timestamps con
+  tolerancia de 60 s; las trazas previas sin `iteration` mantienen la
+  correlación por `trigger` (RFC-46); `check_session_artifacts.py` aplica el
+  modelo de registro solo a sesiones `>= 11.0.0`.
+- **Medidor de budget** (plan 78, RFC-64): `measure_context_budget.py` acepta
+  `--phase`/`--iteration` opcionales en el reporte JSON.
+
+### Removed
+
+- **Registro de gates no transicionales en `state.json`** (plan 78, RFC-64):
+  D*/H09/H10/H15/S00/REVIEW dejan de ser registrables en `state.json`
+  (solo `HARNESS_REPORT.md`); las trazas históricas no se reescriben.
+
+### Modelo conceptual
+
+- **RFC-64 implementada** (plan 78): el Execution Record Model pasa de modelo
+  aceptado (plan 103) a materialización en `11.0.0`, preservando las tres
+  lecturas Accepted (`clock` implementa `agent_clock` sin renombrar; `seq`
+  estrictamente monótono por sesión; TR-002 con tolerancia de 60 s y
+  `timestamp_divergence.cause`).
+
 ## [10.3.0] — 2026-08-31
 
 ### Added
@@ -117,83 +498,6 @@ La política de versionado, changelog, tags y estados de planes vive en
   obtiene de la Knowledge Base de discovery
   (`.project/knowledge/discovery/`, `executive_summary.md` como entrada
   read-first), con frescura por claim y provenance.
-
-## [Unreleased]
-
-### Modelo conceptual
-
-- **Revisión de la serie Proposal completada** (plan 57, RFC-56): las 23 RFCs
-  de la serie 32–54 quedaron `Accepted` y sus planes asociados (31–53) están
-  `Executed`. Sin cambio de payload; solo estados y traza de gobernanza.
-- **Modelo de Context Persistence y Cacheability** (plan 86, RFC-71): la RFC-71
-  pasa a `Accepted` como modelo semántico de reutilización del Execution
-  Context (vocabulario normativo, segmentos Core/Project/Worker, identidades
-  compuestas, ortogonalidad de scope/persistence/cacheability/memoization/
-  isolation/lifecycle, invalidación por identidad e invariantes I-001…I-012);
-  formaliza la fuente de verdad previa a las RFCs 72–74 (provider prompt
-  cache, persistence de proyecto y telemetría/economía), que siguen en
-  `Proposal`. Cambio docs-only: sin `VERSION` bump ni tag (ver
-  `docs/VERSIONING.md` §3).
-- **Modelo de la capacidad de Provider Prompt Cache** (plan 87, RFC-72): la
-  RFC-72 pasa a `Accepted` como modelo de la capacidad de materialización y
-  prompt caching del provider (`MaterializationIdentity` con sus reglas
-  condicionales, Canonical Materialization e I-MAT-001, Ordering Contract con
-  orden OPEN/DEFERRED, Stable Prefix como propiedad de la materialización,
-  Provider Prompt Cache Capability, Provider Adapter Boundary,
-  `ProviderCacheReference` opaca, semántica de hit/miss, invalidación en tres
-  dominios, admisión como policy e invariantes I-MAT-001…I-MAT-012); formaliza
-  la frontera de materialización sobre el modelo semántico de la RFC-71; las
-  RFCs 73–74 (persistence de proyecto y telemetría/economía) siguen en
-  `Proposal`. Cambio docs-only: sin `VERSION` bump ni tag (ver
-  `docs/VERSIONING.md` §3).
-- **Modelo de persistence del contexto de proyecto y Discovery** (plan 92,
-  RFC-73): la RFC-73 pasa a `Accepted` como modelo de persistence del contexto
-  de proyecto y Discovery (Project Knowledge como abstracción arquitectónica,
-  isolation por `ProjectIdentity`, hashes de discovery ≠ `SegmentContentIdentity`,
-  frescura/revalidación, provenance e invariantes I-PROJ-001…I-PROJ-012);
-  formaliza la fuente de verdad de persistence previa a la implementación
-  (plan 90, gated a RFC-73 `Accepted`); la RFC-74 sigue en `Proposal`. Cambio
-  docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3).
-- **Modelo de economía del cache, telemetría y evidencia de admisión** (plan 93,
-  RFC-74): la RFC-74 pasa a `Accepted` como fuente de verdad de medición (capas
-  de economía no confluibles, avoided work, vocabulario de eventos de reuse,
-  taxonomía de misses, experimentos e invariantes I-ECO-001…I-ECO-006; sin
-  thresholds ni pricing); formaliza la capa de medición de las RFCs 71–73 sin
-  redefinirlas. Aceptación docs-only: sin `VERSION` bump ni tag (ver
-  `docs/VERSIONING.md` §3); no implica implementación — la implementación
-  (eventos/catálogo/agregador) queda en el plan 91, `Aprobado para ejecución`.
-
-### Changed
-
-- **Taxonomía documental y layout del repo fuente** (Plan A, RFC-69): la
-  documentación se reorganiza bajo `docs/` (`rfc/`, `plans/`, `architecture/`,
-  `working/`), se crea `docs/CONVENTIONS.md` con la normativa, los INDEX pasan
-  a ser registro/navegación, los checkers se migran al layout nuevo y los
-  working docs quedan contenidos y versionados. Cambio docs-only: sin `VERSION`
-  bump ni tag (ver `docs/VERSIONING.md` §3).
-- **Gobernanza ADR del repo fuente** (plan 83, RFC-69): `docs/adr/` materializado
-  con 14 ADRs individuales (ADR-01…ADR-14 ↔ D0–D13 preservadas como identidad
-  histórica), matriz `D# ↔ ADR ↔ RFC ↔ plan` en `docs/adr/INDEX.md`, template
-  `_TEMPLATE.md`, ciclo de status ADR en `docs/CONVENTIONS.md` y cobertura de
-  `docs/adr/` en los checkers de estructura y citas. Cambio docs-only: sin
-  `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3).
-
-### Fixed
-
-- **Guía de adopción sin `git subtree --prefix=.`** (plan 85): `docs/ADOPTION.md`
-  ya no recomienda `git subtree` con prefijo raíz — el `dist` solo trae el
-  payload (`.agents/` + `AGENTS.md`) y un `subtree pull` con `--prefix=.`
-  genera conflictos modify/delete sobre el proyecto adoptante; se documenta la
-  copia del payload desde `dist` vía git o sin git, con manejo de archivos
-  eliminados entre versiones. Además, `check_plan_citations.py` exime las citas
-  históricas a artefactos eliminados (`PROJECT_ARTIFACTS.md`, plan 84),
-  restaurando la batería tras 10.0.0. Cambio docs-only: sin `VERSION` bump ni
-  tag (ver `docs/VERSIONING.md` §3).
-
-(los cambios docs-only se registran aquí bajo `[Unreleased]`; ver
-`docs/VERSIONING.md` §3)
-
----
 
 ## [9.1.0] — 2026-08-27
 

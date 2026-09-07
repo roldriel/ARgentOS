@@ -77,7 +77,7 @@ autorización completa.
 
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
-| `78-execution-record-model.md` | RFC-64 | Aprobado para ejecución | Identidad de ejecución por composición (`execution_id = (session_id, iteration)`), roles disjuntos de los cuatro registros, alcance de `state.json` (gates de transición H00–H07, H11 + status terminal), semántica temporal UTC con `clock` declarado, event keys en ENTRY/METRIC (`iteration`/`seq`), reconciliación bidireccional y de timestamps en `--audit`, y registro obligatorio de `context_budget` por delegación con budget. Gated a RFC-64 `Accepted` (Clase A, RFC-56). Versión 6.0.0 (MAJOR). |
+| `78-execution-record-model.md` | RFC-64 | Executed | Identidad de ejecución por composición (`execution_id = (session_id, iteration)`), roles disjuntos de los cuatro registros, alcance de `state.json` (gates de transición H00–H07, H11 + status terminal), semántica temporal UTC con `clock` declarado, event keys en ENTRY/METRIC (`iteration`/`seq`), reconciliación bidireccional y de timestamps en `--audit`, y registro obligatorio de `context_budget` por delegación con budget. RFC-64 `Accepted` (plan 103, 2026-09-03; Clase A, RFC-56). Rebase 2026-09-04 contra el estado 10.3.0 (versión objetivo 11.0.0, guard `>= 11.0.0` + fixtures legacy 7.0.0–10.3.0, METRICS schema 1.2.0 → 2.0.0, MIGRATION §13, integración de la declaración de `state.json`). **Ejecución (2026-09-04):** implementado en `dev` — commits C1 `d94f33a` (contenido: contratos schema 2.0.0, Execution records en `harness/INDEX.md`, runner con `TRANSITION_TRIGGERS`/UTC-`Z`, pairing de `context_budget`, audit `(iteration, trigger)` + tolerancia 60 s, guard `>= 11.0.0`, MIGRATION §13, VERSION/CHANGELOG `[11.0.0]`) y C2 (registro/cierre); pytest `445 passed`; checkers canónicos PASS; C-1/C-2/C-3 sin ANOMALY; Validation Anchor V1 (T1 `3e016ed…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (version-producing, release pendiente); `<PLAN-78>:F-1` resuelto vía `<PLAN-78>:C-1` (ancla semántica del runtime); sin push, sin tag. |
 
 ## Decimoquinta serie: modelo de evidencia y verificación (25 ago 2026)
 
@@ -164,6 +164,512 @@ changelog bajo `[Unreleased]` y registro del plan). Sin `VERSION` bump ni tag
 |---|---|---|---|
 | `92-rfc73-acceptance.md` | RFC-73 | Executed | Formaliza la RFC-73 (Project & Discovery Context Persistence) como modelo de persistence del contexto de proyecto y Discovery (Project Knowledge, isolation por `ProjectIdentity`, hashes de discovery ≠ `SegmentContentIdentity`, frescura/revalidación, invariantes I-PROJ-001…I-PROJ-012): RFC-73 pasa a `Accepted`, con Amendment Log, INDEX de RFCs y changelog. Cambio docs-only: sin `VERSION` bump ni tag (RFC-69); la implementación queda en el plan 90 (gated a RFC-73 `Accepted`). **Ejecución (2026-08-31):** RFC-73 pasa a `Accepted (plan 92, 2026-08-30)` con entrada en su Amendment Log, INDEX de RFCs y changelog; plan marcado `Executed`. Sin cambios en `protocol/.agents/`, `runtime/` ni `tests/`; RFCs 71/72/74 intactas; plan 90 sigue gated (NO ejecutado). |
 | `93-rfc74-acceptance.md` | RFC-74 | Executed | Formaliza la RFC-74 (Cache Observability & Economics) como modelo de medición y economía del cache (capas de economía, avoided work, eventos de reuse, taxonomía de misses, invariantes I-ECO-001…I-ECO-006): RFC-74 pasa a `Accepted`, con Amendment Log, INDEX de RFCs y changelog. Depende de RFCs 71–73 `Accepted` (planes 86/87/92). Cambio docs-only: sin `VERSION` bump ni tag (RFC-69); la implementación queda en el plan 91 (`Aprobado para ejecución`, NO ejecutado). **Ejecución (2026-08-31):** RFC-74 pasa a `Accepted (plan 93, 2026-08-31)` con entrada en su Amendment Log, INDEX de RFCs y changelog; plan marcado `Executed`. Sin cambios en `protocol/.agents/`, `runtime/`, `tests/` ni `tools/`; RFCs 71–73 intactas; plan 91 NO ejecutado (gate de RFC-74 cumplido; permanece `Aprobado para ejecución`). |
+
+## Vigésima sexta serie: Master Action Plan del Change Lifecycle DEV (01 sep 2026)
+
+Mapa maestro del Change Lifecycle de ARgentOS DEV derivado de RFC-75
+(`Accepted`, 2026-09-01) y de los ADR-15/16. **No es un Plan de implementación
+ejecutable**: define la estrategia incremental sobre los **seis incrementos
+conceptuales de RFC-75** (0–5), agrupados en **unidades de implementación
+iniciales** (A: 0; B: 1+3 en batch operacional; C: 2; D: 4), con el Incremento 5
+como track futuro deferido; es la base de derivación para los planes de
+implementación futuros (95+). Este MAP es docs-only (sin cambios en
+`protocol/.agents/`, `runtime/`, `tests/` ni `tools/`, sin `VERSION` bump ni
+tag, RFC-69); los incrementos derivados no lo son todos (el Incremento 4
+incorpora tooling y tests).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `94-change-lifecycle-master-action-plan.md` | RFC-75 | Executed | Master Action Plan del Change Lifecycle de ARgentOS DEV: estado real contrastado con git/checkers; modelo de lifecycle y condiciones derivadas (Verified/Executed/Committed/Closed/Promoted/Released); frontera DEV vs Protocol; inventario del workflow actual; mapeo RFC-75 → mecanismos; modelo de autoridad (ADR-16); economía de Change Levels L0–L3; decisión de no-state-machine; estrategias de skills/artifacts/policies/checkers/Git/telemetría; continuidad entre agentes (handoff fuera de alcance); roadmap incremental con seis incrementos conceptuales (0–5) agrupados en unidades de implementación A–D (1+3 en batch operacional) y "usable at every phase"; dogfooding; grafo de dependencias; riesgos; ADR candidates; deuda no bloqueante; validación (incluye política de "batería verde" §24.1); criterios de salida; retrospectiva RFC-71..74; preguntas abiertas; auditoría adversarial; veredicto READY FOR IMPLEMENTATION PLANNING. Entregable producido, corregido y verificado (checkers en verde; fallo de pytest preexistente como desviación documentada) sin ejecutar incrementos; `Executed` sin `Closed` (checkpoint/commit pendiente del mantenedor). |
+
+## Vigésima séptima serie: Change Lifecycle DEV — Unidad A / Incremento 0 (02 sep 2026)
+
+Primer Implementation Plan ejecutable derivado del Master Action Plan 94.
+Implementa exclusivamente la **Unidad A = Incremento conceptual 0** de RFC-75:
+semántica y vocabulario del Change Lifecycle DEV (condiciones derivadas
+Verified/Executed/Committed/Closed/Promoted/Released), modelo de Change Levels
+(ejes + `max` + L0 provisional, independiente de la clase RFC-56), frontera
+DEV/Protocol, serie como identidad derivada y observability schema baseline de
+las cuatro métricas permanentes (sin medición operacional ni machinery nueva).
+Cambio docs-only sobre `docs/CONVENTIONS.md`, `docs/VERSIONING.md`,
+`AGENTS.md`, `docs/AGENTS.md`, `CHANGELOG.md:[Unreleased]` y el registro del
+plan en este INDEX; sin `VERSION` bump ni tag (RFC-69). No implementa anchors,
+checkpoints, findings, pending, checkers ni series registries (Incrementos 1–5
+quedan para las unidades B/C/D y el track deferido). Plan redactado, registrado
+y ejecutado (2026-09-02) con verificación de checkers en verde y pytest
+`339 passed, 1 failed` (fallo temporal preexistente como desviación
+documentada); `Executed` sin `Closed` (OPEN-2 resuelto el 2026-09-02 por
+decisión explícita del mantenedor — corrección independiente del test, commit
+`865e3ad`, pytest `340 passed, 0 failed`, checkers PASS — sin aceptar
+desviación vigente; cierre formal pendiente del mecanismo de checkpoint del
+Incremento 3).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `95-change-lifecycle-unit-a-increment-0.md` | RFC-75 | Executed | Plan de implementación de la Unidad A (Incremento 0) del Change Lifecycle DEV: escribe en las fuentes de verdad la semántica del lifecycle (condiciones derivadas y vocabulario Verified/Executed/Committed/Closed/Promoted/Released/Abandoned), el modelo de Change Levels (ejes + `Level = max(...)` + L0 provisional, independiente de la clase RFC-56), la frontera DEV/Protocol, la serie como identidad derivada y el observability schema baseline de las cuatro métricas permanentes de RFC-75 (validation anchor coverage, finding lineage coverage, stale validation rate, Git closure anomalies) sin fingir medición; preserva la regla transversal target semantics vs operationalización (VC-1/GC-1/LC-1/PC-1 exigibles solo desde sus incrementos 1/3/2). Cambio docs-only: `docs/CONVENTIONS.md` (subsecciones de alcance DEV-only, Change Levels y regla transversal), `docs/VERSIONING.md` (§7 semántica de condiciones derivadas + §11 métricas), `AGENTS.md` raíz (`Task lifecycle`, frontera en `Do NOT`), `docs/AGENTS.md` (`Identity`: serie derivada), ítem `(plan 95, RFC-75)` en `CHANGELOG.md:[Unreleased]`; sin `VERSION` bump ni tag (RFC-69); sin campos de template, checkers, anchors, checkpoints, findings, pending, skills ni state machines. Derivado de RFC-75 `Accepted` y ADR-15/16 (plan 94 como mapa maestro, Unidad A); veredicto PLAN 95 READY FOR IMPLEMENTATION. **Ejecución (2026-09-02):** U1–U5 aplicados y verificados (checkers en verde; pytest `339 passed, 1 failed` con el fallo temporal preexistente reportado como desviación documentada, sin modificarlo); status `Executed` sin `Closed` (mecanismo de checkpoint del Incremento 3; OPEN-2 resuelto el 2026-09-02 por decisión explícita del mantenedor vía la corrección independiente del test — commit `865e3ad`, pytest `340 passed, 0 failed` — sin aceptar desviación vigente; cierre formal pendiente del mecanismo de checkpoint del Incremento 3). Sin cambios en `protocol/`, `runtime/`, `tests/`, `tools/`, VERSION, ADRs ni RFCs. |
+
+## Vigésima octava serie: Change Lifecycle DEV — Unidad B / Incrementos 1+3 (02 sep 2026)
+
+Segundo Implementation Plan ejecutable derivado del Master Action Plan 94.
+Implementa la **Unidad B = Incremento conceptual 1 + Incremento conceptual 3**
+de RFC-75 como una única unidad de ejecución planificada (el Incremento 3 no
+se renumera ni se absorbe dentro del 1): Validation Anchors operativos (VC-1)
+con campos de anchor y algoritmo de Scoped Content Identity v1 (tree id +
+delta identity por primitivas git), intake fallback con `Change Level` en el
+primer artifact (L0 provisional y triggers), serie como identidad derivada
+(declaración `Serie:` + relaciones verificables, sin registry) y Git
+closure/checkpoint operativo (GC-1) con registro de checkpoint, consistencia
+anchor↔checkpoint antes de `Closed`, multi-commit/multi-RFC y docs-only sin
+release. Cambio docs-only (ejecución futura) sobre
+`docs/plans/_TEMPLATE.md`, `docs/rfc/_TEMPLATE.md`, `docs/CONVENTIONS.md`,
+`docs/VERSIONING.md`, `AGENTS.md`, `docs/AGENTS.md`, Amendment Log de RFC-75,
+`CHANGELOG.md:[Unreleased]` e INDEX; sin `VERSION` bump ni tag (RFC-69); sin
+checkers, tests, skills, entidades, registries ni state machines (Incrementos
+2/4/5 quedan diferidos). Plan redactado y registrado (2026-09-02) con Change
+Level L2 (prospectivo, dogfooding) y veredicto PLAN 96 READY FOR
+IMPLEMENTATION. **Ejecución (2026-09-02):** implementado sobre `dev`
+(E3–E14 + registros de cierre); el propio plan produjo y verificó el primer
+Validation Anchor (state identity `b8add7d7…`; delta `a818ed4f…`) y el primer
+Checkpoint (consistencia C1 `9e4192f` ↔ anchor PASS; revalidación V2 sobre C2
+antes de `Closed`); status `Executed`; condición derivada `Closed` (docs-only,
+sin release).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `96-change-lifecycle-unit-b-increments-1-3.md` | RFC-75 | Executed | Plan de implementación de la Unidad B (Incrementos 1+3) del Change Lifecycle DEV: materializa VC-1 (Validation Anchors con campos de anchor — declared scope, command-set, effective inputs, observed dependencies, environmental factors, Scoped Content Identity v1 por `git write-tree`/`ls-files`/`hash-object` — en template de Plan y Amendment Log de RFC) y GC-1 (Git closure/checkpoint: registro de la relación closure↔estado Git con commits de cierre, tree id, consistencia anchor↔checkpoint y condición derivada `Closed`; `Committed ≠ Closed ≠ Released`; multi-commit/multi-RFC; docs-only sin release); intake fallback con `Change Level` en el primer artifact (L0 provisional, triggers, downgrade justificado) y serie como identidad derivada (declaración + relaciones; sin registry). Cambio docs-only: templates (`_TEMPLATE.md` de planes y RFCs), `docs/CONVENTIONS.md` (reglas operativas), `docs/VERSIONING.md` (§7/§10/§11), `AGENTS.md`, `docs/AGENTS.md`, Amendment Log de RFC-75, ítem `(plan 96, RFC-75)` en `CHANGELOG.md:[Unreleased]` y espejo en este INDEX; sin `VERSION` bump ni tag (RFC-69); sin checkers/tests/skills/entidades/registries/state machines (Incrementos 2/4/5 diferidos). Derivado de RFC-75 `Accepted` y ADR-15/16 (plan 94 Unidad B; plan 95 Incremento 0); Change Level L2 (coordinación 1, scope 1, impacto arquitectónico 1, release 1, duración 2). **Ejecución (2026-09-02):** implementación E3–E14 verificada (checkers PASS; pytest `340 passed, 0 failed`); commits C1 `9e4192f` (contenido) y C2 (registros de cierre): primer Validation Anchor real (state identity `b8add7d74a41b907627b7faa4f10909af599ef2b`; delta `a818ed4ffe683faad9cde368f4a0718112f40f62983c63d1e459dcdd947a0d14`) y primer Checkpoint (consistencia C1↔anchor PASS; revalidación V2 sobre C2 antes de `Closed`); status `Executed`; condición derivada `Closed` (docs-only, sin release). Sin cambios en `protocol/`, `runtime/`, `tests/`, `tools/`, VERSION, ADR-15/16, RFC-56/69 ni planes 94/95. |
+
+## Vigésima novena serie: Change Lifecycle DEV — Unidad C / Incremento 2 (02 sep 2026)
+
+Tercer Implementation Plan ejecutable derivado del Master Action Plan 94.
+Operacionaliza para artifacts nuevos la **Unidad C = Incremento conceptual 2**
+de RFC-75: findings con refs calificadas `<artifact>:F-<n>` y estados,
+corrections con registro de provenance `C-<n>` y alcance de revalidación,
+lineage formal `F-n`/`C-n` (namespace por artifact, sin registries), modelo de
+revalidación A1/A2 de la Decisión B, pending decisions per-artifact (PC-1),
+condiciones no resueltas, lineage post-close y estructuras documentales
+(CONVENTIONS, templates, VERSIONING, AGENTS.md, Amendment Log de RFC-75,
+INDEX, changelog) que el Incremento 4 consumirá como datos. Cambio
+exclusivamente documental (sin `protocol/`, `runtime/`, `tools/`, `tests/`,
+VERSION ni `dist/`; sin `VERSION` bump ni tag, RFC-69); no implementa el
+Incremento 4 ni crea el Plan 98; no toca `docs/adr/*` ni los Planes 94/95/96.
+Derivado de RFC-75 `Accepted` y ADR-15/16 (plan 94 Unidad C; plan 95 Incremento
+0; plan 96 Incrementos 1+3, `Closed`; Decisión B `fc52c88`); Change Level L2.
+Plan redactado a partir del Planning Report v2 aprobado (2026-09-02),
+creado y registrado el 2026-09-02 (Status inicial `Aprobado para ejecución`,
+sin implementar) y **ejecutado y cerrado el 2026-09-02**: Status `Executed`;
+condición derivada `Closed` (docs-only, sin release) con Validation Anchor
+(V1 sobre C1) y Checkpoint (revalidación V2 sobre C2) registrados; commits C1
+`236735b` (contenido) y C2 (registros de cierre) en `dev`; pytest
+`340 passed, 0 failed`; sin `VERSION` bump ni tag.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `97-change-lifecycle-unit-c-increment-2.md` | RFC-75 | Executed | Plan de implementación de la Unidad C (Incremento 2) del Change Lifecycle DEV: operacionaliza para artifacts nuevos findings (`<artifact>:F-<n>`, estados open/partially-resolved/resolved/deferred/superseded y reapertura por finding nuevo o metadata), corrections como registro de provenance (`C-<n>` ≠ fuente normativa; CL-6/CL-7), lineage formal por artifact sin registries globales, revalidación integrada a A1/A2 (A2 referencia A1 sin mutarlo; Decisión B `fc52c88`), pending per-artifact con metadata PC-1 (blocking/no-blocking, owner, escalación, resolución, evidencia, efecto downstream, ADR-worthiness), condiciones no resueltas, post-close por referencia (RFC-75 Mec. 12) y formatos deterministas que consumirá el Incremento 4. Cambio docs-only: `docs/CONVENTIONS.md` (subsecciones operativas LC-1/PC-1 y mapa de aplicabilidad), templates de Plan y RFC, `docs/VERSIONING.md` (§10 DoD + §11 campos de la métrica finding lineage coverage), `AGENTS.md` raíz, Amendment Log de RFC-75, ítem `(plan 97, RFC-75)` en `CHANGELOG.md:[Unreleased]` y espejo final en este INDEX; sin `VERSION` bump ni tag (RFC-69); sin checkers/tests/entidades/registries/state machines (Incrementos 4/5 diferidos). Derivado de RFC-75 `Accepted` y ADR-15/16 (plan 94 Unidad C; plan 95; plan 96 `Closed`); Change Level L2. **Creación (2026-09-02):** artifact creado y registrado sin ejecutar (Status `Aprobado para ejecución`, PLANNED / OPEN). **Ejecución (2026-09-02):** P2–P8 aplicados y verificados — CONVENTIONS, templates de Plan/RFC, VERSIONING §10/§11, AGENTS.md, Amendment Log de RFC-75, changelog e INDEX — checkers PASS (warnings esperados de `dev`); pytest `340 passed, 0 failed`; commits C1 `236735b` (contenido) y C2 (registros de cierre): Validation Anchor V1 (state identity T1 `0df8920c…`; delta `5d5ca643…`) y Checkpoint con revalidación V2 sobre C2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release). Dogfooding del propio plan: `No findings detected / N/A`; pending no-bloqueantes OQ-1…OQ-5 (owner mantenedor) documentados en §26 del plan. Sin cambios en `protocol/`, `runtime/`, `tests/`, `tools/`, VERSION, ADRs, RFC-46/56/69, `docs/AGENTS.md` ni planes 94/95/96. |
+
+## Trigésima serie: Change Lifecycle DEV — Unidad D / Incremento 4 (02 sep 2026)
+
+Cuarto Implementation Plan ejecutable derivado del Master Action Plan 94.
+Implementa la **Unidad D = Incremento conceptual 4** de RFC-75 con el mínimo
+viable demostrado por el corpus actual: automatización segura determinista y
+factual (advisory) de **C-1 — lifecycle anchor validation** y **C-2 —
+lifecycle checkpoint validation**, DEV-only sobre `tools/` + `tests/` (sin
+incorporación inicial a la batería canónica, sin CI, sin F-n/C-n/stale/series/
+métricas, sin registries, sin entidades, sin estado machine global). Consume
+los campos de anchor/checkpoint v1 materializados por las unidades B/C
+(planes 96/97) y respeta tree identity ≠ commit SHA, no-reachability desde
+`dev`, GAP ≠ invalidación y la frontera DEV/Protocol. Plan creado y registrado
+el 2026-09-02 (Status inicial `Aprobado para ejecución`, PLANNED / OPEN) y
+**ejecutado y cerrado el 2026-09-02**: C-1 (`tools/check_lifecycle_anchor.py`
++ `tests/test_check_lifecycle_anchor.py`) y C-2
+(`tools/check_lifecycle_checkpoint.py` +
+`tests/test_check_lifecycle_checkpoint.py`) implementados con commits C1
+`669a576` y C2 `9b5b8a1` en `dev`; pytest `380 passed, 0 failed`; checkers
+canónicos PASS (warnings esperados de `dev`); dogfooding sobre planes 96/97/98
+sin falsos positivos; Validation Anchor (V1 sobre C1) y Checkpoint
+(revalidación V2 sobre el estado final antes del cierre) registrados; Status
+`Executed`; condición derivada `Closed` (docs-only, sin release); sin `VERSION`
+bump ni tag.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `98-change-lifecycle-unit-d-increment-4.md` | RFC-75 | Executed | Plan de implementación de la Unidad D (Incremento 4) del Change Lifecycle DEV: especifica la primera automatización operativa del lifecycle como mínimo viable C-1 (lifecycle anchor checker propuesto `tools/check_lifecycle_anchor.py` + `tests/test_check_lifecycle_anchor.py`: forma/completitud de anchors v1, distinción GAP advisory vs anomalía, sin autoridad normativa) y C-2 (lifecycle checkpoint checker propuesto `tools/check_lifecycle_checkpoint.py` + `tests/test_check_lifecycle_checkpoint.py`: relación closure↔estado Git con tree identity, consistencia GC-1 contra el anchor del estado de cierre, modelo A1/A2 de la Decisión B, SHA = locator, sin reachability desde `dev`); población del régimen nuevo por señales estructurales del artifact (secciones del template `## Validation anchor`/`## Checkpoint / cierre`) sin registry global ni entidad Change; legacy excluido sin backfill automático (RFC-75 Mec. 15); testing determinista con pytest `tmp_path` y git temporales (19 escenarios C-1 + 21 escenarios C-2); dogfooding sobre el repo real; commits C1/C2 separados; recovery/stop conditions; AC-01…AC-21; sin `VERSION` bump ni tag, sin CI y sin tocar `protocol/.agents/` ni `.agents/` raíz. **Creación (2026-09-02):** artifact creado y registrado sin ejecutar (Status `Aprobado para ejecución`, PLANNED / OPEN; veredicto GO WITH CONDITIONS C1–C4); checkers documentales en verde; sin commits; Plan 98 NO `Executed`/`Closed`. **Ejecución (2026-09-02):** C-1/C-2 implementados y verificados — pytest `359 passed` (GATE C-1) y `380 passed` (GATE C-2), checkers canónicos PASS (warnings esperados de `dev`), `git diff --check` limpio; commits C1 `669a576` y C2 `9b5b8a1` en `dev`; dogfooding C-1/C-2: planes 96/97 `VALID` (tree de C1 == T1 declarado), plan 98 `N/A` en PLANNED, legacy 01–95 `EXCLUDED`, GAP=0, ANOMALY=0; validación adversarial PASS (tree identity, A1→A2, no-reachability, legacy, GAP/anomalía); Validation Anchor V1 (state identity T1 `1a3e93e9…`; delta `9d523cce…`) y Checkpoint con revalidación V2 sobre el estado final antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release). Dogfooding del propio plan: `No findings detected / N/A`; resolución documentada de OQ-7 (variante de encabezado `## Checkpoint` del corpus 96). Sin cambios en `protocol/`, `runtime/`, VERSION, ADRs/RFCs, `docs/AGENTS.md` ni planes 94–97. |
+
+## Trigésima primera serie: Change Lifecycle DEV — Corrección post-close F-1 (C-2/GC-1) (02 sep 2026)
+
+Primer correction Plan post-close de la serie Change Lifecycle DEV (RFC-75),
+derivado del **C1/C2 Read-Only Audit Report** posterior a la ejecución/cierre
+de Plan 98. Corrige exclusivamente el defecto de materialización **F-1**
+(MAJOR) en C-2 (`tools/check_lifecycle_checkpoint.py`): la selección del
+Validation Anchor aplicable de GC-1 usa recencia ("latest A2 wins") y
+pertenencia genérica del tree entre los commits de cierre, en lugar de
+identificar el estado de cierre y seleccionar el anchor de la validación cuyo
+estado validado corresponde a ese estado. La ejecución futura corrige
+únicamente C-2 + los tests relacionados (`tests/test_check_lifecycle_checkpoint.py`)
+con regresiones obligatorias (Casos A/B/C adversariales y 10 casos adicionales),
+preservando tree identity ≠ SHA, no-reachability, GAP advisory ≠ ANOMALY,
+A1 inmutable y A2 con lineage hacia A1, sin tocar C-1, F-2…F-9, `C-n`,
+RFC-75/ADR-15/16 ni Plan 98 (que permanece CLOSED). Cambio DEV-only sin
+`VERSION` bump ni tag (RFC-69); plan creado y registrado sin ejecutar
+(2026-09-02, Status `Aprobado para ejecución`, PLANNED / OPEN; veredicto GO
+WITH CONDITIONS); checkers documentales en verde; sin commits; sin implementar
+F-1. **Ejecución (2026-09-02):** F-1 corregido en C-2
+(`tools/check_lifecycle_checkpoint.py` + `tests/test_check_lifecycle_checkpoint.py`)
+con selección del anchor por correspondencia de estado (sin "latest A2 wins"
+ni pertenencia genérica del tree) y regresiones permanentes (Casos A/B/C +
+T1–T12); commit C1 `42da250`; pytest `388 passed, 0 failed`; checkers
+canónicos PASS; dogfooding 96/97/98 `VALID` y `ANOMALY=0`; Validation Anchor
+V1 (T1 `e9b47b1c…`; delta `dfb76a4d…`) y Checkpoint con revalidación V2 antes
+de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin
+release); `<PLAN-99>:C-1` registrado; sin cambios en `protocol/`, `runtime/`,
+C-1, VERSION, ADRs/RFCs ni Plan 98.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `99-change-lifecycle-f1-c2-gc1-correction.md` | RFC-75 | Executed | Correction Plan post-close de F-1 (C1/C2 Read-Only Audit Report posterior a Plan 98): corrige la materialización de GC-1 en C-2 (`tools/check_lifecycle_checkpoint.py` + `tests/test_check_lifecycle_checkpoint.py`) para seleccionar el anchor de la validación cuyo estado validado corresponde al estado de cierre (Tier 1 por tree identity; Tier 2 por revalidación declarada única sobre el cierre para el patrón corpus 96–98; sin recencia, sin pertenencia genérica del tree, sin SHA/reachability como identidad); reglas R-99-1…R-99-10; regresiones obligatorias Casos A/B/C + escenarios T1–T12; conserva GAP advisory ≠ ANOMALY, A1/A2 (Decisión B), anti-circularidad (estados validados solo desde la sección `## Validation anchor`), dogfooding sin regresiones sobre planes 96/97/98; `C-n` (`<PLAN-99>:C-1`) especificado y registrado al cerrar; anchor/checkpoint propios; cierre docs-only sin release; sin modificar RFC-75/ADR-15/16, C-1, Plan 98 (CLOSED), `protocol/.agents/` ni `.agents/`. **Creación (2026-09-02):** artifact creado y registrado sin ejecutar (Status `Aprobado para ejecución`, PLANNED / OPEN; veredicto GO WITH CONDITIONS C1–C4); checkers documentales en verde; sin commits; F-1 registrado como `<PLAN-99>:F-1` (open); Plan 99 NO `Executed`/`Closed`. **Ejecución (2026-09-02):** C-2 corregido y verificado — pytest `388 passed, 0 failed` (29 tests C-2: 21 existentes + 8 regresiones F-1), checkers canónicos PASS, `git diff --check` limpio; commit C1 `42da250` en `dev` (2 archivos; tree `e9b47b1c…`); dogfooding C-1/C-2: planes 96/97/98 `VALID` (anchor aplicable A2 declarado), plan 99 `N/A` pre-cierre y `VALID` tras su cierre, legacy 01–95 `EXCLUDED`, GAP=0, ANOMALY=0; adversarial review PASS (los 3 casos del bug original fallan sobre la implementación anterior y pasan sobre la corregida); Validation Anchor V1 (state identity T1 `e9b47b1c…`; delta `dfb76a4d…`) y Checkpoint con revalidación V2 sobre el estado final antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); `<PLAN-99>:C-1` registrado (F-1 `resolved`). Sin cambios en `protocol/`, `runtime/`, C-1, VERSION, ADRs/RFCs, `docs/CONVENTIONS.md`, `docs/VERSIONING.md` ni Plan 98; sin push. |
+
+## Trigésima segunda serie: Change Lifecycle DEV — Continuación post-roadmap A–D (lineage integrity / LC-1, C-3) (02 sep 2026)
+
+Primer Implementation Plan **posterior al roadmap A–D** de la serie Change
+Lifecycle DEV (RFC-75): no es una unidad histórica del roadmap y no inventa un
+"Incremento 5". Continúa la materialización del lifecycle automatizando la
+siguiente capacidad que el estado factual del repo demuestra más madura:
+**integridad de lineage de findings/corrections/revalidación (LC-1)**,
+verificada por un checker determinista nuevo **C-3 — lifecycle lineage
+checker** (propuesto `tools/check_lifecycle_lineage.py` +
+`tests/test_check_lifecycle_lineage.py`): verifica forma, completitud mínima y
+consistencia de los registros del Incremento 2 (`### Findings`/`### Correcciones`
+del contenedor `## Findings / Correcciones / Pending`) — refs calificadas
+`<artifact>:F-<n>`/`C-<n>` con namespace del artifact, vocabulario de estados,
+elementos inmutables del finding (CL-8), provenance a origen y alcance de
+revalidación de corrections (CL-6), trazabilidad de claims de revalidación a
+evidencia declarada del propio artifact (CL-7), marcadores de ausencia y
+contradicciones de resolución — con clasificaciones EXCLUDED/BOUNDARY/N/A/
+VALID/GAP/ANOMALY, GAP advisory ≠ ANOMALY, sin autoridad normativa (ADR-16),
+read-only, stdlib-only y sin Git en v1. Gate persist → observe → automate
+satisfecho con datos reales (Plan 99: cadena `<PLAN-99>:F-1` → `<PLAN-99>:C-1`
+→ V1/V2 → `resolved`; Plan 98: ausencia declarada `No findings detected /
+N/A`). Cambio DEV-only (tooling + tests + registros de cierre) sin `VERSION`
+bump ni tag (RFC-69); sin incorporación inicial a la batería canónica ni a CI;
+sin F-3/F-2…F-9, sin pending (PC-1), sin C-1/C-2, sin RFC/ADR nuevos ni
+modificación de Planes 94–99. **Creación (2026-09-02):** artifact creado y
+registrado sin ejecutar (Status `Aprobado para ejecución`, PLANNED / OPEN;
+veredicto GO WITH CONDITIONS C1–C4); checkers documentales en verde; sin
+commits; Plan 100 NO `Executed`/`Closed`. **Ejecución (2026-09-02):** C-3
+implementado (`tools/check_lifecycle_lineage.py` +
+`tests/test_check_lifecycle_lineage.py`; reglas R-L1-1…R-L1-12; 40 tests:
+matriz T01–T28 + 12 escenarios adversariales permanentes); pytest suite C-3
+`40 passed` y pytest global `428 passed, 0 failed`; checkers canónicos PASS;
+commits C1 `1ffe24c` (contenido) en `dev`; dogfooding C-3: planes 96/97
+`EXCLUDED`, plan 98 `N/A`, plan 99 `VALID` (cadena `<PLAN-99>:F-1` →
+`<PLAN-99>:C-1`), legacy 01–95 `EXCLUDED`, plan 100 lifecycle-stable
+(`BOUNDARY` pre-C2 → `N/A` tras su cierre), GAP=0, ANOMALY=0; Validation
+Anchor V1 (T1 `2f348f37…`; delta `e4f715ec…`) y Checkpoint con revalidación
+V2 antes de `Closed`; status `Executed`; condición derivada `Closed`
+(docs-only, sin release); sin cambios en `protocol/`, `runtime/`, C-1/C-2,
+RFC-75/ADR-15/16, VERSION ni Planes 94–99; sin push.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `100-change-lifecycle-lineage-integrity.md` | RFC-75 | Executed | Plan de implementación de la continuación post-roadmap A–D del Change Lifecycle DEV: selecciona con evidencia la capacidad de integridad de lineage findings/corrections/revalidación (LC-1/CL-6/CL-7) y especifica C-3 — lifecycle lineage checker (`tools/check_lifecycle_lineage.py` + `tests/test_check_lifecycle_lineage.py` propuestos): población estructural del dominio del Incremento 2 (contenedor `## Findings / Correcciones / Pending`; subsecciones `### Findings`/`### Correcciones`; `### Pending decisions` fuera de v1), contrato de registros y refs calificadas `<artifact>:F-<n>`/`C-<n>` con namespace del artifact, vocabulario de estados (open/partially-resolved/resolved/deferred/superseded), elementos inmutables del finding (CL-8), provenance a origen y alcance de revalidación de corrections (CL-6), soporte declarado de claims de revalidación en el `## Validation anchor`/checkpoint del mismo artifact (CL-7), marcadores de ausencia (`No findings detected / N/A`) y contradicciones de resolución; clasificaciones EXCLUDED/BOUNDARY/N/A/VALID/GAP/ANOMALY con GAP advisory ≠ ANOMALY y sin autoridad normativa (ADR-16); read-only, stdlib-only, sin Git en v1, exit 0 salvo ANOMALY; matriz de tests T01–T28 (happy path, missing, malformed, conflicting, legacy, boundary `reopened`, no-retroactivity, determinismo, ejecución repetida, adversarial, dogfooding real, stdlib-only); dogfooding esperado Plan 98 `N/A`, Plan 99 `VALID`, planes 96/97 y legacy `EXCLUDED`, `ANOMALY=0`; sin F-3 (no bloqueante; GAP sin tie-break ante duplicados), sin F-2…F-9, sin pending/PC-1, sin C-1/C-2, sin RFC/ADR nuevos, sin incorporación a batería canónica/CI; commits C1/C2 al ejecutar; anchor/checkpoint propios; cierre docs-only sin release; RFC-75/ADR-15/16 y Planes 94–99 intactos. **Creación (2026-09-02):** artifact creado y registrado sin ejecutar (Status `Aprobado para ejecución`, PLANNED / OPEN; veredicto GO WITH CONDITIONS C1–C4); checkers documentales en verde; sin commits; Plan 100 NO `Executed`/`Closed`. **Ejecución (2026-09-02):** C-3 implementado y verificado — pytest suite C-3 `40 passed` (matriz T01–T28 + 12 adversariales permanentes) y pytest global `428 passed, 0 failed`; checkers canónicos PASS; commit C1 `1ffe24c` (contenido: tool + suite) en `dev`; dogfooding C-3: planes 96/97 `EXCLUDED`, plan 98 `N/A`, plan 99 `VALID` (cadena `<PLAN-99>:F-1` → `<PLAN-99>:C-1`), legacy 01–95 `EXCLUDED`, plan 100 `BOUNDARY` pre-C2 → `N/A` tras su cierre, GAP=0, ANOMALY=0; Validation Anchor V1 (T1 `2f348f37…`; delta `e4f715ec…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); sin cambios en `protocol/`, `runtime/`, C-1/C-2, RFC-75/ADR-15/16, VERSION ni Planes 94–99; sin push. |
+
+## Trigésima tercera serie: Change Lifecycle DEV — Capa operacional `.agents/` (Plan 101) (02 sep 2026)
+
+Implementation Plan **posterior al cierre de la serie A–D** del Change
+Lifecycle DEV (RFC-75): formaliza la materialización futura de la **capa
+operacional `.agents/` de ARgentOS DEV** en la raíz del repo fuente como
+interfaz operacional permanente que un agente LLM lee para ejecutar el Change
+Lifecycle (entry point `.agents/AGENTS.md` + workflow
+`.agents/workflows/change-lifecycle.md` + policies de authority,
+validation-closure y lifecycle-checkers), con integración mínima de
+descubrimiento/taxonomía/frontera en `AGENTS.md` raíz, `docs/AGENTS.md` y
+`docs/CONVENTIONS.md`; fuente de diseño = staging temporal gitignored
+`sessions/agents-dev-layer/` (no versionado, no operacional), con transición
+explícita staging → `/.agents/` y eliminación del staging tras materialización
+verificada (sin duplicación operacional permanente). Reutiliza RFC-75,
+ADR-15/16, C1/C2/C3, templates y convenciones sin crear autoridad normativa
+nueva, sin state machines/registries/databases/tracker globales, sin copiar
+`protocol/.agents/` (frontera DEV/Protocol intacta; `protocol/`, `dist/`,
+`runtime/`, `tools/`, `tests/` excluidos), sin checkers nuevos ni modificación
+de C1/C2/C3 salvo necesidad factual estrictamente imprescindible autorizada
+por el propio alcance, sin F-3/F-2…F-9, sin RFC/ADR nuevos ni modificación de
+RFC-75/ADR-15/16 ni Planes 94–100; gates G0–G7, criterios AC-101-01…AC-101-18,
+dogfooding operacional, recovery con Git, commits C1/C2 al ejecutar, cierre
+docs-only sin release (RFC-69). **Creación (2026-09-02):** artifact creado y
+registrado sin ejecutar (Status `Aprobado para ejecución`, PLANNED / OPEN;
+Planned YES; Executed NO; Committed NO; Verified NO; Closed NO; Released NO;
+veredicto GO — CREATION ONLY; ejecución futura GO WITH CONDITIONS C1–C4);
+checkers documentales en verde; C1/C2/C3 sin ANOMALY; sin commits; Plan 101 NO
+`Executed`/`Closed`; `.agents/` NO materializado; staging intacto.
+**Ejecución (2026-09-03):** Plan 101 ejecutado con autorización explícita del
+mantenedor — capa `.agents/` materializada en la raíz (5 archivos: AGENTS.md +
+workflow + 3 policies, 1:1 con el diseño staged verificado por hash),
+integración mínima aplicada (`AGENTS.md` raíz con puntero de descubrimiento;
+`docs/AGENTS.md` con taxonomía de la capa operacional; `docs/CONVENTIONS.md`
+con frontera documental Producto vs DEV), dogfooding G7 PASS (cadena
+`AGENTS.md` → `.agents/AGENTS.md` → workflow → policies sin cargar todo
+`docs/`); pytest `428 passed, 0 failed`; checkers canónicos PASS; C1/C2/C3
+GAP=0, ANOMALY=0; commit C1 `3706570` (contenido) + C2 (registro) en `dev`;
+Validation Anchor V1 (T1 `74f96b14…`; delta `47c95eee…`) y Checkpoint con
+revalidación V2 antes de `Closed`; status `Executed`; condición derivada
+`Closed` (docs-only, sin release); staging `sessions/agents-dev-layer/`
+eliminado tras materialización verificada; sin findings/corrections reales;
+sin cambios en `protocol/`, `runtime/`, C-1/C-2/C-3, RFC-75/ADR-15/16,
+VERSION ni Planes 94–100; sin push.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `101-change-lifecycle-agents-operational-layer.md` | RFC-75 | Executed | Plan de implementación posterior al roadmap A–D del Change Lifecycle DEV: autoriza la **materialización futura** de la capa operacional `.agents/` de ARgentOS DEV en la raíz del repo fuente (ubicación canónica `/.agents/`), como interfaz operacional permanente del agente LLM para ejecutar el Change Lifecycle — `.agents/AGENTS.md` (entry point operacional DEV; descubrible desde el `AGENTS.md` raíz), `.agents/workflows/change-lifecycle.md` (intake → estado Git → detección/clasificación → autorización → Plan → ejecución → evidencia → validación → findings/corrections/revalidation → checkpoint → Closed → post-close), `.agents/policies/authority.md` (FACTUAL/NORMATIVE/DECISION/RELEASE/DESCRIPTIVE + detect → classify → escalate → human decision → correct artifact → revalidate), `.agents/policies/validation-closure.md` (A1/A2/revalidation/anchor/closure state/checkpoint/Executed/Committed/Verified/Closed/Released/GAP/ANOMALY/stop conditions; GC-1 por correspondencia de estado validado→cierre, semántica corregida F-1 en C-2, sin latest A2 wins ni generic tree membership) y `.agents/policies/lifecycle-checkers.md` (C1/C2/C3: cuándo/input/VALID/GAP/ANOMALY/acción; deterministas, no normativos; sin copiar algoritmos) — más integración mínima de descubribilidad, entry point, taxonomía (`docs/AGENTS.md`) y frontera documental Product/Protocol vs DEV (`docs/CONVENTIONS.md`); fuente de diseño = staging temporal `sessions/agents-dev-layer/` (gitignored, no versionado, no operacional) con transición y eliminación del staging tras materialización exitosa (AC-101-09); sin autoridad normativa nueva (`.agents/` = operación sobre contratos existentes; `docs/` = autoridad/historia; `tools/` = verificación determinista); frontera DEV/Protocol intacta (sin copias de `protocol/.agents/`; `protocol/`, `dist/`, `runtime/`, `tools/`, `tests/` excluidos); sin checkers nuevos, sin modificación de C1/C2/C3 salvo necesidad factual imprescindible autorizada, sin F-3/F-2…F-9, sin pending/PC-1 nuevos, sin RFC/ADR, sin state machines/registries/databases/trackers; gates G0–G7 y criterios AC-101-01…AC-101-18 verificables; dogfooding operacional (AGENTS.md → `.agents/AGENTS.md` → workflow → clasificación → autoridad → Plan → ejecución → C1/C2/C3 → validation → checkpoint → Closed) sin cargar todo `docs/`; recovery con Git (materialización parcial, paths incorrectos, divergencia staging/`.agents/`, modificación accidental de `protocol/.agents/`, root AGENTS incorrecto, docs incoherente, validación fallida, rollback); commits C1 (materialización/integración) y C2 (registro/cierre) al ejecutar en `dev`, sin push/tag/release/VERSION bump; anchor/checkpoint propios (V1/V2) al cerrar; cierre docs-only sin release (RFC-69); RFC-75/ADR-15/16 y Planes 94–100 intactos. **Creación (2026-09-02):** artifact creado y registrado sin ejecutar (Status `Aprobado para ejecución`, PLANNED / OPEN; Planned YES; Executed NO; Committed NO; Verified NO; Closed NO; Released NO; veredicto GO — CREATION ONLY; ejecución futura GO WITH CONDITIONS C1–C4); checkers documentales en verde (estructura, citas; C1/C2/C3 GAP=0, ANOMALY=0); sin commits; Plan 101 NO `Executed`/`Closed`; `.agents/` NO materializado en la raíz; staging `sessions/agents-dev-layer/` intacto. **Ejecución (2026-09-03):** capa `.agents/` materializada e integrada — commit C1 `3706570` (5 archivos `.agents/` + `AGENTS.md` + `docs/AGENTS.md` + `docs/CONVENTIONS.md`) y commit C2 (registro/cierre) en `dev`; pytest `428 passed, 0 failed`; checkers canónicos PASS; dogfooding C1/C2/C3 GAP=0, ANOMALY=0 (plan 101 `VALID` C-1/C-2, `N/A` C-3); Validation Anchor V1 (T1 `74f96b14…`; delta `47c95eee…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); staging eliminado; sin findings/corrections; sin cambios en `protocol/`, `runtime/`, C-1/C-2/C-3, RFC-75/ADR-15/16, VERSION ni Planes 94–100; sin push. |
+
+## Trigésima cuarta serie: README — Repository Operational Model (Plan 102) (03 sep 2026)
+
+Plan 102 (cambio DEV docs-only, RFC-75; sin efecto sobre
+`protocol/.agents/`): agrega a `README.md` una sección breve
+`## Repository Operational Model` que explica la separación operacional entre
+`.agents/` (interfaz operacional del agente DEV), `docs/` (autoridad/historia/
+documentación) y `tools/` (verificación determinista, sin autoridad normativa
+propia), y la frontera con `protocol/.agents/` (dominio del Protocol; data, no
+instrucciones DEV). Clasificación: clase RFC-56 — (sin payload), Change Level
+L1, scope documental (README EntryPoint + artifacts de registro del plan).
+Ejecución en `dev`: commit C1 `f6cf0a8` (contenido README) y commit C2
+(registro/cierre) con anchor/checkpoint propios; cierre docs-only sin `VERSION`
+bump ni tag (RFC-69). Sin cambios en `.agents/`, `protocol/`, `runtime/`,
+`tests/`, `tools/`, `dist/` ni Planes 94–101.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `102-readme-repository-operational-model.md` | RFC-75 | Executed | Agrega a `README.md` la sección `## Repository Operational Model` (breve, en inglés, orientada a agentes/desarrolladores nuevos): `.agents/` es la interfaz operacional que un agente consulta para orientarse y ejecutar trabajo en DEV (instrucciones operacionales; la autoridad normativa vive en `docs/`); `docs/` contiene documentación, convenciones, decisiones y evidencia documental según su autoridad; `tools/` contiene mecanismos de verificación/chequeo y su output es evidencia factual, nunca autoridad normativa por sí mismo; `protocol/.agents/` pertenece al dominio del Protocol (entry `protocol/_AGENTS.md`) y no debe confundirse con el `.agents/` operacional de DEV. Cambio DEV docs-only: clase RFC-56 —, Change Level L1, sin `VERSION` bump ni tag (RFC-69); commits C1 `f6cf0a8` (contenido) + C2 (registro/cierre) en `dev`; Validation Anchor V1 (T1 `7da67a2f…`; delta `82b2e799…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); sin findings/corrections; sin cambios en `.agents/`, `protocol/`, `runtime/`, `tests/`, `tools/`, `dist/`, VERSION ni Planes 94–101; sin push. |
+
+## Trigésima quinta serie: aceptación de la RFC-64 (03 sep 2026)
+
+Plan de aceptación/formalización docs-only de la RFC-64 (Execution Record
+Model), siguiendo el patrón normativo de los planes 92/93 (RFC-73/74) bajo el
+régimen del Change Lifecycle DEV (RFC-75; anchors/checkpoints de los
+incrementos 1+3/2). No implementa ninguna capacidad: solo `Proposal →
+Accepted` (status, cuerpo `## Status`, Amendment Log con las tres lecturas de
+implementación de la decisión humana, INDEX de RFCs, alineación de metadatos de
+estado de ADR-06/07/08/11 + ADR INDEX, changelog bajo `[Unreleased]` y registro
+del plan). Sin `VERSION` bump ni tag (RFC-69). La aceptación NO autoriza la
+ejecución del plan 78 (permanece `Aprobado para ejecución` sin ejecutar; las
+condiciones C3–C6 de su ejecución futura quedan preservadas como contexto en el
+Amendment Log de la RFC-64).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `103-rfc64-acceptance.md` | RFC-64 | Executed | Formaliza la aceptación de la RFC-64 (Execution Record Model): identidad de ejecución por composición, roles disjuntos de los registros, alcance de `state.json`, semántica temporal UTC con fuente declarada y observabilidad de budget. RFC-64 pasa a `Accepted (plan 103, 2026-09-03)` con entrada en su `## Amendment Log` que preserva las tres lecturas de implementación de la decisión humana (`clock` implementa `agent_clock` sin renombrar a `source`; `seq` estrictamente monótono por sesión; TR-002 con tolerancia de 60 s y `timestamp_divergence.cause`) y las condiciones futuras del plan 78 como contexto (versión 11.0.0, guard/fixtures legacy, METRICS schema 1.2.0, declaración de `state.json`, C3–C6; NO ejecutadas); INDEX de RFCs actualizado; ADR-06/07/08/11 + ADR INDEX con metadatos de estado alineados (sin contenido normativo nuevo). Cambio docs-only: sin `VERSION` bump ni tag (RFC-69); commits C1 `5d1c8e0` (contenido) + C2 (registro/cierre) en `dev`; Validation Anchor V1 (T1 `fd0a3db8…`; delta `8e72e9b4…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); sin findings/corrections; sin cambios en `protocol/.agents/`, `runtime/`, `tests/`, `tools/`, `dist/`, VERSION ni Planes 94–102; Plan 78 intacto y NO ejecutado; sin push. |
+
+## Trigésima sexta serie: alineación documental y operacional post-Plan-78 (Plan 104) (05 sep 2026)
+
+Plan 104 (cambio DEV docs-only autorizado por decisión humana del mantenedor
+«Plan 104 — Documentation & Operational Alignment», 2026-09-05; régimen
+RFC-69/RFC-75; sin RFC nueva, clase RFC-56 —): alinea la documentación
+operacional/descriptiva con el estado real post-Plan-78 (`11.0.0` pre-release
+en `dev`, sin promover). Scope: root `AGENTS.md` como entrypoint/puntero sin
+espejo de la batería canónica (layout de `docs/` corregido con `docs/rfc/`,
+`docs/adr/` y `docs/plans/` diferenciados); `.agents/AGENTS.md` permanece como
+entrypoint (no `INDEX.md`) con la alineación factual mínima del `## Verification
+battery`; `README.md` sin batería parcial duplicada; `docs/VERSIONING.md` §9
+como snapshot 2026-09-05 coherente con git y §4.1 con ownership único de la
+batería; `docs/CONVENTIONS.md` con rangos actualizados (RFCs hasta RFC-75;
+ADRs hasta ADR-16); `docs/MIGRATION.md` con el link `../CHANGELOG.md` corregido;
+`CHANGELOG.md` con `[Unreleased]` en la posición superior; modelos de
+arquitectura preservados como snapshots históricos con banner mínimo (contenido
+original intacto). Sin cambios en `protocol/.agents/`, `runtime/`, `tools/`,
+`tests/`, `dist/`, `protocol/.agents/VERSION` (11.0.0), Deferred
+(ROADMAP/audits/source-layout/ADOPTION) ni tags; sin promoción de `11.0.0`.
+Ejecución en `dev`: commit C1 `a2c9c43` (contenido) y commit C2
+(registro/cierre); Validation Anchor V1 (T1 `639c4fce…`; delta `792e1507…`) y
+Checkpoint con revalidación V2 antes de `Closed`; C1/C2/C3 GAP=0, ANOMALY=0;
+status `Executed`; condición derivada `Closed` (docs-only, sin release); sin
+findings/corrections.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `104-documentation-operational-alignment.md` | — | Executed | Alineación documental y operacional post-Plan-78 (decisión humana 2026-09-05): root `AGENTS.md` como entrypoint/puntero a la batería canónica de `docs/VERSIONING.md` §4.1 con layout de `docs/` corregido (RFCs/ADRs/planes diferenciados); `.agents/AGENTS.md` intacto como entrypoint operacional (alineación factual mínima del `## Verification battery`: puntero, no espejo; sin `INDEX.md`); `README.md` sin batería parcial (puntero canónico); `docs/VERSIONING.md` §9 snapshot 2026-09-05 (master/dist `10.3.0`; dev `11.0.0` pre-release; tags hasta `10.3.0`) y §4.1 con ownership único; `docs/CONVENTIONS.md` con rangos actualizados (RFC-75/ADR-16); `docs/MIGRATION.md` link `../CHANGELOG.md` corregido; `CHANGELOG.md` con `[Unreleased]` reubicado arriba; banners históricos mínimos en `ARCHITECTURAL_PROBLEM_MODEL.md` y `ARCHITECTURAL_DECISION_MODEL.md` (contenido original preservado; materialización posterior respaldada por la matriz `docs/adr/INDEX.md:Matriz D# ↔ ADR ↔ RFC ↔ plan`). Cambio DEV docs-only: clase RFC-56 —, Change Level L2, sin `VERSION` bump ni tag (RFC-69); commits C1 `a2c9c43` (contenido) + C2 (registro/cierre) en `dev`; Validation Anchor V1 (T1 `639c4fce…`; delta `792e1507…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); sin findings/corrections; sin cambios en `protocol/.agents/`, `runtime/`, `tests/`, `tools/`, `dist/`, `protocol/.agents/VERSION` (11.0.0), Deferred ni Planes 94–103; sin push, sin merge, sin tag; `11.0.0` sigue sin release. |
+
+## Trigésima séptima serie: arquitectura terminológica y glosario (Plan 105) (05 sep 2026)
+
+Plan 105 (cambio DEV docs-only autorizado por decisiones humanas del
+mantenedor D1–D5, 2026-09-05; régimen RFC-69/RFC-75; sin RFC/ADR nuevo, clase
+RFC-56 —): materializa la arquitectura terminológica aprobada: vocabularios
+DEV/Protocol separados con puente descriptivo (`docs/glossary/`), glosario
+`docs/glossary/INDEX.md` + `terms.md` como registro Inventory/DESCRIPTIVE no
+normativo, reglas operacionales D1–D5 en `docs/CONVENTIONS.md`, semántica
+AGENTS/INDEX/ENTRYPOINT y mapa de clase en `docs/AGENTS.md`, punteros de
+descubrimiento en root `AGENTS.md` y `.agents/AGENTS.md`. Sin cambios en
+`protocol/.agents/`, `runtime/`, `tools/`, `tests/`, `dist/`,
+`protocol/.agents/VERSION` (11.0.0) ni tags; sin renames; sin checker nuevo.
+Ejecución en `dev`: commit C1 `120f44e` (contenido) y C2 (registro/cierre);
+Validation Anchor V1 (T1 `69f16b4f…`; delta `346ab984…`) y Checkpoint con
+revalidación V2 antes de `Closed`; C1/C2/C3 GAP=0, ANOMALY=0; status
+`Executed`; condición derivada `Closed` (docs-only, sin release); sin
+findings/corrections.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `105-terminology-architecture-materialization.md` | — | Executed | Materialización docs-only de las decisiones humanas D1–D5 (terminología: vocabularios separados + puente descriptivo; glosario `docs/glossary/INDEX.md` + `terms.md` Inventory/DESCRIPTIVE no normativo; convención AGENTS/INDEX/ENTRYPOINT preservada; regla SCI; reglas de calificación; semántica documentada en `docs/AGENTS.md` y regla operacional en `docs/CONVENTIONS.md`). Cambio DEV docs-only: clase RFC-56 —, Change Level L2, sin `VERSION` bump ni tag (RFC-69); commits C1 `120f44e` (contenido) + C2 (registro/cierre) en `dev`; Validation Anchor V1 (T1 `69f16b4f…`; delta `346ab984…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); pending no bloqueante de elevación ADR futura; sin findings/corrections; sin cambios en `protocol/.agents/`, `runtime/`, `tests/`, `tools/`, `dist/`, `protocol/.agents/VERSION` (11.0.0) ni Planes 94–104; sin push, sin merge, sin tag; `11.0.0` sigue sin release. |
+
+## Trigésima octava serie: corrección post-close del glosario (Plan 106) (05 sep 2026)
+
+Plan 106 (cambio DEV docs-only autorizado por el mantenedor, 2026-09-05;
+régimen RFC-69/RFC-75; sin RFC/ADR nuevo, clase RFC-56 —): corrige los
+hallazgos F1–F5 del Fresh Agent Terminology Stress Test sobre los artifacts
+del Plan 105 (glosario): referencias de autoridad malformadas (F1/F2/F3),
+regla de cobertura/alta explícita (F4) y normalización del vocabulario de
+`Status` con restricciones de uso modeladas por separado (F5). Sin cambios en
+`protocol/.agents/`, `runtime/`, `tools/`, `tests/`, `dist/`,
+`protocol/.agents/VERSION` (11.0.0), sin renames y sin reabrir el Plan 105
+(post-close por referencia, RFC-75 Mecanismo 12).
+Ejecución en `dev`: commit C1 `922931a` (contenido), C2 `d0ca838` y C3
+`de53e29` (registro/cierre + residual) y C4 (alineación final del registro);
+Validation Anchor V1 (T1 `b4a6c860…`; delta `24adc65f…`) y Checkpoint con
+revalidación V2 antes de `Closed`; C1/C2/C3 GAP=0, ANOMALY=0; status
+`Executed`; condición derivada `Closed` (docs-only, sin release); findings
+`<PLAN-106>:F-1..F-5` resueltos vía `<PLAN-106>:C-1..C-5`; corrección residual
+de referencias malformadas en `terms.md` (misma clase F1/F3) cubierta por V2.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `106-post-close-glossary-correction.md` | — | Executed | Corrección docs-only post-close F1–F5 sobre los artifacts del Plan 105 (glosario): F1 cita de autoridad malformada reparada; F2 `Authority Reference` restaurado; F3 referencia `path:section` reemplazada por heading real (+ referencias malformadas residuales en `terms.md`, misma clase); F4 sección «Cobertura y alta de entradas» (selectiva; ausencia ≠ defecto; alta por ambigüedad/gobernanza/cross-layer); F5 `current (restricted)` eliminado — restricciones de uso separadas del `Status`. Cambio DEV docs-only: clase RFC-56 —, Change Level L1, sin `VERSION` bump ni tag (RFC-69); commits C1 `922931a` (contenido) + C2 `d0ca838` + C3 `de53e29` (registro/cierre y residual) + C4 (alineación final) en `dev`; Validation Anchor V1 (T1 `b4a6c860…`; delta `24adc65f…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); findings `<PLAN-106>:F-1..F-5` resueltos vía `<PLAN-106>:C-1..C-5` (FACTUAL/TRACEABILITY); sin cambios en `protocol/.agents/`, `runtime/`, `tests/`, `tools/`, `dist/`, `protocol/.agents/VERSION` (11.0.0), Plan 105 (`Closed`) ni documentos históricos; sin push, sin merge, sin tag; `11.0.0` sigue sin release. |
+
+## Trigésima novena serie: determinación DEV del estado terminal por ejecución (Plan 107) (05 sep 2026)
+
+Plan 107 (cambio DEV de tooling + registros docs-only autorizado por el
+mantenedor, 2026-09-05; régimen RFC-75/RFC-69; sin RFC/ADR nuevo, clase RFC-56
+—): mecanismo DEV read-only que determina el estado terminal de cada ejecución
+(`execution_id = (session_id, iteration)`) desde su Execution Record —
+`state.json` `status` terminal (`ABORT`/`COMPLETED`), la verdad mecánica del
+estado del protocolo por ejecución (RFC-64/RFC-63) — sin modificar el modelo
+del Protocol, sin campos/estados/artifacts/categorías nuevas y sin inferir un
+resultado cuando el registro no declara estado terminal (`no_gates_passed`,
+`in_progress`), `state.json` falta o está corrupto (fail-closed). Sin cambios
+en `protocol/.agents/`, `runtime/`, `dist/`, `protocol/.agents/VERSION`
+(11.0.0), sin release.
+Ejecución en `dev`: commit C1 `5dbd5bd` (contenido: herramienta + 13 tests),
+C2 (registro/cierre); Validation Anchor V1 (T1 `bf88ca4c…`; delta
+`a68ae699…`) y Checkpoint con revalidación V2 antes de `Closed`; C-1/C-2/C-3
+GAP=0, ANOMALY=0; status `Executed`; condición derivada `Closed` (docs-only,
+sin release); sin findings/corrections/pending (`N/A`); sin push, sin merge,
+sin tag; `11.0.0` sigue sin release.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `107-determinacion-estado-terminal-ejecucion.md` | — | Executed | Mecanismo DEV de determinación/verificación del estado terminal por ejecución desde los Execution Records existentes: `tools/determine_execution_state.py` (determinismo sobre `state.json` `status`; no determinación declarada con razón para registros no terminales o `state.json` ausente/corrupto; salida JSON ordenada; stdlib-only, read-only) + `tests/test_determine_execution_state.py` (13 tests). Cambio DEV tooling + registros docs-only: clase RFC-56 —, Change Level L2, sin `VERSION` bump ni tag (RFC-69); commits C1 `5dbd5bd` (contenido) + C2 (registro/cierre) en `dev`; Validation Anchor V1 (T1 `bf88ca4c…`; delta `a68ae699…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); sin findings/corrections/pending (`N/A`); sin cambios en `protocol/.agents/`, `runtime/`, `tests/` legacy, `dist/`, `protocol/.agents/VERSION` (11.0.0) ni Planes 94–106; sin push, sin merge, sin tag; `11.0.0` sigue sin release. |
+
+## Cuadragésima serie: consulta DEV de una ejecución específica por iteración (Plan 108) (05 sep 2026)
+
+Plan 108 (cambio DEV de tooling + registros docs-only autorizado por el
+mantenedor, 2026-09-05; régimen RFC-75/RFC-69; sin RFC/ADR nuevo, clase RFC-56
+—): extiende el mecanismo DEV de determinación del estado terminal por
+ejecución con la consulta de **una ejecución específica**: `--iteration`
+(requiere `--session`; identificación inequívoca por `execution_id =
+(session_id, iteration)`, RFC-64) devuelve únicamente la determinación de esa
+ejecución, reutilizando la semántica existente (determinación para `status`
+terminal `ABORT`/`COMPLETED`; no determinación con razón para status no
+terminal o `state.json` ausente/corrupto; fail-closed sin inferencia) y sin
+agregar campos/estados/artifacts/categorías ni mecanismo paralelo. La consulta
+de sesión completa conserva su comportamiento actual; la iteración o sesión
+inexistente produce report vacío (ausencia = no determinación), sin fabricar
+entradas. Sin cambios en `protocol/.agents/`, `runtime/`, `dist/`,
+`protocol/.agents/VERSION` (11.0.0), sin release.
+Ejecución en `dev`: commit C1 `f612d26` (contenido: herramienta + 9 tests
+nuevos; suite total 22), C2 (registro/cierre); Validation Anchor V1 (T1
+`d49f5473…`; delta `6f28624d…`) y Checkpoint con revalidación V2 antes de
+`Closed`; C-1/C-2/C-3 GAP=0, ANOMALY=0; status `Executed`; condición derivada
+`Closed` (docs-only, sin release); sin findings/corrections/pending (`N/A`);
+sin push, sin merge, sin tag; `11.0.0` sigue sin release.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `108-consulta-especifica-de-ejecucion.md` | — | Executed | Consulta DEV de una ejecución específica por iteración sobre el mecanismo de determinación del estado terminal: `tools/determine_execution_state.py` agrega `--iteration` (requiere `--session`; `execution_id = (session_id, iteration)`) y devuelve únicamente la determinación de esa ejecución con la semántica existente (determinación para `ABORT`/`COMPLETED`; no determinación con razón para no terminal o `state.json` ausente/corrupto; iteración/sesión inexistente → report vacío fail-closed sin fabricar entradas; sin `--iteration` la consulta de sesión completa es idéntica) + `tests/test_determine_execution_state.py` (9 tests nuevos; 22 en la suite). Cambio DEV tooling + registros docs-only: clase RFC-56 —, Change Level L2, sin `VERSION` bump ni tag (RFC-69); commits C1 `f612d26` (contenido) + C2 (registro/cierre) en `dev`; Validation Anchor V1 (T1 `d49f5473…`; delta `6f28624d…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); sin findings/corrections/pending (`N/A`); sin cambios en `protocol/.agents/`, `runtime/`, `dist/`, `protocol/.agents/VERSION` (11.0.0) ni Planes 94–107; sin push, sin merge, sin tag; `11.0.0` sigue sin release. |
+
+## Cuadragésima primera serie: generador DEV de Scoped Content Identity para Validation Anchors (Plan 109) (05 sep 2026)
+
+Plan 109 (cambio DEV de tooling + registros docs-only autorizado por el
+mantenedor, 2026-09-05 — Dogfooding Test #3 —; régimen RFC-75/RFC-69; sin
+RFC/ADR nuevo, clase RFC-56 —): tool read-only que **genera** la Scoped
+Content Identity v1 que cada Validation Anchor registra (VC-1) y que el
+Checkpoint verifica (GC-1): `tools/scoped_content_identity.py` computa la
+Delta scoped identity (sha256 de la serialización canónica `scoped-v1` +
+pares `path NUL blob NUL` sobre un scope declarado de paths repo-relative
+ordenados) y la State identity (tree del index staged vía `git write-tree`, o
+del ref vía `git rev-parse <ref>^{tree}` con `--ref`), reutilizando el
+algoritmo v1 ya normado (plan 96 §13) y las primitivas git existentes sin
+modificar C-1/C-2/C-3, sin agregar campos/estados/artifacts/categorías ni
+mecanismo paralelo. Fail-closed (path fuera del repo/faltante/directorio, repo
+no git, ref no resoluble → error determinista, exit 1, sin salida parcial);
+salida JSON determinista; sin escrituras al working tree ni al index. Sin
+cambios en `protocol/.agents/`, `runtime/`, `dist/`,
+`protocol/.agents/VERSION` (11.0.0), sin release.
+Ejecución en `dev`: commit C1 `d8bc464` (contenido: herramienta + 15 tests;
+suite total 482), C2 (registro/cierre); Validation Anchor V1 (T1
+`12cff4c9…`; delta `e0b10edb…`, generada con el propio tool — dogfooding —)
+y Checkpoint con revalidación V2 antes de `Closed`; C-1/C-2/C-3 GAP=0,
+ANOMALY=0; status `Executed`; condición derivada `Closed` (docs-only, sin
+release); sin findings/corrections/pending (`N/A`); sin push, sin merge, sin
+tag; `11.0.0` sigue sin release.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `109-scoped-content-identity-generator.md` | — | Executed | Generador DEV determinista de la Scoped Content Identity v1 para Validation Anchors/Checkpoints: `tools/scoped_content_identity.py` (scope de paths repo-relative normalizado/deduplicado/ordenado; blob id por `git ls-files -s` o `git hash-object --path` para untracked; serialización `scoped-v1` + pares `path NUL blob NUL`; sha256 delta; state identity staged `write-tree` o `--ref <ref>^{tree}`; JSON determinista; fail-closed sin salida parcial; stdlib-only, read-only, sin red) + `tests/test_scoped_content_identity.py` (15 tests en repos git aislados). Cambio DEV tooling + registros docs-only: clase RFC-56 —, Change Level L2, sin `VERSION` bump ni tag (RFC-69); commits C1 `d8bc464` (contenido) + C2 (registro/cierre) en `dev`; Validation Anchor V1 (T1 `12cff4c9…`; delta `e0b10edb…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); sin findings/corrections/pending (`N/A`); sin cambios en `protocol/.agents/`, `runtime/`, `dist/`, `protocol/.agents/VERSION` (11.0.0) ni Planes 94–108; sin push, sin merge, sin tag; `11.0.0` sigue sin release. |
+
+## Cuadragésima segunda serie: inspección DEV de una ejecución concreta con identidad de su contenido (Plan 110) (06 sep 2026)
+
+Plan 110 (cambio DEV de tooling + registros docs-only autorizado por el
+mantenedor, 2026-09-06 — Dogfooding Test #4, GO H1=1 —; régimen
+RFC-75/RFC-69; sin RFC/ADR nuevo, clase RFC-56 —): extiende la consulta de
+una ejecución específica (`determine_execution_state.py --session S
+--iteration N`, Plan 108) con `--content-identity`: la entrada de la ejecución
+relaciona su determinación con la Scoped Content Identity v1 del contenido de
+su Execution Record (`.project/<session>/<iteration>/`, archivos presentes
+ordenados), computada por composición con el generador existente
+(`tools/scoped_content_identity.py`, Plan 109) — importado sin modificar, sin
+duplicar el algoritmo v1, sin escrituras, sin tracking causal ni relación
+persistente Execution Record ↔ proyecto. Fail-closed: scope vacío, root sin
+repo git u otro error del generador → `applicable: false` con razón
+determinista, sin fabricar identidad; sesión/iteración inexistente → report
+vacío; sin el flag la salida es exactamente la actual. Sin cambios en
+`protocol/.agents/`, `runtime/`, `dist/`, `protocol/.agents/VERSION` (11.0.0),
+sin release.
+Ejecución en `dev`: commit C1 `bccf229` (contenido: herramienta + 18 tests
+nuevos; pytest `500 passed`), C2 (registro/cierre); Validation Anchor V1 (T1
+`416587fc…`; delta `1857802e…`, generada con el propio tool — dogfooding —) y
+Checkpoint con revalidación V2 antes de `Closed`; C-1/C-2/C-3 GAP=0,
+ANOMALY=0; status `Executed`; condición derivada `Closed` (docs-only, sin
+release); sin findings/corrections/pending (`N/A`); sin push, sin merge, sin
+tag; `11.0.0` sigue sin release.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `110-inspeccion-ejecucion-identidad-contenido.md` | — | Executed | Inspección DEV de una ejecución concreta relacionada con la identidad de su contenido: `tools/determine_execution_state.py` agrega `--content-identity` (con `--session` + `--iteration`) a la consulta de una ejecución específica; la entrada agrega `content_identity` = Scoped Content Identity v1 del scope del Execution Record de la iteración (`.project/<session>/<iteration>/`), computada por composición con `tools/scoped_content_identity.py` (import sin modificar; sin duplicar el algoritmo v1; JSON determinista; `applicable: false` con razón para scope vacío / root sin repo git / error del generador; sesión o iteración inexistente → report vacío fail-closed; sin el flag la salida es exactamente la actual) + `tests/test_determine_execution_state.py` (18 tests nuevos; 40 en la suite). Cambio DEV tooling + registros docs-only: clase RFC-56 —, Change Level L2, sin `VERSION` bump ni tag (RFC-69); commits C1 `bccf229` (contenido) + C2 (registro/cierre) en `dev`; Validation Anchor V1 (T1 `416587fc…`; delta `1857802e…`) y Checkpoint con revalidación V2 antes de `Closed`; status `Executed`; condición derivada `Closed` (docs-only, sin release); sin findings/corrections/pending (`N/A`); sin cambios en `protocol/.agents/`, `runtime/`, `dist/`, `protocol/.agents/VERSION` (11.0.0) ni Planes 94–109; sin push, sin merge, sin tag; `11.0.0` sigue sin release. |
+
+## Cuadragésima tercera serie: resumen por sesión y filtro de ejecuciones sin determinación terminal (Plan 111) (06 sep 2026)
+
+Plan 111 (cambio DEV de tooling + registros docs-only autorizado por el
+mantenedor, 2026-09-06 — Dogfooding Test #6, GO H1=1 —; régimen
+RFC-75/RFC-69; sin RFC/ADR nuevo, clase RFC-56 —): extiende la consulta DEV
+de Execution Records (`tools/determine_execution_state.py`, Planes 107–110)
+con dos modos aditivos de inspección read-only y determinista sobre la
+semántica existente de `determine_iteration`: `--session-summary` (reporte
+agregado por sesión: `protocol_version` de fuentes existentes, total/
+determinadas/indeterminadas y conteos `ABORT`/`COMPLETED`; con o sin
+`--session`; sesión o `.project/` ausentes → vacío fail-closed sin fabricar
+entradas) y `--undetermined` (restringe el reporte por ejecución a las
+entradas sin determinación con su razón existente; combinable con `--session`;
+incompatible con `--iteration` y con `--session-summary`). Sin flags nuevos la
+salida es exactamente la actual. El plan se ejecuta en dos etapas por agentes
+independientes (Etapa 1: U1 + V1; Etapa 2: U2 + revalidación A2 + cierre).
+Sin cambios en `protocol/.agents/`, `runtime/`, `dist/`,
+`protocol/.agents/VERSION` (11.0.0), sin release.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `111-resumen-por-sesion-ejecuciones-indeterminadas.md` | — | Executed | Consulta DEV de resumen por sesión y de ejecuciones sin determinación terminal sobre `tools/determine_execution_state.py` (Planes 107–110): U1 `--session-summary` (reporte agregado por sesión con `protocol_version` de fuentes existentes, `executions`/`determined`/`undetermined` y conteos `terminal_abort`/`terminal_completed` derivados de la semántica existente de `determine_iteration`; con o sin `--session`; sesión o `.project/` ausentes → `sessions` vacío y `summary` en cero, fail-closed sin fabricar entradas) y U2 `--undetermined` (reporte por ejecución restringido a `determined: false` con razón `state_json_missing`/`state_json_corrupt`/`status_not_terminal`; combinable con `--session`; incompatible con `--iteration` y con `--session-summary`, error determinista). Sin flags nuevos la salida es exactamente la actual (regresión cero); read-only, stdlib-only, sin red, sin escrituras sobre `.project/`. Cambio DEV tooling + registros docs-only: clase RFC-56 —, Change Level L2, sin `VERSION` bump ni tag (RFC-69); ejecución en dos etapas por agentes independientes (Etapa 1: U1 + tests + V1; Etapa 2: U2 + tests + revalidación A2 + cierre `Closed` docs-only); sin cambios en `protocol/.agents/`, `runtime/`, `dist/`, `protocol/.agents/VERSION` (11.0.0) ni Planes 94–110; sin push, sin merge, sin tag; `11.0.0` sigue sin release. **Creación (2026-09-06):** artifact creado y registrado sin ejecutar (Status `Aprobado para ejecución`, GO del mantenedor registrado en el plan como H1 = 1); Plan 111 NO `Executed`/`Closed`. **Ejecución de la Etapa 1 (2026-09-06):** U1 `--session-summary` implementada y validada — V1 sobre C1 `a596f69` (T1 `2f1855c3…`; delta `9bd8fa87…` generada con el propio tool); checkers PASS y pytest `514 passed`; commit de registro P `0ebd412` y commit de contenido C1 `a596f69` en `dev`; sin cambios fuera del alcance del GO; Etapa 2 (U2 `--undetermined` + tests, revalidación A2 y cierre `Closed` docs-only) pendiente; Plan 111 NO `Executed`/`Closed`. **Ejecución de la Etapa 2 y cierre (2026-09-06):** U2 `--undetermined` implementada y validada (filtro de entradas sin determinación con razones existentes; combinable con `--session`; excluyente con `--iteration` y `--session-summary`; guard API); 10 tests nuevos (64 en la suite del archivo); commits C2 `c7fd80a` (contenido) y R2 (registro/cierre) en `dev`; revalidación A2 sobre el estado final (checkers PASS; pytest `524 passed`; C-1 `VALID`, C-2 `VALID` — A2 declarado, GC-1 —, C-3 `N/A`; GAP=0, ANOMALY=0); status `Executed`; condición derivada `Closed` (docs-only, sin release); sin findings/corrections/pending (`N/A`); sin cambios en `protocol/.agents/`, `runtime/`, `dist/`, `protocol/.agents/VERSION` (11.0.0) ni Planes 94–110; sin push, sin merge, sin tag; `11.0.0` sigue sin release. |
+
+## Cuadragésima cuarta serie: alcance determinista del gate S00 sobre el health checklist (Plan 112) (06 sep 2026)
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `112-alcance-s00-health-determinista.md` | — (vía plan, Clase B) | Executed | Alcance determinista del gate S00 sobre el health checklist: el ítem 2 de `protocol/.agents/orchestrators/system/harness/policies/S00-system-ready.md` (`## Checklist`) pasa a declarar como alcance PASS el de la `## Decision` vigente de `protocol/.agents/standards/runtime/PROTOCOL_HEALTH.md` (ítems 1–6, 8–9 y 11–13; ítem 10 sólo con el flag `knowledge_base` habilitado; ítem 7 warning-only), sin duplicar el checklist y sin cambio de significado (single-source policy). Cambio Protocol Clase B (RFC-56), Change Level L1; versión `11.0.1` (PATCH; `protocol/.agents/VERSION` 11.0.0 → 11.0.1); sin RFC ni ADR; sin cambios en `master`/`dist`/tags/push/release. **Creación (2026-09-06):** artifact creado y registrado sin ejecutar (Status `Aprobado para ejecución`, GO del mantenedor registrado en el plan como H1 = 1). **Ejecución y cierre (2026-09-06):** ítem 2 de S00 reformulado (alcance PASS por referencia a la Decision de `PROTOCOL_HEALTH.md`), `protocol/.agents/VERSION` → `11.0.1`, sección `[11.0.1]` en `CHANGELOG.md`, y ancla `PROTOCOL_VERSION` de `runtime/toolcalls/canonical.py` alineada a `11.0.1` (requisito mecánico del checker de versión; fuera del payload); commits A `abe2b37` (registro), C1 `310e974` (contenido) y R2 (registro/cierre) en `dev`; V1 sobre C1 y revalidación A2 sobre el estado final (checkers PASS; pytest `524 passed`; C-1 `VALID`, C-2 `VALID` — A2 declarado, GC-1 —, C-3 `N/A`; GAP=0, ANOMALY=0); status `Executed`; condición derivada `Closed` (con release pendiente); sin findings/corrections/pending (`N/A`); sin cambios en otros archivos del payload ni en `master`/`dist`/tags; sin push, sin merge, sin tag; `11.0.1` y `11.0.0` siguen sin release. |
 
 ## Serie de RFCs (documentos canónicos)
 

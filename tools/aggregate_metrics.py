@@ -13,6 +13,14 @@ health signals, for the whole project and, with ``--per-session``, for each
 session. Unparseable comments are counted as corrupt, never silently
 discarded. The aggregation is advisory: nothing gates on it.
 
+``--audit`` reconciles ``state.json`` gate PASS records against
+``HARNESS_REPORT.md`` PASS entries. Sessions declaring ``protocol_version >=
+11.0.0`` are correlated by ``(iteration, trigger)`` and their timestamps are
+compared (``gate_ts`` vs ``event_ts``) with a 60-second tolerance; a larger
+divergence without ``timestamp_divergence.cause`` is an alert. Sessions
+without ``iteration`` (the published band up to 10.3.0 and earlier) keep the
+historical by-``trigger`` correlation (RFC-46).
+
 Usage:
   python tools/aggregate_metrics.py [--root REPO_ROOT] [--per-session] [--audit]
 
@@ -44,6 +52,8 @@ STATE_TRIGGERS = {
 }
 SEMVER_RE = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
 NEW_PROTOCOL = (4, 0, 0)
+RECORD_PROTOCOL = (11, 0, 0)
+TIMESTAMP_TOLERANCE_SECONDS = 60.0
 REUSE_LAYERS = ("discovery", "knowledge", "materialization")
 REUSE_OPERATIONS = ("lookup", "eligibility", "reuse_attempt", "post_use")
 PROVIDER_CACHE_RESULTS = ("hit", "miss", "unavailable")
@@ -537,14 +547,19 @@ def audit_cross_checks(root: Path) -> list[str]:
     ``protocol_version >= 4.0.0``, a ``PASS`` entry for a state-machine trigger
     (H00–H07, H11) without a matching ``state.json`` record is also flagged.
     Entries for non-state gates (e.g. H15) legitimately lack a ``state.json``
-    record in both directions.
+    record in both directions. Sessions declaring ``protocol_version >=
+    11.0.0`` correlate by ``(iteration, trigger)`` (their ENTRYs carry
+    ``iteration``) and get a timestamp comparison with a 60-second tolerance
+    plus the ``timestamp_divergence.cause`` exception; older sessions keep the
+    by-``trigger`` correlation because their ENTRYs have no ``iteration``
+    (RFC-46).
     """
     alerts: list[str] = []
     project = root / ".project"
     if not project.is_dir():
         return alerts
     for session in session_dirs(root):
-        state_triggers: set[str] = set()
+        state_by_iter: dict[str, dict[str, dict]] = {}
         for state_file in sorted(session.rglob("state.json")):
             try:
                 state = json.loads(
@@ -557,9 +572,16 @@ def audit_cross_checks(root: Path) -> list[str]:
             gates = state.get("gates")
             if not isinstance(gates, dict):
                 continue
+            iteration = state_file.parent.name
+            state_by_iter.setdefault(iteration, {})
             for trigger, entry in gates.items():
-                if isinstance(entry, dict) and entry.get("result") == "PASS":
-                    state_triggers.add(trigger)
+                if (
+                    isinstance(entry, dict)
+                    and entry.get("result") == "PASS"
+                    and isinstance(trigger, str)
+                ):
+                    state_by_iter[iteration][trigger] = entry
+        entry_by_iter: dict[str, dict[str, dict]] = {}
         entry_triggers: set[str] = set()
         report = session / "HARNESS_REPORT.md"
         if report.is_file():
@@ -574,21 +596,92 @@ def audit_cross_checks(root: Path) -> list[str]:
                     and data.get("result") == "PASS"
                     and isinstance(data.get("trigger"), str)
                 ):
-                    entry_triggers.add(data["trigger"])
-        for trigger in sorted(state_triggers - entry_triggers):
-            alerts.append(
-                f"{session.name}: state.json records PASS for {trigger} "
-                "without a matching PASS entry in HARNESS_REPORT.md"
-            )
+                    trigger = data["trigger"]
+                    iteration = data.get("iteration")
+                    entry_triggers.add(trigger)
+                    if isinstance(iteration, str):
+                        entry_by_iter.setdefault(iteration, {})[trigger] = data
         version = session_protocol_version(session)
+        record_protocol = version is not None and version >= RECORD_PROTOCOL
+
+        for iteration, gates in state_by_iter.items():
+            for trigger in sorted(gates):
+                if record_protocol:
+                    if trigger not in entry_by_iter.get(iteration, {}):
+                        alerts.append(
+                            f"{session.name}: state.json records PASS for "
+                            f"{trigger} in iteration {iteration} without a "
+                            "matching PASS entry in HARNESS_REPORT.md"
+                        )
+                elif trigger not in entry_triggers:
+                    alerts.append(
+                        f"{session.name}: state.json records PASS for "
+                        f"{trigger} without a matching PASS entry in "
+                        "HARNESS_REPORT.md"
+                    )
+
+        if record_protocol:
+            for iteration, gates in state_by_iter.items():
+                for trigger in sorted(gates):
+                    state_entry = gates[trigger]
+                    entry = entry_by_iter.get(iteration, {}).get(trigger)
+                    if entry is None:
+                        continue
+                    gate_ts = parse_iso(
+                        state_entry.get("timestamp")
+                        if isinstance(state_entry.get("timestamp"), str)
+                        else ""
+                    )
+                    event_ts = parse_iso(
+                        entry.get("timestamp")
+                        if isinstance(entry.get("timestamp"), str)
+                        else ""
+                    )
+                    if gate_ts is None or event_ts is None:
+                        continue
+                    divergence = entry.get("timestamp_divergence")
+                    has_cause = (
+                        isinstance(divergence, dict)
+                        and isinstance(divergence.get("cause"), str)
+                        and bool(divergence["cause"].strip())
+                    )
+                    if (
+                        abs((event_ts - gate_ts).total_seconds())
+                        > TIMESTAMP_TOLERANCE_SECONDS
+                        and not has_cause
+                    ):
+                        alerts.append(
+                            f"{session.name}: gate {trigger} in iteration "
+                            f"{iteration} diverges more than 60s between "
+                            "state.json (gate_ts) and HARNESS_REPORT.md "
+                            "(event_ts) without timestamp_divergence.cause"
+                        )
+
         if version is not None and version >= NEW_PROTOCOL:
-            for trigger in sorted(
-                (entry_triggers & STATE_TRIGGERS) - state_triggers
-            ):
-                alerts.append(
-                    f"{session.name}: HARNESS_REPORT.md records PASS for "
-                    f"{trigger} without a matching PASS in state.json"
-                )
+            if record_protocol:
+                for iteration, entries in entry_by_iter.items():
+                    known = set(state_by_iter.get(iteration, {}))
+                    for trigger in sorted(
+                        (set(entries) & STATE_TRIGGERS) - known
+                    ):
+                        alerts.append(
+                            f"{session.name}: HARNESS_REPORT.md records PASS "
+                            f"for {trigger} in iteration {iteration} without "
+                            "a matching PASS in state.json"
+                        )
+            else:
+                state_triggers = {
+                    trigger
+                    for gates in state_by_iter.values()
+                    for trigger in gates
+                }
+                for trigger in sorted(
+                    (entry_triggers & STATE_TRIGGERS) - state_triggers
+                ):
+                    alerts.append(
+                        f"{session.name}: HARNESS_REPORT.md records PASS for "
+                        f"{trigger} without a matching PASS in state.json"
+                    )
     return alerts
 
 

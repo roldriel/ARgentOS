@@ -289,11 +289,15 @@ For details on the entry format, see `.agents/orchestrators/discovery/contracts/
 
 The protocol state of each iteration lives in
 `.project/<session-uuid>/<iteration>/state.json`: session, iteration, task
-profile, gates passed with timestamps, last gate, and `status` (in progress
-or terminal `ABORT`/`COMPLETED`). This section is the canonical source for
-how that state is written and consumed. The Task State and the Gate States of
-transition gates live in `state.json`; non-transition Gate States (for example
-the review gate) and the derived Artifact Lifecycle live in `HARNESS_REPORT.md`
+profile, transition gates passed with their canonical timestamps, last gate,
+and `status` (in progress or terminal `ABORT`/`COMPLETED`). This section is
+the canonical source for how that state is written and consumed.
+Scope closure: `state.json` records transition gates of the core state
+machine (H00–H07 and H11) and the terminal status only; every other gate
+trigger (D*, H09/H10, H15, S00 and REVIEW) is recorded in `HARNESS_REPORT.md`
+and never in `state.json`. The Task State and the Gate States of transition
+gates live in `state.json`; non-transition Gate States (for example the
+review gate) and the derived Artifact Lifecycle live in `HARNESS_REPORT.md`
 (see §State dimensions below). Invariants:
 
 1. Only `.agents/harness/runner_state.py` writes it, transactionally (temp
@@ -347,6 +351,9 @@ Invariants:
 - ST-003: the Artifact Lifecycle is never written by hand; it is derived from
   the Gate State record.
 - ST-004: no payload document declares "state" without indicating its dimension.
+- ST-005: `state.json` records transition gates H00–H07 and H11 and the
+  terminal status only; non-transition gate triggers (D*, H09/H10, H15, S00,
+  REVIEW) are never registered in `state.json`.
 - AL-001: the artifact lifecycle state is derived, never written by the author.
 - AL-002: `validated` ⇔ the exit gate has PASS in `state.json`.
 - AL-003: a `superseded` artifact is not consumed as input by later phases.
@@ -382,6 +389,64 @@ when the plan gate (H04) `PASS` is recorded, it scans for project files
 modified after the session started but before the PASS, and the
 Orchestrator records suspects as an alert in the HARNESS_REPORT
 entry (contract: `.agents/contracts/HARNESS_REPORT.md`).
+
+## Execution records
+
+The four session records have disjoint roles, and artifacts are durable
+objects with a derived lifecycle (Artifact Lifecycle, §State dimensions):
+
+| Record | Role | Source | Scope |
+|---|---|---|---|
+| `state.json` | mechanical truth of the protocol state | runner_state (UTC) | transition gates H00–H07, H11 + terminal status |
+| `HARNESS_REPORT.md` | gate review trail | Orchestrator (self-reported) | every gate invocation (ENTRY) |
+| `SESSION_LOG.md` | narrative of decisions and non-gate events | Orchestrator (append-only) | version + decisions + corrections |
+| `METRICS.md` | process observables | Orchestrator (self-reported) | catalogued events with `seq` |
+| Artifacts | durable objects with derived lifecycle | writer + derivation | evidence referenced by path + hash |
+
+**Execution identity.** `execution_id = (session_id, iteration)`; no new UUIDs
+are introduced. Gate events correlate by `(execution_id, trigger)`, METRICS
+events by `(execution_id, seq)` and delegations by `(execution_id, phase,
+attempt#)`. The actor is recorded as `(role_id, mode)`; worker instance
+identity is never persisted. The kernel is described with metadata
+(`protocol_version`, `mode`), never as an entity.
+
+**Temporal semantics.** `created_at` is the artifact creation moment;
+`started_at`/`completed_at` delimit the execution window; `event_ts` is the
+registration moment of a record; `gate_ts` is the canonical PASS moment in
+`state.json`. UTC (ISO-8601 with `Z`) is the canonical clock. Agent-written
+timestamps produced without a reliable clock MUST declare `clock:
+agent_clock` and are non-canonical. Order within an execution is by `gate_ts`
+for gates and by `seq` for metrics.
+
+**Minimum information to reconstruct an execution.** (1) `session_id` +
+`protocol_version` + `mode`; (2) `execution_id` (iteration); (3) gate records
+with result, evidence (class + reference) and `gate_ts`; (4) hashes of
+artifacts cited as evidence; (5) terminal status and deferred items; (6)
+METRICS events with `seq`. Post-hoc audit depends on the original project:
+the trail is not self-contained by design.
+
+**Invariants.**
+
+- EI-001: every recorded event has a derivable event key.
+- EI-002: a gate PASS in `state.json` and its ENTRY in `HARNESS_REPORT.md`
+  share the same `(execution_id, trigger)`.
+- EI-003: METRICS events have `seq` strictly increasing per session.
+- TR-001: every transition gate PASS exists in `state.json` and in
+  `HARNESS_REPORT.md` (bidirectional).
+- TR-002: the timestamps of the same gate coincide or declare a divergence
+  with cause.
+- TR-003: every session has the four records and `protocol_version`.
+- TR-004: METRICS events have `seq` strictly increasing per session.
+- TR-005: execution reconstruction correlates by event keys, never by
+  timestamps.
+- TM-001: every protocol timestamp is UTC or carries `clock: agent_clock`.
+- TM-002: `gate_ts` in `state.json` is canonical (runtime, UTC with `Z`).
+- TM-003: event correlation uses event keys, never timestamps.
+- OBS-001: every delegation with `context_budget` has a `context_budget`
+  event in `METRICS.md`.
+- OBS-002: a budget-compliance claim without the declared/consumed pair is an
+  attestation.
+- OBS-003: `session.duration_ms` uses a single time source.
 
 ## Hook setup (enforced mode)
 

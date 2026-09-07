@@ -250,9 +250,54 @@ introduce terminología nueva.
 
 ## Validation anchor
 
-<!-- Se completa al validar (VC-1). Registro de la Etapa 1: V1 sobre el
-contenido del commit de contenido de la Etapa 1. Registro de la Etapa 2:
-revalidación A2 sobre el estado final antes de `Closed`. -->
+Registrado al ejecutar la Etapa 1 del Plan 111 (2026-09-06). La validación
+**V1** corrió sobre el contenido del commit de contenido de la Etapa 1 (C1
+`a596f69`, herramienta + tests U1), **antes** de agregar los registros de esta
+sección (anti-circularidad; precedente Planes 96–110).
+
+- Declared scope: contenido del commit C1 de la Etapa 1 del Plan 111 —
+  `tools/determine_execution_state.py` + `tests/test_determine_execution_state.py`
+  — + batería canónica del repo (checkers dev + pytest, incluida la suite
+  nueva) sobre ese estado.
+- Validation command-set:
+  - `python tools/check_protocol_invariants.py --payload protocol .`
+  - `python tools/check_plan_citations.py`
+  - `python tools/check_plan_structure.py`
+  - `python tools/check_taxonomy_coherence.py`
+  - `python tools/check_session_artifacts.py`
+  - `python tools/check_version_state.py`
+  - `python -m pytest tests/ -q --basetemp .pytest_cache\basetemp-v1`
+  - `git diff --cached --check` (limpio en el stage previo a C1)
+- Effective inputs (repo content): contenido completo del repo en el estado
+  validado (los checkers escanean `docs/`, `protocol/`, `tools/`, `tests/`,
+  `runtime/` y la raíz; pytest consume `tests/` + `tools/` + `runtime/`);
+  representado por el State identity (tree id).
+- Observed dependencies: `no instrumentado` (sin tooling de instrumentación en
+  esta ejecución); el consumo por comando se observa de la documentación de
+  cada checker y de la batería (`docs/VERSIONING.md:4.1 Batería canónica de
+  verificación`).
+- Environmental factors: OS Windows; Python 3.14.3; git 2.55.0.windows.5;
+  pytest 9.0.3; `protocol/.agents/VERSION` = 11.0.0; pytest ejecutado con
+  basetemp local `.pytest_cache\basetemp-v1` por ACL del basetemp
+  `pytest-of-rolda`; los writes de index/objetos del `.git` del repo real
+  (`git add`, `git commit`) se ejecutaron fuera del sandbox por ACL de solo
+  lectura del `.git` (ruido ambiental documentado en planes 96–110; no es
+  intervención humana sobre el cambio); sin red.
+- Scoped Content Identity:
+  - State identity (estado validado = árbol de C1): T1 =
+    `2f1855c3f11dfe88560922a36b71764056f25c54` (tree id; verificado con
+    `git rev-parse 'a596f69^{tree}'` y con el generador vía `--ref a596f69`).
+  - Delta scoped identity (scope S = 2 archivos del commit C1, orden
+    lexicográfico; serialización `scoped-v1` + pares `path NUL blob NUL`,
+    generada con el propio tool `tools/scoped_content_identity.py`):
+    `9bd8fa8782216880f7098621860f1ff8f918ca2e0c87c6b1f1b30f262362b279`.
+    Pares path → blob (C1): `tests/test_determine_execution_state.py` →
+    `e635cb7c9cd3524ece0cab0b9c8d40655e2119cd`;
+    `tools/determine_execution_state.py` →
+    `cf25b04020208f5d76d12155a2e42634212c983c`.
+- Validity / stale: `vigente` (V1, estado de C1); la revalidación A2 sobre el
+  estado final de la ejecución (incluidos los registros de cierre) queda
+  registrada en la Etapa 2, antes de `Closed`.
 
 ## Checkpoint / cierre
 
@@ -299,5 +344,50 @@ sin determinación terminal) → `tools/determine_execution_state.py` + `tests/`
 
 ## Nota de ejecución
 
-<!-- Se agrega al ejecutar. Registro de la Etapa 1 (2026-09-06) y de la
-Etapa 2 (cierre). -->
+- 2026-09-06 — **Etapa 1 ejecutada sobre `dev`** (GO del mantenedor registrado
+  como H1 = 1 en `## Criterio de entrada`). Estado inicial: branch `dev`, HEAD
+  `adbd39c`, working tree limpio; batería canónica en verde (checkers PASS;
+  pytest `500 passed, 0 failed`; basetemp local `.pytest_cache\basetemp` por
+  ACL del sandbox).
+  Clasificación: origen = decisión humana del mantenedor (Dogfooding Test #6,
+  GO Plan 111); clase RFC-56 = — (sin payload); Change Level = L2; dominio =
+  tooling DEV (`tools/`, `tests/`) + registros docs-only.
+  Registro del plan: commit P `0ebd412` en `dev` (`docs(plans): register plan
+  111 session summary and undetermined query (plan 111)`); checkers de
+  estructura y citas en verde.
+  Implementación U1 (commit C1 `a596f69` en `dev`, contenido validado por V1):
+  `tools/determine_execution_state.py` agrega el modo `--session-summary`
+  (flag aditivo; reporte `{"sessions": [...], "summary": {...}}` con una
+  entrada por sesión — `session`, `protocol_version` de las fuentes existentes
+  (`SESSION_LOG.md` o evento `session_start` de `METRICS.md`), `executions`,
+  `determined`, `undetermined`, `terminal_abort` y `terminal_completed`,
+  derivados exclusivamente de la semántica existente de `determine_iteration`
+  — y un `summary` global con las mismas magnitudes más `sessions`); con
+  `--session` el reporte se limita a esa sesión; sesión inexistente o
+  `.project/` ausente → `sessions` vacío y contadores en cero (fail-closed por
+  ausencia, sin fabricar entradas ni inferir estados); incompatible con
+  `--iteration` y `--content-identity` (error determinista de `argparse`, exit
+  2); sin el flag la salida es exactamente la actual; docstring y `usage`
+  actualizados; sin escrituras, read-only, stdlib-only, sin red) y
+  `tests/test_determine_execution_state.py` (14 tests nuevos de U1: `.project/`
+  ausente; sesión mixta COMPLETED/ABORT/no terminal; agregación multi-sesión;
+  `state.json` faltante contado como indeterminado; `protocol_version` desde
+  `SESSION_LOG.md` y ausencia sin declaración; exclusión de
+  `knowledge`/`skills`; filtro `--session`; sesión desconocida fail-closed;
+  sesión sin iteraciones; determinismo; paridad CLI ↔ API; incompatibilidades
+  con `--iteration` y `--content-identity`; suite del archivo 54 tests).
+  Validación V1 (contenido de C1): checkers canónicos PASS + pytest
+  `514 passed, 0 failed`; `git diff --cached --check` limpio; identidad del
+  contenido validado registrada en `## Validation anchor` (T1
+  `2f1855c3…` == `C1^{tree}`; delta `9bd8fa87…` generada con el propio tool —
+  dogfooding —). Gate C-1 sobre el anchor registrado: sin ANOMALY
+  (clasificación del Plan 111: `VALID` para el anchor; ver evidencia de la
+  Etapa 2 para el cierre). Sin cambios en `protocol/.agents/`, `runtime/`,
+  `dist/`, `protocol/.agents/VERSION` (11.0.0), `master`, tags ni release; sin
+  findings/corrections/pending reales (`N/A`); sin push, sin merge.
+  **La tarea queda deliberadamente incompleta en un punto de continuación
+  legítimo** (estado Committed, no `Executed`/`Closed`): pendientes de la
+  Etapa 2 — U2 (`--undetermined`) + tests, revalidación A2 sobre el estado
+  final, registros de cierre (status `Executed`, espejo del INDEX, ítem en
+  `CHANGELOG.md:[Unreleased]`, `## Checkpoint / cierre`) y commit de
+  registro/cierre en `dev`, según los `## Pasos` de este plan.

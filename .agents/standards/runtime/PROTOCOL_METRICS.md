@@ -172,6 +172,17 @@ freshness, provenance or isolation.
 - If a data point already passes through a harness trigger, it is recorded in `HARNESS_REPORT.md` by the Orchestrator as part of the gate evaluation; no duplicate event is recorded.
 - Every other data point is recorded by the Orchestrator as a `METRIC` comment in `METRICS.md` at the moment the event occurs (not retroactively at session end).
 - Events are append-only: a wrong event is corrected by a later event, never by editing or deleting the recorded one.
+- Every `METRIC` event carries `seq` (an integer, strictly increasing per
+  session), `timestamp` and `clock` (`utc` | `agent_clock`); execution-scoped
+  events additionally carry `iteration` (the numeric iteration folder of the
+  execution). This applies to every catalogued type, including
+  `reuse_event` and `provider_cache_event` (contract:
+  `.agents/contracts/METRICS.md`, §Event catalog).
+- A delegation that declares `context_budget` carries it in its `delegation`
+  event and is paired with a `context_budget` event of the same delegation
+  (same `iteration`/`phase`, same declared value) (OBS-001); without the
+  declared/consumed pair, a budget-compliance claim is an attestation
+  (OBS-002).
 - The event catalog (types and required fields) is defined by `.agents/contracts/METRICS.md`; this standard defines what the events mean.
 
 ## Aggregation
@@ -210,11 +221,15 @@ No metric gates anything; the class only declares the trust boundary. The
 aggregation report tags each metric with its class, and the development-side
 `--audit` mode reports discrepancies between the mechanical cross-checks.
 
-Events MAY carry the optional `clock` field (`utc` | `agent_clock`, contract:
-`.agents/contracts/METRICS.md`, §Event catalog): `utc` is the default for
-mechanically written records; agent-written timestamps without a reliable clock
-declare `clock: agent_clock` (G-004). The `Verified` class means "corroborated
-by a second artifact", not external verification of the event: a data point
+Every event carries `seq`, `timestamp` and `clock` (`utc` | `agent_clock`;
+contract: `.agents/contracts/METRICS.md`, §Event catalog): `utc` is the
+default for mechanically written records; agent-written timestamps without a
+reliable clock declare `clock: agent_clock` (G-004). Execution-scoped events
+carry `iteration`. A `delegation` event that declares `context_budget` is
+paired with a `context_budget` event of the same delegation (same
+`iteration`/`phase`, same declared value); the `Verified` class of the
+declared/consumed pair is kept. The `Verified` class means "corroborated by a
+second artifact", not external verification of the event: a data point
 without that corroboration is a recorded report, and a claim about it that
 cannot cite evidence is an attestation (`.agents/harness/INDEX.md`,
 §Enforcement boundaries).

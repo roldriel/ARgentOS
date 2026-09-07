@@ -1,11 +1,11 @@
 +++
-schema_version = "1.1.0"
+schema_version = "2.0.0"
 artifact = "HARNESS_REPORT.md"
 phase = "all"
 produced_by = "orchestrator"
 enforcement = "informational"
 +++
-schema_version = "1.1.0"
+schema_version = "2.0.0"
 
 
 ---
@@ -55,6 +55,9 @@ The report follows a fixed declarative structure that the Orchestrator must resp
 
    - `Transition`: the gated transition (for example `EXECUTING → VERIFYING`).
    - `Result`: `PASS`, `FAIL`, or `SKIP`. `SKIP` means `skipped: profile`: the gate is not mandatory for the task profile assigned in the session's `TASK_ANALYSIS.md`; the omission is a system decision, not an oversight.
+   - `Execution`: the numeric iteration folder (`<iteration>`) of the
+     execution; the `execution_id` is shared with `state.json` (the event key
+     of the gate is `(session_uuid, iteration, trigger)`).
    - `Timestamp`: ISO-8601 timestamp of the invocation.
    - `Artifact checked`: present only when the trigger validates an artifact.
    - `Checks`: one bullet per check, formatted as `` `<check-id>`: <result> — <evidence> `` with an optional `` `claim_class` `` marker. Every check cites its evidence or declares an explicit `claim_class`: with non-empty `evidence` the implicit class is `verified`; without `evidence`, the check MUST declare `claim_class: attested` or `claim_class: inference` (`verified` requires `evidence`). A skipped gate records a single check `gate_required_for_profile` with result `SKIP`, evidence `skipped: profile — …` and no claim class.
@@ -69,13 +72,20 @@ The report follows a fixed declarative structure that the Orchestrator must resp
    Each entry ends with a machine-readable HTML comment so history is preserved across updates:
 
    ```markdown
-   <!-- ENTRY: {"timestamp": "...", "clock": "utc", "trigger": "...", "transition": "...", "result": "...", "checks": [{"id": "...", "result": "...", "evidence": "...", "claim_class": "verified"}], "evidence": [{"class": "reference", "claim_id": "<check-id>", "ref": "..."}], "artifact": "...", "duration_ms": 0, "rubric_scores": {...}, "alerts": [...]} -->
+   <!-- ENTRY: {"timestamp": "...", "clock": "utc", "iteration": "<N>", "trigger": "...", "transition": "...", "result": "...", "checks": [{"id": "...", "result": "...", "evidence": "...", "claim_class": "verified"}], "evidence": [{"class": "reference", "claim_id": "<check-id>", "ref": "..."}], "artifact": "...", "duration_ms": 0, "rubric_scores": {...}, "alerts": [...]} -->
    ```
 
    The `alerts` array is optional (absent or empty when no alert was raised).
-   `clock` is optional (`utc` | `agent_clock`): mechanically written records
-   default to `utc`; agent-written timestamps produced without a reliable clock
-   MUST declare `clock: agent_clock` (G-004). `claim_class` on each check
+   `iteration` and `clock` are required on every ENTRY: `iteration` is the
+   numeric iteration folder of the execution (string) and `clock` is `utc` |
+   `agent_clock` — mechanically written records default to `utc`;
+   agent-written timestamps produced without a reliable clock MUST declare
+   `clock: agent_clock` (G-004). `timestamp` is the `event_ts` of the trail
+   (the registration moment); the canonical `gate_ts` of a transition gate
+   lives in `state.json`. When `event_ts` differs from the `gate_ts` of the
+   same gate, the ENTRY MUST declare the divergence with its cause:
+   `"timestamp_divergence": {"cause": "<reason>"}` (TR-002).
+   `claim_class` on each check
    (`verified` | `attested` | `inference`) is optional in the JSON only when
    the check carries non-empty `evidence`; a check without `evidence` MUST
    carry an explicit `claim_class` of `attested` or `inference` (G-002/G-003).

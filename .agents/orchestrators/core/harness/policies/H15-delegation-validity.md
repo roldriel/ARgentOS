@@ -58,6 +58,13 @@ Each violation is reported with its failure class, as defined inline in the dele
 2. Each entry of `skills` resolves under `.project/skills/` or `.agents/skills/` (project level wins on collision). `[gate]` — violation class F2, non-blocking: the phase continues without that capability and the deviation is logged.
 3. Each path of `input_artifacts` exists inside the session (`.project/<session-uuid>/<iteration>/`). `[gate]` — violation class F1.
 4. If `context_budget` is present, its value is a finite, positive constraint on the resource the runtime uses to represent the Budget (for the prompt-based runtime: estimated tokens, per `.agents/standards/context/BUDGET_MATERIALIZATION.md`). `[gate]` — violation class F1 when the value is not finite and positive; `[agent]` — class F2 when the value is finite but the Orchestrator cannot justify its coherence with the session Budget.
+   When the delegation carries `context_budget`, the Orchestrator MUST
+   additionally record the `context_budget` metric event (`METRICS.md`,
+   §Event catalog) with the declared value and the consumed figure measured
+   by the estimation rule of `BUDGET_MATERIALIZATION.md` (§2) for the same
+   delegation; without the declared/consumed pair, any budget-compliance
+   claim is an attestation. `[agent]` — the registration is verified
+   post-hoc by the development-side session checker.
 
 ### Post-return gate
 

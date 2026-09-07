@@ -177,11 +177,33 @@ def test_detect_bypass_flags_files_modified_before_plan_pass(session):
     os.utime(protocol_file, (now - 10, now - 10))
 
     gate_ts = time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime(now))
-    suspects = runner_state.detect_bypass(session_uuid, "00", gate_ts)
+    suspects, reliable = runner_state.detect_bypass(session_uuid, "00", gate_ts)
 
     assert "deliverable.py" in suspects
     assert "after.py" not in suspects
     assert not any("notes.md" in s for s in suspects)
+    assert reliable is True
+
+
+def test_detect_bypass_reliable_flag_false_on_non_utc_timestamp(session):
+    session_uuid, _, _ = session
+
+    suspects, reliable = runner_state.detect_bypass(
+        session_uuid, "00", "2026-08-25T10:00:00"
+    )
+
+    assert suspects == []
+    assert reliable is False
+
+
+def test_record_gate_pass_writes_utc_z_timestamp(session):
+    session_uuid, _, _ = session
+
+    path = runner_state.record_gate_pass(session_uuid, "00", "H04")
+    state = json.loads(path.read_text(encoding="utf-8"))
+
+    assert state["gates"]["H04"]["timestamp"].endswith("Z")
+    assert state["updated"].endswith("Z")
 
 
 def test_cli_pass_records_state(session, capsys):
@@ -197,6 +219,21 @@ def test_cli_pass_records_state(session, capsys):
     assert str(state_path) in out
     state = json.loads(state_path.read_text(encoding="utf-8"))
     assert state["gates"]["H04"]["result"] == "PASS"
+    assert state["gates"]["H04"]["timestamp"].endswith("Z")
+
+
+def test_cli_pass_rejects_non_transition_trigger(session, capsys):
+    session_uuid, _, _ = session
+
+    for trigger in ("H10", "D01", "H15", "REVIEW"):
+        exit_code = runner_state.main(
+            ["--session", session_uuid, "--trigger", trigger, "pass"]
+        )
+
+        assert exit_code == 2
+        assert (
+            "not a transition trigger" in capsys.readouterr().err
+        )
 
 
 def test_cli_pass_with_explicit_iteration(session, capsys):

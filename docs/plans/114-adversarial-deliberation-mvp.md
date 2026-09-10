@@ -225,6 +225,150 @@ Cerrar solo si se cumplen los 16 criterios de `## Criterios de salida`. Al cerra
 
 **No** promover la convención a gobernanza, **no** hacerla obligatoria, **no** crear tooling, **no** integrarla con Change Lifecycle ni con Protocol dentro de este Plan.
 
+## Registro del primer Trial — `<PLAN-105>` (Steps 3–9)
+
+> **Este registro es contenido experimental del Plan 114.** No crea gobernanza, no
+> modifica la decisión pendiente `<PLAN-105>` y no posee autoridad: la decisión
+> sigue siendo del mantenedor. Conforme a la regla DEV, el Plan 105 está `Closed`
+> y **no** se modifica; este Plan es el artefacto nuevo que lo referencia.
+
+### Marco declarado
+
+| Elemento | Valor |
+|---|---|
+| Problema / cuestión (referencia) | Decisión pendiente `<PLAN-105>`: *elevar la arquitectura terminológica (D1–D5) a ADR cuando se satisfaga el criterio de ADR-worthiness* |
+| Candidata | `C-1` — *elevar **ahora** la arquitectura terminológica (D1–D5) a ADR* |
+| Modo | `viability` |
+| Criterios | `K-1` disparadores de ADR-worthiness de `docs/adr/16-change-lifecycle-authority.md:ADR-worthiness` · `K-2` costo de gobernanza de un ADR prematuro · `K-3` valor de fijar el invariante antes de que aparezca un consumidor · `K-4` reversibilidad de elevar después |
+| Límites declarados | máximo 2 pasadas de evaluación; sin confrontación; una síntesis |
+| Motivo de invocación | El Plan 114 requiere un caso real de dogfooding; `<PLAN-105>` es una decisión registrada, DEV-only, con dos opciones materialmente distintas, no bloqueante y con resolución pendiente |
+
+### Perspectiva A — postura: sostener la viabilidad de `C-1`
+
+- **Etiqueta local:** `E-A`.
+- **Ejecutor:** agente DEV (sesión de ejecución del Plan 114).
+- **Material recibido:** registro `<PLAN-105>` (`docs/plans/105-terminology-architecture-materialization.md:## Findings / Correcciones / Pending` → `### Pending decisions`); `docs/adr/16-change-lifecycle-authority.md:ADR-worthiness`; `docs/CONVENTIONS.md:Convenciones de terminología y nomenclatura (decisiones D1–D5, 2026-09-05)`; `docs/glossary/INDEX.md:Qué es y qué no es`; `docs/AGENTS.md:INDEX y CONVENTIONS`.
+- **Material compartido:** encuadre, criterios `K-1..K-4` y el material común anterior.
+- **Relación con conclusiones previas:** ninguna (primera pasada del Trial).
+- **Condición de compromiso:** conclusión registrada antes de que `E-B` conociera conclusión alguna.
+- **Conclusión:** **VIABLE** (la elevación inmediata es viable).
+- **Razones por criterio:**
+  - `K-1(a)` *consumo fuera del artefacto de origen*: **parcialmente a favor**. La convención vive en `docs/CONVENTIONS.md` y la consumen piezas que no son esa subsección — el `AGENTS.md` raíz y `.agents/AGENTS.md` referencian la convención de terminología, y todo texto nuevo aplica las reglas de calificación y la regla SCI.
+  - `K-1(c)` *invariante arquitectónico persistente con cambio auditable de forma independiente*: **a favor**. La decisión D3 declara "no se introduce `.agents/ENTRYPOINT.md` ni `BOOTSTRAP.md` sin nueva decisión": es un invariante cuya modificación futura exige decisión propia. Un ADR lo haría auditable por sí mismo, independientemente del texto de CONVENTIONS.
+  - `K-2` *costo*: **bajo**. Un ADR es un documento + registro en `docs/adr/INDEX.md`; el ciclo `Proposal → Accepted → Superseded` ya existe y está normalizado.
+  - `K-3` *valor de fijar antes del primer consumidor*: **a favor**. La regla SCI y la calificación de términos ya se aplican en texto nuevo; un ADR las haría visibles para quien lee el registro de decisiones y no el cuerpo de CONVENTIONS.
+  - `K-4` *reversibilidad*: **a favor**. La elevación es reversible por supersession; elevar ahora no introduce un compromiso irreversible.
+- **Premisas:** (P1) el ADR no autoriza cambios: su función es de registro/auditoría y no de habilitación (`docs/adr/16-change-lifecycle-authority.md:Decisión` puntos 1–2); (P2) la elevación puede ser retrospectiva (`:ADR-worthiness`); (P3) la carga de mantenimiento de un ADR es acotada.
+- **Supuestos:** que el contenido D1–D5 no cambiará en el corto plazo; que la visibilidad adicional en el registro de decisiones tiene valor para el mantenedor y para agentes que no leen CONVENTIONS completo.
+- **Incertidumbres:** si `K-1(c)` basta por sí solo cuando el ADR **no** autoriza nada; si "invariante arquitectónico" alcanza a convenciones de terminología; si `K-1(a)` aplica sin una RFC de origen.
+
+### Perspectiva B — postura: atacar `C-1`
+
+- **Etiqueta local:** `E-B`.
+- **Ejecutor:** **el mismo** agente DEV (misma sesión) → `ejecutores: mismo`.
+- **Material recibido:** registro `<PLAN-105>`; `docs/adr/16-change-lifecycle-authority.md` (`ADR-worthiness`, `Decisión` puntos 1–5, `Invariantes`, `Consecuencias`); `docs/CONVENTIONS.md:Convenciones de terminología y nomenclatura (decisiones D1–D5, 2026-09-05)`; `docs/glossary/INDEX.md:Qué es y qué no es`; `docs/AGENTS.md:INDEX y CONVENTIONS`. **No** recibió la conclusión de `E-A`.
+- **Material compartido:** encuadre, criterios `K-1..K-4` y el material común anterior.
+- **Relación con conclusiones previas:** ninguna (no conocía `E-A`).
+- **Condición de compromiso:** conclusión registrada antes de la revelación de `E-A`.
+- **Conclusión:** **NOT_VIABLE** (elevar ahora no es viable).
+- **Razones por criterio:**
+  - `K-1(a)`: **no se satisface**. El criterio presupone un artefacto de origen del que la decisión se desprende; aquí no hay RFC ni plan de origen que la contenga: la decisión nació como decisión humana directa materializada en `docs/CONVENTIONS.md` y reflejada en `docs/AGENTS.md`. Afirmar que "todo el texto nuevo la consume" extiende el criterio: el criterio habla de **consumo desde otro artefacto de decisión**, no de que el repositorio aplique una convención vigente.
+  - `K-1(b)`: **no se satisface**. Elevar no supersede ni modifica un ADR existente; sería un ADR nuevo sobre materia no cubierta por ADR-01…16.
+  - `K-1(c)`: **débil, y potencialmente autoinvalidante**. La fuerza del invariante D3 ("sin nueva decisión") **ya existe** en la regla operacional vigente; y como el ADR **no autoriza** (`docs/adr/16-change-lifecycle-authority.md:Invariantes` AU-2), convertirlo en ADR **no agrega fuerza ejecutable**: la autorización seguiría viniendo del lifecycle. El beneficio sería de visibilidad, no de auditabilidad.
+  - `K-2`: **costo real y no trivial**. Un ADR es un artefacto permanente con ciclo propio, registro en INDEX, relaciones, estado de implementación y Amendment Log. Un ADR cuyo contenido **espeje** la subsección de `docs/CONVENTIONS.md` crea **dos textos sobre la misma materia**, que es lo que la gobernanza documental DEV prohíbe: `docs/AGENTS.md:INDEX y CONVENTIONS` ("no se duplican responsabilidades"; el INDEX registra, no regula) y `docs/glossary/INDEX.md:Qué es y qué no es` ("Prohibido: duplicar definiciones normativas"). El ADR quedaría obligado a mantener sincronía con CONVENTIONS sin ser su fuente.
+  - `K-3` (invertido): fijar "antes del primer consumidor" es **prematuro** cuando no hay consumidor que lo requiera. El propio criterio es **condicional a evidencia** y trae guardas explícitas: "No toda decisión arquitectónica necesita ADR; no se crea un ADR por cada RFC" (`docs/adr/16-change-lifecycle-authority.md:ADR-worthiness`).
+  - `K-4` (invertido): la reversibilidad **corta en ambos sentidos**. Elevar es reversible, pero deshacer un ADR improcedente deja traza de gobernanza (supersession + Amendment Log) y consume mantenimiento; **esperar cuesta cero** mientras la convención opera.
+  - **Debilidades de `E-A` detectadas:** (i) trata "todo el texto nuevo consume la convención" como si fuera el criterio `(a)`, cuando el texto nuevo consume un artefacto **ya normativo** (`docs/CONVENTIONS.md`) y por tanto no hay carencia de autoridad; (ii) supone que elevar "gana estabilidad" cuando el ADR no cambia la autorización — P1 es cierta pero **juega contra** `E-A`; (iii) no verifica si existe un consumidor que demande cita independiente.
+- **Evidencia faltante (declarada):** no existe ningún caso registrado de conflicto entre la convención D1–D5 y otra autoridad DEV; no existe consumidor cross-artefacto que requiera citarla por identidad independiente; no se localizó ningún pedido del mantenedor de elevar.
+- **Omisiones detectadas:** `E-A` no evaluó el riesgo de duplicación de fuente ni la asimetría de costo (mantener un ADR frente a mantener una subsección ya existente).
+- **Consecuencias negativas:** un artefacto de gobernanza más que mantener; riesgo de divergencia CONVENTIONS↔ADR; precedente de elevar convenciones operativas a ADR por anticipación.
+- **Supuestos:** que un ADR aporta visibilidad neta.
+- **Incertidumbres:** si el criterio ADR-worthiness admite una lectura amplia de `(c)` que B no comparte; si esa visibilidad tiene valor material para quien ya lee `docs/CONVENTIONS.md`.
+
+### Síntesis
+
+**Entradas consideradas:** `E-A` y `E-B` (ambas comprometidas antes de la revelación). **Ninguna conclusión fue suprimida ni reescrita.**
+
+**Convergencias (derivadas, con origen):**
+
+- `S-1` — *elevar no cambia la autorización*: deriva de `docs/adr/16-change-lifecycle-authority.md:Decisión` punto 1 (un ADR es registro de decisión y no autoriza payload) y `:Invariantes` AU-2. Ambas evaluaciones la asumen; `E-B` la usa **contra** `C-1` y `E-A` no la pondera.
+- `S-2` — *la elevación es reversible por supersession*: deriva de `docs/adr/16-change-lifecycle-authority.md:Decisión` punto 5 y `:Invariantes` AU-7.
+- `S-3` — *la convención D1–D5 está vigente y operando*: deriva de `docs/CONVENTIONS.md:Convenciones de terminología y nomenclatura (decisiones D1–D5, 2026-09-05)` (regla operacional) y del registro `<PLAN-105>` (`resolución: pendiente`).
+
+**Contradicciones identificadas (no adjudicadas):**
+
+- `X-1` — **`K-1(c)`**: `E-A` sostiene que el invariante D3 satisface el criterio y que un ADR lo haría auditable independientemente; `E-B` sostiene que la auditabilidad ya existe en la regla operacional y que, al no autorizar el ADR, no hay ganancia funcional.
+- `X-2` — **costo de duplicación**: `E-A` lo estima "bajo" (documento + registro); `E-B` lo estima **riesgo estructural** (dos textos sobre la misma materia, contra la gobernanza documental DEV). Depende de si el ADR sería fuente o espejo.
+
+**Dependencias y condiciones (derivadas):**
+
+- `D-1` — el valor de elevar depende de que exista un **consumidor que requiera cita independiente** (condición no satisfecha hoy).
+- `C-2` — si apareciera un conflicto real entre la convención y otra autoridad, o un consumidor cross-artefacto, `K-1(a)`/`K-1(b)` podrían satisfacerse y la conclusión podría invertirse (el criterio admite elevación retrospectiva: `docs/adr/16-change-lifecycle-authority.md:ADR-worthiness`).
+
+**Desacuerdo preservado (explícito, sin adjudicar):** la divergencia se concentra en `K-1(c)` y en el costo de duplicación; **no se resuelve por mayoría, por conteo ni por preferencia del sintetizador**.
+
+**Sin contenido nuevo:** la síntesis no introdujo hechos externos, evidencia nueva ni argumentos materiales no fundados. No fue necesaria ninguna pasada adicional: no surgió ningún argumento material nuevo que exigiera registrarse como nueva evaluación.
+
+### Veredicto
+
+| Campo | Valor |
+|---|---|
+| **Valor** | `NOT_VIABLE` — *no es viable elevar **ahora*** `C-1` (la candidata evaluada es la elevación inmediata) |
+| **¿Hubo ataque?** | Sí (`E-B`) |
+| **Ejecutores** | `mismo` — dos pasadas del **mismo** ejecutor (agente DEV de esta sesión) |
+| **Material compartido** | encuadre, criterios `K-1..K-4`, registro `<PLAN-105>`, `docs/adr/16`, subsección de terminología de `docs/CONVENTIONS.md`, `docs/glossary/INDEX.md`, `docs/AGENTS.md` |
+| **Criterios** | declarados: `K-1..K-4` |
+| **Qué quedó sin hacer** | sin confrontación (declarada opcional y no usada); sin participación humana como ejecutor; sin verificación externa de las premisas más allá de los artefactos leídos; límite de 2 pasadas respetado |
+| **Razones por criterio** | `K-1(a)` no satisfecho · `K-1(b)` no satisfecho · `K-1(c)` **en disputa** (`X-1`) · `K-2` costo/riesgo de duplicación alegado y no refutado (`X-2`) · `K-3` prematuro sin consumidor · `K-4` reversible en ambos sentidos |
+| **Desacuerdo** | `X-1` y `X-2`, preservados sin adjudicar |
+| **Relación con cada evaluación** | **coincide con `E-B`** (valor `NOT_VIABLE`); **diverge de `E-A`** (que concluyó `VIABLE`); la divergencia queda registrada con sus razones |
+| **Limitaciones** | veredicto **relativo a la evidencia disponible** y **criterio-dependiente** (una lectura amplia de `K-1(c)` lo invertiría); **no** es evidencia de independencia (mismo ejecutor); **no** descarta `C-1` (el criterio admite elevación retrospectiva) |
+| **Razón de terminación** | `VERDICT` |
+
+### Recomendación (advisory)
+
+**Se emite,** separada del veredicto y de la decisión:
+
+> **No elevar ahora.** Mantener `<PLAN-105>` abierto y **re-evaluar cuando aparezca un disparador verificable**: consumo cross-artefacto que requiera citar la decisión por identidad independiente, o un conflicto real entre la convención D1–D5 y otra autoridad DEV. Si lo que se busca es **descubribilidad** y no auditabilidad independiente, la vía de menor costo es una **referencia desde el registro existente** hacia la regla operacional, no un ADR que espeje su contenido.
+
+Esta recomendación es **advisory**: **no** autoriza, **no** aprueba, **no** decide y **no** modifica gobernanza.
+
+### Decisión humana — fuera del mecanismo
+
+**No tomada durante esta ejecución.** No hubo decisión del mantenedor disponible al ejecutar el Trial.
+
+`Trial Verdict ≠ Recommendation ≠ Human Decision`
+
+Registro: `<PLAN-105>` **permanece pendiente y escalada** al mantenedor (owner: mantenedor), sin resolución improvisada. Este Plan **no** resolvió la decisión ni la declara resuelta. La decisión, cuando se tome, deberá registrarse como **acto humano separado** (fecha, actor, opción elegida, fundamento) — fuera de este mecanismo.
+
+### Evidencia de valor (baseline vs Trial)
+
+**Baseline (proceso normal sin deliberación adversarial):** la práctica vigente registraría la cuestión como decisión pendiente y, llegado el caso, una **nota en prosa** con la recomendación del agente (`docs/rfc/_TEMPLATE.md:Alternativas consideradas` aplicado a mano). No habría segunda postura obligada a atacar, ni base declarada, ni desacuerdo tipado por criterio.
+
+**Trial (segunda perspectiva + síntesis):**
+
+| # | Pregunta | Respuesta observada |
+|---|---|---|
+| 1 | ¿La segunda perspectiva encontró algo material? | **Sí.** `E-B` aportó dos argumentos que `E-A` no había considerado: (i) el ADR **no autoriza**, luego elevar no agrega fuerza funcional; (ii) el **riesgo de duplicación de fuente** CONVENTIONS↔ADR, contra la gobernanza documental DEV |
+| 2 | ¿Contraargumento que el baseline probablemente no habría producido? | **Probablemente sí**, con reserva: el baseline habría registrado "elevar / no elevar" y el criterio; la conexión *no-autorización ⇒ no-ganancia* y el conflicto con la regla de no-duplicación requieren postura adversarial dirigida. **No demostrable contrafactualmente** |
+| 3 | ¿Detectó un supuesto inválido? | **Sí.** `E-A` trataba "todo el texto nuevo consume la convención" como si satisfaciera `K-1(a)`, cuando ese texto consume un artefacto **ya normativo** |
+| 4 | ¿Detectó evidencia mal interpretada? | **No como cita errónea.** Sí detectó una **inferencia no sostenida**: que `K-1(c)` basta cuando el ADR no agrega fuerza |
+| 5 | ¿Cambió el veredicto? | **Sí — hallazgo principal.** Sin `E-B`, la conclusión de una sola pasada habría sido `VIABLE` (apoyada en `K-1(c)`, costo bajo y reversibilidad). Con `E-B`, el veredicto es `NOT_VIABLE` |
+| 6 | ¿Cambió la decisión humana? | **No observable** — no hubo decisión durante la ejecución |
+| 7 | ¿El desacuerdo quedó mejor preservado? | **Sí.** Quedó tipado por criterio (`X-1`, `X-2`) en lugar de un "sí/no" plano |
+| 8 | ¿La base permitió reconstruir el razonamiento? | **Sí.** Base declarada + razones por criterio + premisas citadas + divergencia registrada |
+| 9 | ¿Cuál fue el coste incremental? | Una pasada de evaluación adicional + una síntesis; **mismo ejecutor y mismo contexto**, sin lecturas externas duplicadas; **coste humano adicional nulo**; sin medición de tiempo ni de tokens (no instrumentado) |
+| 10 | ¿La deliberación fue innecesaria? | **No en este caso**: cambió el resultado respecto de la conclusión de una sola pasada (5). Con la reserva de ser **un** caso |
+
+**Qué NO pudo demostrarse (registro obligatorio):**
+
+- **La independencia no se demostró:** ambas perspectivas las produjo el **mismo ejecutor**; la divergencia observada es un **re-encuadre adversarial interno a un mismo razonador**, no divergencia entre evaluadores independientes. Lo demostrado es el valor de la **disciplina adversarial con procedencia declarada**, no el de perspectivas independientes.
+- **N=1:** un solo caso no permite generalizar valor, ni estimar frecuencia de utilidad, ni costo medio.
+- **El baseline es una reconstrucción**, no una ejecución observada y comparable.
+- **No hay medición** de tokens, tiempo ni contexto consumido.
+- **Caso en que la segunda perspectiva solo confirmó lo ya disponible:** no ocurrió aquí; **no se registra ninguno**.
+- **Coincidencia ≠ evidencia de valor:** `S-1..S-3` se registraron como convergencias **derivadas**, no como evidencia de corrección del veredicto.
+
 ## Criterios de salida
 
 - [ ] 1. La convención existe en `docs/working/proposals/ADVERSARIAL_DELIBERATION_CONVENTION.md`.

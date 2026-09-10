@@ -686,6 +686,33 @@ agente), explícitamente no normativa y sin duplicar autoridades de `docs/`.
 |---|---|---|---|
 | `113-decision-making-compass-materialization.md` | — | Executed | Materialización docs-only de la brújula de decisiones como sección `## Decision-Making Compass` en el `AGENTS.md` raíz (P1–P5: claridad sobre crecimiento; separación RFC/Plan/Git/INDEX/Glossary; calidad de decisión sobre volumen documental; contención con «no change» como resultado válido; calidad de decisión como objetivo de evaluación no demostrado aún), declarada explícitamente como principios de juicio no normativos y sin duplicar autoridades de `docs/`. Cambio DEV docs-only: clase RFC-56 —, Change Level L1, sin `VERSION` bump ni tag (RFC-69); sin RFC/ADR nuevo; sin cambios en `protocol/.agents/` (`protocol/.agents/VERSION` 11.0.0), `runtime/`, `tools/`, `tests/`, `harness`, `dist/`, `master` ni tags. **Creación (2026-09-07):** artifact creado y registrado sin ejecutar (Status `Aprobado para ejecución`, GO del mantenedor registrado en el plan como H1 = 1); Plan 113 NO `Executed`/`Closed`. **Ejecución y cierre (2026-09-07):** sección canónica insertada en el `AGENTS.md` raíz (entre `## Do NOT` y `## Development workflow`); commits A `012c7f1` (registro), C1 `6ff06f6` (contenido) y R2 (registro/cierre) en `dev`; V1 sobre C1 (T1 `6fe6ec68…`; delta `16ea77bd…`) y revalidación A2 sobre el estado final (checkers PASS; pytest `524 passed`; C-1 `VALID`, C-2 `VALID` — A2 declarado, GC-1 —, C-3 `N/A`; GAP=0, ANOMALY=0); status `Executed`; condición derivada `Closed` (docs-only, sin release); sin findings/corrections/pending (`N/A`); sin push, sin merge, sin tag; `11.0.0` sigue sin release. |
 
+## Cuadragésima sexta serie: MVP de deliberación adversarial DEV — convención Working y primer dogfooding (Plan 114) (09 sep 2026)
+
+Plan 114 (cambio DEV docs-only autorizado por el mantenedor, 2026-09-09, GO
+registrado en el plan como H1 = GO; régimen RFC-75/RFC-69; sin RFC/ADR nuevo,
+clase RFC-56 —): implementa el MVP de deliberación adversarial mediante el
+mínimo suficiente cerrado en D1–D3 — (i) una **convención Working no normativa**
+(`docs/working/proposals/ADVERSARIAL_DELIBERATION_CONVENTION.md`) con marco
+declarado, pasadas de evaluación atribuidas (postura, ejecutor, material
+recibido/compartido, compromiso antes de revelación, conclusiones con razones
+por criterio, premisas, supuestos e incertidumbres), reglas de síntesis
+(permitido/prohibido, argumento material nuevo ⇒ nueva pasada, no supresión ni
+reescritura, desacuerdo preservado), vocabulario de veredicto de
+viabilidad/preferencia, recomendación advisory y boundary de autoridad;
+(ii) el **registro embebido** del primer Trial real en el propio Plan, sobre la
+decisión pendiente `<PLAN-105>` (elevación ADR de la arquitectura
+terminológica), con dos perspectivas atribuidas, síntesis, veredicto con base
+declarada y recomendación advisory; (iii) evidencia de valor frente al
+baseline. Sin código, sin tool, sin skill, sin checker, sin registry, sin state
+machine, sin entidad global y sin cambios de plantillas. Sin cambios en
+`protocol/.agents/`, `runtime/`, `tools/`, `tests/`, `.agents/`, `dist/`,
+`master` ni tags; sin `VERSION` bump ni tag (RFC-69); sin push, sin merge, sin
+tag; `11.0.0` sigue sin release.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `114-adversarial-deliberation-mvp.md` | — | Aprobado para ejecución | MVP DEV de deliberación adversarial: convención Working no normativa (`docs/working/proposals/ADVERSARIAL_DELIBERATION_CONVENTION.md`) + registro embebido del primer Trial real sobre la decisión pendiente `<PLAN-105>` + evidencia de valor. Cambio DEV docs-only: clase RFC-56 —, Change Level L1, sin `VERSION` bump ni tag (RFC-69); sin RFC/ADR nuevo; boundaries DEV/Protocol intactas. **Creación (2026-09-09):** artifact creado como borrador en `sessions/drafts/` y promovido a `docs/plans/` con `Status` `Aprobado para ejecución` y GO del mantenedor registrado en el plan como H1 = GO; sin `CHANGELOG` (reservado al cierre). |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

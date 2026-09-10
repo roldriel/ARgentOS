@@ -307,6 +307,26 @@ La política de versionado, changelog, tags y estados de planes vive en
   checker ni regla nuevos y sin duplicar autoridades de `docs/`. Cambio
   docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3); sin
   cambios en el payload del Protocol.
+- **MVP de deliberación adversarial DEV — convención Working y primer
+  dogfooding** (plan 114, —): se agrega la Working Convention no normativa
+  `docs/working/proposals/ADVERSARIAL_DELIBERATION_CONVENTION.md` (marco
+  declarado, pasadas de evaluación atribuidas con compromiso antes de
+  revelación, procedencia, reglas de síntesis con desacuerdo preservado,
+  vocabulario de veredicto, recomendación advisory y boundary de autoridad) y
+  se registra el primer Trial real sobre la decisión pendiente `<PLAN-105>`,
+  con evidencia de valor frente al baseline: `MVP IMPLEMENTED — VALUE
+  PARTIALLY DEMONSTRATED` (la segunda perspectiva cambió el veredicto de
+  `VIABLE` a `NOT_VIABLE`, pero **no** se demostró independencia — mismo
+  ejecutor, N=1 — y la pregunta 6 quedó no observable durante el experimento).
+  Decisiones humanas del mantenedor registradas como acto separado
+  (2026-09-09): `<PLAN-105>` **no** se eleva a ADR en este momento y la
+  convención queda `KEEP AS WORKING / CONTINUE DOGFOODING` — permanece
+  experimental/Working, **no** promovida a gobernanza, **no** obligatoria y
+  **no** incorporada al Change Lifecycle ni al Protocol. Sin código, tool,
+  checker, registry, state machine, entidad global ni cambios de plantillas;
+  sin cambios en `protocol/.agents/`, `runtime/`, `tools/`, `tests/` ni
+  `.agents/`. Cambio docs-only: sin `VERSION` bump ni tag (ver
+  `docs/VERSIONING.md` §3).
 
 ### Fixed
 

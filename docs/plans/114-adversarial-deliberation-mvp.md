@@ -4,7 +4,7 @@
 ignorado por git) y fue promovido a docs/plans/ con el GO del mantenedor
 registrado como H1 en ## Creación. -->
 
-**Status:** Executed (parcial: la decisión humana sobre `<PLAN-105>` no fue tomada y permanece escalada — criterio de salida 12; ver `## Validation anchor` y `## Checkpoint / Closure`)
+**Status:** Executed (2026-09-09; los 16 criterios de salida satisfechos; condición derivada `Closed` — docs-only, sin release; ver `## Status` y `## Checkpoint / Closure`)
 **Fecha:** 2026-09-09 (ejecución; borrador creado el 2026-09-07)
 **RFC:** — (vía plan; sin efecto en `protocol/.agents/`; RFC-56 no aplica)
 **Clase:** — (sin efecto en payload)
@@ -14,10 +14,10 @@ registrado como H1 en ## Creación. -->
 
 ## Status
 
-**Estado vigente: `Executed (parcial)`** — ejecutado bajo `Aprobado para ejecución` (GO del mantenedor: H1 = GO, 2026-09-09); **no** `Closed` (ver `## Checkpoint / Closure`). Motivo de la parcialidad: el criterio de salida **12** no se satisface — la decisión humana sobre `<PLAN-105>` no fue tomada y permanece escalada al mantenedor; los otros 15 criterios quedaron satisfechos y la batería canónica quedó en verde en A2 (checkers PASS, `python -m pytest tests/` `524 passed`). Condición operacional de autorización:
+**Estado vigente: `Executed`** — ejecutado bajo `Aprobado para ejecución` (GO del mantenedor: H1 = GO, 2026-09-09); condición derivada **`Closed`** (docs-only, sin release; ver `## Checkpoint / Closure`). Los **16** criterios de salida quedaron satisfechos: el criterio **12** se cumplió al registrarse la decisión humana como acto separado (2026-09-09, `### Decisión humana — fuera del mecanismo`) y la batería canónica quedó en verde en A2 (checkers PASS, `python -m pytest tests/` `524 passed`). La **evaluación de valor no cambia** con esa decisión: sigue siendo parcial (mismo ejecutor, N=1, independencia no demostrada, pregunta 6 no observable durante el experimento). Condición operacional de autorización:
 
 - **`Status: Aprobado para redacción`** — habilita la redacción y la promoción del Plan (moverlo a `docs/plans/`, registrarlo en el INDEX). **No** habilita la ejecución de los Steps 1–12.
-- **`Status: Aprobado para ejecución`** — es el **único** estado que habilita ejecutar los Steps 1–12. **Estado vigente.**
+- **`Status: Aprobado para ejecución`** — es el **único** estado que habilita ejecutar los Steps 1–12. **Estado aplicado durante la ejecución** (el estado vigente hoy es `Executed`).
 - Si existe GO del mantenedor (H1) pero el `Status` vigente no es exactamente `Aprobado para ejecución`: **STOP** (ver `## Stop Conditions`).
 
 No se auto-asigna autorización (`.agents/AGENTS.md`: "Do not invent authorization") y no se inventan estados nuevos.
@@ -339,7 +339,26 @@ Esta recomendación es **advisory**: **no** autoriza, **no** aprueba, **no** dec
 
 `Trial Verdict ≠ Recommendation ≠ Human Decision`
 
-Registro: `<PLAN-105>` **permanece pendiente y escalada** al mantenedor (owner: mantenedor), sin resolución improvisada. Este Plan **no** resolvió la decisión ni la declara resuelta. La decisión, cuando se tome, deberá registrarse como **acto humano separado** (fecha, actor, opción elegida, fundamento) — fuera de este mecanismo.
+Registro durante la ejecución: `<PLAN-105>` **permaneció pendiente y escalada** al mantenedor (owner: mantenedor), sin resolución improvisada, y este Plan **no** la declaró resuelta.
+
+**Decisión posterior del mantenedor (2026-09-09) — acto humano separado.** Registrada tras la ejecución del mecanismo, con el Trial ya cerrado:
+
+- **Fecha:** 2026-09-09.
+- **Actor:** mantenedor (autoridad de decisión DEV). **Autoridad:** DECISION humana; no del mecanismo, no de un checker y no del agente.
+- **Opción elegida:** `<PLAN-105>` **NO** se eleva a ADR en este momento — no se fija la arquitectura de terminología D1–D5 (`docs/CONVENTIONS.md:Convenciones de terminología y nomenclatura (decisiones D1–D5, 2026-09-05)`) como decisión arquitectónica normativa mediante ADR.
+- **Base:** el Trial del Plan 114 produjo veredicto `NOT_VIABLE` para la elevación inmediata bajo los criterios definidos para el experimento, y la segunda perspectiva aportó argumentos materiales que modificaron el resultado respecto del análisis inicial.
+- **Fundamento:** la evidencia disponible no justifica fijar ahora la arquitectura de terminología como decisión arquitectónica normativa mediante ADR; la cuestión puede revisitarse si aparece un trigger concreto de ADR-worthiness (`docs/adr/16-change-lifecycle-authority.md:Decisión`, punto 3) o nueva evidencia que cambie la evaluación.
+- **Distinción (obligatoria):** esta decisión humana **no** es el `Trial Verdict`, **no** es la `Recommendation` del Trial y **no** es una conclusión normativa automática del mecanismo de deliberación. El mecanismo produce evidencia y recomendación; la autoridad de decisión permanece en el mantenedor.
+- **Registro:** resolución de la pending decision `<PLAN-114>` en `### Pending decisions` de este Plan (el artifact que la posee y la mantuvo escalada). El Plan 105 es un artifact `Closed`: **no** se reabre ni se modifica (`docs/CONVENTIONS.md:Change Lifecycle — Pending decisions (regla operacional; PC-1, Incremento 2)`; `.agents/AGENTS.md` regla 9, post-close por referencia). No se crea ADR, RFC, registry ni entidad de decisión.
+- **Efecto:** `<PLAN-105>` permanece `Closed` con su registro original intacto; `docs/CONVENTIONS.md` y la gobernanza terminológica quedan sin cambios.
+
+**Decisión del mantenedor sobre la Working Convention (2026-09-09) — mismo acto humano.**
+
+- **Opción elegida:** `KEEP AS WORKING / CONTINUE DOGFOODING` — la convención permanece **experimental/Working**; **no** se promueve a gobernanza, **no** se convierte en obligatoriedad general, **no** se incorpora al Change Lifecycle como requisito, **no** se incorpora al Protocol, **no** se transforma en RFC/ADR y **no** se vuelve regla normativa general de DEV.
+- **Fundamento:** la evidencia del Plan 114 es positiva pero insuficiente para promoción amplia — hubo contribución material de una segunda perspectiva y el veredicto cambió, pero el experimento fue **N=1**, ambas perspectivas las produjo el **mismo ejecutor**, **no** se demostró independencia epistemológica y una dimensión de valor (pregunta 6) **no** fue observable.
+- **Continuidad:** el dogfooding continúa **sin** un Plan nuevo; la próxima evolución debe surgir de evidencia de uso real.
+- **Registro:** banner de estado de `docs/working/proposals/ADVERSARIAL_DELIBERATION_CONVENTION.md`, fila del INDEX de propuestas y pending decision `<PLAN-114>` de este Plan.
+- **Distinción (obligatoria):** Working Convention ≠ gobernanza ≠ regla obligatoria.
 
 ### Evidencia de valor (baseline vs Trial)
 
@@ -354,7 +373,7 @@ Registro: `<PLAN-105>` **permanece pendiente y escalada** al mantenedor (owner: 
 | 3 | ¿Detectó un supuesto inválido? | **Sí.** `E-A` trataba "todo el texto nuevo consume la convención" como si satisfaciera `K-1(a)`, cuando ese texto consume un artefacto **ya normativo** |
 | 4 | ¿Detectó evidencia mal interpretada? | **No como cita errónea.** Sí detectó una **inferencia no sostenida**: que `K-1(c)` basta cuando el ADR no agrega fuerza |
 | 5 | ¿Cambió el veredicto? | **Sí — hallazgo principal.** Sin `E-B`, la conclusión de una sola pasada habría sido `VIABLE` (apoyada en `K-1(c)`, costo bajo y reversibilidad). Con `E-B`, el veredicto es `NOT_VIABLE` |
-| 6 | ¿Cambió la decisión humana? | **No observable** — no hubo decisión durante la ejecución |
+| 6 | ¿Cambió la decisión humana? | **No observable durante la ejecución** (no hubo decisión al ejecutar el Trial). La decisión posterior del mantenedor (2026-09-09, `### Decisión humana — fuera del mecanismo`) **coincide** con el veredicto `NOT_VIABLE`, pero eso **no** demuestra que el Trial la haya inducido: sin contrafactual no hay atribución causal |
 | 7 | ¿El desacuerdo quedó mejor preservado? | **Sí.** Quedó tipado por criterio (`X-1`, `X-2`) en lugar de un "sí/no" plano |
 | 8 | ¿La base permitió reconstruir el razonamiento? | **Sí.** Base declarada + razones por criterio + premisas citadas + divergencia registrada |
 | 9 | ¿Cuál fue el coste incremental? | Una pasada de evaluación adicional + una síntesis; **mismo ejecutor y mismo contexto**, sin lecturas externas duplicadas; **coste humano adicional nulo**; sin medición de tiempo ni de tokens (no instrumentado) |
@@ -394,31 +413,27 @@ Batería canónica de `docs/VERSIONING.md:4.1 Batería canónica de verificació
 
 ## Validation anchor
 
-**Declared scope:** el change surface autorizado del Plan 114 — `docs/working/proposals/ADVERSARIAL_DELIBERATION_CONVENTION.md` (nuevo), `docs/working/proposals/INDEX.md`, `docs/plans/114-adversarial-deliberation-mvp.md`, `docs/plans/INDEX.md`.
+Registrado al validar el Plan 114 (2026-09-09). La validación **A1** corrió sobre el estado del commit de contenido C2 `7434167`, **antes** de agregar los registros de esta sección (anti-circularidad; precedente Planes 96–113).
 
-**Validation command-set** (batería canónica, `docs/VERSIONING.md:4.1`):
-
-```text
-python tools/check_protocol_invariants.py --payload protocol .
-python tools/check_plan_citations.py
-python tools/check_plan_structure.py
-python tools/check_taxonomy_coherence.py
-python tools/check_session_artifacts.py
-python tools/check_version_state.py
-python -m pytest tests/
-```
-
-**Adaptación ambiental declarada (pytest):** aplicada **sólo en A1** (bajo la política de archivos de la sesión entonces vigente): `python -m pytest tests/ --basetemp=<dir temporal> -q -p no:cacheprovider` — ver *Environmental factors*. En **A2** se ejecutó el comando canónico `python -m pytest tests/` sin adaptación: `524 passed`. `tools/check_dist_sync.py` **no** se ejecuta: es un check local que se espera rojo en `dev` por diseño (comparación contra la rama `dist`).
-
-**Effective inputs (repo content):** `dev` en el estado del commit **C2 `7434167`** (tree `761a200a4c8aa7985177dd4c69c134c49f7ae037`). Blobs del change surface: convención `6360216747b0d727ce03c24da79ac34c2bfc0f5e` (C1), INDEX de propuestas `ab4ef4f5468094d625392a9868017a6afba91bae` (C1), Plan 114 `b04cf73d5abd32499ee4bb54982cbd6b6626c48c` (C2), fila del Plan 114 en el INDEX de planes (commit A `eecb62e`).
-
-**Observed dependencies:** no instrumentado.
-
-**Environmental factors:** sesión DSH con política de archivos `workspace-write` (ampliada una vez, declarada, para poder ejecutar pytest); Windows + OneDrive; Python 3.14 (`C:\Program Files\Python314`) con `pytest`/`pytest-asyncio` en `AppData\Roaming\Python\Python314\site-packages`; **la pierna pytest no es ejecutable bajo `workspace-write`**: el fixture `tmp_path` falla con `PermissionError [WinError 5]` al enumerar su directorio temporal, tanto dentro del workspace como en el temp del sandbox; git advierte normalización LF→CRLF en los archivos nuevos.
-
-**Scoped Content Identity:** *delta* (path → blob) = los cuatro paths del change surface con los blobs arriba listados; *state identity* = tree id `761a200a4c8aa7985177dd4c69c134c49f7ae037` (estado de contenido, commit C2).
-
-**Validity / stale:** **A1** (validación sobre el estado de contenido, tree `761a200a…`) y **A2** (revalidación sobre el estado de cierre) registradas abajo; el estado de cierre difiere del de A1 únicamente en los registros de este propio Plan (declarado, no silenciado).
+- **Declared scope:** el change surface autorizado del Plan 114 — `docs/working/proposals/ADVERSARIAL_DELIBERATION_CONVENTION.md` (nuevo), `docs/working/proposals/INDEX.md`, `docs/plans/114-adversarial-deliberation-mvp.md`, `docs/plans/INDEX.md` y `CHANGELOG.md` (registro documental de cierre) — + la batería canónica del repo (checkers DEV + `pytest`, incluida la suite completa) sobre ese scope.
+- **Validation command-set:**
+  - `python tools/check_protocol_invariants.py --payload protocol .`
+  - `python tools/check_plan_citations.py`
+  - `python tools/check_plan_structure.py`
+  - `python tools/check_taxonomy_coherence.py`
+  - `python tools/check_session_artifacts.py`
+  - `python tools/check_version_state.py`
+  - `python -m pytest tests/` (comando canónico en A2; en A1 requirió la adaptación ambiental declarada abajo)
+  - `python tools/check_lifecycle_anchor.py` (C-1), `python tools/check_lifecycle_checkpoint.py` (C-2) y `python tools/check_lifecycle_lineage.py` (C-3)
+  - `git diff --check` y `git status --short --branch`
+- **Effective inputs (repo content):** contenido completo del repo en el estado validado (los checkers escanean `docs/`, `protocol/`, `tools/`, `tests/`, `runtime/` y la raíz; `pytest` consume `tests/` + `tools/` + `runtime/`); representado por el State identity (tree id). En A1 los blobs del change surface eran: convención `6360216747b0d727ce03c24da79ac34c2bfc0f5e` (C1), INDEX de propuestas `ab4ef4f5468094d625392a9868017a6afba91bae` (C1), Plan 114 `b04cf73d5abd32499ee4bb54982cbd6b6626c48c` (C2) y la fila del Plan 114 en el INDEX de planes (commit A `eecb62e`).
+- **Observed dependencies:** `no instrumentado` (sin tooling de instrumentación en esta ejecución); el consumo por comando se observa en la documentación de cada checker y en la batería (`docs/VERSIONING.md:4.1 Batería canónica de verificación`).
+- **Environmental factors:** Windows + OneDrive; Python 3.14.3 (`C:\Program Files\Python314`) con `pytest` 9.0.3 en `AppData\Roaming\Python\Python314\site-packages`; git 2.55.0.windows.5; git advierte normalización LF→CRLF en los archivos nuevos; `protocol/.agents/VERSION` = 11.0.0 (sin tag, esperado en `dev`); sin red. En **A1** la sesión corría con política de archivos `workspace-write` (ampliada una vez, declarada): la pierna `pytest` no era ejecutable así porque el fixture `tmp_path` fallaba con `PermissionError [WinError 5]` al enumerar su directorio temporal, dentro del workspace y en el temp del sandbox, y se ejecutó con `--basetemp`/`-p no:cacheprovider`; en **A2** el comando canónico corrió sin adaptación.
+- **Scoped Content Identity:**
+  - State identity (estado validado = árbol del commit C2 `7434167`; A1): T1 =
+    `761a200a4c8aa7985177dd4c69c134c49f7ae037` (verificado con `git rev-parse '7434167^{tree}'` y con el generador vía `--ref 7434167`).
+  - Delta scoped identity (scope S = los cuatro paths del change surface, ordenados; serialización `scoped-v1` + pares `path NUL blob NUL`): `415ac6244698db71487c1ee50b7c1884f9a8d0f6867405195fb1b34a94041621` (generado con `tools/scoped_content_identity.py --ref 7434167` sobre los cuatro paths).
+- **Validity / stale:** `vigente` (A1, estado del commit C2); **revalidada por A2** sobre el estado validado del commit final de registros de esta ejecución, antes de derivar `Closed` (ver `## Checkpoint / Closure`).
 
 **A1 — resultados observados (estado de contenido, tree `761a200a…`):**
 
@@ -436,12 +451,17 @@ python -m pytest tests/
 
 ## Checkpoint / Closure
 
-- **Commits de cierre:** A `eecb62e` (promoción del Plan + registro en el INDEX de planes), C1 `4f6a3a4` (convención + registro en el INDEX de propuestas + registro del Trial), C2 `7434167` (corrección `<PLAN-114>:C-1`), R2 (este commit: registros de cierre). Sin `push`, sin `merge`, sin tag.
-- **Estado validado (ref al Validation anchor):** **A1** sobre el estado de contenido (tree `761a200a4c8aa7985177dd4c69c134c49f7ae037`, commit C2) + **A2** sobre el estado de cierre.
-- **Estado de cierre (tree id):** el árbol del commit R2; **no puede transcribirse dentro del commit que lo crea** (auto-referencia). Se registra por referencia: `git log -1 --format=%T` sobre R2. Por construcción, R2 añade a A1 sólo los registros de este Plan.
-- **Consistencia checkpoint↔anchor:** **PASS** — A2 se ejecutó sobre este mismo estado de cierre (checkers **PASS**; `python -m pytest tests/` canónico `524 passed`; registros de lineage `VALID`, `GAP=0`, `ANOMALY=0`) y su resultado está transcrito en `## Nota de ejecución`; el commit R2 no cambia contenido respecto del estado validado. El estado de cierre difiere del de A1 (tree `761a200a…`) únicamente en los registros de cierre de este Plan: Validation anchor, checkpoint, nota de ejecución, resultado final, contenedor de findings/correcciones y la fila del Plan 114 en `docs/plans/INDEX.md` (declarado, no silenciado).
-- **Governance aplicada:** Plan `Executed (parcial: …)`; fila del Plan 114 actualizada en `docs/plans/INDEX.md`; índice de propuestas actualizado; `<PLAN-114>:F-1`/`F-2`/`F-3` y `C-1`/`C-2` registrados; `<PLAN-105>` permanece **pendiente y escalada** (owner: mantenedor). **`CHANGELOG [Unreleased]`: NO aplicado** — el Plan **no** queda cerrado (ver condición derivada); la entrada `(plan 114, —)` corresponde al cierre. Sin `VERSION` bump (permanece `11.0.0`/`11.0.1` sin release).
-- **Condición derivada:** **no cerrado.** Motivo declarado: el criterio de salida **12** no se satisface — la decisión humana sobre `<PLAN-105>` no fue tomada (permanece escalada al mantenedor) y el Step 12 del Plan prohíbe cerrarlo como si estuviera resuelta. La validación **no** es motivo de no-cierre: en A2 la batería canónica quedó en verde (checkers PASS y `python -m pytest tests/` `524 passed`); el fallo de `pytest` observado en A1 quedó registrado como `<PLAN-114>:F-2` y reparado dentro de este mismo Plan (el checker de lineage reporta `VALID`, `GAP=0`, `ANOMALY=0`).
+- **Commits de cierre:**
+  - Commit A `eecb62e` — promoción del Plan a `docs/plans/` + registro en el INDEX de planes.
+  - Commit de contenido C1 `4f6a3a4` — convención Working + registro en el INDEX de propuestas + registro del Trial.
+  - Commit de corrección C2 `7434167` — corrección `<PLAN-114>:C-1` (citas a `docs/adr/16-change-lifecycle-authority.md`).
+  - Commit de registros R2 `e7008fd` — registros de cierre (Validation anchor, checkpoint, nota de ejecución, resultado final, contenedor de findings/correcciones).
+  - Commit de cierre R3 — este commit: registro de las decisiones humanas del mantenedor, actualización del estado del Plan y de su fila del INDEX; su SHA se identifica por el mensaje (auto-referencia: el árbol no embebe su propia identidad). Sin `push`, sin `merge`, sin tag.
+- **Estado validado (ref al Validation anchor):** **A1** sobre el estado del commit de contenido C2 (tree `761a200a4c8aa7985177dd4c69c134c49f7ae037`) + **A2** sobre el estado del commit final de registros.
+- **Estado de cierre (tree id):** el árbol del último commit de cierre (R3) = `git rev-parse R3^{tree}` (no embebido por auto-referencia; verificable en git tras el commit). En la validación **A2** se registró el tree id del estado staged antes del commit (`git write-tree`), que debe coincidir con `R3^{tree}` tras el commit.
+- **Consistencia checkpoint↔anchor:** **PASS** — la revalidación **A2** cubre el estado del commit final de registros (batería canónica completa: checkers **PASS** y `python -m pytest tests/` canónico `524 passed`; gates C-1 `VALID`, C-2 `VALID` y C-3 `VALID` con `GAP=0`/`ANOMALY=0`), por lo que el checkpoint se evalúa contra **A2** (`docs/CONVENTIONS.md:Change Lifecycle — Checkpoint y cierre Git (regla operacional; GC-1, Incremento 3)`). El estado del commit final difiere del estado de A1 (tree `761a200a…`) únicamente en los registros documentales de esta ejecución: Validation anchor, checkpoint, nota de ejecución, resultado final, contenedor de findings/correcciones, `CHANGELOG.md` y la fila del Plan 114 en `docs/plans/INDEX.md` (declarado, no silenciado).
+- **Governance aplicada:** Plan `Executed` (header + espejo en el INDEX de planes); ítem `(plan 114, —)` en `CHANGELOG.md:[Unreleased]`; índice de propuestas actualizado (convención Working, no promovida); `<PLAN-114>:F-1`/`F-2`/`F-3` y `C-1`/`C-2` registrados; decisiones humanas del mantenedor registradas (2026-09-09) en `### Decisión humana — fuera del mecanismo` y en `### Pending decisions`; `<PLAN-105>` permanece `Closed` y sin modificar. Sin `VERSION` bump (permanece `11.0.0` sin release) ni tag (RFC-69).
+- **Condición derivada:** **`Closed` (docs-only, sin release)**. `Executed` (status del Plan) ∧ governance aplicada ∧ checkpoint ∧ consistencia checkpoint↔anchor ∧ evidencia **PASS** para el estado de cierre: los **16** criterios de salida quedaron satisfechos al registrarse la decisión humana como acto separado (criterio 12). `Executed ≠ Committed ≠ Closed ≠ Released`. Residual declarado y **no bloqueante**: `<PLAN-114>:F-1`/`F-2` permanecen `partially-resolved` (correcciones `C-1`/`C-2` aplicadas y revalidadas en A2; su reconocimiento formal pertenece a la autoridad humana) y `F-3` permanece `deferred` con owner (mantenedor), fuera del alcance de este cierre.
 
 ## Out of Scope
 
@@ -506,8 +526,8 @@ Detenerse inmediatamente, registrando la condición, la evidencia, por qué bloq
 
 ### Pending decisions
 
-- `<PLAN-114>` — decisión: resolución de `<PLAN-105>` (elevación ADR de la arquitectura terminológica) a la luz del veredicto del primer Trial; blocking: no; owner: mantenedor; escalación: mantenedor; resolución: pendiente; evidencia: registro del Trial en este Plan; efecto downstream: gobernanza terminológica; ADR-worthiness: candidata futura.
-- `<PLAN-114>` — decisión: promover (o no) la convención de deliberación a gobernanza y/o hacerla obligatoria; blocking: no; owner: mantenedor; resolución: pendiente (depende de la evidencia de valor); evidencia: Step 11.
+- `<PLAN-114>` — decisión: resolución de `<PLAN-105>` (elevación ADR de la arquitectura terminológica) a la luz del veredicto del primer Trial; blocking: no; owner: mantenedor; escalación: mantenedor; resolución: **decidida por el mantenedor (2026-09-09): `<PLAN-105>` NO se eleva a ADR en este momento** (acto humano registrado en `### Decisión humana — fuera del mecanismo`; el Plan 105 permanece `Closed` y sin modificar); evidencia: registro del Trial en este Plan + decisión del mantenedor; efecto downstream: gobernanza terminológica diferida, revisitable ante un trigger de ADR-worthiness; ADR-worthiness: candidata futura (no bloqueante).
+- `<PLAN-114>` — decisión: promover (o no) la convención de deliberación a gobernanza y/o hacerla obligatoria; blocking: no; owner: mantenedor; escalación: mantenedor; resolución: **decidida por el mantenedor (2026-09-09): `KEEP AS WORKING / CONTINUE DOGFOODING`** — permanece experimental/Working, no promovida a gobernanza, no obligatoria y sin Plan nuevo; evidencia: evidencia de valor del Step 11 (N=1, mismo ejecutor, independencia no demostrada, pregunta 6 no observable durante el experimento); efecto downstream: ninguno normativo (la convención queda localizada en `docs/working/proposals/`); ADR-worthiness: no aplica.
 
 ## Trazabilidad
 
@@ -530,9 +550,18 @@ Referencias verificables usadas: `docs/plans/105-terminology-architecture-materi
   - **A1** (estado de contenido, tree `761a200a…`) y **A2** (estado de cierre): ver `## Validation anchor`. **Resultado de A2:** `check_protocol_invariants` PASS · `check_plan_citations` PASS · `check_plan_structure` PASS · `check_taxonomy_coherence` PASS · `check_session_artifacts` PASS · `check_version_state` PASS · `python -m pytest tests/` (comando canónico) **524 passed**.
 - **Corrección aplicada:** `<PLAN-114>:C-1` (repunte de las citas a `docs/adr/16-change-lifecycle-authority.md:Decisión`, punto 3) — commit **C2 `7434167`**; y, en el mismo acto de cierre, reescritura de los registros de lineage a la forma del contrato (`F-1`, `F-2`, `F-3`, `C-1`) que resuelve la causa de `<PLAN-114>:F-2` (`check_lifecycle_lineage.py`: Plan 114 `VALID`, `GAP=0`, `ANOMALY=0`).
 - **Hallazgo adicional del Step 10:** `<PLAN-114>:F-3` (deferred, owner: mantenedor) — el ejemplo de `docs/plans/_TEMPLATE.md` usa `F-01`/`C-01` mientras el checker C-3 sólo reconoce `F-<n>`/`C-<n>` sin cero a la izquierda; es la causa raíz de `<PLAN-114>:F-2` y queda registrado, no corregido (templates fuera del change surface).
-- **Desviaciones declaradas:** (i) **adaptación ambiental** de la pierna `pytest` **sólo en A1** (bajo la política de archivos entonces vigente `tmp_path` no era enumerable: `WinError 5`; se ejecutó con acceso ampliado y `--basetemp`/`-p no:cacheprovider`); en **A2** se ejecutó el comando canónico `python -m pytest tests/` sin adaptación: **524 passed**; (ii) `tools/check_dist_sync.py` **no ejecutado** (rojo esperado en `dev` por diseño); (iii) **`CHANGELOG` sin entrada** porque el Plan **no se cierra** (criterio 12 no satisfecho).
+- **Desviaciones declaradas:** (i) **adaptación ambiental** de la pierna `pytest` **sólo en A1** (bajo la política de archivos entonces vigente `tmp_path` no era enumerable: `WinError 5`; se ejecutó con acceso ampliado y `--basetemp`/`-p no:cacheprovider`); en **A2** se ejecutó el comando canónico `python -m pytest tests/` sin adaptación: **524 passed**; (ii) `tools/check_dist_sync.py` **no ejecutado** (rojo esperado en `dev` por diseño); (iii) en la primera ronda de cierre **no** se agregó entrada a `CHANGELOG.md` porque en ese momento el Plan **no** se cerraba (criterio 12 aún no satisfecho) — se agrega en el registro de cierre (R3, ver abajo).
 - **Alcance:** sin cambios fuera del change surface autorizado; `git status` limpio salvo `.codegraph/` (untracked preexistente) y el directorio temporal de pytest (eliminado). Sin `VERSION` bump, sin tag, sin `push`, sin `merge`.
 - **Resultado:** ver `## Resultado final del Plan`.
+
+**2026-09-09 — registro de las decisiones humanas del mantenedor y cierre del Plan (R3).**
+
+- **Decisión humana sobre `<PLAN-105>`:** registrada como acto separado en `### Decisión humana — fuera del mecanismo` — **no** se eleva la arquitectura de terminología D1–D5 a ADR en este momento. El Plan 105 permanece `Closed` y **sin modificar** (post-close por referencia).
+- **Decisión sobre la Working Convention:** `KEEP AS WORKING / CONTINUE DOGFOODING` — permanece experimental/Working, no promovida a gobernanza, no obligatoria y sin Plan nuevo; registrada en el banner de la convención, en el INDEX de propuestas y en `### Pending decisions`.
+- **Validación de cierre:** batería canónica completa (6 checkers **PASS**; `python -m pytest tests/` `524 passed`) + gates de lifecycle **C-1 `VALID`**, **C-3 `VALID`** (`GAP=0`, `ANOMALY=0`) y **C-2 `VALID`** (GC-1, `A2 (declared)` como anchor aplicable por correspondencia con el estado de cierre); `git status --short --branch` limpio salvo `.codegraph/`.
+- **Estado:** los **16** criterios de salida satisfechos (el 12 al registrarse la decisión humana) → Plan `Executed`; condición derivada **`Closed`** (docs-only, sin release). Ítem `(plan 114, —)` agregado a `CHANGELOG.md:[Unreleased]`; fila del Plan 114 actualizada en `docs/plans/INDEX.md`.
+- **F-3:** permanece `deferred` (owner: mantenedor), fuera de este cierre; no se corrige, no se reasigna y no se convierte en trabajo nuevo.
+- **Residual declarado (no bloqueante):** `<PLAN-114>:F-1`/`F-2` permanecen `partially-resolved` con sus correcciones aplicadas y revalidadas; su reconocimiento formal pertenece a la autoridad humana y no se modifica unilateralmente.
 
 ## Resultado final del Plan
 
@@ -540,8 +569,9 @@ Referencias verificables usadas: `docs/plans/105-terminology-architecture-materi
 
 **Fundamento — derivado de la evidencia registrada, no elegido previamente.**
 
-- **Implementado:** la convención existe, está registrada y es no normativa; el primer Trial real se ejecutó sobre `<PLAN-105>` con dos perspectivas atribuidas, compromiso antes de revelación, procedencia declarada, síntesis con desacuerdo preservado (sin adjudicar), veredicto con base declarada y recomendación advisory separada; la decisión permaneció fuera del mecanismo. Criterios de salida satisfechos: 1–11, 13, 15, 16.
+- **Implementado:** la convención existe, está registrada y es no normativa; el primer Trial real se ejecutó sobre `<PLAN-105>` con dos perspectivas atribuidas, compromiso antes de revelación, procedencia declarada, síntesis con desacuerdo preservado (sin adjudicar), veredicto con base declarada y recomendación advisory separada; la decisión permaneció fuera del mecanismo. Criterios de salida satisfechos: **los 16** (el 12, tras el registro de la decisión humana del 2026-09-09).
 - **Valor parcialmente demostrado:** la segunda perspectiva **cambió el resultado** — sin `E-B`, la conclusión de una sola pasada habría sido `VIABLE` (apoyada en `K-1(c)`, costo bajo y reversibilidad); con `E-B`, el veredicto es `NOT_VIABLE` — y aportó **dos argumentos materiales** que la primera no había considerado (que el ADR **no autoriza** y por tanto elevar no agrega fuerza funcional; el **riesgo de duplicación de fuente** CONVENTIONS↔ADR, contra la gobernanza documental DEV).
-- **Por qué sólo parcial y no demostrado del todo:** ambas perspectivas las produjo **el mismo ejecutor** (mismo agente, misma sesión) ⇒ **no** se demostró el valor de perspectivas **independientes**, sólo el de la **disciplina adversarial con procedencia declarada**; es **N=1** y no permite generalizar; el **baseline es una reconstrucción**, no una ejecución comparable; **no hay medición** de tokens/tiempo; y la pregunta 6 (¿cambió la decisión humana?) quedó **no observable** por no haber decisión.
-- **Criterios no satisfechos (motivo de `Executed (parcial)`):** **12** — la decisión sobre `<PLAN-105>` **no fue tomada**: el veredicto del Trial quedó escalado al mantenedor y la decisión es su acto separado; el Step 12 prohíbe cerrar el Plan como si estuviera resuelta. Los 15 criterios restantes quedaron satisfechos, incluido **14** (batería canónica en verde en A2: checkers PASS y `python -m pytest tests/` `524 passed`).
+- **Por qué sólo parcial y no demostrado del todo:** ambas perspectivas las produjo **el mismo ejecutor** (mismo agente, misma sesión) ⇒ **no** se demostró el valor de perspectivas **independientes**, sólo el de la **disciplina adversarial con procedencia declarada**; es **N=1** y no permite generalizar; el **baseline es una reconstrucción**, no una ejecución comparable; **no hay medición** de tokens/tiempo; y la pregunta 6 (¿cambió la decisión humana?) quedó **no observable durante el experimento** (la decisión posterior del mantenedor coincide con el veredicto, pero sin contrafactual eso **no** demuestra inducción).
+- **Decisión humana (posterior al Trial, 2026-09-09):** registrada como **acto separado** — `<PLAN-105>` no se eleva a ADR en este momento y la convención permanece Working (`KEEP AS WORKING / CONTINUE DOGFOODING`). Es autoridad del mantenedor: **no** es el veredicto del Trial, **no** es su recomendación y **no** es una conclusión automática del mecanismo. La decisión **no** modifica la evaluación de valor, que sigue siendo parcial.
+- **Criterios de salida:** los **16** satisfechos. El **12** ("la decisión quedó en autoridad humana, registrada como acto separado") se cumplió con el registro del 2026-09-09; el **14** (validaciones aplicables) con la batería canónica en verde en A2 (checkers PASS y `python -m pytest tests/` `524 passed`). Condición derivada: **`Closed`** (docs-only, sin release).
 - **Fuera de este Plan (no decidido aquí):** promoción de la convención a gobernanza, obligatoriedad, tooling, integración con Change Lifecycle, integración con Protocol y cualquier evolución arquitectónica. Dependen de la evidencia obtenida y de decisión del mantenedor.

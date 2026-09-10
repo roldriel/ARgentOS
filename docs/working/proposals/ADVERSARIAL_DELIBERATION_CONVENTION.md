@@ -21,6 +21,19 @@
 >
 > El uso interno de `MUST`/`PROHIBITED` es, por tanto, **interno al experimento**:
 > quien no invoque esta convención no queda alcanzado por ninguna de sus reglas.
+>
+> **Estado de la convención (decisión del mantenedor, 2026-09-09).** Tras la
+> evidencia del primer dogfooding (Plan 114, `<PLAN-105>`), la decisión humana
+> registrada es **`KEEP AS WORKING / CONTINUE DOGFOODING`**: este documento
+> **permanece experimental/Working**. **No** se promueve a gobernanza, **no** se
+> convierte en obligatoriedad general, **no** se incorpora al Change Lifecycle
+> como requisito, **no** se incorpora al Protocol, **no** se transforma en
+> RFC/ADR y **no** se vuelve regla normativa general de DEV. La evidencia
+> disponible es positiva pero insuficiente para promoción amplia (N=1, mismo
+> ejecutor en ambas perspectivas, independencia epistemológica no demostrada,
+> una dimensión de valor no observable). El registro de la decisión vive en el
+> Plan 114 (`### Decisión humana — fuera del mecanismo` y `### Pending
+> decisions`); no se crea un Plan nuevo para continuar el dogfooding.
 
 ---
 

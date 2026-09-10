@@ -239,7 +239,7 @@ Cerrar solo si se cumplen los 16 criterios de `## Criterios de salida`. Al cerra
 | Problema / cuestión (referencia) | Decisión pendiente `<PLAN-105>`: *elevar la arquitectura terminológica (D1–D5) a ADR cuando se satisfaga el criterio de ADR-worthiness* |
 | Candidata | `C-1` — *elevar **ahora** la arquitectura terminológica (D1–D5) a ADR* |
 | Modo | `viability` |
-| Criterios | `K-1` disparadores de ADR-worthiness de `docs/adr/16-change-lifecycle-authority.md:ADR-worthiness` · `K-2` costo de gobernanza de un ADR prematuro · `K-3` valor de fijar el invariante antes de que aparezca un consumidor · `K-4` reversibilidad de elevar después |
+| Criterios | `K-1` disparadores de ADR-worthiness de `docs/adr/16-change-lifecycle-authority.md:Decisión` (punto 3 — ADR-worthiness) · `K-2` costo de gobernanza de un ADR prematuro · `K-3` valor de fijar el invariante antes de que aparezca un consumidor · `K-4` reversibilidad de elevar después |
 | Límites declarados | máximo 2 pasadas de evaluación; sin confrontación; una síntesis |
 | Motivo de invocación | El Plan 114 requiere un caso real de dogfooding; `<PLAN-105>` es una decisión registrada, DEV-only, con dos opciones materialmente distintas, no bloqueante y con resolución pendiente |
 
@@ -247,7 +247,7 @@ Cerrar solo si se cumplen los 16 criterios de `## Criterios de salida`. Al cerra
 
 - **Etiqueta local:** `E-A`.
 - **Ejecutor:** agente DEV (sesión de ejecución del Plan 114).
-- **Material recibido:** registro `<PLAN-105>` (`docs/plans/105-terminology-architecture-materialization.md:## Findings / Correcciones / Pending` → `### Pending decisions`); `docs/adr/16-change-lifecycle-authority.md:ADR-worthiness`; `docs/CONVENTIONS.md:Convenciones de terminología y nomenclatura (decisiones D1–D5, 2026-09-05)`; `docs/glossary/INDEX.md:Qué es y qué no es`; `docs/AGENTS.md:INDEX y CONVENTIONS`.
+- **Material recibido:** registro `<PLAN-105>` (`docs/plans/105-terminology-architecture-materialization.md:## Findings / Correcciones / Pending` → `### Pending decisions`); `docs/adr/16-change-lifecycle-authority.md:Decisión` (punto 3 — ADR-worthiness); `docs/CONVENTIONS.md:Convenciones de terminología y nomenclatura (decisiones D1–D5, 2026-09-05)`; `docs/glossary/INDEX.md:Qué es y qué no es`; `docs/AGENTS.md:INDEX y CONVENTIONS`.
 - **Material compartido:** encuadre, criterios `K-1..K-4` y el material común anterior.
 - **Relación con conclusiones previas:** ninguna (primera pasada del Trial).
 - **Condición de compromiso:** conclusión registrada antes de que `E-B` conociera conclusión alguna.
@@ -258,7 +258,7 @@ Cerrar solo si se cumplen los 16 criterios de `## Criterios de salida`. Al cerra
   - `K-2` *costo*: **bajo**. Un ADR es un documento + registro en `docs/adr/INDEX.md`; el ciclo `Proposal → Accepted → Superseded` ya existe y está normalizado.
   - `K-3` *valor de fijar antes del primer consumidor*: **a favor**. La regla SCI y la calificación de términos ya se aplican en texto nuevo; un ADR las haría visibles para quien lee el registro de decisiones y no el cuerpo de CONVENTIONS.
   - `K-4` *reversibilidad*: **a favor**. La elevación es reversible por supersession; elevar ahora no introduce un compromiso irreversible.
-- **Premisas:** (P1) el ADR no autoriza cambios: su función es de registro/auditoría y no de habilitación (`docs/adr/16-change-lifecycle-authority.md:Decisión` puntos 1–2); (P2) la elevación puede ser retrospectiva (`:ADR-worthiness`); (P3) la carga de mantenimiento de un ADR es acotada.
+- **Premisas:** (P1) el ADR no autoriza cambios: su función es de registro/auditoría y no de habilitación (`docs/adr/16-change-lifecycle-authority.md:Decisión` puntos 1–2); (P2) la elevación puede ser retrospectiva (`:Decisión`, punto 3 — ADR-worthiness); (P3) la carga de mantenimiento de un ADR es acotada.
 - **Supuestos:** que el contenido D1–D5 no cambiará en el corto plazo; que la visibilidad adicional en el registro de decisiones tiene valor para el mantenedor y para agentes que no leen CONVENTIONS completo.
 - **Incertidumbres:** si `K-1(c)` basta por sí solo cuando el ADR **no** autoriza nada; si "invariante arquitectónico" alcanza a convenciones de terminología; si `K-1(a)` aplica sin una RFC de origen.
 
@@ -276,7 +276,7 @@ Cerrar solo si se cumplen los 16 criterios de `## Criterios de salida`. Al cerra
   - `K-1(b)`: **no se satisface**. Elevar no supersede ni modifica un ADR existente; sería un ADR nuevo sobre materia no cubierta por ADR-01…16.
   - `K-1(c)`: **débil, y potencialmente autoinvalidante**. La fuerza del invariante D3 ("sin nueva decisión") **ya existe** en la regla operacional vigente; y como el ADR **no autoriza** (`docs/adr/16-change-lifecycle-authority.md:Invariantes` AU-2), convertirlo en ADR **no agrega fuerza ejecutable**: la autorización seguiría viniendo del lifecycle. El beneficio sería de visibilidad, no de auditabilidad.
   - `K-2`: **costo real y no trivial**. Un ADR es un artefacto permanente con ciclo propio, registro en INDEX, relaciones, estado de implementación y Amendment Log. Un ADR cuyo contenido **espeje** la subsección de `docs/CONVENTIONS.md` crea **dos textos sobre la misma materia**, que es lo que la gobernanza documental DEV prohíbe: `docs/AGENTS.md:INDEX y CONVENTIONS` ("no se duplican responsabilidades"; el INDEX registra, no regula) y `docs/glossary/INDEX.md:Qué es y qué no es` ("Prohibido: duplicar definiciones normativas"). El ADR quedaría obligado a mantener sincronía con CONVENTIONS sin ser su fuente.
-  - `K-3` (invertido): fijar "antes del primer consumidor" es **prematuro** cuando no hay consumidor que lo requiera. El propio criterio es **condicional a evidencia** y trae guardas explícitas: "No toda decisión arquitectónica necesita ADR; no se crea un ADR por cada RFC" (`docs/adr/16-change-lifecycle-authority.md:ADR-worthiness`).
+  - `K-3` (invertido): fijar "antes del primer consumidor" es **prematuro** cuando no hay consumidor que lo requiera. El propio criterio es **condicional a evidencia** y trae guardas explícitas: "No toda decisión arquitectónica necesita ADR; no se crea un ADR por cada RFC" (`docs/adr/16-change-lifecycle-authority.md:Decisión` (punto 3 — ADR-worthiness)).
   - `K-4` (invertido): la reversibilidad **corta en ambos sentidos**. Elevar es reversible, pero deshacer un ADR improcedente deja traza de gobernanza (supersession + Amendment Log) y consume mantenimiento; **esperar cuesta cero** mientras la convención opera.
   - **Debilidades de `E-A` detectadas:** (i) trata "todo el texto nuevo consume la convención" como si fuera el criterio `(a)`, cuando el texto nuevo consume un artefacto **ya normativo** (`docs/CONVENTIONS.md`) y por tanto no hay carencia de autoridad; (ii) supone que elevar "gana estabilidad" cuando el ADR no cambia la autorización — P1 es cierta pero **juega contra** `E-A`; (iii) no verifica si existe un consumidor que demande cita independiente.
 - **Evidencia faltante (declarada):** no existe ningún caso registrado de conflicto entre la convención D1–D5 y otra autoridad DEV; no existe consumidor cross-artefacto que requiera citarla por identidad independiente; no se localizó ningún pedido del mantenedor de elevar.
@@ -303,7 +303,7 @@ Cerrar solo si se cumplen los 16 criterios de `## Criterios de salida`. Al cerra
 **Dependencias y condiciones (derivadas):**
 
 - `D-1` — el valor de elevar depende de que exista un **consumidor que requiera cita independiente** (condición no satisfecha hoy).
-- `C-2` — si apareciera un conflicto real entre la convención y otra autoridad, o un consumidor cross-artefacto, `K-1(a)`/`K-1(b)` podrían satisfacerse y la conclusión podría invertirse (el criterio admite elevación retrospectiva: `docs/adr/16-change-lifecycle-authority.md:ADR-worthiness`).
+- `C-2` — si apareciera un conflicto real entre la convención y otra autoridad, o un consumidor cross-artefacto, `K-1(a)`/`K-1(b)` podrían satisfacerse y la conclusión podría invertirse (el criterio admite elevación retrospectiva: `docs/adr/16-change-lifecycle-authority.md:Decisión` (punto 3 — ADR-worthiness)).
 
 **Desacuerdo preservado (explícito, sin adjudicar):** la divergencia se concentra en `K-1(c)` y en el costo de duplicación; **no se resuelve por mayoría, por conteo ni por preferencia del sintetizador**.
 
@@ -464,11 +464,11 @@ Detenerse inmediatamente, registrando la condición, la evidencia, por qué bloq
 
 ### Findings
 
-- `No findings detected / N/A` (a completar en la ejecución)
+- `<PLAN-114>:F-01` — estado: `partially-resolved` (corrección `C-01` aplicada y revalidada; la **resolución formal es decisión del mantenedor**: `docs/CONVENTIONS.md:Change Lifecycle — Findings y correcciones (regla operacional; LC-1, Incremento 2)`); **observación original:** 4 citas del Plan 114 referenciaban `docs/adr/16-change-lifecycle-authority.md:ADR-worthiness`, sección que **no existe** como encabezado — la materia "ADR-worthiness" es el **punto 3 de `## Decisión`** de ese ADR; detectado por `python tools/check_plan_citations.py` en la **primera** ejecución de la batería (V1 = **FAIL**: 4 broken citations) sobre el estado del commit C1 `4f6a3a4`; **evidencia original:** salida del checker listando las líneas 242, 250, 279 y 306 con `[section not found]`; **estado Git observado:** `dev` en `4f6a3a4`, working tree limpio salvo `.codegraph/` (untracked); **provenance original:** contenido producido por el agente en la ejecución del Plan 114.
 
 ### Correcciones
 
-- `N/A`
+- `<PLAN-114>:C-01` — **refs origen:** `<PLAN-114>:F-01`; **acción:** repuntar las 4 citas a `docs/adr/16-change-lifecycle-authority.md:Decisión` (punto 3 — ADR-worthiness) y la forma corta `:ADR-worthiness` a `:Decisión`; **alcance de revalidación:** batería canónica completa sobre el estado corregido (V2), en particular `check_plan_citations.py`; **evidencia:** commit `C2` y salida de V2 (ver `## Nota de ejecución`).
 
 ### Pending decisions
 

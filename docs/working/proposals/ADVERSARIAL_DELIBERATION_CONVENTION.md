@@ -58,6 +58,20 @@
 > dogfood (reconocimiento de `<PLAN-114>:F-1`/`F-2`, resolución de
 > `<PLAN-114>:F-3`, release de `11.1.0`/`11.2.0`) permanecen pendientes con
 > owner (mantenedor) y son independientes de este cierre.
+>
+> **Estado de adopción (Plan 117, 2026-09-12).** `Adversarial Deliberation —
+> DEV`: **ADOPTED + WORKING + NON-NORMATIVE**. La capacidad queda adoptada como
+> **capability disponible** del entorno DEV —reconocible, invocable y
+> reutilizable— y **sigue siendo Working**: no es obligatoria, no crea gates,
+> no crea lifecycle states, no posee autoridad, no se promueve a gobernanza, no
+> se incorpora al Change Lifecycle ni al Protocol, y **no** es el Protocol-native
+> Jury Trial (FUTURE / NOT STARTED / OUT OF SCOPE). «Adoptada» significa
+> **disponible**, nunca `mandatory`; su naturaleza no cambia y no se crea un
+> lifecycle state nuevo. La definición de la feature, el contrato de adopción y
+> el predicate `JURY_TRIAL_DEV_FEATURE_CLOSED` quedan registrados en
+> `docs/plans/117-adversarial-deliberation-feature-adoption.md` (docs-only, sin
+> release); `JURY_TRIAL_CLOSED` es únicamente el predicate del MVP ya cerrado
+> por el Plan 116 y no sustituye al predicate de la feature.
 
 ---
 
@@ -289,3 +303,20 @@ estados: es una secuencia de pasos registrados.
 | Se alcanza el límite | `UNDETERMINED(LIMIT)` si no había veredicto; el veredicto alcanzado si ya existía |
 | Un ejecutor no puede completar una pasada | Reintentar en las mismas condiciones = el **mismo paso reintentado**; con condiciones nuevas = **paso nuevo** |
 | Interrupción / reanudación | Se conserva lo comprometido; nada se reescribe; lo posterior es contenido nuevo que referencia lo anterior |
+
+## 15. Record / Registration (record home)
+
+El registro de una deliberación **pertenece al artifact que posee la decisión**
+(`docs/CONVENTIONS.md:Change Lifecycle — Pending decisions (regla operacional; PC-1, Incremento 2)`):
+
+- **Artifact dueño abierto:** el registro se asienta en ese artifact.
+- **Artifact dueño cerrado:** el registro se asienta en un **artifact nuevo que
+  referencia al cerrado**
+  (`docs/CONVENTIONS.md:Change Lifecycle — Findings y correcciones (regla operacional; LC-1, Incremento 2)`);
+  el artifact cerrado **no se reabre**.
+- **No se crea un artifact únicamente para alojar un Trial**, ni registry, ID
+  global, schema, plantilla, entidad `Trial` o lifecycle.
+- **Contenedores:** el registro **MUST NOT** ocupar ni usar como encabezado los
+  contenedores de lineage del lifecycle (`## Findings / Correcciones / Pending`,
+  `### Findings`, `### Correcciones`), ni referencias que el contrato de lineage
+  interprete como findings o correcciones; usa encabezados propios.

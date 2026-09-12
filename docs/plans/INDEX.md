@@ -752,6 +752,32 @@ plantillas. Sin cambios en `protocol/.agents/`, `runtime/`, `tools/`, `tests/`,
 |---|---|---|---|
 | `116-adversarial-deliberation-mvp-closure.md` | — | Executed | Cierre del MVP de deliberación adversarial DEV (Adversarial Deliberation MVP Closure): dogfood final A/B/C sobre decisiones reales registradas del repositorio conforme a la convención Working, decisiones humanas separadas, validación (batería + C-1/C-2/C-3) y evaluación del closure predicate A–I. **Creación (2026-09-12):** artifact creado con `Status` `Aprobado para ejecución` y GO del mantenedor registrado en el plan como H1 (decisiones D-1/D-2 del prompt de Phase 2). **Ejecución (2026-09-12):** Tres Trials reales — A: reconocimiento formal de `<PLAN-114>:F-1`/`F-2` con ejecutores diferenciados (agente principal + subagente de deliberación, compromiso antes de revelación, sin afirmación de independencia epistemológica), veredicto `NOT_VIABLE` sobre la candidata tal como enunciada; B: intervención sobre `<PLAN-114>:F-3`, veredicto `NOT_VIABLE` con **NO CHANGE registrado como resultado legítimo** (sin diffs); C: release batch de `11.1.0`/`11.2.0` con camino no canónico de **confrontación acotada (§7)** terminada por criterio de valor, veredicto `NOT_VIABLE` (K-4: confirmación del usuario para MINOR no registrada); decisiones humanas registradas como pendientes escaladas con owner (PC-1; `Trial Verdict ≠ Recommendation ≠ Human Decision`); corrección factual declarada del marco C (el batch `11.0.0`/`11.0.1` ya estaba promovido en `2dfb99f`); validación: batería canónica PASS (A1 tree `cf0358b0…`, delta `835bd6c6…`; A2 sobre el estado final), C-1 `VALID`, C-3 `VALID` (`GAP=0`, `ANOMALY=0`), C-2 pendiente del commit del mantenedor, pierna `pytest` con la clase ambiental preexistente de permisos del sandbox (sin fallos nuevos; los tests content-sensitive T27/estructura pasan); status `Executed`. **Human Checkpoint y cierre (2026-09-12):** el mantenedor aceptó el cierre (`D-1 = ACCEPT CLOSURE OF THE DEV ADVERSARIAL DELIBERATION MVP`; `D-2 = ACCEPT FINAL DOGFOOD A/B/C`) y el commit atómico de cierre materializó la condición derivada **`Closed` (docs-only, sin release)** con `JURY_TRIAL_CLOSED = A ∧ B ∧ C ∧ D ∧ E ∧ F ∧ G ∧ H ∧ I` satisfecho (predicate I PASS por aceptación humana + commit); las decisiones deliberadas (F-1/F-2, F-3, release `11.1.0`/`11.2.0`) permanecen pendientes con owner y no forman parte de este cierre; la convención sigue Working/no normativa; la feature Protocol-native queda FUTURE / NOT STARTED / OUT OF SCOPE; sin cambios en `protocol/.agents/`, `runtime/`, `tools/`, `tests/`, `.agents/`, plantillas ni `docs/CONVENTIONS.md`/`docs/VERSIONING.md`; sin RFC/ADR, sin `VERSION` bump, sin tag, sin push, sin merge. |
 
+## Cuadragésima novena serie: adopción de la feature DEV de deliberación adversarial (Plan 117) (12 sep 2026)
+
+Plan 117 (cambio DEV docs-only autorizado por el mantenedor, 2026-09-12, GO
+registrado como H1 en el plan vía las decisiones D-1…D-8 del prompt de Phase 5;
+régimen RFC-75/RFC-69; sin RFC/ADR nuevo, clase RFC-56 —): materializa la
+adopción de la feature DEV de deliberación adversarial (`Adversarial
+Deliberation`) especificada en Phase 4 —`DEFINITION-B` aceptada— como capability
+**Working, no normativa, disponible y reutilizable**: definición final de la
+feature, contrato de adopción (15 elementos), frontera de autoridad, contrato de
+independencia y de valor, límites, evidencia (cuatro Trials reales en dos
+Planes), limitaciones declaradas y predicate `JURY_TRIAL_DEV_FEATURE_CLOSED` con
+C1–C8; cierra el `GAP-02` (regla de record home) en la convención con el mínimo
+texto derivado de PC-1/LC-1; actualiza el banner de la convención y la fila de
+`docs/working/proposals/INDEX.md` con el standing adoptado (descriptivo, sin
+lifecycle state nuevo); registra el acto humano de cierre como decisión separada
+y deriva `JURY_TRIAL_DEV_FEATURE_CLOSED` (docs-only, sin release). Sin código,
+tool, checker, registry, state machine, entidad `Trial`, ID global, telemetría,
+métricas, routing operacional, integración al Change Lifecycle, dogfood
+adicional ni cambios de plantillas. Sin cambios en `protocol/.agents/`,
+`runtime/`, `tools/`, `tests/`, `.agents/`, `ROADMAP.md`, `AGENTS.md`, `dist/`,
+`master` ni tags; sin `VERSION` bump ni tag (RFC-69).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `117-adversarial-deliberation-feature-adoption.md` | — | Executed | Adopción de la feature DEV de deliberación adversarial (Adversarial Deliberation Feature Adoption): materializa el contrato de adopción de Phase 4 —`DEFINITION-B` aceptada— y el predicate `JURY_TRIAL_DEV_FEATURE_CLOSED` con C1–C8, cierra el `GAP-02` (record home) en la Working Convention con el mínimo texto derivado de PC-1/LC-1, declara el standing `ADOPTED + WORKING + NON-NORMATIVE` (sin lifecycle state nuevo) y registra la decisión humana de cierre como acto separado. **Creación (2026-09-12):** artifact creado con `Status` `Aprobado para ejecución` y GO del mantenedor registrado como H1 (decisiones D-1…D-8 del prompt de Phase 5). **Ejecución (2026-09-12):** definición final de la feature, contrato de adopción de 15 elementos, frontera de autoridad, contratos de independencia y de valor, evidencia (cuatro Trials reales en dos Planes, dos configuraciones de ejecutor, confrontación acotada, NO CHANGE y reconstruibilidad) y limitaciones declaradas; validación A1 (tree `56e4407f…`, delta `f725d0c0…`) y segunda validación sobre el estado staged de cierre con los 6 checkers canónicos PASS, C-1 Plan 117 `VALID`, C-2 Plan 117 `VALID`, C-3 `N/A` (ausencia declarada, con `GAP=0` y `ANOMALY=0`), los tests content-sensitive `2 passed` y la pierna `pytest` con la clase ambiental preexistente sin fallos nuevos; tabla C1–C8 verificada con evidencia y `JURY_TRIAL_DEV_FEATURE_CLOSED = TRUE` derivado (no declarado); condición derivada **`Closed` (docs-only, sin release)** con commit atómico `feat(dev): adopt adversarial deliberation as a reusable DEV capability (plan 117)`. Sin code, tool, checker, registry, state machine, entidad `Trial`, ID global, telemetría, métricas, routing operacional, integración al Change Lifecycle, dogfood adicional ni arquitectura nueva; sin cambios en `protocol/`, `dist/`, `runtime/`, `tools/`, `tests/`, `.agents/`, `ROADMAP.md`, `AGENTS.md`, plantillas, `docs/CONVENTIONS.md` ni `docs/VERSIONING.md`; sin RFC/ADR, sin `VERSION` bump, sin tag, sin push, sin merge. |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

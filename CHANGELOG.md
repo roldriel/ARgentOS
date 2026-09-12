@@ -358,6 +358,27 @@ La política de versionado, changelog, tags y estados de planes vive en
   plantillas; sin cambios en `protocol/.agents/`, `runtime/`, `tools/`,
   `tests/` ni `.agents/`. Cambio docs-only: sin `VERSION` bump ni tag (ver
   `docs/VERSIONING.md` §3).
+- **Adopción de la feature DEV de deliberación adversarial** (plan 117, —): la
+  Working Convention no normativa
+  (`docs/working/proposals/ADVERSARIAL_DELIBERATION_CONVENTION.md`) queda
+  **adoptada como capability disponible del entorno DEV** —reconocible,
+  invocable y reutilizable— con standing `ADOPTED + WORKING + NON-NORMATIVE`,
+  sin nuevo lifecycle state, sin promoción a gobernanza, sin obligatoriedad, sin
+  gate y sin autoridad. Se materializa la definición final de la feature, el
+  contrato de adopción (15 elementos), la frontera de autoridad, los contratos
+  de independencia y de valor, las limitaciones declaradas y el predicate
+  `JURY_TRIAL_DEV_FEATURE_CLOSED` con C1–C8 (el predicate `JURY_TRIAL_CLOSED`
+  del MVP queda únicamente como precondition y no lo sustituye); se cierra el
+  `GAP-02` (record home) en la convención con el mínimo texto derivado de
+  PC-1/LC-1 —el registro pertenece al artifact que posee la decisión; si está
+  cerrado, a un artifact nuevo que lo referencia, fuera de los contenedores de
+  lineage— y se registra la decisión humana de cierre como acto separado. DEV
+  only y Working/no normativa: sin cambio en el Protocol, sin código, tool,
+  checker, registry, state machine, entidad `Trial`, ID global, telemetría,
+  métricas, routing operacional, integración al Change Lifecycle, tests ni
+  arquitectura nueva; sin cambios en `protocol/.agents/`, `runtime/`, `tools/`,
+  `tests/`, `.agents/`, `ROADMAP.md`, `AGENTS.md` ni plantillas. Cambio
+  docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3).
 
 ### Fixed
 

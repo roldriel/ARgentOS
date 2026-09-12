@@ -45,10 +45,27 @@ authority role, or a Change State Machine.
 | `target` | Reference to the governed object (protocol file, contract, mechanism). |
 | `declaration` | Initial identity-bearing declaration (target + stable scope intent). |
 | `protocol_version` | Semantic version governing the Change's interpretation (at creation). |
-| `namespace` | Isolation component of the derived identity. **Value DEFERRED** (required input; its concrete value is not yet decided). |
+| `namespace` | Isolation component of the derived identity. Value: **`project_identity`** (D-02; RFC-71 isolation, RFC-73 project segment). |
 
 These four fields are the identity inputs. They are immutable after creation:
 modifying any of them implies a different Change identity (RFC-76 I4).
+
+### Canonical representation (D-03)
+
+The identity inputs are canonicalized as four ordered lines, UTF-8:
+
+```text
+target=<target>
+declaration=<declaration.strip()>
+protocol_version=<semver>
+namespace=project_identity
+```
+
+`declaration` is trimmed and otherwise left untouched (no internal
+normalization); `target` is used verbatim (no Protocol-native target
+normalization rule exists); references, metadata and governance state are
+excluded. The content identity is `SHA-256(canonical)` (RFC-71); the Change
+identity is the RFC-71 `SegmentIdentity` over it.
 
 ### Governance (APPEND-ONLY)
 
@@ -117,10 +134,11 @@ artifact lifecycle state. No Change State Machine is introduced.
 
 ## Persistence / retrieval
 
-The Change Governance Artifact is a durable Protocol-native category. Retrieval
-is content-addressed and the locator is the derived Change Identity (no
-registry). Both are conditional on the namespace value, which remains deferred:
-no concrete namespace, no secondary locator, no registry.
+The Change Governance Artifact is a durable, per-project Protocol-native
+category, materialized at `.project/changes/<change_identity>.md` (D-01). The
+filename is derived from the Change Identity (filesystem-safe); the path is not
+part of the identity. Retrieval is content-addressed and the locator is the
+derived Change Identity (no registry, no global index, no identity service).
 
 ## Reflexivity
 
@@ -130,9 +148,8 @@ introduced.
 
 ## Deferred semantics
 
-The following remain explicitly deferred (RFC-76): `namespace` value;
-canonical representation of the identity inputs; closure predicate;
-reflexive bootstrap; Task↔Change cardinality; GC semantics; physical location.
+The following remain explicitly deferred (RFC-76): closure predicate;
+reflexive bootstrap; Task↔Change cardinality; GC semantics.
 
 ## Invariants
 

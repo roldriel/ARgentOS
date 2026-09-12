@@ -94,7 +94,7 @@ Persistent state directories:
 
 - `.project/knowledge/` — the knowledge base (entries, discovery reports) accumulated across sessions.
 - `.project/skills/` — project-level skills (see `.agents/standards/orchestration/SKILLS.md`); a skill is not a session artifact.
-- Change Governance Artifacts — the durable, Protocol-native governance state of Protocol Changes (contract `.agents/contracts/CHANGE_GOVERNANCE.md`, RFC-76). Not a session artifact. Physical location deferred (materialization detail, RFC-76).
+- `.project/changes/` — the durable, per-project Change Governance Artifacts (contract `.agents/contracts/CHANGE_GOVERNANCE.md`, RFC-76). A Change Governance Artifact is not a session artifact; its filename is derived from the Change identity.
 
 Rules:
 

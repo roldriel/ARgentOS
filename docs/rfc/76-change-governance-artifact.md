@@ -21,7 +21,7 @@ Las fases 5.1–5.3 establecieron, con evidencia, el boundary y las decisiones h
 
 Cubre: la semántica del **Change Governance Artifact**, sus identity inputs y su identidad derivada, el modelo append-only de governance history, la frontera de autorización del Change frente a RFC-66, la semántica de cierre v1, la semántica de revisión/supersession, la relación con executions, la persistencia/retrieval conceptual, la relación con el Artifact Lifecycle de RFC-63 y la reflexividad conceptual.
 
-No cubre (ver Non-Goals y Deferred): el valor concreto del namespace, la canonicalization específica, el closure predicate, el bootstrap reflexivo, la cardinalidad Task↔Change, la semántica de GC y la ubicación física.
+No cubre (ver Non-Goals y Deferred): el closure predicate, el bootstrap reflexivo, la cardinalidad Task↔Change y la semántica de GC.
 
 ## Terminología
 
@@ -48,10 +48,19 @@ Un Artifact representa **un único Change**.
 
 **Decisión (aceptada):** los identity inputs son `{target, declaration(initial), protocol_version, namespace}` (I1). Son **inmutables** tras la creación del Change (I4); modificar cualquiera implica una identidad diferente.
 
-**Decisión (aceptada):** la identidad reutiliza directamente la composición `SegmentIdentity` de RFC-71 (I5): `semantic_version = protocol_version`, `content_identity = SegmentContentIdentity(hash(canonical(target + declaration)))`, `namespace = namespace`. No se introduce wrapper, primitive, identity service ni registry.
+**Decisión (aceptada):** la identidad reutiliza directamente la composición `SegmentIdentity` de RFC-71 (I5): `semantic_version = protocol_version`, `content_identity = SHA-256(canonical(target, declaration, protocol_version, namespace))`, `namespace = project_identity` (D-02). No se introduce wrapper, primitive, identity service ni registry.
 
-- `namespace` es un **input obligatorio de identidad** (componente `SegmentIdentity` de RFC-71); **`namespace value = DEFERRED`** (I2).
-- La **canonical representation** específica de los identity inputs es **`DEFERRED`** (I3); se reutiliza la primitive de content identity de RFC-71 (SHA-256, serialización canónica UTF-8, `docs/rfc/71-context-persistence-cacheability-model.md:SegmentContentIdentity`), sin fijar aquí la serialización concreta del artifact.
+- `namespace` es un **input obligatorio de identidad**, con valor **`project_identity`** (D-02; RFC-71 isolation, RFC-73 project segment).
+- La **canonical representation** (D-03) de los identity inputs es, en orden fijo y UTF-8:
+
+  ```text
+  target=<target>
+  declaration=<declaration.strip()>
+  protocol_version=<semver>
+  namespace=project_identity
+  ```
+
+  `declaration` lleva `strip()` y sin normalización interna; `target` se usa verbatim (no existe una regla Protocol-native de normalización de target); references, metadata y governance state quedan excluidos; el hash es SHA-256 (RFC-71).
 
 ### Governance history
 
@@ -89,9 +98,9 @@ Preservar la separación: `Artifact validated ≠ Execution completed ≠ Verifi
 
 ### Persistence / retrieval
 
-**Decisión (aceptada):** el Change Governance Artifact es una **categoría durable Protocol-native** distinta (P1).
+**Decisión (aceptada):** el Change Governance Artifact es una **categoría durable Protocol-native** per-project (P1), materializada en **`.project/changes/<change_identity>.md`** (D-01). El filename deriva del Change Identity (filesystem-safe); el path no forma parte de la identidad; no existe registry ni índice global.
 
-**Decisión (aceptada, condicional):** retrieval **content-addressed** (P2) y **locator = Change Identity** (P3), sin registry. Ambas quedan **condicionadas a I2 (namespace, DEFERRED)**: mientras el valor del namespace siga diferido, no se fija un namespace concreto, no se introduce un segundo locator y no se crea registry.
+**Decisión (aceptada):** retrieval **content-addressed** (P2) y **locator = Change Identity** (P3), sin registry, sin identity service.
 
 ### Artifact Lifecycle relation
 
@@ -105,7 +114,7 @@ El artifact reutiliza el **Artifact Lifecycle de RFC-63** (`draft/validated/supe
 
 ## Non-Goals
 
-Fuera del alcance de esta RFC: nueva Change State Machine; nuevo authority role; registry; identity service; identity primitive nueva; redefinición de RFC-66; ownership; closure predicate; cardinalidad Task↔Change; GC semantics; ubicación física; bootstrap reflexivo; canonicalización específica; release; importación de la maquinaria DEV (anchors, checkpoints, findings, corrections, pending, series, DEV Change state machines).
+Fuera del alcance de esta RFC: nueva Change State Machine; nuevo authority role; registry; identity service; identity primitive nueva; redefinición de RFC-66; ownership; closure predicate; cardinalidad Task↔Change; GC semantics; bootstrap reflexivo; release; importación de la maquinaria DEV (anchors, checkpoints, findings, corrections, pending, series, DEV Change state machines).
 
 ## Compatibilidad
 
@@ -116,7 +125,7 @@ Adición compatible (MINOR): nuevo contrato + nueva categoría durable + registr
 - La identidad es determinística y derivada (RFC-71 I-001/I-004); los identity-bearing inputs son inmutables (I4), evitando identity churn.
 - La governance history es append-only (no se sobrescribe historia; principio RFC-46 reexpresado nativamente).
 - La evidencia no se convierte en autoridad (RFC-65); la effect authorization no se convierte en Change authorization (RFC-66).
-- No se introduce reuso cross-project de identidad sin autorización explícita (RFC-71 I-008); el valor del namespace queda diferido.
+- No se introduce reuso cross-project de identidad sin autorización explícita (RFC-71 I-008); el namespace `project_identity` aísla los Changes por proyecto.
 
 ## Referencias normativas
 
@@ -141,9 +150,10 @@ Adición compatible (MINOR): nuevo contrato + nueva categoría durable + registr
 - [ ] `declaration` frozen; revisión de propuesta no cambia la identidad; supersession RFC-63.
 - [ ] El Change referencia `executions[]`; la relación Task↔Change se deriva.
 - [ ] La categoría durable está registrada en `PROTOCOL_BOUNDARIES.md`; el artifact está registrado en `PROTOCOL_TAXONOMY.md`.
-- [ ] Los elementos diferidos (`namespace value`, `canonical representation`, `closure predicate`, `reflexive bootstrap`, `Task↔Change cardinality`, `GC`, `physical location`) permanecen explícitamente DEFERRED.
+- [ ] Los elementos diferidos (`closure predicate`, `reflexive bootstrap`, `Task↔Change cardinality`, `GC`) permanecen explícitamente DEFERRED.
 - [ ] Batería canónica de verificación en verde.
 
 ## Amendment Log
 
 - 2026-09-12 — Creación y registro formal (RFC-76). Materializa las decisiones humanas de las fases 5.1–5.3 (I1–I5, G1–G7, R1–R4, T1–T2, P1–P3, X1–X2) y las decisiones de materialización N1–N4. Status Accepted (plan 115). Cambio MINOR (11.1.0).
+- 2026-09-12 — Sincronización normativa (D-01/D-02/D-03): resuelve `namespace value` (`project_identity`), `canonical representation` (líneas ordenadas + SHA-256) y `physical location` (`.project/changes/<change_identity>.md`). Permanecen DEFERRED: `closure predicate`, `reflexive bootstrap`, `Task↔Change cardinality`, `GC`. Cambio MINOR (11.2.0).

@@ -372,6 +372,19 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [11.2.0] — 2026-09-12
+
+### Changed
+
+- **Change Governance Artifact — namespace, canonical representation y
+  ubicación** (plan 115, RFC-76; decisiones D-01/D-02/D-03): resuelve los
+  elementos diferidos de identidad y persistencia. `namespace` =
+  `project_identity`; canonical representation por cuatro líneas ordenadas
+  (UTF-8, SHA-256; `declaration` con trim, `target` verbatim); ubicación física
+  `.project/changes/<change_identity>.md` (content-addressed, sin registry).
+  Permanecen DEFERRED: closure predicate, reflexive bootstrap, Task↔Change
+  cardinality, GC semantics.
+
 ## [11.1.0] — 2026-09-12
 
 ### Added

@@ -327,6 +327,37 @@ La política de versionado, changelog, tags y estados de planes vive en
   sin cambios en `protocol/.agents/`, `runtime/`, `tools/`, `tests/` ni
   `.agents/`. Cambio docs-only: sin `VERSION` bump ni tag (ver
   `docs/VERSIONING.md` §3).
+- **Cierre del MVP de deliberación adversarial DEV — dogfood final A/B/C y
+  evaluación del closure predicate** (plan 116, —): Tres Trials reales conforme
+  a la Working Convention no normativa
+  (`docs/working/proposals/ADVERSARIAL_DELIBERATION_CONVENTION.md`) —
+  Escenario A (reconocimiento formal de `<PLAN-114>:F-1`/`F-2`: veredicto
+  `NOT_VIABLE` sobre la candidata tal como estaba enunciada; dos perspectivas
+  con ejecutores diferenciados — agente principal + subagente de deliberación,
+  compromiso antes de revelación, sin afirmación de independencia
+  epistemológica); Escenario B (intervención sobre `<PLAN-114>:F-3`: veredicto
+  `NOT_VIABLE` y **NO CHANGE** registrado como resultado legítimo); Escenario C
+  (release batch de `11.1.0`/`11.2.0`: camino no canónico con confrontación
+  acotada §7, nunca antes ejercitada, terminada por criterio de valor; veredicto
+  `NOT_VIABLE` por `K-4` — confirmación del usuario para MINOR no registrada) —
+  con decisiones humanas registradas como actos separados o pendientes
+  escaladas con owner (PC-1), validación (batería canónica + gates C-1/C-2/C-3)
+  y evaluación letra por letra del closure predicate
+  `A ∧ B ∧ C ∧ D ∧ E ∧ F ∧ G ∧ H ∧ I` (contract / architecture /
+  implementation / integration / validation / verification / dogfood /
+  documentation / governance); propuesta **`READY TO CLOSE`** para el MVP DEV.
+  **Human Checkpoint (2026-09-12):** el mantenedor registró `D-1 = ACCEPT
+  CLOSURE OF THE DEV ADVERSARIAL DELIBERATION MVP` y `D-2 = ACCEPT FINAL
+  DOGFOOD A/B/C`; con la aceptación y el commit atómico de cierre el predicate I
+  pasa a PASS y el MVP DEV queda **`CLOSED` (docs-only, sin release)** — las
+  decisiones deliberadas (reconocimiento de F-1/F-2, resolución de F-3, release
+  de `11.1.0`/`11.2.0`) permanecen pendientes con owner y no forman parte de
+  este cierre. La Working Convention permanece no normativa. La feature
+  Protocol-native queda **FUTURE / NOT STARTED / OUT OF SCOPE**. Sin código,
+  tool, checker, registry, state machine, entidad global ni cambios de
+  plantillas; sin cambios en `protocol/.agents/`, `runtime/`, `tools/`,
+  `tests/` ni `.agents/`. Cambio docs-only: sin `VERSION` bump ni tag (ver
+  `docs/VERSIONING.md` §3).
 
 ### Fixed
 

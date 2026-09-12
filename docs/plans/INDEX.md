@@ -729,6 +729,29 @@ bootstrap, Task↔Change cardinality, GC, physical location). Cambio MINOR.
 |---|---|---|---|
 | `115-change-governance-artifact-materialization.md` | RFC-76 | Executed | Materialización del Change Governance Artifact: contrato `CHANGE_GOVERNANCE.md` + taxonomía + boundaries + RFC/plan/INDEXes + changelog `[11.1.0]` + migración §14 + `VERSION` `11.1.0`. Cambio MINOR (aditivo); sin state machine/rol/registry/identity service; deferred explícito. Sin commit, sin tag (release pendiente). |
 
+## Cuadragésima octava serie: cierre del MVP de deliberación adversarial DEV — dogfood final A/B/C y evaluación del closure predicate (Plan 116) (12 sep 2026)
+
+Plan 116 (cambio DEV docs-only autorizado por el mantenedor, 2026-09-12, GO
+registrado como H1 en el plan vía las decisiones D-1/D-2 del prompt de Phase 2;
+régimen RFC-75/RFC-69; sin RFC/ADR nuevo, clase RFC-56 —): ejecuta el dogfood
+final del MVP de deliberación adversarial conforme a la Working Convention no
+normativa (`docs/working/proposals/ADVERSARIAL_DELIBERATION_CONVENTION.md`):
+Tres Trials reales — Escenario A (decisión real con ejecutores diferenciados y
+decisión humana observable), Escenario B (resultado legítimo NO CHANGE) y
+Escenario C (camino no canónico con confrontación acotada) — con registros
+embebidos, decisiones humanas como acto separado (o pendientes escaladas con
+owner), validación por la batería canónica y los gates de lifecycle existentes,
+y evaluación letra por letra del closure predicate `A ∧ B ∧ C ∧ D ∧ E ∧ F ∧ G
+∧ H ∧ I` (contract / architecture / implementation / integration / validation
+/ verification / dogfood / documentation / governance). Sin código, tool,
+checker, registry, state machine, entidad global, RFC, ADR ni cambios de
+plantillas. Sin cambios en `protocol/.agents/`, `runtime/`, `tools/`, `tests/`,
+`.agents/`, `dist/`, `master` ni tags; sin `VERSION` bump ni tag (RFC-69).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `116-adversarial-deliberation-mvp-closure.md` | — | Executed | Cierre del MVP de deliberación adversarial DEV (Adversarial Deliberation MVP Closure): dogfood final A/B/C sobre decisiones reales registradas del repositorio conforme a la convención Working, decisiones humanas separadas, validación (batería + C-1/C-2/C-3) y evaluación del closure predicate A–I. **Creación (2026-09-12):** artifact creado con `Status` `Aprobado para ejecución` y GO del mantenedor registrado en el plan como H1 (decisiones D-1/D-2 del prompt de Phase 2). **Ejecución (2026-09-12):** Tres Trials reales — A: reconocimiento formal de `<PLAN-114>:F-1`/`F-2` con ejecutores diferenciados (agente principal + subagente de deliberación, compromiso antes de revelación, sin afirmación de independencia epistemológica), veredicto `NOT_VIABLE` sobre la candidata tal como enunciada; B: intervención sobre `<PLAN-114>:F-3`, veredicto `NOT_VIABLE` con **NO CHANGE registrado como resultado legítimo** (sin diffs); C: release batch de `11.1.0`/`11.2.0` con camino no canónico de **confrontación acotada (§7)** terminada por criterio de valor, veredicto `NOT_VIABLE` (K-4: confirmación del usuario para MINOR no registrada); decisiones humanas registradas como pendientes escaladas con owner (PC-1; `Trial Verdict ≠ Recommendation ≠ Human Decision`); corrección factual declarada del marco C (el batch `11.0.0`/`11.0.1` ya estaba promovido en `2dfb99f`); validación: batería canónica PASS (A1 tree `cf0358b0…`, delta `835bd6c6…`; A2 sobre el estado final), C-1 `VALID`, C-3 `VALID` (`GAP=0`, `ANOMALY=0`), C-2 pendiente del commit del mantenedor, pierna `pytest` con la clase ambiental preexistente de permisos del sandbox (sin fallos nuevos; los tests content-sensitive T27/estructura pasan); status `Executed`. **Human Checkpoint y cierre (2026-09-12):** el mantenedor aceptó el cierre (`D-1 = ACCEPT CLOSURE OF THE DEV ADVERSARIAL DELIBERATION MVP`; `D-2 = ACCEPT FINAL DOGFOOD A/B/C`) y el commit atómico de cierre materializó la condición derivada **`Closed` (docs-only, sin release)** con `JURY_TRIAL_CLOSED = A ∧ B ∧ C ∧ D ∧ E ∧ F ∧ G ∧ H ∧ I` satisfecho (predicate I PASS por aceptación humana + commit); las decisiones deliberadas (F-1/F-2, F-3, release `11.1.0`/`11.2.0`) permanecen pendientes con owner y no forman parte de este cierre; la convención sigue Working/no normativa; la feature Protocol-native queda FUTURE / NOT STARTED / OUT OF SCOPE; sin cambios en `protocol/.agents/`, `runtime/`, `tools/`, `tests/`, `.agents/`, plantillas ni `docs/CONVENTIONS.md`/`docs/VERSIONING.md`; sin RFC/ADR, sin `VERSION` bump, sin tag, sin push, sin merge. |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

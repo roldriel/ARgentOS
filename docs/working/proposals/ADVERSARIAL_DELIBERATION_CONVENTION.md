@@ -34,6 +34,30 @@
 > una dimensión de valor no observable). El registro de la decisión vive en el
 > Plan 114 (`### Decisión humana — fuera del mecanismo` y `### Pending
 > decisions`); no se crea un Plan nuevo para continuar el dogfooding.
+>
+> **Estado de la evaluación de cierre (Plan 116, 2026-09-12).** El dogfood
+> final A/B/C del MVP DEV se ejecutó y quedó registrado en
+> `docs/plans/116-adversarial-deliberation-mvp-closure.md` (Escenario A:
+> decisión real con ejecutores diferenciados; Escenario B: NO CHANGE como
+> resultado legítimo; Escenario C: camino no canónico con confrontación
+> acotada), con decisiones humanas registradas como actos separados o
+> pendientes escaladas con owner. El closure predicate
+> (contract/architecture/implementation/integration/validation/verification/
+> dogfood/documentation/governance) quedó evaluado letra por letra con evidencia
+> en ese Plan y **`JURY_TRIAL_CLOSED` quedó satisfecho**: el mantenedor aceptó el
+> cierre del MVP DEV (Human Checkpoint, 2026-09-12: `D-1 = ACCEPT CLOSURE OF THE
+> DEV ADVERSARIAL DELIBERATION MVP`; `D-2 = ACCEPT FINAL DOGFOOD A/B/C`) y el
+> cierre se materializó con el commit atómico del Plan 116. La convención
+> **permanece Working/no normativa** (naturaleza sin cambios): no se promueve a
+> gobernanza, no se convierte en RFC/ADR, no se incorpora al Change Lifecycle ni
+> al Protocol, y no adquiere autoridad. La feature Protocol-native sigue
+> **FUTURE / NOT STARTED / OUT OF SCOPE**.
+>
+> **Estado del MVP (2026-09-12).** `Adversarial Deliberation MVP — DEV`:
+> **CLOSED** (docs-only, sin release). Las decisiones deliberadas durante el
+> dogfood (reconocimiento de `<PLAN-114>:F-1`/`F-2`, resolución de
+> `<PLAN-114>:F-3`, release de `11.1.0`/`11.2.0`) permanecen pendientes con
+> owner (mantenedor) y son independientes de este cierre.
 
 ---
 

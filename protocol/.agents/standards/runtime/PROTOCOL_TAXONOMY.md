@@ -1147,6 +1147,20 @@ entities:
       - core:COMPLETED
     contract: .agents/contracts/METRICS.md
 
+  CHANGE_GOVERNANCE.md:
+    kind: artifact
+    domain: cross-cutting
+    lifecycle: null
+    tag: governance
+    description: Durable Protocol-native governance state of one Change; identity derived via RFC-71 SegmentIdentity; governance collections append-only with derived current values; closure is an explicit human decision (v1).
+    produced_by:
+      - core:TASK_RECEIVED
+    consumed_by:
+      - core:TASK_RECEIVED
+      - core:ANALYZING_TASK
+      - core:PLANNING
+    contract: .agents/contracts/CHANGE_GOVERNANCE.md
+
   # -------------------------------------------------------------------------
   # Harness policies
   # -------------------------------------------------------------------------

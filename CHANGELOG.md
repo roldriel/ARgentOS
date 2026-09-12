@@ -372,6 +372,27 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [11.1.0] — 2026-09-12
+
+### Added
+
+- **Change Governance Artifact** (plan 115, RFC-76): nuevo contrato
+  `CHANGE_GOVERNANCE.md` — representación durable Protocol-native del governance
+  state de un Change del payload. Identidad derivada vía `SegmentIdentity`
+  (RFC-71); identity inputs `{target, declaration, protocol_version, namespace}`
+  inmutables; governance collections append-only (`decisions[]`,
+  `authorizations[]`, `closure_decisions[]`) con current derivado; Change
+  authorization semánticamente distinta de RFC-66; cierre v1 por decisión humana
+  explícita; `declaration` frozen con revisión de propuesta sin cambio de
+  identidad; supersession por Artifact Lifecycle RFC-63; relación con executions
+  por referencia; retrieval content-addressed con locator = Change Identity (sin
+  registry). Sin state machine, rol, registry ni identity service nuevos.
+
+### Modelo conceptual
+
+- **RFC-76** (plan 115): `Accepted` — modelo del Change Governance Artifact
+  (Protocol Change Lifecycle nativo, sin importar maquinaria DEV).
+
 ## [11.0.1] — 2026-09-06
 
 ### Fixed

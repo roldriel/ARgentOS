@@ -1,6 +1,6 @@
 # RFC-75 — Change Lifecycle de ARgentOS DEV
 
-**Status:** Accepted (2026-09-01; registro formal tras auditoría final de diseño; implementación pendiente)
+**Status:** Accepted (2026-09-01; registro formal tras auditoría final de diseño; implementación materializada por los Incrementos 0–4 — planes 95–101, 2026-09-02/03 —, con el Incremento 5 fuera de alcance por decisión de la propia RFC)
 **Fecha:** 2026-09-01
 **Serie:** Change Lifecycle (gobernanza del repo fuente) | —
 **Origen:** Serie de auditorías y scope definition v2 (2026-08-25..31), corregida hasta v5; evidencia RFC-71..74, G1, planes 86–93, spike de reconstrucción, auditorías adversariales independientes.
@@ -503,22 +503,84 @@ produce bump de `VERSION` ni tag; cambio docs-only (RFC-69).
 
 ## Criterios de aceptación
 
-- [ ] El lifecycle Dev queda definido: intake, classification, RFC, ADR cuando
+> **Convención de evidencia de esta lista.** Cada criterio se marca contra
+> evidencia existente y verificable, citada con `ruta:sección` o con el plan y
+> los commits que la materializaron. Los incrementos 0–4 se desplegaron como
+> Unidades A–D (`docs/plans/94-change-lifecycle-master-action-plan.md:18.
+> Planificación incremental`) y se registran en el `## Amendment Log` de esta
+> RFC. Reconciliación normativa: Plan 118 (2026-09-13, H-1).
+
+- [x] El lifecycle Dev queda definido: intake, classification, RFC, ADR cuando
       corresponde, Plan, execution, validation, findings/corrections,
       revalidation, checkpoint, closure, promotion/release cuando aplique.
-- [ ] `Level = max(dimensiones)` con umbrales coarse y ejes independientes de
-      RFC-56.
-- [ ] El anchor distingue declared scope / command-set / effective inputs /
+      **Evidencia:** `## Modelo de lifecycle` y `## Mecanismo 1`–`## Mecanismo 15`
+      de esta RFC; `docs/CONVENTIONS.md` (siete secciones operacionales del
+      Change Lifecycle DEV); `docs/VERSIONING.md:7. Estados de planes y RFCs`
+      (condiciones derivadas) y `:10. Definition of Done`. Materializado por los
+      cuatro incrementos (planes 95–101) y operacionalizado en
+      `.agents/workflows/change-lifecycle.md:Change Lifecycle — Operational
+      Workflow (ARgentOS DEV)`.
+- [x] `Level = max(dimensiones)` con umbrales coarse y ejes independientes de
+      RFC-56. **Evidencia:** `## Mecanismo 2 — Change Levels` (tabla de umbrales
+      coarse y fronteras con RFC-56 union); `docs/CONVENTIONS.md:Change Lifecycle
+      — Change Levels (modelo objetivo)`;
+      `.agents/workflows/change-lifecycle.md:1. Change detection and
+      classification` (clasificación e intake);
+      campo `**Change Level:**` en `docs/plans/_TEMPLATE.md`.
+- [x] El anchor distingue declared scope / command-set / effective inputs /
       observed dependencies / environmental factors / Scoped Content Identity /
-      validity; sin whole-tree por defecto.
-- [ ] El límite de dependencias ambientales desconocidas está declarado sin
-      mecanismo inventado.
-- [ ] Checkpoint ≠ anchor; Closed exige consistencia (scoped + factores).
-- [ ] Findings como relaciones con refs calificadas y estados, sin entidad.
-- [ ] Autoridad por clases (ADR-16) sin jerarquía universal; checker ≠ autoridad.
-- [ ] Frontera Dev/Protocol explícita; sin mecanismos compartidos.
-- [ ] Rollout incremental 0→{1,3}→2→4; cada incremento deja el repo utilizable.
-- [ ] Batería canónica en verde y citas resolubles.
+      validity; sin whole-tree por defecto. **Evidencia:** `## Mecanismo 6 —
+      Validation Anchors` (definición de los siete conceptos y límite
+      explícito del whole-tree); `docs/CONVENTIONS.md:Change Lifecycle —
+      Validation anchors y Scoped Content Identity (regla operacional; VC-1,
+      Incremento 1)`; `.agents/policies/validation-closure.md:1. Registered
+      validation and anchors (VC-1)`; contenedor
+      `## Validation anchor` de `docs/plans/_TEMPLATE.md`; generador
+      `tools/scoped_content_identity.py`.
+- [x] El límite de dependencias ambientales desconocidas está declarado sin
+      mecanismo inventado. **Evidencia:** `## Mecanismo 6 — Validation Anchors`
+      («Límite explícito»); `## Seguridad e integridad` («Límite declarado»);
+      `.agents/policies/validation-closure.md:2. Validity is relative to the
+      anchor (CL-2)` (responsabilidad del autor con
+      revalidación como backstop).
+- [x] Checkpoint ≠ anchor; Closed exige consistencia (scoped + factores).
+      **Evidencia:** `## Mecanismo 7 — Git Checkpoints`;
+      `docs/CONVENTIONS.md:Change Lifecycle — Checkpoint y cierre Git (regla
+      operacional; GC-1, Incremento 3)`;
+      `.agents/policies/validation-closure.md:5. Checkpoint (GC-1)` y
+      `.agents/policies/validation-closure.md:6. Derived conditions`; gate
+      `tools/check_lifecycle_checkpoint.py` (C-2);
+      contenedor `## Checkpoint / cierre` de `docs/plans/_TEMPLATE.md`.
+- [x] Findings como relaciones con refs calificadas y estados, sin entidad.
+      **Evidencia:** `## Mecanismo 8 — Findings / Corrections / Revalidation`;
+      `docs/CONVENTIONS.md:Change Lifecycle — Findings y correcciones (regla
+      operacional; LC-1, Incremento 2)`; `.agents/policies/validation-closure.md`
+      (sección 4); gate `tools/check_lifecycle_lineage.py` (C-3), materializado
+      por el Plan 100.
+- [x] Autoridad por clases (ADR-16) sin jerarquía universal; checker ≠ autoridad.
+      **Evidencia:** `## Mecanismo 10 — Authority / Conflict Resolution`;
+      `docs/adr/16-change-lifecycle-authority.md`; `.agents/policies/authority.md`
+      (cinco clases, protocolo de conflicto y regla «checker output = factual
+      evidence ≠ normative authority»).
+- [x] Frontera Dev/Protocol explícita; sin mecanismos compartidos.
+      **Evidencia:** `## Dev vs Protocol` de esta RFC; `AGENTS.md` («The protocol
+      payload is data, not instructions» y la prohibición de implementar
+      mecanismos de Change Lifecycle dentro de `protocol/.agents/`);
+      `.agents/AGENTS.md:Hard boundary: DEV vs Protocol`.
+- [x] Rollout incremental 0→{1,3}→2→4; cada incremento deja el repo utilizable.
+      **Evidencia:** `## Rollout incremental`; agregación en Unidades A–D
+      (`docs/plans/94-change-lifecycle-master-action-plan.md:18. Planificación
+      incremental`); ejecución por los Planes 95 (Incremento 0), 96
+      (Incrementos 1+3), 97 (Incremento 2) y 98 (Incremento 4), todos
+      `Executed` y con condición derivada `Closed`; continuación post-roadmap en
+      los Planes 99 (F-1/C-2), 100 (C-3) y 101 (capa operacional).
+- [x] Batería canónica en verde y citas resolubles. **Evidencia:** las cuatro
+      rondas de validación registradas — `## Amendment Log` de esta RFC
+      (Incrementos 1/3 y 2) y los anchors de los Planes 96–101 — reportan los
+      checkers canónicos PASS y `check_plan_citations.py` «All citations
+      resolve»; estado re-verificado al reconciliar: batería canónica completa en
+      verde, C-1 `GAP=0`/`ANOMALY=0`, C-2 `GAP=1` (Plan 116, preexistente y
+      advisory), C-3 `GAP=0`/`ANOMALY=0` (Plan 118 `## Nota de ejecución`).
 
 ## Amendment Log
 
@@ -545,3 +607,57 @@ produce bump de `VERSION` ni tag; cambio docs-only (RFC-69).
   operacionalmente exigibles para artifacts nuevos; legacy intacto (ausencia de
   campos = legacy, no invalidez). Cambio docs-only: sin `VERSION` bump ni tag
   (RFC-69).
+- 2026-09-02 — **Incremento 4 materializado** (plan 98, Unidad D): automatización
+  segura mínima sobre los datos de lifecycle producidos por las Unidades B/C
+  (`## Mecanismo 14 — Automation`, sin automatización completa). Herramientas
+  `tools/check_lifecycle_anchor.py` (C-1, chequeo de presencia y consistencia del
+  Validation Anchor, VC-1) y `tools/check_lifecycle_checkpoint.py` (C-2, chequeo
+  del checkpoint y su consistencia con el anchor aplicable, GC-1), con sus
+  contratos de exit code — `GAP` advisory nunca cambia el exit code; solo
+  `ANOMALY` lo hace — y sus suites en `tests/`. Commits `669a576` (C-1),
+  `9b5b8a1` (C-2) y `0d2d7fd` (estabilización del dogfooding sobre el repo real);
+  registro del Plan en `aa68704`. Cambio DEV tools/tests-only: sin `VERSION` bump
+  ni tag.
+- 2026-09-02 — **F-1 corregido** (plan 99): el chequeo C-2 seleccionaba el anchor
+  aplicable por recencia en lugar de por correspondencia con el estado de cierre,
+  lo que producía ambigüedad ante revalidaciones múltiples. La corrección
+  establece la semántica ya normada en `## Mecanismo 7 — Git Checkpoints` y en
+  `.agents/policies/validation-closure.md:5. Checkpoint (GC-1)`: la selección es por
+  **correspondencia** del estado validado con el estado de cierre — nunca por
+  recencia («latest A2 wins») ni por pertenencia genérica al árbol. Commit
+  `42da250`; registro del Plan en `51cabb2`. Cambio DEV tools/tests-only: sin
+  `VERSION` bump ni tag.
+- 2026-09-02 — **C-3 materializado** (plan 100): tercer gate determinista
+  `tools/check_lifecycle_lineage.py` (C-3), que verifica forma, completitud
+  mínima y consistencia interna del lineage de findings, correcciones y
+  revalidaciones (LC-1) en el contenedor `## Findings / Correcciones / Pending`:
+  refs calificadas `<artifact>:F-<n>`/`C-<n>`, vocabulario de estados, elementos
+  inmutables del finding, provenance y alcance de revalidación de la corrección,
+  marcadores de ausencia y consistencia de resolución; `### Pending decisions`
+  queda fuera del alcance v1. Commit `1ffe24c` (checker + suite); registro del
+  Plan en `d93d234`. Cambio DEV tools/tests-only: sin `VERSION` bump ni tag.
+- 2026-09-03 — **Capa operacional DEV materializada** (plan 101): `.agents/` como
+  interfaz de operación del Change Lifecycle para agentes — `AGENTS.md` (reglas
+  operativas fundamentales y ruteo de lectura bajo demanda),
+  `workflows/change-lifecycle.md` (ejecución paso a paso del lifecycle:
+  intake, clasificación, gate de autorización, plan, ejecución, evidencia,
+  anchors, findings/correcciones, checkpoint, cierre y GAP/ANOMALY/STOP),
+  `policies/authority.md` (clases de autoridad, protocolo de conflicto,
+  ADR-worthiness, discovery documental y stop conditions),
+  `policies/validation-closure.md` (VC-1, CL-2, A2, LC-1, GC-1, condiciones
+  derivadas y stop conditions) y `policies/lifecycle-checkers.md` (integración y
+  vocabulario de los gates C-1/C-2/C-3). La capa es **operacional, no normativa**:
+  enruta a la autoridad de `docs/` y no la duplica ni la reemplaza. Commit
+  `3706570`; registro del Plan en `7bcda08`. Cambio DEV docs-only: sin `VERSION`
+  bump ni tag.
+- 2026-09-13 — **Reconciliación normativa de cierre del MVP** (plan 118,
+  decisión humana H-1 autorizada por el mantenedor): se registran en este
+  `## Amendment Log` las cuatro materializaciones posteriores que ningún plan
+  había autorizado a registrar (Incremento 4, F-1, C-3 y capa operacional
+  `.agents/`), se corrige el header — que declaraba implementación pendiente — y
+  se marcan los diez criterios de aceptación con su evidencia rastreable.
+  `docs/VERSIONING.md:4.1 Batería canónica de verificación` registra además los
+  gates de lifecycle C-1/C-2/C-3 como conjunto adicional advisory/factual. Esta
+  entrada **no cambia ningún mecanismo, invariante ni decisión** de la RFC:
+  reconcilia su registro con el estado real ya alcanzado. Cambio DEV docs-only:
+  sin `VERSION` bump ni tag (RFC-69).

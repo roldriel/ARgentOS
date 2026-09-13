@@ -36,6 +36,18 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Modelo conceptual
 
+- **Cierre del MVP de Change Lifecycle DEV — reconciliación normativa de RFC-75**
+  (plan 118, RFC-75): RFC-75 reconcilia su registro con el estado real alcanzado
+  por sus Incrementos 0–4, sin rediseño. Su `## Amendment Log` registra las cuatro
+  materializaciones posteriores que ningún plan había autorizado a registrar
+  (Incremento 4 / Unidad D — plan 98; F-1 sobre la selección del anchor aplicable
+  en C-2 — plan 99; C-3 lineage checker — plan 100; capa operacional `.agents/` —
+  plan 101); se corrige el header que declaraba implementación pendiente y se
+  marcan los diez criterios de aceptación con evidencia rastreable.
+  `docs/VERSIONING.md:4.1` registra los gates de lifecycle C-1/C-2/C-3 como
+  conjunto adicional advisory/factual (fuera del bloque de comandos y de CI).
+  Sin cambio de mecanismos, invariantes ni decisiones; cambio docs-only: sin
+  `VERSION` bump ni tag (RFC-69).
 - **Revisión de la serie Proposal completada** (plan 57, RFC-56): las 23 RFCs
   de la serie 32–54 quedaron `Accepted` y sus planes asociados (31–53) están
   `Executed`. Sin cambio de payload; solo estados y traza de gobernanza.

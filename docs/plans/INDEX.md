@@ -778,6 +778,28 @@ adicional ni cambios de plantillas. Sin cambios en `protocol/.agents/`,
 |---|---|---|---|
 | `117-adversarial-deliberation-feature-adoption.md` | — | Executed | Adopción de la feature DEV de deliberación adversarial (Adversarial Deliberation Feature Adoption): materializa el contrato de adopción de Phase 4 —`DEFINITION-B` aceptada— y el predicate `JURY_TRIAL_DEV_FEATURE_CLOSED` con C1–C8, cierra el `GAP-02` (record home) en la Working Convention con el mínimo texto derivado de PC-1/LC-1, declara el standing `ADOPTED + WORKING + NON-NORMATIVE` (sin lifecycle state nuevo) y registra la decisión humana de cierre como acto separado. **Creación (2026-09-12):** artifact creado con `Status` `Aprobado para ejecución` y GO del mantenedor registrado como H1 (decisiones D-1…D-8 del prompt de Phase 5). **Ejecución (2026-09-12):** definición final de la feature, contrato de adopción de 15 elementos, frontera de autoridad, contratos de independencia y de valor, evidencia (cuatro Trials reales en dos Planes, dos configuraciones de ejecutor, confrontación acotada, NO CHANGE y reconstruibilidad) y limitaciones declaradas; validación A1 (tree `56e4407f…`, delta `f725d0c0…`) y segunda validación sobre el estado staged de cierre con los 6 checkers canónicos PASS, C-1 Plan 117 `VALID`, C-2 Plan 117 `VALID`, C-3 `N/A` (ausencia declarada, con `GAP=0` y `ANOMALY=0`), los tests content-sensitive `2 passed` y la pierna `pytest` con la clase ambiental preexistente sin fallos nuevos; tabla C1–C8 verificada con evidencia y `JURY_TRIAL_DEV_FEATURE_CLOSED = TRUE` derivado (no declarado); condición derivada **`Closed` (docs-only, sin release)** con commit atómico `feat(dev): adopt adversarial deliberation as a reusable DEV capability (plan 117)`. Sin code, tool, checker, registry, state machine, entidad `Trial`, ID global, telemetría, métricas, routing operacional, integración al Change Lifecycle, dogfood adicional ni arquitectura nueva; sin cambios en `protocol/`, `dist/`, `runtime/`, `tools/`, `tests/`, `.agents/`, `ROADMAP.md`, `AGENTS.md`, plantillas, `docs/CONVENTIONS.md` ni `docs/VERSIONING.md`; sin RFC/ADR, sin `VERSION` bump, sin tag, sin push, sin merge. |
 
+## Quincuagésima serie: cierre del MVP de Change Lifecycle DEV — reconciliación normativa de RFC-75 (Plan 118) (13 sep 2026)
+
+Plan 118 (cambio DEV docs-only autorizado por el mantenedor, 2026-09-13: cierre
+del MVP de Change Lifecycle DEV materializando la decisión humana H-1 mediante el
+Plan P-1; régimen RFC-75/RFC-69; clase RFC-56 B; sin RFC/ADR nuevo): reconcilia
+normativamente RFC-75 con el estado real alcanzado por sus Incrementos 0–4, sin
+rediseñarla. Registra en su `## Amendment Log` las cuatro materializaciones que
+ningún plan había autorizado a registrar (Incremento 4 / Unidad D, plan 98; F-1
+sobre la selección del anchor aplicable en C-2, plan 99; C-3 lineage checker,
+plan 100; capa operacional `.agents/`, plan 101), corrige el header `**Status:**`
+que declaraba implementación pendiente y marca los diez criterios de aceptación
+con evidencia rastreable (`ruta:sección`, plan y commit). Registra en
+`docs/VERSIONING.md:4.1 Batería canónica de verificación` los gates de lifecycle
+C-1/C-2/C-3 como conjunto **adicional advisory/factual** (no se agregan al bloque
+de comandos de la batería ni a CI). Sin cambios de mecanismos, invariantes ni
+decisiones de RFC-75; sin cambios en `protocol/`, `runtime/`, `tools/`, `tests/`,
+`dist/`, `master` ni tags; sin `VERSION` bump ni tag (RFC-69).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `118-change-lifecycle-dev-mvp-closure.md` | RFC-75 | Executed | Cierre del MVP de Change Lifecycle DEV (reconciliación normativa de RFC-75, H-1/P-1): registra en el `## Amendment Log` las cuatro materializaciones posteriores no registradas (Incremento 4 `669a576`/`9b5b8a1`/`0d2d7fd`/`aa68704`; F-1 `42da250`/`51cabb2`; C-3 `1ffe24c`/`d93d234`; capa `.agents/` `3706570`/`7bcda08`), corrige el header que declaraba implementación pendiente y marca los diez criterios de aceptación con evidencia rastreable. Registra C-1/C-2/C-3 como gates adicionales advisory/factuales en `docs/VERSIONING.md:4.1`. Diff limitado a header, `## Criterios de aceptación` y `## Amendment Log` de RFC-75, más la regla de §4.1: ningún mecanismo, invariante ni decisión cambia. Validación: batería canónica PASS, C-1 Plan 118 `VALID`, C-2 Plan 118 `VALID`, C-3 `N/A` (sin registros de lineage; `GAP=0`/`ANOMALY=0`), citas resolubles. Condición derivada **`Closed` (docs-only, sin release)**. Sin RFC/ADR, sin `VERSION` bump, sin tag, sin push, sin merge. |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

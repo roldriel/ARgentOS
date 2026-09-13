@@ -118,6 +118,17 @@ Reglas:
   (H13 rules 2/5/10) como red de seguridad de desarrollo.
 - **`check_session_artifacts.py`:** valida los bloques `ENTRY`/`METRIC` y los
   `state.json` bajo `.project/`; sin `.project/` es OK.
+- **Gates de lifecycle C-1/C-2/C-3 (adicionales, advisory/factuales):**
+  `tools/check_lifecycle_anchor.py` (C-1, Validation Anchor, VC-1),
+  `tools/check_lifecycle_checkpoint.py` (C-2, checkpoint y consistencia con el
+  anchor aplicable, GC-1) y `tools/check_lifecycle_lineage.py` (C-3, lineage de
+  findings/correcciones, LC-1) verifican los invariantes del Change Lifecycle
+  DEV (RFC-75 Incremento 4, plan 98; C-3 en plan 100). **No forman parte del
+  bloque de comandos de arriba ni de CI:** son gates de lifecycle que se corren
+  en los momentos que fija `.agents/policies/lifecycle-checkers.md`, y su salida
+  es evidencia factual, nunca autoridad normativa (ADR-16). Su contrato de exit
+  code es el de esa policy: `GAP` es advisory y nunca cambia el exit code; solo
+  `ANOMALY` lo vuelve no-cero.
 - **`check_version_state.py`:** invariante versión ↔ changelog ↔ tag; en `dev`
   las secciones/versión sin tag son warning (excepción declarada), y es error
   cuando una versión no tiene sección o un tag no la tiene.

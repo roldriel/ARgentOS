@@ -105,7 +105,7 @@ Registrado al validar el Plan 115 (2026-09-12). La validación **A1** corrió so
 
 ### Pending decisions
 
-- `N/A` (ninguna decisión pendiente bloqueante; elementos diferidos registrados en RFC-76 y la autorización RELEASE del batch `11.1.0`/`11.2.0` permanece registrada en `<PLAN-116>` Escenario C con owner mantenedor).
+- `<PLAN-115>` — decisiones: (i) confirmación del usuario para los cambios MINOR `11.0.1 → 11.1.0` y `11.1.0 → 11.2.0` (`docs/VERSIONING.md:3. Versionado`), que este artifact posee por ser el dueño de las versiones; (ii) autorización RELEASE del batch `11.1.0`/`11.2.0`. blocking: no; owner: mantenedor; escalación: mantenedor; resolución: **RESUELTAS por el mantenedor (2026-09-12, Phase 6)** — `MINOR_CONFIRMATION = CONFIRMED` para ambas clasificaciones (cierra `K-4`) y `RELEASE_AUTHORIZATION = AUTHORIZED` para promover el delta completo de `dev` a `master` con los tags anotados `11.1.0` y `11.2.0`; evidencia: la resolución registrada por PC-1 en la pending decision de Escenario C de `<PLAN-116>` (artifact que registró el pendiente original) más la confirmación del mantenedor registrada en esta resolución; efecto downstream: los artifacts de `11.1.0`/`11.2.0` quedan elegibles para la promoción final `dev` → `master` — la autorización **solo autoriza** el release, que se ejecuta como paso separado y no forma parte de este cierre; ADR-worthiness: no aplica. Elementos diferidos de RFC-76 (`closure predicate`, `reflexive bootstrap`, `Task↔Change cardinality`, `GC`) permanecen DEFERRED y no son decisiones pendientes de este Plan.
 
 ## Riesgos
 

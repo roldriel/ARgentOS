@@ -832,6 +832,32 @@ promoción).
 |---|---|---|---|
 | `119-change-lifecycle-protocol-mvp-closure-h3-deferral.md` | RFC-76 | Executed | Cierre del MVP de Change Lifecycle Protocol (H-3/P-2): declara DEFERRED append, current y governance_position; reconcilia `protocol/.agents/contracts/CHANGE_GOVERNANCE.md` con el runtime (sección `## Implemented scope (MVP)` + `## Deferred semantics` + `CGA-010`); registra la decisión en el `## Amendment Log` de RFC-76 y actualiza sus criterios de aceptación; `VERSION` 11.3.0, `CHANGELOG.md` `[11.3.0]`, `docs/MIGRATION.md:16`. Dogfood real del Change Lifecycle Protocol con Change Governance Artifact materializado antes del Change. Sin implementar append/current/governance_position; sin runtime nuevo. Validación: batería canónica PASS, `tests/test_change_governance.py` verde, `CGA-001`…`CGA-010` verificados, C-1/C-2/C-3 sin `ANOMALY`. Condición derivada **`Closed` (con release pendiente)**. Sin tag, sin push, sin merge. |
 
+## Quincuagésima segunda serie: MVP Protocol-native de deliberación adversarial (Plan 120) (14 sep 2026)
+
+Plan 120 (cambio de payload autorizado por RFC-77 `Accepted`, 2026-09-14; clase
+RFC-56 A; Change Level L2): materializa la capacidad
+**`adversarial-deliberation`** definida por RFC-77 como composición de una
+Skill nueva (`skills/adversarial-deliberation/SKILL.md`), una subsección de
+comportamiento del Orchestrator existente, un contrato de artefacto nuevo
+(`contracts/DELIBERATION_REPORT.md`, sesión-scoped e `informational`) y los
+registros mínimos (taxonomía `kind: artifact` + `kind: contract`, boundaries,
+inventario de skills, punto de decisión `D7`). La deliberación es
+**evidencia**, nunca autoridad: su resultado es una `attestation` /
+recomendación advisory, con procedencia declarada
+(`ejecutores: mismo | distinto`) y **sin** afirmación de independencia
+epistemológica. Sin entidad, `kind`, rol, perfil, fase, estado, lifecycle
+state, authority class, registry, ID global, primitive de identidad, feature
+flag, gate, clasificador automático, voting, confrontación, Prompt Cache ni
+rediseño del Change Lifecycle nuevos. Dogfood real: el propio Change que
+materializa la feature, gobernado por su Change Governance Artifact desde el
+inicio. **Autorización de ejecución del Plan pendiente** (el Plan se crea en
+`Aprobado para redacción`; su entregable es de implementación, por lo que su
+`Status` de ejecución requiere autoridad humana).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `120-adversarial-deliberation-materialization.md` | RFC-77 | Executed | Materialización del MVP Protocol-native de deliberación adversarial: contrato `DELIBERATION_REPORT.md` (`enforcement: informational`, sesión-scoped, sin lifecycle propio), Skill `adversarial-deliberation` (con condiciones de uso para candidatura por juicio y consumidor declarado), subsección de invocación y construcción de contextos en el rol del Orchestrator (dos pasadas con contextos distintos, compromiso previo a la revelación, comparación por criterio, preservación del desacuerdo, síntesis, veredicto, recomendación advisory opcional, interpretación), punto de decisión `D7`, entidades de taxonomía y boundaries, suite `tests/test_adversarial_deliberation.py` (75 tests: contrato, skill, orquestación, autoridad, contexto y negativos) y el dogfood real del propio Change con reconstrucción por un tercero y evaluación `J1..J11`. Baseline: 6 checkers canónicos PASS y `pytest` **535 passed / 0 failed**; resultado: batería 6/6 PASS y `pytest` **610 passed / 0 failed** (sin regresiones). **H-5 (2026-09-14):** autorizado para ejecución, alcance limitado a los 14 entregables; clasificación MINOR `11.3.0` → `11.4.0` confirmada. **H-6 (2026-09-14):** cierre aceptado por el mantenedor — `JURY_TRIAL_PROTOCOL_MVP_CLOSED = TRUE` (J1..J10 verificados; J11 por acto humano), aceptando como limitación declarada del MVP el hallazgo de contaminación entre pasadas del dogfood (Pass 2 con exposición potencial al path del reporte vivo que ya contenía la conclusión de Pass 1), sin autorizar enforcement, aislamiento, diversidad de modelo/proveedor ni confrontación adicionales. Condición derivada **`Closed` (con release pendiente)**. Sin tag, sin push, sin merge. |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

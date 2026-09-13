@@ -43,6 +43,7 @@ One row per protocol skill. Structural validity (every row exists on disk with v
 | terminology-enforcer | Enforce the protocol's canonical vocabulary in artifacts. Activated by judgment (see policy H13, §"Agent-side enforcement"). |
 | suggest-commits | Analyze git changes and propose logical Conventional Commits grouped by intent. Utility skill for the adopting project (user-invoked, not part of the task workflow; outside the activation table by design). |
 | discovery | Run a project discovery on demand (user-invoked, not part of the task workflow; outside the activation table by design): `/discovery` runs scope `full`, `/discovery lite` runs scope `lite`. |
+| adversarial-deliberation | Perform one attributed adversarial evaluation pass over a candidate decision, plus the comparative evaluation and synthesis that yield a declared advisory verdict. Activated by judgment (Orchestrator deliberation invocation, `D7`; see `.agents/orchestrators/core/roles/orchestrator.md` §"Deliberation Invocation"). |
 
 ## Activation table
 

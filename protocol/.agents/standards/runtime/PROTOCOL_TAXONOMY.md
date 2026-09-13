@@ -1161,6 +1161,20 @@ entities:
       - core:PLANNING
     contract: .agents/contracts/CHANGE_GOVERNANCE.md
 
+  DELIBERATION_REPORT.md:
+    kind: artifact
+    domain: cross-cutting
+    lifecycle: null
+    tag: deliberation
+    description: Structured, verifiable record of one adversarial-deliberation instance (RFC-77); session-scoped and informational; two attributed passes with commitment before revelation, comparative evaluation per criterion, synthesis with preserved disagreement, one advisory verdict and an optional advisory recommendation; carries no authority and satisfies no gate.
+    produced_by:
+      - core:TASK_RECEIVED
+    consumed_by:
+      - core:TASK_RECEIVED
+      - core:ANALYZING_TASK
+      - core:PLANNING
+    contract: .agents/contracts/DELIBERATION_REPORT.md
+
   # -------------------------------------------------------------------------
   # Harness policies
   # -------------------------------------------------------------------------
@@ -2362,6 +2376,19 @@ entities:
     consumed_by:
       - core:COMPLETED
     file: .agents/contracts/METRICS.md
+
+  contract:DELIBERATION_REPORT.md:
+    kind: contract
+    domain: cross-cutting
+    artifact: DELIBERATION_REPORT.md
+    lifecycle: null
+    produced_by:
+      - core:TASK_RECEIVED
+    consumed_by:
+      - core:TASK_RECEIVED
+      - core:ANALYZING_TASK
+      - core:PLANNING
+    file: .agents/contracts/DELIBERATION_REPORT.md
 
   contract:KB_DISCOVERY_REPORT.md:
     kind: contract

@@ -439,3 +439,43 @@ No rompe contratos ni requiere migración.
   `## Implemented scope (MVP)` y `## Deferred semantics`) y
   `docs/rfc/76-change-governance-artifact.md:Governance history`. Sin migración de
   datos.
+
+## 17. Capacidad Protocol-native de deliberación adversarial — 11.4.0 (plan 120, RFC-77)
+
+- **Qué se agrega.** La capacidad `adversarial-deliberation`: una Skill
+  (`skills/adversarial-deliberation/SKILL.md`), un contrato de artefacto
+  (`contracts/DELIBERATION_REPORT.md`), un punto de decisión
+  (`standards/orchestration/DECISIONS.md`, `D7`) y una subsección del rol del
+  Orchestrator (§4.4 *Deliberation Invocation*), más sus registros en taxonomía,
+  boundaries e inventario de skills.
+- **Por qué es compatible (MINOR).** Es una adición **opcional y aditiva**: no
+  redefine ningún campo existente, no altera la semántica de ningún contrato
+  previo y no rompe payloads anteriores. Un adoptante que no invoque la capacidad
+  no observa ningún cambio de comportamiento: la Skill no se activa, no inyecta
+  contexto y no crea obligación alguna.
+- **Qué no cambia.** No se introduce ninguna entidad, `kind` de taxonomía, rol,
+  perfil de worker, fase de workflow, estado, lifecycle state, authority class,
+  registry, ID global de Trial/Jury ni primitive de identidad. No hay feature
+  flag, gate, clasificador automático, voting, confrontación, telemetría ni Prompt
+  Cache. La máquina de estados y el harness no se modifican: una deliberación
+  **no** produce transiciones y **no** satisface ningún ítem `[gate]`.
+- **Frontera de autoridad (importante para el adoptante).** El resultado de una
+  deliberación es `attestation` y recomendación **advisory**. Nunca es
+  verificación independiente, autoridad normativa, decisión humana, autorización,
+  resolución de findings, transición de estado, autorización de release ni
+  autorización de gobernanza. `Verdict ≠ Recommendation ≠ Decision`.
+- **Independencia.** La independencia se registra como **condición de
+  procedencia** (`ejecutores: mismo | distinto`), no como garantía
+  epistemológica. Afirmar independencia epistemológica o presentar la deliberación
+  como verificación independiente está **prohibido**. En ejecución de instancia
+  única debe declararse `ejecutores: mismo` y el resultado se trata como
+  `attestation`.
+- **Persistencia.** `DELIBERATION_REPORT.md` es un artefacto **de sesión**
+  (`.project/<session-uuid>/<iteration>/<order>-DELIBERATION_REPORT.md`),
+  inmutable dentro de la sesión e `informational`. No hay categoría durable,
+  registry, ID global, retención ni cleanup. No se escribe en `.project/changes/`.
+- **Adopción.** Leer `.agents/contracts/DELIBERATION_REPORT.md` (secciones
+  `## Authority boundary`, `## Provenance` y `## Limitations`),
+  `docs/rfc/77-protocol-native-adversarial-deliberation.md` y
+  `.agents/standards/orchestration/DECISIONS.md: D7 — Deliberation invocation`.
+  Sin migración de datos.

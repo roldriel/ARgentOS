@@ -32,6 +32,39 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [11.4.0] — 2026-09-14
+
+### Added
+
+- **Capacidad Protocol-native `adversarial-deliberation`** (plan 120, RFC-77):
+  incorpora al Protocol la deliberación adversarial como una **capacidad**, nunca
+  como autoridad. Compuesta por: la Skill
+  `protocol/.agents/skills/adversarial-deliberation/SKILL.md` (una pasada de
+  evaluación atribuida, con postura declarada, material recibido, compromiso
+  previo a la revelación, y las reglas de síntesis, desacuerdo y frontera de
+  autoridad); el contrato de artefacto
+  `protocol/.agents/contracts/DELIBERATION_REPORT.md` (secciones obligatorias,
+  vocabulario cerrado, invariantes `DEL-001`…`DEL-012`, sesión-scoped e
+  `informational`); el punto de decisión `D7 — Invocación de deliberación
+  adversarial` en `protocol/.agents/standards/orchestration/DECISIONS.md`; y la
+  subsección §4.4 *Deliberation Invocation* del rol del Orchestrator (invocación
+  con motivo registrado, construcción de Execution Contexts distintos por pasada,
+  exigencia de compromiso previo a la revelación, comparación por criterio,
+  preservación del desacuerdo, síntesis, veredicto y recomendación advisory
+  opcional, e interpretación). Registros: entidades `kind: artifact` y
+  `kind: contract` en `PROTOCOL_TAXONOMY.md`, declaración del artefacto en
+  `PROTOCOL_BOUNDARIES.md`, y fila de inventario en `skills/INDEX.md` (sin fila en
+  la tabla de activación: la candidatura es por juicio). Suite de verificación
+  `tests/test_adversarial_deliberation.py` (contrato, skill, orquestación,
+  autoridad, contexto y negativos). Cambio MINOR aditivo: sin entidad, `kind`,
+  rol, perfil, fase, estado, lifecycle state, authority class, registry, ID
+  global, primitive de identidad, feature flag, gate, clasificador automático,
+  voting, confrontación, Prompt Cache ni rediseño del Change Lifecycle nuevos. La
+  independencia es una **condición de procedencia declarada**
+  (`ejecutores: mismo | distinto`), nunca una garantía epistemológica; el
+  resultado es `attestation`/recomendación advisory y no satisface ningún ítem
+  `[gate]`. `MVP CLOSED != RELEASE AUTHORIZED`. Tag pendiente de promoción.
+
 ## [11.3.0] — 2026-09-13
 
 ### Changed

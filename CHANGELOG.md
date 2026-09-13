@@ -32,6 +32,26 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [11.3.0] — 2026-09-13
+
+### Changed
+
+- **Change Governance Artifact — alcance del MVP: append, current y
+  governance_position DEFERRED** (plan 119, RFC-76; decisión H-3, OPTION B): el
+  contrato declara explícitamente qué está implementado en el MVP
+  (materialización del artifact, identidad RFC-71, persistencia, estructura de las
+  colecciones como historia acumulada, registro de decisiones/autorizaciones/cierre
+  provisto por el llamador, reconstrucción por recomputación de identidad y
+  lectura del archivo) y qué queda **DEFERRED** (la operación de **append**, la
+  derivación de **current** y la derivación de **governance_position**), con el
+  invariante nuevo `CGA-010`. "Append-only" pasa a describir la **forma** del
+  artifact y no una operación disponible: la acumulación posterior de historia se
+  realiza por **re-materialización completa con historia acumulada**, que **no es
+  append**, con la consecuencia declarada de que los estados intermedios del
+  artifact no se preservan. Sin runtime, campos, endpoints, eventos, estados ni
+  métodos nuevos; `runtime/toolcalls/change_governance.py` sin cambios. Cambio
+  MINOR (11.2.0 → 11.3.0); tag pendiente de promoción.
+
 ## [Unreleased]
 
 ### Modelo conceptual

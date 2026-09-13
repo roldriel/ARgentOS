@@ -800,6 +800,38 @@ decisiones de RFC-75; sin cambios en `protocol/`, `runtime/`, `tools/`, `tests/`
 |---|---|---|---|
 | `118-change-lifecycle-dev-mvp-closure.md` | RFC-75 | Executed | Cierre del MVP de Change Lifecycle DEV (reconciliación normativa de RFC-75, H-1/P-1): registra en el `## Amendment Log` las cuatro materializaciones posteriores no registradas (Incremento 4 `669a576`/`9b5b8a1`/`0d2d7fd`/`aa68704`; F-1 `42da250`/`51cabb2`; C-3 `1ffe24c`/`d93d234`; capa `.agents/` `3706570`/`7bcda08`), corrige el header que declaraba implementación pendiente y marca los diez criterios de aceptación con evidencia rastreable. Registra C-1/C-2/C-3 como gates adicionales advisory/factuales en `docs/VERSIONING.md:4.1`. Diff limitado a header, `## Criterios de aceptación` y `## Amendment Log` de RFC-75, más la regla de §4.1: ningún mecanismo, invariante ni decisión cambia. Validación: batería canónica PASS, C-1 Plan 118 `VALID`, C-2 Plan 118 `VALID`, C-3 `N/A` (sin registros de lineage; `GAP=0`/`ANOMALY=0`), citas resolubles. Condición derivada **`Closed` (docs-only, sin release)**. Sin RFC/ADR, sin `VERSION` bump, sin tag, sin push, sin merge. |
 
+## Quincuagésima primera serie: cierre del MVP de Change Lifecycle Protocol — H-3 (deferral de append/current/governance_position) (Plan 119) (13 sep 2026)
+
+Plan 119 (cambio de payload autorizado por el mantenedor, 2026-09-13: cierre del
+MVP de Change Lifecycle Protocol materializando la decisión humana H-3 = OPTION B
+mediante el Plan P-2; RFC-76 `Accepted` + plan `Aprobado para ejecución`; clase
+RFC-56 B; cambio MINOR 11.2.0 → 11.3.0): declara **DEFERRED** la operación de
+**append**, la derivación de **current** y la derivación de **governance_position**
+para el MVP, y reconcilia el contrato `CHANGE_GOVERNANCE.md` con el runtime
+existente, que no implementa ninguna de las tres. El contrato incorpora
+`## Implemented scope (MVP)` (qué está implementado: materialización, identidad
+RFC-71, persistencia, estructura de colecciones como historia acumulada, registro
+de decisiones/autorizaciones/cierre provisto por el llamador, reconstrucción por
+recomputación de identidad y lectura) y `## Deferred semantics` (las tres
+semánticas diferidas + invariante nuevo `CGA-010`), y precisa que "append-only"
+describe la **forma** del artifact y no una operación disponible: la acumulación
+posterior se realiza por **re-materialización completa con historia acumulada**,
+que **no es append**. RFC-76 registra la decisión en su `## Amendment Log`, marca
+sus criterios de aceptación distinguiendo diseñado / implementado / verificado /
+dogfoodeado / diferido, y `docs/MIGRATION.md:16` documenta el cambio como
+compatible. **Dogfood del Change Lifecycle Protocol:** el Change se gobernó con un
+Change Governance Artifact (`target` = `protocol/.agents/contracts/CHANGE_GOVERNANCE.md`)
+materializado **antes** de la ejecución, con decisión y autorización registradas y
+`closure_decision` incorporada por re-materialización completa. Sin runtime,
+campos, endpoints, eventos, estados, métodos, state machine, registry, identity
+service, gate ni checker nuevos; `runtime/toolcalls/change_governance.py` y
+`tests/test_change_governance.py` sin cambios. Release pendiente (tag en la
+promoción).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `119-change-lifecycle-protocol-mvp-closure-h3-deferral.md` | RFC-76 | Executed | Cierre del MVP de Change Lifecycle Protocol (H-3/P-2): declara DEFERRED append, current y governance_position; reconcilia `protocol/.agents/contracts/CHANGE_GOVERNANCE.md` con el runtime (sección `## Implemented scope (MVP)` + `## Deferred semantics` + `CGA-010`); registra la decisión en el `## Amendment Log` de RFC-76 y actualiza sus criterios de aceptación; `VERSION` 11.3.0, `CHANGELOG.md` `[11.3.0]`, `docs/MIGRATION.md:16`. Dogfood real del Change Lifecycle Protocol con Change Governance Artifact materializado antes del Change. Sin implementar append/current/governance_position; sin runtime nuevo. Validación: batería canónica PASS, `tests/test_change_governance.py` verde, `CGA-001`…`CGA-010` verificados, C-1/C-2/C-3 sin `ANOMALY`. Condición derivada **`Closed` (con release pendiente)**. Sin tag, sin push, sin merge. |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

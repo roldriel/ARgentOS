@@ -278,3 +278,17 @@ referencia en VERSIONING → validación → cierre.
   (CL-1..CL-10, VC-1, GC-1, LC-1, PC-1) ni decisión de RFC-75 cambia. Sin cambios
   en `protocol/`, `runtime/`, `tools/`, `tests/`, `.agents/`, `dist/`, `master` ni
   tags; sin `VERSION` bump ni tag.
+
+- **Corrección de esta nota durante el cierre del MVP Protocol (2026-09-13), por
+  referencia, sin reabrir el artifact (RFC-46).** Al cerrar el Plan 119 se
+  verificó contra `git diff e803f98^ e803f98` que el `## Amendment Log` de RFC-75
+  recibió **cinco** entradas nuevas, no cuatro: las cuatro materializaciones y la
+  entrada de reconciliación. El párrafo «Ejecutado» de esta nota enumera las cinco
+  correctamente; la frase introductoria de los `## Entregables` («cuatro entradas
+  nuevas») y el `## Objetivo` omiten la quinta. No se reescribe lo publicado: se
+  corrige por referencia aquí. Igualmente, el `## Amendment Log` recibió la
+  entrada **«MVP del Change Lifecycle DEV declarado completo»** con la evaluación
+  término por término de `D1..D14`, que es la declaración de cierre del MVP DEV
+  exigida por H-1/P-1 y no estaba enumerada en los entregables originales. Es
+  registro del acto de cierre ya autorizado, no diseño ni mecanismo nuevo; el Plan
+  118 no se reabre ni recupera un anchor adicional.

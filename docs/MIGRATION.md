@@ -409,3 +409,33 @@ Change Governance Artifact (decisiones D-01/D-02/D-03).
   `declaration` / `protocol_version` / `namespace`), UTF-8, SHA-256;
   `declaration` con trim, `target` verbatim.
 - **Sin migración de datos:** no existe storage previo.
+
+## 16. Change Governance Artifact — alcance del MVP: append/current/governance_position diferidos — 11.3.0 (plan 119, RFC-76)
+
+Cambio **MINOR** (compatible): acota explícitamente el alcance del MVP del
+Change Lifecycle Protocol sin cambiar el modelo del Change Governance Artifact.
+No rompe contratos ni requiere migración.
+
+- **Qué se declara diferido.** La operación de **append**, la derivación de
+  **current** (`current decision` / `current authorization` / `current closure`) y
+  la derivación de **governance_position** quedan **DEFERRED** (invariante
+  `CGA-010`). No se implementa runtime, campo, endpoint, evento, estado ni método
+  para ellas.
+- **Por qué es compatible.** Ninguna de las tres operaciones existía: el runtime
+  sólo expone la materialización completa del artifact. Un adoptante no puede
+  consumir una capacidad que nunca estuvo disponible, por lo que no hay
+  comportamiento eliminado.
+- **Qué cambia en la lectura del contrato.** "Append-only" pasa a describir la
+  **forma** del artifact (historia acumulada que no admite sobrescritura parcial
+  de una colección), no una operación disponible. El contrato incorpora una
+  sección `## Implemented scope (MVP)` que separa lo implementado de lo diferido.
+- **Mecanismo disponible en el MVP.** La acumulación posterior de historia se
+  realiza por **re-materialización completa con historia acumulada**: se provee la
+  historia completa a la llamada de materialización y se reescribe el artifact.
+  **No es append** y no debe documentarse como tal. Consecuencia declarada: los
+  estados intermedios del artifact no se preservan, porque se reescribe el mismo
+  path.
+- **Adopción.** Leer `.agents/contracts/CHANGE_GOVERNANCE.md` (secciones
+  `## Implemented scope (MVP)` y `## Deferred semantics`) y
+  `docs/rfc/76-change-governance-artifact.md:Governance history`. Sin migración de
+  datos.

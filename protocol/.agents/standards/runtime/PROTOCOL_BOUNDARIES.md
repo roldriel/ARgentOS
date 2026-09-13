@@ -94,11 +94,12 @@ Persistent state directories:
 
 - `.project/knowledge/` — the knowledge base (entries, discovery reports) accumulated across sessions.
 - `.project/skills/` — project-level skills (see `.agents/standards/orchestration/SKILLS.md`); a skill is not a session artifact.
+- `.project/changes/` — the durable, per-project Change Governance Artifacts (contract `.agents/contracts/CHANGE_GOVERNANCE.md`, RFC-76). A Change Governance Artifact is not a session artifact; its filename is derived from the Change identity.
 
 Rules:
 
 - Session artifacts MUST NOT be written to persistent state directories, and persistent state MUST NOT be placed inside `<session-uuid>/` folders.
-- Persistent state follows its own contracts (knowledge-base contracts, `.agents/skills/README.md`), not the `<order>-ARTIFACT_NAME.md` naming convention.
+- Persistent state follows its own contracts (knowledge-base contracts, `.agents/skills/README.md`, `.agents/contracts/CHANGE_GOVERNANCE.md`), not the `<order>-ARTIFACT_NAME.md` naming convention.
 - `.project/skills/` carries an in-situ `README.md` so any agent discovering the folder finds the format instructions there.
 
 Semantic isolation and cache frontier:

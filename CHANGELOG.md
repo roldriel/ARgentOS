@@ -297,6 +297,88 @@ La política de versionado, changelog, tags y estados de planes vive en
   (64 en la suite de `tests/test_determine_execution_state.py`). Cambio DEV
   tooling + registros docs-only: sin `VERSION` bump ni tag (ver
   `docs/VERSIONING.md` §3).
+- **Brújula de decisiones (Decision-Making Compass)** (plan 113): el
+  `AGENTS.md` raíz incorpora la sección `## Decision-Making Compass` —
+  claridad sobre crecimiento; separación de responsabilidades
+  RFC/Plan/Git/INDEX/Glossary; calidad de decisión sobre volumen documental;
+  contención («no change» como resultado válido); calidad de decisión como
+  objetivo de evaluación (no demostrado aún) — como principios de juicio
+  explícitamente no normativos, sin documento, mecanismo, estado, registry,
+  checker ni regla nuevos y sin duplicar autoridades de `docs/`. Cambio
+  docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3); sin
+  cambios en el payload del Protocol.
+- **MVP de deliberación adversarial DEV — convención Working y primer
+  dogfooding** (plan 114, —): se agrega la Working Convention no normativa
+  `docs/working/proposals/ADVERSARIAL_DELIBERATION_CONVENTION.md` (marco
+  declarado, pasadas de evaluación atribuidas con compromiso antes de
+  revelación, procedencia, reglas de síntesis con desacuerdo preservado,
+  vocabulario de veredicto, recomendación advisory y boundary de autoridad) y
+  se registra el primer Trial real sobre la decisión pendiente `<PLAN-105>`,
+  con evidencia de valor frente al baseline: `MVP IMPLEMENTED — VALUE
+  PARTIALLY DEMONSTRATED` (la segunda perspectiva cambió el veredicto de
+  `VIABLE` a `NOT_VIABLE`, pero **no** se demostró independencia — mismo
+  ejecutor, N=1 — y la pregunta 6 quedó no observable durante el experimento).
+  Decisiones humanas del mantenedor registradas como acto separado
+  (2026-09-09): `<PLAN-105>` **no** se eleva a ADR en este momento y la
+  convención queda `KEEP AS WORKING / CONTINUE DOGFOODING` — permanece
+  experimental/Working, **no** promovida a gobernanza, **no** obligatoria y
+  **no** incorporada al Change Lifecycle ni al Protocol. Sin código, tool,
+  checker, registry, state machine, entidad global ni cambios de plantillas;
+  sin cambios en `protocol/.agents/`, `runtime/`, `tools/`, `tests/` ni
+  `.agents/`. Cambio docs-only: sin `VERSION` bump ni tag (ver
+  `docs/VERSIONING.md` §3).
+- **Cierre del MVP de deliberación adversarial DEV — dogfood final A/B/C y
+  evaluación del closure predicate** (plan 116, —): Tres Trials reales conforme
+  a la Working Convention no normativa
+  (`docs/working/proposals/ADVERSARIAL_DELIBERATION_CONVENTION.md`) —
+  Escenario A (reconocimiento formal de `<PLAN-114>:F-1`/`F-2`: veredicto
+  `NOT_VIABLE` sobre la candidata tal como estaba enunciada; dos perspectivas
+  con ejecutores diferenciados — agente principal + subagente de deliberación,
+  compromiso antes de revelación, sin afirmación de independencia
+  epistemológica); Escenario B (intervención sobre `<PLAN-114>:F-3`: veredicto
+  `NOT_VIABLE` y **NO CHANGE** registrado como resultado legítimo); Escenario C
+  (release batch de `11.1.0`/`11.2.0`: camino no canónico con confrontación
+  acotada §7, nunca antes ejercitada, terminada por criterio de valor; veredicto
+  `NOT_VIABLE` por `K-4` — confirmación del usuario para MINOR no registrada) —
+  con decisiones humanas registradas como actos separados o pendientes
+  escaladas con owner (PC-1), validación (batería canónica + gates C-1/C-2/C-3)
+  y evaluación letra por letra del closure predicate
+  `A ∧ B ∧ C ∧ D ∧ E ∧ F ∧ G ∧ H ∧ I` (contract / architecture /
+  implementation / integration / validation / verification / dogfood /
+  documentation / governance); propuesta **`READY TO CLOSE`** para el MVP DEV.
+  **Human Checkpoint (2026-09-12):** el mantenedor registró `D-1 = ACCEPT
+  CLOSURE OF THE DEV ADVERSARIAL DELIBERATION MVP` y `D-2 = ACCEPT FINAL
+  DOGFOOD A/B/C`; con la aceptación y el commit atómico de cierre el predicate I
+  pasa a PASS y el MVP DEV queda **`CLOSED` (docs-only, sin release)** — las
+  decisiones deliberadas (reconocimiento de F-1/F-2, resolución de F-3, release
+  de `11.1.0`/`11.2.0`) permanecen pendientes con owner y no forman parte de
+  este cierre. La Working Convention permanece no normativa. La feature
+  Protocol-native queda **FUTURE / NOT STARTED / OUT OF SCOPE**. Sin código,
+  tool, checker, registry, state machine, entidad global ni cambios de
+  plantillas; sin cambios en `protocol/.agents/`, `runtime/`, `tools/`,
+  `tests/` ni `.agents/`. Cambio docs-only: sin `VERSION` bump ni tag (ver
+  `docs/VERSIONING.md` §3).
+- **Adopción de la feature DEV de deliberación adversarial** (plan 117, —): la
+  Working Convention no normativa
+  (`docs/working/proposals/ADVERSARIAL_DELIBERATION_CONVENTION.md`) queda
+  **adoptada como capability disponible del entorno DEV** —reconocible,
+  invocable y reutilizable— con standing `ADOPTED + WORKING + NON-NORMATIVE`,
+  sin nuevo lifecycle state, sin promoción a gobernanza, sin obligatoriedad, sin
+  gate y sin autoridad. Se materializa la definición final de la feature, el
+  contrato de adopción (15 elementos), la frontera de autoridad, los contratos
+  de independencia y de valor, las limitaciones declaradas y el predicate
+  `JURY_TRIAL_DEV_FEATURE_CLOSED` con C1–C8 (el predicate `JURY_TRIAL_CLOSED`
+  del MVP queda únicamente como precondition y no lo sustituye); se cierra el
+  `GAP-02` (record home) en la convención con el mínimo texto derivado de
+  PC-1/LC-1 —el registro pertenece al artifact que posee la decisión; si está
+  cerrado, a un artifact nuevo que lo referencia, fuera de los contenedores de
+  lineage— y se registra la decisión humana de cierre como acto separado. DEV
+  only y Working/no normativa: sin cambio en el Protocol, sin código, tool,
+  checker, registry, state machine, entidad `Trial`, ID global, telemetría,
+  métricas, routing operacional, integración al Change Lifecycle, tests ni
+  arquitectura nueva; sin cambios en `protocol/.agents/`, `runtime/`, `tools/`,
+  `tests/`, `.agents/`, `ROADMAP.md`, `AGENTS.md` ni plantillas. Cambio
+  docs-only: sin `VERSION` bump ni tag (ver `docs/VERSIONING.md` §3).
 
 ### Fixed
 
@@ -341,6 +423,40 @@ La política de versionado, changelog, tags y estados de planes vive en
 `docs/VERSIONING.md` §3)
 
 ---
+
+## [11.2.0] — 2026-09-12
+
+### Changed
+
+- **Change Governance Artifact — namespace, canonical representation y
+  ubicación** (plan 115, RFC-76; decisiones D-01/D-02/D-03): resuelve los
+  elementos diferidos de identidad y persistencia. `namespace` =
+  `project_identity`; canonical representation por cuatro líneas ordenadas
+  (UTF-8, SHA-256; `declaration` con trim, `target` verbatim); ubicación física
+  `.project/changes/<change_identity>.md` (content-addressed, sin registry).
+  Permanecen DEFERRED: closure predicate, reflexive bootstrap, Task↔Change
+  cardinality, GC semantics.
+
+## [11.1.0] — 2026-09-12
+
+### Added
+
+- **Change Governance Artifact** (plan 115, RFC-76): nuevo contrato
+  `CHANGE_GOVERNANCE.md` — representación durable Protocol-native del governance
+  state de un Change del payload. Identidad derivada vía `SegmentIdentity`
+  (RFC-71); identity inputs `{target, declaration, protocol_version, namespace}`
+  inmutables; governance collections append-only (`decisions[]`,
+  `authorizations[]`, `closure_decisions[]`) con current derivado; Change
+  authorization semánticamente distinta de RFC-66; cierre v1 por decisión humana
+  explícita; `declaration` frozen con revisión de propuesta sin cambio de
+  identidad; supersession por Artifact Lifecycle RFC-63; relación con executions
+  por referencia; retrieval content-addressed con locator = Change Identity (sin
+  registry). Sin state machine, rol, registry ni identity service nuevos.
+
+### Modelo conceptual
+
+- **RFC-76** (plan 115): `Accepted` — modelo del Change Governance Artifact
+  (Protocol Change Lifecycle nativo, sin importar maquinaria DEV).
 
 ## [11.0.1] — 2026-09-06
 

@@ -671,6 +671,113 @@ Sin cambios en `protocol/.agents/`, `runtime/`, `dist/`,
 |---|---|---|---|
 | `112-alcance-s00-health-determinista.md` | — (vía plan, Clase B) | Executed | Alcance determinista del gate S00 sobre el health checklist: el ítem 2 de `protocol/.agents/orchestrators/system/harness/policies/S00-system-ready.md` (`## Checklist`) pasa a declarar como alcance PASS el de la `## Decision` vigente de `protocol/.agents/standards/runtime/PROTOCOL_HEALTH.md` (ítems 1–6, 8–9 y 11–13; ítem 10 sólo con el flag `knowledge_base` habilitado; ítem 7 warning-only), sin duplicar el checklist y sin cambio de significado (single-source policy). Cambio Protocol Clase B (RFC-56), Change Level L1; versión `11.0.1` (PATCH; `protocol/.agents/VERSION` 11.0.0 → 11.0.1); sin RFC ni ADR; sin cambios en `master`/`dist`/tags/push/release. **Creación (2026-09-06):** artifact creado y registrado sin ejecutar (Status `Aprobado para ejecución`, GO del mantenedor registrado en el plan como H1 = 1). **Ejecución y cierre (2026-09-06):** ítem 2 de S00 reformulado (alcance PASS por referencia a la Decision de `PROTOCOL_HEALTH.md`), `protocol/.agents/VERSION` → `11.0.1`, sección `[11.0.1]` en `CHANGELOG.md`, y ancla `PROTOCOL_VERSION` de `runtime/toolcalls/canonical.py` alineada a `11.0.1` (requisito mecánico del checker de versión; fuera del payload); commits A `abe2b37` (registro), C1 `310e974` (contenido) y R2 (registro/cierre) en `dev`; V1 sobre C1 y revalidación A2 sobre el estado final (checkers PASS; pytest `524 passed`; C-1 `VALID`, C-2 `VALID` — A2 declarado, GC-1 —, C-3 `N/A`; GAP=0, ANOMALY=0); status `Executed`; condición derivada `Closed` (con release pendiente); sin findings/corrections/pending (`N/A`); sin cambios en otros archivos del payload ni en `master`/`dist`/tags; sin push, sin merge, sin tag; `11.0.1` y `11.0.0` siguen sin release. |
 
+## Cuadragésima quinta serie: materialización de la brújula de decisiones en el AGENTS.md raíz (Plan 113) (07 sep 2026)
+
+Plan 113 (cambio DEV docs-only autorizado por el mantenedor, 2026-09-07, GO
+registrado en el plan como H1 = 1): materializa la «brújula de decisiones» de
+ARgentOS — claridad sobre crecimiento; separación de responsabilidades
+RFC/Plan/Git/INDEX/Glossary; calidad de decisión sobre volumen documental;
+contención («no change» como resultado válido); calidad de decisión como
+objetivo de evaluación — como sección canónica `## Decision-Making Compass`
+en el `AGENTS.md` raíz (entrypoint de instrucción DEV, primera lectura del
+agente), explícitamente no normativa y sin duplicar autoridades de `docs/`.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `113-decision-making-compass-materialization.md` | — | Executed | Materialización docs-only de la brújula de decisiones como sección `## Decision-Making Compass` en el `AGENTS.md` raíz (P1–P5: claridad sobre crecimiento; separación RFC/Plan/Git/INDEX/Glossary; calidad de decisión sobre volumen documental; contención con «no change» como resultado válido; calidad de decisión como objetivo de evaluación no demostrado aún), declarada explícitamente como principios de juicio no normativos y sin duplicar autoridades de `docs/`. Cambio DEV docs-only: clase RFC-56 —, Change Level L1, sin `VERSION` bump ni tag (RFC-69); sin RFC/ADR nuevo; sin cambios en `protocol/.agents/` (`protocol/.agents/VERSION` 11.0.0), `runtime/`, `tools/`, `tests/`, `harness`, `dist/`, `master` ni tags. **Creación (2026-09-07):** artifact creado y registrado sin ejecutar (Status `Aprobado para ejecución`, GO del mantenedor registrado en el plan como H1 = 1); Plan 113 NO `Executed`/`Closed`. **Ejecución y cierre (2026-09-07):** sección canónica insertada en el `AGENTS.md` raíz (entre `## Do NOT` y `## Development workflow`); commits A `012c7f1` (registro), C1 `6ff06f6` (contenido) y R2 (registro/cierre) en `dev`; V1 sobre C1 (T1 `6fe6ec68…`; delta `16ea77bd…`) y revalidación A2 sobre el estado final (checkers PASS; pytest `524 passed`; C-1 `VALID`, C-2 `VALID` — A2 declarado, GC-1 —, C-3 `N/A`; GAP=0, ANOMALY=0); status `Executed`; condición derivada `Closed` (docs-only, sin release); sin findings/corrections/pending (`N/A`); sin push, sin merge, sin tag; `11.0.0` sigue sin release. |
+
+## Cuadragésima sexta serie: MVP de deliberación adversarial DEV — convención Working y primer dogfooding (Plan 114) (09 sep 2026)
+
+Plan 114 (cambio DEV docs-only autorizado por el mantenedor, 2026-09-09, GO
+registrado en el plan como H1 = GO; régimen RFC-75/RFC-69; sin RFC/ADR nuevo,
+clase RFC-56 —): implementa el MVP de deliberación adversarial mediante el
+mínimo suficiente cerrado en D1–D3 — (i) una **convención Working no normativa**
+(`docs/working/proposals/ADVERSARIAL_DELIBERATION_CONVENTION.md`) con marco
+declarado, pasadas de evaluación atribuidas (postura, ejecutor, material
+recibido/compartido, compromiso antes de revelación, conclusiones con razones
+por criterio, premisas, supuestos e incertidumbres), reglas de síntesis
+(permitido/prohibido, argumento material nuevo ⇒ nueva pasada, no supresión ni
+reescritura, desacuerdo preservado), vocabulario de veredicto de
+viabilidad/preferencia, recomendación advisory y boundary de autoridad;
+(ii) el **registro embebido** del primer Trial real en el propio Plan, sobre la
+decisión pendiente `<PLAN-105>` (elevación ADR de la arquitectura
+terminológica), con dos perspectivas atribuidas, síntesis, veredicto con base
+declarada y recomendación advisory; (iii) evidencia de valor frente al
+baseline. Sin código, sin tool, sin skill, sin checker, sin registry, sin state
+machine, sin entidad global y sin cambios de plantillas. Sin cambios en
+`protocol/.agents/`, `runtime/`, `tools/`, `tests/`, `.agents/`, `dist/`,
+`master` ni tags; sin `VERSION` bump ni tag (RFC-69); sin push, sin merge, sin
+tag; `11.0.0` sigue sin release.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `114-adversarial-deliberation-mvp.md` | — | Executed | MVP DEV de deliberación adversarial: convención Working no normativa (`docs/working/proposals/ADVERSARIAL_DELIBERATION_CONVENTION.md`) + registro embebido del primer Trial real sobre la decisión pendiente `<PLAN-105>` + evidencia de valor. Cambio DEV docs-only: clase RFC-56 —, Change Level L1, sin `VERSION` bump ni tag (RFC-69); sin RFC/ADR nuevo; boundaries DEV/Protocol intactas. **Creación (2026-09-09):** artifact creado como borrador en `sessions/drafts/` y promovido a `docs/plans/` con `Status` `Aprobado para ejecución` y GO del mantenedor registrado en el plan como H1 = GO; sin `CHANGELOG` (reservado al cierre). **Ejecución (2026-09-09):** convención Working creada y registrada en el INDEX de propuestas (sin alterar otras entradas) y primer Trial real ejecutado sobre `<PLAN-105>` con marco declarado, dos perspectivas atribuidas (`E-A` / `E-B`), compromiso antes de revelación, procedencia registrada, síntesis con desacuerdo preservado, veredicto `NOT_VIABLE` con base declarada y recomendación advisory; la decisión humana **no** fue tomada y quedó escalada al mantenedor; commits A `eecb62e` (registro del Plan), C1 `4f6a3a4` (convención + registro + Trial), C2 `7434167` (corrección `<PLAN-114>:C-1`) y R2 (registros de cierre) en `dev`; V1 sobre C1 (4 citas rotas → `<PLAN-114>:F-1`), V2 sobre C2 (checkers PASS; pytest `1 failed / 523 passed` → `<PLAN-114>:F-2`) y revalidación A2 sobre el estado de cierre (checkers PASS; `python -m pytest tests/` canónico `524 passed`; registros de lineage `VALID`, `GAP=0`, `ANOMALY=0`; C-3 sin anomalías); resultado del Plan **`MVP IMPLEMENTED — VALUE PARTIALLY DEMONSTRATED`** (valor de la disciplina adversarial con procedencia declarada; independencia **no** demostrada: mismo ejecutor, N=1; pregunta 6 no observable); findings `<PLAN-114>:F-1`/`F-2` (partially-resolved) y `F-3` (deferred, owner: mantenedor, causa raíz de F-2: el ejemplo `F-01`/`C-01` de `docs/plans/_TEMPLATE.md` frente al contrato del checker C-3), correcciones `C-1`/`C-2` y dos pending decisions de `<PLAN-114>` (resolución de `<PLAN-105>` y promoción/obligatoriedad de la convención); status `Executed (parcial)` y condición derivada **no `Closed`** — la decisión humana es acto separado pendiente (Step 9/Step 12); sin `CHANGELOG` (reservado al cierre); sin push, sin merge, sin tag; `11.0.0` sigue sin release. **Cierre (2026-09-09):** el mantenedor registró las dos decisiones humanas como acto separado — (i) `<PLAN-105>` **no** se eleva a ADR en este momento (el Plan 105 permanece `Closed` y sin modificar) y (ii) la Working Convention queda **`KEEP AS WORKING / CONTINUE DOGFOODING`**: experimental/Working, **no** promovida a gobernanza, **no** obligatoria, **no** incorporada al Change Lifecycle ni al Protocol y sin Plan nuevo; crate R3 y validación de cierre: checkers PASS, `python -m pytest tests/` `524 passed`, gates C-1/C-2/C-3 `VALID` (`GAP=0`, `ANOMALY=0`; C-2 con `A2 (declared)`), `git status` limpio salvo `.codegraph/`; los **16** criterios de salida satisfechos (el 12 con el registro de la decisión humana) → status `Executed` y condición derivada **`Closed` (docs-only, sin release)**; ítem `(plan 114, —)` agregado a `CHANGELOG.md:[Unreleased]`; residual declarado y no bloqueante: `F-1`/`F-2` permanecen `partially-resolved` con sus correcciones aplicadas y revalidadas, y `F-3` permanece `deferred` (owner: mantenedor), fuera de este cierre; sin push, sin merge, sin tag; `11.0.0` sigue sin release. |
+
+## Cuadragésima séptima serie: Change Lifecycle Protocol — Change Governance Artifact (Plan 115) (12 sep 2026)
+
+Plan 115 (cambio de payload Clase A autorizado por el mantenedor, 2026-09-12,
+GO registrado en las decisiones N1–N4 de Phase 5.4 Stage 1; RFC-76 `Accepted` +
+plan `Aprobado para ejecución`): materializa el modelo del Change Governance
+Artifact del Protocol (RFC-76) — contrato `CHANGE_GOVERNANCE.md`, registro en
+taxonomía y boundaries, RFC/plan/INDEXes, changelog `[11.1.0]`, migración §14 y
+`VERSION` `11.1.0`. Sin state machine, rol, registry, identity service,
+predicate, cardinalidad ni maquinaria DEV; elementos diferidos explícitos
+(namespace value, canonical representation, closure predicate, reflexive
+bootstrap, Task↔Change cardinality, GC, physical location). Cambio MINOR.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `115-change-governance-artifact-materialization.md` | RFC-76 | Executed | Materialización del Change Governance Artifact: contrato `CHANGE_GOVERNANCE.md` + taxonomía + boundaries + RFC/plan/INDEXes + changelog `[11.1.0]`/`[11.2.0]` + migración §14/§15 + `VERSION` `11.1.0` → `11.2.0` + ancla semántica del runtime (`PROTOCOL_VERSION`) + runtime de referencia `runtime/toolcalls/change_governance.py` + `tests/test_change_governance.py`. Cambio MINOR (aditivo, dos rondas); sin state machine/rol/registry/identity service. **Cierre (2026-09-12):** commits de contenido `14e7fc4` (`11.1.0`) y `b8c6ce0` (`11.2.0`); Validation Anchor con Scoped Content Identity completa (State identity T1 `0fe88fdf…`; delta `d8036076…`, scope de 18 paths) y Checkpoint con revalidación A2; `check_lifecycle_anchor.py` → C-1 `VALID`, `check_lifecycle_checkpoint.py` → C-2 `VALID` (A2 declared), `check_lifecycle_lineage.py` → `GAP=0`/`ANOMALY=0`; status `Executed`; condición derivada **`Closed` (con release pendiente)**; finding `<PLAN-115>:F-1` `resolved` vía `<PLAN-115>:C-1` (superficie real de 18 paths y elementos DEFERRED resueltos por la ronda `11.2.0` con autorización RFC-76 D-01/D-02/D-03); sin tag (release `11.1.0`/`11.2.0` autorizado por el mantenedor el 2026-09-12 — `MINOR_CONFIRMATION = CONFIRMED` y `RELEASE_AUTHORIZATION = AUTHORIZED`, resolución PC-1 registrada en `<PLAN-116>` Escenario C y en la pending decision de este Plan); sin push, sin merge. |
+
+## Cuadragésima octava serie: cierre del MVP de deliberación adversarial DEV — dogfood final A/B/C y evaluación del closure predicate (Plan 116) (12 sep 2026)
+
+Plan 116 (cambio DEV docs-only autorizado por el mantenedor, 2026-09-12, GO
+registrado como H1 en el plan vía las decisiones D-1/D-2 del prompt de Phase 2;
+régimen RFC-75/RFC-69; sin RFC/ADR nuevo, clase RFC-56 —): ejecuta el dogfood
+final del MVP de deliberación adversarial conforme a la Working Convention no
+normativa (`docs/working/proposals/ADVERSARIAL_DELIBERATION_CONVENTION.md`):
+Tres Trials reales — Escenario A (decisión real con ejecutores diferenciados y
+decisión humana observable), Escenario B (resultado legítimo NO CHANGE) y
+Escenario C (camino no canónico con confrontación acotada) — con registros
+embebidos, decisiones humanas como acto separado (o pendientes escaladas con
+owner), validación por la batería canónica y los gates de lifecycle existentes,
+y evaluación letra por letra del closure predicate `A ∧ B ∧ C ∧ D ∧ E ∧ F ∧ G
+∧ H ∧ I` (contract / architecture / implementation / integration / validation
+/ verification / dogfood / documentation / governance). Sin código, tool,
+checker, registry, state machine, entidad global, RFC, ADR ni cambios de
+plantillas. Sin cambios en `protocol/.agents/`, `runtime/`, `tools/`, `tests/`,
+`.agents/`, `dist/`, `master` ni tags; sin `VERSION` bump ni tag (RFC-69).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `116-adversarial-deliberation-mvp-closure.md` | — | Executed | Cierre del MVP de deliberación adversarial DEV (Adversarial Deliberation MVP Closure): dogfood final A/B/C sobre decisiones reales registradas del repositorio conforme a la convención Working, decisiones humanas separadas, validación (batería + C-1/C-2/C-3) y evaluación del closure predicate A–I. **Creación (2026-09-12):** artifact creado con `Status` `Aprobado para ejecución` y GO del mantenedor registrado en el plan como H1 (decisiones D-1/D-2 del prompt de Phase 2). **Ejecución (2026-09-12):** Tres Trials reales — A: reconocimiento formal de `<PLAN-114>:F-1`/`F-2` con ejecutores diferenciados (agente principal + subagente de deliberación, compromiso antes de revelación, sin afirmación de independencia epistemológica), veredicto `NOT_VIABLE` sobre la candidata tal como enunciada; B: intervención sobre `<PLAN-114>:F-3`, veredicto `NOT_VIABLE` con **NO CHANGE registrado como resultado legítimo** (sin diffs); C: release batch de `11.1.0`/`11.2.0` con camino no canónico de **confrontación acotada (§7)** terminada por criterio de valor, veredicto `NOT_VIABLE` (K-4: confirmación del usuario para MINOR no registrada); decisiones humanas registradas como pendientes escaladas con owner (PC-1; `Trial Verdict ≠ Recommendation ≠ Human Decision`); corrección factual declarada del marco C (el batch `11.0.0`/`11.0.1` ya estaba promovido en `2dfb99f`); validación: batería canónica PASS (A1 tree `cf0358b0…`, delta `835bd6c6…`; A2 sobre el estado final), C-1 `VALID`, C-3 `VALID` (`GAP=0`, `ANOMALY=0`), C-2 pendiente del commit del mantenedor, pierna `pytest` con la clase ambiental preexistente de permisos del sandbox (sin fallos nuevos; los tests content-sensitive T27/estructura pasan); status `Executed`. **Human Checkpoint y cierre (2026-09-12):** el mantenedor aceptó el cierre (`D-1 = ACCEPT CLOSURE OF THE DEV ADVERSARIAL DELIBERATION MVP`; `D-2 = ACCEPT FINAL DOGFOOD A/B/C`) y el commit atómico de cierre materializó la condición derivada **`Closed` (docs-only, sin release)** con `JURY_TRIAL_CLOSED = A ∧ B ∧ C ∧ D ∧ E ∧ F ∧ G ∧ H ∧ I` satisfecho (predicate I PASS por aceptación humana + commit); las decisiones deliberadas (F-1/F-2, F-3, release `11.1.0`/`11.2.0`) permanecen pendientes con owner y no forman parte de este cierre; la convención sigue Working/no normativa; la feature Protocol-native queda FUTURE / NOT STARTED / OUT OF SCOPE; sin cambios en `protocol/.agents/`, `runtime/`, `tools/`, `tests/`, `.agents/`, plantillas ni `docs/CONVENTIONS.md`/`docs/VERSIONING.md`; sin RFC/ADR, sin `VERSION` bump, sin tag, sin push, sin merge. **Resolución de la decisión de release (2026-09-12, Phase 6):** el mantenedor registró como acto humano separado `MINOR_CONFIRMATION = CONFIRMED` para `11.0.1 → 11.1.0` y `11.1.0 → 11.2.0` (cierra `K-4`) y `RELEASE_AUTHORIZATION = AUTHORIZED` para promover el delta completo de `dev` a `master` con los tags anotados `11.1.0` y `11.2.0`; la resolución quedó registrada en la pending decision de Escenario C de este Plan, **solo autoriza** el release y no ejecuta promoción, tag, `dist` ni `master`; Plan 116 no se reabre (evidencia histórica de los Trials intacta). |
+
+## Cuadragésima novena serie: adopción de la feature DEV de deliberación adversarial (Plan 117) (12 sep 2026)
+
+Plan 117 (cambio DEV docs-only autorizado por el mantenedor, 2026-09-12, GO
+registrado como H1 en el plan vía las decisiones D-1…D-8 del prompt de Phase 5;
+régimen RFC-75/RFC-69; sin RFC/ADR nuevo, clase RFC-56 —): materializa la
+adopción de la feature DEV de deliberación adversarial (`Adversarial
+Deliberation`) especificada en Phase 4 —`DEFINITION-B` aceptada— como capability
+**Working, no normativa, disponible y reutilizable**: definición final de la
+feature, contrato de adopción (15 elementos), frontera de autoridad, contrato de
+independencia y de valor, límites, evidencia (cuatro Trials reales en dos
+Planes), limitaciones declaradas y predicate `JURY_TRIAL_DEV_FEATURE_CLOSED` con
+C1–C8; cierra el `GAP-02` (regla de record home) en la convención con el mínimo
+texto derivado de PC-1/LC-1; actualiza el banner de la convención y la fila de
+`docs/working/proposals/INDEX.md` con el standing adoptado (descriptivo, sin
+lifecycle state nuevo); registra el acto humano de cierre como decisión separada
+y deriva `JURY_TRIAL_DEV_FEATURE_CLOSED` (docs-only, sin release). Sin código,
+tool, checker, registry, state machine, entidad `Trial`, ID global, telemetría,
+métricas, routing operacional, integración al Change Lifecycle, dogfood
+adicional ni cambios de plantillas. Sin cambios en `protocol/.agents/`,
+`runtime/`, `tools/`, `tests/`, `.agents/`, `ROADMAP.md`, `AGENTS.md`, `dist/`,
+`master` ni tags; sin `VERSION` bump ni tag (RFC-69).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `117-adversarial-deliberation-feature-adoption.md` | — | Executed | Adopción de la feature DEV de deliberación adversarial (Adversarial Deliberation Feature Adoption): materializa el contrato de adopción de Phase 4 —`DEFINITION-B` aceptada— y el predicate `JURY_TRIAL_DEV_FEATURE_CLOSED` con C1–C8, cierra el `GAP-02` (record home) en la Working Convention con el mínimo texto derivado de PC-1/LC-1, declara el standing `ADOPTED + WORKING + NON-NORMATIVE` (sin lifecycle state nuevo) y registra la decisión humana de cierre como acto separado. **Creación (2026-09-12):** artifact creado con `Status` `Aprobado para ejecución` y GO del mantenedor registrado como H1 (decisiones D-1…D-8 del prompt de Phase 5). **Ejecución (2026-09-12):** definición final de la feature, contrato de adopción de 15 elementos, frontera de autoridad, contratos de independencia y de valor, evidencia (cuatro Trials reales en dos Planes, dos configuraciones de ejecutor, confrontación acotada, NO CHANGE y reconstruibilidad) y limitaciones declaradas; validación A1 (tree `56e4407f…`, delta `f725d0c0…`) y segunda validación sobre el estado staged de cierre con los 6 checkers canónicos PASS, C-1 Plan 117 `VALID`, C-2 Plan 117 `VALID`, C-3 `N/A` (ausencia declarada, con `GAP=0` y `ANOMALY=0`), los tests content-sensitive `2 passed` y la pierna `pytest` con la clase ambiental preexistente sin fallos nuevos; tabla C1–C8 verificada con evidencia y `JURY_TRIAL_DEV_FEATURE_CLOSED = TRUE` derivado (no declarado); condición derivada **`Closed` (docs-only, sin release)** con commit atómico `feat(dev): adopt adversarial deliberation as a reusable DEV capability (plan 117)`. Sin code, tool, checker, registry, state machine, entidad `Trial`, ID global, telemetría, métricas, routing operacional, integración al Change Lifecycle, dogfood adicional ni arquitectura nueva; sin cambios en `protocol/`, `dist/`, `runtime/`, `tools/`, `tests/`, `.agents/`, `ROADMAP.md`, `AGENTS.md`, plantillas, `docs/CONVENTIONS.md` ni `docs/VERSIONING.md`; sin RFC/ADR, sin `VERSION` bump, sin tag, sin push, sin merge. |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

@@ -376,3 +376,36 @@ observabilidad de budget.
   para el modelo completo (roles, identidad, semántica temporal e invariantes
   EI/TR/TM/OBS). Los reportes nuevos deben incluir los campos obligatorios;
   los artefactos de sesión existentes no se migran.
+
+## 14. Change Governance Artifact — 11.1.0 (plan 115, RFC-76)
+
+Adición **MINOR** (compatible): nuevo contrato `CHANGE_GOVERNANCE.md` y nueva
+categoría de estado persistente (Change Governance Artifacts), sin romper
+contratos existentes.
+
+- **Contrato nuevo.** `CHANGE_GOVERNANCE.md` describe el governance state durable
+  de un Change. Es una capacidad nueva opcional: los proyectos existentes no
+  requieren producir este artifact.
+- **Identidad derivada.** La identidad del Change reutiliza `SegmentIdentity`
+  (RFC-71); los identity inputs `{target, declaration, protocol_version,
+  namespace}` son inmutables. `namespace` value y canonical representation
+  quedan diferidos (RFC-76).
+- **Elementos diferidos.** namespace value, canonical representation, closure
+  predicate, reflexive bootstrap, Task↔Change cardinality, GC semantics y
+  ubicación física permanecen sin decisión normativa (RFC-76).
+- **Adopción.** Leer `docs/rfc/76-change-governance-artifact.md` y
+  `.agents/contracts/CHANGE_GOVERNANCE.md`. Sin migración de datos: no existe
+  storage previo.
+
+## 15. Change Governance Artifact — identidad y persistencia — 11.2.0 (plan 115, RFC-76)
+
+Adición **MINOR** (compatible): concretiza la identidad y la persistencia del
+Change Governance Artifact (decisiones D-01/D-02/D-03).
+
+- **Ubicación.** `.project/changes/<change_identity>.md` — categoría durable
+  per-project, content-addressed, sin registry ni índice global.
+- **Namespace.** `project_identity` (RFC-71 isolation, RFC-73 project segment).
+- **Canonical representation.** Cuatro líneas ordenadas (`target` /
+  `declaration` / `protocol_version` / `namespace`), UTF-8, SHA-256;
+  `declaration` con trim, `target` verbatim.
+- **Sin migración de datos:** no existe storage previo.

@@ -212,17 +212,29 @@ def segments_from_context(
     delivered composition maps to the worker segment (the execution contract
     delivered to the worker); its namespace is `protocol-global` and the
     project anchor is carried by `project_identity`.
+
+    Completeness (RFC-78, section 6 / PC-004). The canonical content covers
+    every field of the Delegation Payload that constitutes delivered context,
+    including the reconciled `harness_policy`, `profile` and the
+    `input_artifacts` **references**. `communication_style` and
+    `technical_approach` are execution metadata and do not participate. The
+    definition of `SemanticContextIdentity` is unchanged; what is corrected is
+    the completeness of the fields feeding it: two payloads that differ in a
+    delivered-context field no longer share one identity.
     """
     content = _canonical_json(
         {
             "session_uuid": context.session_uuid,
             "current_state": context.current_state,
-            "target_phase": context.target_phase,
+            "target_phase": context.phases(),
+            "harness_policy": context.policies(),
             "role_to_adopt": context.role_to_adopt,
+            "profile": context.profile,
             "task_summary": context.task_summary,
             "context_budget": context.context_budget,
             "skills": tuple(skill.name for skill in context.skills),
             "knowledge_entries": context.knowledge_entries,
+            "input_artifacts": context.input_artifacts,
         }
     )
     return (
@@ -260,21 +272,31 @@ class MaterializationVersion:
     serialization_version }` (RFC-72, section 2). A change to any component
     changes the materialization identity and therefore the canonical
     representation contract.
+
+    `content_contract_version` is an additional, optional component introduced
+    by RFC-78 section 7 to satisfy requirement PC-004's sibling honesty rule:
+    two different content sets must never share one `MaterializationIdentity`.
+    It is `None` under ordering contract v1 (the historical contract, whose
+    identity is unchanged byte for byte) and identifies the stable-content
+    contract under ordering contract v2. It is a version component of the
+    existing identity, not a new identity primitive.
     """
 
     variant: str
     ordering_contract_version: str
     serialization_version: str
+    content_contract_version: str | None = None
 
     def serialize(self) -> str:
         """Canonical string form of this materialization version."""
-        return _canonical_json(
-            {
-                "variant": self.variant,
-                "ordering_contract_version": self.ordering_contract_version,
-                "serialization_version": self.serialization_version,
-            }
-        )
+        payload: dict[str, Any] = {
+            "variant": self.variant,
+            "ordering_contract_version": self.ordering_contract_version,
+            "serialization_version": self.serialization_version,
+        }
+        if self.content_contract_version is not None:
+            payload["content_contract_version"] = self.content_contract_version
+        return _canonical_json(payload)
 
 
 def materialization_identity(
@@ -293,13 +315,18 @@ def materialization_identity(
     and omits it otherwise. The function encodes that participation
     deterministically and invents no seventh dimension.
     """
-    dims: dict[str, Any] = {
-        "materialization_version": {
-            "variant": materialization_version.variant,
-            "ordering_contract_version": materialization_version.ordering_contract_version,
-            "serialization_version": materialization_version.serialization_version,
-        }
+    version: dict[str, Any] = {
+        "variant": materialization_version.variant,
+        "ordering_contract_version": (
+            materialization_version.ordering_contract_version
+        ),
+        "serialization_version": materialization_version.serialization_version,
     }
+    if materialization_version.content_contract_version is not None:
+        version["content_contract_version"] = (
+            materialization_version.content_contract_version
+        )
+    dims: dict[str, Any] = {"materialization_version": version}
     if provider is not None:
         dims["provider"] = provider
     if model is not None:
@@ -315,7 +342,9 @@ def materialization_version_from_identity(
     """Parse the `materialization_version` embedded in an identity string.
 
     Used to validate that a canonical materialization is produced under the
-    contract named by its `MaterializationIdentity` (I-MAT-001 honesty).
+    contract named by its `MaterializationIdentity` (I-MAT-001 honesty). A
+    `content_contract_version` absent from the identity is parsed as `None`,
+    so identities produced under ordering contract v1 stay valid unchanged.
     """
     try:
         data = json.loads(identity)
@@ -324,6 +353,7 @@ def materialization_version_from_identity(
             variant=mv["variant"],
             ordering_contract_version=mv["ordering_contract_version"],
             serialization_version=mv["serialization_version"],
+            content_contract_version=mv.get("content_contract_version"),
         )
     except (ValueError, KeyError, TypeError, json.JSONDecodeError) as exc:
         raise ValueError(f"not a materialization identity: {identity!r}") from exc

@@ -858,6 +858,33 @@ inicio. **Autorización de ejecución del Plan pendiente** (el Plan se crea en
 |---|---|---|---|
 | `120-adversarial-deliberation-materialization.md` | RFC-77 | Executed | Materialización del MVP Protocol-native de deliberación adversarial: contrato `DELIBERATION_REPORT.md` (`enforcement: informational`, sesión-scoped, sin lifecycle propio), Skill `adversarial-deliberation` (con condiciones de uso para candidatura por juicio y consumidor declarado), subsección de invocación y construcción de contextos en el rol del Orchestrator (dos pasadas con contextos distintos, compromiso previo a la revelación, comparación por criterio, preservación del desacuerdo, síntesis, veredicto, recomendación advisory opcional, interpretación), punto de decisión `D7`, entidades de taxonomía y boundaries, suite `tests/test_adversarial_deliberation.py` (75 tests: contrato, skill, orquestación, autoridad, contexto y negativos) y el dogfood real del propio Change con reconstrucción por un tercero y evaluación `J1..J11`. Baseline: 6 checkers canónicos PASS y `pytest` **535 passed / 0 failed**; resultado: batería 6/6 PASS y `pytest` **610 passed / 0 failed** (sin regresiones). **H-5 (2026-09-14):** autorizado para ejecución, alcance limitado a los 14 entregables; clasificación MINOR `11.3.0` → `11.4.0` confirmada. **H-6 (2026-09-14):** cierre aceptado por el mantenedor — `JURY_TRIAL_PROTOCOL_MVP_CLOSED = TRUE` (J1..J10 verificados; J11 por acto humano), aceptando como limitación declarada del MVP el hallazgo de contaminación entre pasadas del dogfood (Pass 2 con exposición potencial al path del reporte vivo que ya contenía la conclusión de Pass 1), sin autorizar enforcement, aislamiento, diversidad de modelo/proveedor ni confrontación adicionales. Condición derivada **`Closed` (con release pendiente)**. Sin tag, sin push, sin merge. |
 
+## Quincuagésima tercera serie: stable prefix provider-bound de Prompt Cache Protocol (Plan 121) (14 sep 2026)
+
+Plan 121 (cambio de payload autorizado por RFC-78 `Accepted (plan 121,
+2026-09-14)` — gate satisfecho; clase RFC-56 A; Change Level L3):
+materializa el **stable prefix provider-bound** Core + Worker decidido por las
+decisiones humanas HD-1b/HD-1b-bootstrap/HD-2b/HD-3/HD-4/HD-5/HD-6/HD-7
+(mantenedor, 2026-09-14). Alcance: resolución determinística del contenido
+estable (workflow module, role, profile, harness policy, skills, worker
+bootstrap); `OrderingContract` v2 con el paso `protocol-bootstrap` declarado
+vacío y el prefijo estable antes del sufijo dinámico; reconciliación
+`ExecutionContext` ↔ Delegation Payload (cierra F-1); corrección de completitud
+de la derivación de identidad **sin** tocar `session_uuid` ni el aislamiento; y
+corrección de F-2. Objetivo declarado: **INFRASTRUCTURE / READINESS MVP**, no
+ahorro económico. **Sin** provider real, **sin** Project/KB como prefijo, **sin**
+identidad/registry/estado/fase/authority class/cache database nuevos, **sin**
+evidencia de provider simulada y **sin** release. Origen:
+`docs/working/research/PROMPT_CACHE_PHASE_1_REPORT.md` (Phase 1) y el Phase 2
+Report (`PHASE_2_STOPPED_AT_AUTHORIZATION_GATE`). **Ejecutado (2026-09-14)** con
+autorización humana explícita del mantenedor y alcance limitado a los
+entregables; commit atómico pendiente de la acción del mantenedor, por lo que la
+condición derivada es `Executed` y el cierre requiere ese commit. La
+autorización **no** incluye release, tag, promoción a `master` ni publicación.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `121-provider-bound-stable-prefix-readiness-mvp.md` | RFC-78 | Executed | Materialización del stable prefix provider-bound Core + Worker (readiness MVP): `runtime/toolcalls/segment_resolution.py` nuevo (resolución determinística del contenido estable, regla de pertenencia, orden por contrato, `SegmentResolutionError` ante elemento irresoluble y rechazo de rutas que escapan de `.agents/`), `ORDERING_CONTRACT_V2` (`protocol-bootstrap` como step declarado y **vacío**; prefijo estable antes del sufijo dinámico; `ORDERING_CONTRACT_V1` conservado), composición *banner de identidad → región estable → ancla SCI → sufijo dinámico* para que `stable_prefix_bytes` sea prefijo de bytes e invariante a `session_uuid`/task/artefactos y `stable_region` sea el contenido reusable idéntico entre variantes, reconciliación `ExecutionContext` ↔ Delegation Payload por HD-7 (`harness_policy`/`profile`/`input_artifacts` como referencias; `communication_style`/`technical_approach` metadata de ejecución), `content_contract_version` en `MaterializationVersion` para que dos conjuntos de contenido nunca compartan una `MaterializationIdentity`, corrección de completitud de la derivación de identidad con `session_uuid` y aislamiento intactos (cierra **F-1**), corrección de **F-2** (test parametrizado sobre los diez campos del contexto entregado), sección «Stable prefix (provider-bound materialization)» en `CONTEXT.md`, bump MINOR `11.4.0` → `11.5.0` con ancla `PROTOCOL_VERSION` sincronizada, `CHANGELOG.md` `[11.5.0]` y `docs/MIGRATION.md` §18, y dogfood de los diez puntos verificables sobre el payload real. Verificación: seis checkers canónicos PASS (`check_protocol_invariants` 215 files / 10227 references) y `pytest` **704 passed / 4 failed** — los 4 son ajenos al cambio (3 verificados contra el baseline sin el cambio: `3 failed / 607 passed`; el cuarto es el informe de Phase 1 sin commitear, target de citas, que cierra al commitear). Validation Anchor A1 (delta `f6841e23…`; tree `8acfd149…`); `check_lifecycle_anchor`/`check_lifecycle_checkpoint` → Plan 121 `VALID`; `check_lifecycle_lineage` `GAP=0`. Condición derivada **`Closed` (con release pendiente)**; `Committed` es estado del repositorio y el commit atómico en `dev` es acción del mantenedor. **Sin release, sin tag, sin promoción a `master`, sin `dist`.** Beneficio económico `UNKNOWN`; evidencia de provider **DEFERRED / NOT VERIFICABLE**; `NullProviderAdapter` permanece. |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

@@ -118,7 +118,7 @@ The technical-practice flags map each flag to the rubric that scores it and the 
 
 ## Context
 
-- `context/CONTEXT.md` — context engineering, the determinism model, knowledge-base budgets, context compression techniques, and compact tags. Also defines stable/dynamic context classification, context segments (Core/Project/Worker), semantic identity, scope and semantic isolation.
+- `context/CONTEXT.md` — context engineering, the determinism model, knowledge-base budgets, context compression techniques, and compact tags. Also defines stable/dynamic context classification, context segments (Core/Project/Worker), semantic identity, scope and semantic isolation, and the provider-bound stable prefix (eligibility rule, Core + Worker scope, declared-empty bootstrap step, ordering and identity boundary).
 - `context/BUDGET_MATERIALIZATION.md` — materialization of the Context Budget for the prompt-based runtime: unit (estimated tokens), estimation rule, and conversion from the character-denominated KB budgets. Also declares that persistence and cacheability do not change the semantic limits of the Context Budget.
 - `context/RESOLUTION_TIE_BREAKING.md` — Resolution policy: ordered criteria for deciding between equivalent context candidates (explicit directive, source precedence, recency, coverage, first-fit).
 - `context/RESOLUTION_DEDUPLICATION.md` — Resolution policy: detection of fully-contained (redundant) candidates and their lossless removal.

@@ -32,6 +32,36 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [11.5.0] — 2026-09-14
+
+### Added
+
+- **Stable prefix provider-bound** (plan 121, RFC-78): el Protocol define el
+  **stable prefix** de la materialización dirigida al provider — la porción
+  inicial de la representación canónica que contiene el Contexto Estable
+  resuelto y ningún contenido dinámico. Se incorpora a
+  `standards/context/CONTEXT.md` («Stable prefix (provider-bound
+  materialization)»): la **regla de pertenencia** (Stable Context ∧ scope de la
+  delegación ∧ consumido demostrablemente por el Worker o resoluble
+  determinísticamente del Delegation Payload), el **alcance Core + Worker** del
+  prefijo, el paso **`protocol-bootstrap` declarado y vacío** en el scope del
+  Worker (la secuencia de bootstrap carga rol de sistema, state machine y rol
+  del orquestador en el **Orchestrator**; el contrato de ejecución del Worker no
+  dirige al Worker a leer ningún documento de bootstrap), la exclusión
+  **deliberada y diferida** del segmento **Project/KB** (su freshness/lifecycle
+  introduce una dinámica de invalidación distinta), la frontera con las policies
+  de composición (Compression y Optimization gobiernan la forma del payload del
+  protocolo; el prefijo es la representación que el runtime produce a partir de
+  él) y las no-equivalencias (Stable Context ≠ Stable Prefix; Stable Prefix ≠
+  Segment ≠ identity ≠ persistence ≠ autorización de reuso; resolver contenido ≠
+  cache hit del provider). Un elemento estable irresoluble se reporta como
+  desviación y el runtime **nunca inventa su contenido**. El orden pertenece a la
+  materialización (`ordering_contract_version`), no a la identidad semántica; no
+  se introduce identity primitive nueva, no se modifica
+  `SemanticContextIdentity` y el prefijo no altera los límites semánticos del
+  Context Budget. Cambio aditivo y compatible; el Protocol **no** implementa
+  prompt cache del provider ni declara ahorro alguno.
+
 ## [11.4.0] — 2026-09-14
 
 ### Added

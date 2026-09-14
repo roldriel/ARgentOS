@@ -63,17 +63,53 @@ boundary). Concretely (`runtime/toolcalls/canonical.py`):
   serializers (`prompt` and `toolcalls`); the canonical envelope wraps either.
 - **Serialization**: UTF-8, no BOM, LF line endings, no variable trailing
   whitespace; `serialization_version = "1"`.
-- **Ordering Contract v1**: the runtime declares its Current Ordering Choice
-  as the de facto field order already implemented by both renderers
-  (session → state → phase → role → task → context_budget →
+- **Ordering Contract v1** (historical): the runtime declares its Current
+  Ordering Choice as the de facto field order already implemented by both
+  renderers (session → state → phase → role → task → context_budget →
   knowledge_entries → skills). This formalizes the runtime's choice inside a
   versioned contract; it does **not** resolve the protocol's normative
   OPEN/DEFERRED ordering state, which remains subject to measurement
   (`docs/rfc/72-provider-prompt-cache-capability.md:4. Orden (Ordering Contract)`).
+  It is preserved unchanged: payloads and identities produced under v1 stay
+  valid byte for byte.
+- **Ordering Contract v2** (current; `docs/rfc/78-provider-bound-stable-prefix-materialization.md:5`):
+  stable content first, dynamic suffix last, with the resolved stable region as
+  the reusable prefix. The step `protocol-bootstrap` is **declared and empty**
+  in the Worker scope: the bootstrap sequence loads the system role, the state
+  machine and the orchestrator role into the **Orchestrator**, and the Worker
+  execution contract does not direct the Worker to read any bootstrap document.
+  Composition (`runtime/toolcalls/canonical.py`):
+
+  ```text
+  [materialization-identity banner (static)]  [stable region]  [sci anchor]  [dynamic suffix]
+  ```
+
+  The banner is static by construction, so `stable_prefix_bytes` (banner +
+  stable region) is invariant to `session_uuid`, task and artifact references,
+  and is a byte prefix of the payload. `stable_region` is the reusable content
+  alone, independent of the banner and therefore identical across variants.
+- **Stable region**: the Core + Worker stable content resolved from the payload
+  (`runtime/toolcalls/segment_resolution.py`): workflow module (`target_phase`),
+  role (`role_to_adopt`), profile (`profile`), harness policy
+  (`harness_policy`), activated skills (`skills`) and the Worker role document.
+  The Project/KB segment is **not** part of the prefix, and the **content** of
+  the input artifacts never enters it — only their references participate, in
+  the dynamic suffix and in the identity. An element named by the delegation
+  that cannot be resolved raises `SegmentResolutionError`: the runtime reports
+  the failure and never substitutes invented content.
+- **Content contract**: because two different content sets must never share one
+  `MaterializationIdentity`, ordering contract v2 names its content set
+  explicitly (`content_contract_version`). The runtime refuses to materialize
+  when the identity does not describe the contract it implements.
 - **Stable Prefix**: the portion of the representation identical between
   compatible invocations (same SCI + same MI) is computed as a property of
   the materialization — not a segment, not an identity
-  (`docs/rfc/72-provider-prompt-cache-capability.md:5. Stable Prefix`).
+  (`docs/rfc/72-provider-prompt-cache-capability.md:5. Stable Prefix`). The
+  stable prefix is the representational counterpart of the Protocol's Stable
+  Context (`protocol/.agents/standards/context/CONTEXT.md:Stable prefix (provider-bound materialization)`).
+- **Reuse scope**: the prefix is reusable **intra-session**. `session_uuid`
+  participates in `SemanticContextIdentity` (I-MAT-001 fidelity), so the
+  runtime makes **no** claim and seeks **no** reuse across sessions.
 - **Protocol version anchor**: the runtime's `PROTOCOL_VERSION`
   (`runtime/toolcalls/canonical.py`) is the semantic anchor of derived
   identities (RFC-71: `semantic_version` = protocol version governing the

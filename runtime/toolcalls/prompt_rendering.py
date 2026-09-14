@@ -45,6 +45,31 @@ def render_prompt(context: ExecutionContext) -> str:
     return "\n".join(lines) + "\n"
 
 
+def render_dynamic_suffix(context: ExecutionContext) -> str:
+    """Render the dynamic suffix of the canonical payload (ordering v2).
+
+    RFC-78 section 5 defines the v2 field order as stable content first and the
+    dynamic suffix last. This function produces only the parameterized portion:
+    the task-specific fields and the execution/session metadata. The stable
+    prefix is resolved separately from the payload
+    (`runtime/toolcalls/segment_resolution.py`) and is not part of the suffix.
+    """
+    lines = [
+        "suffix: task",
+        f"task: {context.task_summary}",
+        "suffix: knowledge_entries",
+    ]
+    lines.extend(f"  - {entry}" for entry in context.knowledge_entries)
+    lines.append("suffix: artifacts")
+    lines.extend(f"  - {ref}" for ref in context.input_artifacts)
+    lines.append("suffix: execution_metadata")
+    lines.append(f"session_uuid: {context.session_uuid}")
+    lines.append(f"current_state: {context.current_state}")
+    lines.append("target_phase: " + ", ".join(context.phases()))
+    lines.append(f"context_budget: {context.context_budget}")
+    return "\n".join(lines) + "\n"
+
+
 def load_skill_contents(context: ExecutionContext) -> dict[str, str]:
     """What the Worker reads up front under this materialization.
 

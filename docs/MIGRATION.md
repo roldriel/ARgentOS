@@ -479,3 +479,68 @@ No rompe contratos ni requiere migración.
   `docs/rfc/77-protocol-native-adversarial-deliberation.md` y
   `.agents/standards/orchestration/DECISIONS.md: D7 — Deliberation invocation`.
   Sin migración de datos.
+
+## 18. Stable prefix provider-bound — 11.5.0 (plan 121, RFC-78)
+
+- **Qué se agrega.** La definición del **stable prefix** de la materialización
+  dirigida al provider en `standards/context/CONTEXT.md` («Stable prefix
+  (provider-bound materialization)»): la regla de pertenencia (Stable Context ∧
+  scope de la delegación ∧ consumido demostrablemente por el Worker o resoluble
+  determinísticamente del Delegation Payload), el alcance **Core + Worker** del
+  prefijo, el paso **`protocol-bootstrap` declarado y vacío** en el scope del
+  Worker, la exclusión **deliberada y diferida** del segmento **Project/KB**, la
+  frontera con las policies de composición y las no-equivalencias
+  (`Stable Context ≠ Stable Prefix`; `Stable Prefix ≠ Segment ≠ identity ≠
+  persistence ≠ autorización de reuso`; `resolver contenido ≠ cache hit`).
+- **Por qué es compatible (MINOR).** Es una **adición documental**: define una
+  semántica que hasta ahora no estaba escrita y **no** redefine ningún campo,
+  contrato, máquina de estados, workflow, rol, policy de composición ni límite
+  del Context Budget. Nada de lo que un adoptante hacía deja de ser válido.
+- **Qué NO cambia en el Protocol.**
+  - La definición de `SemanticContextIdentity` es la misma
+    (`{protocol_version, project_identity, segments[]}`).
+  - `session_uuid` mantiene su posición y su semántica en la derivación de
+    identidad: el aislamiento **cross-session** no se altera y el reuso del
+    prefijo es **intra-session**.
+  - El aislamiento por proyecto y la prohibición de reuso cross-project (I-008)
+    no se tocan.
+  - No se introduce identity primitive, registry, estado, fase de workflow,
+    authority class, base de datos de cache, feature flag ni gate nuevos.
+  - El Protocol **no** implementa prompt cache del provider: el Provider posee su
+    cache (creación, reuso, evicción, vida útil y billing). El Protocol **no**
+    declara ahorro alguno.
+- **Contrato de runtime (referencia, no Protocol).** La implementación de
+  referencia del runtime introduce el **Ordering Contract v2**
+  (`ordering_contract_version = "2"`) y un componente de contenido explícito en
+  la identidad de materialización (`content_contract_version`), de modo que dos
+  conjuntos de contenido distintos **nunca** comparten una misma
+  `MaterializationIdentity`. El contrato v1 se conserva y sigue siendo válido: un
+  runtime que implemente v1 sigue produciendo las mismas representaciones que
+  antes. Un runtime que **no** implemente un contrato de orden nombrado por la
+  identidad debe **rechazar** la materialización, no reinterpretarla.
+- **Contrato de orden v2 (referencia para un runtime que lo adopte).** El banner
+  de identidad (estático) precede a la **región estable** resuelta; el ancla
+  `SemanticContextIdentity` y el sufijo dinámico la siguen, porque
+  `session_uuid` participa de esa identidad. Así la región estable queda como
+  **prefijo de bytes** invariante a `session_uuid`, task y referencias de
+  artifacts. El paso `protocol-bootstrap` es **vacío** en el scope del Worker:
+  no incluye `_AGENTS.md`, `.agents/INDEX.md`, state machines ni el rol del
+  orquestador — su lectura corresponde al **Orchestrator**, y el contrato de
+  ejecución del Worker no ordena al Worker leerlos.
+- **Qué puede requerir atención del adoptante.** Si el adoptante tiene su propio
+  runtime de materialización y quiere beneficiarse del prefijo estable, debe
+  implementar el contrato v2 y resolver el contenido estable desde el payload:
+  módulo de workflow (`target_phase`), rol (`role_to_adopt`), perfil (`profile`),
+  policy del gate (`harness_policy`), skills (`skills`) y el rol del Worker. Los
+  `input_artifacts` participan **como referencias**; su contenido nunca entra al
+  prefijo. Un elemento nombrado que no se pueda resolver debe producir un **fallo
+  explícito**, nunca contenido inventado.
+- **Limitaciones declaradas.** El prefijo se envía en cada invocación y su
+  tamaño es sustancial; sin evidencia del provider **no** puede afirmarse que el
+  net benefit sea positivo. La evidencia de cache del provider
+  (hit / tokens cacheados / costo) permanece **DEFERRED / NOT VERIFICABLE**
+  porque no existe adapter real autorizado, y el beneficio económico permanece
+  **UNKNOWN**.
+- **Adopción.** Leer `docs/rfc/78-provider-bound-stable-prefix-materialization.md`
+  y `.agents/standards/context/CONTEXT.md` (sección «Stable prefix
+  (provider-bound materialization)»). Sin migración de datos.

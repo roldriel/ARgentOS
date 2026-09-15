@@ -7,7 +7,9 @@
 > identidad histórica (`docs/rfc/69-documentation-taxonomy-and-layout.md:Modelo ADR`).
 > ADR-15/16 registran decisiones del lifecycle de cambios del repo fuente
 > (autorizadas por el mantenedor, 2026-08-31; docs-only, sin `VERSION` bump ni
-> tag).
+> tag). ADR-17 registra la decisión de estructura del repositorio: modelo de
+> lifetime y arquitectura estructural compuesta (autorizada por el mantenedor,
+> 2026-09-15; plan 125; docs-only, sin `VERSION` bump ni tag).
 
 ## Matriz D# ↔ ADR ↔ RFC ↔ plan
 
@@ -38,6 +40,7 @@ de autorización sigue siendo RFC `Accepted` + plan
 | [ADR-14](14-implementation-priority.md) | D13 | Implementation Priority | Accepted | [RFC-62](docs/rfc/62-guarantee-model-and-enforcement-boundaries.md) … [RFC-68](docs/rfc/68-architecture-evolution-workflow.md) | [plan 76](docs/plans/76-guarantee-model-enforcement-boundaries.md) … [plan 82](docs/plans/82-architecture-evolution-workflow.md) | serie ejecutada (planes 76–82) |
 | [ADR-15](15-change-lifecycle-continuity.md) | — | Change Lifecycle — Continuity & Git Checkpoint Semantics | Accepted | — | — | — |
 | [ADR-16](16-change-lifecycle-authority.md) | — | Change Lifecycle — Authority & Decision Model | Accepted | — | — | — |
+| [ADR-17](17-repository-lifetime-and-composite-structure.md) | — | Repository Structure — Lifetime Model & Composite Placement | Accepted | — | [plan 125](docs/plans/125-repository-architecture-decisions.md) | decisión registrada (docs-only); implementación derivada pendiente (semántica de lifetime/persistence en el contrato Protocol → RFC-56) |
 
 ## Notas
 

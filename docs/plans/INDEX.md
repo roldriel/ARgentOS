@@ -6,10 +6,13 @@
 > Las secciones `## Convenciones` y `## Serie de RFCs (documentos canónicos)`
 > se conservan como anclas de navegación para referencias históricas.
 
-Estado al 2026-09-15. El Plan 124 está `Executed` con condición derivada
-`Closed` (docs-only, sin release; Quincuagésima sexta serie, cierre de hallazgos
-de arquitectura de `tests/`); el resto de los planes numerados están `Executed`,
-y la última serie ejecutada es la Quincuagésima quinta (Plan 123, 15 sep 2026). El
+Estado al 2026-09-15. El Plan 125 está `Executed` con condición derivada `Closed`
+(docs-only, sin release; Quincuagésima séptima serie, decisiones arquitectónicas
+de estructura del repositorio); el Plan 124 está `Executed` con condición
+derivada `Closed` (docs-only, sin release; Quincuagésima sexta serie, cierre de
+hallazgos de arquitectura de `tests/`); el resto de los planes numerados están
+`Executed`, y la última serie ejecutada con anterioridad es la Quincuagésima
+quinta (Plan 123, 15 sep 2026). El
 protocolo publicado es `11.2.0` (`master`/`dist`, tags anotados `11.0.0`,
 `11.0.1`, `11.1.0` y `11.2.0`); `dev` lleva los releases en curso
 `11.3.0`–`11.5.0` sin publicar (ver `docs/VERSIONING.md` §9, que es el
@@ -993,6 +996,21 @@ sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
 | `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. |
+
+## Quincuagésima séptima serie: decisiones arquitectónicas de estructura del repositorio (Plan 125) (15 sep 2026)
+
+Plan 125 (vía plan; docs-only, sin efecto en `protocol/.agents/`, por lo que
+RFC-56 no aplica). Registra las decisiones arquitectónicas humanas tomadas por
+el mantenedor sobre la estructura del repositorio, derivadas de la Repository
+Structure Architecture Review (read-only, `dev` @ `4cd11ed`) y de su Repository
+Architecture Decision Set (A–K, L). El plan **no** diseña el Repository/Artifact
+Placement Contract, **no** migra artefactos, **no** resuelve las decisiones
+abiertas C, D, E, G, H, I, J y K, y no introduce entidad, registry, estado de
+lifecycle, clase de autoridad ni mecanismo de governance nuevos.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `125-repository-architecture-decisions.md` | — (vía plan; RFC-56 no aplica) | Executed | Registro formal de las decisiones humanas **A3** (lifetime permanece como propiedad semántica en `docs/`, sin dimensión física general del árbol; se admite separación física específica dentro de `.project/` entre estado durable y session-ephemeral), **B4** (arquitectura estructural compuesta por namespace/dominio; ninguna estrategia física global obligatoria; B4 no autoriza migración por sí mismo), **F1** (`.project/changes/` conserva su path; el contrato Protocol debe distinguir explícitamente project-durable de session-ephemeral; «durable» no implica Git-committed; sin mover, sin cambiar `.gitignore`, sin tocar runtime resolvers) y **L1** (A y B son ADR-worthy; materializado como `docs/adr/17-repository-lifetime-and-composite-structure.md` dentro del mismo Change, conforme a `docs/CONVENTIONS.md:Convenciones`). Incluye la sección explícita de decisiones **ABIERTAS** C/D/E/G/H/I/J/K con su autoridad requerida y dependencia, el límite del siguiente paso (Repository/Artifact Placement Contract, derivado de artifact/nature, owner/domain, authority, lifecycle, persistence, scope, consumption, creation, mutation, discovery, canonicality e historical status, **no diseñado**) y los pendientes `PC-1` (semántica de lifetime/persistence en el contrato Protocol → RFC-56), `PC-2` (separación física dentro de `.project/`) y `PC-3` (las ocho decisiones abiertas). Docs-only: sin `VERSION` bump ni tag (RFC-69). |
 
 ## Quincuagésima sexta serie: cierre de hallazgos de arquitectura de `tests/` (Plan 124) (15 sep 2026)
 

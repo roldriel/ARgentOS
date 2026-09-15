@@ -36,6 +36,22 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Modelo conceptual
 
+- **Decisiones arquitectónicas de estructura del repositorio** (plan 125,
+  ADR-17): se registran las decisiones humanas del mantenedor sobre la estructura
+  del repo fuente, derivadas de la Repository Structure Architecture Review
+  (read-only) y de su Decision Set. **A3**: lifetime permanece como propiedad
+  semántica en `docs/` y no se convierte en una dimensión física general del
+  árbol; se admite separación física específica dentro de `.project/` entre
+  estado durable y session-ephemeral. **B4**: arquitectura estructural compuesta
+  por namespace/dominio, sin una única estructura física global obligatoria; B4
+  no autoriza migración por sí mismo. **F1**: `.project/changes/` conserva su
+  path, el contrato Protocol debe distinguir explícitamente project-durable de
+  session-ephemeral y «durable» no implica Git-committed. **L1**: A y B son
+  ADR-worthy, materializado en `docs/adr/17-repository-lifetime-and-composite-structure.md`.
+  Las decisiones de placement C, D, E, G, H, I, J y K permanecen **abiertas**.
+  El Repository/Artifact Placement Contract queda como trabajo posterior
+  (downstream), no diseñado. Sin cambio de mecanismos, invariantes ni autoridad;
+  cambio docs-only: sin `VERSION` bump ni tag (RFC-69).
 - **Cierre del MVP de Change Lifecycle DEV — reconciliación normativa de RFC-75**
   (plan 118, RFC-75): RFC-75 reconcilia su registro con el estado real alcanzado
   por sus Incrementos 0–4, sin rediseño. Su `## Amendment Log` registra las cuatro

@@ -9,7 +9,10 @@
 > (autorizadas por el mantenedor, 2026-08-31; docs-only, sin `VERSION` bump ni
 > tag). ADR-17 registra la decisión de estructura del repositorio: modelo de
 > lifetime y arquitectura estructural compuesta (autorizada por el mantenedor,
-> 2026-09-15; plan 125; docs-only, sin `VERSION` bump ni tag).
+> 2026-09-15; plan 125; docs-only, sin `VERSION` bump ni tag). ADR-18 registra
+> las decisiones de frontera del payload, provenance y clasificación (C–K;
+> autorizadas por el mantenedor, 2026-09-15; plan 126; materializadas en el
+> mismo cambio, Clase B).
 
 ## Matriz D# ↔ ADR ↔ RFC ↔ plan
 
@@ -41,6 +44,7 @@ de autorización sigue siendo RFC `Accepted` + plan
 | [ADR-15](15-change-lifecycle-continuity.md) | — | Change Lifecycle — Continuity & Git Checkpoint Semantics | Accepted | — | — | — |
 | [ADR-16](16-change-lifecycle-authority.md) | — | Change Lifecycle — Authority & Decision Model | Accepted | — | — | — |
 | [ADR-17](17-repository-lifetime-and-composite-structure.md) | — | Repository Structure — Lifetime Model & Composite Placement | Accepted | — | [plan 125](docs/plans/125-repository-architecture-decisions.md) | decisión registrada (docs-only); implementación derivada pendiente (semántica de lifetime/persistence en el contrato Protocol → RFC-56) |
+| [ADR-18](18-payload-boundary-provenance-and-classification.md) | — | Payload Boundary, Provenance and Classification | Accepted | — | [plan 126](docs/plans/126-repository-architecture-decisions-ck.md) | materializado en el mismo cambio (Clase B): checker de frontera + allowlist de provenance, declaración de distribución del harness, vocabulario `tags.kind` no exhaustivo, clasificación documental DEV en el lugar, INDEX semántico |
 
 ## Notas
 

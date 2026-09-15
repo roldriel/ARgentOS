@@ -36,6 +36,21 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Modelo conceptual
 
+- **Frontera del payload, provenance y clasificación** (plan 126, ADR-18; Clase B
+  de RFC-56): se materializan las decisiones arquitectónicas C–K. Los tests del
+  harness (`.agents/harness/tests/`) quedan declarados **parte del payload
+  distribuido**, como suite de regresión de los scripts que sí se distribuyen,
+  mientras los cinco checkers de `tools/` permanecen DEV-only; el payload puede
+  conservar sus dos citas de **fuente normativa** en `docs/rfc/` mediante una
+  excepción acotada al par (archivo citante, target exacto); el checker de frontera
+  incorpora `docs` como segmento prohibido —la regla pasa a ser aplicable, no sólo
+  declarada— con allowlist de provenance y cobertura de tests; `tags` se documenta
+  como **vocabulario no cerrado** y `tags.kind` como no exhaustivo, con
+  `state_machine` y `taxonomy` añadidos; la clasificación documental DEV se
+  corrige **en el lugar** (`docs/architecture/` → Historical, la auditoría de raíz
+  → Working/Audit) sin reorganizar `docs/`; un INDEX es **opcional y semántico**;
+  y la creación de `.project/` por el health probe se acepta como correcta, sin
+  cambio de comportamiento. Sin migración, sin `VERSION` bump ni tag.
 - **Decisiones arquitectónicas de estructura del repositorio** (plan 125,
   ADR-17): se registran las decisiones humanas del mantenedor sobre la estructura
   del repo fuente, derivadas de la Repository Structure Architecture Review

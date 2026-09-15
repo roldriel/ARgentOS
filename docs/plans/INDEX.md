@@ -6,7 +6,9 @@
 > Las secciones `## Convenciones` y `## Serie de RFCs (documentos canónicos)`
 > se conservan como anclas de navegación para referencias históricas.
 
-Estado al 2026-09-15. El Plan 125 está `Executed` con condición derivada `Closed`
+Estado al 2026-09-15. El Plan 126 está `Executed` con condición derivada `Closed`
+(Quincuagésima octava serie, materialización de las decisiones C–K; Clase B;
+release pendiente); el Plan 125 está `Executed` con condición derivada `Closed`
 (docs-only, sin release; Quincuagésima séptima serie, decisiones arquitectónicas
 de estructura del repositorio); el Plan 124 está `Executed` con condición
 derivada `Closed` (docs-only, sin release; Quincuagésima sexta serie, cierre de
@@ -996,6 +998,18 @@ sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
 | `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. |
+
+## Quincuagésima octava serie: materialización de las decisiones C–K (Plan 126) (15 sep 2026)
+
+Plan 126 (vía plan, **Clase B** de RFC-56: mejora documental compatible). Materializa
+las decisiones arquitectónicas C–K aceptadas por el mantenedor a partir de la
+síntesis posterior a ADR-17, y deja el Repository/Artifact Placement Contract como
+trabajo posterior no diseñado. No crea entidad, registry, estado de lifecycle,
+clase de autoridad ni mecanismo nuevos; no migra artefactos.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `126-repository-architecture-decisions-ck.md` | — (vía plan, Clase B RFC-56) | Executed | Materialización de **C1** (los harness tests de `.agents/harness/tests/` son parte del payload distribuido y suite de regresión del harness; los cinco checkers de `tools/` siguen DEV-only: declarado en `.agents/harness/INDEX.md`), **D4** (el payload conserva sus dos citas de fuente normativa `docs/rfc/` mediante una excepción acotada al par (archivo citante, target exacto), explícita y auditable; `functional_writer.md` aclarado como carpeta del proyecto adoptante), **E1** (`docs` añadido al boundary declarado del checker existente —sin checker nuevo— más la allowlist de provenance, con 4 tests: `docs/` ordinario rechazado, provenance allowlisted aceptada, la allowlist no autoriza otros `docs/`, no aplica a archivo no listado), **G2+G1** (`tags` declarado vocabulario documentado y no cerrado; `tags.kind` no exhaustivo/extensible; `state_machine` y `taxonomy` añadidos; ningún consumidor reescrito), **H** derivada de A3+B4 (clasificación documental corregida **en el lugar**: `docs/architecture/` → Historical/`archived`, `docs/AUDITORIA_DOCUMENTACION.md` → Working/Audit de raíz, mapa folder→clase con columna de lifecycle; sin movimiento ni clases nuevas), **I** derivada de C1 (harness sin reestructurar), **J1** (INDEX opcional y semántico, nunca autoridad; ningún INDEX creado) y **K3** (`health_check.py` sin cambios; el directorio efímero del probe aceptado como correcto; clarificación documental mínima). Registrado en `docs/adr/18-payload-boundary-provenance-and-classification.md`. Sin `VERSION` bump ni tag. |
 
 ## Quincuagésima séptima serie: decisiones arquitectónicas de estructura del repositorio (Plan 125) (15 sep 2026)
 

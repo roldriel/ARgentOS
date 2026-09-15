@@ -21,7 +21,7 @@ no su carpeta; la carpeta es una convención física (ver mapa folder → clase)
 | **EntryPoint** | Visibilidad de un vistazo; vive en la raíz | `AGENTS.md`, `README.md`, `CHANGELOG.md`, `ROADMAP.md`, `LICENSE` |
 | **Policy** | Reglas vigentes del repo | `docs/AGENTS.md` (esta carta), `docs/CONVENTIONS.md`, `docs/VERSIONING.md`, `docs/ADOPTION.md`, `docs/MIGRATION.md`, `docs/source-layout.md` |
 | **Governance** | Artefactos con ciclo de status propio | RFC (modelo y propuesta de cambio), ADR (decisión), Plan (ejecución) |
-| **Inventory** | Registros vivos y verificables: canonical + mutable + verified | `docs/architecture/ARCHITECTURAL_PROBLEM_MODEL.md` (P#, CG#, RC#); `docs/plans/analisis-explicitud.md` (catálogo de gaps, Inventory-like) |
+| **Inventory** | Registros vivos y verificables: canonical + mutable + verified | `docs/glossary/INDEX.md` (registro de terminología); `docs/plans/analisis-explicitud.md` (catálogo de gaps, Inventory-like) |
 | **Working** | Transitorios, pre-canónicos; nunca targets normativos; pueden ser provenance | Audit, Research, Proposal bajo `docs/working/` |
 
 **Product** y **Tooling** no son naturalezas documentales: son capas físicas
@@ -78,17 +78,23 @@ operacional; Incremento 1)`, no en esta carta.
 
 ### Folder → class map
 
-| Carpeta | Clase |
-|---|---|
-| `docs/rfc/` | Governance / RFC |
-| `docs/adr/` | Governance / ADR |
-| `docs/plans/` | Governance / Plan (+ support docs) |
-| `docs/architecture/` | Inventory / Architecture models |
-| `docs/working/` | Working (`audits/`, `research/`, `proposals/`) |
-| `docs/glossary/` | Inventory / Terminology registry (DESCRIPTIVE; no normativo) |
+| Carpeta | Clase | Lifecycle |
+|---|---|---|
+| `docs/rfc/` | Governance / RFC | active → congelado al `Accepted`/`Superseded` |
+| `docs/adr/` | Governance / ADR | active |
+| `docs/plans/` | Governance / Plan (+ support docs) | active → traza histórica al `Executed` |
+| `docs/architecture/` | **Historical** — snapshots de análisis preservados como provenance (declarados Inventory antes de que ambos archivos se congelaran; el banner de cada archivo prevalece) | `archived` |
+| `docs/working/` | Working (`audits/`, `research/`, `proposals/`) | active o `archived` por archivo |
+| `docs/glossary/` | Inventory / Terminology registry (DESCRIPTIVE; no normativo) | active |
+| `docs/AUDITORIA_DOCUMENTACION.md` (raíz de `docs/`) | **Working / Audit** — excepción de raíz documentada; no es Policy pese a su ubicación | `archived` |
 
 La clase se deriva de esta carta; la carpeta es convención física, no fuente
-de verdad. Support docs clasificados explícitamente:
+de verdad — y **la clase no se infiere de la carpeta ni la carpeta del
+lifetime** (ADR-17 RS-1/RS-2). Las dos filas de naturaleza Working/Historical
+existen precisamente porque su ubicación física no coincide con su clase: se
+**clasifican en el lugar**, sin relocalizarlas (ADR-17: lifetime es semántico,
+`docs/` no se reorganiza y ninguna decisión autoriza migración). Support docs
+clasificados explícitamente:
 `docs/plans/analisis-explicitud.md` → Inventory-like;
 `docs/plans/skills-mechanism.md` → Governance/support;
 `docs/plans/ec-pipeline-vision.md` → Historical (banner de cierre).
@@ -115,7 +121,15 @@ Semántica de nombres de archivo (decisión D3, 2026-09-05; no se renombra nada)
 - `protocol/.agents/INDEX.md` = **bootstrap + navegación** del Protocol (rol
   dual; no es un mero registro).
 - Los `INDEX.md` de `docs/` e internos = **registro/navegación**; nunca
-  autoridad (AU-4).
+  autoridad (AU-4). **Un INDEX es opcional y semántico:** su existencia se
+  justifica por el valor de navegación o de carga que aporta, no por simetría
+  estructural entre carpetas. No se exige un INDEX por namespace, no se crea uno
+  para igualar a otro, y su ausencia no es una carencia ni un defecto de
+  discoverability; tampoco su presencia convierte a un INDEX en autoridad sobre
+  los contratos o la gobernanza que enruta. Ejemplo vigente: en el Protocol sólo
+  algunos namespaces llevan INDEX (el bootstrap y `standards/` enrutan la carga;
+  `contracts/`, `delegation/` y `roles/` se alcanzan desde las máquinas de estado
+  y los roles), y esa asimetría es intencional.
 - `orchestrators/discovery/contracts/ENTRYPOINT.md` = **contrato de discovery**
   de la KB entry `entrypoint.md`; no es una convención de capa (no se crea
   `.agents/ENTRYPOINT.md`).

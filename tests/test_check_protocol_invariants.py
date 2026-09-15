@@ -109,6 +109,76 @@ def test_boundary_violation_reported(tmp_path):
     )
 
 
+def test_docs_reference_is_a_boundary_violation(tmp_path):
+    """A `docs/` reference from an ordinary payload file is rejected.
+
+    `docs/` is source-repository governance: it is not published to adopters
+    (only `.agents/` + the entry file ship), so a reference to it would be a
+    broken link in the distributed copy.
+    """
+    make_repo(tmp_path, {
+        ".agents/roles/sample.md": ROLE_OK,
+        ".agents/skills/INDEX.md": "See `docs/plans/anything.md`.\n",
+        "docs/plans/anything.md": "# Doc\n",
+    })
+    v = cpi.verify(tmp_path)
+    assert any(x.code == "BOUNDARY" and "docs/plans" in x.message for x in v)
+
+
+def test_docs_provenance_reference_is_accepted_for_allowlisted_file(tmp_path):
+    """The allowlisted normative-source citation is accepted, and the checker
+    reports no violation for it."""
+    make_repo(tmp_path, {
+        ".agents/contracts/CHANGE_GOVERNANCE.md": (
+            "---\ntaxonomy: \".agents/standards/runtime/PROTOCOL_TAXONOMY.md\"\n"
+            "kind: contract\ndomain: cross-cutting\n---\n\n"
+            "# Contract: Change Governance Artifact\n\n"
+            "Its normative source is "
+            "`docs/rfc/76-change-governance-artifact.md` (RFC-76).\n"
+        ),
+        "docs/rfc/76-change-governance-artifact.md": "# RFC-76\n",
+    })
+    v = [x for x in cpi.verify(tmp_path) if "76-change-governance" in x.message]
+    assert v == []
+
+
+def test_docs_allowlist_does_not_authorize_other_docs_paths(tmp_path):
+    """The exception is exact: a listed file may name ONLY its registered
+    path, never `docs/` in general."""
+    make_repo(tmp_path, {
+        ".agents/contracts/CHANGE_GOVERNANCE.md": (
+            "---\ntaxonomy: \".agents/standards/runtime/PROTOCOL_TAXONOMY.md\"\n"
+            "kind: contract\ndomain: cross-cutting\n---\n\n"
+            "# Contract: Change Governance Artifact\n\n"
+            "Its normative source is "
+            "`docs/rfc/76-change-governance-artifact.md` (RFC-76), and see "
+            "`docs/rfc/77-something-else.md`.\n"
+        ),
+        "docs/rfc/76-change-governance-artifact.md": "# RFC-76\n",
+        "docs/rfc/77-something-else.md": "# RFC-77\n",
+    })
+    v = cpi.verify(tmp_path)
+    assert any(
+        x.code == "BOUNDARY" and "77-something-else" in x.message for x in v
+    ), "an unregistered docs/ path from an allowlisted file must still fail"
+
+
+def test_docs_allowlist_does_not_apply_to_unlisted_file(tmp_path):
+    """A non-allowlisted payload file cannot cite the registered provenance
+    path: the exception is per citing file, not global."""
+    make_repo(tmp_path, {
+        ".agents/roles/sample.md": ROLE_OK,
+        ".agents/skills/INDEX.md": (
+            "See `docs/rfc/76-change-governance-artifact.md`.\n"
+        ),
+        "docs/rfc/76-change-governance-artifact.md": "# RFC-76\n",
+    })
+    v = cpi.verify(tmp_path)
+    assert any(
+        x.code == "BOUNDARY" and "76-change-governance" in x.message for x in v
+    ), "only the citing file registered in the allowlist may use the exception"
+
+
 def test_agents_md_reference_ok(tmp_path):
     make_repo(tmp_path, {
         ".agents/roles/sample.md": ROLE_OK + "\nSee `AGENTS.md`.\n",

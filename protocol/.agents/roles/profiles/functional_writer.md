@@ -42,7 +42,8 @@ Produce business-oriented documentation: state flows, operation manuals, busines
 - [ ] A glossary is included if there are inevitable technical terms.
 
 ## 7. Expected output
-- Markdown document in `docs/` or section in `README.md`.
+- Markdown document under the adopting project's documentation directory
+  (conventionally `docs/`) or a section in its `README.md`.
 - Glossary of terms.
 - Flow examples.
 

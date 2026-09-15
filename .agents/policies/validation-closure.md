@@ -94,12 +94,86 @@ Record (plan `## Checkpoint / cierre`):
 - Closure state (Git tree id).
 - Consistency checkpoint↔anchor: PASS/FAIL + evidence.
 - Governance applied and derived condition.
+- Documentation impact determination (5.1).
 
 Consistency rule: `Closed` requires the scoped content identity of the closure
 state to equal that of the applicable anchor **and** declared environmental
 factors unchanged. If a revalidation A2 covers the closure state, evaluate
 against A2; if the closure state is still A1's state, against A1. Existence of
 A2 never removes A1. Any difference → **revalidate before `Closed`**.
+
+### 5.1 Documentation impact (closure determination)
+
+Every DEV Change determines, at closure, its impact on **current-state
+documentation**. This is a governance record inside the closure that already
+exists, not a phase, a state, a gate, an entity, an authority, an ID
+namespace, a registry or a tracker. Git remains the authority on the effective
+state; the determination is a statement about documentation, never a source of
+truth for the repository state.
+
+Exactly one classification, never a fourth value and never silence:
+
+| Classification | Meaning |
+|---|---|
+| `REQUIRED` | the Change modifies, invalidates, makes obsolete or otherwise alters information that must stay correct in current-state documentation |
+| `NOT_REQUIRED` | the Change does not alter any current-state documentation that must stay in sync |
+| `DEFERRED` | a documentation impact is identified, but the update cannot or must not be made yet |
+
+Minimum record:
+
+- **`REQUIRED`** — affected documentation (exact repo-relative paths), the
+  aspect affected, the update that corresponds, and the evidence that the
+  update was made or correctly incorporated into the Change before closure. An
+  empty `REQUIRED` is not acceptable.
+- **`NOT_REQUIRED`** — an explicit, verifiable reason tied to the real scope of
+  the Change. The bare classification is not acceptable: "creo que no afecta",
+  "parece que no", "no fue necesario" or "se revisó documentación" without the
+  result are not evidence.
+- **`DEFERRED`** — the documentation left pending, why it is deferred, and the
+  **existing** pending decision (PC-1) that governs the deferral and holds the
+  continuity, with owner. `DEFERRED` creates no new pending mechanism: it
+  reuses per-artifact pending decisions. An impact deferred without an owning
+  pending decision is not `DEFERRED`; it is an unresolved blocking condition.
+
+**Current-state scope.** A document is current-state when it describes how the
+repository currently works or in what state it currently is. Consider at
+least: `docs/VERSIONING.md` (in particular its current-state snapshot),
+`docs/plans/INDEX.md` (navigation and current-state information), `ROADMAP.md`,
+`README.md`, `AGENTS.md` and `.agents/AGENTS.md` when active
+behaviour/instructions change, active policies under `.agents/policies/`,
+active workflows under `.agents/workflows/`, and active contracts whose
+semantics the Change modifies; plus any other document the Change itself
+identifies as current-state.
+
+**Historical exclusion.** Historical documentation is never updated merely
+because it describes an older state: historical RFCs, historical ADRs, closed
+plans, historical reports, audits, historical changelog entries and archived
+documents. Historical documentation keeps its historical context (RFC-46);
+post-close problems produce new artifacts that reference the closed one.
+
+**Preemption.** Changes to `protocol/.agents/` preempt this rule and keep their
+own obligation: the `CHANGELOG.md` entry and the `protocol/.agents/VERSION`
+bump per `docs/VERSIONING.md` §3/§5. This determination neither replaces nor
+weakens the changelog rule, and it never requires a changelog entry of its own.
+
+**VERSIONING snapshot.** The current-state snapshot of `docs/VERSIONING.md` §9
+is reconciled at promotion/release, or when the Change has an explicit impact
+on that snapshot; it is never updated in every Change. A divergence between the
+snapshot and Git is never used to invent a version or to modify that document
+arbitrarily; Git (`git tag` + `protocol/.agents/VERSION`) prevails.
+
+**Where it is recorded.** In the `## Checkpoint / cierre` record of the Plan
+(the template carries the field), so the determination is part of the closure
+the checkpoint documents. For a change with no Plan (Class C / direct action),
+it goes with the intake classification in the commit message — `REQUIRED:
+<paths> — <evidence>` or `NOT_REQUIRED: <reason>`, or `DEFERRED: <paths> —
+<pending-decision ref>` —, in the place where the Change Lifecycle already
+requires the classification of a Plan-less change.
+
+**Enforcement.** The obligation is governance, not a semantic validation. No
+checker interprets prose or decides whether a document is up to date, and no
+checker is added for this. Absence of the determination, or a classification
+outside the three values, is a stop condition (see §7).
 
 ## 6. Derived conditions
 
@@ -125,6 +199,8 @@ Blocking (STOP — do not close, escalate with evidence):
   covers it (GC-1 consistency fails).
 - Findings are open without resolution or explicit deferral with owner;
   a blocking pending decision persists without resolution/escalation (PC-1).
+- Closure without an explicit Documentation impact determination (5.1), or
+  with a classification outside `REQUIRED` / `NOT_REQUIRED` / `DEFERRED`.
 - Attempted modification of closed history or out-of-scope artifacts.
 - A human decision is required for a mandatory resolution.
 

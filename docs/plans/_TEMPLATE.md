@@ -116,6 +116,13 @@ operacional; GC-1, Incremento 3)):
 - Estado de cierre (tree id): ...
 - Consistencia checkpoint↔anchor: PASS/FAIL + evidencia (revalidación si difiere)
 - Governance aplicada: ...
+- Documentation impact (§5.1 de `.agents/policies/validation-closure.md`):
+  REQUIRED | NOT_REQUIRED | DEFERRED. `REQUIRED` → documentos afectados
+  (rutas), aspecto afectado, actualización y evidencia; `NOT_REQUIRED` → razón
+  explícita ligada al alcance real; `DEFERRED` → documentación pendiente,
+  motivo y pending decision existente (PC-1) con owner. Nunca en blanco.
+  Historical docs (RFCs, ADRs, planes cerrados, reportes, auditorías) no se
+  actualizan por describir un estado antiguo (RFC-46).
 - Condición derivada: Closed (docs-only) | Closed (con release pendiente) |
   no cerrado (motivo) -->
 

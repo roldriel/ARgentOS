@@ -182,13 +182,32 @@ Full semantics: `policies/validation-closure.md`; gate tool: C-2.
 1. Governance applied: INDEX mirrors updated; RFC Amendment Log entries when
    applicable; findings resolved or explicitly deferred with owner; no
    blocking pending decision without resolution/escalation (PC-1).
-2. Changelog: docs-only plans add an `[Unreleased]` item `(plan N, RFC-N)`;
+2. **Documentation impact (closure determination).** Record in the Plan's
+   `## Checkpoint / cierre` exactly one of `REQUIRED` / `NOT_REQUIRED` /
+   `DEFERRED` (no fourth value, no silence), with its evidence. Answer first:
+   *did this Change leave any current-state documentation obsolete or
+   incomplete?* — the documents that must stay correct (`docs/VERSIONING.md`
+   §9 snapshot, `docs/plans/INDEX.md`, `ROADMAP.md`, `README.md`, `AGENTS.md` /
+   `.agents/AGENTS.md` when active instructions change, and the active policies,
+   workflows or contracts this Change modifies). Historical documents (RFCs,
+   ADRs, closed plans, reports, audits, historical changelog entries, archived
+   documents) are never updated for describing an old state (RFC-46).
+   `REQUIRED` names the affected documents, the aspect affected, the update and
+   its evidence (an empty `REQUIRED` is not acceptable); `NOT_REQUIRED` carries
+   an explicit reason tied to the real scope (the bare value is not
+   acceptable); `DEFERRED` reuses an **existing** pending decision (PC-1) with
+   owner as its continuity — no new pending mechanism. Payload changes keep
+   their own changelog/`VERSION` rule; this determination never adds a
+   changelog obligation. Full semantics and the Plan-less (Class C) form:
+   `policies/validation-closure.md:5.1 Documentation impact (closure
+   determination)`. A missing determination blocks closure (stop condition).
+3. Changelog: docs-only plans add an `[Unreleased]` item `(plan N, RFC-N)`;
    no `VERSION` bump, no tag.
-3. Mark the plan `Executed` and derive `Closed` only after the checkpoint
+4. Mark the plan `Executed` and derive `Closed` only after the checkpoint
    above. Committing on `dev` (atomic, Conventional Commit in English) is the
    maintainer's repository action; `Closed` may exist before the commit, but
    the checkpoint records the validated closure state.
-4. Post-close problems: create new artifacts referencing the closed plan
+5. Post-close problems: create new artifacts referencing the closed plan
    (post-close by reference); never reopen or rewrite it.
 
 ## 10. GAP vs ANOMALY vs STOP

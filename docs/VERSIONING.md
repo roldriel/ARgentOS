@@ -156,6 +156,15 @@ Reglas:
   la versión se promueve y taggea.
 - Un solo editor por versión; en ejecución paralela los ítems se agregan a
   `[Unreleased]` y la promoción los consolida (ver §8).
+- **Reconciliación del snapshot current-state (§9):** el snapshot de versiones
+  de §9 es documentación current-state y se reconcilia en los puntos de
+  promoción/release apropiados, o cuando un Change tiene impacto explícito
+  sobre él; **no** se actualiza en cada Change. La autoridad sobre el estado
+  efectivo es el estado Git real (`git tag` + `protocol/.agents/VERSION`); una
+  divergencia entre snapshot y Git nunca se usa para inventar una versión ni
+  para modificar este documento arbitrariamente
+  (`.agents/policies/validation-closure.md:5.1 Documentation impact (closure
+  determination)`).
 
 ## 6. Tags
 
@@ -224,26 +233,28 @@ Condiciones derivadas del Change Lifecycle (semántica; RFC-75
   tocar `VERSION`/changelog, o los ítems se acumulan en `[Unreleased]` y la
   numeración se asigna en la promoción.
 
-## 9. Estado actual (2026-09-05)
+## 9. Estado actual (2026-09-15)
 
-Snapshot del estado al 2026-09-05 (verificado contra git); se actualiza en
-cada release. La fuente inmutable de la verdad son `git tag` +
-`protocol/.agents/VERSION`.
+Snapshot del estado al 2026-09-15 (verificado contra git). La fuente inmutable
+de la verdad son `git tag` + `protocol/.agents/VERSION`: este snapshot es un
+resumen de lectura, no una segunda fuente, y una divergencia se resuelve
+siempre a favor de git.
 
-- `master` = `10.3.0` (promoción de `10.1.0`–`10.3.0`: planes 88–93 y RFCs
-  71–74; tags anotados hasta `10.3.0` inclusive).
+- `master` = `11.2.0` (promoción de `11.1.0`–`11.2.0`: plan 115, RFC-76; tags
+  anotados `11.0.0`, `11.0.1`, `11.1.0` y `11.2.0`).
 - `dist` = publicado desde `master` (`publish-dist` a partir de la promoción
-  de `10.3.0`).
-- `dev` = `11.0.0` pre-release (plan 78 `Executed` con condición derivada
-  `Closed`; RFC-64 implementada, release pendiente).
+  de `11.2.0`).
+- `dev` = `11.5.0` (secciones del changelog `[11.3.0]`, `[11.4.0]` y
+  `[11.5.0]` sin tag: releases en curso según §5; últimos planes ejecutados
+  121, 122 y 123).
 
 Notas:
 
-- `11.0.0` está implementado y registrado en `dev` (sección del changelog
-  `[11.0.0]` sin tag: release en curso según §5); no está promovido a
-  `master`, no tiene tag y `dist` no fue regenerado con él. La promoción
-  (`dev` → `master` + tag anotado `11.0.0` + regeneración de `dist`) es una
-  decisión independiente y posterior a este snapshot.
+- `11.3.0`–`11.5.0` están implementados y registrados en `dev` (secciones del
+  changelog sin tag) y no están promovidos a `master`; `dist` no fue
+  regenerado con ellos. La promoción (`dev` → `master` + tag anotado +
+  regeneración de `dist`) es una decisión independiente y posterior a este
+  snapshot.
 - Mientras `dev` contenga planes sin publicar respecto de `master`/`dist`,
   `check_dist_sync.py` se espera rojo en `dev` por diseño (ver §4.1).
 - **Branch protection no habilitada (decisión del owner, 15 ago 2026):** el
@@ -287,6 +298,16 @@ Un plan está terminado cuando:
       bumped.
 - [ ] Para cambios docs-only (RFC-69): ítem en `[Unreleased]` del changelog
       con `(plan, RFC-N)`; sin `VERSION` bump ni tag.
+- [ ] Documentation impact determinado en el cierre (Change Lifecycle DEV):
+      exactamente `REQUIRED` / `NOT_REQUIRED` / `DEFERRED`, con su evidencia,
+      registrado en `## Checkpoint / cierre` del Plan (para un cambio sin Plan,
+      en el mensaje de commit, según
+      `.agents/policies/validation-closure.md:5.1 Documentation impact (closure
+      determination)`). `REQUIRED` exige documentos afectados y evidencia;
+      `NOT_REQUIRED` exige razón explícita; `DEFERRED` exige una pending
+      decision existente (PC-1) con owner. La ausencia de la determinación
+      bloquea el cierre; no hay checker semántico ni campo obligatorio de
+      template.
 - [ ] Commit atómico en `dev`.
 
 Una versión está publicada cuando, además:

@@ -885,6 +885,110 @@ autorización **no** incluye release, tag, promoción a `master` ni publicación
 |---|---|---|---|
 | `121-provider-bound-stable-prefix-readiness-mvp.md` | RFC-78 | Executed | Materialización del stable prefix provider-bound Core + Worker (readiness MVP): `runtime/toolcalls/segment_resolution.py` nuevo (resolución determinística del contenido estable, regla de pertenencia, orden por contrato, `SegmentResolutionError` ante elemento irresoluble y rechazo de rutas que escapan de `.agents/`), `ORDERING_CONTRACT_V2` (`protocol-bootstrap` como step declarado y **vacío**; prefijo estable antes del sufijo dinámico; `ORDERING_CONTRACT_V1` conservado), composición *banner de identidad → región estable → ancla SCI → sufijo dinámico* para que `stable_prefix_bytes` sea prefijo de bytes e invariante a `session_uuid`/task/artefactos y `stable_region` sea el contenido reusable idéntico entre variantes, reconciliación `ExecutionContext` ↔ Delegation Payload por HD-7 (`harness_policy`/`profile`/`input_artifacts` como referencias; `communication_style`/`technical_approach` metadata de ejecución), `content_contract_version` en `MaterializationVersion` para que dos conjuntos de contenido nunca compartan una `MaterializationIdentity`, corrección de completitud de la derivación de identidad con `session_uuid` y aislamiento intactos (cierra **F-1**), corrección de **F-2** (test parametrizado sobre los diez campos del contexto entregado), sección «Stable prefix (provider-bound materialization)» en `CONTEXT.md`, bump MINOR `11.4.0` → `11.5.0` con ancla `PROTOCOL_VERSION` sincronizada, `CHANGELOG.md` `[11.5.0]` y `docs/MIGRATION.md` §18, y dogfood de los diez puntos verificables sobre el payload real. Verificación: seis checkers canónicos PASS (`check_protocol_invariants` 215 files / 10227 references) y `pytest` **704 passed / 4 failed** — los 4 son ajenos al cambio (3 verificados contra el baseline sin el cambio: `3 failed / 607 passed`; el cuarto es el informe de Phase 1 sin commitear, target de citas, que cierra al commitear). Validation Anchor A1 (delta `f6841e23…`; tree `8acfd149…`); `check_lifecycle_anchor`/`check_lifecycle_checkpoint` → Plan 121 `VALID`; `check_lifecycle_lineage` `GAP=0`. Condición derivada **`Closed` (con release pendiente)**; `Committed` es estado del repositorio y el commit atómico en `dev` es acción del mantenedor. **Sin release, sin tag, sin promoción a `master`, sin `dist`.** Beneficio económico `UNKNOWN`; evidencia de provider **DEFERRED / NOT VERIFICABLE**; `NullProviderAdapter` permanece. |
 
+## Quincuagésima cuarta serie: DEV Autonomous Orchestrator MVP (Plan 122) (14 sep 2026)
+
+Plan 122 (vía plan; sin efecto en `protocol/.agents/`, por lo que RFC-56 no
+aplica; régimen aplicable RFC-75, cuya sección `Preguntas abiertas` declara la
+orquestación/handoff **fuera de su alcance** — el Plan **no** modifica ni reabre
+RFC-75 y **no** reclama ser su Incremento 5, que sigue `Deferred / Future
+Track` por decisión de la propia RFC; Change Level L2): materializa el **MVP del
+DEV Autonomous Orchestrator**, el mecanismo que conduce un Change de ARgentOS DEV
+de principio a fin después de la autoridad humana inicial. Frontera humana
+declarada: «el humano no opera el workflow; el humano es la autoridad». Las dos
+piezas ausentes identificadas por la investigación de autonomía: **M1 —
+Execution Host** (`runtime/orchestrator/host.py`: loop
+`observe → derive → authorize → delegate → execute → ingest → verify → decide →
+continue/stop`, stop conditions explícitas, recovery sin memoria conversacional)
+y **M4 — Persistent Worker Result** (contrato persistente y reconstruible con
+los doce campos exigidos y la relación inequívoca
+`delegation → worker result → ingestion → next action`). El host se implementa
+como mecanismo de **DEV/runtime/host**, no como extensión del Change Lifecycle
+conceptual: la conducción se **deriva** del estado, Git, artifacts, evidence,
+authority, gates aplicables, pending decisions y stop conditions, sin state
+machine nueva, sin segunda representación persistente del estado, sin registry,
+sin base de datos global y sin autoridad nueva. Relación DEV ↔ Protocol:
+**conformance + reference** (el host se conforma a los contratos de
+comportamiento del Protocol — Orchestrator, Worker, delegation, Execution
+Context, context assembly, recovery, frontera de autoridad — sin importar ni
+compartir sus mecanismos). Diferencias obligatorias preservadas: `GAP` no detiene
+el loop si no es bloqueante; `ANOMALY`/`BOUNDARY` escalan; `exit code 0` nunca se
+interpreta como workflow completo; C-1/C-2/C-3 se interpretan por su
+clasificación real; una recomendación del Worker **nunca** es autorización.
+Dogfood real: el host conduce la ejecución de este mismo Change (Plan 122) con
+`run → stop → restart → reconstruct → continue`, derivando `Closed` cuando las
+condiciones se satisfacen y deteniéndose ante toda decisión que requiera
+autoridad humana, sin ejecutar release. Autorizado para ejecución por el
+mantenedor (2026-09-14) como unidad única; la autorización **no** incluye
+release, tag, promoción a `master` ni publicación.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `122-dev-autonomous-orchestrator-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Autonomous Orchestrator: paquete nuevo `runtime/orchestrator/` (`contracts.py` con vocabularios cerrados y el contrato M4 —doce campos, validación, serialización determinista, `recommended_next_action` advisory ≠ autoridad—; `store.py` persistente append-only en `.project/orchestrator/` con escritura atómica y lecturas fail-closed; `observation.py` read-only del Change; `authority.py` con veredictos `AUTHORIZED_EXISTING`/`REQUIRES_HUMAN`/`FORBIDDEN` y release prohibido; `derivation.py` sin `next_state` persistido; `worker.py` con `CommandWorker` real que clasifica por señal y no por exit code; `governance.py` escritor mecánico acotado por sección e idempotente; `host.py` M1 con stop conditions y recovery; `__main__.py` CLI), suite determinista `tests/test_autonomous_orchestrator.py`, sección del host en `runtime/README.md`, policy operacional `.agents/policies/autonomous-orchestration.md`, y registro verbatim del dogfood real en `docs/working/audits/`. Sin payload, sin `VERSION`, sin tag, sin promoción, sin commit. **Ejecutado
+(2026-09-14)** con autorización humana explícita del mantenedor y alcance
+limitado a los entregables: el dogfood real condujo 19 iteraciones en cuatro
+corridas del host (`run-01` validación + detección del defecto real
+`<PLAN-122>:F-1`; `run-02` detención en `STOP_OPEN_FINDINGS` por autoridad
+humana; `run-03` reanudación desde evidencia, revalidación A2 y `CLOSED_DERIVED`
+tras la resolución humana del finding; `run-04` revalidación A2 que cubre el
+registro durable del dogfood), sin que el humano transportara resultados entre
+iteraciones. Verificación: seis checkers canónicos PASS, suite nueva **25
+passed**, C-1 `VALID` / C-2 `VALID` con A2 / C-3 `VALID`; la pierna
+`python -m pytest tests/` queda como **GAP** por clase ambiental declarada
+(sandbox sin mecánica de directorios temporales de pytest), nunca como `PASS`.
+Validation Anchor A1 + revalidaciones A2 (última delta `97d79196…`, tree
+`a640c483…`). Condición derivada **`Closed` (con release pendiente)**; el commit
+atómico consolidado de los Planes 122 + 123 se realizó como acción de repositorio
+autorizada por el mantenedor (2026-09-15), identificado por su mensaje
+(auto-referencia: el árbol no embebe su propia identidad), con revalidación A2
+sobre el estado consolidado (delta `2de38ad8…`, tree `8576dea2…`). Sin release,
+sin tag, sin promoción a `master`, sin `dist`. |
+
+## Quincuagésima quinta serie: MVP del DEV Agent Worker (Plan 123) (15 sep 2026)
+
+Plan 123 (vía plan; sin efecto en `protocol/.agents/`, por lo que RFC-56 no
+aplica; régimen aplicable RFC-75, que declara la orquestación/handoff **fuera de
+su alcance** — el Plan **no** modifica ni reabre RFC-75 y **no** reclama ser su
+Incremento 5; Change Level L2): materializa el **MVP del DEV Agent Worker**, una
+tercera implementación de la frontera `WorkerAdapter` que ya existe (junto a
+`CommandWorker` y `NullWorker`), sin segunda arquitectura, sin state machine, sin
+registry, sin `state.json` y sin autoridad nueva. Decisión humana H-1 consumida:
+`AgentInvoker` = **protocolo inyectable + `NullAgentInvoker` por defecto** — sin
+proveedor real, sin modelo, sin API keys, sin credenciales, sin red y sin
+dependencia de servicios externos. El Worker recibe una `Delegation` válida
+(extendida de forma **aditiva-optional** con `task` e `input_artifacts`),
+reconstruye el `ExecutionContext` que el host entregó reutilizando
+`runtime/toolcalls/context.py` y `render_prompt`, observa el repositorio por
+contenido (no por claim), ejecuta la verificación externa declarada con
+`worker.classify`, se corrige dentro de su autoridad y produce **exactamente un**
+`WorkerResult` (contrato M4 intacto: `claims.self_reported_completion = false`,
+`recommended_next_action` advisory con `action: None`). El host extiende la
+derivación con `RUN_IMPLEMENTATION_TASK` (antes de la validación, para no validar
+un estado que la implementación va a cambiar) y agrega **verificación de scope
+determinista y externa al Worker** (`artifacts_modified ⊄ declared_scope` ⇒
+`STOP_FORBIDDEN_ACTION` + `REQUIRES_HUMAN`). Dogfood real: el Agent Worker ejecuta
+trabajo real del repositorio (endurecimiento del camino de recuperación del
+propio host: el journal declara las líneas que no puede leer en vez de
+descartarlas en silencio), con transcript persistido, `WorkerResult` persistido,
+ingestión, verificación y reconstrucción por un tercero. Hallazgos reales
+detectados por el dogfood y corregidos bajo la autorización del Plan:
+`<PLAN-123>:F-01` (paths untracked no contaban como no committeados en
+`_committed`), `<PLAN-123>:F-02` (una modificación del Worker a un path ya sucio
+era invisible: la observación pasa a comparar **snapshots de contenido**),
+`<PLAN-123>:F-03` (un resultado de implementación que no cambia nada en el estado
+actual se re-derivaba indefinidamente), `<PLAN-123>:F-04` (tres defectos de los
+registros de gobernanza: Plan equivocado en el anchor, idempotencia vacua de la
+revalidación y auto-referencia del artefacto de gobernanza en la identidad de
+contenido validada). Los cuatro hallazgos fueron **aceptados formalmente como
+`resolved` por el mantenedor (2026-09-15)** sobre la base de las correcciones
+`<PLAN-123>:C-1`..`C-4`, su evidencia y el lineage verificado, autorizando al
+Orchestrator a continuar con la derivación del Change. Sin payload, sin `VERSION`,
+sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
+(2026-09-15), identificado por su mensaje.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en

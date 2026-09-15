@@ -53,6 +53,31 @@ exactas (`ruta:sección`), nunca números de línea ni ordinales. -->
 
 1. ...
 
+## Delegación agentiva
+
+<!-- OPCIONAL (regla operacional del Plan 123). Declara el trabajo semántico que
+el DEV Autonomous Orchestrator puede delegar a un Agent Worker
+(`runtime/orchestrator/agent_worker.py`). Sección aditiva-optional: un Plan sin
+ella no delega trabajo semántico (ausencia declarada) y el host conduce sólo
+validación y gates como hasta ahora. No se inventa trabajo: sin `Task` no hay
+delegación.
+
+- **Task:** <instrucción de trabajo autorizada: QUÉ debe hacerse, no cómo>. La
+  autoridad es este Plan aprobado; el Agent Worker no adquiere autoridad propia.
+- **Scope:** `<ruta/uno.py>`, `<ruta/dos.py>` (rutas repo-relative que el Worker
+  queda autorizado a modificar). Si se omite, se usan los entregables declarados
+  y la observación registra que el scope no fue explícito. El host verifica este
+  scope **después** de la delegación comparando snapshots de contenido: una ruta
+  modificada fuera de él produce `STOP_FORBIDDEN_ACTION` + `REQUIRES_HUMAN`.
+
+El resultado del Worker es un `WorkerResult` (contrato M4) con
+`claims.self_reported_completion = false`; no declara `Closed` ni ninguna
+condición derivada, y su recomendación es advisory. Ver
+`.agents/policies/autonomous-orchestration.md` §11. -->
+
+- **Task:** ...
+- **Scope:** `<ruta/uno.py>`
+
 ## Criterios de salida
 
 <!-- Checklist específico del plan que define "terminado". Complementa el DoD

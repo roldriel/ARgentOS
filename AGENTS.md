@@ -19,7 +19,8 @@ install.
 - `tools/` — repository verification tooling (the checkers run by CI and the
   local battery).
 - `runtime/` — reference implementation of Execution Context materialization
-  (prompt and tool calls). See `runtime/README.md`.
+  (prompt and tool calls) and the DEV Autonomous Orchestrator host
+  (`runtime/orchestrator/`, plan 122). See `runtime/README.md`.
 - `tests/` — centralized test suites for `tools/` and `runtime/`. They never
   depend on the `protocol/` payload and never include the harness tests; see
   `tests/AGENTS.md`.

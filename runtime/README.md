@@ -152,3 +152,135 @@ The runtime exposes only the abstract pieces (`runtime/toolcalls/provider_cache.
 
 There is no provider API, no pricing, no universal TTL/eviction and no
 telemetry in this directory.
+
+## DEV Autonomous Orchestrator (Plan 122)
+
+`runtime/orchestrator/` is a **DEV host**: it conducts the Change Lifecycle of
+this repository, it does not extend it. The distinction matters:
+
+- the lifecycle (`docs/rfc/75-change-lifecycle.md`) keeps being the single
+  source of truth; the host only *reads* it and records evidence into the
+  artifact the authorized plan already owns;
+- the host is **not** part of the protocol payload and imports nothing from
+  `protocol/.agents/`. The relation is **conformance + reference**: the DEV host
+  conforms to the Protocol's behavioural contracts and patterns (Orchestrator,
+  Worker, delegation, Execution Context, context assembly, recovery, authority
+  boundary) and implements them in DEV terms;
+- it introduces no state machine, no `next_state`, no registry, no global
+  Change entity and no second persistent representation of the state. The next
+  action is **derived** from `current state + Git + artifacts + evidence +
+  authority + applicable gates + pending decisions + stop conditions`.
+
+The loop (`runtime/orchestrator/host.py`) is
+`observe → derive → authorize → delegate → execute → ingest → verify → decide →
+continue/stop`, with explicit stop conditions and with the two structural rules
+of the mechanism:
+
+- **`exit code 0` is never workflow completion.** A worker classifies each
+  command by the classification the command itself publishes (C-1/C-2/C-3), by
+  its exit status and by the environmental classes **declared in the authorized
+  plan**. A declared environmental class yields `GAP` — declared absence of
+  obtainable evidence — and never `PASS`.
+- **A worker recommendation is never an authorization.**
+  `recommended_next_action` is advisory; the authority boundary
+  (`runtime/orchestrator/authority.py`) returns `AUTHORIZED_EXISTING`,
+  `REQUIRES_HUMAN` or `FORBIDDEN`, and release/promotion/tag are `FORBIDDEN`
+  regardless of any authorization.
+
+Modules: `contracts.py` (closed vocabularies + the M4 Worker Result contract),
+`store.py` (persistent, append-only evidence under `.project/orchestrator/`,
+atomic writes, fail-closed reads), `observation.py` (read-only observation of
+the change), `derivation.py` (next-action derivation), `authority.py`,
+`worker.py` (worker boundary + `CommandWorker`), `governance.py` (mechanical,
+section-scoped, idempotent records for the authorized plan), `host.py` (M1) and
+`__main__.py` (CLI: run / `--observe` / `--reconstruct`).
+
+Operational policy: `.agents/policies/autonomous-orchestration.md`. Suite:
+`tests/test_autonomous_orchestrator.py`. Standard library only; the host reuses
+`tools/scoped_content_identity.py` (plan 109) instead of duplicating the Scoped
+Content Identity algorithm, and it never writes `protocol/.agents/`, `dist/` or
+an artifact of another plan.
+
+## DEV Agent Worker (Plan 123)
+
+`runtime/orchestrator/agent_worker.py` adds a **third implementation of the same
+`WorkerAdapter` boundary**: `AgentWorker`. It is not a second architecture — the
+host delegates through the same protocol, the result travels through the same
+`WorkerResult` contract (M4, unchanged) and the host keeps conducting the
+lifecycle.
+
+```text
+Human Authority → Change Lifecycle → Host → WorkerAdapter
+                                              ├── CommandWorker   (executes a command-set)
+                                              ├── NullWorker      (executes nothing)
+                                              └── AgentWorker     (performs a task)
+                                                     ↓
+                                                AgentInvoker
+                                                     ↓
+                                                WorkerResult
+```
+
+**What it does.** It receives the delegated `task` and the reconstructed
+Execution Context, asks an **`AgentInvoker`** to perform the work, observes from
+**content snapshots** what really changed in the repository, runs the plan's
+declared verification itself with the existing `worker.classify`, records its own
+problems (including writing outside the authorized scope) and persists exactly
+one `WorkerResult` plus the invocation transcript and request as evidence.
+
+**The invocation boundary.** `AgentInvoker` is an injectable protocol with a
+single method; `NullAgentInvoker` is the honest default and the test boundary. It
+distinguishes three situations that must never be conflated — the invocation was
+**not available**, it was **incomplete**, or it **completed** — and it never
+fabricates a step, a command or a transcript. This repository ships **no provider,
+no model, no network and no credentials**: the real invoker belongs to the
+execution environment, which injects it with
+`ExecutionHost(..., worker=AgentWorker(invoker=...))`.
+`ProviderAdapter`/`NullProviderAdapter` (RFC-72) are the Prompt Cache boundary and
+are deliberately **not** reused as a model-invocation mechanism.
+
+**Authority boundary (binding).** The worker has execution capability, never
+sovereign authority. It cannot approve, accept an RFC, change scope, resolve a
+human decision or a finding, decide ADR-worthiness, release, promote, tag or
+publish; `claims.self_reported_completion` is always `false` and
+`recommended_next_action` is always advisory with `action: None`. Its internal
+`observe → reason → act → inspect → verify → correct` loop is **worker-local**: it
+is not an ARgentOS state machine, nothing about it is persisted as protocol state,
+and the transcript is evidence, never authority.
+
+**The delegation.** `Delegation` gained two **additive-optional** fields: `task`
+(the plan's authorized instruction) and `input_artifacts` (references, never
+artifact content). Both default to empty, so every delegation persisted before
+plan 123 is still read unchanged. The plan declares the work and the scope in its
+`## Delegación agentiva` section, which the host reads with `parse_agent_task`
+(absent section ⇒ no semantic work is delegated).
+
+**Derivation and scope verification.** When the plan declares an agent task and no
+Worker Result covers the *current* content state, the host derives
+`RUN_IMPLEMENTATION_TASK` **before** validation — validating first would produce
+evidence about a state the implementation is about to change. After any
+delegation the host verifies the scope **outside the worker**, by comparing
+content snapshots of the working tree: a path that changed and is not in
+`declared_scope` yields `STOP_FORBIDDEN_ACTION` with verdict `REQUIRES_HUMAN`.
+Verification is deliberately independent of the worker's own account: a worker
+that under-reports its changes must not escape the only check that binds it.
+
+**Why content snapshots and not `git status`.** A scope path that is already
+modified before the delegation yields the same dirty answer before and after, so
+a dirty-path comparison reports neither a change nor a violation. Plan 123 found
+this while dogfooding: see `<PLAN-123>:F-02`. The same defect made
+`host._committed()` report `Committed=sí` for a path git does not track
+(`<PLAN-123>:F-01`).
+
+**CLI.** `python -m runtime.orchestrator --plan N --worker agent` runs the loop
+with the Agent Worker. The CLI can only build the honest default
+(`NullAgentInvoker`); a real invoker is injected programmatically.
+
+**Declared limits.** No provider, model, network or credentials. No skills and no
+profiles: DEV has no skill consumer and **does not read `protocol/.agents/` as
+operational instructions** — the MVP works with `skills = ()`, and creating a
+skill system is explicitly out of scope. No telemetry or economics (RFC-74
+untouched). The correspondence between a Worker Result and the content it acted
+on is established by the declared scope and the content snapshots, not by a causal
+link to project content. And the Agent Worker **does not prove autonomous model
+reasoning**: it proves that a worker performing authorized semantic work fits the
+existing boundary without changing it.

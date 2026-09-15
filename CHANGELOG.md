@@ -32,89 +32,6 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
-## [11.5.0] — 2026-09-14
-
-### Added
-
-- **Stable prefix provider-bound** (plan 121, RFC-78): el Protocol define el
-  **stable prefix** de la materialización dirigida al provider — la porción
-  inicial de la representación canónica que contiene el Contexto Estable
-  resuelto y ningún contenido dinámico. Se incorpora a
-  `standards/context/CONTEXT.md` («Stable prefix (provider-bound
-  materialization)»): la **regla de pertenencia** (Stable Context ∧ scope de la
-  delegación ∧ consumido demostrablemente por el Worker o resoluble
-  determinísticamente del Delegation Payload), el **alcance Core + Worker** del
-  prefijo, el paso **`protocol-bootstrap` declarado y vacío** en el scope del
-  Worker (la secuencia de bootstrap carga rol de sistema, state machine y rol
-  del orquestador en el **Orchestrator**; el contrato de ejecución del Worker no
-  dirige al Worker a leer ningún documento de bootstrap), la exclusión
-  **deliberada y diferida** del segmento **Project/KB** (su freshness/lifecycle
-  introduce una dinámica de invalidación distinta), la frontera con las policies
-  de composición (Compression y Optimization gobiernan la forma del payload del
-  protocolo; el prefijo es la representación que el runtime produce a partir de
-  él) y las no-equivalencias (Stable Context ≠ Stable Prefix; Stable Prefix ≠
-  Segment ≠ identity ≠ persistence ≠ autorización de reuso; resolver contenido ≠
-  cache hit del provider). Un elemento estable irresoluble se reporta como
-  desviación y el runtime **nunca inventa su contenido**. El orden pertenece a la
-  materialización (`ordering_contract_version`), no a la identidad semántica; no
-  se introduce identity primitive nueva, no se modifica
-  `SemanticContextIdentity` y el prefijo no altera los límites semánticos del
-  Context Budget. Cambio aditivo y compatible; el Protocol **no** implementa
-  prompt cache del provider ni declara ahorro alguno.
-
-## [11.4.0] — 2026-09-14
-
-### Added
-
-- **Capacidad Protocol-native `adversarial-deliberation`** (plan 120, RFC-77):
-  incorpora al Protocol la deliberación adversarial como una **capacidad**, nunca
-  como autoridad. Compuesta por: la Skill
-  `protocol/.agents/skills/adversarial-deliberation/SKILL.md` (una pasada de
-  evaluación atribuida, con postura declarada, material recibido, compromiso
-  previo a la revelación, y las reglas de síntesis, desacuerdo y frontera de
-  autoridad); el contrato de artefacto
-  `protocol/.agents/contracts/DELIBERATION_REPORT.md` (secciones obligatorias,
-  vocabulario cerrado, invariantes `DEL-001`…`DEL-012`, sesión-scoped e
-  `informational`); el punto de decisión `D7 — Invocación de deliberación
-  adversarial` en `protocol/.agents/standards/orchestration/DECISIONS.md`; y la
-  subsección §4.4 *Deliberation Invocation* del rol del Orchestrator (invocación
-  con motivo registrado, construcción de Execution Contexts distintos por pasada,
-  exigencia de compromiso previo a la revelación, comparación por criterio,
-  preservación del desacuerdo, síntesis, veredicto y recomendación advisory
-  opcional, e interpretación). Registros: entidades `kind: artifact` y
-  `kind: contract` en `PROTOCOL_TAXONOMY.md`, declaración del artefacto en
-  `PROTOCOL_BOUNDARIES.md`, y fila de inventario en `skills/INDEX.md` (sin fila en
-  la tabla de activación: la candidatura es por juicio). Suite de verificación
-  `tests/test_adversarial_deliberation.py` (contrato, skill, orquestación,
-  autoridad, contexto y negativos). Cambio MINOR aditivo: sin entidad, `kind`,
-  rol, perfil, fase, estado, lifecycle state, authority class, registry, ID
-  global, primitive de identidad, feature flag, gate, clasificador automático,
-  voting, confrontación, Prompt Cache ni rediseño del Change Lifecycle nuevos. La
-  independencia es una **condición de procedencia declarada**
-  (`ejecutores: mismo | distinto`), nunca una garantía epistemológica; el
-  resultado es `attestation`/recomendación advisory y no satisface ningún ítem
-  `[gate]`. `MVP CLOSED != RELEASE AUTHORIZED`. Tag pendiente de promoción.
-
-## [11.3.0] — 2026-09-13
-
-### Changed
-
-- **Change Governance Artifact — alcance del MVP: append, current y
-  governance_position DEFERRED** (plan 119, RFC-76; decisión H-3, OPTION B): el
-  contrato declara explícitamente qué está implementado en el MVP
-  (materialización del artifact, identidad RFC-71, persistencia, estructura de las
-  colecciones como historia acumulada, registro de decisiones/autorizaciones/cierre
-  provisto por el llamador, reconstrucción por recomputación de identidad y
-  lectura del archivo) y qué queda **DEFERRED** (la operación de **append**, la
-  derivación de **current** y la derivación de **governance_position**), con el
-  invariante nuevo `CGA-010`. "Append-only" pasa a describir la **forma** del
-  artifact y no una operación disponible: la acumulación posterior de historia se
-  realiza por **re-materialización completa con historia acumulada**, que **no es
-  append**, con la consecuencia declarada de que los estados intermedios del
-  artifact no se preservan. Sin runtime, campos, endpoints, eventos, estados ni
-  métodos nuevos; `runtime/toolcalls/change_governance.py` sin cambios. Cambio
-  MINOR (11.2.0 → 11.3.0); tag pendiente de promoción.
-
 ## [Unreleased]
 
 ### Modelo conceptual
@@ -518,6 +435,89 @@ La política de versionado, changelog, tags y estados de planes vive en
 `docs/VERSIONING.md` §3)
 
 ---
+
+## [11.5.0] — 2026-09-14
+
+### Added
+
+- **Stable prefix provider-bound** (plan 121, RFC-78): el Protocol define el
+  **stable prefix** de la materialización dirigida al provider — la porción
+  inicial de la representación canónica que contiene el Contexto Estable
+  resuelto y ningún contenido dinámico. Se incorpora a
+  `standards/context/CONTEXT.md` («Stable prefix (provider-bound
+  materialization)»): la **regla de pertenencia** (Stable Context ∧ scope de la
+  delegación ∧ consumido demostrablemente por el Worker o resoluble
+  determinísticamente del Delegation Payload), el **alcance Core + Worker** del
+  prefijo, el paso **`protocol-bootstrap` declarado y vacío** en el scope del
+  Worker (la secuencia de bootstrap carga rol de sistema, state machine y rol
+  del orquestador en el **Orchestrator**; el contrato de ejecución del Worker no
+  dirige al Worker a leer ningún documento de bootstrap), la exclusión
+  **deliberada y diferida** del segmento **Project/KB** (su freshness/lifecycle
+  introduce una dinámica de invalidación distinta), la frontera con las policies
+  de composición (Compression y Optimization gobiernan la forma del payload del
+  protocolo; el prefijo es la representación que el runtime produce a partir de
+  él) y las no-equivalencias (Stable Context ≠ Stable Prefix; Stable Prefix ≠
+  Segment ≠ identity ≠ persistence ≠ autorización de reuso; resolver contenido ≠
+  cache hit del provider). Un elemento estable irresoluble se reporta como
+  desviación y el runtime **nunca inventa su contenido**. El orden pertenece a la
+  materialización (`ordering_contract_version`), no a la identidad semántica; no
+  se introduce identity primitive nueva, no se modifica
+  `SemanticContextIdentity` y el prefijo no altera los límites semánticos del
+  Context Budget. Cambio aditivo y compatible; el Protocol **no** implementa
+  prompt cache del provider ni declara ahorro alguno.
+
+## [11.4.0] — 2026-09-14
+
+### Added
+
+- **Capacidad Protocol-native `adversarial-deliberation`** (plan 120, RFC-77):
+  incorpora al Protocol la deliberación adversarial como una **capacidad**, nunca
+  como autoridad. Compuesta por: la Skill
+  `protocol/.agents/skills/adversarial-deliberation/SKILL.md` (una pasada de
+  evaluación atribuida, con postura declarada, material recibido, compromiso
+  previo a la revelación, y las reglas de síntesis, desacuerdo y frontera de
+  autoridad); el contrato de artefacto
+  `protocol/.agents/contracts/DELIBERATION_REPORT.md` (secciones obligatorias,
+  vocabulario cerrado, invariantes `DEL-001`…`DEL-012`, sesión-scoped e
+  `informational`); el punto de decisión `D7 — Invocación de deliberación
+  adversarial` en `protocol/.agents/standards/orchestration/DECISIONS.md`; y la
+  subsección §4.4 *Deliberation Invocation* del rol del Orchestrator (invocación
+  con motivo registrado, construcción de Execution Contexts distintos por pasada,
+  exigencia de compromiso previo a la revelación, comparación por criterio,
+  preservación del desacuerdo, síntesis, veredicto y recomendación advisory
+  opcional, e interpretación). Registros: entidades `kind: artifact` y
+  `kind: contract` en `PROTOCOL_TAXONOMY.md`, declaración del artefacto en
+  `PROTOCOL_BOUNDARIES.md`, y fila de inventario en `skills/INDEX.md` (sin fila en
+  la tabla de activación: la candidatura es por juicio). Suite de verificación
+  `tests/test_adversarial_deliberation.py` (contrato, skill, orquestación,
+  autoridad, contexto y negativos). Cambio MINOR aditivo: sin entidad, `kind`,
+  rol, perfil, fase, estado, lifecycle state, authority class, registry, ID
+  global, primitive de identidad, feature flag, gate, clasificador automático,
+  voting, confrontación, Prompt Cache ni rediseño del Change Lifecycle nuevos. La
+  independencia es una **condición de procedencia declarada**
+  (`ejecutores: mismo | distinto`), nunca una garantía epistemológica; el
+  resultado es `attestation`/recomendación advisory y no satisface ningún ítem
+  `[gate]`. `MVP CLOSED != RELEASE AUTHORIZED`. Tag pendiente de promoción.
+
+## [11.3.0] — 2026-09-13
+
+### Changed
+
+- **Change Governance Artifact — alcance del MVP: append, current y
+  governance_position DEFERRED** (plan 119, RFC-76; decisión H-3, OPTION B): el
+  contrato declara explícitamente qué está implementado en el MVP
+  (materialización del artifact, identidad RFC-71, persistencia, estructura de las
+  colecciones como historia acumulada, registro de decisiones/autorizaciones/cierre
+  provisto por el llamador, reconstrucción por recomputación de identidad y
+  lectura del archivo) y qué queda **DEFERRED** (la operación de **append**, la
+  derivación de **current** y la derivación de **governance_position**), con el
+  invariante nuevo `CGA-010`. "Append-only" pasa a describir la **forma** del
+  artifact y no una operación disponible: la acumulación posterior de historia se
+  realiza por **re-materialización completa con historia acumulada**, que **no es
+  append**, con la consecuencia declarada de que los estados intermedios del
+  artifact no se preservan. Sin runtime, campos, endpoints, eventos, estados ni
+  métodos nuevos; `runtime/toolcalls/change_governance.py` sin cambios. Cambio
+  MINOR (11.2.0 → 11.3.0); tag pendiente de promoción.
 
 ## [11.2.0] — 2026-09-12
 

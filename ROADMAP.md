@@ -5,7 +5,7 @@ prioridades. No implementa nada: cada entrada cita su origen en
 `docs/plans/INDEX.md` o en los planes/RFCs. Los ítems que toquen
 `protocol/.agents/` requieren su propio RFC/plan antes de ejecutarse.
 
-## Pendientes priorizados (origen: `docs/plans/INDEX.md`)
+## Backlog resuelto (origen: `docs/plans/INDEX.md`)
 
 | Prioridad | Ítem | Origen | Cubierto por |
 | --- | --- | --- | --- |
@@ -18,13 +18,20 @@ prioridades. No implementa nada: cada entrada cita su origen en
 | Baja | Enmiendas conceptuales (recovery temprano, tooling, project_shape) | Backlog B-7 | planes 29, 43 y 52 (`docs/plans/52-tooling-profile-candidacy.md`) |
 | Baja | Modelo de ejecución de delegaciones en runtimes de contexto único | Backlog B-8, plan 49 | plan 49 (`docs/plans/49-delegation-single-instance-model.md`) |
 
-Los estados de esos planes/RFCs se consultan en `docs/plans/INDEX.md` (fuente de
-verdad descriptiva); esta tabla solo referencia, no duplica estados.
+Los ítems de esta tabla provienen del backlog evidenciado del plan 19 (5 ago
+2026) y **ya fueron resueltos**: cada `B-x` se redactó como par plan/RFC en la
+Sexta serie (`docs/plans/INDEX.md` §Backlog evidenciado - plan 19 registra la
+resolución ítem por ítem). La tabla se conserva como traza de esa resolución,
+no como trabajo pendiente. El estado de cada plan se consulta en
+`docs/plans/INDEX.md` (fuente de verdad descriptiva); esta tabla solo
+referencia, no duplica estados.
 
-Además, las RFCs 39–54 (todas `Accepted` desde el 12 ago 2026, vía RFC-56)
-maduran tooling a medida que se ejecuten sus planes: budget de discovery,
-freshness de KB, validación mecánica de skills, catálogo de roles de worker,
-entre otros.
+Además, las RFCs 39–54 quedaron todas `Accepted` vía RFC-56 (plan 57) y sus
+planes asociados están `Executed`, por lo que el tooling que maduraban (budget
+de discovery, freshness de KB, validación mecánica de skills, catálogo de roles
+de worker, entre otros) ya está materializado; el protocolo pasó de 3.x a
+11.x. El estado `Accepted`/`Executed` no es `Released`: la publicación por
+versión y tag se consulta en `docs/VERSIONING.md` §9.
 
 ## Proceso
 

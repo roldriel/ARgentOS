@@ -6,24 +6,27 @@
 > Las secciones `## Convenciones` y `## Serie de RFCs (documentos canónicos)`
 > se conservan como anclas de navegación para referencias históricas.
 
-Estado al 2026-08-16. La **serie de remediación de la auditoría 2.0.1** está
-completa: RFC-29…56 `Accepted` (las 23 RFCs de la serie 32…54 se revisaron una
-por una vía RFC-56, plan 57) y todos los planes numerados `Executed`. El
-trabajo activo es la remediación de la **auditoría de sistema 3.1**
-(`AUDITORIA_SISTEMA_2026-08-16.md`). `master`/`dist` están en `3.19.0` (tags
-anotados `3.16.0`–`3.19.0`); `dev` lleva las versiones en curso `3.20.0`–
-`3.25.0` sin publicar. El 12 ago 2026 se
-completó la remediación de la auditoría de documentación
+Estado al 2026-09-15. Todos los planes numerados están `Executed`; la última
+serie registrada es la Quincuagésima quinta (Plan 123, 15 sep 2026). El
+protocolo publicado es `11.2.0` (`master`/`dist`, tags anotados `11.0.0`,
+`11.0.1`, `11.1.0` y `11.2.0`); `dev` lleva los releases en curso
+`11.3.0`–`11.5.0` sin publicar (ver `docs/VERSIONING.md` §9, que es el
+snapshot vigente de versiones; este header no lo duplica). La **serie de
+remediación de la auditoría 2.0.1** está completa: RFC-29…56 `Accepted` (las 23
+RFCs de la serie 32…54 se revisaron una por una vía RFC-56, plan 57). El 12 ago
+2026 se completó la remediación de la auditoría de documentación
 (`docs/AUDITORIA_DOCUMENTACION.md`, fuera del payload): AGENTS.md raíz
 operativo, plantillas de plan/RFC + `tools/check_plan_structure.py`, tests
 centralizados en `tests/`, batería en CI sin path filters, disolución de `dev/`
 (`tools/`, `runtime/`, `docs/` en raíz) y `tools/check_dist_sync.py`. El 14 ago
-2026 se agregó `AUDITORIA_SISTEMA.md` (tracker vivo de remediación del sistema)
-y se unificó la definición de batería en `docs/VERSIONING.md` §4.1. El 14–15
-ago 2026 se ejecutaron los planes 58–68 (remediación de la auditoría de
-sistema, cierre de backlog B-6 y validador obligatorio F1-B, versiones
-3.9.0–3.19.0). Los planes de construcción del protocolo (dominios, taxonomía,
-discovery) están implementados; sus versiones históricas viven en `archive/`.
+2026 se agregó el tracker de remediación del sistema
+(`docs/working/audits/AUDITORIA_SISTEMA.md`, cerrado el 14 ago 2026 según su
+propio status) y se unificó la definición de batería en `docs/VERSIONING.md`
+§4.1. El 14–15 ago 2026 se ejecutaron los planes 58–68 (remediación de la
+auditoría de sistema, cierre de backlog B-6 y validador obligatorio F1-B,
+versiones 3.9.0–3.19.0). Los planes de construcción del protocolo (dominios,
+taxonomía, discovery) están implementados; sus versiones históricas viven en
+`archive/`.
 
 ## Novena serie: remediación de la auditoría de sistema 3.1 (16 ago 2026)
 

@@ -36,8 +36,8 @@ observe → derive → authorize → delegate → execute → ingest → verify
 - **decide** — continue, or stop with a documented reason.
 
 Implementation: `runtime/orchestrator/` (`host.py`, `observation.py`,
-`derivation.py`, `authority.py`, `worker.py`, `store.py`, `governance.py`,
-`contracts.py`). Entry point:
+`derivation.py`, `authority.py`, `worker.py`, `agent_worker.py`, `store.py`,
+`governance.py`, `contracts.py`). Entry point:
 
 ```bash
 python -m runtime.orchestrator --plan N            # run the loop
@@ -156,9 +156,11 @@ a `GAP`, never a positive fact.
 
 ## 10. Declared limits of the MVP
 
-- The shipped worker is a **command worker** (a real executor of the delegated
-  command-set). A real agent worker is a different implementation of the same
-  boundary and is not part of this MVP.
+- The worker shipped by the host (`CommandWorker`) is a **command worker** (a
+  real executor of the delegated command-set); `NullWorker` executes nothing.
+  The **Agent Worker** (plan 123) is a third implementation of the same
+  `WorkerAdapter` boundary and is described in §11; the host selects it with
+  `--worker agent`.
 - Governance writes are limited to records the authorized plan already owns
   (status, validation anchor, checkpoint, execution note, open finding records).
   The host never writes narrative decisions.

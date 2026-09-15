@@ -6,10 +6,10 @@ reconstructs the delivered Execution Context, an injected ``AgentInvoker`` reall
 performs work, the repository really changes, the declared verification really
 runs and the Worker Result is really persisted and re-read.
 
-They deliberately do **not** use pytest's ``tmp_path``: in the agent sandbox of
-this repository the pytest temporary-directory machinery is denied by the
-execution environment (the same declared environmental class as plans 121/122), so
-a scratch directory is created explicitly and is overridable through
+They deliberately do **not** use pytest's ``tmp_path``: the throw-away git
+repositories built here must not be nested in the repository under test, so a
+scratch directory is created explicitly **outside** the repository (see
+``tests/pytest_isolation.py``) and is overridable through
 ``ARGENTOS_ORCHESTRATOR_SCRATCH``. The tests are deterministic and independent of
 ``protocol/``.
 """
@@ -27,6 +27,9 @@ import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
+sys.path.insert(0, str(REPO_ROOT / "tests"))
+
+import pytest_isolation  # noqa: E402
 
 from runtime.orchestrator.agent_worker import (  # noqa: E402
     INVOCATION_COMPLETED,
@@ -78,7 +81,7 @@ from runtime.orchestrator.worker import CommandWorker, NullWorker  # noqa: E402
 SCRATCH_ROOT = Path(
     os.environ.get(
         "ARGENTOS_ORCHESTRATOR_SCRATCH",
-        str(REPO_ROOT / ".project" / "agent-worker-test"),
+        str(pytest_isolation.scratch_root("agent-worker")),
     )
 )
 

@@ -15,6 +15,15 @@ never the product payload.
   `dist`, runs in adopting projects, and is executed in the CI regression job
   (`.github/workflows/check-protocol.yml`) so payload code regressions are
   caught in this repository.
+- **Never write temporaries inside the repository.** `tests/pytest_isolation.py`
+  defines the single repository-external temporary root of a session (system
+  temp + `argentos-pytest`, overridable with `ARGENTOS_PYTEST_TMP`); the root
+  `conftest.py` points pytest's basetemp, cache and scratch there. Use
+  `tmp_path`/`tmpdir` for files, and `pytest_isolation.scratch_root(<suite>)`
+  for throw-away repositories a test builds itself — never a path under the
+  repository root, not even under the ephemeral `.project/`. Running the suite
+  must leave the repository surface unchanged;
+  `tests/test_pytest_isolation.py` is the regression.
 - New dev tools get their suite in this directory, following the existing
   style: fake-repo fixtures via `tmp_path`, CLI exit-code coverage, and a
   stdlib-only test for the tool.

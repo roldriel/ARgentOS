@@ -7,7 +7,6 @@ line-ending normalization case (CRLF working tree vs LF blobs).
 
 from __future__ import annotations
 
-import ast
 import os
 import shutil
 import subprocess
@@ -19,9 +18,8 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[1]
 TOOL = REPO_ROOT / "tools" / "check_dist_sync.py"
 
-sys.path.insert(0, str(REPO_ROOT / "tools"))
-
 import check_dist_sync as cds  # noqa: E402
+from testsupport import assert_tool_imports_only_stdlib  # noqa: E402
 
 pytestmark = pytest.mark.skipif(
     shutil.which("git") is None, reason="git CLI not available"
@@ -132,16 +130,7 @@ def test_crlf_working_tree_does_not_fool_the_check(tmp_path):
 
 # --- stdlib only ---------------------------------------------------------------
 
-_STDLIB = set(sys.stdlib_module_names)
-
 
 def test_tool_uses_only_stdlib():
-    tree = ast.parse(TOOL.read_text(encoding="utf-8"))
-    imported = set()
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            imported.update(a.name.split(".")[0] for a in node.names)
-        elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
-            imported.add(node.module.split(".")[0])
-    third_party = imported - _STDLIB - {"check_dist_sync"}
-    assert third_party == set(), f"third-party imports: {third_party}"
+    assert_tool_imports_only_stdlib(TOOL, {"check_dist_sync"})
+

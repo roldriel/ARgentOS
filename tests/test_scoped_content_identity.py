@@ -25,8 +25,6 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[1]
 TOOL = REPO_ROOT / "tools" / "scoped_content_identity.py"
 
-sys.path.insert(0, str(REPO_ROOT / "tools"))
-
 import scoped_content_identity as sci  # noqa: E402
 
 pytestmark = pytest.mark.skipif(

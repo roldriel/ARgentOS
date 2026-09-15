@@ -17,7 +17,6 @@ origin state.
 
 from __future__ import annotations
 
-import ast
 import os
 import re
 import shutil
@@ -30,9 +29,8 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[1]
 TOOL = REPO_ROOT / "tools" / "check_lifecycle_checkpoint.py"
 
-sys.path.insert(0, str(REPO_ROOT / "tools"))
-
 import check_lifecycle_checkpoint as clc  # noqa: E402
+from testsupport import assert_tool_imports_only_stdlib  # noqa: E402
 
 pytestmark = pytest.mark.skipif(
     shutil.which("git") is None, reason="git CLI not available"
@@ -773,16 +771,5 @@ def test_real_repo_expected_classifications():
 
 # --- stdlib only ----------------------------------------------------------------------
 
-_STDLIB = set(sys.stdlib_module_names)
-
-
 def test_tool_uses_only_stdlib():
-    tree = ast.parse(TOOL.read_text(encoding="utf-8"))
-    imported = set()
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            imported.update(a.name.split(".")[0] for a in node.names)
-        elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
-            imported.add(node.module.split(".")[0])
-    third_party = imported - _STDLIB - {"check_lifecycle_checkpoint"}
-    assert third_party == set(), f"third-party imports: {third_party}"
+    assert_tool_imports_only_stdlib(TOOL, {"check_lifecycle_checkpoint"})

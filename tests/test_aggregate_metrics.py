@@ -2,13 +2,11 @@
 
 from __future__ import annotations
 
-import sys
 import json
 from pathlib import Path
 from datetime import datetime, timedelta, timezone
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(REPO_ROOT / "tools"))
 
 import aggregate_metrics as am  # noqa: E402
 

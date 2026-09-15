@@ -40,7 +40,24 @@ import sys
 import tempfile
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent / "tests"))
+# The single import bootstrap of the DEV test session. Tests live in ``tests/``
+# (not a package) and the repository tooling lives in ``tools/`` (plain
+# executable scripts, not a package), so both directories go on ``sys.path``
+# once, here, instead of repeating ``sys.path.insert`` in every suite:
+#
+# - ``tests`` so the suites can ``import pytest_isolation`` / ``import
+#   testsupport``;
+# - ``tools`` so a suite can ``import check_plan_citations`` and friends.
+#
+# ``tools/`` deliberately stays a directory of scripts: it is invoked directly
+# (``python tools/check_*.py``) by the canonical battery, by CI and by the
+# suites themselves, and three tools import their siblings with flat module
+# names (``legacy_paths``, ``scoped_content_identity``). Adding a package
+# ``__init__.py`` would break those package-style imports while changing
+# nothing for script execution — see plan 124, F-01.
+_HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(_HERE / "tests"))
+sys.path.insert(0, str(_HERE / "tools"))
 
 import pytest  # noqa: E402
 import pytest_isolation as isolation  # noqa: E402

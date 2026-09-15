@@ -48,10 +48,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-import subprocess
-import time
 from dataclasses import dataclass, field
-from pathlib import Path
 from typing import Any, Mapping, Protocol, Sequence
 
 from ..toolcalls.context import ExecutionContext
@@ -70,10 +67,8 @@ from .store import OrchestratorStore
 from .worker import (
     DEFAULT_TIMEOUT_SECONDS,
     changed_paths,
-    classify,
-    content_digests,
-    repository_paths,
     repository_snapshot,
+    run_command_set,
 )
 
 #: The role the worker adopts. The generic worker role; no profile, no skill.
@@ -363,9 +358,7 @@ class AgentWorker:
             delegation_id=delegation.delegation_id,
         )
 
-        started = time.monotonic()
         invocation = self.invoker.invoke(request)
-        duration_ms = int((time.monotonic() - started) * 1000)
 
         if not isinstance(invocation, AgentInvocationResult):
             raise AgentWorkerError(
@@ -521,80 +514,22 @@ class AgentWorker:
         plan_rel: str | None,
         environmental: Sequence[tuple[str, str]],
     ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[str]]:
-        """Run the delegation's declared verification commands, classified."""
-        root = store.root
-        commands: list[dict[str, Any]] = []
-        results: list[dict[str, Any]] = []
-        problems: list[str] = []
-        capture_dir = f"{run_id}/it{delegation.iteration:04d}"
+        """Run the delegation's declared verification commands, classified.
 
-        for index, argv in enumerate(delegation.command_set, start=1):
-            stdout_rel = f"{capture_dir}/verify-{index:02d}-stdout.txt"
-            stderr_rel = f"{capture_dir}/verify-{index:02d}-stderr.txt"
-            stdout_path = store.runs_dir(delegation.plan) / stdout_rel
-            stderr_path = store.runs_dir(delegation.plan) / stderr_rel
-            stdout_path.parent.mkdir(parents=True, exist_ok=True)
-
-            started = time.monotonic()
-            timed_out = False
-            exit_code: int | None = None
-            with stdout_path.open("wb") as out, stderr_path.open("wb") as err:
-                try:
-                    proc = subprocess.run(
-                        list(argv),
-                        cwd=str(root),
-                        stdout=out,
-                        stderr=err,
-                        timeout=self.timeout_seconds,
-                        check=False,
-                    )
-                    exit_code = proc.returncode
-                except subprocess.TimeoutExpired:
-                    timed_out = True
-                except OSError as exc:
-                    exit_code = None
-                    problems.append(
-                        f"{' '.join(argv)}: could not be executed ({exc})"
-                    )
-            duration_ms = int((time.monotonic() - started) * 1000)
-
-            stdout_text = stdout_path.read_text(encoding="utf-8", errors="replace")
-            stderr_text = stderr_path.read_text(encoding="utf-8", errors="replace")
-            signal, basis, gate_label = classify(
-                argv,
-                exit_code=exit_code,
-                timed_out=timed_out,
-                stdout_text=stdout_text,
-                plan_rel=plan_rel,
-                environmental=environmental,
-            )
-            commands.append(
-                {
-                    "argv": list(argv),
-                    "exit_code": exit_code,
-                    "timed_out": timed_out,
-                    "duration_ms": duration_ms,
-                    "stdout_path": stdout_rel,
-                    "stdout_sha256": _sha256_text(stdout_text),
-                    "stdout_bytes": len(stdout_text.encode("utf-8", errors="replace")),
-                    "stdout_tail": _tail(stdout_text),
-                    "stderr_path": stderr_rel,
-                    "stderr_sha256": _sha256_text(stderr_text),
-                    "stderr_bytes": len(stderr_text.encode("utf-8", errors="replace")),
-                    "stderr_tail": _tail(stderr_text),
-                }
-            )
-            results.append(
-                {
-                    "label": gate_label or f"verification-{index:02d}",
-                    "command_index": index,
-                    "argv": list(argv),
-                    "signal": signal,
-                    "classification_basis": basis,
-                    "exit_code": exit_code,
-                }
-            )
-        return commands, results, problems
+        It goes through the same executor the command worker uses
+        (``worker.run_command_set``), so the two workers cannot disagree about
+        what a command did or about how its evidence is stored.
+        """
+        return run_command_set(
+            delegation,
+            store=store,
+            run_id=run_id,
+            plan_rel=plan_rel,
+            environmental=environmental,
+            timeout_seconds=self.timeout_seconds,
+            capture_prefix="verify",
+            default_label_prefix="verification",
+        )
 
     @staticmethod
     def _command_evidence(

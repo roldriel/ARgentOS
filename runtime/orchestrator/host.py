@@ -28,7 +28,7 @@ is observe.
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Mapping, Sequence
@@ -36,7 +36,6 @@ from typing import Any, Mapping, Sequence
 from .authority import AuthorityBoundary
 from .contracts import (
     AUTHORIZED_EXISTING,
-    CLOSED_DERIVED,
     EXECUTABLE_ACTIONS,
     RECORD_CHECKPOINT,
     RECORD_PLAN_STATUS_EXECUTED,
@@ -46,6 +45,7 @@ from .contracts import (
     RUN_IMPLEMENTATION_TASK,
     RUN_LIFECYCLE_GATES,
     Delegation,
+    WorkerResult,
     validate_worker_result,
 )
 from .derivation import (
@@ -69,9 +69,13 @@ from .governance import (
     record_validation_anchor,
 )
 from .observation import ChangeObservation, observe
-from .agent_worker import changed_paths, repository_snapshot
 from .store import OrchestratorStore
-from .worker import CommandWorker, WorkerAdapter
+from .worker import (
+    CommandWorker,
+    WorkerAdapter,
+    changed_paths,
+    repository_snapshot,
+)
 
 DEFAULT_MAX_ITERATIONS = 8
 
@@ -214,7 +218,7 @@ class ExecutionHost:
     ) -> Delegation:
         task: str | None = None
         input_artifacts: tuple[str, ...] = ()
-        expected_evidence = (
+        expected_evidence: tuple[str, ...] = (
             "stdout/stderr capture per command",
             "classification signal per command",
             "artifacts modified during execution",
@@ -329,9 +333,23 @@ class ExecutionHost:
                 ],
             )
         notes: list[str] = []
-        payload = (
-            result.to_dict() if hasattr(result, "to_dict") else dict(result)  # type: ignore[arg-type]
-        )
+        # A conforming worker returns a ``WorkerResult``; the host still validates
+        # whatever came back, because a worker is code the host does not own. A
+        # plain mapping is accepted as the payload to validate (it is the shape a
+        # non-conforming worker produces and it must be *rejected* by the M4
+        # contract, never crash the host); anything else is one declared problem,
+        # never an AttributeError raised out of the verification of a claim.
+        if isinstance(result, WorkerResult):
+            payload: Mapping[str, Any] = result.to_dict()
+        elif isinstance(result, Mapping):
+            payload = result
+        else:
+            payload = {}
+            notes.append(
+                "the worker returned "
+                f"{type(result).__name__}, which is neither a WorkerResult nor a "
+                "payload object"
+            )
         problems = validate_worker_result(payload)
         if problems:
             stop = invalid_result_action(

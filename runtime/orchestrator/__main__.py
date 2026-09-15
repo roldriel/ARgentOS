@@ -57,7 +57,7 @@ from .host import DEFAULT_MAX_ITERATIONS, ExecutionHost
 from .observation import ObservationError, observe
 from .store import OrchestratorStore
 from .agent_worker import AgentWorker
-from .worker import CommandWorker, NullWorker
+from .worker import CommandWorker, NullWorker, WorkerAdapter
 
 #: Terminal derivations whose signal class requires attention (exit 1).
 ATTENTION_ACTIONS = frozenset(
@@ -162,12 +162,16 @@ def main(argv: list[str] | None = None) -> int:
         print(report)
         return 0
 
-    worker = CommandWorker() if args.worker == "command" else NullWorker()
+    worker: WorkerAdapter
     if args.worker == "agent":
         # The CLI can only construct the honest default: this repository ships no
         # provider and no model. An embedding environment injects its own
         # AgentInvoker through `ExecutionHost(..., worker=AgentWorker(invoker=...))`.
         worker = AgentWorker()
+    elif args.worker == "none":
+        worker = NullWorker()
+    else:
+        worker = CommandWorker()
     host = ExecutionHost(
         root,
         args.plan,

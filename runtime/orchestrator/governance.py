@@ -24,9 +24,8 @@ from __future__ import annotations
 import os
 import re
 import tempfile
-from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Sequence
+from typing import Sequence
 
 from .contracts import AUTHORIZED_EXISTING, AuthorityDecision
 

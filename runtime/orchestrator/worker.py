@@ -30,7 +30,7 @@ import subprocess
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Protocol, Sequence
+from typing import Any, Mapping, Protocol, Sequence
 
 from .contracts import (
     ANOMALY,
@@ -64,12 +64,34 @@ class WorkerError(RuntimeError):
 
 class WorkerAdapter(Protocol):
     """The boundary the host delegates through. Implementations execute nothing
-    else and never decide anything."""
+    else and never decide anything.
+
+    ``execute`` is called by the host with two additional keyword arguments that
+    are part of the boundary, not of one implementation's convenience:
+
+    - ``plan_rel`` — the plan artifact's repository-relative path, without which
+      no command can be classified against the plan it validates;
+    - ``environmental`` — the environmental classes the authorized plan declares,
+      without which a declared absence of evidence cannot be told apart from a
+      mechanical violation (``GAP`` vs ``FAIL``).
+
+    Both default to "not provided". A worker that does not receive them can still
+    produce a result, but the classification it can offer is correspondingly
+    weaker; the host always provides both. They are declared here because a third
+    implementation that follows this protocol literally must accept the same call
+    the host really makes.
+    """
 
     kind: str
 
     def execute(
-        self, delegation: Delegation, *, store: OrchestratorStore, run_id: str
+        self,
+        delegation: Delegation,
+        *,
+        store: OrchestratorStore,
+        run_id: str,
+        plan_rel: str | None = None,
+        environmental: Sequence[tuple[str, str]] = (),
     ) -> WorkerResult:  # pragma: no cover - protocol declaration
         ...
 
@@ -96,7 +118,17 @@ def _is_checker(argv: Sequence[str]) -> bool:
 
 
 def _is_pytest(argv: Sequence[str]) -> bool:
-    return "pytest" in Path(argv[0]).name or "-m" in argv and "pytest" in argv
+    """True when the command runs pytest, whether invoked directly or via ``-m``.
+
+    The parentheses are not cosmetic: without them ``and`` binds tighter than
+    ``or`` and any ``-m <module>`` invocation would count as pytest. The guard on
+    an empty ``argv`` keeps the classifier total: a command with no program name
+    is classified by the caller's exit status, never by an ``IndexError`` raised
+    from inside the classification.
+    """
+    if not argv:
+        return False
+    return "pytest" in Path(argv[0]).name or ("-m" in argv and "pytest" in argv)
 
 
 def environmental_class_for(
@@ -182,6 +214,114 @@ def classify(
     if _is_checker(argv):
         return FAIL, f"the checker exited {exit_code}: mechanical violation", label
     return FAIL, f"the command exited {exit_code}", label
+
+
+def run_command_set(
+    delegation: Delegation,
+    *,
+    store: OrchestratorStore,
+    run_id: str,
+    plan_rel: str | None,
+    environmental: Sequence[tuple[str, str]],
+    timeout_seconds: int,
+    capture_prefix: str,
+    default_label_prefix: str,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[str]]:
+    """Run, capture and classify a delegation's declared command-set.
+
+    This is the one executor of the delegated command-set. Both workers that run
+    commands really (``CommandWorker`` and ``AgentWorker``'s independent
+    verification) go through it, so the capture layout, the per-command metadata
+    and the classification of a command can never disagree between the two: the
+    change a worker reports and the change the host verifies are read from the
+    same evidence.
+
+    Returns ``(commands, results, problems)``:
+
+    - ``commands`` — one record per command: argv, exit status, timeout, duration
+      and the persisted stdout/stderr captures with their digests and tails;
+    - ``results`` — one classified result per command (``signal`` plus the basis
+      the classification was derived from);
+    - ``problems`` — the commands that could not be executed at all. They are
+      **not** classified: absence of execution is reported as absence.
+
+    ``capture_prefix`` names the capture files and ``default_label_prefix`` the
+    default result label, so each caller keeps the file/label convention it
+    already publishes. Classification is delegated verbatim to :func:`classify`;
+    no signal is invented here.
+    """
+    root = store.root
+    commands: list[dict[str, Any]] = []
+    results: list[dict[str, Any]] = []
+    problems: list[str] = []
+    capture_dir = f"{run_id}/it{delegation.iteration:04d}"
+
+    for index, argv in enumerate(delegation.command_set, start=1):
+        stdout_rel = f"{capture_dir}/{capture_prefix}-{index:02d}-stdout.txt"
+        stderr_rel = f"{capture_dir}/{capture_prefix}-{index:02d}-stderr.txt"
+        stdout_path = store.runs_dir(delegation.plan) / stdout_rel
+        stderr_path = store.runs_dir(delegation.plan) / stderr_rel
+        stdout_path.parent.mkdir(parents=True, exist_ok=True)
+
+        started = time.monotonic()
+        timed_out = False
+        exit_code: int | None = None
+        with stdout_path.open("wb") as out, stderr_path.open("wb") as err:
+            try:
+                proc = subprocess.run(
+                    list(argv),
+                    cwd=str(root),
+                    stdout=out,
+                    stderr=err,
+                    timeout=timeout_seconds,
+                    check=False,
+                )
+                exit_code = proc.returncode
+            except subprocess.TimeoutExpired:
+                timed_out = True
+            except OSError as exc:
+                exit_code = None
+                problems.append(f"{' '.join(argv)}: could not be executed ({exc})")
+        duration_ms = int((time.monotonic() - started) * 1000)
+
+        stdout_text = stdout_path.read_text(encoding="utf-8", errors="replace")
+        stderr_text = stderr_path.read_text(encoding="utf-8", errors="replace")
+        signal, basis, gate_label = classify(
+            argv,
+            exit_code=exit_code,
+            timed_out=timed_out,
+            stdout_text=stdout_text,
+            plan_rel=plan_rel,
+            environmental=environmental,
+        )
+
+        commands.append(
+            {
+                "argv": list(argv),
+                "exit_code": exit_code,
+                "timed_out": timed_out,
+                "duration_ms": duration_ms,
+                "stdout_path": stdout_rel,
+                "stdout_sha256": _sha256_text(stdout_text),
+                "stdout_bytes": len(stdout_text.encode("utf-8", errors="replace")),
+                "stdout_tail": _tail(stdout_text),
+                "stderr_path": stderr_rel,
+                "stderr_sha256": _sha256_text(stderr_text),
+                "stderr_bytes": len(stderr_text.encode("utf-8", errors="replace")),
+                "stderr_tail": _tail(stderr_text),
+            }
+        )
+        results.append(
+            {
+                "label": gate_label or f"{default_label_prefix}-{index:02d}",
+                "command_index": index,
+                "argv": list(argv),
+                "signal": signal,
+                "classification_basis": basis,
+                "exit_code": exit_code,
+            }
+        )
+    return commands, results, problems
 
 
 def repository_paths(root: Path) -> set[str]:
@@ -307,99 +447,43 @@ class CommandWorker:
     ) -> WorkerResult:
         root = store.root
         before = repository_paths(root)
-        commands: list[dict[str, Any]] = []
-        results: list[dict[str, Any]] = []
-        problems: list[dict[str, Any]] = []
         evidence: list[dict[str, Any]] = []
-        pending: list[str] = []
 
-        for index, argv in enumerate(delegation.command_set, start=1):
-            label = _gate_label(argv) or f"command-{index:02d}"
-            # Captures are unique per iteration: two iterations of the same run
-            # must never overwrite each other's evidence.
-            capture_dir = f"{run_id}/it{delegation.iteration:04d}"
-            stdout_rel = f"{capture_dir}/cmd-{index:02d}-stdout.txt"
-            stderr_rel = f"{capture_dir}/cmd-{index:02d}-stderr.txt"
-            stdout_path = store.runs_dir(delegation.plan) / stdout_rel
-            stderr_path = store.runs_dir(delegation.plan) / stderr_rel
-            stdout_path.parent.mkdir(parents=True, exist_ok=True)
-
-            started = time.monotonic()
-            timed_out = False
-            exit_code: int | None = None
-            with stdout_path.open("wb") as out, stderr_path.open("wb") as err:
-                try:
-                    proc = subprocess.run(
-                        list(argv),
-                        cwd=str(root),
-                        stdout=out,
-                        stderr=err,
-                        timeout=self.timeout_seconds,
-                        check=False,
-                    )
-                    exit_code = proc.returncode
-                except subprocess.TimeoutExpired:
-                    timed_out = True
-                except OSError as exc:
-                    exit_code = None
-                    pending.append(f"{' '.join(argv)}: could not be executed ({exc})")
-            duration_ms = int((time.monotonic() - started) * 1000)
-
-            stdout_text = stdout_path.read_text(encoding="utf-8", errors="replace")
-            stderr_text = stderr_path.read_text(encoding="utf-8", errors="replace")
-            signal, basis, gate_label = classify(
-                argv,
-                exit_code=exit_code,
-                timed_out=timed_out,
-                stdout_text=stdout_text,
-                plan_rel=plan_rel,
-                environmental=environmental,
-            )
-
-            commands.append(
-                {
-                    "argv": list(argv),
-                    "exit_code": exit_code,
-                    "timed_out": timed_out,
-                    "duration_ms": duration_ms,
-                    "stdout_path": stdout_rel,
-                    "stdout_sha256": _sha256_text(stdout_text),
-                    "stdout_bytes": len(stdout_text.encode("utf-8", errors="replace")),
-                    "stdout_tail": _tail(stdout_text),
-                    "stderr_path": stderr_rel,
-                    "stderr_sha256": _sha256_text(stderr_text),
-                    "stderr_bytes": len(stderr_text.encode("utf-8", errors="replace")),
-                    "stderr_tail": _tail(stderr_text),
-                }
-            )
-            results.append(
-                {
-                    "label": gate_label or label,
-                    "command_index": index,
-                    "argv": list(argv),
-                    "signal": signal,
-                    "classification_basis": basis,
-                    "exit_code": exit_code,
-                }
-            )
-            for rel in (stdout_rel, stderr_rel):
+        # Captures are unique per iteration: two iterations of the same run must
+        # never overwrite each other's evidence. The executor owns that layout.
+        commands, results, pending = run_command_set(
+            delegation,
+            store=store,
+            run_id=run_id,
+            plan_rel=plan_rel,
+            environmental=environmental,
+            timeout_seconds=self.timeout_seconds,
+            capture_prefix="cmd",
+            default_label_prefix="command",
+        )
+        problems: list[dict[str, Any]] = [
+            {
+                "signal": result["signal"],
+                "description": (
+                    f"{' '.join(result['argv'])}: "
+                    f"{result['classification_basis']}"
+                ),
+                "evidence_ref": command["stdout_path"],
+            }
+            for command, result in zip(commands, results)
+            if result["signal"] != VALID
+        ]
+        for command in commands:
+            for key in ("stdout_path", "stderr_path"):
+                rel = str(command[key])
+                digest_key = key.replace("_path", "_sha256")
                 evidence.append(
                     {
                         "kind": "command-capture",
                         "path": (store.runs_dir(delegation.plan) / rel)
                         .relative_to(root)
                         .as_posix(),
-                        "sha256": _sha256_text(
-                            stdout_text if rel.endswith("stdout.txt") else stderr_text
-                        ),
-                    }
-                )
-            if signal != VALID:
-                problems.append(
-                    {
-                        "signal": signal,
-                        "description": f"{' '.join(argv)}: {basis}",
-                        "evidence_ref": stdout_rel,
+                        "sha256": str(command[digest_key]),
                     }
                 )
 

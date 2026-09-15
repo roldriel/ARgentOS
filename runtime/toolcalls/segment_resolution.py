@@ -34,6 +34,14 @@ content (RFC-78, PC-009).
 The module is stdlib-only and pure: it reads the payload files passed in and
 returns their bytes unmodified. It has no side effects, no persistence state and
 no identity of its own.
+
+Scope boundary: this module **resolves** which stable segments exist and in what
+order (`resolve_stable_segments`, `order_stable_segments`). It does not turn them
+into the bytes of the representation: that serialization belongs to
+`canonical.encode_stable_region`, which is the only serializer the stable prefix
+is built from and the one that refuses a region whose required steps were not
+resolved (RFC-78, PC-009). A second serializer here would be a silent, more
+permissive duplicate of a contract decision that is not this module's to make.
 """
 
 from __future__ import annotations
@@ -71,8 +79,6 @@ _KIND_PRIORITY = {
     KIND_HARNESS_POLICY: 3,
     KIND_SKILL: 4,
 }
-
-_SEPARATOR = b"\n\x1e\n"
 
 
 class SegmentResolutionError(Exception):
@@ -221,21 +227,3 @@ def order_stable_segments(
             key=lambda segment: _KIND_PRIORITY.get(segment.kind, len(_KIND_PRIORITY)),
         )
     )
-
-
-def encode_stable_region(segments: tuple[SegmentResolution, ...]) -> bytes:
-    """The canonical byte serialization of the stable region (ordering v2).
-
-    UTF-8, LF line endings, no BOM, no variable trailing whitespace. The
-    separator is a byte that never occurs in UTF-8 text (U+001E), so the
-    concatenation is unambiguous and deterministic for a given segment set.
-    """
-    blocks = []
-    for segment in order_stable_segments(segments):
-        header = (
-            f"segment: {segment.kind}\n"
-            f"id: {segment.logical_id}\n"
-            f"path: {segment.relative_path}\n"
-        ).encode("utf-8")
-        blocks.append(header + segment.content)
-    return _SEPARATOR.join(blocks)

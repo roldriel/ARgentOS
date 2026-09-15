@@ -21,7 +21,7 @@ import subprocess
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Sequence
+from typing import Any, Mapping, Sequence
 
 from .store import OrchestratorStore
 
@@ -842,9 +842,13 @@ def observe(
                 gates_after_anchor = True
             if observed.get("checkpoint_present"):
                 gates_after_checkpoint = True
-            signals = record.get("gate_signals")
-            if isinstance(signals, list):
-                last_gate_signals = tuple(str(item) for item in signals)
+            # ``journal`` comes from disk, so a value is only known to be JSON
+            # until it is checked. The declared type of ``last_gate_signals`` is
+            # kept honest by narrowing into a separate local, never by trusting
+            # whatever the last readable journal line happened to hold.
+            recorded_signals = record.get("gate_signals")
+            if isinstance(recorded_signals, list):
+                last_gate_signals = tuple(str(item) for item in recorded_signals)
             same_state = observed.get("current_delta_identity") == current_delta
             if same_state and observed.get("anchor_present"):
                 gates_for_current_state = True

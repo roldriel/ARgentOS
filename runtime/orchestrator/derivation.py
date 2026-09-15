@@ -13,8 +13,8 @@ state is invented to express any of these conditions.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Any, Iterable, Mapping, Sequence
+from dataclasses import dataclass
+from typing import Any, Mapping, Sequence
 
 from .authority import AuthorityBoundary
 from .contracts import (
@@ -23,7 +23,6 @@ from .contracts import (
     CLOSED_DERIVED,
     EXCLUDED,
     FAIL,
-    GAP,
     NOT_APPLICABLE,
     RECORD_CHECKPOINT,
     RECORD_PLAN_STATUS_EXECUTED,
@@ -107,6 +106,29 @@ def stop_action(
 ) -> NextAction:
     """Build a host-level stop (max iterations, missing result, no progress)."""
     return _decision(kind, rationale, boundary, evidence_refs)
+
+
+def _entry_criteria_detail(observation: ChangeObservation) -> str:
+    """The observed reason the plan's entry criteria are not satisfied.
+
+    Two different situations reach the same stop and must stay distinguishable,
+    because they require different human actions:
+
+    - the plan declares checkboxes and some are unchecked: the unmet criteria are
+      named;
+    - the plan declares **no** entry-criteria container at all (``total == 0``):
+      there is nothing to name, and an empty reason would let the stop read as if
+      it had been justified by evidence it never had.
+
+    Absence of evidence is stated as absence, never as an empty success.
+    """
+    criteria = observation.entry_criteria
+    if criteria.total == 0:
+        return (
+            "the plan declares no entry-criteria container, so no criterion was "
+            "observed as satisfied (declared absence, not an unmet criterion)"
+        )
+    return "; ".join(criteria.unchecked)
 
 
 def gate_signals_by_name(
@@ -223,10 +245,7 @@ def derive_next_action(
     if not observation.entry_criteria.satisfied:
         return _decision(
             STOP_ENTRY_CRITERIA_UNMET,
-            (
-                "entry criteria unmet: "
-                + "; ".join(observation.entry_criteria.unchecked)
-            ),
+            "entry criteria unmet: " + _entry_criteria_detail(observation),
             boundary,
             refs,
         )

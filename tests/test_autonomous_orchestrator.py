@@ -5,15 +5,18 @@ throw-away git repository is built per test and the host really observes it,
 really delegates, really executes commands and really writes records into the
 throw-away plan artifact. Nothing here checks the presence of files.
 
-They deliberately do **not** use pytest's ``tmp_path``: in the agent sandbox of
-this repository the pytest temporary-directory machinery is denied by the
-execution environment, so a scratch directory is created explicitly (and
-overridable through ``ARGENTOS_ORCHESTRATOR_SCRATCH``). The tests are
-deterministic and independent of ``protocol/``.
+They deliberately do **not** use pytest's ``tmp_path``: the throw-away git
+repositories built here must not be nested in the repository under test, so a
+scratch directory is created explicitly **outside** the repository (see
+``tests/pytest_isolation.py``) and is overridable through
+``ARGENTOS_ORCHESTRATOR_SCRATCH``. The tests are deterministic and independent of
+``protocol/``.
 """
 
 from __future__ import annotations
 
+import ast
+import inspect
 import json
 import os
 import shutil
@@ -21,11 +24,15 @@ import subprocess
 import sys
 import uuid
 from pathlib import Path
+from typing import Protocol
 
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
+sys.path.insert(0, str(REPO_ROOT / "tests"))
+
+import pytest_isolation  # noqa: E402
 
 from runtime.orchestrator.authority import AuthorityBoundary  # noqa: E402
 from runtime.orchestrator.contracts import (  # noqa: E402
@@ -50,12 +57,16 @@ from runtime.orchestrator.governance import (  # noqa: E402
 from runtime.orchestrator.host import ExecutionHost  # noqa: E402
 from runtime.orchestrator.observation import observe  # noqa: E402
 from runtime.orchestrator.store import OrchestratorStore  # noqa: E402
-from runtime.orchestrator.worker import CommandWorker, NullWorker  # noqa: E402
+from runtime.orchestrator.worker import (  # noqa: E402
+    CommandWorker,
+    NullWorker,
+    WorkerAdapter,
+)
 
 SCRATCH_ROOT = Path(
     os.environ.get(
         "ARGENTOS_ORCHESTRATOR_SCRATCH",
-        str(REPO_ROOT / ".project" / "orchestrator-test"),
+        str(pytest_isolation.scratch_root("orchestrator")),
     )
 )
 
@@ -99,6 +110,9 @@ sys.exit(1)
 
 
 def _scratch(name: str) -> Path:
+    # The isolated scratch root lives outside the repository and is cleared by
+    # the root conftest at session start, so an interrupted run cannot
+    # accumulate throw-away repositories.
     path = SCRATCH_ROOT / f"{name}-{uuid.uuid4().hex[:8]}"
     path.mkdir(parents=True, exist_ok=True)
     return path
@@ -631,6 +645,134 @@ def test_gate_without_a_classification_line_is_a_gap():
         plan_rel=f"docs/plans/{PLAN_NAME}",
     )
     assert result.results[0]["signal"] == GAP
+
+
+# --------------------------------------------------------------------------- #
+# WorkerAdapter — the boundary contract the Host really calls
+# --------------------------------------------------------------------------- #
+# F-1: the Protocol published `execute(self, delegation, *, store, run_id)` while
+# the Host really calls it with `plan_rel=` and `environmental=`. The tests below
+# fix that contract structurally: they read the *real* call out of `host.py` and
+# bind its arguments against the *real* Protocol signature. Neither a concrete
+# worker nor a copy of the expected signature is used, so the test cannot drift
+# with an implementation: it fails the moment the published contract stops
+# accepting the call the Host makes.
+
+HOST_PATH = REPO_ROOT / "runtime" / "orchestrator" / "host.py"
+
+
+def _host_worker_execute_call() -> tuple[list[ast.expr], dict[str, ast.expr]]:
+    """The real ``self.worker.execute(...)`` call the Host makes.
+
+    Read from the source so the test describes the call site instead of a guess
+    at it: the positional arguments and the keywords, exactly as written. Parsing
+    the AST (rather than regexing the text) keeps the test independent of
+    formatting.
+    """
+    tree = ast.parse(HOST_PATH.read_text(encoding="utf-8"))
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        func = node.func
+        if (
+            isinstance(func, ast.Attribute)
+            and func.attr == "execute"
+            and isinstance(func.value, ast.Attribute)
+            and func.value.attr == "worker"
+        ):
+            keywords = {
+                keyword.arg: keyword.value
+                for keyword in node.keywords
+                if keyword.arg is not None
+            }
+            return list(node.args), keywords
+    raise AssertionError(
+        f"no `self.worker.execute(...)` call found in {HOST_PATH}: the test can no "
+        "longer observe the call the Host makes"
+    )
+
+
+def test_worker_adapter_declares_the_two_parameters_the_host_passes():
+    """The published boundary declares every argument the Host supplies.
+
+    Dropping either keyword is exactly F-1: a third implementation that follows
+    the Protocol literally would raise ``TypeError`` on the Host's call.
+    """
+    parameters = inspect.signature(WorkerAdapter.execute).parameters
+    _, host_keywords = _host_worker_execute_call()
+
+    missing = {"plan_rel", "environmental"} - set(parameters)
+    assert not missing, (
+        f"WorkerAdapter.execute no longer declares {sorted(missing)}: the Host "
+        f"calls it with {sorted(host_keywords)} (F-1)"
+    )
+    for name in ("plan_rel", "environmental"):
+        assert name in host_keywords, (
+            f"the Host no longer supplies {name!r}: the contract this test "
+            "protects changed at the call site"
+        )
+
+
+def test_worker_adapter_signature_accepts_the_real_host_call():
+    """The real Host call binds against the published Protocol signature.
+
+    The call is reconstructed from ``host.py`` as a real Python call against a
+    placeholder worker, so ``inspect.signature`` performs exactly the argument
+    matching the interpreter would perform: a missing declaration, a changed kind
+    (keyword-only versus positional) or a removed default all raise ``TypeError``.
+    Nothing here checks that a method merely exists.
+    """
+    positional, keywords = _host_worker_execute_call()
+    rendered = [ast.unparse(argument) for argument in positional]
+    assert rendered == ["delegation"], (
+        f"the Host now passes more than the delegation positionally: {rendered}"
+    )
+    missing = {"store", "run_id"} - set(keywords)
+    assert not missing, f"the Host call no longer passes {sorted(missing)}"
+
+    class PlaceholderWorker:
+        """An empty shell: only the *shape* of the call is under test."""
+
+        kind = "placeholder"
+
+        def execute(self, *args, **kwargs):
+            """Never called; ``Signature.bind`` is what validates the call."""
+
+    host_call_kwargs = {name: object() for name in keywords}
+    inspect.signature(WorkerAdapter.execute).bind(
+        PlaceholderWorker(), *[object() for _ in positional], **host_call_kwargs
+    )
+
+
+def test_worker_adapter_boundary_is_incomplete_without_plan_rel_and_environmental():
+    """Controlled falsification: the assertions above really detect the regression.
+
+    The pre-F-1 declaration — three parameters, no ``plan_rel``, no
+    ``environmental`` — must reject the Host's real call. That is the exact
+    failure a future removal of either parameter would reintroduce.
+    """
+
+    class IncompleteBoundary(Protocol):
+        """The pre-F-1 declaration, reproduced here on purpose."""
+
+        kind: str
+
+        def execute(self, delegation, *, store, run_id) -> object:
+            ...
+
+    positional, keywords = _host_worker_execute_call()
+    arguments = {name: object() for name in keywords}
+
+    with pytest.raises(TypeError):
+        inspect.signature(IncompleteBoundary.execute).bind(
+            object(), *[object() for _ in positional], **arguments
+        )
+
+    # The corrected contract accepts the very same call; without this second half
+    # the falsification would pass for the wrong reason (a broken helper).
+    inspect.signature(WorkerAdapter.execute).bind(
+        object(), *[object() for _ in positional], **arguments
+    )
 
 
 # --------------------------------------------------------------------------- #

@@ -30,7 +30,6 @@ and the verdict is one of exactly three:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable
 
 from .contracts import (
     AUTHORIZED_EXISTING,

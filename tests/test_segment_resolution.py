@@ -30,7 +30,6 @@ from runtime.toolcalls.segment_resolution import (  # noqa: E402
     KIND_SKILL,
     KIND_WORKFLOW_MODULE,
     SegmentResolutionError,
-    encode_stable_region,
     order_stable_segments,
     resolve_stable_segments,
     stable_segment_refs,
@@ -265,25 +264,20 @@ def test_protocol_bootstrap_is_not_resolved(payload_root: Path):
     assert not any("orchestrator.md" in path for path in paths)
 
 
-def test_encode_stable_region_is_deterministic(payload_root: Path):
-    resolved = resolve_stable_segments(make_context(), payload_root)
-    assert encode_stable_region(resolved) == encode_stable_region(resolved)
+def test_unresolved_required_step_is_never_serialized_as_an_empty_region():
+    """The serialization of the stable region is owned by `canonical`.
 
+    This module resolves segments; it does not decide the bytes of the region.
+    The bytes are produced by `canonical.encode_stable_region`, which is the only
+    serializer RFC-78's stable prefix is built from, and it refuses to emit a
+    region whose required steps were not resolved. A second, more permissive
+    serializer here would silently produce a region missing the declared-empty
+    structural markers the contract requires — so there is none to call.
+    """
+    from runtime.toolcalls.canonical import encode_stable_region
 
-def test_encode_stable_region_uses_lf_and_no_bom(payload_root: Path):
-    encoded = encode_stable_region(resolve_stable_segments(make_context(), payload_root))
-    assert not encoded.startswith(b"\xef\xbb\xbf")
-    assert b"\r\n" not in encoded
-
-
-def test_encode_stable_region_includes_verbatim_content(payload_root: Path):
-    encoded = encode_stable_region(resolve_stable_segments(make_context(), payload_root))
-    assert b"# Role: Executor" in encoded
-    assert b"# H05" in encoded
-
-
-def test_empty_segment_set_encodes_to_empty_bytes():
-    assert encode_stable_region(()) == b""
+    with pytest.raises(SegmentResolutionError):
+        encode_stable_region(())
 
 
 def test_declared_empty_bootstrap_appears_in_the_contract_order():

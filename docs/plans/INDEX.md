@@ -6,15 +6,17 @@
 > Las secciones `## Convenciones` y `## Serie de RFCs (documentos canónicos)`
 > se conservan como anclas de navegación para referencias históricas.
 
-Estado al 2026-09-15. El Plan 128 está `Executed` con condición derivada `Closed`
-(materialización del Placement Contract; docs-only, sin release; Sexagésima
-serie). El Plan 127 está `Executed` con condición derivada `Closed` (**diseño
-cerrado**; `Placement Contract: NOT CREATED` en ese momento; sin release;
-Quincuagésima novena serie). El Plan 126 está `Executed` con condición derivada
-`Closed` (Quincuagésima octava serie, materialización de las decisiones C–K;
-Clase B; release pendiente); el Plan 125 está `Executed` con condición derivada
-`Closed` (docs-only, sin release; Quincuagésima séptima serie, decisiones
-arquitectónicas de estructura del repositorio); el Plan 124 está `Executed` con condición
+Estado al 2026-09-15. El Plan 129 está `Executed` con condición derivada `Closed`
+(cierre de PC-1/PC-2/PC-3 del Placement Contract; docs-only, sin release;
+Sexagésima primera serie). El Plan 128 está `Executed` con condición derivada
+`Closed` (materialización del Placement Contract; docs-only, sin release;
+Sexagésima serie). El Plan 127 está `Executed` con condición derivada `Closed`
+(**diseño cerrado**; `Placement Contract: NOT CREATED` en ese momento; sin
+release; Quincuagésima novena serie). El Plan 126 está `Executed` con condición
+derivada `Closed` (Quincuagésima octava serie, materialización de las decisiones
+C–K; Clase B; release pendiente); el Plan 125 está `Executed` con condición
+derivada `Closed` (docs-only, sin release; Quincuagésima séptima serie,
+decisiones arquitectónicas de estructura del repositorio); el Plan 124 está `Executed` con condición
 derivada `Closed` (docs-only, sin release; Quincuagésima sexta serie, cierre de
 hallazgos de arquitectura de `tests/`); el resto de los planes numerados están
 `Executed`, y la última serie ejecutada con anterioridad es la Quincuagésima
@@ -1002,6 +1004,17 @@ sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
 | `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. |
+
+## Sexagésima primera serie: cierre de PC-1, PC-2 y PC-3 del Placement Contract (Plan 129) (15 sep 2026)
+
+Plan 129 (vía plan; docs-only, sin efecto en `protocol/.agents/`, RFC-56 no aplica).
+Cierra las tres decisiones pendientes del Repository/Artifact Placement Contract
+como un único Change integral, sin implementar el enforcement. No crea ADR, no
+migra nada y no modifica el Change Lifecycle.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `129-pc1-pc2-pc3-closure.md` | — (vía plan, docs-only) | Executed | **PC-1 = CLOSED**: `.project/changes/` es **project-durable** y **Git-persisted**, con las tres propiedades separadas literalmente (`project-durable` = persistencia · `git-persisted` = preservación/versionado por Git · `git commit` = **operación** gobernada por el Change Lifecycle y su autoridad); sin auto-commit, sin `always`/`never commit`, sin `auto-ignore`; el contrato no adquiere autoridad para ejecutar commits ni modifica el Change Lifecycle (§6, §7 paso 6, §21 `PC-67`…`PC-71`). **PC-2 = CLOSED con implementación diferida**: el enforcement mecánico y determinista queda **autorizado como dirección futura** con boundary `Contract = fuente normativa · Enforcement = realización mecánica · Orchestrator = consumidor`, prohibición de segunda fuente normativa, regla «si implementación y contrato discrepan, gobierna el contrato», y las ocho invariantes **E-1…E-8** (determinismo; placement explícito; STOP; no guessing; el enforcement no es source of truth; separación de autoridad; el Orchestrator no reinterpreta STOP como PLACE; escalado humano). **NO implementado**: sin checker, resolver, servicio, hook, integración CI, registry, schema, database ni state machine (§22 `PC-72`…`PC-77`, §23, §24 `PC-79`/`PC-80`). **PC-3 = CLOSED**: las excepciones son **documentales por defecto**, sin representación estructurada ni identificadores, con el procedimiento localizar → verificar owner → interpretar → aplicar → STOP, y **sin** prohibición permanente de una representación futura (§9 `PC-31a`…`PC-31c`). Equivalencias del apéndice actualizadas (`project-durable ≠ git commit operation`, `exception ≠ registry`, `enforcement ≠ source of truth`, `STOP ≠ GUESS`). Registra como finding la colisión de etiquetas entre las decisiones de plan (`PC-1/2/3`) y las reglas internas del contrato (`PC-1`…`PC-80`), sin renumerar unilateralmente (`DECISION REQUIRED` de nomenclatura). Sin `VERSION` bump ni tag. |
 
 ## Sexagésima serie: materialización del Repository/Artifact Placement Contract (Plan 128) (15 sep 2026)
 

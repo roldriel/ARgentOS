@@ -36,6 +36,29 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Modelo conceptual
 
+- **Cierre de PC-1, PC-2 y PC-3 del Placement Contract** (plan 129, docs-only):
+  se cierran las tres decisiones pendientes de `docs/placement-contract.md`.
+  **PC-1**: `.project/changes/` es **project-durable** y **Git-persisted**, y el
+  contrato separa tres propiedades que no deben conflacionarse —
+  `project-durable` (persistencia), `git-persisted` (preservación/versionado por
+  Git) y `git commit` (**operación** gobernada por el Change Lifecycle y su
+  autoridad). No se autoriza auto-commit ni se establece `always`/`never commit`
+  ni `auto-ignore`; el contrato no adquiere autoridad para ejecutar commits y no
+  modifica el Change Lifecycle. **PC-2**: el **enforcement mecánico y
+  determinista** del contrato queda **autorizado como dirección de
+  implementación futura**, con el boundary `Contract = fuente normativa ·
+  Enforcement = realización mecánica · Orchestrator = consumidor`, la prohibición
+  de convertirse en segunda fuente normativa, la regla «si implementación y
+  contrato discrepan, gobierna el contrato», y las ocho invariantes **E-1…E-8**
+  (determinismo; placement explícito; STOP; no guessing; el enforcement no es
+  source of truth; separación de autoridad; el Orchestrator no reinterpreta STOP
+  como PLACE; escalado a autoridad humana). **El enforcement NO está
+  implementado**: sin checker, resolver, servicio, hook del Orchestrator,
+  integración CI, registry, schema, database ni state machine. **PC-3**: las
+  excepciones son **documentales por defecto**, sin representación estructurada
+  ni identificadores, con el procedimiento localizar → verificar owner →
+  interpretar → aplicar → STOP, y sin prohibición permanente de una
+  representación futura. Sin migración, sin ADR nuevo, sin `VERSION` bump ni tag.
 - **Materialización del Repository/Artifact Placement Contract** (plan 128,
   docs-only): se crea `docs/placement-contract.md` como documento normativo
   independiente que determina dónde debe ubicarse un artefacto nuevo en este

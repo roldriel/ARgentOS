@@ -125,10 +125,10 @@ Canonicality status MUST NOT:
 
 ### Project / session state
 
-| Family | Canonical namespace | Status | Distributed |
-|---|---|---|---|
-| Session execution state | `.project/<session-uuid>/<iteration>/`, `.project/orchestrator/` | `generated` | No |
-| Project-durable state | `.project/changes/`, `.project/knowledge/` | source-of-truth (per contract) | No |
+| Family | Canonical namespace | Status | Distributed | Git persistence |
+|---|---|---|---|---|
+| Session execution state | `.project/<session-uuid>/<iteration>/`, `.project/orchestrator/` | `generated` | No | Disposable; not part of durable state |
+| Project-durable state | `.project/changes/`, `.project/knowledge/` | source-of-truth (per contract) | No | **Git-persisted** (§21) |
 
 ### Root-anchored placements (not families)
 
@@ -175,8 +175,10 @@ Canonicality status MUST NOT:
 6. AUTHORITY AND LIFETIME             [METADATA — never selects]
    Declare authority and lifetime independently of the location.
    Authority unknown or contested                    → STOP (AUTHORITY UNRESOLVED)
-   For project-durable artifacts, record project-durable and git-committed
-   as SEPARATE properties; this contract does not decide the second (§21).
+   For project-durable artifacts, record THREE separate properties and do not
+   conflate them: project-durable (persistence property), git-persisted
+   (preservation property), and the git commit operation (governed by the
+   Change Lifecycle and its authority, never by this contract). See §21.
 
 7. CONSTRAINT VALIDATION              [does not re-select]
    a. domain boundary respected?                     (§3)
@@ -235,6 +237,12 @@ An exception MUST:
 **PC-30.** If an agent cannot locate or interpret the exception governing a case → **STOP**.
 
 **PC-31.** No registry, schema, database, global exception index or new identity primitive is created or implied by this contract. A future decision MAY introduce a machine-locatable representation; this contract neither requires nor forbids it.
+
+**PC-31a.** Exceptions are **documentary by default** (decision PC-3, plan 129). This contract does not require, and does not introduce, a structured or encoded representation of exceptions, and exception identifiers do not exist.
+
+**PC-31b.** To apply an exception an agent MUST, in order: (1) **locate** the exception; (2) **verify** the owner that authorized it; (3) **interpret** the rule it states; (4) **apply** it; or (5) **STOP** if it cannot be located or interpreted. Locating and interpreting an exception is a documentary act, not a lookup in a machine-readable store.
+
+**PC-31c.** Machine-locatability is **not prohibited**; it is simply not decided in favour of here. Sufficient future evidence MAY justify a structured representation by a later decision.
 
 ## 10. Move / rename semantics
 
@@ -340,17 +348,63 @@ An exception MUST:
 
 **PC-66.** This contract does not restate the payload boundary rules, the provenance allowlist, the lifetime model, or the documentation taxonomy. It references them. Their normative homes are ADR-17, ADR-18, `.agents/standards/runtime/PROTOCOL_BOUNDARIES.md`, and `docs/AGENTS.md`.
 
-## 21. Deferred: PC-1
+## 21. Project-durable state and Git persistence
 
-**PC-67.** `.project/changes/` is **project-durable** according to the existing architecture, but **Git persistence remains governed by PC-1 and is not decided by this contract**.
+**PC-67.** The Change Governance artifacts held in `.project/changes/` are **project-durable** and **Git-persisted**. They form part of the durable, versionable state of the project and MUST be preservable through Git.
 
-**PC-68.** This contract MUST NOT establish a Git policy for `.project/changes/`. It MUST NOT state or imply *always commit*, *never commit*, *auto-commit* or *auto-ignore*. It records only the distinction `project-durable ≠ git-committed` (ADR-17 `RS-5`).
+**PC-68.** Three properties MUST NOT be conflated, and this contract keeps them separate:
 
-**PC-69.** Sections that would require that decision to be fully normative are marked **`DEFERRED — PC-1`**. Only §6's statement of the durable namespace is affected, and it is recorded without a Git policy.
+```text
+project-durable   = a persistence property of the project's state
+git-persisted     = a preservation / versioning property, realized through Git
+git commit        = an OPERATION, governed by the Change Lifecycle and its
+                    authority — never by this contract
+```
 
-## 22. Non-goals
+**PC-69.** Consequently:
 
-**PC-70.** This contract is **not**:
+- this contract establishes **persistence and preservability**, not commit behaviour;
+- it MUST NOT state or imply *always commit*, *never commit*, *auto-commit* or *auto-ignore*;
+- it does **not** authorize automatic commits;
+- the **act** of committing remains owned by the Change Lifecycle and the authority that governs the Change;
+- this contract acquires **no authority to execute, schedule or withhold commits**.
+
+**PC-70.** Git persistence is a statement about **what may be preserved and versioned**, not about **when or whether a commit happens**. `project-durable ≠ git commit operation`.
+
+**PC-71.** This contract does not modify the Change Lifecycle.
+
+## 22. Enforcement
+
+**PC-72.** Mechanical, deterministic enforcement of this contract **is authorized as a future implementation direction** (decision PC-2, plan 129). It is **not implemented** by this contract, and this contract's existence does not imply that it exists.
+
+**PC-73.** The architectural boundary is:
+
+```text
+Placement Contract   = the normative source
+Enforcement          = a mechanical realization OF the contract
+Orchestrator         = a consumer of the enforcement result
+```
+
+**PC-74.** `25. Enforcement deferred` records that **mechanical enforcement is authorized as a future implementation direction and is not implemented**; it is the planning boundary for that future work, and it creates no mechanism.
+
+**PC-75.** Enforcement MUST NOT become a second normative source. It realizes this contract and nothing more. There is no separate rule registry, and the contract's content MUST NOT be duplicated into a parallel taxonomy. If an implementation and this contract disagree, **this contract governs** and the implementation defect MUST be escalated and corrected — never reconciled by reinterpretation of the contract.
+
+**PC-76.** Any future enforcement MUST preserve these invariants:
+
+- **E-1 Determinism** — same input + same contract version/state ⇒ same result.
+- **E-2 Explicit placement** — a location may be produced ONLY by an explicit rule.
+- **E-3 STOP** — if the required information or rule does not exist ⇒ STOP.
+- **E-4 No guessing** — no implicit result derived from filename, intuition, folder proximity, canonicality alone, `generated` alone, `derived` alone, a requested path, or INDEX prose.
+- **E-5 Contract authority** — enforcement never becomes the source of truth.
+- **E-6 Authority separation** — enforcement does not create artifacts, move artifacts, modify Change state, grant authority, authorize commits, or authorize releases.
+- **E-7 Orchestrator boundary** — a future Orchestrator MAY consult the `PLACE | STOP` result before performing an artifact creation, and MUST NOT reinterpret a STOP as a PLACE.
+- **E-8 Human escalation** — resolution requiring a decision that does not exist escalates `STOP → human authority`, never `STOP → autonomous invention`.
+
+**PC-77.** Enforcement is a separate future Change. This contract neither specifies its interface, its placement, nor its technology.
+
+## 23. Non-goals
+
+**PC-78.** This contract is **not**:
 
 - a global folder taxonomy;
 - an artifact registry, kind registry, ID space or identity primitive;
@@ -358,7 +412,13 @@ An exception MUST:
 - an authority mechanism;
 - a migration authorization;
 - a code or content standard;
-- an enforcement mechanism. **No checker, no Orchestrator integration, no CI integration is created or implied by this contract.** Enforcement is a separate future decision.
+- **an implemented enforcement mechanism.** Mechanical enforcement is an authorized future direction (§22) but is **not implemented**: no checker, resolver, service, Orchestrator hook, CI integration, registry, schema, database or state machine exists or is implied by this contract. See §24.
+
+## 24. Enforcement deferred
+
+**PC-79.** **Mechanical enforcement is authorized as a future implementation direction and is NOT implemented.** This section is the planning boundary for that future work; it creates no mechanism.
+
+**PC-80.** It is the subject of decision PC-2 (plan 129), closed as a decision with its implementation deferred. The invariants any future implementation must preserve are recorded in §22 (`PC-76`).
 
 ---
 
@@ -388,7 +448,10 @@ PLACE  |  STOP                       ← §7, §8
 canonicality        ≠ placement
 generated           ≠ non-canonical
 derived             ≠ same namespace
-project-durable     ≠ git-committed
+project-durable     ≠ git commit operation
+exception           ≠ registry
+enforcement         ≠ source of truth
+STOP                ≠ GUESS
 AGENTS.md           ≠ Placement Contract
 Placement Contract  ≠ registry
 Placement Contract  ≠ state machine

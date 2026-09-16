@@ -36,6 +36,24 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Modelo conceptual
 
+- **Materialización del Repository/Artifact Placement Contract** (plan 128,
+  docs-only): se crea `docs/placement-contract.md` como documento normativo
+  independiente que determina dónde debe ubicarse un artefacto nuevo en este
+  repositorio, o exige detenerse. Regla central: *canonicality qualifies
+  placement; it does NOT determine placement*; el algoritmo resuelve
+  `domain/owner → kind/family → family rule → canonical namespace → canonicality
+  qualification → constraints → PLACE | STOP`, y `GUESS` no es un resultado
+  admisible. Decisiones humanas materializadas: **OQ-2 = NO** (las excepciones
+  se registran en el artefacto que posee la decisión, acotadas al artefacto o la
+  familia; sin registry, schema, database, índice global ni identity primitive,
+  y sin prohibir una representación machine-locatable futura); **OQ-3 = A**
+  (documento independiente bajo `docs/`, sin namespace nuevo, referenciado desde
+  `AGENTS.md` sólo para discovery); **OQ-4 = NO** (sin ADR nuevo; el contrato
+  materializa ADR-17 y ADR-18 y queda downstream de ambos). `PC-1` permanece
+  `OPEN / DEFERRED`: se registra `project-durable ≠ git-committed` sin
+  establecer política de Git para `.project/changes/`. Sin registry, checker,
+  schema, state machine, clase de autoridad, integración de enforcement ni
+  migración. Sin `VERSION` bump ni tag.
 - **Cierre de diseño del Repository/Artifact Placement Contract** (plan 127,
   docs-only): se registra como traza versionada el diseño del contrato de
   placement y su corrección final. Tesis: `domain/owner → kind/family →

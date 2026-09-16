@@ -6,8 +6,10 @@
 > Las secciones `## Convenciones` y `## Serie de RFCs (documentos canónicos)`
 > se conservan como anclas de navegación para referencias históricas.
 
-Estado al 2026-09-15. El Plan 127 está `Executed` con condición derivada `Closed`
-(**diseño cerrado**; `Placement Contract: NOT CREATED`; sin release;
+Estado al 2026-09-15. El Plan 128 está `Executed` con condición derivada `Closed`
+(materialización del Placement Contract; docs-only, sin release; Sexagésima
+serie). El Plan 127 está `Executed` con condición derivada `Closed` (**diseño
+cerrado**; `Placement Contract: NOT CREATED` en ese momento; sin release;
 Quincuagésima novena serie). El Plan 126 está `Executed` con condición derivada
 `Closed` (Quincuagésima octava serie, materialización de las decisiones C–K;
 Clase B; release pendiente); el Plan 125 está `Executed` con condición derivada
@@ -1000,6 +1002,20 @@ sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
 | `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. |
+
+## Sexagésima serie: materialización del Repository/Artifact Placement Contract (Plan 128) (15 sep 2026)
+
+Plan 128 (vía plan; docs-only, sin efecto en `protocol/.agents/`, RFC-56 no aplica).
+Materializa el **Repository/Artifact Placement Contract** como documento normativo
+independiente bajo `docs/`, derivado del diseño cerrado en Plan 127 y de las
+decisiones humanas `OQ-2 = NO`, `OQ-3 = A`, `OQ-4 = NO`, con `PC-1` mantenido
+`OPEN / DEFERRED`. No crea registry, checker, schema, namespace, state machine,
+clase de autoridad ni ADR; no integra enforcement en runtime/Orchestrator/CI; no
+autoriza migración.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `128-placement-contract-materialization.md` | — (vía plan, docs-only) | Executed | Materializa `docs/placement-contract.md`: 22 secciones numeradas con reglas normativas `PC-1`..`PC-70` (purpose/scope, applicability, domain identification, kind/family, canonicality qualification, namespace selection con tablas domain-scoped, algoritmo de 8 pasos, STOP semantics, excepciones, move/rename, distribución, históricos, fixtures, scratch, generado/derivado, responsabilidades del agente, frontera de autoridad humana, relación con `AGENTS.md`, navegación INDEX, relación con ADR-17/ADR-18, `Deferred: PC-1` y non-goals). **OQ-2 = NO**: las excepciones se registran en el artefacto que posee la decisión, acotadas al artefacto o la familia, sin registry/schema/database/índice global/identity primitive, y sin prohibir que una decisión futura introduzca una representación machine-locatable. **OQ-3 = A**: documento independiente `docs/placement-contract.md`, sin namespace nuevo, con `AGENTS.md` sólo referenciándolo para discovery. **OQ-4 = NO**: sin ADR nuevo; el contrato materializa ADR-17 y ADR-18 y se declara downstream de ambos. **PC-1**: sección `Deferred: PC-1` que registra `project-durable ≠ git-committed` sin establecer política de Git. Regla central: *canonicality qualifies placement; it does NOT determine placement*; el algoritmo termina en `PLACE` o `STOP` y `GUESS` no es admisible. Sin `VERSION` bump ni tag. |
 
 ## Quincuagésima novena serie: cierre de diseño del Repository/Artifact Placement Contract (Plan 127) (15 sep 2026)
 

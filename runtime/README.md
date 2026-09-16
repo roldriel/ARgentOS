@@ -153,6 +153,38 @@ The runtime exposes only the abstract pieces (`runtime/toolcalls/provider_cache.
 There is no provider API, no pricing, no universal TTL/eviction and no
 telemetry in this directory.
 
+## Placement resolver (Plan 131)
+
+`runtime/placement/` responde una sola pregunta — *¿dónde va este artefacto?* —
+con `PLACE` o `STOP`, nunca con una conjetura. Consume
+`docs/placement-contract.md` y **no** lo reemplaza.
+
+- `rules.py` realiza la tabla de familias del contrato (§6), con la procedencia
+  de sección de cada fila y los artefactos de path exacto. Las reglas no viven
+  aquí: viven en el contrato.
+- `resolver.py` implementa el algoritmo de §7 en su orden
+  (`domain/owner → kind/family → family rule → canonical namespace →
+  canonicality qualification → constraints → PLACE | STOP`) y la verificación de
+  ubicación de §16 (`PC-51`). Es una función **pura**: no lee filesystem, reloj,
+  rama, CWD ni caché.
+- Invariantes que no se debilitan: `canonicality` es un **cualificador** y nunca
+  selecciona ni crea namespace (§5); `kind` **no** es un enum global cerrado
+  (§4, `PC-8`) y un kind sin regla devuelve `STOP (NEW_FAMILY)`; no hay fallback,
+  ni "match más cercano", ni inferencia por parecido de una carpeta; las
+  excepciones son una entrada del llamador (`PC-27`), nunca un registry.
+
+Frontera: `Contract = fuente normativa · Resolver = realización mecánica ·
+Consumidor = agente / humano / Orchestrator`. Si una implementación y el
+contrato discrepan, **gobierna el contrato** y el defecto de implementación se
+escala y se corrige — nunca se reconcilia reinterpretando el contrato (`PC-75`).
+Por eso el resolver **no** es un hook del Orchestrator (`PC-73`, `PC-78`) y no
+hay enforcement global ni integración CI.
+
+Guarda de deriva: `tests/test_placement_contract_drift.py` falla si la tabla
+realizada y el contrato publicado divergen. Dogfood sobre el repositorio real:
+`tests/test_placement_dogfood.py`. Comportamiento y falsación:
+`tests/test_placement_resolver.py`.
+
 ## DEV Autonomous Orchestrator (Plan 122)
 
 `runtime/orchestrator/` is a **DEV host**: it conducts the Change Lifecycle of

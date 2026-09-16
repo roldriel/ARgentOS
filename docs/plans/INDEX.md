@@ -6,7 +6,10 @@
 > Las secciones `## Convenciones` y `## Serie de RFCs (documentos canónicos)`
 > se conservan como anclas de navegación para referencias históricas.
 
-Estado al 2026-09-15. El Plan 130 está `Executed` con condición derivada `Closed`
+Estado al 2026-09-15. El Plan 131 está `Executed` con condición derivada `Closed`
+(implementación mecánica del Placement Contract como resolver determinista; DEV
+`runtime/` + `tests/`, sin release; Sexagésima tercera serie). El Plan 130 está
+`Executed` con condición derivada `Closed`
 (corrección nomenclatural de Plan 129; docs-only, sin release; Sexagésima segunda
 serie). El Plan 129 está `Executed` con condición derivada `Closed`
 (cierre de `PLAN-129:DEC-1/DEC-2/DEC-3` del Placement Contract; docs-only, sin release;
@@ -1006,6 +1009,18 @@ sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
 | `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. |
+
+## Sexagésima tercera serie: implementación mecánica del Placement Contract (Plan 131) (15 sep 2026)
+
+Plan 131 (vía plan; DEV `runtime/` + `tests/`, sin efecto en `protocol/.agents/`,
+RFC-56 no aplica). Materializa `docs/placement-contract.md` como un resolver
+determinista: `PLACE` con el namespace canónico y la regla que lo autoriza, o
+`STOP` con el disparador que falta. Consume `PLAN-129:DEC-2` (enforcement
+autorizado como dirección futura) y no reinterpreta el contrato.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `131-placement-contract-mechanical-implementation.md` | — (vía plan, DEV runtime/tests) | Executed | Implementación mecánica del Placement Contract. **Nuevo paquete `runtime/placement/`**: `rules.py` (realización de la tabla de familias del contrato §6 con la procedencia de sección de cada fila, el discriminante estructural `flat` de las formas `(root)`/`(flat)`, familias root-anchored y artefactos de path exacto), `resolver.py` (algoritmo §7 en su orden: identificación semántica → dominio → kind/familia dentro del dominio → namespace canónico → canonicality como cualificador → autoridad/lifetime como metadata → constraints → `PLACE`; más `verify_path()` para `§16 PC-51`), `__init__.py` (superficie pública). **Tres suites nuevas**: `tests/test_placement_resolver.py` (comportamiento y falsación de la propiedad central), `tests/test_placement_contract_drift.py` (guarda de deriva: namespaces, familias, disparadores de STOP, canonicalities y semántica de Git persistence sin interpretar prosa) y `tests/test_placement_dogfood.py` (módulo anclado al repo real, sólo lectura: evidencia `PLACE` citando §6 y `STOP` con lo requerido). Propiedad garantizada: `regla explícita → PLACE`; `sin regla / ambigua / información insuficiente → STOP`; `guess plausible → NUNCA PLACE`. `canonicality` nunca selecciona ni crea namespace; `kind` no es un enum global cerrado; las excepciones son entrada del llamador, no registry. **Es una librería, no un hook**: `PC-78`/`PC-79` excluyen el hook del Orchestrator y `PC-73` lo define como consumidor, así que no se integra en `runtime/orchestrator/`. Findings `F-1`..`F-3` (tabla realizada más amplia que el contrato; `historical` como licencia de ubicación; nombre de familia sin contrapartida) corregidos por `C-1`. `docs/placement-contract.md` con **0 diff**. Sin entidad/registry/ID/state machine/autoridad/lifecycle/taxonomía global nuevos; sin CI, hook, branch protection ni enforcement global; sin ADR; sin migración. Sin `VERSION` bump ni tag. |
 
 ## Sexagésima segunda serie: corrección nomenclatural de Plan 129 (Plan 130) (15 sep 2026)
 

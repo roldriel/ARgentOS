@@ -36,6 +36,29 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Modelo conceptual
 
+- **Implementación mecánica del Placement Contract** (plan 131, DEV `runtime/` +
+  `tests/`, sin efecto en el payload): `docs/placement-contract.md` se materializa
+  como un **resolver determinista** — `PLACE` con el namespace canónico y la regla
+  que lo autoriza, o `STOP` con el disparador que falta — de modo que un agente
+  deja de tener que **adivinar** dónde va un artefacto. Propiedad garantizada:
+  `regla explícita y aplicable → PLACE`; `sin regla aplicable / regla ambigua /
+  información insuficiente → STOP`; `camino plausible → NUNCA PLACE`. Nuevo
+  paquete `runtime/placement/` (`rules.py` realiza la tabla de familias del
+  contrato §6 con la procedencia de cada fila; `resolver.py` implementa el
+  algoritmo §7 y la verificación de ubicación de `§16 PC-51`), con tres suites:
+  comportamiento y falsación, guarda de deriva contra el contrato y *dogfood*
+  anclado al repositorio real. `canonicality` **nunca** selecciona ni crea
+  namespace (es un cualificador); `kind` no es un enum global cerrado (el
+  vocabulario es domain-scoped y un kind sin regla devuelve `NEW_FAMILY`); las
+  excepciones son una **entrada** del llamador, no un registry. **El enforcement
+  se materializa como librería, no como hook**: `docs/placement-contract.md`
+  §23/§24 (`PC-78`/`PC-79`) excluyen el hook del Orchestrator y §22 (`PC-73`) lo
+  define como consumidor, así que no se integra en `runtime/orchestrator/`. El
+  contrato queda **con 0 diff**: 80 reglas y 3 variantes intactas. Sin entidad
+  `Placement`, registry, base de datos, ID, state machine, clase de autoridad,
+  lifecycle, taxonomía global de artefactos ni identidad universal nuevos; sin CI,
+  hook de pre-commit, branch protection ni enforcement global; sin ADR; sin
+  migración. Sin `VERSION` bump ni tag.
 - **Corrección nomenclatural de Plan 129** (plan 130, docs-only): se corrige la
   colisión de identificadores registrada en `<PLAN-129>:F-2`. Los identificadores
   de decisión de Plan 129 pasan de `PC-1`/`PC-2`/`PC-3` a **`PLAN-129:DEC-1`**,

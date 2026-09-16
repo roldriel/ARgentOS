@@ -6,11 +6,13 @@
 > Las secciones `## Convenciones` y `## Serie de RFCs (documentos canónicos)`
 > se conservan como anclas de navegación para referencias históricas.
 
-Estado al 2026-09-15. El Plan 126 está `Executed` con condición derivada `Closed`
-(Quincuagésima octava serie, materialización de las decisiones C–K; Clase B;
-release pendiente); el Plan 125 está `Executed` con condición derivada `Closed`
-(docs-only, sin release; Quincuagésima séptima serie, decisiones arquitectónicas
-de estructura del repositorio); el Plan 124 está `Executed` con condición
+Estado al 2026-09-15. El Plan 127 está `Executed` con condición derivada `Closed`
+(**diseño cerrado**; `Placement Contract: NOT CREATED`; sin release;
+Quincuagésima novena serie). El Plan 126 está `Executed` con condición derivada
+`Closed` (Quincuagésima octava serie, materialización de las decisiones C–K;
+Clase B; release pendiente); el Plan 125 está `Executed` con condición derivada
+`Closed` (docs-only, sin release; Quincuagésima séptima serie, decisiones
+arquitectónicas de estructura del repositorio); el Plan 124 está `Executed` con condición
 derivada `Closed` (docs-only, sin release; Quincuagésima sexta serie, cierre de
 hallazgos de arquitectura de `tests/`); el resto de los planes numerados están
 `Executed`, y la última serie ejecutada con anterioridad es la Quincuagésima
@@ -998,6 +1000,20 @@ sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
 | `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. |
+
+## Quincuagésima novena serie: cierre de diseño del Repository/Artifact Placement Contract (Plan 127) (15 sep 2026)
+
+Plan 127 (vía plan; docs-only, sin efecto en `protocol/.agents/`, RFC-56 no aplica).
+Registra el cierre formal del **diseño** del Repository/Artifact Placement Contract y
+persiste como traza versionada su modelo semántico corregido, su algoritmo de
+resolución, su modelo de STOP y sus decisiones pendientes. El plan **no** materializa
+el contrato, no crea registry, checker, schema, namespace ni ADR, y no autoriza
+migración alguna. Depende de ADR-17 y ADR-18 como arquitectura upstream, que no
+modifica. **`Design: CLOSED` · `Placement Contract: NOT CREATED` · `Migration: NOT STARTED`.**
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `127-repository-artifact-placement-contract-design.md` | — (vía plan, docs-only) | Executed | Diseño del Repository/Artifact Placement Contract: tesis central `domain/owner → kind/family → family rule → canonical namespace → canonicality qualification → constraints → PLACE \| STOP`; **dos discriminadores** (dominio/owner, kind/family) y **un cualificador** (canonicality), con la regla universal de que canonicality nunca selecciona ni crea namespace; `kind` **no** es enum global cerrado (tabla domain-scoped, alineada con ADR-18 `RS-11`); **15 familias canónicas + 3 reglas root-anchored + 2 no-familias**; modelo de canonicalidad corregido (`generated ≠ non-canonical`, `derived ≠ same namespace`; la ubicación proviene siempre de una regla explícita y su ausencia produce `STOP (UNDEFINED PLACEMENT)`, sin STOP nuevo); algoritmo de 8 pasos; 9 triggers de STOP mapeados al vocabulario existente (GAP / ANOMALY / `REQUIRES_HUMAN`) sin crear clase de autoridad, estado de lifecycle ni estado de state machine; modelo de excepciones acotado al artefacto que posee la decisión (sin registry); move/rename separado del placement nuevo (`RS-7`, RFC-46); distribución declarada **domain+namespace-scoped** (`protocol/.agents/` se distribuye; el `.agents/` de DEV nunca); lifetime semántico, sin topología (`RS-2`/`RS-5`); contrato del agente para 5 casos (nuevo, dudoso, no canónico pedido, familia nueva, cross-domain); tabla de machine-verifiability; integración con el Orchestrator como consulta (preflight antes de delegar, verificación de scope después, evidencia en el cierre) sin gate ni registry; current→target sin migración; y registro de las correcciones C1–C9 con BEFORE/AFTER/REASON. Recomendación (no decisión): variante **B — Structured placement**. Deja **explícitamente abiertas** `OQ-2` (excepciones machine-locatable), `OQ-3` (ubicación canónica del contrato), `OQ-4` (ADR-worthiness de la materialización) y `PC-1` (persistencia Git de `.project/changes/`). Sin `VERSION` bump ni tag. |
 
 ## Quincuagésima octava serie: materialización de las decisiones C–K (Plan 126) (15 sep 2026)
 

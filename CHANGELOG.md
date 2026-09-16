@@ -36,6 +36,26 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Modelo conceptual
 
+- **Cierre de diseño del Repository/Artifact Placement Contract** (plan 127,
+  docs-only): se registra como traza versionada el diseño del contrato de
+  placement y su corrección final. Tesis: `domain/owner → kind/family →
+  family rule → canonical namespace → canonicality qualification → constraints
+  → PLACE | STOP`, con **dos discriminadores** (dominio/owner, kind/family) y
+  **un cualificador** (canonicality). Regla central: *canonicality cualifica
+  placement; no lo determina*; la ubicación proviene siempre de una regla
+  explícita y su ausencia produce **STOP**, nunca inferencia. `generated` no
+  implica estar fuera del repositorio, fuera del canonical state, ignorado,
+  branch ni non-canonical; `derived` no implica compartir namespace con su
+  fuente. `kind` no es un enum global cerrado (tabla domain-scoped, ADR-18
+  `RS-11`). Inventario: 15 familias canónicas + 3 reglas root-anchored + 2
+  no-familias. Distribución declarada **domain+namespace-scoped**
+  (`protocol/.agents/` se distribuye; el `.agents/` de DEV nunca). Sin registry,
+  sin checker, sin schema, sin namespace nuevo, sin state machine, sin clase de
+  autoridad, sin ADR adicional y sin migración. Quedan **abiertas** `OQ-2`
+  (excepciones machine-locatable), `OQ-3` (ubicación canónica del contrato),
+  `OQ-4` (ADR-worthiness de la materialización) y `PC-1` (persistencia Git de
+  `.project/changes/`). **Design: CLOSED · Placement Contract: NOT CREATED ·
+  Migration: NOT STARTED · Release: NOT AUTHORIZED.** Sin `VERSION` bump ni tag.
 - **Frontera del payload, provenance y clasificación** (plan 126, ADR-18; Clase B
   de RFC-56): se materializan las decisiones arquitectónicas C–K. Los tests del
   harness (`.agents/harness/tests/`) quedan declarados **parte del payload

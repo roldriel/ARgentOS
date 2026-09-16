@@ -1,4 +1,4 @@
-# Plan 129 — Cierre de PC-1, PC-2 y PC-3 del Repository/Artifact Placement Contract
+# Plan 129 — Cierre de DEC-1, DEC-2 y DEC-3 del Repository/Artifact Placement Contract
 
 **Status:** Executed
 **Fecha:** 2026-09-15
@@ -6,15 +6,15 @@
 **Clase:** — (no aplica: el plan no toca `protocol/.agents/`)
 **Change Level:** L1 (`max(coordination=0, scope=1, architectural impact=1, release impact=0, duration/complexity=1)`; RFC-75 Mecanismo 2). *coordination*: 1 agente, sesión única. *scope*: un dominio DEV y cuatro artefactos documentales. *architectural impact*: cierra tres decisiones ya tomadas y registra invariantes de una implementación futura; no introduce arquitectura nueva ni primitivas. *release impact*: ninguno. *duration/complexity*: acotada.
 **Depende de:** Plan 128 (`docs/plans/128-placement-contract-materialization.md`), que materializó `docs/placement-contract.md`; y Plan 127 (design record). Consume, sin modificarlas: ADR-17, ADR-18, RFC-46, RFC-56, RFC-75, ADR-15 y ADR-16.
-**Origen:** Directiva del mantenedor (2026-09-15) que decide y ordena materializar **PC-1**, **PC-2** y **PC-3** como un único Change integral, sin implementar el enforcement de PC-2.
+**Origen:** Directiva del mantenedor (2026-09-15) que decide y ordena materializar **DEC-1**, **DEC-2** y **DEC-3** como un único Change integral, sin implementar el enforcement de DEC-2.
 
 ## Objetivo
 
 Cerrar las tres decisiones pendientes del Placement Contract y reflejarlas normativamente en `docs/placement-contract.md`:
 
-- **PC-1** — `.project/changes/` es **project-durable** y **Git-persisted**; el **acto de commit** permanece gobernado por el Change Lifecycle y su autoridad, y el contrato no adquiere autoridad para ejecutarlo.
-- **PC-2** — el **enforcement mecánico y determinista** del contrato queda **autorizado como dirección de implementación futura**, con su boundary, sus invariantes y la relación Contract → enforcement → Orchestrator registradas; **no se implementa**.
-- **PC-3** — las excepciones continúan siendo **documentales por defecto**; no se introduce representación machine-locatable, sin convertir la decisión en prohibición permanente.
+- **DEC-1** — `.project/changes/` es **project-durable** y **Git-persisted**; el **acto de commit** permanece gobernado por el Change Lifecycle y su autoridad, y el contrato no adquiere autoridad para ejecutarlo.
+- **DEC-2** — el **enforcement mecánico y determinista** del contrato queda **autorizado como dirección de implementación futura**, con su boundary, sus invariantes y la relación Contract → enforcement → Orchestrator registradas; **no se implementa**.
+- **DEC-3** — las excepciones continúan siendo **documentales por defecto**; no se introduce representación machine-locatable, sin convertir la decisión en prohibición permanente.
 
 Este plan **no** implementa enforcement (checker, resolver, servicio, hook del Orchestrator, integración CI, registry, schema, database ni state machine), **no** crea ADR, **no** migra nada y **no** modifica el Change Lifecycle.
 
@@ -23,12 +23,12 @@ Este plan **no** implementa enforcement (checker, resolver, servicio, hook del O
 - [x] `dev` limpio en `0bc4e6768a23acda40b6ef5e6fe466e49588a261` (verificado con `git status --short` y `git rev-parse HEAD`); coincide con el commit de cierre de Plan 128.
 - [x] `docs/placement-contract.md` existe (Plan 128 materializado).
 - [x] `docs/plans/128-placement-contract-materialization.md` existe.
-- [x] Las decisiones pendientes del contrato corresponden exactamente a PC-1, PC-2 y PC-3 (`docs/plans/128-placement-contract-materialization.md:Findings / Correcciones / Pending`).
+- [x] Las decisiones pendientes del contrato corresponden exactamente a DEC-1, DEC-2 y DEC-3 (`docs/plans/128-placement-contract-materialization.md:Findings / Correcciones / Pending`).
 - [x] Decisiones humanas explícitas sobre las tres.
 
 ## Entregables
 
-1. `docs/placement-contract.md` — PC-1 cerrado como regla normativa; PC-2 registrado con boundary e invariantes; PC-3 precisado como documental; no-goals alineados; equivalencias del apéndice actualizadas.
+1. `docs/placement-contract.md` — DEC-1 cerrado como regla normativa; DEC-2 registrado con boundary e invariantes; DEC-3 precisado como documental; no-goals alineados; equivalencias del apéndice actualizadas.
 2. `docs/plans/129-pc1-pc2-pc3-closure.md` (**este archivo**).
 3. `docs/plans/INDEX.md` — registro del plan.
 4. `CHANGELOG.md` — ítem `[Unreleased]` del par (plan 129).
@@ -36,17 +36,17 @@ Este plan **no** implementa enforcement (checker, resolver, servicio, hook del O
 ## Pasos
 
 1. Verificar baseline y coherencia con Plan 128.
-2. Materializar PC-1 en §6, §7 y §21; eliminar la condición deferred.
-3. Materializar PC-2 en §22 y §24, con la relación Contract → enforcement → Orchestrator y las invariantes E-1…E-8.
-4. Materializar PC-3 en §9, sin formato estructurado ni identificadores de excepción.
+2. Materializar DEC-1 en §6, §7 y §21; eliminar la condición deferred.
+3. Materializar DEC-2 en §22 y §24, con la relación Contract → enforcement → Orchestrator y las invariantes E-1…E-8.
+4. Materializar DEC-3 en §9, sin formato estructurado ni identificadores de excepción.
 5. Revisión transversal de coherencia entre las secciones afectadas.
 6. Registrar Plan 129, INDEX y changelog; determinar Documentation Impact; validar.
 
 ## Criterios de salida
 
-- [ ] PC-1 ya **no** aparece como `OPEN / DEFERRED`; `.project/changes/` se declara project-durable **y** Git-persisted; las tres propiedades (project-durable / git-persisted / git commit) quedan separadas; sin política afirmativa de auto-commit; Change Lifecycle intacto.
-- [ ] PC-2 registrado como decisión **cerrada con implementación diferida**; boundary Contract/enforcement/Orchestrator explícito; las ocho invariantes E-1…E-8 registradas; prohibición de segunda fuente normativa y regla «si implementación y contrato discrepan, gobierna el contrato».
-- [ ] PC-3: excepciones documentales por defecto; procedimiento localizar → verificar owner → interpretar → aplicar → STOP; sin registry, schema, database, índice global ni identity primitive; sin prohibición permanente.
+- [ ] DEC-1 ya **no** aparece como `OPEN / DEFERRED`; `.project/changes/` se declara project-durable **y** Git-persisted; las tres propiedades (project-durable / git-persisted / git commit) quedan separadas; sin política afirmativa de auto-commit; Change Lifecycle intacto.
+- [ ] DEC-2 registrado como decisión **cerrada con implementación diferida**; boundary Contract/enforcement/Orchestrator explícito; las ocho invariantes E-1…E-8 registradas; prohibición de segunda fuente normativa y regla «si implementación y contrato discrepan, gobierna el contrato».
+- [ ] DEC-3: excepciones documentales por defecto; procedimiento localizar → verificar owner → interpretar → aplicar → STOP; sin registry, schema, database, índice global ni identity primitive; sin prohibición permanente.
 - [ ] Equivalencias del apéndice actualizadas (`project-durable ≠ git commit operation`, `exception ≠ registry`, `enforcement ≠ source of truth`, `STOP ≠ GUESS`).
 - [ ] Sin checker, resolver, servicio, hook, integración CI, registry, schema, database, state machine, lifecycle nuevo, autoridad nueva ni ADR.
 - [ ] Sin migración; `protocol/`, `runtime/`, `tools/`, `tests/` sin cambios; DEV ≠ Protocol intacto.
@@ -69,7 +69,7 @@ git diff --name-status
 
 ## Decisiones humanas materializadas
 
-### PC-1 — project-durable / Git persistence
+### DEC-1 — project-durable / Git persistence
 
 **Decisión (mantenedor, 2026-09-15):** `.project/changes/` es **project-durable** y **Git-persisted**; `project-durable ≠ git commit operation`.
 
@@ -81,9 +81,9 @@ Materialización en `docs/placement-contract.md`:
 | §7 paso 6 | resolución | Deben registrarse **tres** propiedades separadas — `project-durable`, `git-persisted` y la **operación** `git commit` — sin conflacionarlas; remite a §21 |
 | §21 | **`PC-67`…`PC-71`** | Renombrada de «Deferred: PC-1» a **«Project-durable state and Git persistence»**. Los artifacts son project-durable **y Git-persisted** y deben poder preservarse mediante Git; se fija la separación literal de las tres propiedades; se prohíbe expresamente `always commit` / `never commit` / `auto-commit` / `auto-ignore`; se declara que el contrato no autoriza commits automáticos, que el acto de commit pertenece al Change Lifecycle y a su autoridad, y que el contrato **no adquiere autoridad** para ejecutar, programar ni retener commits; `PC-70` fija `project-durable ≠ git commit operation`; `PC-71` declara que el contrato no modifica el Change Lifecycle |
 
-**No resuelto por inferencia:** nada. La ambigüedad que dejaba PC-1 abierto está cerrada; lo que permanece fuera del contrato es la **operación** de commit, que por decisión pertenece a otro dominio de autoridad.
+**No resuelto por inferencia:** nada. La ambigüedad que dejaba DEC-1 abierto está cerrada; lo que permanece fuera del contrato es la **operación** de commit, que por decisión pertenece a otro dominio de autoridad.
 
-### PC-2 — Enforcement
+### DEC-2 — Enforcement
 
 **Decisión (mantenedor, 2026-09-15):** **SÍ** — ARgentOS debe disponer de enforcement mecánico y determinista derivado del Placement Contract, capaz de producir `PLACE` o `STOP`, nunca `GUESS`. **La implementación queda diferida a otro Change.**
 
@@ -93,7 +93,7 @@ Materialización en `docs/placement-contract.md`:
 |---|---|---|
 | §22 | **`PC-72`…`PC-77`** | Boundary arquitectónico: `Placement Contract = fuente normativa` · `Enforcement = realización mecánica del contrato` · `Orchestrator = consumidor del resultado`. El enforcement **no** puede convertirse en segunda fuente normativa; no hay registry de reglas separado ni taxonomía paralela; si implementación y contrato discrepan, **gobierna el contrato** y el defecto se escala y corrige, nunca se reconcilia reinterpretando el contrato. Se registran las ocho invariantes |
 | §23 | no-goals | La viñeta de enforcement se reformula: no es un mecanismo **implementado**; el estado autorizado se remite a §22 y §24 |
-| §24 | **`PC-79`**, **`PC-80`** | **Enforcement deferred**: el enforcement mecánico está autorizado como dirección futura y **NO está implementado**; es el límite de planificación, no un mecanismo. Sujeto a la decisión PC-2 de este plan, cerrada con implementación diferida |
+| §24 | **`PC-79`**, **`PC-80`** | **Enforcement deferred**: el enforcement mecánico está autorizado como dirección futura y **NO está implementado**; es el límite de planificación, no un mecanismo. Sujeto a la decisión DEC-2 de este plan, cerrada con implementación diferida |
 | apéndice | equivalencias | Se añade `enforcement ≠ source of truth` y `STOP ≠ GUESS` |
 
 **Invariantes registradas para el futuro enforcement (E-1…E-8):**
@@ -111,15 +111,21 @@ Materialización en `docs/placement-contract.md`:
 
 **No implementado (por decisión):** checker, resolver runtime, servicio de placement, hook del Orchestrator, integración CI, registry, schema, database y state machine. La implementación será otro Change autorizado.
 
-### PC-3 — Machine-locatable exceptions
+### DEC-3 — Machine-locatable exceptions
 
 **Decisión (mantenedor, 2026-09-15):** **NO** introducir ahora una representación machine-locatable. Las excepciones siguen siendo documentales. La decisión **no** es una prohibición permanente.
 
 Materialización en `docs/placement-contract.md:9. Exceptions` (**`PC-31a`**…**`PC-31c`**): las excepciones son **documentales por defecto**; no se introduce representación estructurada ni codificada y **no existen identificadores de excepción**; el procedimiento del agente queda fijado en cinco pasos — **localizar → verificar el owner → interpretar la regla → aplicar → o STOP** si no puede localizarla o interpretarla — y se declara que localizar e interpretar es un **acto documental, no una consulta a un store machine-readable**. Se mantiene `PC-31`: sin registry, schema, database, índice global ni identity primitive, y **sin prohibir** que una decisión futura con evidencia suficiente introduzca una representación estructurada.
 
-## Nota de nomenclatura (colisión de etiquetas)
+## Nota de nomenclatura (colisión de etiquetas) — corregida
 
-Se registra una ambigüedad de etiquetado, **sin corregirla unilateralmente**: los identificadores de decisión pendiente de los planes 127/128 (`PC-1`, `PC-2`, `PC-3`) coinciden con las etiquetas de regla internas del propio contrato (`PC-1`…`PC-80`). El uso es distinguible por contexto (`docs/placement-contract.md` para reglas; `docs/plans/*` para decisiones pendientes), y esta colisión existía ya en el contrato materializado por Plan 128 —que también usaba `PC-n` para sus reglas—, de modo que el problema es de nomenclatura heredada, no de semántica. **No se renumeran las reglas del contrato en este Change**: hacerlo reescribiría 80 etiquetas y decenas de referencias sin cambio normativo, y ese es un `DECISION REQUIRED` de nomenclatura que corresponde al mantenedor. Queda registrado como `PC-1` de este plan (ver pendientes).
+Este plan registró originalmente sus tres decisiones como `PC-1`, `PC-2` y `PC-3`, que colisionaban con las etiquetas de regla internas de `docs/placement-contract.md` (`PC-1`…`PC-80`). La colisión fue registrada sin corrección unilateral y quedó como `<PLAN-129>:F-2`.
+
+**Resuelta por corrección autorizada (Plan 130):** los identificadores de decisión de este plan pasan a **`PLAN-129:DEC-1`**, **`PLAN-129:DEC-2`** y **`PLAN-129:DEC-3`**. Las etiquetas de regla del Placement Contract **no** se modifican: siguen siendo `PC-1`…`PC-80` (con variantes `PC-31a`…`PC-31c`). Los dos namespaces textuales quedan ahora **disjuntos**, de modo que un agente no necesita inferir el significado de un identificador por contexto.
+
+**Semántica preservada:** `PLAN-129:DEC-1` es la decisión de persistencia de `.project/changes/`; `PC-1` es la primera regla del contrato («this contract exists to remove guesswork»). No hay solapamiento.
+
+**No se generaliza:** este Change corrige únicamente Plan 129. No se introduce ni se propone una convención global `PLAN-<N>:DEC-<N>` para todos los planes; una decisión de ese alcance correspondería al mantenedor.
 
 ## Revisión transversal de coherencia
 
@@ -128,7 +134,7 @@ Revisadas las secciones afectadas por las tres decisiones. Resultados:
 | Comprobación | Resultado |
 |---|---|
 | `project-durable` / `git-persisted` / `git commit` separados en §6, §7 y §21 | **coherente** |
-| `PC-1` ya no aparece como `OPEN`/`DEFERRED` ni como `DEFERRED — PC-1` en el contrato | **0 ocurrencias** |
+| `DEC-1` no aparece como `OPEN` ni como `DEFERRED — PC-1` en el contrato | **0 ocurrencias** |
 | Ninguna afirmación de política de commit (`always/never/auto commit`, `auto-ignore`) salvo la prohibición de `PC-69` | **coherente** |
 | Enforcement: §22 (boundary + invariantes), §23 (no-goal reformulado) y §24 (deferred) sin contradicción | **coherente** |
 | La viñeta de non-goals ya no excluye el enforcement en absoluto, sino su **implementación** | **coherente** |
@@ -142,28 +148,30 @@ Revisadas las secciones afectadas por las tres decisiones. Resultados:
 
 ### Findings
 
-- `<PLAN-129>:F-1` — estado: `open`; severidad: `low`; observación: el contrato materializado por Plan 128 dejaba PC-1 como sección `21. Deferred: PC-1` y marcaba una sección como `DEFERRED — PC-1`, de modo que `.project/changes/` quedaba sin semántica de persistencia cerrada y un agente no podía determinar normativamente si el estado durable debía preservarse; evidencia original: `docs/placement-contract.md` (Plan 128) §21 y §6 con la marca `DEFERRED — PC-1`; estado Git observado: `dev` @ `0bc4e67`, working tree limpio; provenance original: Plan 128 `PC-1` y decisión humana de cierre (2026-09-15); resolución: materializada por `<PLAN-129>:C-1`.
-- `<PLAN-129>:F-2` — estado: `open`; severidad: `low`; observación: colisión de etiquetas entre los identificadores de decisión pendiente de los planes 127/128 (`PC-1`, `PC-2`, `PC-3`) y las etiquetas de regla internas del contrato (`PC-1`…`PC-80`), heredada de Plan 128; evidencia original: `docs/placement-contract.md` (etiquetas `PC-n`) frente a `docs/plans/128-placement-contract-materialization.md:Findings / Correcciones / Pending` (decisiones `PC-n`); estado Git observado: `dev` @ `0bc4e67`, working tree limpio; provenance original: Plan 128; resolución: **no resuelta** — registrada como `DECISION REQUIRED` de nomenclatura, sin renumerar unilateralmente.
+- `<PLAN-129>:F-1` — estado: `open`; severidad: `low`; observación: el contrato materializado por Plan 128 dejaba la persistencia como sección `21. Deferred: PC-1` y marcaba una sección como `DEFERRED — PC-1`, de modo que `.project/changes/` quedaba sin semántica de persistencia cerrada y un agente no podía determinar normativamente si el estado durable debía preservarse; evidencia original: `docs/placement-contract.md` (Plan 128) §21 y §6 con la marca `DEFERRED — PC-1`; estado Git observado: `dev` @ `0bc4e67`, working tree limpio; provenance original: Plan 128 (decisión de persistencia, entonces rotulada `PC-1`) y decisión humana de cierre (2026-09-15); resolución: materializada por `<PLAN-129>:C-1`.
+- `<PLAN-129>:F-2` — estado: **`resolved`**; severidad: `low`; observación: colisión de namespaces textuales entre los identificadores de decisión de nivel de plan (`PC-1`, `PC-2`, `PC-3`) y las etiquetas de regla internas del Placement Contract (`PC-1`…`PC-80`), heredada de Plan 128; el mismo namespace representaba dos conceptos distintos, de modo que un agente debía inferir el significado por contexto; evidencia original: `docs/placement-contract.md` (etiquetas de regla `PC-n`) frente a `docs/plans/128-placement-contract-materialization.md:Findings / Correcciones / Pending` (decisiones `PC-n`); estado Git observado: `dev` @ `0bc4e67`, working tree limpio; provenance original: Plan 128; resolución: **RESUELTA por el mantenedor (2026-09-15)** mediante el renombrado autorizado de Plan 130 de los identificadores de decisión de este plan a **`PLAN-129:DEC-1`**, **`PLAN-129:DEC-2`** y **`PLAN-129:DEC-3`**, sin tocar las etiquetas de regla del Placement Contract; la ambigüedad queda eliminada porque ambos namespaces son ahora disjuntos; corregida por `<PLAN-129>:C-2`.
 
 ### Correcciones
 
 - `<PLAN-129>:C-1` — refs origen: `<PLAN-129>:F-1`; alcance de revalidación: `docs/placement-contract.md` (§6, §7, §9, §21, §22, §23, §24 y apéndice), `docs/plans/129-pc1-pc2-pc3-closure.md`, `docs/plans/INDEX.md`, `CHANGELOG.md`; evidencia (Git/commit/estado): batería canónica en verde y gates C-1/C-2/C-3 `VALID`; commit atómico de cierre.
+- `<PLAN-129>:C-2` — refs origen: `<PLAN-129>:F-2`; alcance de revalidación: los identificadores de decisión de este plan (`docs/plans/129-pc1-pc2-pc3-closure.md`) y sus referencias en `docs/plans/INDEX.md` y `CHANGELOG.md`; evidencia (Git/commit/estado): renombrado a `PLAN-129:DEC-1`/`DEC-2`/`DEC-3` sin modificar ninguna etiqueta de regla del contrato (Plan 130, commit atómico).
 
 ### Pending decisions
 
-- `<PLAN-129>:PC-1` — decisión: nomenclatura. ¿Deben renumerarse las etiquetas de regla internas del contrato (`PC-n`) para eliminar la colisión con los identificadores de decisión de los planes (`PC-1`/`PC-2`/`PC-3`), o debe mantenerse el etiquetado actual distinguido por contexto?; blocking: no; owner: mantenedor; escalación: decisión directa si la colisión causa ambigüedad operativa; resolución: pendiente; evidencia: `<PLAN-129>:F-2`.
-- `<PLAN-129>:PC-2` — decisión: autorizar e implementar el enforcement mecánico de PC-2 (checker, resolver, servicio, boundary del Orchestrator, integración CI). La **dirección** ya está autorizada y las invariantes E-1…E-8 registradas; la **implementación** es un Change futuro separado; blocking: no; owner: mantenedor; escalación: nuevo Change/Plan autorizado; resolución: pendiente (implementación diferida por decisión); evidencia: `docs/placement-contract.md:22. Enforcement` y `24. Enforcement deferred`.
+- `<PLAN-129>:DEC-2` — decisión: autorizar e implementar el enforcement mecánico de DEC-2 (checker, resolver, servicio, boundary del Orchestrator, integración CI). La **dirección** ya está autorizada y las invariantes E-1…E-8 registradas; la **implementación** es un Change futuro separado; blocking: no; owner: mantenedor; escalación: nuevo Change/Plan autorizado; resolución: pendiente (implementación diferida por decisión); evidencia: `docs/placement-contract.md:22. Enforcement` y `24. Enforcement deferred`.
+
+*(La decisión de nomenclatura que este plan registraba como pending quedó **resuelta** por el renombrado autorizado de Plan 130 —`PLAN-129:DEC-1`/`DEC-2`/`DEC-3`— y por ello ya no figura como pending. No se propone generalizar esa convención a otros planes.)*
 
 ## Riesgos
 
 - **Que el enforcement futuro se convierta en segunda fuente normativa.** Mitigación: `PC-75` lo prohíbe explícitamente y fija que, ante discrepancia, gobierna el contrato.
-- **Que la autorización de PC-2 se lea como implementación.** Mitigación: §22 `PC-72`, §23 y §24 declaran en tres lugares que el enforcement **no está implementado** y que no se crea ni se implica ningún mecanismo.
-- **Que el cierre de PC-1 se lea como autorización de commit.** Mitigación: `PC-68`/`PC-69` separan las tres propiedades y prohíben toda política de commit; `PC-71` declara el Change Lifecycle intacto.
-- **Que PC-3 se lea como prohibición permanente.** Mitigación: `PC-31` y `PC-31c` declaran expresamente que una decisión futura con evidencia suficiente puede introducir una representación estructurada.
+- **Que la autorización de DEC-2 se lea como implementación.** Mitigación: §22 `PC-72`, §23 y §24 declaran en tres lugares que el enforcement **no está implementado** y que no se crea ni se implica ningún mecanismo.
+- **Que el cierre de DEC-1 se lea como autorización de commit.** Mitigación: `PC-68`/`PC-69` separan las tres propiedades y prohíben toda política de commit; `PC-71` declara el Change Lifecycle intacto.
+- **Que DEC-3 se lea como prohibición permanente.** Mitigación: `PC-31` y `PC-31c` declaran expresamente que una decisión futura con evidencia suficiente puede introducir una representación estructurada.
 
 ## Trazabilidad
 
-Plan 127 (diseño) → Plan 128 (materialización del contrato) → decisiones humanas PC-1/PC-2/PC-3 → **este plan** → implementación del enforcement (Change futuro, no autorizado todavía) → migración (no autorizada).
+Plan 127 (diseño) → Plan 128 (materialización del contrato) → decisiones humanas DEC-1/DEC-2/DEC-3 → **este plan** → implementación del enforcement (Change futuro, no autorizado todavía) → migración (no autorizada).
 
 ## Validation anchor
 
@@ -193,8 +201,8 @@ Plan 127 (diseño) → Plan 128 (materialización del contrato) → decisiones h
 - **Estado de cierre (tree id):** `e6b4723b3798bf9193fd8bf33b0fa43bd4ac3fe9` — el árbol del índice que la validación A1 consumió, con el scope declarado (4 paths) y este registro de cierre. Difieren **sólo** en los registros de gobernanza que el propio cierre escribe en este artifact (el `## Validation anchor`, este `## Checkpoint / cierre` y la `## Nota de ejecución`); la delta scoped identity de S es estable y reproducible. La diferencia se declara aquí en lugar de ocultarse (precedente de los Planes 120 y 123–128) y es verificable con `git rev-parse HEAD^{tree}` tras el commit.
 - **Consistencia checkpoint↔anchor:** PASS — el estado de cierre es el estado validado por A1 aplicable (mismo tree id); la consistencia se verificó con C-2.
 - **Governance aplicada:** `docs/plans/INDEX.md` registra el Plan 129 (tabla + serie, Sexagésima primera) y su encabezado de estado; `CHANGELOG.md` `[Unreleased]` registra el par (plan 129); `## Validation anchor` y `## Checkpoint / cierre` registrados; findings `F-1`/`F-2`, corrección `C-1` y pendientes `PC-1`/`PC-2` registrados; `**Status:** Executed`.
-- **Documentation impact (§5.1):** **REQUIRED** — documentos afectados: `docs/placement-contract.md` (aspecto: PC-1 aparecía como sección `Deferred` y `DEFERRED — PC-1`, PC-2 no estaba registrado y PC-3 era sólo implícito; actualización: §6 columna de Git persistence, §7 paso 6 con las tres propiedades separadas, §21 `PC-67`…`PC-71`, §22 `PC-72`…`PC-77` con boundary e invariantes E-1…E-8, §23 no-goals reformulado, §24 enforcement deferred, §9 `PC-31a`…`PC-31c`, y apéndice con las equivalencias actualizadas; evidencia: `check_plan_citations` PASS, 25 secciones sin huecos, 0 marcas deferred), `docs/plans/INDEX.md` (aspecto: cierre no registrado; actualización: serie + tabla + encabezado; evidencia: `check_plan_structure` PASS) y `CHANGELOG.md` (aspecto: par del plan; actualización: ítem `[Unreleased]`; evidencia: `check_version_state` PASS). `AGENTS.md` **no** requiere cambio: su referencia de discovery al contrato sigue válida y el brief prohíbe introducir instrucciones de ejecución de un enforcement que aún no existe; su referencia única se mantiene sin duplicar el contrato. `docs/AGENTS.md` y `docs/source-layout.md` no se modifican. No se actualiza ningún documento histórico (RFC-46). `protocol/.agents/VERSION` y el changelog del payload no se tocan: el contrato es DEV y no tiene efecto payload. Sin `VERSION` bump ni tag.
-- **Condición derivada:** **`Closed`** (docs-only, sin release) — `Executed` ∧ governance aplicada ∧ checkpoint registrado ∧ consistencia PASS. **Clasificación de estado final:** `PC-1 = CLOSED` · `PC-2 = CLOSED (implementation deferred)` · `PC-3 = CLOSED (no machine representation)` · `Placement Contract = MATERIALIZED` · `Enforcement = NOT IMPLEMENTED` · `Exception machine representation = NOT IMPLEMENTED` · `Migration = NOT STARTED` · `Release = NOT AUTHORIZED`. `Committed` es estado del repositorio. Sin tag, sin push, sin merge, sin promoción a `master`, sin `dist`.
+- **Documentation impact (§5.1):** **REQUIRED** — documentos afectados: `docs/placement-contract.md` (aspecto: DEC-1 aparecía como sección `Deferred` y `DEFERRED — PC-1`, DEC-2 no estaba registrado y DEC-3 era sólo implícito; actualización: §6 columna de Git persistence, §7 paso 6 con las tres propiedades separadas, §21 `PC-67`…`PC-71`, §22 `PC-72`…`PC-77` con boundary e invariantes E-1…E-8, §23 no-goals reformulado, §24 enforcement deferred, §9 `PC-31a`…`PC-31c`, y apéndice con las equivalencias actualizadas; evidencia: `check_plan_citations` PASS, 25 secciones sin huecos, 0 marcas deferred), `docs/plans/INDEX.md` (aspecto: cierre no registrado; actualización: serie + tabla + encabezado; evidencia: `check_plan_structure` PASS) y `CHANGELOG.md` (aspecto: par del plan; actualización: ítem `[Unreleased]`; evidencia: `check_version_state` PASS). `AGENTS.md` **no** requiere cambio: su referencia de discovery al contrato sigue válida y el brief prohíbe introducir instrucciones de ejecución de un enforcement que aún no existe; su referencia única se mantiene sin duplicar el contrato. `docs/AGENTS.md` y `docs/source-layout.md` no se modifican. No se actualiza ningún documento histórico (RFC-46). `protocol/.agents/VERSION` y el changelog del payload no se tocan: el contrato es DEV y no tiene efecto payload. Sin `VERSION` bump ni tag.
+- **Condición derivada:** **`Closed`** (docs-only, sin release) — `Executed` ∧ governance aplicada ∧ checkpoint registrado ∧ consistencia PASS. **Clasificación de estado final:** `PLAN-129:DEC-1 = CLOSED` · `PLAN-129:DEC-2 = CLOSED (implementation deferred)` · `PLAN-129:DEC-3 = CLOSED (no machine representation)` · `Placement Contract = MATERIALIZED` · `Enforcement = NOT IMPLEMENTED` · `Exception machine representation = NOT IMPLEMENTED` · `Migration = NOT STARTED` · `Release = NOT AUTHORIZED`. `Committed` es estado del repositorio. Sin tag, sin push, sin merge, sin promoción a `master`, sin `dist`.
 
 ## Nota de ejecución
 
@@ -206,4 +214,4 @@ Plan 127 (diseño) → Plan 128 (materialización del contrato) → decisiones h
 
 **Alcance.** 4 archivos, todos documentales. Ningún artefacto movido, renombrado ni eliminado. `protocol/`, `runtime/`, `tools/`, `tests/`, `.agents/`, `.github/`, `.gitignore` y `AGENTS.md` sin cambios.
 
-**No realizado (por diseño).** Sin checker, resolver, servicio de placement, hook del Orchestrator, integración CI, registry, schema, database, state machine, lifecycle nuevo, autoridad nueva, workflow phase, taxonomía global ni ADR. Sin migración. El Change Lifecycle no fue modificado. PC-1 de este plan (nomenclatura `PC-n`) queda registrado como `DECISION REQUIRED` sin renumerar unilateralmente.
+**No realizado (por diseño).** Sin checker, resolver, servicio de placement, hook del Orchestrator, integración CI, registry, schema, database, state machine, lifecycle nuevo, autoridad nueva, workflow phase, taxonomía global ni ADR. Sin migración. El Change Lifecycle no fue modificado. La decisión de nomenclatura de este plan quedó resuelta por el renombrado autorizado de Plan 130 (`PLAN-129:DEC-1`/`DEC-2`/`DEC-3`), sin renumerar las reglas del contrato y sin generalizar la convención a otros planes.

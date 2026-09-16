@@ -36,15 +36,27 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Modelo conceptual
 
-- **Cierre de PC-1, PC-2 y PC-3 del Placement Contract** (plan 129, docs-only):
+- **Corrección nomenclatural de Plan 129** (plan 130, docs-only): se corrige la
+  colisión de identificadores registrada en `<PLAN-129>:F-2`. Los identificadores
+  de decisión de Plan 129 pasan de `PC-1`/`PC-2`/`PC-3` a **`PLAN-129:DEC-1`**,
+  **`PLAN-129:DEC-2`** y **`PLAN-129:DEC-3`**, de modo que dejan de colisionar con
+  las etiquetas de regla internas de `docs/placement-contract.md`
+  (`PC-1`…`PC-80`, más `PC-31a`…`PC-31c`). El Placement Contract queda **con 0
+  diff**: no se renumeran sus reglas ni cambia su contenido normativo. `<PLAN-129>:F-2`
+  pasa a `resolved` y se registra `<PLAN-129>:C-2`. Ninguna semántica cambia: la
+  decisión de persistencia de `.project/changes/`, la dirección autorizada del
+  enforcement y el carácter documental de las excepciones permanecen idénticos.
+  No se crea ADR, no se introduce una convención global de nomenclatura, no hay
+  migración. Sin `VERSION` bump ni tag.
+- **Cierre de `PLAN-129:DEC-1`, `PLAN-129:DEC-2` y `PLAN-129:DEC-3` del Placement Contract** (plan 129, docs-only):
   se cierran las tres decisiones pendientes de `docs/placement-contract.md`.
-  **PC-1**: `.project/changes/` es **project-durable** y **Git-persisted**, y el
+  **`PLAN-129:DEC-1`**: `.project/changes/` es **project-durable** y **Git-persisted**, y el
   contrato separa tres propiedades que no deben conflacionarse —
   `project-durable` (persistencia), `git-persisted` (preservación/versionado por
   Git) y `git commit` (**operación** gobernada por el Change Lifecycle y su
   autoridad). No se autoriza auto-commit ni se establece `always`/`never commit`
   ni `auto-ignore`; el contrato no adquiere autoridad para ejecutar commits y no
-  modifica el Change Lifecycle. **PC-2**: el **enforcement mecánico y
+  modifica el Change Lifecycle. **`PLAN-129:DEC-2`**: el **enforcement mecánico y
   determinista** del contrato queda **autorizado como dirección de
   implementación futura**, con el boundary `Contract = fuente normativa ·
   Enforcement = realización mecánica · Orchestrator = consumidor`, la prohibición
@@ -54,7 +66,7 @@ La política de versionado, changelog, tags y estados de planes vive en
   source of truth; separación de autoridad; el Orchestrator no reinterpreta STOP
   como PLACE; escalado a autoridad humana). **El enforcement NO está
   implementado**: sin checker, resolver, servicio, hook del Orchestrator,
-  integración CI, registry, schema, database ni state machine. **PC-3**: las
+  integración CI, registry, schema, database ni state machine. **`PLAN-129:DEC-3`**: las
   excepciones son **documentales por defecto**, sin representación estructurada
   ni identificadores, con el procedimiento localizar → verificar owner →
   interpretar → aplicar → STOP, y sin prohibición permanente de una
@@ -72,7 +84,8 @@ La política de versionado, changelog, tags y estados de planes vive en
   y sin prohibir una representación machine-locatable futura); **OQ-3 = A**
   (documento independiente bajo `docs/`, sin namespace nuevo, referenciado desde
   `AGENTS.md` sólo para discovery); **OQ-4 = NO** (sin ADR nuevo; el contrato
-  materializa ADR-17 y ADR-18 y queda downstream de ambos). `PC-1` permanece
+  materializa ADR-17 y ADR-18 y queda downstream de ambos). La persistencia Git de
+  `.project/changes/` permanece
   `OPEN / DEFERRED`: se registra `project-durable ≠ git-committed` sin
   establecer política de Git para `.project/changes/`. Sin registry, checker,
   schema, state machine, clase de autoridad, integración de enforcement ni
@@ -94,8 +107,8 @@ La política de versionado, changelog, tags y estados de planes vive en
   sin checker, sin schema, sin namespace nuevo, sin state machine, sin clase de
   autoridad, sin ADR adicional y sin migración. Quedan **abiertas** `OQ-2`
   (excepciones machine-locatable), `OQ-3` (ubicación canónica del contrato),
-  `OQ-4` (ADR-worthiness de la materialización) y `PC-1` (persistencia Git de
-  `.project/changes/`). **Design: CLOSED · Placement Contract: NOT CREATED ·
+  `OQ-4` (ADR-worthiness de la materialización) y la persistencia Git de
+  `.project/changes/`. **Design: CLOSED · Placement Contract: NOT CREATED ·
   Migration: NOT STARTED · Release: NOT AUTHORIZED.** Sin `VERSION` bump ni tag.
 - **Frontera del payload, provenance y clasificación** (plan 126, ADR-18; Clase B
   de RFC-56): se materializan las decisiones arquitectónicas C–K. Los tests del

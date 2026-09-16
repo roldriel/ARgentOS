@@ -6,8 +6,10 @@
 > Las secciones `## Convenciones` y `## Serie de RFCs (documentos canónicos)`
 > se conservan como anclas de navegación para referencias históricas.
 
-Estado al 2026-09-15. El Plan 129 está `Executed` con condición derivada `Closed`
-(cierre de PC-1/PC-2/PC-3 del Placement Contract; docs-only, sin release;
+Estado al 2026-09-15. El Plan 130 está `Executed` con condición derivada `Closed`
+(corrección nomenclatural de Plan 129; docs-only, sin release; Sexagésima segunda
+serie). El Plan 129 está `Executed` con condición derivada `Closed`
+(cierre de `PLAN-129:DEC-1/DEC-2/DEC-3` del Placement Contract; docs-only, sin release;
 Sexagésima primera serie). El Plan 128 está `Executed` con condición derivada
 `Closed` (materialización del Placement Contract; docs-only, sin release;
 Sexagésima serie). El Plan 127 está `Executed` con condición derivada `Closed`
@@ -1005,7 +1007,19 @@ sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
 |---|---|---|---|
 | `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. |
 
-## Sexagésima primera serie: cierre de PC-1, PC-2 y PC-3 del Placement Contract (Plan 129) (15 sep 2026)
+## Sexagésima segunda serie: corrección nomenclatural de Plan 129 (Plan 130) (15 sep 2026)
+
+Plan 130 (vía plan; docs-only, sin efecto en `protocol/.agents/`, RFC-56 no aplica).
+Corrige la colisión de identificadores detectada en `<PLAN-129>:F-2`: los
+identificadores de decisión de Plan 129 pasan a `PLAN-129:DEC-1/2/3`, sin tocar
+las etiquetas de regla del Placement Contract. No crea ADR, no introduce
+convención global de nomenclatura, no migra nada y no altera ninguna semántica.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `130-nomenclature-fix-plan-129-identifiers.md` | — (vía plan, docs-only) | Executed | Corrección nomenclatural: renombra **únicamente** los identificadores de decisión de Plan 129 —`PC-1`/`PC-2`/`PC-3` → `PLAN-129:DEC-1`/`PLAN-129:DEC-2`/`PLAN-129:DEC-3`— para que el namespace textual de decisión deje de colisionar con las etiquetas de regla internas de `docs/placement-contract.md` (`PC-1`…`PC-80`, más `PC-31a`…`PC-31c`). El contrato queda **con 0 diff**: 80 reglas y 3 variantes intactas, sin renumerar ni cambiar contenido normativo. Marca `<PLAN-129>:F-2` como `resolved` y registra `<PLAN-129>:C-2`; retira el pending de nomenclatura. Alinea además dos referencias al pending de persistencia heredado del Plan 128 (`docs/plans/INDEX.md`, `CHANGELOG.md`) que usaban la misma etiqueta para la misma decisión. **No** generaliza la convención a otros planes. Semántica de `DEC-1`/`DEC-2`/`DEC-3` sin cambios. Sin `VERSION` bump ni tag. |
+
+## Sexagésima primera serie: cierre de DEC-1, DEC-2 y DEC-3 del Placement Contract (Plan 129) (15 sep 2026)
 
 Plan 129 (vía plan; docs-only, sin efecto en `protocol/.agents/`, RFC-56 no aplica).
 Cierra las tres decisiones pendientes del Repository/Artifact Placement Contract
@@ -1014,14 +1028,14 @@ migra nada y no modifica el Change Lifecycle.
 
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
-| `129-pc1-pc2-pc3-closure.md` | — (vía plan, docs-only) | Executed | **PC-1 = CLOSED**: `.project/changes/` es **project-durable** y **Git-persisted**, con las tres propiedades separadas literalmente (`project-durable` = persistencia · `git-persisted` = preservación/versionado por Git · `git commit` = **operación** gobernada por el Change Lifecycle y su autoridad); sin auto-commit, sin `always`/`never commit`, sin `auto-ignore`; el contrato no adquiere autoridad para ejecutar commits ni modifica el Change Lifecycle (§6, §7 paso 6, §21 `PC-67`…`PC-71`). **PC-2 = CLOSED con implementación diferida**: el enforcement mecánico y determinista queda **autorizado como dirección futura** con boundary `Contract = fuente normativa · Enforcement = realización mecánica · Orchestrator = consumidor`, prohibición de segunda fuente normativa, regla «si implementación y contrato discrepan, gobierna el contrato», y las ocho invariantes **E-1…E-8** (determinismo; placement explícito; STOP; no guessing; el enforcement no es source of truth; separación de autoridad; el Orchestrator no reinterpreta STOP como PLACE; escalado humano). **NO implementado**: sin checker, resolver, servicio, hook, integración CI, registry, schema, database ni state machine (§22 `PC-72`…`PC-77`, §23, §24 `PC-79`/`PC-80`). **PC-3 = CLOSED**: las excepciones son **documentales por defecto**, sin representación estructurada ni identificadores, con el procedimiento localizar → verificar owner → interpretar → aplicar → STOP, y **sin** prohibición permanente de una representación futura (§9 `PC-31a`…`PC-31c`). Equivalencias del apéndice actualizadas (`project-durable ≠ git commit operation`, `exception ≠ registry`, `enforcement ≠ source of truth`, `STOP ≠ GUESS`). Registra como finding la colisión de etiquetas entre las decisiones de plan (`PC-1/2/3`) y las reglas internas del contrato (`PC-1`…`PC-80`), sin renumerar unilateralmente (`DECISION REQUIRED` de nomenclatura). Sin `VERSION` bump ni tag. |
+| `129-pc1-pc2-pc3-closure.md` | — (vía plan, docs-only) | Executed | **`PLAN-129:DEC-1` = CLOSED**: `.project/changes/` es **project-durable** y **Git-persisted**, con las tres propiedades separadas literalmente (`project-durable` = persistencia · `git-persisted` = preservación/versionado por Git · `git commit` = **operación** gobernada por el Change Lifecycle y su autoridad); sin auto-commit, sin `always`/`never commit`, sin `auto-ignore`; el contrato no adquiere autoridad para ejecutar commits ni modifica el Change Lifecycle (§6, §7 paso 6, §21 `PC-67`…`PC-71`). **`PLAN-129:DEC-2` = CLOSED con implementación diferida**: el enforcement mecánico y determinista queda **autorizado como dirección futura** con boundary `Contract = fuente normativa · Enforcement = realización mecánica · Orchestrator = consumidor`, prohibición de segunda fuente normativa, regla «si implementación y contrato discrepan, gobierna el contrato», y las ocho invariantes **E-1…E-8** (determinismo; placement explícito; STOP; no guessing; el enforcement no es source of truth; separación de autoridad; el Orchestrator no reinterpreta STOP como PLACE; escalado humano). **NO implementado**: sin checker, resolver, servicio, hook, integración CI, registry, schema, database ni state machine (§22 `PC-72`…`PC-77`, §23, §24 `PC-79`/`PC-80`). **`PLAN-129:DEC-3` = CLOSED**: las excepciones son **documentales por defecto**, sin representación estructurada ni identificadores, con el procedimiento localizar → verificar owner → interpretar → aplicar → STOP, y **sin** prohibición permanente de una representación futura (§9 `PC-31a`…`PC-31c`). Equivalencias del apéndice actualizadas (`project-durable ≠ git commit operation`, `exception ≠ registry`, `enforcement ≠ source of truth`, `STOP ≠ GUESS`). Registró como finding la colisión de etiquetas entre las decisiones de plan (`PC-1/2/3`) y las reglas internas del contrato (`PC-1`…`PC-80`), resuelta por el renombrado autorizado de Plan 130 a `PLAN-129:DEC-1/2/3`, sin renumerar las reglas del contrato ni generalizar la convención. Sin `VERSION` bump ni tag. |
 
 ## Sexagésima serie: materialización del Repository/Artifact Placement Contract (Plan 128) (15 sep 2026)
 
 Plan 128 (vía plan; docs-only, sin efecto en `protocol/.agents/`, RFC-56 no aplica).
 Materializa el **Repository/Artifact Placement Contract** como documento normativo
 independiente bajo `docs/`, derivado del diseño cerrado en Plan 127 y de las
-decisiones humanas `OQ-2 = NO`, `OQ-3 = A`, `OQ-4 = NO`, con `PC-1` mantenido
+decisiones humanas `OQ-2 = NO`, `OQ-3 = A`, `OQ-4 = NO`, con `DEC-1` (persistencia) mantenido
 `OPEN / DEFERRED`. No crea registry, checker, schema, namespace, state machine,
 clase de autoridad ni ADR; no integra enforcement en runtime/Orchestrator/CI; no
 autoriza migración.

@@ -430,6 +430,72 @@ determinista sobre los effective inputs repo
   posteriormente el closure con ese estado; `Closed` nunca es prerrequisito de
   un anchor ni de una revalidación.
 
+### Change Lifecycle — Estado de cierre, grafo de commit y árbol material (modelo, Plan 134)
+
+Estos tres conceptos **no son equivalentes** y no deben colapsarse. El modelo se
+deriva de ADR-15 (CL-3: el cierre exige un estado Git verificable que permita
+reconstruir el estado validado y gobernado; y su principio *persisted state ≠
+materialized view*) y de RFC-75
+`docs/rfc/75-change-lifecycle.md:Mecanismo 7 — Git Checkpoints`.
+
+| Concepto | Qué es | Identidad | Source of truth |
+|---|---|---|---|
+| **Estado validado** | el estado del repositorio sobre el que la validación se ejecutó | Scoped Content Identity (delta) + state identity (tree id del índice staged) | `## Validation anchor` del artifact |
+| **Estado de cierre** | el estado del repositorio que el checkpoint **certifica**, definido por la relación GC-1 con el anchor aplicable | el de su anchor aplicable (A1 o A2), declarado con el mismo par delta + state identity | `## Checkpoint / cierre` + el anchor referenciado |
+| **Árbol material del commit de cierre** | el tree id del commit de Git que materializa el cierre | tree id de Git, resuelto desde el commit | Git (`git rev-parse <commit>^{tree}`) |
+| **Grafo de commit de cierre** | el conjunto de commits del Plan (multi-commit es legal) | locators (SHA), nunca identidad semántica | Git (`git log`) |
+
+**Regla de consistencia (GC-1).** `Closed` exige que la **identidad scoped del
+estado de cierre** sea igual a la del **anchor aplicable** —la validación cuyo
+estado validado corresponde al estado de cierre— y que los factores ambientales
+declarados no hayan cambiado. Es una identidad de **contenido scoped**, no una
+igualdad de árboles de commit.
+
+**`A ≠ B` es esperado, no una violación.** Sean `A` el árbol del estado validado
+y `B` el del commit que registra el cierre. RFC-75 Mecanismo 7 declara
+explícitamente que *el commit de cierre puede incluir governance* (INDEX,
+CHANGELOG, ADR, docs). Por lo tanto:
+
+- `Closed` **no** requiere `A == B`. El estado de cierre es el estado validado
+  más los registros de gobernanza que el cierre produce; el commit de cierre es
+  su **materialización**, y su árbol puede diferir legítimamente del declarado.
+- Inversamente, `A == B` es posible y correcto cuando el cierre no agrega
+  governance posterior a la validación.
+- La relación que sí es normativa es la de GC-1 (identidad scoped del estado de
+  cierre = identidad del anchor aplicable), junto con la **localizabilidad de su
+  materialización** en Git.
+
+**Auto-referencia y su resolución.** Un artifact de cierre que embebe la
+identidad del estado que él mismo modifica es auto-referencial: si el estado
+fuera `S + registros de cierre`, escribir la identidad de ese estado cambiaría
+el estado, y la identidad no podría alcanzar un punto fijo. La resolución es
+declarativa y no requiere identidad nueva:
+
+1. El **scope declarado** (`Scoped Content Identity`) es el conjunto de paths
+   declarado por el Plan y **fijo antes de escribir los registros de cierre**.
+2. El **estado de cierre** es el estado validado más los registros de gobernanza
+   que el artifact de cierre escribe; su **identidad scoped sobre ese scope** es,
+   por construcción, la del anchor aplicable. Los registros de cierre no agregan
+   paths al scope y por eso no alteran la identidad scoped declarada.
+3. La **identidad del estado de cierre se declara como el par delta scoped
+   identity + state identity del anchor aplicable** (el tree id del índice staged
+   en el momento de la validación), que es recuperable y verificable por
+   correspondencia de estado. No se declara como identidad un elemento
+   auto-referencial del propio registro.
+4. El **commit de cierre se localiza por su mensaje** (el artifact no puede
+   embeber su propio SHA sin ampliar el scope después de validar), y su árbol
+   material se verifica desde Git. Es legítimo y recomendable embeber el SHA del
+   commit de cierre —o su tree id junto al SHA— en el registro **después** de que
+   el commit exista: es el pegamento que cierra la cadena de evidencia, y C-2 lo
+   verifica.
+
+**No confundir con el tree id del commit.** Un tree id solo no dice de qué
+estado es: para un estado de cierre su identidad es la Scoped Content Identity
+del scope declarado, mientras que el tree id del commit de cierre es un hecho de
+Git sobre ese commit. Declarar `Estado de cierre: <tree id del commit de cierre>`
+como identidad de estado es un error semántico: describe la materialización, no
+el estado certificado.
+
 ### Change Lifecycle — Determinaciones de cierre: impacto documental e impacto de Roadmap (regla operacional)
 
 Toda Change DEV determina, **en el cierre**, dos impactos **independientes**

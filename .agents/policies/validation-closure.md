@@ -88,20 +88,65 @@ artifact, not "having a commit", not a SHA.
 
 Record (plan `## Checkpoint / cierre`):
 
-- Closure commits (list; multi-commit legal).
+- Closure commits (list; multi-commit legal). The closing commit is located by
+  its message; embedding its SHA (or its tree id next to the SHA) **after** the
+  commit exists is legal and recommended: it is the link that makes the
+  materialized closure verifiable.
 - Validated state (reference to the anchor whose validated state corresponds
   to the closure state).
-- Closure state (Git tree id).
+- Closure state identity: the **delta scoped identity + state identity of the
+  applicable anchor** (the tree id of the staged index at validation time),
+  declared as the identity of the state the checkpoint certifies. It is **not**
+  the tree of the closing commit.
+- Materialized closing commit tree (optional, once the commit exists): the tree
+  id resolved from the closing commit, recorded as a Git fact and verified by
+  C-2. Its divergence from the closure state identity is expected when the
+  closing commit carries governance records.
 - Consistency checkpoint↔anchor: PASS/FAIL + evidence.
 - Governance applied and derived condition.
 - Documentation impact determination (5.1).
 - Roadmap impact determination (5.2).
 
-Consistency rule: `Closed` requires the scoped content identity of the closure
-state to equal that of the applicable anchor **and** declared environmental
+**Three concepts that must not be collapsed** (full model:
+`docs/CONVENTIONS.md:Change Lifecycle — Estado de cierre, grafo de commit y
+árbol material (modelo, Plan 134)`): the **validated state** (what the
+validation consumed), the **closure state** (what the checkpoint certifies,
+identified by GC-1 against the applicable anchor), and the **materialized
+closing commit tree** (a Git fact about the closing commit).
+
+Consistency rule: `Closed` requires the **scoped content identity of the closure
+state** to equal that of the applicable anchor **and** declared environmental
 factors unchanged. If a revalidation A2 covers the closure state, evaluate
 against A2; if the closure state is still A1's state, against A1. Existence of
 A2 never removes A1. Any difference → **revalidate before `Closed`**.
+
+**Closure content identity vs. commit tree.** RFC-75 Mecanismo 7 states that the
+closing commit **may include governance** (INDEX, CHANGELOG, ADR, docs). The
+closure state is therefore the validated state plus the governance records the
+closure produces, and its identity is the applicable anchor's; the closing commit
+is that state's **materialization**, whose tree may legitimately differ. `Closed`
+does **not** require `validated tree == commit tree`. The self-reference of a
+closure artifact is resolved declaratively: the declared Scoped Content Identity
+scope is fixed before the closure records are written, and the closure state
+identity is declared as the anchor's identity pair (delta + state identity),
+never as an identity element that the record itself would change.
+
+**C-2 contract (what the checker verifies).** C-2 verifies the following
+relations and nothing else:
+
+| # | Relation | Evidence source | Signal |
+|---|---|---|---|
+| R1 | the checkpoint record is present and complete for a regime member | document | `N/A` / `GAP` |
+| R2 | the **closure state identity** corresponds to the applicable anchor's validated state identity, selected by **correspondence** (never recency) | declared identity + `## Validation anchor` | `ANOMALY` on contradiction |
+| R3 | `Closed` carries PASS evidence for that closure state | document | `ANOMALY` |
+| R4 | a declared **materialized closing commit tree** is consistent with the resolved closing commit; and any divergence between the declared closure state identity and the resolved closing commit tree is reported with its governance attribution requirement | Git | report / `ANOMALY` on a contradiction between two declared values |
+
+C-2 does **not** require a declared closure state to equal the tree of the final
+closing commit, because the closing commit may carry governance records — that
+divergence is expected, and treating it as a contradiction would forbid what
+RFC-75 explicitly allows. C-2 does require the declared closure state to
+correspond to a registered validation (R2), and it verifies the materialized
+locators when they are declared (R4) instead of leaving them unverified.
 
 ### 5.1 Documentation impact (closure determination)
 

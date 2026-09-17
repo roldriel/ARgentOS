@@ -113,7 +113,14 @@ operacional; GC-1, Incremento 3)):
 
 - Commits de cierre: ...
 - Estado validado (ref al Validation anchor): ...
-- Estado de cierre (tree id): ...
+- Estado de cierre (identidad): delta scoped identity + state identity del anchor
+  aplicable (el tree id del índice staged en el momento de la validación). Es el
+  estado que el checkpoint **certifica** por correspondencia GC-1. **No** es el
+  árbol del commit de cierre.
+- Árbol material del commit de cierre (tree id): solo cuando el commit ya existe;
+  es un hecho de Git, no la identidad del estado de cierre, y puede diferir
+  legítimamente del declarado porque el commit de cierre incluye governance
+  (RFC-75 Mecanismo 7).
 - Consistencia checkpoint↔anchor: PASS/FAIL + evidencia (revalidación si difiere)
 - Governance aplicada: ...
 - Documentation impact (§5.1 de `.agents/policies/validation-closure.md`):

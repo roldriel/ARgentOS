@@ -164,16 +164,31 @@ correcciones; Incremento 2) and `policies/validation-closure.md`.
 
 Full semantics: `policies/validation-closure.md`; gate tool: C-2.
 
+Do not collapse three distinct concepts: the **validated state** (what the
+validation consumed), the **closure state** (what the checkpoint certifies, by
+GC-1 correspondence with the applicable anchor) and the **materialized closing
+commit tree** (a Git fact about the closing commit). The closing commit may
+carry governance (RFC-75 `Mecanismo 7 — Git Checkpoints`), so
+`validated tree == commit tree` is **not** a requirement.
+
 1. Before declaring `Closed`, complete the plan's
    `## Checkpoint / cierre` record: closure commits (list; multi-commit is
    legal), validated state (reference to the anchor whose validated state
-   corresponds to the closure state), closure state (Git **tree id**), and
-   consistency checkpoint↔anchor.
-2. Run C-2. Consistency requires the scoped content identity of the closure
-   state to equal the anchor's and the declared environmental factors to be
-   unchanged. If they differ → **revalidate first** (A2 on the closure state);
-   do not derive `Closed` with a stale anchor.
-3. `Closed` is derived, not written as a status: `Executed` + applicable
+   corresponds to the closure state), the **closure state identity** (the
+   anchor's delta scoped identity + state identity — the tree id of the staged
+   index at validation time), the **materialized closing commit tree** when the
+   commit already exists, and consistency checkpoint↔anchor.
+2. Keep the declared Scoped Content Identity scope **fixed before** writing the
+   closure records, so the closure state's identity over that scope is the
+   anchor's by construction and the self-reference of the closure artifact
+   cannot change it.
+3. Run C-2. Consistency requires the scoped content identity of the closure
+   state to equal the applicable anchor's and the declared environmental factors
+   to be unchanged. If they differ → **revalidate first** (A2 on the closure
+   state); do not derive `Closed` with a stale anchor. C-2 also verifies the
+   materialized closing commit when it is declared (see `policies/
+   validation-closure.md:5. Checkpoint (GC-1)`).
+4. `Closed` is derived, not written as a status: `Executed` + applicable
    governance + checkpoint + consistency + PASS validation evidence for the
    closure state. A docs-only plan closes without a release (RFC-69).
 

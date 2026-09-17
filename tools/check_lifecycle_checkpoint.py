@@ -26,6 +26,17 @@ only locators resolved through local read-only git primitives
 ``origin`` is never required: any locally existing, valid object is
 verifiable (docs/plans/98-change-lifecycle-unit-d-increment-4.md §11).
 
+**Three concepts that are not interchangeable** (model fixed by Plan 134,
+``docs/CONVENTIONS.md:Change Lifecycle — Estado de cierre, grafo de commit y
+árbol material (modelo, Plan 134)``):
+
+- the **validated state** — the repository state the validation consumed,
+  identified by the anchor's Scoped Content Identity;
+- the **closure state** — the state the checkpoint certifies, identified by
+  GC-1 correspondence with the applicable anchor;
+- the **materialized closing commit tree** — a Git fact about the final closing
+  commit.
+
 GC-1 compares the closure state with the anchor of the validation whose
 validated state is the closure state (Plan 99 / F-1 correction): the
 applicable anchor is selected by **correspondence of validated state to
@@ -33,13 +44,23 @@ closure state**, never by recency ("latest A2 wins"), never by generic tree
 membership among the closing commits. A1 applies when the closure state is
 A1's; the A2 whose validated state matches the closure state applies when a
 revalidation covers it; a revalidation never replaces A1 and references it
-(Decision B). Closure state is the tree of the **final** closing commit of the
-plan (or the declared closure tree when the final commit locator is not
-embedded, per the anti-self-reference convention of the corpus). A
+(Decision B).
+
+The closure state is the **declared** closure identity when the closing commit
+locator is not embedded (the anti-self-reference convention of the corpus), or
+the tree of the final closing commit when its locator **does** resolve. A
 revalidation declared in the Validation Anchor whose validated-state subject
 references the closure state (corpus v1 pattern of plans 96-98) is accepted as
 declared evidence only when no embedded state identity resolves the
 correspondence (Tier 2); ambiguity is GAP, never an invented tie-break.
+
+**``validated tree == commit tree`` is not a requirement.** RFC-75
+``Mecanismo 7 — Git Checkpoints`` states that the closing commit may include
+governance (INDEX, CHANGELOG, ADR, docs). When a declared closure state
+differs from a resolved final closing commit tree, the divergence is reported
+as an advisory GAP demanding governance attribution — not as an ANOMALY. The
+ANOMALY-level relation for the closure state is R2: it must correspond to a
+registered validation.
 
 This checker has no normative authority (ADR-16): GAPs are advisory and never
 turn the exit code non-zero by themselves; only ANOMALYs do.
@@ -435,9 +456,24 @@ def classify_checkpoint(root: Path, rel: Path, text: str) -> CheckpointFinding:
             + ", ".join(unresolved)
         )
 
-    # Closure state (R-99-2): tree of the final closing commit when its
-    # locator resolves; otherwise the declared "Estado de cierre" literal
-    # when present; otherwise UNKNOWN (final commit identified by message).
+    # Closure state (R-99-2). Two distinct concepts (Plan 134 model):
+    #
+    #   * the **closure state** — what the checkpoint certifies; its identity is
+    #     the declared "Estado de cierre" literal, which GC-1 requires to
+    #     correspond to the applicable anchor's validated state (R2);
+    #   * the **materialized closing commit tree** — a Git fact about the final
+    #     closing commit, resolved from the declared locator.
+    #
+    # RFC-75 `Mecanismo 7 — Git Checkpoints` states that the closing commit may
+    # carry governance (INDEX, CHANGELOG, ADR, docs). Therefore
+    # `validated tree == commit tree` is NOT a requirement, and a declared
+    # closure state that differs from the resolved final commit tree is not by
+    # itself a contradiction: the divergence is reported for governance
+    # attribution (advisory GAP) instead of being rejected.
+    # closure_state is the state the checkpoint certifies. It is the *declared*
+    # closure identity when the record carries one; the tree of the final
+    # closing commit is the fallback for records that embed a locator without a
+    # declared identity (and the materialization checked by R4 below).
     final_label: str | None = None
     final_tree: str | None = None
     if closing_entries:
@@ -446,16 +482,10 @@ def classify_checkpoint(root: Path, rel: Path, text: str) -> CheckpointFinding:
             final_tree = resolve_tree(root, sha)
             if final_tree is not None:
                 break
-    closure_state: str | None = final_tree
     closure_literal = _HEX40_RE.findall(closure_block)
-    if closure_literal:
-        if closure_state is not None and closure_literal[0] != closure_state:
-            reasons.append(
-                "declared closure tree differs from the tree of the final "
-                "closing commit"
-            )
-        elif closure_state is None:
-            closure_state = closure_literal[0]
+    closure_state: str | None = (
+        closure_literal[0] if closure_literal else final_tree
+    )
 
     # Anchor state identities (A1 first; later ones are A2 revalidation
     # records when the artifact declares one).
@@ -564,9 +594,32 @@ def classify_checkpoint(root: Path, rel: Path, text: str) -> CheckpointFinding:
                 "covers it; evidence insufficient"
             )
 
+    # R4 (Plan 134): the materialized closing commit is a Git fact, and under
+    # RFC-75 Mecanismo 7 the closing commit **may carry governance** (INDEX,
+    # CHANGELOG, ADR, docs). A declared closure state that corresponds to a
+    # registered validation and differs from the resolved closing-commit tree is
+    # therefore the expected closure materialization, not a contradiction: it is
+    # reported as an advisory GAP that requires attribution, and it is only
+    # reported when R2 held (`applicable_label`), so a declared closure state
+    # that corresponds to no validation keeps its ANOMALY above.
+    if (
+        applicable_label is not None
+        and closure_literal
+        and final_tree is not None
+        and closure_literal[0] != final_tree
+    ):
+        reasons.append(
+            "declared closure state differs from the materialized closing "
+            "commit tree; the divergence must be attributable to the "
+            "governance records the closure publishes (RFC-75 Mecanismo 7)"
+        )
+
+    # Plan 134: `validated tree == commit tree` is not a requirement, so the
+    # closure-state/materialized-commit divergence below is an advisory GAP
+    # (attribution required), never an ANOMALY. The ANOMALY-level relation for
+    # the closure state is R2 (correspondence with the applicable anchor).
     anomaly_prefixes = (
         "condition declares Closed while consistency declares FAIL",
-        "declared closure tree differs",
         "declared revalidation covers the closure state but its embedded "
         "validated state differs",
         "closure state has no corresponding validation while consistency "

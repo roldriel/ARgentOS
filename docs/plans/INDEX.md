@@ -6,7 +6,10 @@
 > Las secciones `## Convenciones` y `## Serie de RFCs (documentos canónicos)`
 > se conservan como anclas de navegación para referencias históricas.
 
-Estado al 2026-09-15. El Plan 133 está `Executed` con condición derivada `Closed`
+Estado al 2026-09-15. El Plan 134 está `Executed` con condición derivada `Closed`
+(integridad de la evidencia de cierre: modelo del estado de cierre vs. árbol
+material del commit y contrato de C-2; docs-only + tooling DEV, sin release;
+Sexagésima sexta serie). El Plan 133 está `Executed` con condición derivada `Closed`
 (formalización del Roadmap Impact en el Change Lifecycle DEV y barrido documental
 integral; docs-only, sin release; Sexagésima quinta serie). El Plan 132 está `Executed` con condición derivada `Closed`
 (actualización del Roadmap al estado real; docs-only, sin release; Sexagésima
@@ -1013,6 +1016,20 @@ sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
 | `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. |
+
+## Sexagésima sexta serie: integridad de la evidencia de cierre (Plan 134) (15 sep 2026)
+
+Plan 134 (vía plan; docs-only + tooling DEV, sin efecto en `protocol/.agents/`,
+RFC-56 no aplica; Change Level L2). Determina la semántica exacta de la cadena de
+evidencia de cierre del Change Lifecycle DEV —baseline, anchor, estado validado,
+checkpoint, estado de cierre, árbol del commit de cierre, estado commiteado y
+`Closed`— y corrige el mecanismo donde la evidencia demuestra defecto. El Plan
+133 (`<PLAN-133>:F-5`) había detectado que el closure tree declarado no coincide
+con el árbol material del commit de cierre.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `134-closure-evidence-integrity.md` | — (vía plan, docs-only + tooling DEV) | Executed | Integridad de la evidencia de cierre. **Modelo normativo** (nuevo, en `docs/CONVENTIONS.md`): «Estado de cierre, grafo de commit y árbol material» define que el **estado validado**, el **estado de cierre** (lo que el checkpoint certifica, por correspondencia GC-1 con el anchor aplicable) y el **árbol material del commit de cierre** (hecho de Git) son tres conceptos que no se colapsan; `A ≠ B` es **esperado** porque RFC-75 `Mecanismo 7 — Git Checkpoints` declara que el commit de cierre puede incluir governance (INDEX, CHANGELOG, ADR, docs), de modo que `Closed` **no** exige `validated tree == commit tree`; la auto-referencia de un artifact de cierre se resuelve declarativamente (scope fijo antes de escribir los registros; identidad del estado de cierre = par delta + state identity del anchor aplicable; commit localizable por mensaje). **Defecto confirmado (Resultado A) en C-2**: su contrato documentado decía «closure state = tree del commit de cierre final», relación que contradice RFC-75 y que además era **código muerto** en el corpus real —las entradas de commit de cierre de los Planes 120–133 no embeben SHA, así que `ordered_closing_commits` devuelve vacío y la rama de contradicción nunca se ejecutaba—, mientras la relación que sí aplicaba (identidad declarada vs. estado validado del anchor) solo estaba documentada como fallback. Contrato de C-2 fijado en R1–R4 (`docs/CONVENTIONS.md` + `.agents/policies/validation-closure.md:5`, `.agents/policies/lifecycle-checkers.md`, docstring del checker): la divergencia estado-de-cierre ↔ árbol-material es **GAP advisory con requisito de atribución**, no ANOMALY; el nivel ANOMALY del estado de cierre es R2 (correspondencia con un anchor registrado). C-1 y C-3 declarados **NOT_REQUIRED**. **12 Planes históricos (120, 123–133) clasificados CORRECT**: su declaración es la del estado validado, que es exactamente lo que GC-1 exige; no se modificó ninguno. Template de Plan con los tres conceptos separados. Corregidas 2 regresiones de la suite de C-2 que codificaban la semántica superada. Sin RFC/ADR nuevo, sin `VERSION` bump ni tag. |
 
 ## Sexagésima quinta serie: Roadmap Impact y barrido documental integral (Plan 133) (15 sep 2026)
 

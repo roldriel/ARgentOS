@@ -37,6 +37,37 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Modelo conceptual
 
+- **Integridad de la evidencia de cierre y contrato de C-2** (plan 134,
+  docs-only + tooling DEV): el Change Lifecycle DEV gana un **modelo normativo**
+  que separa tres conceptos que no deben colapsarse —el **estado validado** (lo
+  que la validación consumió), el **estado de cierre** (lo que el checkpoint
+  certifica, por correspondencia GC-1 con el anchor aplicable) y el **árbol
+  material del commit de cierre** (un hecho de Git)— y establece que
+  `validated tree == commit tree` **no es un requisito**: RFC-75
+  `Mecanismo 7 — Git Checkpoints` autoriza que el commit de cierre incluya
+  governance (INDEX, CHANGELOG, ADR, docs), por lo que `A ≠ B` es esperado, no
+  una violación de GC-1. La **auto-referencia** del artifact de cierre se resuelve
+  de forma declarativa (el scope se fija antes de escribir los registros; la
+  identidad del estado de cierre es el par delta + state identity del anchor
+  aplicable; el commit se localiza por su mensaje) sin introducir identidad,
+  estado ni registry nuevos. **Defecto confirmado y corregido**: el contrato
+  documentado de C-2 declaraba «closure state = tree id del commit de cierre
+  final», relación que contradecía la normativa y que además era **inalcanzable
+  en el corpus real** —las entradas «Commits de cierre» de los Planes 120–133
+  identifican el commit por mensaje y sin SHA, así que la rama de contradicción
+  nunca se ejecutaba—; el contrato se fija ahora en R1–R4
+  (`.agents/policies/validation-closure.md:5`,
+  `.agents/policies/lifecycle-checkers.md` y el docstring del checker) y la
+  divergencia estado-de-cierre ↔ árbol material pasa a **GAP advisory con
+  requisito de atribución** en lugar de ANOMALY, preservando R2 (correspondencia
+  con un anchor registrado) como el nivel ANOMALY. El registro de cierre del
+  template separa «estado de cierre (identidad)» de «árbol material del commit».
+  **Los 12 Planes históricos examinados (120, 123–133) se clasificaron
+  `CORRECT`** y no se modificó ninguno: declaran el estado validado, que es
+  exactamente lo que GC-1 exige. C-1 y C-3 declarados `NOT_REQUIRED`. No cambia
+  `Committed`, `Closed`, `Released` ni la condición derivada `Closed`; sin RFC ni
+  ADR nuevos, sin `VERSION` bump ni tag.
+
 - **Roadmap Impact en el Change Lifecycle DEV y barrido documental integral**
   (plan 133, docs-only): el Change Lifecycle DEV gana una determinación de cierre
   nueva, **Roadmap impact**, **independiente** de **Documentation impact** y con

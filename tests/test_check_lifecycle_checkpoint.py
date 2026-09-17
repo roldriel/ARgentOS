@@ -465,8 +465,13 @@ def test_missing_anchor_is_gap(tmp_path):
 
 
 def test_wrong_declared_closure_tree_is_anomaly(tmp_path):
-    """Declared closure tree id differs from the closing commit's tree while
-    the record claims consistency -> ANOMALY (tree identity is semantic)."""
+    """A declared closure state that corresponds to NO registered validation is
+    an ANOMALY (R2), independent of the closing commit.
+
+    Plan 134 note: the ANOMALY here is R2 (no correspondence with any anchor
+    state), not a divergence from the closing commit's tree — the latter is an
+    advisory GAP, because RFC-75 Mecanismo 7 allows the closing commit to carry
+    governance."""
     root = init_repo(tmp_path)
     sha_a, tree_a = commit(root, {"content.txt": "v1\n"}, "content A")
     wrong = "c" * 40
@@ -478,8 +483,68 @@ def test_wrong_declared_closure_tree_is_anomaly(tmp_path):
     write_plan(root, doc)
     finding = one_finding(root)
     assert finding.classification == "ANOMALY"
-    assert "declared closure tree differs" in " ".join(finding.reasons)
+    assert "closure state has no corresponding validation" in " ".join(
+        finding.reasons
+    )
     assert run_tool(root).returncode == 1
+
+
+def test_closure_state_diverging_from_closing_commit_is_gap_not_anomaly(
+    tmp_path,
+):
+    """Plan 134 norm: the closure state is what the checkpoint certifies — the
+    applicable anchor's validated state — and the closing commit may add
+    governance. A declared closure state that corresponds to a registered
+    validation but differs from the resolved final commit tree is therefore an
+    advisory GAP with an attribution requirement, never an ANOMALY, and never a
+    non-zero exit by itself.
+
+    Regression: before Plan 134 this configuration produced ANOMALY
+    ("declared closure tree differs from the tree of the final closing
+    commit") and exit code 1, which forbade what RFC-75 Mecanismo 7 allows."""
+    root = init_repo(tmp_path)
+    sha_a, tree_a = commit(root, {"content.txt": "v1\n"}, "content A")
+    sha_gov, tree_gov = commit(
+        root, {"governance.txt": "INDEX updated\n"}, "governance for close"
+    )
+    assert tree_a != tree_gov
+    doc = regime_doc(
+        "Executed",
+        anchor_a1(tree_a),
+        checkpoint_record([sha_a, sha_gov], tree_a),
+    )
+    write_plan(root, doc)
+    finding = one_finding(root)
+    assert finding.classification == "GAP"
+    assert "must be attributable to the governance records" in " ".join(
+        finding.reasons
+    )
+    assert run_tool(root).returncode == 0
+
+
+def test_materialized_commit_tree_declared_as_closure_state_is_anomaly(
+    tmp_path,
+):
+    """Plan 134 model: declaring the *materialized* closing commit tree as the
+    closure state identity describes the materialization instead of the state
+    the checkpoint certifies, so it corresponds to no registered validation and
+    is an ANOMALY (R2)."""
+    root = init_repo(tmp_path)
+    sha_a, tree_a = commit(root, {"content.txt": "v1\n"}, "content A")
+    sha_gov, tree_gov = commit(
+        root, {"governance.txt": "INDEX updated\n"}, "governance for close"
+    )
+    doc = regime_doc(
+        "Executed",
+        anchor_a1(tree_a),
+        checkpoint_record([sha_a, sha_gov], tree_gov),
+    )
+    write_plan(root, doc)
+    finding = one_finding(root)
+    assert finding.classification == "ANOMALY"
+    assert "closure state has no corresponding validation" in " ".join(
+        finding.reasons
+    )
 
 
 # --- No reachability requirement ---------------------------------------------------
@@ -599,10 +664,16 @@ def test_closure_state_without_corresponding_validation_without_pass_is_gap(
     assert run_tool(root).returncode == 0
 
 
-def test_declared_closure_tree_must_match_final_closing_commit(tmp_path):
-    """T5: the declared closure tree must match the FINAL closing commit's
-    tree; a literal matching only an intermediate commit is contradictory.
-    Pre-fix generic membership accepted it as VALID."""
+def test_declared_closure_state_matching_intermediate_commit_is_gap(tmp_path):
+    """Plan 134: the declared closure state must correspond to a registered
+    validation (R2), not to the final closing commit's tree. A closure state
+    matching an intermediate commit's tree — the state the validation actually
+    consumed — is legitimate: it is the closure state, and the later closing
+    commit merely materializes it while adding governance.
+
+    Regression: before Plan 134 this was ANOMALY ("declared closure tree
+    differs") with exit code 1. The ANOMALY-level relation remains R2, so a
+    declared closure state matching NO registered validation still fails."""
     root = init_repo(tmp_path)
     sha_a, tree_a = commit(root, {"content.txt": "v1\n"}, "content A")
     sha_b, tree_b = commit(root, {"content.txt": "v2\n"}, "content B")
@@ -615,9 +686,37 @@ def test_declared_closure_tree_must_match_final_closing_commit(tmp_path):
     )
     write_plan(root, doc)
     finding = one_finding(root)
+    # `tree_b` corresponds to no anchor state -> R2 fails.
     assert finding.classification == "ANOMALY"
-    assert "declared closure tree differs" in " ".join(finding.reasons)
+    assert "closure state has no corresponding validation" in " ".join(
+        finding.reasons
+    )
     assert run_tool(root).returncode == 1
+
+
+def test_closure_state_of_intermediate_validated_commit_is_gap(tmp_path):
+    """Plan 134: declaring as closure state the tree of the commit whose state
+    the anchor validated — while a later closing commit materializes the
+    closure — is the corpus behaviour and must not be rejected. The only signal
+    is the advisory governance-attribution GAP."""
+    root = init_repo(tmp_path)
+    sha_a, tree_a = commit(root, {"content.txt": "v1\n"}, "content A")
+    sha_gov, tree_gov = commit(
+        root, {"governance.txt": "INDEX updated\n"}, "governance for close"
+    )
+    assert tree_a != tree_gov
+    doc = regime_doc(
+        "Executed",
+        anchor_a1(tree_a),
+        checkpoint_record([sha_a, sha_gov], tree_a),
+    )
+    write_plan(root, doc)
+    finding = one_finding(root)
+    assert finding.classification == "GAP"
+    assert "must be attributable to the governance records" in " ".join(
+        finding.reasons
+    )
+    assert run_tool(root).returncode == 0
 
 
 def test_corpus_declared_revalidation_over_final_state_is_valid(tmp_path):

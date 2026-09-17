@@ -123,6 +123,16 @@ operacional; GC-1, Incremento 3)):
   motivo y pending decision existente (PC-1) con owner. Nunca en blanco.
   Historical docs (RFCs, ADRs, planes cerrados, reportes, auditorías) no se
   actualizan por describir un estado antiguo (RFC-46).
+- Roadmap impact (§5.2 de `.agents/policies/validation-closure.md`):
+  REQUIRED | NOT_REQUIRED | DEFERRED — determinación **independiente** de la
+  anterior. `REQUIRED` → trabajo creado/completado/cancelado/reclasificado/
+  re-priorizado, artefacto que lo posee (ownership/source of truth: `ROADMAP.md`
+  como mapa operativo, `docs/plans/INDEX.md`, índices de RFC/ADR, un plan
+  activo), actualización y evidencia. **No** significa "editar `ROADMAP.md`":
+  el `ROADMAP.md` sigue siendo un mapa operativo, no un changelog.
+  `NOT_REQUIRED` → razón explícita (sin efecto sobre el mapa de trabajo
+  futuro); `DEFERRED` → impacto pendiente, motivo y pending decision existente
+  (PC-1) con owner. Nunca en blanco.
 - Condición derivada: Closed (docs-only) | Closed (con release pendiente) |
   no cerrado (motivo) -->
 

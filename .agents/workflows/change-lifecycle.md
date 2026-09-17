@@ -182,25 +182,51 @@ Full semantics: `policies/validation-closure.md`; gate tool: C-2.
 1. Governance applied: INDEX mirrors updated; RFC Amendment Log entries when
    applicable; findings resolved or explicitly deferred with owner; no
    blocking pending decision without resolution/escalation (PC-1).
-2. **Documentation impact (closure determination).** Record in the Plan's
+2. **Impact determinations (closure).** Record in the Plan's
    `## Checkpoint / cierre` exactly one of `REQUIRED` / `NOT_REQUIRED` /
-   `DEFERRED` (no fourth value, no silence), with its evidence. Answer first:
-   *did this Change leave any current-state documentation obsolete or
-   incomplete?* — the documents that must stay correct (`docs/VERSIONING.md`
-   §9 snapshot, `docs/plans/INDEX.md`, `ROADMAP.md`, `README.md`, `AGENTS.md` /
-   `.agents/AGENTS.md` when active instructions change, and the active policies,
-   workflows or contracts this Change modifies). Historical documents (RFCs,
-   ADRs, closed plans, reports, audits, historical changelog entries, archived
-   documents) are never updated for describing an old state (RFC-46).
-   `REQUIRED` names the affected documents, the aspect affected, the update and
-   its evidence (an empty `REQUIRED` is not acceptable); `NOT_REQUIRED` carries
-   an explicit reason tied to the real scope (the bare value is not
-   acceptable); `DEFERRED` reuses an **existing** pending decision (PC-1) with
-   owner as its continuity — no new pending mechanism. Payload changes keep
-   their own changelog/`VERSION` rule; this determination never adds a
-   changelog obligation. Full semantics and the Plan-less (Class C) form:
-   `policies/validation-closure.md:5.1 Documentation impact (closure
-   determination)`. A missing determination blocks closure (stop condition).
+   `DEFERRED` for **each** of two independent determinations (no fourth value,
+   no silence, and never one value covering both):
+
+   **a. Documentation impact** — *did this Change leave any current-state
+   documentation obsolete or incomplete?* The documents that must stay correct
+   (`docs/VERSIONING.md` §9 snapshot, `docs/plans/INDEX.md`, `ROADMAP.md`,
+   `README.md`, `AGENTS.md` / `.agents/AGENTS.md` when active instructions
+   change, and the active policies, workflows or contracts this Change
+   modifies). Historical documents (RFCs, ADRs, closed plans, reports, audits,
+   historical changelog entries, archived documents) are never updated for
+   describing an old state (RFC-46). `REQUIRED` names the affected documents,
+   the aspect affected, the update and its evidence (an empty `REQUIRED` is not
+   acceptable); `NOT_REQUIRED` carries an explicit reason tied to the real
+   scope (the bare value is not acceptable); `DEFERRED` reuses an **existing**
+   pending decision (PC-1) with owner as its continuity — no new pending
+   mechanism.
+
+   **b. Roadmap impact** — *does this Change alter the operational map of
+   future work?* Not "was `ROADMAP.md` edited": `REQUIRED` covers creating,
+   completing, cancelling, reclassifying, re-prioritizing or re-dependency-ing
+   work, discovering new work, or moving an item between candidate / active /
+   blocked; `NOT_REQUIRED` covers changes with no effect on that map (internal
+   refactor without scope change, purely technical fix, historical correction,
+   documentation that does not move the map); `DEFERRED` covers a real impact
+   whose update needs a decision or an authority not yet available, and reuses
+   an **existing** pending decision (PC-1) with owner.
+
+   `REQUIRED` in either one means the represented state must be reconciled
+   before closure, **but it does not mean "always edit `ROADMAP.md`"**: the
+   artifact to update follows ownership / source of truth (`ROADMAP.md` for the
+   operational map, `docs/plans/INDEX.md` for the plan registry, the RFC/ADR
+   indexes, an active plan, or the operational documentation that owns the
+   state). `ROADMAP.md` stays an operational map, never a changelog. The two
+   determinations are independent: `Documentation impact: REQUIRED` with
+   `Roadmap impact: NOT_REQUIRED` is perfectly valid, and so are
+   `REQUIRED`/`REQUIRED` and `NOT_REQUIRED`/`REQUIRED`.
+
+   Payload changes keep their own changelog/`VERSION` rule; neither
+   determination adds a changelog obligation. Full semantics and the Plan-less
+   (Class C) form: `policies/validation-closure.md:5.1 Documentation impact
+   (closure determination)` and `policies/validation-closure.md:5.2 Roadmap
+   impact (closure determination)`. A missing determination blocks closure
+   (stop condition).
 3. Changelog: docs-only plans add an `[Unreleased]` item `(plan N, RFC-N)`;
    no `VERSION` bump, no tag.
 4. Mark the plan `Executed` and derive `Closed` only after the checkpoint

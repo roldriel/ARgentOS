@@ -4,7 +4,7 @@ Todos los cambios notables del protocolo `.agents/` se documentan en este archiv
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/)
 y el protocolo sigue [Semantic Versioning](https://semver.org/lang/es/) de forma
-conceptual, según lo definido en `plans/20-release-adoption.md` §A:
+conceptual, según lo definido en `docs/plans/20-release-adoption.md` §A:
 
 - **MAJOR**: cambios del modelo conceptual o contratos incompatibles con versiones anteriores.
 - **MINOR**: adiciones compatibles (nuevas policies, contratos nuevos que no rompen los existentes, skills nuevas).
@@ -19,12 +19,13 @@ Cada versión se agrupa en secciones según el tipo de cambio:
 - **Deprecated** — capacidades que se mantienen pero serán eliminadas.
 - **Removed** — capacidades o contratos eliminados (siempre MAJOR).
 - **Fixed** — correcciones de errores documentales o de contratos.
-- **Modelo conceptual** — RFCs aceptadas o enmendadas (viven en `plans/rfc/`; se listan aquí porque gobiernan el significado de `.agents/`).
+- **Modelo conceptual** — RFCs aceptadas o enmendadas (viven en `docs/rfc/`; se listan aquí porque gobiernan el significado de `.agents/`).
 
 Regla de trazabilidad: cada ítem del changelog referencia la policy, el plan o la
-RFC que originó el cambio. Los planes viven en `plans/`, las RFCs en `plans/rfc/`
-y las policies del harness en `.agents/harness/policies/` y
-`.agents/orchestrators/*/harness/policies/`.
+RFC que originó el cambio. Los planes viven en `docs/plans/`, las RFCs en
+`docs/rfc/` y las policies del harness en
+`protocol/.agents/harness/policies/` y
+`protocol/.agents/orchestrators/*/harness/policies/`.
 
 La política de migración entre versiones vive en [`docs/MIGRATION.md`](docs/MIGRATION.md).
 La política de versionado, changelog, tags y estados de planes vive en
@@ -36,6 +37,38 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Modelo conceptual
 
+- **Roadmap Impact en el Change Lifecycle DEV y barrido documental integral**
+  (plan 133, docs-only): el Change Lifecycle DEV gana una determinación de cierre
+  nueva, **Roadmap impact**, **independiente** de **Documentation impact** y con
+  los mismos tres valores (`REQUIRED` / `NOT_REQUIRED` / `DEFERRED`). Regla
+  central: `Roadmap impact: REQUIRED` **no** significa editar `ROADMAP.md` —el
+  artefacto a reconciliar se determina por *ownership/source of truth*
+  (`ROADMAP.md` como mapa operativo, `docs/plans/INDEX.md`, los índices de
+  RFC/ADR, un plan activo o la documentación operativa que posee el estado)— y
+  `ROADMAP.md` sigue siendo un mapa operativo, nunca un changelog. Las dos
+  determinaciones no se fusionan ni se sustituyen: `Documentation impact:
+  REQUIRED` con `Roadmap impact: NOT_REQUIRED` es válido, y también lo son
+  `REQUIRED`/`REQUIRED` y `NOT_REQUIRED`/`REQUIRED`. Se formaliza como
+  subsección normativa en `docs/CONVENTIONS.md`, semántica operativa en
+  `.agents/policies/validation-closure.md` §5.2 (con §5.1 y la condición de stop
+  ajustadas), `.agents/workflows/change-lifecycle.md:9. Closure and handoff`,
+  `docs/VERSIONING.md` §10 y el campo del `## Checkpoint / cierre` del template
+  de plan. Sin segunda lifecycle, fase, estado, entidad, registry, tracker,
+  checker ni campo obligatorio nuevos; no se reclama el rótulo «Incremento 5» de
+  RFC-75 (track de coordinación/handoff fuera de alcance por decisión de la RFC).
+  **Barrido documental:** se corrigieron cuatro defectos de documentación de
+  estado actual —rutas pre-disolución en el header de `CHANGELOG.md` (`plans/`,
+  `plans/rfc/`, `.agents/harness/…` → `docs/plans/`, `docs/rfc/`,
+  `protocol/.agents/…`), el ancla de migración y la lista incompleta de la
+  batería canónica en `docs/CONVENTIONS.md` (enumeraba tres de los seis
+  checkers), la atribución de `B-7` al Plan 43 en `docs/plans/INDEX.md` (es
+  `B-4`, F-04; el residuo de `B-7` son los planes 29 y 52) y el título
+  «planes activos» de la sección del roadmap del Execution Context (sus cuatro
+  planes están `Executed` desde agosto 2026)—. Cierra la continuidad de
+  `<PLAN-132>:F-2` / `<PLAN-132>:PC-1`. `protocol/.agents/`, `dist/`, los RFCs,
+  los ADRs, los planes cerrados y `ROADMAP.md` sin cambios; documentación
+  histórica no reescrita (RFC-46). Sin ADR, sin migración, sin `VERSION` bump ni
+  tag.
 - **Actualización del Roadmap al estado real** (plan 132, docs-only): `ROADMAP.md`
   deja de presentar como backlog activo la tabla histórica B-1…B-8 —cuyos
   problemas originales están resueltos— y pasa a ser un **mapa operativo

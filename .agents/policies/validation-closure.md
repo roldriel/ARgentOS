@@ -95,6 +95,7 @@ Record (plan `## Checkpoint / cierre`):
 - Consistency checkpoint↔anchor: PASS/FAIL + evidence.
 - Governance applied and derived condition.
 - Documentation impact determination (5.1).
+- Roadmap impact determination (5.2).
 
 Consistency rule: `Closed` requires the scoped content identity of the closure
 state to equal that of the applicable anchor **and** declared environmental
@@ -175,6 +176,67 @@ checker interprets prose or decides whether a document is up to date, and no
 checker is added for this. Absence of the determination, or a classification
 outside the three values, is a stop condition (see §7).
 
+### 5.2 Roadmap impact (closure determination)
+
+Every DEV Change determines, at closure and **independently of §5.1**, its
+impact on the **operational map of future work**. Same vocabulary — exactly one
+of `REQUIRED` / `NOT_REQUIRED` / `DEFERRED`, never a fourth value and never
+silence — and the same governance nature: a record inside the closure that
+already exists, not a phase, state, gate, entity, authority, ID namespace,
+registry or tracker.
+
+The question is not "was `ROADMAP.md` edited?" but *does this Change alter the
+operational representation of future work, in the source of truth that owns it?*
+
+| Classification | Meaning |
+|---|---|
+| `REQUIRED` | the Change materially modifies the operational map of future work: it creates future work, completes work of the map, cancels work, changes an item's state, priority or dependency, discovers new work, turns a candidate into active work or active work into blocked/requires-authorization, or substantially changes the nature of an item |
+| `NOT_REQUIRED` | the Change does not modify the operational map of future work: an internal refactor without scope change, a purely technical fix with no backlog impact, a historical correction that does not alter future work, or documentation that does not change the operational map |
+| `DEFERRED` | an impact or potential impact exists, but its update requires a decision or an authority that is not yet available |
+
+Rules:
+
+- **`REQUIRED` does not mean "always edit `ROADMAP.md`".** It means the
+  operational state the map represents must be **reconciled before closure**,
+  unless an explicit authorized deferment exists. Which artifact must be updated
+  follows **ownership / source of truth**: `ROADMAP.md` (the operational map),
+  `docs/plans/INDEX.md` (plan registry), `docs/rfc/INDEX.md` /
+  `docs/adr/INDEX.md` (RFC/ADR registries), an active plan, or the operational
+  documentation that actually owns the state.
+- `ROADMAP.md` remains an **operational map, not a changelog**: it does not
+  catalogue closed history and does not duplicate the detailed state of plans.
+- **The two determinations are independent.** Every combination is valid —
+  `Documentation impact: REQUIRED` with `Roadmap impact: NOT_REQUIRED`,
+  `Documentation impact: REQUIRED` with `Roadmap impact: REQUIRED`, or
+  `Documentation impact: NOT_REQUIRED` with `Roadmap impact: REQUIRED`. Neither
+  implies nor replaces the other and they are never merged into one value.
+- **Minimum record.** `REQUIRED` — the artifacts/items added, completed,
+  cancelled, reclassified or re-prioritized, the update made and its evidence.
+  `NOT_REQUIRED` — an explicit, verifiable reason tied to the real scope of the
+  Change (the bare classification is not acceptable). `DEFERRED` — the impact
+  left pending, why it is deferred, and the **existing** pending decision (PC-1)
+  that governs the deferral and holds the continuity, with owner. An impact
+  deferred without an owning pending decision is not `DEFERRED`; it is an
+  unresolved blocking condition.
+- **Historical exclusion and payload preemption** are the same as §5.1, and the
+  `docs/VERSIONING.md` current-state snapshot is likewise reconciled at
+  promotion/release, never in every Change.
+
+**Where it is recorded.** Next to the §5.1 determination in the Plan's
+`## Checkpoint / cierre` record (the template carries the field). For a change
+with no Plan (Class C / direct action) it goes with the intake classification in
+the commit message — `Roadmap impact: REQUIRED: <items> — <evidence>`,
+`Roadmap impact: NOT_REQUIRED: <reason>` or `Roadmap impact: DEFERRED: <items> —
+<pending-decision ref>`.
+
+**Enforcement.** Identical to §5.1: governance, not a semantic validation; no
+checker interprets prose; absence of the determination or a classification
+outside the three values is a stop condition.
+
+Full normative semantics of both determinations:
+`docs/CONVENTIONS.md:Change Lifecycle — Determinaciones de cierre: impacto
+documental e impacto de Roadmap (regla operacional)`.
+
 ## 6. Derived conditions
 
 ```text
@@ -199,8 +261,9 @@ Blocking (STOP — do not close, escalate with evidence):
   covers it (GC-1 consistency fails).
 - Findings are open without resolution or explicit deferral with owner;
   a blocking pending decision persists without resolution/escalation (PC-1).
-- Closure without an explicit Documentation impact determination (5.1), or
-  with a classification outside `REQUIRED` / `NOT_REQUIRED` / `DEFERRED`.
+- Closure without an explicit Documentation impact determination (5.1) or
+  without an explicit Roadmap impact determination (5.2), or with a
+  classification outside `REQUIRED` / `NOT_REQUIRED` / `DEFERRED` in either.
 - Attempted modification of closed history or out-of-scope artifacts.
 - A human decision is required for a mandatory resolution.
 

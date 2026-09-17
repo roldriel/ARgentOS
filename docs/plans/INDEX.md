@@ -6,7 +6,9 @@
 > Las secciones `## Convenciones` y `## Serie de RFCs (documentos canónicos)`
 > se conservan como anclas de navegación para referencias históricas.
 
-Estado al 2026-09-15. El Plan 132 está `Executed` con condición derivada `Closed`
+Estado al 2026-09-15. El Plan 133 está `Executed` con condición derivada `Closed`
+(formalización del Roadmap Impact en el Change Lifecycle DEV y barrido documental
+integral; docs-only, sin release; Sexagésima quinta serie). El Plan 132 está `Executed` con condición derivada `Closed`
 (actualización del Roadmap al estado real; docs-only, sin release; Sexagésima
 cuarta serie). El Plan 131 está `Executed` con condición derivada `Closed`
 (implementación mecánica del Placement Contract como resolver determinista; DEV
@@ -1012,6 +1014,22 @@ sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
 |---|---|---|---|
 | `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. |
 
+## Sexagésima quinta serie: Roadmap Impact y barrido documental integral (Plan 133) (15 sep 2026)
+
+Plan 133 (vía plan; docs-only, sin efecto en `protocol/.agents/`, RFC-56 no
+aplica; Change Level L2). Formaliza en el Change Lifecycle DEV una determinación
+de cierre nueva, **Roadmap impact**, independiente de **Documentation impact** y
+con los mismos tres valores (`REQUIRED` / `NOT_REQUIRED` / `DEFERRED`), sin crear
+segunda lifecycle, fase, estado, entidad, registry, tracker, checker ni campo
+obligatorio nuevos. Además recorre el universo documental real del repositorio y
+corrige únicamente la documentación de estado actual materialmente obsoleta,
+dejando clasificado lo histórico, lo diferido y lo que requiere autoridad.
+Cierra la continuidad de `<PLAN-132>:F-2` / `<PLAN-132>:PC-1`.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `133-roadmap-impact-and-documentary-sweep.md` | — (vía plan, docs-only) | Executed | Formalización del **Roadmap impact** en el Change Lifecycle DEV y barrido documental integral. **Mecanismo**: subsección normativa nueva en `docs/CONVENTIONS.md` (`### Change Lifecycle — Determinaciones de cierre: impacto documental e impacto de Roadmap (regla operacional)`), que además da fuente canónica al **Documentation impact** —que hasta ahora vivía sólo en la policy operativa y en el DoD—; semántica operativa en `.agents/policies/validation-closure.md` §5.2 (con §5.1 y la condición de stop ajustadas); `.agents/workflows/change-lifecycle.md:9. Closure and handoff` con las dos determinaciones; `docs/VERSIONING.md` §10 con las dos en el DoD; y campo `Roadmap impact` en el `## Checkpoint / cierre` de `docs/plans/_TEMPLATE.md`. Regla central: `Roadmap impact: REQUIRED` **no** significa editar `ROADMAP.md` — el artefacto a reconciliar se determina por ownership/source of truth, y `ROADMAP.md` sigue siendo un mapa operativo, no un changelog; las dos determinaciones son independientes en todas sus combinaciones. No se reclama el rótulo «Incremento 5» de RFC-75 (track de coordinación/handoff, fuera de alcance por decisión de la propia RFC). **Barrido y correcciones** (las cuatro confirmadas por el mantenedor): `CHANGELOG.md` header con rutas pre-disolución corregidas (`plans/20-release-adoption.md` → `docs/plans/`, `plans/rfc/` → `docs/rfc/`, `.agents/harness/policies/` y `.agents/orchestrators/*` → `protocol/.agents/…`); `docs/CONVENTIONS.md` con el ancla de migración (`plans/INDEX.md` → `docs/plans/INDEX.md`), la lista de la batería canónica completada a los **seis** checkers + pytest (antes enumeraba tres) y el path histórico de `archive/` explicitado; `docs/plans/INDEX.md` con la atribución de `B-7` corregida (planes 29 y 52; el Plan 43 corresponde a `B-4`, F-04) y el título de la sección del roadmap EC corregido a histórico (sus cuatro planes están `Executed` desde agosto 2026, no son «planes activos»). Documentos **no** modificados con razón verificable: `ROADMAP.md` (su mapa operativo no cambia), `README.md`, `AGENTS.md`, `.agents/AGENTS.md`, `runtime/README.md`, `tests/AGENTS.md`, `protocol/.agents/` completo, `docs/VERSIONING.md` §9 (sin release), RFCs, ADRs y planes cerrados. Sin ADR, sin migración, sin `VERSION` bump ni tag. |
+
 ## Sexagésima cuarta serie: actualización del Roadmap al estado real (Plan 132) (15 sep 2026)
 
 Plan 132 (vía plan; docs-only, sin efecto en `protocol/.agents/`, RFC-56 no
@@ -1137,7 +1155,11 @@ Change Lifecycle.
 > `docs/rfc/`; esta sección se conserva como ancla de navegación para
 > referencias históricas.
 
-## Roadmap de implementación (planes activos)
+## Roadmap de implementación del Execution Context (histórico: planes 04–07, todos `Executed`)
+
+> Sección histórica: es el roadmap del Execution Context Pipeline, cerrado en
+> los planes 04–07 (agosto 2026). No es el mapa de trabajo activo —el mapa
+> operativo actual es `ROADMAP.md`— y se conserva como traza de navegación.
 
 ```text
 Nivel 1  Cierre del pipeline principal ──┐ (paralelizable)
@@ -1332,8 +1354,12 @@ Resolución: los ítems B-1…B-8 se redactan como pares RFC + plan en la **Sext
 serie** (tabla arriba); cada plan referencia su fricción F-xx. B-1 → plan 40
 (y 47), B-2 → planes 29 y 33, B-3 → plan 50, B-4 → planes 37-43 y 53, B-5 →
 plan 44, B-6 → planes 46 y 67 (tests del flujo enforced + subcomandos
-validate-delegation/validate-return), B-7 → planes 29, 43 y 52, B-8 → plan 49.
+validate-delegation/validate-return), B-7 → planes 29 y 52, B-8 → plan 49.
 El actor único de hashes de B-4 (F-17) se completa con el plan 58.
+El Plan 43 (`43-intent-reflection-auto-confirm.md`) corresponde a `B-4`
+(`INTENT_REFLECTION` auto-confirmada sin estado productor, F-04), no a `B-7`;
+la atribución anterior de `B-7` al Plan 43 era un error de trazabilidad,
+corregido en el Plan 133 (`<PLAN-132>:F-2` / `<PLAN-132>:PC-1`, resueltos).
 
 ## Documentos de soporte
 

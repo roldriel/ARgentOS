@@ -298,16 +298,25 @@ Un plan está terminado cuando:
       bumped.
 - [ ] Para cambios docs-only (RFC-69): ítem en `[Unreleased]` del changelog
       con `(plan, RFC-N)`; sin `VERSION` bump ni tag.
-- [ ] Documentation impact determinado en el cierre (Change Lifecycle DEV):
-      exactamente `REQUIRED` / `NOT_REQUIRED` / `DEFERRED`, con su evidencia,
-      registrado en `## Checkpoint / cierre` del Plan (para un cambio sin Plan,
-      en el mensaje de commit, según
+- [ ] Determinaciones de impacto del cierre (Change Lifecycle DEV): **dos**
+      determinaciones **independientes**, cada una exactamente `REQUIRED` /
+      `NOT_REQUIRED` / `DEFERRED` con su evidencia, registradas en
+      `## Checkpoint / cierre` del Plan (para un cambio sin Plan, en el mensaje
+      de commit, según
       `.agents/policies/validation-closure.md:5.1 Documentation impact (closure
-      determination)`). `REQUIRED` exige documentos afectados y evidencia;
+      determination)` y `.agents/policies/validation-closure.md:5.2 Roadmap
+      impact (closure determination)`): **Documentation impact** (¿quedó
+      documentación de estado actual obsoleta o incompleta?) y **Roadmap
+      impact** (¿se alteró el mapa operativo del trabajo futuro?). En ambas,
+      `REQUIRED` exige los documentos/ítems afectados y evidencia;
       `NOT_REQUIRED` exige razón explícita; `DEFERRED` exige una pending
-      decision existente (PC-1) con owner. La ausencia de la determinación
-      bloquea el cierre; no hay checker semántico ni campo obligatorio de
-      template.
+      decision existente (PC-1) con owner. `Roadmap impact: REQUIRED` **no**
+      significa editar `ROADMAP.md`: el artefacto a reconciliar se determina
+      por ownership/source of truth. Las dos son independientes: no se fusionan
+      ni se sustituyen (`docs/CONVENTIONS.md:Change Lifecycle — Determinaciones
+      de cierre: impacto documental e impacto de Roadmap (regla operacional)`).
+      La ausencia de cualquiera de las dos bloquea el cierre; no hay
+      checker semántico ni campo obligatorio de template.
 - [ ] Commit atómico en `dev`.
 
 Una versión está publicada cuando, además:

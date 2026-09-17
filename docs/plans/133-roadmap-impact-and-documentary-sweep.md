@@ -197,16 +197,25 @@ documentos de estado actual.
   push, sin tag.
 - **Estado validado (ref al Validation anchor):** A1 (arriba), state identity `02dcd35f10ccceb834f03a8059dc3fdd96cbff78`, delta scoped identity `de43b223efab9ba2a335542d0233d94af2bca3e448b45beb53ca4d3e11e3109d`.
 - **Estado de cierre (tree id):** `02dcd35f10ccceb834f03a8059dc3fdd96cbff78`
-  — identidad de contenido del estado de cierre, igual a la del estado validado
-  por A1 sobre el scope declarado (8 paths). El commit de cierre incluye además
-  los registros de gobernanza que este propio artifact escribe al cerrar (el
-  `## Validation anchor`, este `## Checkpoint / cierre`, la `## Nota de
-  ejecución` y las secciones `## Findings / Correcciones / Pending`), de modo que
-  su árbol material difiere del declarado; la diferencia se declara aquí en lugar
-  de ocultarse (precedente de los Planes 120 y 123–132), no altera el contenido
-  scoped validado y se verifica tras el commit con `git rev-parse HEAD^{tree}`.
-  El árbol material del commit de cierre **no** se transcribe aquí porque es
-  auto-referencial (depende del propio registro que lo declararía).
+  — identidad de contenido del estado de cierre: el estado validado por A1 sobre
+  el scope declarado (8 paths), **sin** los registros de gobernanza que este
+  propio artifact escribe al cerrar (el `## Validation anchor`, este
+  `## Checkpoint / cierre`, la `## Nota de ejecución` y las secciones
+  `## Findings / Correcciones / Pending`). Es el estado al que GC-1 evalúa la
+  consistencia, y es recuperable e inspeccionable como objeto git con
+  `git cat-file -t 02dcd35f10ccceb834f03a8059dc3fdd96cbff78`.
+  El **árbol material del commit de cierre no es el declarado aquí y no se
+  transcribe**: es auto-referencial —el registro que lo declararía forma parte
+  del árbol que declara— y su valor correcto es el que resuelva
+  `git rev-parse HEAD^{tree}` sobre el commit atómico
+  `docs(dev): formalize roadmap impact and sweep documentation (plan 133)`
+  (verificado: `d17503fe8f3253323cf0d98fed707eb100f9791a`). La diferencia es
+  únicamente el registro de gobernanza declarado, no contenido scoped validado;
+  se declara aquí en lugar de ocultarse (precedente de los Planes 120 y
+  123–132). Esta precisión se incorporó como `<PLAN-133>:C-4` /
+  `<PLAN-133>:F-5`. El literal numérico anterior —y el de los Planes 120 y
+  123–132— identificaba el estado validado, no el árbol material: ése es el
+  defecto que `<PLAN-133>:F-5` registra.
 - **Consistencia checkpoint↔anchor:** PASS — el estado de cierre declarado tiene
   la identidad de contenido scoped que la validación A1 consumió (mismos 8 paths,
   misma delta scoped identity) y los factores ambientales declarados no
@@ -219,8 +228,10 @@ documentos de estado actual.
   `.agents/workflows/change-lifecycle.md`, `docs/VERSIONING.md` y
   `docs/plans/_TEMPLATE.md`; `<PLAN-132>:F-2` pasa a `resolved` y
   `<PLAN-132>:PC-1` a `resuelto por referencia` mediante `<PLAN-133>:C-3`;
-  findings `<PLAN-133>:F-1` (`deferred`, con owner) y `<PLAN-133>:F-2`
-  (`deferred`, con owner) registrados; `**Status:** Executed`.
+  findings `<PLAN-133>:F-1` (`deferred`, con owner), `<PLAN-133>:F-2`
+  (`deferred`, con owner), `<PLAN-133>:F-3` (`resolved`), `<PLAN-133>:F-4`
+  (`resolved`) y `<PLAN-133>:F-5` (`resolved`) registrados, con las correcciones
+  `<PLAN-133>:C-1`…`C-4`; `**Status:** Executed`.
 - **Documentation impact:** **REQUIRED** — documentos afectados y actualizados
   dentro de este mismo Change, con su aspecto y su evidencia:
   `docs/CONVENTIONS.md` (aspecto: (a) el mecanismo de **Documentation impact**
@@ -360,6 +371,30 @@ documentos de estado actual.
   corrección de estado actual dentro del alcance autorizado; además
   `check_version_state.py` pasa. Se registra como deuda no bloqueante con owner.
 
+- `<PLAN-133>:F-5` — estado: `resolved`; severidad: `medium`; observación:
+  verificación 10 del barrido (correspondencia entre el registro de cierre y el
+  árbol real) — el campo `Estado de cierre (tree id)` del `## Checkpoint /
+  cierre` declaraba como árbol de cierre el tree id del **estado validado**
+  (`02dcd35f…`, el árbol staged en el momento de la validación), que **no** es el
+  árbol del commit de cierre (`d17503fe…`), porque el commit incorpora los
+  registros de gobernanza que el propio artifact escribe al cerrar; el literal,
+  por tanto, identificaba correctamente el estado validado por A1 pero **no** el
+  árbol material del commit, y el gate C-2 no podía detectarlo (compara el estado
+  de cierre declarado contra el anchor —donde son iguales por construcción—, no
+  contra el árbol del commit); el mismo patrón aparece en los Planes 120 y
+  123–132, es decir, **no es un defecto introducido por este Change sino el
+  comportamiento del formato de cierre vigente**; evidencia original: `git
+  rev-parse HEAD^{tree}` = `d17503fe8f3253323cf0d98fed707eb100f9791a` contra el
+  literal declarado `02dcd35f10ccceb834f03a8059dc3fdd96cbff78`, sobre el commit
+  `c7ac44e`; estado Git observado: `dev` @ `c7ac44eeb44c92665b132a644b7650602ad96855`;
+  provenance original: autoverificación del Change tras el commit; resolución:
+  corregido dentro de este mismo Change por `<PLAN-133>:C-4` —el campo distingue
+  ahora explícitamente la identidad del estado validado (que es la que GC-1
+  evalúa) del árbol material del commit de cierre, declara que este último es
+  auto-referencial y no se transcribe, e indica cómo verificarlo—; **no** se
+  modificó C-2, ningún otro plan ni la semántica de GC-1: la corrección es
+  documental y de precisión del registro, no de mecanismo.
+
 ### Correcciones
 
 - `<PLAN-133>:C-1` — refs origen: `<PLAN-133>:F-3` (rutas pre-disolución en el
@@ -388,6 +423,18 @@ documentos de estado actual.
   `check_plan_structure` PASS en el árbol validado. No se reabre el Plan 132
   (post-close por referencia, RFC-75 Mecanismo 12); su `F-2` y su `PC-1`
   conservan sus elementos inmutables y sólo evoluciona su metadata de estado.
+
+- `<PLAN-133>:C-4` — refs origen: `<PLAN-133>:F-5` (el campo `Estado de cierre
+  (tree id)` declaraba el tree id del estado validado, no el árbol material del
+  commit de cierre); alcance de revalidación: `docs/plans/133-roadmap-impact-and-documentary-sweep.md`
+  (sección `## Checkpoint / cierre`); evidencia (Git/estado): el campo distingue
+  ahora la identidad del estado validado —la que GC-1 evalúa, recuperable con
+  `git cat-file -t 02dcd35f…`— del árbol material del commit de cierre, declara
+  que este último es auto-referencial y no se transcribe, e indica la
+  verificación con `git rev-parse HEAD^{tree}`; C-1/C-2/C-3 y los seis checkers
+  canónicos PASS sobre el árbol corregido. Sin cambios de mecanismo: C-2, GC-1 y
+  cualquier otro plan permanecen intactos; la corrección es de precisión del
+  registro, no de semántica.
 
 ### Pending decisions
 

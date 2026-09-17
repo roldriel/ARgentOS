@@ -36,6 +36,22 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Modelo conceptual
 
+- **Actualización del Roadmap al estado real** (plan 132, docs-only): `ROADMAP.md`
+  deja de presentar como backlog activo la tabla histórica B-1…B-8 —cuyos
+  problemas originales están resueltos— y pasa a ser un **mapa operativo
+  actual** con las categorías separadas: trabajo activo/dogfood, pendientes que
+  requieren autorización, candidatos futuros e histórico resuelto. Se registran
+  como trabajo **derivado nuevo** el checker D01 mecánico (próximo dogfood) y el
+  validador estructural EARS (siguiente), sin reabrir `B-1`/`B-2`; como
+  **pendientes de payload que requieren RFC-56** el residuo de `B-4` (`F-14`,
+  `F-17`), la clasificación `project_shape` para repositorios documentales/de
+  protocolo de `B-7` (`F-16`) y el slot de session risk de single-instance en el
+  catálogo de métricas (`B-8`); y como **candidato futuro** el checker mecánico
+  de `.last_discovery` (`B-3`). `B-5` y `B-6` dejan de figurar como pendientes.
+  El registro histórico permanece en `docs/plans/INDEX.md`, los planes y las
+  RFCs; el Roadmap no lo duplica. Sin tareas nuevas, sin cambios en
+  `protocol/.agents/`, `runtime/`, `tools/` ni `tests/`; sin ADR, sin migración,
+  sin `VERSION` bump ni tag.
 - **Implementación mecánica del Placement Contract** (plan 131, DEV `runtime/` +
   `tests/`, sin efecto en el payload): `docs/placement-contract.md` se materializa
   como un **resolver determinista** — `PLACE` con el namespace canónico y la regla

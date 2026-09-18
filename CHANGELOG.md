@@ -37,6 +37,38 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Modelo conceptual
 
+- **Cierre formal de Closure Evidence Integrity y baseline para D01** (plan 134,
+  cierre documental, docs-only): verificación término por término del estado ya
+  ejecutado —baseline, existencia y materialización del Plan 134, working tree,
+  C-1/C-2/C-3, los seis checkers canónicos, `C-2 ANOMALY=0`, el `GAP` preexistente
+  del Plan 116, ausencia de cambios pendientes, `protocol/` intacto y Planes
+  históricos 120–133 sin tocar— y una única corrección documental mínima: el
+  registro de cierre no enunciaba una por una las seis condiciones derivadas
+  (`Promoted` no aparecía; `Released` sólo incidentalmente), de modo que el estado
+  de cierre no era reconstruible sin inferencia; se agregó la tabla
+  `Verified/Executed/Committed/Closed/Promoted/Released` con valor y evidencia
+  (`<PLAN-134>:F-5` resuelto por `<PLAN-134>:C-3`). La verificación detectó además
+  que el **estado validado por A1 no era reconstruible desde el commit**
+  (`e415e03e…` era un objeto git válido pero nunca árbol de ningún commit, y su
+  delta no reproducía desde el estado commiteado): A1 queda `stale` sin mutarse y
+  se registra la **revalidación A2** sobre el estado reconstruible
+  (`751d7c7d…` / `b580f894…`), que es el que el checkpoint certifica
+  (`<PLAN-134>:F-6` resuelto por `<PLAN-134>:C-4`); es la misma clase de defecto
+  que `<PLAN-133>:F-5` y una limitación del procedimiento vigente —identidades
+  medidas sobre el índice staged—, no del modelo. **No** se modificó el modelo
+  semántico, **no** se alteró R4, **no** se tocó el Plan 116, **no** se agregó el
+  SHA del commit de cierre como requisito del template y **no** se modificó ningún
+  Plan histórico. **Pendientes preservados explícitamente:** (1) *R4 / locator del
+  commit de cierre* — pending decision, owner mantenedor, scope cambio futuro de
+  procedimiento (registrar el SHA del cierre, mantener R4 opcional u otra forma de
+  locator reproducible: **no se eligió opción**); (2) *Plan 116* — `GAP`
+  preexistente de C-2 por ambigüedad de revalidaciones múltiples, boundary de
+  interpretación humana que **no bloquea el cierre** bajo las reglas actuales. Se
+  registra además que la consigna de cierre describía el Change anterior con
+  `<PLAN-134>:F-5`/`C-*` cuando el `F-5`/`C-4` reales pertenecen al **Plan 133**:
+  la premisa confundía los namespaces de dos Planes y el repositorio era y es
+  coherente (no se cambió nada para hacerla coincidir). Sin `VERSION` bump ni tag;
+  sin push, merge, release ni promoción.
 - **Integridad de la evidencia de cierre y contrato de C-2** (plan 134,
   docs-only + tooling DEV): el Change Lifecycle DEV gana un **modelo normativo**
   que separa tres conceptos que no deben colapsarse —el **estado validado** (lo

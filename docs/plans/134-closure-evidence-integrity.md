@@ -261,7 +261,26 @@ de formato; no cambia `Closed`, no agrega estados ni identidades.
     escribir los registros de cierre; el estado de cierre se declara abajo con
     esta misma identidad, y el árbol material del commit de cierre **no** se usa
     como identidad (se registra como hecho de Git cuando el commit exista).
-- **Validity / stale:** vigente.
+- **Validity / stale:** A1 (arriba) valida el estado del commit `f6884c5`, que
+  incluía los registros de cierre originales de este artifact. **A1 es `stale`
+  respecto del estado corregido** por el cierre formal (2026-09-15): las
+  correcciones `<PLAN-134>:C-3`/`<PLAN-134>:C-4` modifican este artifact, que
+  pertenece al scope declarado. Se registra la **revalidación A2** en este mismo
+  anchor (abajo); A1 conserva su significado histórico y no se muta.
+- **Revalidación A2 (estado corregido, 2026-09-15).** Referencia a A1: la cadena
+  es histórica (`A1 → A2`), nunca una mutación de A1. Motivo: los registros de
+  cierre del Change «Close Closure Evidence Integrity» (F-5/C-3 y F-6/C-4)
+  modifican este artifact, que forma parte del scope declarado en A1; A1 pasa a
+  `stale` para el estado corregido (CL-2). Command-set: idéntico al de A1.
+  Cambios de factores ambientales: ninguno. Resultado: **PASS** (ver
+  `## Nota de ejecución`, «Cierre formal y verificación de baseline»).
+  - **State identity (A2, estado revalidado):** `751d7c7d07652082397a33aa737885fe219a8070` (tree id del índice staged del scope declarado con los 10 paths, incluidos los registros de cierre corregidos).
+  - **Delta scoped identity (A2):** `b580f8940b0ec573a05ce2226b34e7b0c0cfd1516581ec30397e666020105c7f` (sha256 `scoped-v1` sobre los 10 paths, en orden lexicográfico).
+  - **Límite declarado:** el delta declarado se midió antes de escribir este
+    enunciado, por lo que no se auto-referencia; el árbol material del commit que
+    materializa A2 se resuelve con `git rev-parse <commit>^{tree}` en lugar de
+    transcribirse aquí. Los checkers no verifican mecánicamente este resultado:
+    es evidencia textual declarada.
 
 *Resultado real de la ejecución:* verification-01
 (`check_protocol_invariants --payload protocol .`): PASS (exit 0, «215 files
@@ -288,16 +307,22 @@ la divergencia produce `GAP` advisory y R2 sigue produciendo `ANOMALY`.
 
 - **Commits de cierre:** el commit atómico de este Change en `dev`, acción de
   repositorio del mantenedor:
-  `fix(dev): correct closure evidence integrity and the C-2 contract (plan 134)`.
-  Su SHA se identifica por el mensaje (el artifact no puede embeber su propio SHA
-  sin ampliar el scope después de validar); verificable con `git log`.
-- **Estado validado (ref al Validation anchor):** A1 (arriba), state identity
-  `e415e03e2587986a5e866dd3ac3631c3895c4f02`, delta scoped identity
-  `7a4a18b1a87e2a561f7535941711920bcfd40ec92b30bc8b83bd7c5ae7823b47`.
-- **Estado de cierre (identidad):** `e415e03e2587986a5e866dd3ac3631c3895c4f02`
+  `fix(dev): correct closure evidence integrity and the C-2 contract (plan 134)`
+  (`f6884c5`). Su SHA se identifica por el mensaje (el artifact no puede embeber
+  su propio SHA sin ampliar el scope después de validar); verificable con
+  `git log`. El cierre formal posterior (`<PLAN-134>:C-3`/`<PLAN-134>:C-4`) se
+  materializa en su propio commit atómico, identificado igualmente por su
+  mensaje.
+- **Estado validado (ref al Validation anchor):** **A2** (revalidación sobre el
+  estado corregido, arriba), state identity
+  `751d7c7d07652082397a33aa737885fe219a8070`, delta scoped identity
+  `b580f8940b0ec573a05ce2226b34e7b0c0cfd1516581ec30397e666020105c7f`. A1
+  (`e415e03e…` / `7a4a18b1…`) conserva su significado histórico como la
+  validación del estado del commit `f6884c5`.
+- **Estado de cierre (identidad):** `751d7c7d07652082397a33aa737885fe219a8070`
   (state identity) + delta scoped identity
-  `7a4a18b1a87e2a561f7535941711920bcfd40ec92b30bc8b83bd7c5ae7823b47`
-  — la identidad del estado validado por A1 sobre el scope declarado (10 paths),
+  `b580f8940b0ec573a05ce2226b34e7b0c0cfd1516581ec30397e666020105c7f`
+  — la identidad del estado validado por A2 sobre el scope declarado (10 paths),
   es decir el estado que este checkpoint **certifica** por correspondencia GC-1.
   Es una identidad de **contenido scoped**, no el árbol de un commit.
 - **Árbol material del commit de cierre (tree id):** no se transcribe como
@@ -305,13 +330,13 @@ la divergencia produce `GAP` advisory y R2 sigue produciendo `ANOMALY`.
   de gobernanza que este artifact escribe al cerrar, de modo que su árbol difiere
   legítimamente del declarado (RFC-75 `docs/rfc/75-change-lifecycle.md:Mecanismo
   7 — Git Checkpoints`); su valor correcto es el que resuelva
-  `git rev-parse HEAD^{tree}` sobre el commit de cierre. Esta es exactamente la
+  `git rev-parse <commit>^{tree}` sobre el commit de cierre. Esta es exactamente la
   relación que este Change documenta y **no** considera una violación de GC-1.
 - **Consistencia checkpoint↔anchor:** **PASS** — el estado de cierre declarado
-  tiene la identidad de contenido scoped del anchor aplicable A1 (mismos 10 paths,
-  misma delta scoped identity y misma state identity), y los factores ambientales
-  declarados no cambiaron; verificado con C-2, que clasificó este artifact
-  conforme a GC-1 sobre el árbol validado.
+  tiene la identidad de contenido scoped del anchor aplicable **A2** (mismos 10
+  paths, misma delta scoped identity y misma state identity), y los factores
+  ambientales declarados no cambiaron; verificado con C-2, que clasificó este
+  artifact conforme a GC-1 sobre el árbol validado.
 - **Governance aplicada:** `docs/plans/INDEX.md` registra el Plan 134 (fila, serie
   Sexagésima sexta y encabezado de estado); `CHANGELOG.md` `[Unreleased]` registra
   el par (plan 134); el modelo del estado de cierre queda en
@@ -321,7 +346,11 @@ la divergencia produce `GAP` advisory y R2 sigue produciendo `ANOMALY`.
   `.agents/policies/lifecycle-checkers.md` y el template en
   `docs/plans/_TEMPLATE.md`; findings `<PLAN-134>:F-1`…`F-4` (`resolved`) y
   correcciones `<PLAN-134>:C-1`/`<PLAN-134>:C-2` registrados; C-1 y C-3
-  declarados `NOT_REQUIRED`; `**Status:** Executed`.
+  declarados `NOT_REQUIRED`; `**Status:** Executed`. **Cierre formal
+  (2026-09-15, post-commit `f6884c5`):** se agrega `<PLAN-134>:F-5` (`resolved`)
+  y su corrección `<PLAN-134>:C-3` (enunciado término por término de las seis
+  condiciones derivadas) y se registra la verificación de cierre del Change
+  «Close Closure Evidence Integrity»; ningún otro artifact se modifica.
 - **Documentation impact:** **REQUIRED** — documentos afectados y actualizados
   dentro de este Change: `docs/CONVENTIONS.md` (aspecto: no existía modelo
   normativo que distinguiera estado validado, estado de cierre y árbol material
@@ -366,11 +395,64 @@ la divergencia produce `GAP` advisory y R2 sigue produciendo `ANOMALY`.
 - **Condición derivada:** **`Closed`** (docs-only + tooling DEV, sin release) —
   `Executed` ∧ governance aplicada ∧ checkpoint registrado ∧ consistencia PASS.
   Sin tag, sin push, sin merge, sin promoción a `master`, sin `dist`.
+- **Condiciones derivadas, una por una** (cada una reconstruible de este artifact
+  y de Git; ninguna se confunde con otra):
+
+  | Condición | Valor | Evidencia en este artifact |
+  |---|---|---|
+  | `Verified` | **YES** | `## Validation anchor`, «Resultado real de la ejecución»: seis checkers canónicos + C-1/C-2/C-3 PASS, `pytest tests/test_check_lifecycle_checkpoint.py` 32 passed, `pytest tests/` 837 passed |
+  | `Executed` | **YES** | `**Status:** Executed`; criterios de salida cumplidos |
+  | `Committed` | **YES** | commit atómico `fix(dev): correct closure evidence integrity and the C-2 contract (plan 134)` (`f6884c5`) en `dev` |
+  | `Closed` | **YES** | `Executed` ∧ governance aplicada ∧ ∃ checkpoint ∧ consistencia checkpoint↔anchor **PASS** ∧ evidencia de validación PASS para el estado de cierre |
+  | `Promoted` | **NO** | sin merge `dev` → `master`; `origin/dev` en `4aa261774c034eba3bb6f4e51810513ce9e25933` |
+  | `Released` | **NO** | sin tag, sin release, sin regeneración de `dist` |
+
+  La cadena de implicación `Verified ⊆ Executed ⊆ Closed ⊆ Promoted ⊆ Released`
+  se respeta: las cuatro primeras son verdaderas, las dos últimas falsas, y
+  `Closed ≠ Released`.
 
 ## Findings / Correcciones / Pending
 
 ### Findings
 
+- `<PLAN-134>:F-6` — estado: `resolved`; severidad: `medium`; observación:
+  verificación final de cierre — el estado validado declarado por A1
+  (`e415e03e2587986a5e866dd3ac3631c3895c4f02`, delta `7a4a18b1…`) es un objeto
+  git **válido y presente en la base de objetos, pero nunca fue árbol de ningún
+  commit** (`git log --all --format='%H %T'` no lo contiene; el árbol del commit
+  de cierre `f6884c5` es `d51f8edb…`), y la delta declarada no es reproducible
+  desde el estado commiteado (calculada con la misma serialización `scoped-v1`
+  sobre los blobs de `f6884c5` da `d193a4a8…`, distinta). Es decir: la identidad
+  declarada identificaba correctamente el *contenido* staged sobre el que se
+  corrió la validación, pero **el estado no era reconstruible desde el commit**,
+  que es justamente lo que ADR-15 CL-3 exige («un estado Git verificable que
+  permita reconstruir el estado efectivamente validado y gobernado»), y es la
+  misma clase de defecto que `<PLAN-133>:F-5`; evidencia original: `git cat-file
+  -t e415e03e…` → `tree`; `git rev-parse f6884c5^{tree}` → `d51f8edb…`; `git log
+  --all` sin `e415e03e`; recálculo de la identidad scoped sobre los blobs de
+  `f6884c5` → `d193a4a8…`; estado Git observado: `dev` @
+  `f6884c53790b482e169df27dd7769463932f0479`, working tree limpio; provenance
+  original: Change de cierre «Close Closure Evidence Integrity» (2026-09-15);
+  resolución: **corregido** por `<PLAN-134>:C-4` — A1 se marca `stale` para el
+  estado corregido (conservando su significado histórico), se agrega la
+  revalidación **A2** sobre el estado reconstruible y el checkpoint certifica el
+  estado de A2. Semántica, R4, C-2, Plan 116 e historia: sin cambios.
+- `<PLAN-134>:F-5` — estado: `resolved`; severidad: `low`; observación: verificación
+  final de cierre (post-commit `f6884c5`) — el registro de cierre de este artifact
+  declaraba la condición derivada `Closed` y enumeraba «sin tag, sin push, sin
+  merge, sin promoción», pero **no** enunciaba una por una las condiciones
+  derivadas (`Verified`, `Executed`, `Committed`, `Closed`, `Promoted`,
+  `Released`): `Promoted` no aparecía nombrado en ningún punto del registro y
+  `Released` sólo de forma incidental, de modo que el estado de cierre no era
+  reconstruible término por término desde el artifact sin inferencia; evidencia
+  original: búsqueda de los seis términos en este mismo artifact (`Promoted` → 0
+  ocurrencias; `Verified` → 1, ajena al predicado) y `git rev-parse HEAD` =
+  `f6884c53790b482e169df27dd7769463932f0479` con `origin/dev` sin cambios;
+  estado Git observado: `dev` @ `f6884c5`, working tree limpio; provenance
+  original: Change de cierre «Close Closure Evidence Integrity» (2026-09-15);
+  resolución: **corregido** por `<PLAN-134>:C-3` — se agregó la tabla de las seis
+  condiciones con su valor y su evidencia, sin cambiar la semántica del modelo,
+  sin alterar R4, sin tocar el Plan 116 y sin modificar ningún otro artifact.
 - `<PLAN-134>:F-1` — estado: `resolved`; severidad: `high`; observación: el
   contrato documentado de C-2 declaraba que el **closure state es el tree id del
   commit de cierre final** («Closure state = Git **tree id** of the final closing
@@ -424,6 +506,28 @@ la divergencia produce `GAP` advisory y R2 sigue produciendo `ANOMALY`.
 
 ### Correcciones
 
+- `<PLAN-134>:C-4` — refs origen: `<PLAN-134>:F-6` (el estado validado de A1 no
+  era reconstruible desde el commit); alcance de revalidación: **A2** (arriba),
+  sobre el estado corregido del scope declarado; documento:
+  `docs/plans/134-closure-evidence-integrity.md` (secciones `## Validation
+  anchor` y `## Checkpoint / cierre`); evidencia (Git/estado): A1 marcado `stale`
+  sin mutarlo, A2 registrado con state identity
+  `751d7c7d07652082397a33aa737885fe219a8070` y delta `b580f894…`, y el checkpoint
+  certificando el estado de A2; los seis checkers canónicos, C-1/C-2/C-3 y la
+  suite completa vuelven a pasar sobre el árbol corregido (ver `## Nota de
+  ejecución`). No se modificó el modelo semántico, R4, C-2, el Plan 116 ni ningún
+  Plan histórico.
+- `<PLAN-134>:C-3` — refs origen: `<PLAN-134>:F-5`; alcance de revalidación: —
+  (corrección documental pura y acotada al registro de cierre de este artifact:
+  no cambia contenido scoped validado de ningún otro artefacto de gobernanza y no
+  altera el modelo semántico, R4, C-2, el Plan 116 ni la historia; la verificación
+  de este Change es la re-ejecución de los checkers y gates, declarada en la
+  `## Nota de ejecución`); documento: `docs/plans/134-closure-evidence-integrity.md`
+  (sección `## Checkpoint / cierre`); evidencia (Git/estado): tabla de las seis
+  condiciones derivadas con valor y evidencia por condición; los seis checkers
+  canónicos, C-1/C-2/C-3 y la suite completa vuelven a pasar sobre el árbol
+  corregido (ver `## Nota de ejecución`). Semántica de Plan 134 intacta: la
+  corrección agrega el enunciado explícito de las condiciones, no su significado.
 - `<PLAN-134>:C-1` — refs origen: `<PLAN-134>:F-1`, `<PLAN-134>:F-2`,
   `<PLAN-134>:F-4`; alcance de revalidación: — (corrección documental pura: no
   cambia contenido scoped validado de ningún artefacto de gobernanza; la
@@ -528,3 +632,94 @@ Prompt Cache, Jury Trial, C-2/CI como incidente de infraestructura, ni pytest
 isolation; sin D01 Mechanical Checker (sigue siendo el próximo dogfood); sin
 `protocol/.agents/`, `dist/`, CI, `VERSION` ni tags; sin push, merge, release ni
 promoción.
+
+### Cierre formal y verificación de baseline (2026-09-15)
+
+*Change «Close Closure Evidence Integrity». Ejecutado sobre `dev` @
+`f6884c53790b482e169df27dd7769463932f0479`, working tree limpio.*
+
+**Verificación del estado, punto por punto** (ninguno se dio por supuesto; los
+trece se comprobaron contra el repositorio antes de decidir si hacía falta una
+corrección):
+
+| # | Comprobación | Resultado |
+|---|---|---|
+| 1 | baseline Git | `f6884c5`; rama `dev`; `origin/dev` = `4aa2617` (13 commits locales sin publicar); `protocol/.agents/VERSION` = `11.5.0`; 50 tags, ninguno en `HEAD` |
+| 2 | Plan 134 existe | `docs/plans/134-closure-evidence-integrity.md` presente; registrado en `docs/plans/INDEX.md` (fila + Sexagésima sexta serie + encabezado) |
+| 3 | cierre/corrección materializados | commit `f6884c5` (`fix(dev): correct closure evidence integrity and the C-2 contract (plan 134)`, 10 archivos); su contenido en `HEAD` |
+| 4 | working tree | limpio antes y después de la verificación |
+| 5 | C-1 | 134 planes, `VALID=40`, `GAP=0`, `ANOMALY=0` |
+| 6 | C-2 | 134 planes, `VALID=39`, `GAP=1`, `ANOMALY=0` |
+| 7 | C-3 | 134 planes, `VALID=19`, `GAP=0`, `ANOMALY=0` |
+| 8 | seis checkers canónicos | `check_protocol_invariants` (215 files / 10256 refs), `check_plan_citations`, `check_plan_structure`, `check_taxonomy_coherence`, `check_session_artifacts`, `check_version_state`: los seis exit 0 |
+| 9 | C-2 `ANOMALY=0` | confirmado (el único `GAP` es el esperado) |
+| 10 | Plan 116 sigue siendo el `GAP` preexistente | sí: «multiple declared revalidations could correspond to the closure state; ambiguity, evidence insufficient» |
+| 11 | cambios pendientes de Plan 134 | ninguno: `git status` limpio; el árbol commiteado contiene todo el contenido del Change |
+| 12 | Protocol sin modificaciones | `git diff f6884c5 -- protocol` vacío; `VERSION` 11.5.0 sin cambios |
+| 13 | Planes históricos 120–133 | `git diff f6884c5 -- 'docs/plans/1[23][0-9]-*.md'` y el Plan 116: sin cambios |
+
+**Discrepancia de premisa registrada (no es un defecto del repositorio).** La
+consigna describía el Change anterior como «corrección posterior ya realizada
+según `<PLAN-134>:F-5` / `<PLAN-134>:C-*`» y esperaba `F-1`…`F-5` `resolved` en
+este Plan. Verificado el repositorio: `<PLAN-134>:F-5` **no existía**, y el
+`F-5`/`C-4` reales pertenecen al **Plan 133** (`<PLAN-133>:F-5`: el closure tree
+declarado no coincidía con el árbol material del commit; `<PLAN-133>:C-4`: su
+corrección). El Plan 134 tenía `F-1`…`F-4`, todas `resolved`, con `C-1`/`C-2`. La
+premisa confundía los namespaces de los dos Planes; el repositorio era y es
+coherente, y **no se cambió nada para hacerla coincidir**. El `F-5` del Plan 134
+que ahora existe es el hallazgo **nuevo** de esta verificación de cierre
+(enunciado explícito de las condiciones derivadas), no un renombrado del de
+Plan 133.
+
+**Corrección documental mínima aplicada.** Único defecto real encontrado: el
+registro de cierre no enunciaba una por una las seis condiciones derivadas
+(`Promoted` no aparecía; `Released` sólo incidentalmente), de modo que el estado
+de cierre no era reconstruible término por término sin inferencia. Se agregó la
+tabla `Verified/Executed/Committed/Closed/Promoted/Released` con valor y
+evidencia, y se registró como `<PLAN-134>:F-5` + `<PLAN-134>:C-3`. **No** se
+modificó el modelo semántico, **no** se alteró R4, **no** se tocó el Plan 116,
+**no** se agregó el SHA del commit de cierre como requisito del template, **no**
+se modificó ningún Plan histórico y **no** se reabrió el Plan 133.
+
+**Pendientes que permanecen pendientes (sin resolver, por diseño).**
+
+1. **R4 / locator del commit de cierre** — `PENDING DECISION`, owner: mantenedor,
+   scope: cambio futuro de procedimiento del lifecycle. Registrado en
+   `### Pending decisions` de este artifact. Determinará si (a) los Planes
+   futuros deben registrar el SHA del cierre, (b) R4 permanece opcional, o (c) se
+   adopta otra forma de locator reproducible. **No se eligió ninguna opción** y R4
+   **no** se modificó para fabricar evidencia inexistente. Los Planes 120–133 no
+   se tocan retroactivamente.
+2. **Plan 116 — ambigüedad de revalidaciones múltiples** — `GAP` **preexistente**
+   de C-2, boundary que requiere interpretación humana. No se modificó el Plan
+   116, no se inventó tie-breaker, no se cambió C-2 para ocultarlo, no se convirtió
+   en `ANOMALY` y no se mezcló con R4. Bajo las reglas actuales **no bloquea el
+   cierre**: `GAP` es advisory y nunca cambia el exit code.
+
+**Verificación posterior a la corrección.** Los seis checkers canónicos, C-1
+(`GAP=0`, `ANOMALY=0`), C-2 (`ANOMALY=0`, `GAP=1` = Plan 116) y C-3 (`GAP=0`,
+`ANOMALY=0`) y la suite completa (`python -m pytest tests/ -q`) vuelven a pasar
+sobre el árbol corregido, sin que ninguna comprobación se haya ajustado para
+obtener verde. C-2 clasifica este artifact `VALID` con anchor aplicable **A2**,
+seleccionado por **correspondencia de estado** (no por recencia), que es
+exactamente la semántica que el Plan 99/F-1 fijó.
+
+**Hallazgo adicional de la verificación (F-6/C-4).** Al comprobar la
+reconstruibilidad del registro se detectó que el estado validado por A1
+(`e415e03e…`) era un objeto git válido pero **nunca fue árbol de ningún commit**,
+y su delta no era reproducible desde el estado commiteado: identificaba el
+contenido staged sobre el que se corrió la validación, pero el estado **no** era
+reconstruible desde el commit — justo lo que ADR-15 CL-3 exige, y la misma clase
+de defecto que `<PLAN-133>:F-5`. Se corrigió marcando A1 `stale` (sin mutarlo),
+registrando la **revalidación A2** sobre el estado reconstruible
+(`751d7c7d…` / `b580f894…`) y certificando el estado de A2 en el checkpoint. Es
+una limitación heredada del procedimiento vigente —las identidades se midieron
+sobre el índice staged— y **no** se ocultó ni se cambió el modelo semántico, R4,
+C-2, el Plan 116 ni ningún Plan histórico para resolverla.
+
+**Estado de cierre final (reconstruible desde este artifact).** `Verified = YES`,
+`Executed = YES`, `Committed = YES`, `Closed = YES`, `Promoted = NO`,
+`Released = NO`. Sin tag, sin release, sin promoción, sin merge, sin push. El
+baseline resultante para el próximo trabajo es el commit atómico de este Change
+de cierre en `dev`.
+

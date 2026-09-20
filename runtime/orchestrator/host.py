@@ -49,6 +49,8 @@ from .autonomy import (
     STOP_UNCLASSIFIABLE_ACTION,
     AutonomyCandidate,
     AutonomyResult,
+    authorization_drift,
+    authorization_projection,
     envelope_from_observation,
     evaluate_autonomy,
     summarize_autonomy,
@@ -162,25 +164,128 @@ _AUTONOMY_PLAN_WRITES: frozenset[str] = frozenset(
 )
 
 
-def _autonomy_target_path(
+def _autonomy_targets(
     action_kind: str, observation: ChangeObservation
-) -> str | None:
-    """The path a derived action writes, or ``None`` when it writes nothing.
+) -> tuple[tuple[str, ...], bool]:
+    """The **complete** set of paths a derived action writes, and its resolvability.
 
-    The semantic task's target is resolved exactly as the host already resolves
+    The semantic task's targets are resolved exactly as the host already resolves
     the scope it will verify after the delegation (`_build_delegation`): the
     plan's declared agent scope, or its declared deliverables when the scope was
     not explicit. Using the same resolution for both checks is deliberate — two
     different readings of "the authorized scope" in the same host would be a
     defect waiting to happen, and the frontier must check the same scope the
     post-delegation verification enforces.
+
+    ``unresolved`` is a declared fact, not an empty success: a write class whose
+    targets cannot be established stops, because an unestablished write set
+    cannot be shown to stay inside the authorized scope (plan 138 E1).
     """
     if action_kind in _AUTONOMY_PLAN_WRITES:
-        return observation.plan_path
+        if not observation.plan_path:
+            return (), True
+        return (observation.plan_path,), False
     if action_kind == RUN_IMPLEMENTATION_TASK:
-        resolved = observation.agent_task.scope or observation.scope_set
-        return resolved[0] if resolved else None
-    return None
+        declared = observation.agent_task.scope
+        if declared:
+            return tuple(declared), False
+        fallback = observation.scope_set
+        if fallback:
+            return tuple(fallback), False
+        return (), True
+    # Read-only classes (a validation, a revalidation, a gate run) consume the
+    # authorized change and write nowhere. Declaring no target is the truth about
+    # them, not an unresolved write.
+    return (), False
+
+
+def _plan_authorized_scope(observation: ChangeObservation) -> frozenset[str]:
+    """The scope the plan **declares**, used to bound what a task may write.
+
+    Three sources, all read from the plan's own declarations — never from the
+    agent-task scope being checked:
+
+    - ``observation.declared_artifacts``: the paths named in ``## Entregables``;
+    - ``observation.anchor.scope_set``: the scope a registered Validation Anchor
+      already recorded for this change;
+    - ``observation.plan_path``: the plan artifact itself, which the host writes
+      through the existing governance-record mechanism and which is therefore
+      always inside its own Change's authorized scope.
+
+    Existence is deliberately **not** required. ``observation.scope_set`` filters
+    to paths that already exist, which is right for a content identity and wrong
+    here: a plan authorizes the deliverable it is about to create, and the
+    dogfood suite of this very Change is the proof — it is declared, authorized
+    and absent until the execution writes it.
+    """
+    declared = set(observation.declared_artifacts)
+    declared.update(observation.anchor.scope_set)
+    if observation.plan_path:
+        declared.add(observation.plan_path)
+    return frozenset(_normalize_scope_path(path) for path in declared)
+
+
+def _normalize_scope_path(path: str) -> str:
+    """Representation-only normalization, matching the frontier's own rule."""
+    candidate = (path or "").strip().replace("\\", "/")
+    if candidate.startswith("./"):
+        candidate = candidate[2:]
+    return candidate.rstrip("/") if candidate else ""
+
+
+def _autonomy_envelope(observation: ChangeObservation, plan: int):
+    """The autonomy the approved plan declares, bounded by the scope it authorizes.
+
+    ``envelope_from_observation`` reads the plan's ``## Delegación agentiva``:
+    the task and the paths the delegated worker may modify. That declaration is
+    the *proposal*; it is not, by itself, evidence that the plan authorizes those
+    paths — reading the authorization out of the thing being authorized is
+    exactly the circularity that made the plan 136 check vacuous.
+
+    The envelope is therefore intersected with the plan's **declared** scope
+    (``_plan_authorized_scope``). A declared write target the plan does not
+    declare is not authorized, and the frontier stops before the delegation
+    exists — which is what turns "the agent interpreted an obligation as
+    permission" into a refusal the mechanism makes, not a rule the agent must
+    remember.
+
+    ``declaration`` is returned untouched alongside the bounded envelope, because
+    the authorization *checkpoint* must project the declaration as it is written:
+    a widening that the intersection would silently filter away has to remain
+    visible as a divergence, or the rewrite could hide inside the filter.
+    """
+    from dataclasses import replace
+
+    declaration = envelope_from_observation(observation, plan)
+    governance = (observation.plan_path,) if observation.plan_path else ()
+    if not declaration.scope_paths:
+        return declaration, replace(declaration, governance_paths=governance)
+    authorized = _plan_authorized_scope(observation)
+    allowed = tuple(
+        path
+        for path in declaration.scope_paths
+        if _normalize_scope_path(path) in authorized
+    )
+    if allowed == declaration.scope_paths:
+        return declaration, replace(declaration, governance_paths=governance)
+    bounded = replace(declaration, scope_paths=allowed, governance_paths=governance)
+    return declaration, bounded
+
+
+def _declared_outside_plan_scope(observation: ChangeObservation) -> tuple[str, ...]:
+    """Declared write targets the plan does not otherwise authorize.
+
+    The honest, useful diagnostic behind a refusal: it names exactly which part
+    of the declaration the plan does not back, so the escalation says "the
+    declaration asked for a path the plan does not authorize" instead of the much
+    weaker "the plan declares nothing".
+    """
+    authorized = _plan_authorized_scope(observation)
+    return tuple(
+        path
+        for path in observation.agent_task.scope
+        if _normalize_scope_path(path) not in authorized
+    )
 
 
 @dataclass
@@ -238,11 +343,22 @@ class ExecutionHost:
         # enabled, the host verifies *before* acting that the derived action stays
         # inside the autonomy the approved plan declares, and stops at the first
         # frontier instead of inferring its way past it.
+        #
+        # Since plan 138 the gate is also the **enforcement point**: it verifies
+        # the complete set of paths the action would write (all-or-nothing) and
+        # compares the observed authorization contract against the one pinned when
+        # the run was authorized, both *before* the delegation is built. A write
+        # outside the scope is therefore refused before it can produce its
+        # persistent effect, and the post-delegation verification is kept as
+        # defence in depth for the effects the host cannot interpose.
         self.autonomy_gate = autonomy_gate
         #: The frontier verdict of the iteration in progress. Evidence for the
         #: journal record; never a source of authority and never persisted as
         #: state (the next iteration re-derives everything from the repository).
         self._last_autonomy: AutonomyResult | None = None
+        #: Whether this iteration's verdict was a divergence from the pinned
+        #: authorization contract (plan 138 E2). Evidence only.
+        self._last_autonomy_drift: bool = False
 
     # -- observation -------------------------------------------------------- #
 
@@ -303,9 +419,19 @@ class ExecutionHost:
             # Evidence of the SAE frontier (plan 135): what the host was about to
             # do, whether the granted autonomy covered it, and — when it did not —
             # the authority that decides instead. ``None`` when the gate is off.
+            # Since plan 138 it also carries the complete set of write targets
+            # considered, the pinned authorization checkpoint (the declaration the
+            # run was authorized under) and whether this verdict was a divergence
+            # from it. All of it is evidence: it never re-authorizes anything.
             "autonomy": (
                 None if self._last_autonomy is None else self._last_autonomy.to_dict()
             ),
+            "autonomy_checkpoint": (
+                None
+                if self._last_autonomy is None
+                else self._last_autonomy.pinned_projection
+            ),
+            "authorization_drift": self._last_autonomy_drift,
             "delegation_id": delegation_id,
             "result_id": result_id,
             # What the persisted result said about *this* content state, so the
@@ -405,17 +531,43 @@ class ExecutionHost:
     def _apply_autonomy_gate(
         self, observation: ChangeObservation, action: NextAction, boundary: AuthorityBoundary
     ) -> tuple[NextAction, AutonomyResult | None]:
-        """Stop at an SAE frontier instead of conducting the derived action.
+        """Stop at an SAE frontier **before** the action produces any effect.
 
         The host derives an action from the change; the frontier decides whether
         that action is inside the autonomy the approved plan declares. A frontier
         reached here is reported as a real stop with the frontier's own authority
         and reason — never converted into a continuation, and never widened by
         inference.
+
+        Two checks bind every write class (plan 138):
+
+        - **the complete set of write targets** must be inside the authorized
+          scope, all-or-nothing: one unauthorized target stops the whole action,
+          and a target set that could not be resolved stops as well;
+        - **the authorization contract** must still be the one this run was
+          authorized under. The projection observed at the first authorized
+          iteration is pinned in the journal and compared on every later
+          iteration, so rewriting ``Scope``, ``Task``, the authorizing status or
+          the declaration cannot authorize retroactively an action already
+          conducted.
+
+        Both checks run here, which is before ``_execute_delegation`` builds the
+        delegation and before any worker is invoked: the refusal precedes the
+        persistent effect instead of following it.
         """
         if not self.autonomy_gate or action.terminal:
             return action, None
-        envelope = envelope_from_observation(observation, self.plan)
+        declaration, envelope = _autonomy_envelope(observation, self.plan)
+        targets, unresolved = _autonomy_targets(action.kind, observation)
+        # The checkpoint and the verdict must read the same thing: pinning the raw
+        # declaration while evaluating the bounded one would make every execution
+        # diverge from its own checkpoint. `declaration` stays available so a
+        # widening that the bound filtered away is still named in the reason
+        # (`declared_outside_scope`).
+        drift, drift_reason = self._autonomy_drift(envelope)
+        pinned = self._pinned_autonomy_projection()
+        if pinned is None and not drift:
+            pinned = authorization_projection(envelope)
         result = evaluate_autonomy(
             envelope,
             [
@@ -423,28 +575,61 @@ class ExecutionHost:
                     action_class=_AUTONOMY_CLASS_BY_ACTION.get(
                         action.kind, action.kind
                     ),
-                    target_path=_autonomy_target_path(action.kind, observation),
+                    target_path=targets[0] if targets else None,
                     description=action.rationale,
+                    write_targets=targets,
+                    targets_unresolved=unresolved,
+                    declared_outside_scope=_declared_outside_plan_scope(observation),
                 )
             ],
+            pinned_projection=pinned,
         )
         self._last_autonomy = result
+        self._last_autonomy_drift = drift
         if result.continues or result.stop_condition is None:
             return action, result
         stop_kind = _AUTONOMY_STOP_TO_ACTION.get(
             result.stop_condition, STOP_AUTHORITY_REQUIRED
         )
+        reasons = f"{result.reason} (authority: {result.authority})"
+        if drift:
+            reasons += f" The authorization checkpoint diverged: {drift_reason}."
         stop = stop_action(
             stop_kind,
             (
-                f"supervised-autonomous-execution frontier: {result.reason} "
-                f"(authority: {result.authority})"
+                f"supervised-autonomous-execution frontier: {reasons}. The "
+                "refusal precedes the effect: nothing was delegated and nothing "
+                "was written"
             ),
             boundary,
         )
         # The stop carries the action it refused to conduct, so the escalation
         # says exactly what the host was about to do.
         return stop, result
+
+    def _pinned_autonomy_projection(self) -> str | None:
+        """The authorization checkpoint of this plan, as recorded in its journal.
+
+        The **earliest** recorded checkpoint is returned, deliberately: the first
+        time the host authorized an action is the moment the declaration became
+        the authority for everything that follows. Selecting the earliest rather
+        than the latest is what makes the checkpoint survive a restart — a new
+        run cannot re-pin a declaration that was quietly rewritten while the host
+        was down, which is exactly the hole a "latest reading wins" rule would
+        leave open.
+
+        Absence is honest: with nothing recorded this is ``None`` and the caller
+        pins the current projection, which is the legitimate first authorization.
+        """
+        for record in self.store.read_journal(self.plan):
+            recorded = record.get("autonomy_checkpoint")
+            if recorded:
+                return str(recorded)
+        return None
+
+    def _autonomy_drift(self, envelope: Any) -> tuple[bool, str]:
+        """Whether the authorization contract diverged from the pinned one."""
+        return authorization_drift(self._pinned_autonomy_projection(), envelope)
 
     def _execute_delegation(
         self, observation: ChangeObservation, action: NextAction, iteration: int
@@ -557,6 +742,14 @@ class ExecutionHost:
         self, before: Mapping[str, str], delegation: Delegation
     ) -> tuple[str, ...]:
         """Paths the delegation changed outside the scope it authorized.
+
+        **Defence in depth, not the primary mechanism.** Since plan 138 the host
+        refuses an unauthorized write *before* delegating, so this check is no
+        longer what protects the frontier. It is kept, deliberately, because the
+        host cannot interpose on a write performed inside the worker — an injected
+        ``AgentInvoker`` runs its own code and the host only sees the repository
+        afterwards. Removing it would trade a real guarantee (prevention where the
+        host controls the effect) for a false one (prevention everywhere).
 
         Derived from the repository, never from the worker's own account of what
         it did: a worker that under-reports its changes would otherwise escape the

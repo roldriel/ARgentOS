@@ -1,6 +1,6 @@
 # Plan 138 — SAE Scope & Authority Hardening (la autonomía operacional nunca excede Scope + Authority)
 
-**Status:** Aprobado para redacción
+**Status:** Aprobado para ejecución
 **Fecha:** 2026-09-20
 **RFC:** — (vía plan; DEV-only: `.agents/`, `runtime/`, `tests/`, `docs/`; sin efecto en `protocol/.agents/`, RFC-56 no aplica; justificación documentada en `## Objetivo`)
 **Clase:** — (sin efecto payload: no toca `protocol/.agents/` ni el layout del payload fuente)
@@ -75,12 +75,12 @@ propia (`<PLAN-138>:PC-2`). No se avanza EARS ni ningún otro trabajo del mapa.
 
 ## Criterio de entrada
 
-- [ ] Baseline registrado: `dev` en `ebdbfad13e34ef1a38c5dc91365159d552e458f7` (tree `8fb41698a02c24668c5521707224978635565000`), working tree limpio.
-- [ ] Batería canónica verde (seis checkers, exit 0) y gates C-1/C-2/C-3 `ANOMALY=0` sobre ese baseline.
-- [ ] Suites de SAE verdes antes de empezar (`pytest tests/test_autonomous_scope.py tests/test_autonomous_scope_dogfood.py` → 62 passed).
-- [ ] Plan 138 es el próximo número libre del registro (`docs/plans/INDEX.md`), verificado contra `docs/plans/`.
-- [ ] `<PLAN-136>:F-3` permanece `open` / `ready for human resolution` y `<PLAN-136>:PC-4` (a) y `<PLAN-136>:PC-5` están legibles como evidencia; **no** se modifican.
-- [ ] Autorización explícita del mantenedor para **ejecutar** este Plan (decisión humana; hoy el Plan está `Aprobado para redacción`).
+- [x] Baseline registrado: `dev` en `ebdbfad13e34ef1a38c5dc91365159d552e458f7` (tree `8fb41698a02c24668c5521707224978635565000`), working tree limpio.
+- [x] Batería canónica verde (seis checkers, exit 0) y gates C-1/C-2/C-3 `ANOMALY=0` sobre ese baseline.
+- [x] Suites de SAE verdes antes de empezar (`pytest tests/test_autonomous_scope.py tests/test_autonomous_scope_dogfood.py` → 62 passed).
+- [x] Plan 138 es el próximo número libre del registro (`docs/plans/INDEX.md`), verificado contra `docs/plans/`.
+- [x] `<PLAN-136>:F-3` permanece `open` / `ready for human resolution` y `<PLAN-136>:PC-4` (a) y `<PLAN-136>:PC-5` están legibles como evidencia; **no** se modifican.
+- [x] Autorización explícita del mantenedor para **ejecutar** este Plan (decisión humana; el Plan pasa a `Aprobado para ejecución`).
 
 ## Entregables
 
@@ -95,7 +95,8 @@ propia (`<PLAN-138>:PC-2`). No se avanza EARS ni ningún otro trabajo del mapa.
 9. `runtime/README.md` — sección SAE (Plan 135) actualizada con el endurecimiento y los límites declarados.
 10. `docs/plans/INDEX.md` — registro del Plan 138 y su serie.
 11. `CHANGELOG.md` — ítem `[Unreleased]` `(plan 138, RFC-—)` (DEV-only: sin bump ni tag).
-12. `docs/plans/138-sae-scope-authority-hardening.md` — este Plan, con anchor, checkpoint y determinaciones de impacto.
+12. `tests/test_sae_scope_enforcement_dogfood.py` — dogfood anclado al repo real (sólo lectura): el punto de enforcement previo al efecto existe en el runtime, la frontera de F-3 sigue registrada sin modificación, y `ROADMAP.md` con 0 diff. **Corregido en la ejecución** (`<PLAN-138>:F-1` / `<PLAN-138>:C-1`): este entregable figuraba en `## Delegación agentiva` → `Scope` y en el `## Scope` del Plan, pero **no** en `## Entregables`, de modo que la declaración autorizaba un path que el propio Plan no declaraba como entregable. Es exactamente la clase de divergencia que el enforcement de este Change detecta, y quedó registrada como finding.
+13. `docs/plans/138-sae-scope-authority-hardening.md` — este Plan, con anchor, checkpoint y determinaciones de impacto.
 
 ## Pasos
 
@@ -382,17 +383,20 @@ Change respeta las fronteras que el propio incidente F-3 puso a prueba.
 
 ## Validation anchor
 
-*Pendiente: se completa al validar (VC-1, Incremento 1). Este Plan se crea en
-`Aprobado para redacción` y no se ejecuta, de modo que declarar un estado validado
-aquí sería fabricar evidencia.*
+*Validación A1 — registrada al ejecutar el Change del Plan 138 (VC-1, Incremento 1).*
 
-- **Declared scope:** (pendiente)
-- **Validation command-set:** (pendiente)
-- **Effective inputs (repo content):** (pendiente)
-- **Observed dependencies:** (pendiente)
-- **Environmental factors:** (pendiente)
-- **Scoped Content Identity:** (pendiente)
-- **Validity / stale:** (pendiente)
+- **Declared scope:** el cambio del Plan 138 (SAE Scope & Authority Hardening): `.agents/policies/supervised-autonomous-execution.md`, `.agents/policies/validation-closure.md`, `.agents/policies/autonomous-orchestration.md`, `runtime/orchestrator/autonomy.py`, `runtime/orchestrator/host.py`, `runtime/README.md`, `tests/test_sae_scope_enforcement.py`, `tests/test_sae_scope_enforcement_dogfood.py`, `docs/plans/138-sae-scope-authority-hardening.md`, `docs/plans/INDEX.md`, `CHANGELOG.md`, `.agents/AGENTS.md`
+- **Validation command-set:** `python tools/check_protocol_invariants.py --payload protocol .`; `python tools/check_plan_citations.py`; `python tools/check_plan_structure.py`; `python tools/check_taxonomy_coherence.py`; `python tools/check_session_artifacts.py`; `python tools/check_version_state.py`; `python -m pytest tests/`; `python tools/check_lifecycle_anchor.py`; `python tools/check_lifecycle_checkpoint.py`; `python tools/check_lifecycle_lineage.py`; `python -m pytest tests/test_sae_scope_enforcement.py tests/test_sae_scope_enforcement_dogfood.py -q`
+- **Effective inputs (repo content):** el scope declarado (12 paths) más `docs/plans/INDEX.md` y los checkers de `tools/` consumidos por la batería.
+- **Observed dependencies:** `git` (identidad de contenido y estado), `python` (intérprete de los checkers y de la suite); el resto no instrumentado.
+- **Environmental factors:** Windows; Python 3.14; sin red. **Factor ambiental declarado relevante:** la raíz temporal de la sesión de pytest es externa al repositorio (`ARGENTOS_PYTEST_TMP` / `tests/pytest_isolation.py`); las suites nuevas usan `pytest_isolation.scratch_root` y no escriben temporales dentro del repositorio. Ninguna dependencia ambiental impidió obtener evidencia: la corrida final es completa y en verde.
+- **Scoped Content Identity:**
+  - **State identity (estado validado):** T1 = `ed2964d656c4a01f68100a383deadbb3c0133345` (`git write-tree` sobre el índice staged con el cambio completo; coincide con el tree del commit C1).
+  - **Delta scoped identity (scope S = los 12 paths, ordenados; serialización `scoped-v1`):** `c7a8212e52dba5cfbb58d88c60ef1c49852d8e2289ce765c0ffc1ccfcf7a8cd3`
+  - **Scope set (repo-relative paths, ordenados; reconstruible desde este artifact):** `.agents/AGENTS.md`, `.agents/policies/autonomous-orchestration.md`, `.agents/policies/supervised-autonomous-execution.md`, `.agents/policies/validation-closure.md`, `CHANGELOG.md`, `docs/plans/138-sae-scope-authority-hardening.md`, `docs/plans/INDEX.md`, `runtime/README.md`, `runtime/orchestrator/autonomy.py`, `runtime/orchestrator/host.py`, `tests/test_sae_scope_enforcement.py`, `tests/test_sae_scope_enforcement_dogfood.py`
+- **Validity / stale:** `vigente` para A1; el Plan queda **revalidada** por A2 sobre el estado de cierre (ver el Checkpoint).
+
+*Resultado real de la ejecución:* `check_protocol_invariants` OK (215 archivos, 10256 referencias); `check_plan_citations` OK; `check_plan_structure` OK; `check_taxonomy_coherence` OK; `check_session_artifacts` OK; `check_version_state` OK (warnings esperados de `dev`); `pytest tests/` PASS (**1009 passed, 0 failed**); suites nuevas PASS (**44 + 12 = 56 passed**); C-1 `VALID`, C-2 `VALID` (consistencia con A1/A2), C-3 `VALID` (`<PLAN-138>:F-1` → `<PLAN-138>:C-1`); `ANOMALY=0` en los tres gates.
 
 ## Checkpoint / cierre
 
@@ -446,14 +450,11 @@ porque este Plan no se ejecutó.*
 
 ### Findings
 
-No findings detected / N/A — al redactar este Plan no se detectó ningún defecto
-nuevo del repositorio. El defecto que motiva el Change es `<PLAN-136>:F-3`, que
-vive en el artifact que lo posee y que este Plan **no** modifica ni reabre.
+- `<PLAN-138>:F-1` — estado: `open` (la acción de corregir se ejecutó dentro del Scope; la **transición de estado es decisión humana** y este Plan no la escribe); observación: el propio Plan autorizaba como write target `tests/test_sae_scope_enforcement_dogfood.py` —figuraba en `## Delegación agentiva` → `Scope` y en el `## Scope` del Plan— pero **no** lo declaraba en `## Entregables`, de modo que la declaración autorizaba un path que el Plan no declaraba como entregable; es exactamente la clase de divergencia que el enforcement de este Change detecta, y apareció al verificar el envelope real del propio Plan contra la nueva frontera (`tests/test_sae_scope_enforcement_dogfood.py:test_the_real_plan_envelope_passes_the_new_enforcement`); evidencia original: el Plan en el baseline `b11e4a3` (sección `## Delegación agentiva` → `Scope` vs. sección `## Entregables`), y la salida de la verificación read-only que muestra `tests/test_sae_scope_enforcement_dogfood.py` como el único `declared_outside_scope`; estado Git observado: `b11e4a3222f2c6d36a65669be92cf4a3e9889db3`, working tree limpio; provenance original: Paso 0/5 de la ejecución autorizada (2026-09-20). Autoridad aplicable: el Plan aprobado para ejecución autoriza la corrección dentro de su propio Scope (`docs/plans/138-sae-scope-authority-hardening.md` es un write target declarado), y la corrección no cambia ninguna decisión normativa, no requiere RFC ni ADR y no toca el payload. Resolución: corregida dentro del Scope (`<PLAN-138>:C-1`); el estado del finding queda para el mantenedor.
 
 ### Correcciones
 
-N/A — este Plan no ejecutó correcciones. Cualquier `C-<n>` que la ejecución
-produzca se registra en la ejecución (Incremento 2), no en la redacción.
+- `<PLAN-138>:C-1` — refs origen: `<PLAN-138>:F-1`; alcance de revalidación: `docs/plans/138-sae-scope-authority-hardening.md`, sección `## Entregables` (se agregó el entregable faltante y se renumeró el registro del propio Plan) y su efecto sobre el envelope del Plan verificado por `tests/test_sae_scope_enforcement_dogfood.py:test_the_real_plan_envelope_passes_the_new_enforcement`; evidencia: la suite de dogfood en verde tras la corrección, y la verificación read-only que muestra el envelope del Plan 138 con `declared_outside_scope` vacío; la autorización de la corrección es el propio Plan aprobado (registro factual, no fuente normativa).
 
 ### Pending decisions
 

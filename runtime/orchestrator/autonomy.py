@@ -35,6 +35,28 @@ Two rules are structural and never weaken:
    `superseded`) remains a human decision with evidence (CL-8, ADR-16 `AU-3`),
    so no action class below performs it.
 
+Since plan 138 two further rules bind the frontier, and both close defects that
+a real execution produced:
+
+3. **A write is authorized as a whole or not at all.** When the action declares
+   its complete set of write targets, **every** one of them must be inside the
+   authorized scope; one target outside stops the entire action. A set that could
+   not be resolved, or that is empty, stops as well: it cannot be shown to write
+   inside the scope, and assuming it does is the same inference by proximity this
+   frontier exists to forbid — applied to a set instead of a single path.
+   Verifying only the first declared path made the check vacuous, because the
+   path and the scope come from the same declaration
+   (``<PLAN-136>:F-3``).
+4. **The authorization is not retroactive.** ``Scope``, ``Task``, the plan status
+   that authorizes the execution and the declaration itself are the
+   *authorization checkpoint*: they are projected with
+   :func:`authorization_projection` when the host authorizes the first action of a
+   run, and every later iteration compares the observed contract against that
+   pinned projection. A divergence is a scope change made after the fact —
+   exactly the auto-authorization the incident produced — and stops the loop. The
+   governance records the host writes legitimately during the execution are
+   deliberately excluded from the projection: they are not authorization.
+
 The operational definition, the human boundary and the stop conditions live in
 ``.agents/policies/supervised-autonomous-execution.md``. This module *realizes*
 that policy; it is not a second normative source. If the two disagree, the
@@ -44,7 +66,9 @@ never reconciled by reinterpreting the policy.
 
 from __future__ import annotations
 
+import hashlib
 import posixpath
+import re
 from dataclasses import dataclass, field
 from typing import Any, Mapping, Sequence
 
@@ -267,6 +291,20 @@ class AutonomyEnvelope:
     plan: int | None = None
     plan_authorized: bool = False
     declaration_present: bool = False
+    #: The plan status that authorizes execution, verbatim. It is part of the
+    #: authorization contract: rewriting it later does not retroactively
+    #: authorize an action that was already conducted (plan 138, P4).
+    authorizing_status: str = ""
+    #: Repository-relative path of the plan artifact, when it is known. It is
+    #: excluded from the authorization projection: the host's own governance
+    #: records about the plan are not a change of the scope the plan authorized.
+    plan_path: str = ""
+    #: Paths the host writes as its own governance records about this Change —
+    #: the plan artifact and nothing else. They are writable by construction
+    #: (that is the existing record mechanism: anchor, checkpoint, run note,
+    #: status) and they are **not** part of the authorization projection, because
+    #: recording the execution is not the execution being authorized.
+    governance_paths: tuple[str, ...] = ()
 
     @property
     def declared(self) -> bool:
@@ -288,6 +326,8 @@ class AutonomyEnvelope:
             "authority_basis": self.authority_basis,
             "plan_authorized": self.plan_authorized,
             "declaration_present": self.declaration_present,
+            "authorizing_status": self.authorizing_status,
+            "plan_path": self.plan_path,
             "declared": self.declared,
         }
 
@@ -370,14 +410,266 @@ def verify_action_scope(
     )
 
 
+def unresolved_targets_verdict() -> ScopeVerdict:
+    """The verdict for a write whose set of targets could not be established."""
+    return ScopeVerdict(
+        False,
+        "the action's write targets could not be resolved, so its scope "
+        "membership cannot be established: the host stops rather than assuming "
+        "that an unestablished write set stays inside the authorized scope",
+    )
+
+
+def verify_write_targets(
+    envelope: AutonomyEnvelope, targets: Sequence[str]
+) -> ScopeVerdict:
+    """Whether **every** target of a write action is authorized.
+
+    Authorized means one of two things, and never a third:
+
+    - the target is a path the plan's declaration authorizes (exact membership,
+      the same rule as :func:`verify_action_scope`);
+    - the target is a path the host writes as its own governance record about
+      this Change (:attr:`AutonomyEnvelope.governance_paths`), which is the
+      existing record mechanism and not a scope expansion.
+
+    All-or-nothing by construction: the first target without authorization
+    decides the verdict for the whole action. A write that declared no target at
+    all is likewise out: an empty set cannot be shown to be authorized, and
+    treating it as safe would be the same inference the frontier exists to
+    forbid — now applied to a set instead of a single path.
+    """
+    declared = tuple(targets)
+    if not declared:
+        return ScopeVerdict(
+            False,
+            "the action declares no write target, so its scope membership cannot "
+            "be established: STOP rather than assume",
+        )
+    governance = {
+        normalized
+        for normalized in (_normalize_path(path) for path in envelope.governance_paths)
+        if normalized
+    }
+    for target in declared:
+        if _normalize_path(target) in governance:
+            continue
+        verdict = verify_action_scope(envelope, target)
+        if not verdict.in_scope:
+            return ScopeVerdict(
+                False,
+                f"one of the {len(declared)} declared write target(s) of the "
+                f"action is not authorized: {verdict.reason}",
+            )
+    return ScopeVerdict(
+        True,
+        f"all {len(declared)} declared write target(s) of the action are "
+        "authorized (plan scope or the host's own governance record)",
+    )
+
+
 # --------------------------------------------------------------------------- #
-# Candidates and outcomes
+# The authorization checkpoint — the declaration an action is authorized under
 # --------------------------------------------------------------------------- #
+
+
+#: Header of the combined projection and of each of its two halves. The combined
+#: form is what a checkpoint records; the halves are what the comparison uses, so
+#: a rewrite the scope bound filters away is still visible as a divergence.
+PROJECTION_HEADER = "authorization-v1"
+CONTRACT_HEADER = "authorization-contract-v1"
+SCOPE_HEADER = "authorization-scope-v1"
+
+
+def _canonical_text(text: str) -> str:
+    """Normalize representation only: whitespace runs collapse to one space.
+
+    Re-wrapping a field or re-indenting it is the *same* declaration, so it must
+    not read as a change of authorization. Every other change of the words does.
+    """
+    return re.sub(r"\s+", " ", text or "").strip()
+
+
+#: Status families that authorize execution. Both are named by the repository's
+#: own plan lifecycle: ``Aprobado para ejecución`` authorizes a change, and
+#: ``Executed`` is the continuation state the host itself records once
+#: implementation and validation are evidenced. They are deliberately collapsed
+#: into one family in the checkpoint: the host writing ``Executed`` is the
+#: expected governance record of its own work, and reading that as a divergence
+#: would stop every conforming Change. A status outside the family is the
+#: divergence that matters.
+_AUTHORIZING_STATUS_PREFIXES = ("aprobado para ejecución", "executed")
+
+
+def authorization_family(status: str) -> str:
+    """The status family that authorizes the execution, or the status verbatim.
+
+    ``AUTORIZADA`` covers the authorized family; any other value is reported as
+    itself, so the checkpoint distinguishes "still inside the authorizing status
+    family" (continue) from "the status that authorized this run is gone"
+    (divergence: STOP).
+    """
+    normalized = _canonical_text(status).casefold()
+    for prefix in _AUTHORIZING_STATUS_PREFIXES:
+        if normalized.startswith(prefix):
+            return "AUTORIZADA"
+    return normalized
+
+
+def authorization_projection(envelope: AutonomyEnvelope) -> str:
+    """The authorization contract, as a canonical text projection.
+
+    ``Scope`` + ``Task`` + the status family that authorizes execution. Nothing
+    else, and each exclusion is deliberate:
+
+    - the governance records the host legitimately writes during the execution
+      (anchor, checkpoint, run note, and the ``Executed`` status it derives) are
+      **not** authorization, so they never enter the projection;
+    - the plan artifact itself is excluded from the scope lines: a plan
+      authorizes the *content* it changes, and the host's own records about that
+      plan must not read as a change of the scope it authorized. The plan is
+      still writable by the host — that is the existing governance-record
+      mechanism — it is simply not part of what the checkpoint guards.
+
+    What remains is exactly the contract a rewrite could abuse: widening
+    ``Scope``, rewriting ``Task``, revoking the authorizing status or emptying
+    the declaration. Pure and deterministic: no filesystem, no clock, no Git.
+    """
+    plan_rel = _normalize_path(envelope.plan_path)
+    lines = [
+        PROJECTION_HEADER,
+        f"plan: {envelope.plan}",
+        f"status: {authorization_family(envelope.authorizing_status)}",
+        f"task: {_canonical_text(envelope.task)}",
+        f"declaration_present: {envelope.declaration_present}",
+    ]
+    for path in sorted(scope_paths(envelope)):
+        if path == plan_rel:
+            continue
+        lines.append(f"scope: {path}")
+    return "\n".join(lines) + "\n"
+
+
+def authorization_contract_projection(envelope: AutonomyEnvelope) -> str:
+    """The part of the contract that **no** change may rewrite after the fact.
+
+    ``Task``, the authorizing status family and the presence of the declaration.
+    ``Scope`` is deliberately excluded and has its own projection, because the
+    two behave differently: a widening can only be refused against the scope the
+    plan authorizes (a declaration that names an unauthorized path was never
+    authorized in the first place), while rewriting ``Task`` or revoking the
+    status falsifies the contract itself.
+
+    Splitting them is what keeps the checkpoint honest: a rewrite that the scope
+    bound filters away must still be visible as a divergence, or it could hide
+    behind the filter.
+    """
+    return "\n".join(
+        [
+            CONTRACT_HEADER,
+            f"plan: {envelope.plan}",
+            f"status: {authorization_family(envelope.authorizing_status)}",
+            f"task: {_canonical_text(envelope.task)}",
+            f"declaration_present: {envelope.declaration_present}",
+        ]
+    ) + "\n"
+
+
+def authorization_scope_projection(envelope: AutonomyEnvelope) -> str:
+    """The authorized scope, as its own projection (order-independent, exact)."""
+    plan_rel = _normalize_path(envelope.plan_path)
+    lines = [SCOPE_HEADER, f"plan: {envelope.plan}"]
+    for path in sorted(scope_paths(envelope)):
+        if path == plan_rel:
+            continue
+        lines.append(f"scope: {path}")
+    return "\n".join(lines) + "\n"
+
+
+def authorization_projection_digest(envelope: AutonomyEnvelope) -> str:
+    """Content digest of :func:`authorization_projection` (auditable shorthand)."""
+    return hashlib.sha256(
+        authorization_projection(envelope).encode("utf-8", errors="replace")
+    ).hexdigest()
+
+
+def authorization_drift(
+    pinned: str | None, envelope: AutonomyEnvelope
+) -> tuple[bool, str]:
+    """Whether the authorization contract diverged from what was pinned.
+
+    ``pinned`` is the projection recorded when the host authorized the action.
+    The comparison is two checks, because the two halves of the contract fail
+    differently:
+
+    - the **contract** (``Task``, the authorizing status family, the presence of
+      the declaration) must be identical. A rewrite there is a divergence
+      whatever the scope says — it falsifies what was authorized;
+    - the **scope** must not have been widened. Scope is compared against the
+      envelope it is given, which the host has already bounded by the scope the
+      plan authorizes: a declaration that names a path the plan never authorized
+      was never authorized, and the write check refuses it; a widening to a path
+      the plan *does* authorize is a genuine change of the authorized scope and
+      is refused here.
+
+    ``None`` means "not pinned yet" and is reported as no drift: the caller
+    pinning it for the first time is the legitimate case, and inventing a drift
+    there would stop every execution at birth.
+    """
+    if pinned is None:
+        return False, "no authorization checkpoint was pinned yet"
+    # The recorded checkpoint is the combined projection; rebuild its two halves
+    # in the canonical shape each half uses. Lines are taken verbatim, so a
+    # malformed pinned value makes the comparison fail closed (it reports a
+    # divergence) rather than passing vacuously.
+    body = pinned[len(PROJECTION_HEADER):] if pinned.startswith(PROJECTION_HEADER) else pinned
+    lines = [line for line in body.splitlines() if line.strip()]
+    plan_line = next((ln for ln in lines if ln.startswith("plan: ")), "")
+    contract_lines = [
+        ln
+        for ln in lines
+        if ln.startswith(("status: ", "task: ", "declaration_present: "))
+    ]
+    scope_lines = [ln for ln in lines if ln.startswith("scope: ")]
+    pinned_contract = "\n".join([CONTRACT_HEADER, plan_line, *contract_lines]) + "\n"
+    pinned_scope = "\n".join([SCOPE_HEADER, plan_line, *scope_lines]) + "\n"
+
+    contract = authorization_contract_projection(envelope)
+    if contract != pinned_contract:
+        return True, (
+            "the authorization contract (the Task or the status that authorized "
+            "the execution) changed after the execution was already authorized: "
+            "rewriting it cannot authorize an action retroactively (plan 138 P4), "
+            "so the host stops instead of accepting the new reading"
+        )
+    scope = authorization_scope_projection(envelope)
+    if scope != pinned_scope:
+        return True, (
+            "the authorized scope was widened after the execution was already "
+            "authorized: two declarations that cannot both be true, so the host "
+            "keeps the one that authorized the run and stops (plan 138 P4)"
+        )
+    return False, "the authorization contract is unchanged since it was pinned"
+
 
 
 @dataclass(frozen=True)
 class AutonomyCandidate:
-    """One action the host is considering, with the path it would touch.
+    """One action the host is considering, with the paths it would touch.
+
+    ``write_targets`` is the **complete** set of paths the action writes, and it
+    is authoritative when it is present. The frontier applies the rule the defect
+    of plan 136 proved necessary: *if any required target is not authorized, the
+    whole action stops*. There is no partial execution: authorizing a subset of
+    the paths would leave the remaining writes unverified while the action reads
+    as authorized.
+
+    ``target_path`` remains the single-target form: it is what a read-only
+    embedding and the plan 135 corpus use, and it is only consulted when
+    ``write_targets`` is absent. ``targets_unresolved`` declares honestly that
+    the host could not resolve the set: a write whose targets cannot be
+    established cannot be shown to stay inside the scope, so it stops rather than
+    being assumed safe.
 
     ``deferred`` carries the case the policy explicitly allows: a branch whose
     own resolution needs authority the host does not hold is preserved and
@@ -392,6 +684,21 @@ class AutonomyCandidate:
     deferred: bool = False
     deferral_authority: str = ""
     deferral_evidence: str = ""
+    write_targets: tuple[str, ...] = ()
+    targets_unresolved: bool = False
+    #: Declared write targets the plan does **not** otherwise authorize. The
+    #: host computes this diagnostic when it intersects the agent-task declaration
+    #: with the plan's observed scope; naming them is what turns a refusal into
+    #: an escalation a human can act on.
+    declared_outside_scope: tuple[str, ...] = ()
+
+    def effective_targets(self) -> tuple[str, ...]:
+        """The complete declared write set: ``write_targets`` or the singular path."""
+        if self.write_targets:
+            return tuple(self.write_targets)
+        if self.target_path is not None:
+            return (self.target_path,)
+        return ()
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -401,6 +708,9 @@ class AutonomyCandidate:
             "deferred": self.deferred,
             "deferral_authority": self.deferral_authority,
             "deferral_evidence": self.deferral_evidence,
+            "write_targets": list(self.write_targets),
+            "targets_unresolved": self.targets_unresolved,
+            "declared_outside_scope": list(self.declared_outside_scope),
         }
 
 
@@ -464,6 +774,12 @@ class AutonomyResult:
     reason: str
     selected: AutonomyCandidate | None = None
     outcomes: tuple[AutonomyOutcome, ...] = ()
+    #: The authorization checkpoint (plan 138 E2): the projection of the
+    #: declaration the run was authorized under. ``None`` when nothing was
+    #: declared or nothing was pinned. It is evidence of the authorized contract,
+    #: never a second source of authority.
+    pinned_projection: str | None = None
+    authorization_drift: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -474,6 +790,13 @@ class AutonomyResult:
             "reason": self.reason,
             "selected": None if self.selected is None else self.selected.to_dict(),
             "outcomes": [outcome.to_dict() for outcome in self.outcomes],
+            "pinned_projection": self.pinned_projection,
+            "authorization_drift": self.authorization_drift,
+            "write_targets": [
+                target
+                for outcome in self.outcomes
+                for target in outcome.candidate.effective_targets()
+            ],
         }
 
 
@@ -544,13 +867,27 @@ def evaluate_candidate(
         )
 
     # Autonomous class: the scope check binds it, and only a *write* class must
-    # name the path it writes.
-    scope = verify_action_scope(
-        envelope,
-        candidate.target_path,
-        path_required=candidate.action_class in WRITE_ACTION_CLASSES,
-    )
+    # name every path it writes. A read-only class declares no write target —
+    # demanding one would make the frontier unsatisfiable — but a write class
+    # whose target set could not be resolved stops (plan 138 E1).
+    if candidate.action_class in WRITE_ACTION_CLASSES:
+        if candidate.targets_unresolved:
+            scope = unresolved_targets_verdict()
+        else:
+            scope = verify_write_targets(envelope, candidate.effective_targets())
+    else:
+        scope = verify_action_scope(
+            envelope, candidate.target_path, path_required=False
+        )
     if not scope.in_scope:
+        outside = candidate.declared_outside_scope
+        detail = (
+            " The plan's own declaration does not authorize: "
+            + ", ".join(f"`{path}`" for path in outside)
+            + "."
+            if outside
+            else ""
+        )
         return AutonomyOutcome(
             candidate=candidate,
             disposition=DISPOSITION_REQUIRES_AUTHORITY,
@@ -563,7 +900,7 @@ def evaluate_candidate(
             reason=(
                 f"{candidate.action_class} is an autonomous class but its "
                 "target is outside the authorized scope: the host records the "
-                "evidence and does not widen the scope"
+                "evidence and does not widen the scope." + detail
             ),
             scope_reason=scope.reason,
         )
@@ -587,7 +924,10 @@ def evaluate_candidate(
 
 
 def evaluate_autonomy(
-    envelope: AutonomyEnvelope, candidates: Sequence[AutonomyCandidate]
+    envelope: AutonomyEnvelope,
+    candidates: Sequence[AutonomyCandidate],
+    *,
+    pinned_projection: str | None = None,
 ) -> AutonomyResult:
     """Evaluate the candidates and decide continue / stop.
 
@@ -596,8 +936,18 @@ def evaluate_autonomy(
     frontier that was reached. Every candidate is reported, including the ones
     after the stop, because an escalation is only auditable together with what
     the host was about to do.
+
+    ``pinned_projection`` is the authorization checkpoint recorded when the host
+    authorized the first action of the run (plan 138 E2). When it is provided and
+    the observed authorization contract no longer matches it, the evaluation
+    stops: a later modification of ``Scope``, ``Task``, the authorizing status or
+    the declaration does not authorize retroactively an action that was already
+    conducted. The check happens **before** any candidate is accepted, so a
+    rewritten contract cannot buy itself a continuation. ``None`` means "not
+    pinned yet" and is not a drift.
     """
     outcomes = tuple(evaluate_candidate(envelope, candidate) for candidate in candidates)
+    pinned = pinned_projection if pinned_projection is not None else None
 
     if not envelope.declared:
         return AutonomyResult(
@@ -611,6 +961,24 @@ def evaluate_autonomy(
                 "authorization"
             ),
             outcomes=outcomes,
+            pinned_projection=pinned,
+        )
+
+    drifted, drift_reason = authorization_drift(pinned, envelope)
+    if drifted:
+        return AutonomyResult(
+            declared=True,
+            continues=False,
+            stop_condition=STOP_SCOPE_VIOLATION,
+            authority=(
+                "the declaration that authorized the execution is the human's; "
+                "rewriting it afterwards is a scope change, not a clarification "
+                "(plan 138 P4)"
+            ),
+            reason=drift_reason,
+            outcomes=outcomes,
+            pinned_projection=pinned,
+            authorization_drift=True,
         )
 
     # Precedence: an authorized candidate continues. This is what makes the
@@ -635,6 +1003,7 @@ def evaluate_autonomy(
                 ),
                 selected=outcome.candidate,
                 outcomes=outcomes,
+                pinned_projection=pinned,
             )
 
     # No authorized candidate. If a frontier was reached, the escalation names
@@ -649,6 +1018,7 @@ def evaluate_autonomy(
                 authority=outcome.authority,
                 reason=outcome.reason,
                 outcomes=outcomes,
+                pinned_projection=pinned,
             )
 
     return AutonomyResult(
@@ -662,6 +1032,7 @@ def evaluate_autonomy(
             "inventing work"
         ),
         outcomes=outcomes,
+        pinned_projection=pinned,
     )
 
 
@@ -1103,4 +1474,6 @@ def envelope_from_observation(observation: Any, plan: int) -> AutonomyEnvelope:
             getattr(observation, "authorized_for_execution", False)
         ),
         declaration_present=declaration_present,
+        authorizing_status=str(getattr(observation, "status", "") or ""),
+        plan_path=str(getattr(observation, "plan_path", "") or ""),
     )

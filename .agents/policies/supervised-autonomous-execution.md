@@ -1,4 +1,4 @@
-# Supervised Autonomous Execution — DEV Operational Policy (Plan 135)
+# Supervised Autonomous Execution — DEV Operational Policy (Plan 135, hardened by Plan 138)
 
 Operational definition of **Supervised Autonomous Execution (SAE)** for the DEV
 Autonomous Orchestrator: how the host conducts every step that is already inside
@@ -11,6 +11,12 @@ Binds once and everywhere:
 SAE reduces **operational** handoffs. It does not reduce human control over
 scope, authority, normative decisions, architecture, Protocol, release or
 promotion. Autonomy is **operational, not decisional**.
+
+**Plan 138 hardened the enforcement of that frontier** after a real execution
+exceeded its scope (`<PLAN-136>:F-3`). §1.1 (scope precedes every obligation),
+§1.2 (the authorization checkpoint and no retroactivity) and §1.3 (a write is
+authorized as a whole) are the rules that closed the defect; §10 and §12 state
+what the enforcement does and does not cover.
 
 Normative depth is unchanged and is not restated here: RFC-75 governs the Change
 Lifecycle, ADR-16 the authority classes and the conflict protocol, and RFC-56 the
@@ -50,6 +56,89 @@ autonomy ⊆ granted authority
 not autonomous — whatever it looks like, however close it is, and however obvious
 the correction appears.
 
+### 1.1 Scope precedes every obligation (plan 138)
+
+An obligation of **state or closure** — `Documentation Impact: REQUIRED`,
+`Roadmap Impact: REQUIRED`, a `DEFERRED` determination, a validation or
+checkpoint requirement, a lifecycle gate, a changelog obligation — states what
+must be **true** of the repository. It is never an authorization to write.
+
+```text
+obligation  ⇒  a requirement on the state
+obligation  ⇏  a permission to write the artifact that satisfies it
+```
+
+If satisfying an obligation requires modifying an artifact outside the
+authorized scope, the host **stops before writing** and records the obligation as
+pending (see §9). The obligation is not discharged, and that is the correct
+outcome: it is deferred to the human who owns the scope, never converted into an
+implicit permission. This is the operative reading of
+`autonomy ⊆ authorized scope`, and it is the rule whose absence produced the
+scope excess of `<PLAN-136>:F-3`.
+
+**No exception exists for any artifact.** Not for `ROADMAP.md`, not for the
+documentation a determination names, not for the changelog, not for a plan's own
+governance record, not for "the file the policy says should be reconciled".
+
+### 1.2 The authorization checkpoint (plan 138)
+
+The elements that authorize an execution are:
+
+- the plan's `## Delegación agentiva` → `Task` and `Scope`;
+- the plan status that authorizes execution (`Aprobado para ejecución`, or
+  `Executed` for a continuation);
+- the presence of the declaration itself.
+
+Together they are the **authorization checkpoint**. The host projects them when
+it authorizes an action and records that projection as evidence; every later
+iteration compares the observed elements against it.
+
+```text
+authorization changed after the action was authorized  ⇒  STOP
+```
+
+**No retroactivity.** Once execution has started, the host may not rewrite
+`Scope`, `Task`, the authorizing status or the declaration to legitimize an
+action it already took — and it may not accept such a rewrite as authorization
+for the next one. The projection is what the run executes under; a modification
+afterwards is a divergence, not a clarification.
+
+A **legitimate** scope or task change happens:
+
+1. before the action,
+2. through the existing authority mechanism (the human who authorized the plan),
+3. with evidence of that decision,
+4. followed by a new authorization for the work it enables.
+
+No new authority class, entity or mechanism exists for this: the host records what
+the approved plan declares, and a widening it did not declare is simply not
+authorized.
+
+### 1.3 A write is authorized as a whole (plan 138)
+
+Before delegating or recording anything, the host establishes the **complete** set
+of paths the action writes and verifies every one of them:
+
+```text
+authorized(action)  =  every write target ∈ authorized scope
+                       AND the action class ∈ granted authority
+```
+
+- one target outside the authorized scope stops the **entire** action: there is no
+  partial execution, because authorizing a subset would leave the remaining
+  writes unverified while the action reads as authorized;
+- a write whose targets **cannot be established** stops as well: an unestablished
+  write set cannot be shown to be inside the scope, and assuming it is would be
+  the inference by proximity this frontier forbids, applied to a set instead of a
+  single path;
+- the plan artifact itself is authorized for the host's own governance records.
+  That is the existing record mechanism (anchor, checkpoint, run note, status),
+  not a scope expansion — and it is deliberately **not** part of the checkpoint,
+  because recording the execution is not the execution being authorized.
+
+This check runs **before** the delegation exists and before any worker is
+invoked. It is what makes the refusal precede the persistent effect.
+
 ## 2. The two gates, in order
 
 1. **The plan authorizes the work.** Existing mechanism: a plan
@@ -59,8 +148,9 @@ the correction appears.
    action, before acting:
 
    ```text
-   action ∈ authorized scope
+   action ∈ authorized scope          (over the complete write-target set, §1.3)
    AND action ∈ granted authority
+   AND the authorization checkpoint is unchanged (§1.2)
    AND action ∉ stop conditions (§5)
    ```
 
@@ -119,6 +209,9 @@ The host stops and escalates, and **never resolves these by inference**:
 | Condition | Why it is a frontier |
 |---|---|
 | scope change | scope is authorized by the human; the host does not widen it |
+| an obligation whose artifact is outside the scope | an obligation of state is not a write authorization; it is recorded `DEFERRED` (§1.1, §9) |
+| a write whose target set cannot be established | membership cannot be shown ⇒ STOP, never assumed (§1.3) |
+| the authorization checkpoint diverged | a rewrite after the fact cannot legitimize an action (§1.2) |
 | authority change | authority classes belong to ADR-16; only the maintainer holds DECISION |
 | RFC required | RFC-56: an RFC `Accepted` is required first |
 | ADR required | ADR-worthiness is a human judgement (ADR-16 `AU-6`) |
@@ -234,7 +327,8 @@ The host **cannot** turn a `STOP` into a `CONTINUE` by its own inference.
 
 Both reuse the existing mechanisms
 (`.agents/policies/validation-closure.md` §5.1/§5.2); SAE adds no determination
-and changes neither.
+and changes neither. **§1.1 binds them**: a determination of `REQUIRED` is an
+obligation of state, never a write authorization.
 
 The host may update documentation when the Change is authorized to do it,
 `Documentation Impact = REQUIRED`, the update derives directly from the work
@@ -248,6 +342,13 @@ Work generated inside the Change's own authority is recorded and reconciled; wor
 that needs additional authorization is recorded as pending, and the host stops
 only where the boundary actually is.
 
+**When the artifact that owns the obligation is outside the authorized scope**,
+the obligation is registered `DEFERRED` with the pending decision (PC-1) that
+governs it, and the artifact is **not** written. The host does not choose between
+"violate the scope" and "ignore the obligation" by inference: it records the
+obligation and stops at the scope boundary. A `DEFERRED` determination is not an
+authorization either — it never authorizes the deferred write.
+
 ## 10. Evidence
 
 Each autonomous cycle must leave enough evidence to reconstruct: what was
@@ -260,8 +361,18 @@ No new tracing system is created: the host records all of it in its existing
 journal, delegations and Worker Results (`.project/orchestrator/`), and the
 durable governance record stays in the plan artifact, written only through the
 existing plan-authorized record writer. Each iteration record carries the frontier
-verdict (`autonomy`): the action considered, its class, the scope verdict, the
-authority, the disposition and the stop condition.
+verdict (`autonomy`): the action considered, its class, the complete set of write
+targets, the scope verdict, the authority, the disposition, the stop condition,
+the authorization checkpoint the run executes under, and whether this iteration
+diverged from it.
+
+**Prevention and detection are both reported, and they are not the same thing.**
+The frontier refuses an unauthorized write *before* the delegation exists; the
+post-delegation content-snapshot verification (`STOP_FORBIDDEN_ACTION`) remains as
+**defence in depth** for a write performed inside the worker — an injected
+`AgentInvoker` runs its own code, and the host cannot interpose on it. The host
+never claims the second as if it were the first: a stop that followed the effect
+is reported as detection, with the artifact already modified.
 
 ## 11. Execution summary and the autonomy metric
 
@@ -321,3 +432,15 @@ observes real autonomy, it does not incentivize it.**
   condition it cannot establish; it stops instead.
 - No new mechanism exists for metrics, tracing, tracking, identity or storage. If
   a future need requires one, it is an architecture decision and stops at §5.
+- **The enforcement covers the effects the host controls** (plan 138 §1.3/§1.2).
+  Between delegating and the worker returning, the host hands control to code it
+  does not own — an injected `AgentInvoker` performs its own writes. The host
+  refuses an unauthorized **declared** target before that point and detects an
+  undeclared write after it; it cannot interpose inside the invocation. The
+  enforcement is therefore prevention where the host controls the effect and
+  detection where it does not, and the policy never claims the second as the
+  first.
+- The **authorization checkpoint is evidence, not authority**: it records the
+  declaration the run executed under, and it is compared to detect divergence. It
+  grants nothing, and a divergence stops the loop instead of being resolved by
+  reading the newer declaration.

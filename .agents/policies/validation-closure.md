@@ -221,6 +221,16 @@ checker interprets prose or decides whether a document is up to date, and no
 checker is added for this. Absence of the determination, or a classification
 outside the three values, is a stop condition (see §7).
 
+**`REQUIRED` is an obligation of state, never a write authorization (plan 138).**
+A `REQUIRED` determination states what must be **true** of the repository; it does
+not authorize writing the artifact that would satisfy it, and it does not widen
+the scope the Change was authorized to modify
+(`.agents/policies/supervised-autonomous-execution.md` §1.1). When the artifact
+that owns the documentation is outside the authorized scope, the update is
+recorded `DEFERRED` with the **existing** pending decision (PC-1) that governs it,
+and the artifact is **not** written: the alternative is not "satisfy the
+obligation anyway" but "record the obligation and stop at the scope boundary".
+
 ### 5.2 Roadmap impact (closure determination)
 
 Every DEV Change determines, at closure and **independently of §5.1**, its
@@ -278,6 +288,16 @@ the commit message — `Roadmap impact: REQUIRED: <items> — <evidence>`,
 checker interprets prose; absence of the determination or a classification
 outside the three values is a stop condition.
 
+**`REQUIRED` is an obligation of state, never a write authorization (plan 138).**
+The rule below is what the incident `<PLAN-136>:F-3` established by human
+decision (`<PLAN-136>:PC-4`): `Roadmap Impact: REQUIRED` does **not** widen the
+authorized `Scope` of a Change. When the operational map is owned by an artifact
+outside that scope — canonically `ROADMAP.md` — the obligation is registered
+`DEFERRED` with the **existing** pending decision (PC-1) that governs it, and the
+artifact is **not** written. There is no exception for `ROADMAP.md`, and no
+determination of impact converts an obligation of state into a permission to
+write.
+
 Full normative semantics of both determinations:
 `docs/CONVENTIONS.md:Change Lifecycle — Determinaciones de cierre: impacto
 documental e impacto de Roadmap (regla operacional)`.
@@ -310,6 +330,12 @@ Blocking (STOP — do not close, escalate with evidence):
   without an explicit Roadmap impact determination (5.2), or with a
   classification outside `REQUIRED` / `NOT_REQUIRED` / `DEFERRED` in either.
 - Attempted modification of closed history or out-of-scope artifacts.
+- A write whose target set cannot be established, or whose authorization
+  checkpoint diverged from the declaration the execution was authorized under
+  (plan 138; `.agents/policies/supervised-autonomous-execution.md` §1.2/§1.3).
+- An obligation of closure (documentation, roadmap, changelog) whose owner
+  artifact is outside the authorized scope, recorded without its governing
+  pending decision (plan 138; §5.1/§5.2 above).
 - A human decision is required for a mandatory resolution.
 
 Non-blocking debt (record, continue):

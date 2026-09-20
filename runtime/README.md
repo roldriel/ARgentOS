@@ -233,7 +233,7 @@ Operational policy: `.agents/policies/autonomous-orchestration.md`. Suite:
 Content Identity algorithm, and it never writes `protocol/.agents/`, `dist/` or
 an artifact of another plan.
 
-## Supervised Autonomous Execution (Plan 135)
+## Supervised Autonomous Execution (Plan 135, hardened by Plan 138)
 
 `runtime/orchestrator/autonomy.py` is the **frontier**: it decides what the host
 may execute on its own authority and where it must stop. It adds no architecture.
@@ -262,6 +262,17 @@ reconciled by reinterpreting the policy.
 - `verify_action_scope` is **exact membership** after pure normalization. It never
   infers authorization from proximity: a containing path, a descendant, a plural
   or a near-miss name is out of scope.
+- `verify_write_targets` applies the rule to the **complete** set of paths a write
+  would touch (plan 138): one unauthorized target refuses the whole action, and a
+  set that cannot be established refuses it too. Authorizing a subset would leave
+  the remaining writes unverified while the action read as authorized.
+- `authorization_projection` / `authorization_drift` are the **authorization
+  checkpoint** (plan 138): the declaration a run executes under, recorded as
+  evidence when the host authorizes an action and compared on every later
+  iteration. Rewriting `Scope`, `Task` or the authorizing status afterwards is a
+  divergence — the loop stops instead of reading the newer declaration as
+  permission. The host's own governance records are deliberately excluded from
+  the projection: they are not authorization.
 - `evaluate_autonomy` returns `CONTINUE`, or a stop that **names the frontier and
   the authority that decides instead** (`STOP_SCOPE_VIOLATION`,
   `STOP_AUTHORITY_REQUIRED`, `STOP_FORBIDDEN_AUTONOMY`,
@@ -283,15 +294,41 @@ Without it the loop behaves exactly as before this change, so the frontier is
 additive. With it, the host verifies *before* acting and reports the frontier
 verdict in the iteration record, and the run report carries the autonomy summary.
 
+**Enforcement point (plan 138).** `ExecutionHost._apply_autonomy_gate`, invoked
+from `iterate` **before** `_execute_delegation`: it establishes the action's
+complete write-target set, verifies every target against the scope the plan
+authorizes (never against the declaration being checked, which is the circularity
+that made the earlier single-path check vacuous), and compares the authorization
+checkpoint. A refusal here precedes the persistent effect — nothing is delegated
+and nothing is written.
+
+**Prevention and detection are two different guarantees.** The host cannot
+interpose on a write performed inside an injected `AgentInvoker`, which runs its
+own code inside the invocation. So `_scope_violations` (content-snapshot
+comparison after the delegation, `STOP_FORBIDDEN_ACTION`) is **kept as defence in
+depth**, and it is reported as detection: the artifact is already modified. The
+host never claims the second as the first.
+
 **Blocked branches do not block independent work.** A branch whose resolution
 needs authority the host does not hold is preserved, recorded as deferred, and
 does not stop independent authorized work — while never becoming an implicit
 authorization of itself.
 
-Suite: `tests/test_autonomous_scope.py` (behaviour, host integration, and the
+**Obligations are not authorizations.** `Documentation Impact: REQUIRED`,
+`Roadmap Impact: REQUIRED` and any other obligation of state or closure state what
+must be **true**, never what may be **written**: when the owning artifact is
+outside the authorized scope the obligation is registered `DEFERRED` with its
+pending decision and the artifact is not touched (plan 138; `<PLAN-136>:PC-4`).
+
+Suites: `tests/test_autonomous_scope.py` (behaviour, host integration, and the
 falsification of every frontier: disguised scope expansion, authority expansion,
 implicit RFC/ADR, Protocol change, lifecycle change, autonomous resolution of a
-human decision, release/promotion, invented normative documentation).
+human decision, release/promotion, invented normative documentation);
+`tests/test_sae_scope_enforcement.py` (the F-3 regression over a parametrized
+artifact, the all-or-nothing write-target matrix, retroactive-rewrite refusals and
+the declared limit of in-worker writes); and
+`tests/test_sae_scope_enforcement_dogfood.py` (the enforcement asserted over the
+real tree, plus the functional end-to-end refusal).
 
 ## DEV Agent Worker (Plan 123)
 

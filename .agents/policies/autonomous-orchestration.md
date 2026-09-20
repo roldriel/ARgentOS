@@ -209,12 +209,23 @@ decision H-1): a real execution environment injects its own invoker with
   is always advisory (`action: None`) and the derivation never reads it.
 - The plan authorizes the work in its `## Delegación agentiva` section: the
   instruction (**Task**) and the paths the worker may modify (**Scope**). Without
-  that declaration the host delegates no semantic work.
+  that declaration the host delegates no semantic work. A declared path the plan
+  does not otherwise authorize is not authorized: the frontier refuses the
+  delegation before it exists (plan 138).
 - **`STOP_FORBIDDEN_ACTION` + `REQUIRES_HUMAN`:** after any delegation the host
   verifies the scope **outside the worker** by comparing content snapshots of the
   working tree. A changed path outside `declared_scope` stops the loop and
   escalates: widening the authorized scope is a human decision and neither the
   worker nor the host may take it.
+- **Prevention and detection are two different guarantees (plan 138).** Before the
+  delegation the host refuses the whole action when any of its write targets is
+  unauthorized, when the target set cannot be established, or when the
+  authorizing declaration changed after the run was authorized — a refusal that
+  precedes the effect (`ExecutionHost._apply_autonomy_gate`, before
+  `_execute_delegation`). The post-delegation snapshot comparison above is
+  **defence in depth** for the writes the host cannot interpose on, because the
+  injected `AgentInvoker` runs its own code inside the invocation. The second is
+  reported as detection, never as prevention.
 
 ### 11.4 Recovery
 

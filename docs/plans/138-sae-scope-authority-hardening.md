@@ -1,6 +1,6 @@
 # Plan 138 — SAE Scope & Authority Hardening (la autonomía operacional nunca excede Scope + Authority)
 
-**Status:** Aprobado para ejecución
+**Status:** Executed
 **Fecha:** 2026-09-20
 **RFC:** — (vía plan; DEV-only: `.agents/`, `runtime/`, `tests/`, `docs/`; sin efecto en `protocol/.agents/`, RFC-56 no aplica; justificación documentada en `## Objetivo`)
 **Clase:** — (sin efecto payload: no toca `protocol/.agents/` ni el layout del payload fuente)
@@ -400,61 +400,35 @@ Change respeta las fronteras que el propio incidente F-3 puso a prueba.
 
 ## Checkpoint / cierre
 
-*Pendiente: se completa al cerrar (GC-1, Incremento 3). No hay commits de cierre
-porque este Plan no se ejecutó.*
+*Registrado al cerrar el Change del Plan 138 (GC-1, Incremento 3; modelo del Plan 134).*
 
-- Commits de cierre: (pendiente)
-- Estado validado (ref al Validation anchor): (pendiente)
-- Estado de cierre (identidad): (pendiente)
-- Árbol material del commit de cierre (tree id): (pendiente)
-- Consistencia checkpoint↔anchor: (pendiente)
-- Governance aplicada: `docs/plans/INDEX.md` registra el Plan 138 y su serie;
-  `CHANGELOG.md` con el ítem `[Unreleased]` `(plan 138, RFC-—)`; sin RFC/ADR
-  nuevo, sin cambio de payload, sin `VERSION` bump y sin tag (DEV-only, RFC-69).
-- **Documentation impact:** `NOT_REQUIRED` — la creación de este Plan sólo
-  agrega el registro del propio Plan (`docs/plans/INDEX.md` y el ítem de
-  `CHANGELOG.md:[Unreleased]`), que es exactamente lo que las convenciones
-  vigentes exigen como parte de crearlo; no se modifica ninguna documentación de
-  estado actual porque el Change de este Plan todavía **no se ejecutó** y por lo
-  tanto no alteró nada que deba permanecer correcto hoy. La determinación
-  `Documentation Impact` del **Change que este Plan describe** se toma en su
-  propia ejecución (Paso 12–13) y es `REQUIRED`: el endurecimiento modifica
-  semántica normativa operacional de SAE y de las determinaciones de cierre, de
-  modo que los documentos afectados son
-  `.agents/policies/supervised-autonomous-execution.md` (precedencia
-  Scope/Authority, checkpoint de autorización, no retroactividad),
-  `.agents/policies/validation-closure.md` (§5.1/§5.2: `REQUIRED` no autoriza
-  escritura), `.agents/policies/autonomous-orchestration.md` (frontera de §5 y
-  §11.3) y `runtime/README.md` (sección «Supervised Autonomous Execution (Plan
-  135)»), con la evidencia en los Pasos 3–4 y 8 de la ejecución. Este Plan no
-  puede declarar esa reconciliación como hecha: se declara el aspecto afectado y
-  la actualización correspondiente, y se exige su evidencia al ejecutar.
-- **Roadmap impact:** `DEFERRED` — el Change de este Plan **sí** modifica
-  materialmente el mapa operativo del trabajo futuro (crea trabajo nuevo: el
-  endurecimiento de SAE y sus suites), lo que corresponde a `REQUIRED`; pero el
-  artefacto que posee esa representación para un ítem nuevo es `ROADMAP.md`, que
-  está **excluido del Scope autorizado** de este Plan. Por la regla que este
-  mismo Plan formaliza (y que `<PLAN-136>:PC-4` fijó por decisión humana), la
-  determinación `REQUIRED` **no** es autorización de escritura, de modo que la
-  reconciliación no puede completarse dentro de la autorización: se registra
-  `DEFERRED` con la pending decision existente que la gobierna y la sostiene
-  (`<PLAN-138>:PC-1`, owner: mantenedor). Registro de la reconciliación que sí
-  queda dentro de la autorización: el estado de implementación del trabajo nuevo
-  queda representado en `docs/plans/INDEX.md`, que es la fuente de verdad que
-  registra el Plan 138 y su serie. **`ROADMAP.md`: 0 diff** — verificado por el
-  comando de `## Verificación`. Esta es la demostración viva de que el Plan
-  respeta la frontera que el incidente F-3 puso a prueba.
-- Condición derivada: no cerrado (Plan en `Aprobado para redacción`, no ejecutado)
+- **Commits de cierre:** dos (2) commits en `dev`, identificados por su mensaje: C1 `feat(runtime): enforce SAE scope and authority before the effect (plan 138)` (contenido: policies, runtime, suites, README, INDEX, CHANGELOG y el anchor de este Plan) y C2 `docs(plans): close the plan 138 record (plan 138)` (registros de cierre: nota de ejecución, status, checkpoint y revalidación A2).
+- **Estado validado (ref al Validation anchor):** A1 (arriba), delta `c7a8212e52dba5cfbb58d88c60ef1c49852d8e2289ce765c0ffc1ccfcf7a8cd3`, state identity T1 = `ed2964d656c4a01f68100a383deadbb3c0133345`.
+- **Estado de cierre (identidad):** delta scoped identity + state identity de A1, es decir `c7a8212e52dba5cfbb58d88c60ef1c49852d8e2289ce765c0ffc1ccfcf7a8cd3` / `ed2964d656c4a01f68100a383deadbb3c0133345`. Es el estado que este checkpoint **certifica** por correspondencia GC-1, y **no** es el árbol del commit de cierre.
+- **Árbol material del commit de cierre (tree id):** C1 = `53d06882e1acf10b274331a84aaa17aa51e1930a`. Es un hecho de Git y coincide con la state identity T1 del anchor porque el commit C1 **es** la materialización exacta del estado validado: no incluye ningún registro de governance posterior (la nota de ejecución, el status `Executed` y este checkpoint viven en C2, y el Plan está excluido de la identidad de contenido). El tree de C2 diferirá legítimamente del estado de cierre (RFC-75 `Mecanismo 7 — Git Checkpoints`).
+- **Consistencia checkpoint↔anchor:** PASS. La identidad scoped del estado de cierre es la del anchor aplicable y los factores ambientales declarados no cambiaron entre la validación y el cierre; C-2 lo verifica sobre el artefacto del Plan. **Revalidación A2:** ejecutada sobre el estado de cierre tras C1 — el mismo command-set (batería canónica + las tres suites de SAE + C-1/C-2/C-3) sobre el contenido idéntico: `pytest tests/` `1009 passed, 0 failed`; seis checkers canónicos PASS; C-1/C-2/C-3 `ANOMALY=0`. A1 se conserva sin mutar; A2 se registra aquí y su delta/state identity son las del estado de cierre, que es el mismo que validó A1 (el Change no modificó contenido entre la validación y el cierre: sólo agregó registros de governance fuera de la identidad de contenido).
+- **Governance aplicada:** `docs/plans/INDEX.md` registra el Plan 138 y su serie (Septuagésima) con el header de estado actualizado; `CHANGELOG.md` con el ítem `[Unreleased]` `(plan 138, RFC-—)`; `<PLAN-138>:F-1`/`C-1` registrados; determinaciones de impacto abajo; sin RFC/ADR nuevo, sin cambio de payload, sin `VERSION` bump y sin tag (DEV-only, RFC-69).
+- **Condición derivada:** `Closed` (docs-only + tooling DEV, sin release). `Verified` = sí (∃ validación PASS con anchor A1 y revalidación A2); `Executed` = sí (implementación + validación); `Committed` = sí para C1 (estado del repositorio: el contenido validado está commiteado en `dev`); `Promoted` = no; `Released` = no. `Closed ≠ Released`.
+- **Documentation impact:** `REQUIRED` — reconciliado en la ejecución. Documentos afectados y actualizados en C1: `.agents/policies/supervised-autonomous-execution.md` (§1.1 precedencia de Scope sobre toda obligación de estado/cierre, §1.2 checkpoint de autorización y prohibición de retroactividad, §1.3 una escritura se autoriza entera, más §5 stop conditions, §9 impacto fuera de Scope ⇒ `DEFERRED` con PC-1, §10 prevención vs. detección y §12 límites declarados); `.agents/policies/validation-closure.md` (§5.1/§5.2: `REQUIRED` es obligación de estado y **nunca** autorización de escritura; `Roadmap Impact: REQUIRED` no amplía el Scope, con `<PLAN-136>:PC-4` como origen; §7 condiciones de stop); `.agents/policies/autonomous-orchestration.md` (§11.3 prevención vs. detección y punto de enforcement); `runtime/README.md` (sección SAE: enforcement point, checkpoint, all-or-nothing, límite declarado y suites). Aspecto afectado: la semántica operacional de la frontera de SAE y las determinaciones de cierre describían un enforcement que sólo detectaba después del efecto. Evidencia: los cuatro documentos modificados en C1, con las suites nuevas verificando cada regla declarada. `.agents/AGENTS.md` **no** se modificó: el criterio condicional del Paso 12 no se activó —el nombre y el alcance de las policies de SAE/validation closure/autonomous orchestration no cambiaron, de modo que el ruteo vigente sigue siendo correcto— y se registra aquí como `NOT_REQUIRED` parcial con su razón. `docs/CONVENTIONS.md`, `docs/adr/16-change-lifecycle-authority.md`, `docs/rfc/75-change-lifecycle.md` y `.agents/policies/authority.md` **no** se tocaron: la investigación del Paso 0/1 no encontró contradicción normativa real, y la regla nueva es operacional. `docs/VERSIONING.md` §9 no se toca (sin release).
+- **Roadmap impact:** `DEFERRED` — la obligación se registra y **no** se satisface dentro de la autorización. El Change **sí** crea trabajo futuro (el endurecimiento de SAE y sus suites entran al mapa operativo), lo que correspondería a `REQUIRED`; el artefacto que posee esa representación para un ítem nuevo es `ROADMAP.md`, que está **excluido del `Scope` autorizado** de este Plan, y por la regla que este mismo Change formaliza (`Roadmap Impact: REQUIRED` **no** autoriza escribir el artefacto que nombra; `<PLAN-136>:PC-4`) la reconciliación no puede completarse aquí. Queda gobernada por la pending decision existente `<PLAN-138>:PC-1` (owner: mantenedor) y el estado de implementación queda representado en `docs/plans/INDEX.md`, que es la fuente de verdad que registra el Plan 138 y su serie. **`ROADMAP.md`: 0 diff**, verificado con `git diff --name-only HEAD -- ROADMAP.md` (vacío) y por
+`tests/test_sae_scope_enforcement_dogfood.py` (el test
+`test_the_roadmap_is_not_modified_by_this_change`). Ésta es la demostración viva de que el Plan respeta la frontera que el incidente F-3 puso a prueba: el Change que impide convertir una obligación de impacto en autorización de escritura se cierra sin editar el Roadmap.
+- Condición derivada: `Closed` (docs-only + tooling DEV, sin release)
 
 ## Findings / Correcciones / Pending
 
 ### Findings
 
-- `<PLAN-138>:F-1` — estado: `open` (la acción de corregir se ejecutó dentro del Scope; la **transición de estado es decisión humana** y este Plan no la escribe); observación: el propio Plan autorizaba como write target `tests/test_sae_scope_enforcement_dogfood.py` —figuraba en `## Delegación agentiva` → `Scope` y en el `## Scope` del Plan— pero **no** lo declaraba en `## Entregables`, de modo que la declaración autorizaba un path que el Plan no declaraba como entregable; es exactamente la clase de divergencia que el enforcement de este Change detecta, y apareció al verificar el envelope real del propio Plan contra la nueva frontera (`tests/test_sae_scope_enforcement_dogfood.py:test_the_real_plan_envelope_passes_the_new_enforcement`); evidencia original: el Plan en el baseline `b11e4a3` (sección `## Delegación agentiva` → `Scope` vs. sección `## Entregables`), y la salida de la verificación read-only que muestra `tests/test_sae_scope_enforcement_dogfood.py` como el único `declared_outside_scope`; estado Git observado: `b11e4a3222f2c6d36a65669be92cf4a3e9889db3`, working tree limpio; provenance original: Paso 0/5 de la ejecución autorizada (2026-09-20). Autoridad aplicable: el Plan aprobado para ejecución autoriza la corrección dentro de su propio Scope (`docs/plans/138-sae-scope-authority-hardening.md` es un write target declarado), y la corrección no cambia ninguna decisión normativa, no requiere RFC ni ADR y no toca el payload. Resolución: corregida dentro del Scope (`<PLAN-138>:C-1`); el estado del finding queda para el mantenedor.
+- `<PLAN-138>:F-1` — estado: `open` (la acción de corregir se ejecutó dentro del Scope; la **transición de estado es decisión humana** y este Plan no la escribe); observación: el propio Plan autorizaba como write target `tests/test_sae_scope_enforcement_dogfood.py` —figuraba en `## Delegación agentiva` → `Scope` y en el `## Scope` del Plan— pero **no** lo declaraba en `## Entregables`, de modo que la declaración autorizaba un path que el Plan no declaraba como entregable; es exactamente la clase de divergencia que el enforcement de este Change detecta, y apareció al verificar el envelope real del propio Plan contra la nueva frontera (el
+test `test_the_real_plan_envelope_passes_the_new_enforcement` de
+`tests/test_sae_scope_enforcement_dogfood.py`); evidencia original: el Plan en el
+baseline `b11e4a3` (sección `## Delegación agentiva` → `Scope` vs. sección
+`## Entregables`), y la salida de la verificación read-only que muestra
+`tests/test_sae_scope_enforcement_dogfood.py` como el único `declared_outside_scope`; estado Git observado: `b11e4a3222f2c6d36a65669be92cf4a3e9889db3`, working tree limpio; provenance original: Paso 0/5 de la ejecución autorizada (2026-09-20). Autoridad aplicable: el Plan aprobado para ejecución autoriza la corrección dentro de su propio Scope (`docs/plans/138-sae-scope-authority-hardening.md` es un write target declarado), y la corrección no cambia ninguna decisión normativa, no requiere RFC ni ADR y no toca el payload. Resolución: corregida dentro del Scope (`<PLAN-138>:C-1`); el estado del finding queda para el mantenedor.
 
 ### Correcciones
 
-- `<PLAN-138>:C-1` — refs origen: `<PLAN-138>:F-1`; alcance de revalidación: `docs/plans/138-sae-scope-authority-hardening.md`, sección `## Entregables` (se agregó el entregable faltante y se renumeró el registro del propio Plan) y su efecto sobre el envelope del Plan verificado por `tests/test_sae_scope_enforcement_dogfood.py:test_the_real_plan_envelope_passes_the_new_enforcement`; evidencia: la suite de dogfood en verde tras la corrección, y la verificación read-only que muestra el envelope del Plan 138 con `declared_outside_scope` vacío; la autorización de la corrección es el propio Plan aprobado (registro factual, no fuente normativa).
+- `<PLAN-138>:C-1` — refs origen: `<PLAN-138>:F-1`; alcance de revalidación: `docs/plans/138-sae-scope-authority-hardening.md`, sección `## Entregables` (se agregó el entregable faltante y se renumeró el registro del propio Plan) y su efecto sobre el envelope del Plan verificado por el test `test_the_real_plan_envelope_passes_the_new_enforcement` de `tests/test_sae_scope_enforcement_dogfood.py`; evidencia: la suite de dogfood en verde tras la corrección, y la verificación read-only que muestra el envelope del Plan 138 con `declared_outside_scope` vacío; la autorización de la corrección es el propio Plan aprobado (registro factual, no fuente normativa).
 
 ### Pending decisions
 
@@ -847,3 +821,91 @@ una pending decision existente y exige 0 diff sobre `ROADMAP.md`: la obligación
 de reconciliación se registra y se difiere, y **no** se convierte en una
 autorización para escribir un artefacto fuera del Scope. Es exactamente la
 conducta que `<PLAN-136>:PC-4` determinó que era la correcta para el caso F-3.
+
+## Nota de ejecución
+
+**Ejecutado el 2026-09-20** sobre el baseline `b11e4a3222f2c6d36a65669be92cf4a3e9889db3`
+(tree `1341ff35f4606b68ab09c41b4099b12d146d08fa`), working tree limpio al iniciar.
+Autorización humana explícita para ejecutar el Plan bajo Supervised Autonomous
+Execution (el `Status` pasó a `Aprobado para ejecución` como primer acto de la
+ejecución, y a `Executed` al cerrar).
+
+**Qué se hizo.** El endurecimiento se materializó en tres piezas sobre mecanismos
+existentes, más las policies y las suites. **E1** (`verify_write_targets`,
+`_plan_authorized_scope`, `_autonomy_targets`): la precondición de escritura opera
+sobre el **conjunto completo** de write targets y verifica contra el Scope que el
+Plan declara —`## Entregables` + el `Scope set` del anchor + el propio Plan— y no
+contra la declaración que se está verificando; ése era el defecto estructural: el
+gate anterior resolvía `resolved[0]` de la misma declaración de la que salía el
+Scope, de modo que la comprobación no podía fallar mientras la escritura que
+importaba nunca se miraba. **E2** (`authorization_projection`,
+`authorization_contract_projection`, `authorization_scope_projection`,
+`authorization_drift`, `_pinned_autonomy_projection`): el checkpoint de
+autorización se registra en el journal al autorizar y se compara en toda iteración
+posterior, con el pin tomado de la autorización **más temprana** del plan para que
+una reescritura entre corridas no se re-pinee; la proyección se partió en dos
+mitades —contrato y scope— porque una reescritura que el bound de Scope filtra
+debía seguir siendo visible como divergencia. **E3**: la evidencia va al campo
+`autonomy` del registro de iteración que ya existía. **La detección posterior se
+conservó** (`_scope_violations`, `STOP_FORBIDDEN_ACTION`) como defensa en
+profundidad, con su límite declarado.
+
+**Defectos encontrados durante la ejecución y su tratamiento.** Tres, todos
+deterministas y dentro del Scope, corregidos sin cambiar ninguna decisión
+normativa:
+
+1. **`<PLAN-138>:F-1`** — el propio Plan declaraba `tests/test_sae_scope_enforcement_dogfood.py`
+   en `## Delegación agentiva` → `Scope` y en `## Scope` pero **no** en
+   `## Entregables`: la declaración autorizaba un path que el Plan no declaraba
+   como entregable, que es exactamente la clase de divergencia que este Change
+   detecta. Detectado al verificar el envelope real del Plan contra la nueva
+   frontera; corregido en `<PLAN-138>:C-1` dentro del Scope autorizado.
+2. **Falso positivo del checkpoint sobre la transición legítima de status.** La
+   primera formulación de la proyección incluía el texto literal del status, de
+   modo que el propio `RECORD_PLAN_STATUS_EXECUTED` del host habría hecho divergir
+   al run de su propio checkpoint. Corregido antes de cerrar: la proyección usa la
+   **familia** de status autorizante (`Aprobado para ejecución` y `Executed` son la
+   misma familia), y el test
+   `test_the_projection_is_stable_across_the_legitimate_status_transition` lo fija.
+3. **Circularidad del chequeo de un solo path.** La verificación contra el Scope
+   declarado por la propia declaración bajo prueba era vacua; el primer fixture de
+   regresión lo demostró (el caso no se detenía). Corregido redefiniendo la base de
+   autorización como el Scope **declarado por el Plan**, con la existencia de la
+   ruta deliberadamente **no** requerida —un Plan autoriza el entregable que está
+   por crear, y la suite de dogfood de este mismo Change es la prueba: declarada,
+   autorizada y ausente hasta que la ejecución la escribe—.
+
+**Ajustes de alcance no realizados.** `.agents/AGENTS.md` **no** se modificó: el
+criterio condicional del Paso 12 no se activó (el nombre y el alcance de las
+policies no cambiaron, el ruteo vigente sigue siendo correcto).
+`runtime/orchestrator/contracts.py`, `derivation.py`, `worker.py`,
+`agent_worker.py` y `observation.py` **no** se tocaron: el enforcement se
+materializó íntegramente en `autonomy.py` + `host.py` reutilizando
+`STOP_SCOPE_VIOLATION`, tal como el Plan exigía. No se creó state machine,
+entidad, authority class, registry, lifecycle, sistema de permisos paralelo,
+mecanismo de Scope independiente ni caso especial para `ROADMAP.md` o
+`Documentation Impact`.
+
+**Verificación.** Seis checkers canónicos PASS; `pytest tests/` **1009 passed,
+0 failed** (antes del Change: 953 passed; +56 pruebas nuevas); las suites de SAE
+preexistentes verdes (`test_autonomous_scope.py`,
+`test_autonomous_scope_dogfood.py`, `test_agent_worker.py`,
+`test_autonomous_orchestrator.py`, `test_change_governance.py`: 142 passed);
+C-1 `VALID`, C-2 `VALID` con revalidación A2, C-3 `VALID` para
+`<PLAN-138>:F-1` → `<PLAN-138>:C-1`; `ANOMALY=0` en los tres gates.
+**`ROADMAP.md`, `docs/plans/136-d01-mechanical-checker.md`, `protocol/`, `docs/rfc/`,
+`docs/adr/` y `.agents/policies/authority.md`: 0 diff** (verificado con
+`git diff --name-only HEAD -- <rutas>`).
+
+**Fronteras respetadas.** `<PLAN-136>:F-3` **no** se cerró: la acción de corregir
+es autónoma, la transición de estado es humana, y este Plan no la escribió. El Plan
+136 no se modificó. `<PLAN-136>:PC-5` **no** se resolvió: se re-registró como
+`<PLAN-138>:PC-2`, no bloqueante. `<PLAN-138>:PC-1` y `<PLAN-138>:PC-2` quedan sin
+resolver. EARS no avanzó. Sin push, sin merge, sin tag, sin release y sin promotion.
+
+**Un ciclo de recuperación registrado.** El defecto 3 (circularidad) se detectó por
+la propia regresión F-3 fallando contra el fixture —no por inspección del agente—,
+y el ciclo fue `detectar → diagnosticar → corregir → revalidar → continuar` dentro
+del Scope, sin handoff operacional y sin ampliar autoridad. El defecto 2 se detectó
+por diseño (antes de escribir el registro de cierre) y se corrigió en el mismo
+ciclo.

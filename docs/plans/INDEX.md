@@ -6,7 +6,10 @@
 > Las secciones `## Convenciones` y `## Serie de RFCs (documentos canónicos)`
 > se conservan como anclas de navegación para referencias históricas.
 
-Estado al 2026-09-15. El Plan 135 está `Executed` con condición derivada `Closed`
+Estado al 2026-09-15. El Plan 136 está `Aprobado para redacción`
+(D01 Mechanical Checker: checker DEV del subconjunto mecánico de D01 — estructura
+y procedencia resoluble —, **pendiente de autorización humana de ejecución**;
+DEV-only `tools/` + `tests/`, sin release; Sexagésima octava serie). El Plan 135 está `Executed` con condición derivada `Closed`
 (Supervised Autonomous Execution para el DEV Autonomous Orchestrator; DEV-only,
 sin release; Sexagésima séptima serie). El Plan 134 está `Executed` con condición derivada `Closed`
 (integridad de la evidencia de cierre: modelo del estado de cierre vs. árbol
@@ -1018,6 +1021,20 @@ sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
 | `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. |
+
+## Sexagésima octava serie: D01 Mechanical Checker, preparación (Plan 136) (15 sep 2026)
+
+Plan 136 (vía plan; DEV-only — `tools/` + `tests/`, sin efecto en
+`protocol/.agents/`, RFC-56 no aplica; Change Level L2). **Sólo preparación: no
+implementa D01.** Redacta el Plan que materializa el **subconjunto mecánico y
+determinista** de D01 (estructura y procedencia resoluble) como checker DEV,
+reconstruyendo el estado actual de D01 desde el repositorio en lugar del diseño
+histórico. Queda en `Aprobado para redacción`: la autorización de ejecución es una
+decisión humana posterior (`<PLAN-136>:PC-1`).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `136-d01-mechanical-checker.md` | — (vía plan, DEV-only) | Aprobado para redacción | **Reconstrucción de D01**: es una harness policy del payload (trigger `D01`, `DISCOVERY_VALIDATE → DISCOVERY_READY`, único gate del dominio discovery) que cubre validación estructural **y** ground truth; el runner no existe y hoy sus 12 ítems son juicio `[agent]`; el propio contrato declara los ítems de estructura determinista como candidatos `[gate]`. Origen: `B-1` **derivado** (`F-11` resuelta por planes 40 y 47/RFC-48; modelo D01 aclarado por plan 60). **Once puntos deterministas** entran en el checker (existencia y no-vaciedad; front matter TOML y campos requeridos; `artifact`/`kind`; `#` ↔ `title`; `## Discovered Facts` y secciones por contrato de tipo; existencia de `source_files` con `system_probe` sólo para environment; `[entries] active` ↔ archivos; front matter ↔ manifest; `## Project Shape` primera sección de contenido y coincidente con el manifest; `distribution.md` condicional a shape `library`/`cli`). **Seis ítems de juicio quedan fuera por nombre** (stack real, dependencias reales, patrones con ejemplo, secretos, claims sin fuente, merge consistente, api↔shape): no se convierten artificialmente en checker. Requisitos resueltos **desde los contratos** (single-source, plan 47/RFC-48), nunca desde una lista propia. Reporte con el vocabulario de señales y el contrato de exit codes existentes (`GAP` advisory, sólo `ANOMALY` cambia el exit code); ausencia de KB = `N/A` válido. **Scope exacto de seis rutas**: `tools/check_discovery_output.py`, `tests/test_check_discovery_output.py`, `tests/test_discovery_output_dogfood.py`, este Plan, `docs/plans/INDEX.md` y `CHANGELOG.md`. **Fronteras registradas, no resueltas:** `F-1` (`F-17`: `source_files` sin valor de procedencia para ausencias y hechos de árbol → el checker reporta `GAP`, nunca `ANOMALY`, y la corrección de fondo es payload, `<PLAN-136>:PC-2`) y `F-2` (`F-11`: contradicción textual `artifact_validated: KB_DISCOVERY_ENTRY.md` vs las entradas reales, conservada como evidencia sin editar el payload). Pendientes `PC-1` (autorización de ejecución), `PC-2` (`F-17`) y `PC-3` (`F-16`). Documentation impact `REQUIRED` (CHANGELOG, INDEX, el propio Plan; `docs/VERSIONING.md` §4.1 deliberadamente **no** autorizado); Roadmap impact `REQUIRED` (la fila «Mechanical D01 subset» de `ROADMAP.md:Trabajo activo / dogfood` deja de estar activa y el orden de la secuencia de dogfood cambia; reconciliación **al ejecutar**, no ahora). Sin implementación, sin modificar `protocol/`, `runtime/`, `.agents/` ni `ROADMAP.md`, sin release ni tag. |
 
 ## Sexagésima séptima serie: Supervised Autonomous Execution (Plan 135) (15 sep 2026)
 

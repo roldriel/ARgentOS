@@ -6,7 +6,12 @@
 > Las secciones `## Convenciones` y `## Serie de RFCs (documentos canónicos)`
 > se conservan como anclas de navegación para referencias históricas.
 
-Estado al 2026-09-15. El Plan 137 está `Aprobado para redacción`
+Estado al 2026-09-20. El Plan 138 está `Aprobado para redacción`
+(SAE Scope & Authority Hardening: endurecimiento del enforcement de Scope/Authority
+de Supervised Autonomous Execution a partir del incidente `<PLAN-136>:F-3` — la
+determinación de cierre no amplía el Scope autorizado y la escritura fuera de Scope
+debe detenerse **antes** del efecto; DEV-only `runtime/` + `tests/` + policies
+`.agents/`, sin release; Septuagésima serie). El Plan 137 está `Aprobado para redacción`
 (EARS Structural Validator: auditoría de cobertura EARS y guarda DEV de paridad
 entre el estándar, el contrato y el validador del payload; **hallazgo: el
 validador ya existe** — plan 66/RFC-57 — y su reconciliación de roadmap queda
@@ -1026,6 +1031,31 @@ sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
 | `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. |
+
+## Septuagésima serie: SAE Scope & Authority Hardening, preparación (Plan 138) (20 sep 2026)
+
+Plan 138 (vía plan; DEV-only — `.agents/`, `runtime/`, `tests/`, `docs/`, sin
+efecto en `protocol/.agents/`, RFC-56 no aplica; Change Level L2). **Sólo
+investigación y redacción: no implementa el hardening y no se ejecuta.** Nace del
+incidente `<PLAN-136>:F-3` (exceso de Scope y auto-autorización retrospectiva
+durante la ejecución del Plan 136) y de las decisiones humanas `<PLAN-136>:PC-4`
+(a) y `<PLAN-136>:PC-5`. Formaliza cinco propiedades —P1 Scope precede a Impact,
+P2 Scope como precondición operacional, P3 STOP antes de escribir, P4 no
+retroactividad del contrato de autorización, P5 impacto no es autorización— y
+ubica el enforcement en el `ExecutionHost`, **antes** de construir la delegación,
+que es el último punto en el que el efecto persistente todavía no ocurrió.
+Distingue explícitamente **detección** (existe hoy: `_scope_violations` compara
+snapshots de contenido después de la delegación y produce
+`STOP_FORBIDDEN_ACTION`) de **enforcement** (no existe hoy: el gate de SAE verifica
+un solo path, resuelto de la misma declaración que el Scope, y no el conjunto de
+write targets). `<PLAN-136>:F-3` **no** se cierra, el Plan 136 no se modifica,
+`<PLAN-136>:PC-5` no se resuelve (se re-registra como `<PLAN-138>:PC-2`) y EARS no
+avanza. Queda en `Aprobado para redacción`: la autorización de ejecución es una
+decisión humana posterior.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `138-sae-scope-authority-hardening.md` | — (vía plan, DEV-only) | Aprobado para redacción | **Investigación**: cadena `Host → Orchestrator → Derivation → Delegation → Worker → Action → Result` reconstruida sobre el código real (`observation.observe`, `derivation.derive_next_action`, `authority.AuthorityBoundary`, `host._apply_autonomy_gate`/`_build_delegation`/`_execute_delegation`/`_scope_violations`, `worker.repository_snapshot`/`changed_paths`, `agent_worker.AgentInvoker`); clasificación de **cada** obligación de cierre de `.agents/` (Documentation Impact, Roadmap Impact, `DEFERRED`+PC-1, DoD, anchors/checkpoint, C-1/C-2/C-3, changelog del payload, LC-1) y conclusión de que **ninguna** confiere autorización de escritura: existe **una** clase general de regla (toda obligación de estado es un enunciado sobre el estado, nunca una autorización), y el defecto es **ausencia de enunciado explícito**, no contradicción normativa (por eso ADR-16 no se toca). **Cuatro causas separadas**: ambigüedad normativa menor, ausencia de enforcement (causa principal), error de razonamiento del agente, y posibilidad real de autorización retrospectiva (el artifact del Plan es a la vez contrato de autorización y registro mutable, y la observación se re-deriva en cada iteración sin constancia de la declaración vigente al autorizar). **Punto de enforcement**: function `_apply_autonomy_gate` de `runtime/orchestrator/host.py`, invocado desde `iterate` antes de `_execute_delegation`, con tres piezas sobre mecanismos existentes —E1 precondición de escritura sobre el **conjunto completo** de targets (all-or-nothing, target vacío ⇒ STOP), E2 **checkpoint de autorización** (proyección de Task/Scope/Status autorizante/out-of-scope registrada en el journal y comparada en cada iteración; divergencia ⇒ `STOP_SCOPE_VIOLATION`), E3 evidencia en el campo `autonomy` del registro de iteración que ya existe (sin telemetría, store ni registry nuevos)— y con la verificación posterior conservada como **defensa en profundidad** para la escritura que ocurre dentro del `AgentInvoker`, límite declarado que el host no puede interponer. **Scope exacto de doce rutas** con justificación por archivo; **excluidos por nombre**: `ROADMAP.md` (la propia frontera que el Plan respeta), el Plan 136, `.agents/policies/authority.md`, `runtime/orchestrator/contracts.py` (se **reusa** `STOP_SCOPE_VIOLATION`; vocabulario nuevo ⇒ STOP y escalar), `derivation.py`, `worker.py`, `agent_worker.py`, `observation.py` y todo el payload. **Regresión F-3** reproducible con el artefacto excluido **parametrizado** (no hardcodea `ROADMAP.md`) y siete aserciones: parada previa, sin delegación persistida, artefacto byte-idéntico, Scope/Task/Authority byte-idénticos, evidencia reconstruible, no legitimación retrospectiva, y exigencia de que el caso **falle** contra el comportamiento previo. **Suite de falsación** de catorce casos (target/acción permitidos y no permitidos, `REQUIRED` dentro y fuera de Scope, conjunto múltiple con un path fuera, target vacío, ampliación retrospectiva de Scope y de Task, proximidad semántica, `DEFERRED` sin pending decision). **Dogfood** anclado (el punto de enforcement existe, la frontera de F-3 sigue registrada, `ROADMAP.md` con 0 diff) más dogfood funcional en proyecto scratch con `AgentInvoker` inyectado que **realmente escribe**, con el límite declarado de que el repositorio no tiene provider ni modelo (H-1 del Plan 123). **Determinaciones**: `Documentation Impact: REQUIRED` para el Change que el Plan describe (policies SAE/validation-closure/autonomous-orchestration + `runtime/README.md`) y `NOT_REQUIRED` para la redacción; `Roadmap Impact: DEFERRED` con pending decision existente `<PLAN-138>:PC-1` (owner: mantenedor) porque `ROADMAP.md` está fuera del Scope y `REQUIRED` no autoriza escribirlo — es la demostración viva de la frontera de `<PLAN-136>:PC-4`. Sin state machine, entidad, authority class, registry, lifecycle, sistema de permisos paralelo, mecanismo de Scope independiente ni caso especial para `ROADMAP.md`/`Documentation Impact`; sin RFC/ADR nuevo, sin Amendment Log de RFC-75, sin cambio de payload, sin `VERSION` bump, sin tag y sin push. |
 
 ## Sexagésima novena serie: EARS Structural Validator, preparación (Plan 137) (15 sep 2026)
 

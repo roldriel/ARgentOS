@@ -37,6 +37,60 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Added
 
+- **SAE Scope & Authority Hardening — preparación del Plan 138** (plan 138, vía
+  plan; DEV-only, sin efecto en `protocol/.agents/`): se redacta el Plan 138 y
+  **no se implementa nada**. Nace del incidente `<PLAN-136>:F-3` y de las
+  decisiones humanas `<PLAN-136>:PC-4` (a) y `<PLAN-136>:PC-5`. **Investigación
+  (read-only)**: la cadena `Host → Orchestrator → Derivation → Delegation →
+  Worker → Action → Result` se reconstruye sobre el código real
+  (`observation.observe`, `derivation.derive_next_action`,
+  `authority.AuthorityBoundary`, `host._apply_autonomy_gate` /
+  `_build_delegation` / `_execute_delegation` / `_scope_violations`,
+  `worker.repository_snapshot` / `changed_paths`,
+  `agent_worker.AgentInvoker`). **Hallazgo central**: el gate de SAE del Plan 135
+  verifica **un solo** target, resuelto de la misma declaración de la que sale el
+  Scope (`host._autonomy_target_path` → `resolved[0]`), de modo que autoriza la
+  delegación sin demostrar que la escritura sea interna al Scope; la única
+  verificación de Scope (`_scope_violations`) corre **después** de la delegación
+  y por eso **detecta** pero no **impide**. Clasificación de **cada** obligación
+  de cierre de `.agents/` (Documentation Impact, Roadmap Impact, `DEFERRED`+PC-1,
+  DoD, anchors/checkpoint, C-1/C-2/C-3, changelog del payload, LC-1): **ninguna**
+  confiere autorización de escritura; existe **una** clase general de regla (toda
+  obligación de estado es un enunciado sobre el estado, nunca una autorización) y
+  el defecto es **ausencia de enunciado explícito**, no contradicción normativa —
+  por eso `docs/adr/16-change-lifecycle-authority.md` y
+  `.agents/policies/authority.md` **no** se tocan. **Cuatro causas separadas**:
+  ambigüedad normativa menor, ausencia de enforcement (principal), error de
+  razonamiento del agente y posibilidad real de autorización retrospectiva.
+  **Punto de enforcement propuesto**: function `_apply_autonomy_gate` de
+  `runtime/orchestrator/host.py`, antes de `_execute_delegation`, con tres piezas
+  sobre mecanismos existentes
+  (E1 precondición de escritura sobre el conjunto completo de targets,
+  all-or-nothing; E2 checkpoint de autorización con proyección de
+  Task/Scope/Status autorizante/out-of-scope registrada en el journal y comparada
+  en cada iteración; E3 evidencia en el campo `autonomy` que ya existe), **sin**
+  crear state machine, entidad, authority class, registry, lifecycle, sistema de
+  permisos paralelo, mecanismo de Scope independiente ni caso especial para
+  `ROADMAP.md` o `Documentation Impact`; se **reusa** `STOP_SCOPE_VIOLATION` (no
+  se agrega vocabulario a `contracts.py`). **Scope exacto de doce rutas** con
+  justificación por archivo y exclusiones por nombre (`ROADMAP.md`, el Plan 136,
+  `authority.md`, `contracts.py`, `derivation.py`, `worker.py`, `agent_worker.py`,
+  `observation.py`, el payload). **Regresión F-3** reproducible con el artefacto
+  excluido **parametrizado** (no hardcodea `ROADMAP.md`) y siete aserciones
+  (parada previa a la delegación, ausencia de delegación persistida, artefacto
+  byte-idéntico, Scope/Task/Authority byte-idénticos, evidencia reconstruible,
+  no legitimación retrospectiva, y exigencia de que el caso **falle** contra el
+  comportamiento previo). **Suite de falsación** de catorce casos y **dogfood**
+  anclado + funcional con `AgentInvoker` inyectado que realmente escribe,
+  declarando que el repositorio no tiene provider ni modelo (H-1 del Plan 123).
+  **Determinaciones**: `Documentation Impact: REQUIRED` para el Change descrito y
+  `NOT_REQUIRED` para la redacción; `Roadmap Impact: DEFERRED` con pending
+  decision existente `<PLAN-138>:PC-1` (owner: mantenedor) porque `ROADMAP.md`
+  está fuera del Scope y `REQUIRED` **no** autoriza escribirlo — la demostración
+  viva de la frontera de `<PLAN-136>:PC-4`; `ROADMAP.md` con **0 diff**.
+  `<PLAN-136>:F-3` **no** se cierra, el Plan 136 no se modifica y EARS no avanza.
+  Sin RFC/ADR nuevo, sin cambio de payload, sin `VERSION` bump y sin tag.
+
 - **EARS Structural Validator — preparación del Plan 137 (auditoría de cobertura
   EARS)** (plan 137, vía plan; DEV-only, sin efecto en `protocol/.agents/`): se
   redacta el Plan 137 y **no se implementa nada**. **Hallazgo central**: el

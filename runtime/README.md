@@ -233,6 +233,66 @@ Operational policy: `.agents/policies/autonomous-orchestration.md`. Suite:
 Content Identity algorithm, and it never writes `protocol/.agents/`, `dist/` or
 an artifact of another plan.
 
+## Supervised Autonomous Execution (Plan 135)
+
+`runtime/orchestrator/autonomy.py` is the **frontier**: it decides what the host
+may execute on its own authority and where it must stop. It adds no architecture.
+The separation it realizes is:
+
+```text
+AUTHORITY   what is authorized          (RFC Accepted / ADR / approved Plan; ADR-16)
+SCOPE       which work is authorized    (the plan's own ## Delegación agentiva)
+AUTONOMY    what the host may execute without asking again
+
+autonomy ⊆ authorized scope  ∧  autonomy ⊆ granted authority
+```
+
+**It is a pure function, not a hook with state.** No filesystem, clock, branch,
+CWD or cache is read: the same envelope and candidates always produce the same
+verdict, which is what makes the frontier testable and reconstructible. It
+follows the same shape as the placement resolver (Plan 131): a normative source
+(the policy), a mechanical realization *of* it, and a consumer (the host). If the
+implementation and `.agents/policies/supervised-autonomous-execution.md` disagree,
+**the policy governs** and the defect is escalated and corrected — never
+reconciled by reinterpreting the policy.
+
+- `AutonomyEnvelope` is **derived from declarations the approved plan already
+  owns** (task + scope + execution status). It creates no declaration surface. No
+  declaration ⇒ no autonomy, reported as an absence.
+- `verify_action_scope` is **exact membership** after pure normalization. It never
+  infers authorization from proximity: a containing path, a descendant, a plural
+  or a near-miss name is out of scope.
+- `evaluate_autonomy` returns `CONTINUE`, or a stop that **names the frontier and
+  the authority that decides instead** (`STOP_SCOPE_VIOLATION`,
+  `STOP_AUTHORITY_REQUIRED`, `STOP_FORBIDDEN_AUTONOMY`,
+  `STOP_UNCLASSIFIABLE_ACTION`, `STOP_NO_AUTHORIZED_WORK`). An unknown action class
+  stops: it cannot be shown to be inside the authority.
+- `evaluate_finding_resolution` decides an autonomous correction from the eleven
+  declared conditions. A structural correction (RFC, ADR, Protocol, payload,
+  authority, lifecycle, normative decision) escalates whatever the scope says, and
+  the finding's own lifecycle state is **never** written here: that transition is a
+  human decision with evidence (CL-8, ADR-16 `AU-3`).
+- `summarize_autonomy` derives the execution summary from the journal and the
+  Worker Results. It is a **view**, not a tracking system, and it keeps
+  `human_operational_intervention` strictly apart from
+  `human_authority_decision`: only the first measures incomplete autonomy, the
+  second is the boundary working as designed.
+
+**Opt-in and non-regressive.** The host takes `autonomy_gate=` (CLI: `--sae`).
+Without it the loop behaves exactly as before this change, so the frontier is
+additive. With it, the host verifies *before* acting and reports the frontier
+verdict in the iteration record, and the run report carries the autonomy summary.
+
+**Blocked branches do not block independent work.** A branch whose resolution
+needs authority the host does not hold is preserved, recorded as deferred, and
+does not stop independent authorized work — while never becoming an implicit
+authorization of itself.
+
+Suite: `tests/test_autonomous_scope.py` (behaviour, host integration, and the
+falsification of every frontier: disguised scope expansion, authority expansion,
+implicit RFC/ADR, Protocol change, lifecycle change, autonomous resolution of a
+human decision, release/promotion, invented normative documentation).
+
 ## DEV Agent Worker (Plan 123)
 
 `runtime/orchestrator/agent_worker.py` adds a **third implementation of the same

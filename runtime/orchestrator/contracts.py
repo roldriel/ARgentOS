@@ -103,6 +103,15 @@ RECORD_REVALIDATION_ANCHOR = "RECORD_REVALIDATION_ANCHOR"
 RECORD_CHECKPOINT = "RECORD_CHECKPOINT"
 RECORD_PLAN_STATUS_EXECUTED = "RECORD_PLAN_STATUS_EXECUTED"
 RECORD_RUN_NOTE = "RECORD_RUN_NOTE"
+#: Supervised Autonomous Execution (plan 135): the host corrects a defect inside
+#: the authorized scope under the authority the approved plan already grants.
+#: It is a **record** of an executed correction, not a finding lifecycle state:
+#: the resolution of a finding remains a human decision with evidence (CL-8,
+#: ADR-16 AU-3), so no action of this vocabulary writes that state.
+RECORD_FINDING_CORRECTION = "RECORD_FINDING_CORRECTION"
+#: The host records a finding it detected (detection is the host's; resolution is
+#: the human's).
+RECORD_FINDING_DETECTED = "RECORD_FINDING_DETECTED"
 
 #: Terminal derivations and stops.
 CLOSED_DERIVED = "CLOSED_DERIVED"
@@ -122,6 +131,16 @@ STOP_WORKER_RESULT_INVALID = "STOP_WORKER_RESULT_INVALID"
 STOP_MAX_ITERATIONS = "STOP_MAX_ITERATIONS"
 STOP_NO_PROGRESS = "STOP_NO_PROGRESS"
 STOP_FORBIDDEN_ACTION = "STOP_FORBIDDEN_ACTION"
+#: Supervised Autonomous Execution frontier stops (plan 135). They are *stops*,
+#: not states: the loop ends with evidence and the human decides. They are
+#: deliberately separate from the derivation's own conditions, because they
+#: describe a boundary of the granted autonomy rather than a fact about the
+#: change.
+STOP_SCOPE_VIOLATION = "STOP_SCOPE_VIOLATION"
+STOP_AUTHORITY_REQUIRED = "STOP_AUTHORITY_REQUIRED"
+STOP_FORBIDDEN_AUTONOMY = "STOP_FORBIDDEN_AUTONOMY"
+STOP_UNCLASSIFIABLE_ACTION = "STOP_UNCLASSIFIABLE_ACTION"
+STOP_NO_AUTHORIZED_WORK = "STOP_NO_AUTHORIZED_WORK"
 
 EXECUTABLE_ACTIONS: tuple[str, ...] = (
     RUN_VALIDATION,
@@ -136,6 +155,8 @@ RECORD_ACTIONS: tuple[str, ...] = (
     RECORD_CHECKPOINT,
     RECORD_PLAN_STATUS_EXECUTED,
     RECORD_RUN_NOTE,
+    RECORD_FINDING_CORRECTION,
+    RECORD_FINDING_DETECTED,
 )
 
 STOP_ACTIONS: tuple[str, ...] = (
@@ -155,6 +176,11 @@ STOP_ACTIONS: tuple[str, ...] = (
     STOP_MAX_ITERATIONS,
     STOP_NO_PROGRESS,
     STOP_FORBIDDEN_ACTION,
+    STOP_SCOPE_VIOLATION,
+    STOP_AUTHORITY_REQUIRED,
+    STOP_FORBIDDEN_AUTONOMY,
+    STOP_UNCLASSIFIABLE_ACTION,
+    STOP_NO_AUTHORIZED_WORK,
 )
 
 DERIVED_ACTIONS: tuple[str, ...] = (
@@ -162,6 +188,9 @@ DERIVED_ACTIONS: tuple[str, ...] = (
 )
 
 #: Stops that mean "a human must act"; the host resumes later from evidence.
+#: The SAE frontier stops (plan 135) are included: a reached authority boundary
+#: is a human authority decision, and it is emphatically **not** a failure of
+#: operational autonomy.
 HUMAN_AUTHORITY_STOPS = frozenset(
     {
         STOP_AWAIT_PLAN_AUTHORIZATION,
@@ -174,6 +203,9 @@ HUMAN_AUTHORITY_STOPS = frozenset(
         STOP_VALIDATION_FAIL,
         STOP_RELEASE_REQUIRES_HUMAN_AUTHORITY,
         STOP_FORBIDDEN_ACTION,
+        STOP_SCOPE_VIOLATION,
+        STOP_AUTHORITY_REQUIRED,
+        STOP_FORBIDDEN_AUTONOMY,
     }
 )
 

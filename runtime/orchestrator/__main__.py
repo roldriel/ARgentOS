@@ -4,7 +4,7 @@
 Usage::
 
     python -m runtime.orchestrator --plan 122 [--root REPO_ROOT]
-        [--max-iterations N] [--run-id ID] [--worker command|agent|none]
+        [--max-iterations N] [--run-id ID] [--worker command|agent|none] [--sae]
     python -m runtime.orchestrator --plan 122 --observe [--json]
     python -m runtime.orchestrator --plan 122 --reconstruct [RUN_ID] [--json]
 
@@ -13,6 +13,14 @@ Modes:
 ``--observe``      observe and derive once; write nothing, run nothing.
 ``--reconstruct``  rebuild a run's recorrido from persisted evidence only.
 default            run the loop until a terminal derivation or a stop condition.
+
+Supervised Autonomous Execution (plan 135):
+
+``--sae`` enables the frontier gate: before conducting a derived action the host
+verifies that it stays inside the autonomy the authorized plan declares, and
+stops at the first authority frontier instead of continuing. It is **off by
+default** so the loop behaves exactly as before when it is not requested. The
+operational definition is `.agents/policies/supervised-autonomous-execution.md`.
 
 Workers:
 
@@ -111,6 +119,16 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="RUN_ID",
         help="rebuild the recorrido of a run from persisted evidence",
     )
+    parser.add_argument(
+        "--sae",
+        action="store_true",
+        help=(
+            "enable Supervised Autonomous Execution (plan 135): verify before "
+            "acting that the derived action stays inside the autonomy the plan "
+            "declares, and stop at the first authority frontier. Off by default: "
+            "without it the loop behaves exactly as before"
+        ),
+    )
     parser.add_argument("--json", action="store_true", help="machine-readable output")
     return parser
 
@@ -179,6 +197,7 @@ def main(argv: list[str] | None = None) -> int:
         worker=worker,
         max_iterations=args.max_iterations,
         run_id=args.run_id,
+        autonomy_gate=args.sae,
     )
     try:
         run = host.run()

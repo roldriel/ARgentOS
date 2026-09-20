@@ -6,7 +6,9 @@
 > Las secciones `## Convenciones` y `## Serie de RFCs (documentos canónicos)`
 > se conservan como anclas de navegación para referencias históricas.
 
-Estado al 2026-09-15. El Plan 134 está `Executed` con condición derivada `Closed`
+Estado al 2026-09-15. El Plan 135 está `Executed` con condición derivada `Closed`
+(Supervised Autonomous Execution para el DEV Autonomous Orchestrator; DEV-only,
+sin release; Sexagésima séptima serie). El Plan 134 está `Executed` con condición derivada `Closed`
 (integridad de la evidencia de cierre: modelo del estado de cierre vs. árbol
 material del commit y contrato de C-2; docs-only + tooling DEV, sin release;
 Sexagésima sexta serie). El Plan 133 está `Executed` con condición derivada `Closed`
@@ -1016,6 +1018,25 @@ sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
 | `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. |
+
+## Sexagésima séptima serie: Supervised Autonomous Execution (Plan 135) (15 sep 2026)
+
+Plan 135 (vía plan; DEV-only — `.agents/`, `runtime/`, `tests/`, `docs/`, sin
+efecto en `protocol/.agents/`, RFC-56 no aplica; Change Level L2). Formaliza y
+materializa **Supervised Autonomous Execution (SAE)**: la política operacional
+que permite al DEV Autonomous Orchestrator ejecutar, corregir, revalidar,
+recuperar y continuar todo paso que ya esté dentro del scope y la autoridad
+concedidos, deteniéndose exactamente ante una frontera de autoridad. Separa
+explícitamente **Authority** (qué está autorizado), **Scope** (qué trabajo está
+autorizado) y **Autonomy** (qué acciones puede ejecutar el host sin nueva
+autorización), con la regla `autonomy ⊆ authorized scope ∧ autonomy ⊆ granted
+authority`. Investiga primero si la arquitectura existente ya expresa SAE y
+concluye que sí: no crea entidad, registry, state machine, lifecycle, authority
+class, identity primitive, worker type, daemon, database ni sistema de tracing.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `135-supervised-autonomous-execution.md` | — (vía plan, DEV-only) | Executed | Supervised Autonomous Execution. **Policy nueva** `.agents/policies/supervised-autonomous-execution.md`: definición operacional de SAE, separación Authority/Scope/Autonomy, continuación autónoma, política de findings, findings bloqueados vs. branches independientes, stop conditions, human boundary, scope verification, determinaciones de impacto, recovery, evidencia, execution summary y métrica de autonomía (reusa artifacts existentes; no introduce sistema de métricas). **Runtime nuevo** `runtime/orchestrator/autonomy.py`: `AutonomyEnvelope` (derivado de lo que el Plan ya declara), `AutonomyCandidate`, `verify_action_scope` (pertenencia exacta; nunca por proximidad semántica), `evaluate_autonomy` (CONTINUE / STOP / REQUIRES_AUTHORITY / FORBIDDEN con justificación reconstruible) y `summarize_autonomy` (derivado del journal y de los Worker Results; distingue intervención operacional humana de decisión de autoridad humana). **Vocabulario cerrado ampliado** en `contracts.py` (corrección autónoma + condiciones de parada de frontera) y **gate opt-in** en `host.py` (sin envelope declarado el comportamiento es idéntico al actual) con el resumen de autonomía en el run report. **Suite nueva** `tests/test_autonomous_scope.py`: los catorce casos exigidos y la falsación explícita (scope expansion disfrazado, authority expansion, RFC/ADR implícito, cambio de Protocol, cambio de lifecycle, resolución autónoma de decisión humana, release/promotion, documentación normativa inventada). **Decisión de frontera** (`<PLAN-135>:PC-02`): la resolución de un finding —su transición de estado— permanece autoridad humana (CL-8, ADR-16 AU-3); SAE pre-autoriza la **acción de corregir** dentro del scope, que ya autoriza el Plan aprobado, de modo que no se adquiere autoridad nueva ni se modifica ninguna regla normativa. Findings `<PLAN-135>:F-01` (conflicto entre el pedido literal del Change y la regla vigente) corregido por `<PLAN-135>:C-01`. D01 queda habilitado como primer Change funcional ejecutable bajo SAE. `**Status:** Executed` con condición derivada **`Closed`** (docs-only, sin release), Validation Anchor A1 (delta `47042c06…`, tree `16a592c5…`), checkpoint con consistencia PASS verificada por C-2, C-1 `VALID` y C-3 `VALID` (F-1, F-2, C-1, C-2). Findings `<PLAN-135>:F-1` (frontera de autoridad de findings) y `<PLAN-135>:F-2` (registros de lineage no legibles por C-3, detectado por la batería, no por inspección del agente) corregidos por `C-1` y `C-2`, sin marcarlos `resolved` porque esa transición es decisión humana (CL-8, ADR-16 AU-3). Sin `VERSION` bump ni tag. |
 
 ## Sexagésima sexta serie: integridad de la evidencia de cierre (Plan 134) (15 sep 2026)
 

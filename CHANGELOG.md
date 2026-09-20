@@ -35,6 +35,44 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ## [Unreleased]
 
+### Added
+
+- **Supervised Autonomous Execution (SAE) para el DEV Autonomous Orchestrator**
+  (plan 135, vía plan; DEV-only, sin efecto en `protocol/.agents/`): política
+  operacional nueva `.agents/policies/supervised-autonomous-execution.md` que
+  formaliza que el host ejecuta, corrige, revalida, recupera y continúa **todo
+  paso ya dentro del scope y la autoridad concedidos**, deteniéndose exactamente
+  ante una frontera de autoridad. Separa explícitamente **Authority** (qué está
+  autorizado), **Scope** (qué trabajo está autorizado) y **Autonomy** (qué
+  acciones puede ejecutar el host sin pedir autorización de nuevo), con la regla
+  `autonomy ⊆ authorized scope ∧ autonomy ⊆ granted authority`: la autonomía
+  nunca amplía scope ni autoridad. Materialización determinista en
+  `runtime/orchestrator/autonomy.py` — función pura, sin I/O: `AutonomyEnvelope`
+  derivado de lo que el Plan **ya declara** (`## Delegación agentiva`), verificación
+  de scope por **pertenencia exacta** (nunca por proximidad semántica: una ruta
+  contenedora, descendiente, plural o de nombre parecido queda fuera),
+  `evaluate_autonomy` (CONTINUE o parada que nombra la frontera y la autoridad que
+  decide en su lugar), `evaluate_finding_resolution` (corrección autónoma bajo las
+  once condiciones declaradas; una corrección estructural —RFC, ADR, Protocol,
+  payload, authority, lifecycle, decisión normativa— escala) y `summarize_autonomy`
+  (resumen derivado del journal y de los Worker Results; vista, no sistema de
+  métricas). Vocabulario cerrado ampliado en `contracts.py` y gate **opt-in** en
+  `host.py` / CLI `--sae`: sin él el loop se comporta exactamente como antes.
+  **Frontera de findings** (decisión del mantenedor, `<PLAN-135>:PC-02`): el Plan
+  pre-autoriza la **acción de corregir** dentro del scope —mecanismo ya vigente:
+  la corrección la autoriza el Plan aprobado y `C-<n>` es factual, no normativo— y
+  el humano conserva la **transición de estado** del finding (`resolved`/
+  `deferred`/`superseded`), que es decisión humana con evidencia (CL-8, ADR-16
+  `AU-3`); no se adquiere autoridad nueva ni se modifica ninguna regla normativa.
+  Un finding bloqueado no bloquea trabajo independiente autorizado. Suite nueva
+  `tests/test_autonomous_scope.py` con los catorce casos exigidos y la falsación
+  explícita (scope expansion disfrazado, authority expansion, RFC/ADR implícito,
+  cambio de Protocol, cambio de lifecycle, resolución autónoma de decisión humana,
+  release/promotion, documentación normativa inventada). Sin entidad, registry,
+  state machine, lifecycle, authority class, identity primitive, worker type,
+  daemon, database ni sistema de tracing nuevos; sin RFC/ADR nuevo, sin cambio de
+  payload, sin `VERSION` bump y sin tag.
+
 ### Modelo conceptual
 
 - **Cierre formal de Closure Evidence Integrity y baseline para D01** (plan 134,

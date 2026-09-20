@@ -34,16 +34,39 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 from .authority import AuthorityBoundary
+from .autonomy import (
+    CORRECT_FINDING_IN_SCOPE,
+    EXECUTE_AUTHORIZED_TASK,
+    RECORD_CHECKPOINT_EVIDENCE,
+    RECORD_VALIDATION_EVIDENCE,
+    RUN_AUTHORIZED_GATES,
+    RUN_AUTHORIZED_REVALIDATION,
+    RUN_AUTHORIZED_VALIDATION,
+    STOP_AUTHORITY_REQUIRED,
+    STOP_FORBIDDEN_AUTONOMY,
+    STOP_NO_AUTHORIZED_WORK,
+    STOP_SCOPE_VIOLATION,
+    STOP_UNCLASSIFIABLE_ACTION,
+    AutonomyCandidate,
+    AutonomyResult,
+    envelope_from_observation,
+    evaluate_autonomy,
+    summarize_autonomy,
+)
 from .contracts import (
     AUTHORIZED_EXISTING,
     EXECUTABLE_ACTIONS,
     RECORD_CHECKPOINT,
+    RECORD_FINDING_CORRECTION,
+    RECORD_FINDING_DETECTED,
     RECORD_PLAN_STATUS_EXECUTED,
     RECORD_REVALIDATION_ANCHOR,
     RECORD_RUN_NOTE,
     RECORD_VALIDATION_ANCHOR,
     RUN_IMPLEMENTATION_TASK,
     RUN_LIFECYCLE_GATES,
+    RUN_REVALIDATION,
+    RUN_VALIDATION,
     Delegation,
     WorkerResult,
     validate_worker_result,
@@ -97,6 +120,68 @@ LIFECYCLE_GATE_COMMANDS: tuple[tuple[str, ...], ...] = (
     ("python", "tools/check_lifecycle_lineage.py"),
 )
 
+#: Supervised Autonomous Execution (plan 135): the derivation's action vocabulary
+#: mapped onto the frontier vocabulary. The mapping is explicit and total over
+#: the derived actions the host can execute or record — an action with no entry
+#: is not silently allowed, it is classified as unclassifiable and stops.
+_AUTONOMY_CLASS_BY_ACTION: Mapping[str, str] = {
+    RUN_VALIDATION: RUN_AUTHORIZED_VALIDATION,
+    RUN_REVALIDATION: RUN_AUTHORIZED_REVALIDATION,
+    RUN_LIFECYCLE_GATES: RUN_AUTHORIZED_GATES,
+    RUN_IMPLEMENTATION_TASK: EXECUTE_AUTHORIZED_TASK,
+    RECORD_VALIDATION_ANCHOR: RECORD_VALIDATION_EVIDENCE,
+    RECORD_REVALIDATION_ANCHOR: RECORD_VALIDATION_EVIDENCE,
+    RECORD_CHECKPOINT: RECORD_CHECKPOINT_EVIDENCE,
+    RECORD_PLAN_STATUS_EXECUTED: RECORD_VALIDATION_EVIDENCE,
+    RECORD_RUN_NOTE: RECORD_VALIDATION_EVIDENCE,
+    RECORD_FINDING_CORRECTION: CORRECT_FINDING_IN_SCOPE,
+    RECORD_FINDING_DETECTED: CORRECT_FINDING_IN_SCOPE,
+}
+
+#: Frontier stop condition -> the host-level stop action it is reported as.
+_AUTONOMY_STOP_TO_ACTION: Mapping[str, str] = {
+    STOP_SCOPE_VIOLATION: STOP_SCOPE_VIOLATION,
+    STOP_AUTHORITY_REQUIRED: STOP_AUTHORITY_REQUIRED,
+    STOP_FORBIDDEN_AUTONOMY: STOP_FORBIDDEN_AUTONOMY,
+    STOP_UNCLASSIFIABLE_ACTION: STOP_UNCLASSIFIABLE_ACTION,
+    STOP_NO_AUTHORIZED_WORK: STOP_NO_AUTHORIZED_WORK,
+}
+
+#: Derived actions whose write target is the **plan artifact** itself: they are
+#: governance records, and the plan is the artifact that owns them.
+_AUTONOMY_PLAN_WRITES: frozenset[str] = frozenset(
+    {
+        RECORD_VALIDATION_ANCHOR,
+        RECORD_REVALIDATION_ANCHOR,
+        RECORD_CHECKPOINT,
+        RECORD_PLAN_STATUS_EXECUTED,
+        RECORD_RUN_NOTE,
+        RECORD_FINDING_CORRECTION,
+        RECORD_FINDING_DETECTED,
+    }
+)
+
+
+def _autonomy_target_path(
+    action_kind: str, observation: ChangeObservation
+) -> str | None:
+    """The path a derived action writes, or ``None`` when it writes nothing.
+
+    The semantic task's target is resolved exactly as the host already resolves
+    the scope it will verify after the delegation (`_build_delegation`): the
+    plan's declared agent scope, or its declared deliverables when the scope was
+    not explicit. Using the same resolution for both checks is deliberate — two
+    different readings of "the authorized scope" in the same host would be a
+    defect waiting to happen, and the frontier must check the same scope the
+    post-delegation verification enforces.
+    """
+    if action_kind in _AUTONOMY_PLAN_WRITES:
+        return observation.plan_path
+    if action_kind == RUN_IMPLEMENTATION_TASK:
+        resolved = observation.agent_task.scope or observation.scope_set
+        return resolved[0] if resolved else None
+    return None
+
 
 @dataclass
 class HostRun:
@@ -135,6 +220,7 @@ class ExecutionHost:
         max_iterations: int = DEFAULT_MAX_ITERATIONS,
         run_id: str | None = None,
         gate_commands: Sequence[Sequence[str]] | None = None,
+        autonomy_gate: bool = False,
     ) -> None:
         self.root = Path(root).resolve()
         self.plan = plan
@@ -145,6 +231,18 @@ class ExecutionHost:
         self.gate_commands: tuple[tuple[str, ...], ...] = tuple(
             tuple(argv) for argv in (gate_commands or LIFECYCLE_GATE_COMMANDS)
         )
+        # Supervised Autonomous Execution (plan 135). **Opt-in**, and that is a
+        # design decision, not an oversight: without it the host behaves exactly
+        # as before this change, so the frontier is added without altering the
+        # behaviour every existing deployment and test already depends on. When
+        # enabled, the host verifies *before* acting that the derived action stays
+        # inside the autonomy the approved plan declares, and stops at the first
+        # frontier instead of inferring its way past it.
+        self.autonomy_gate = autonomy_gate
+        #: The frontier verdict of the iteration in progress. Evidence for the
+        #: journal record; never a source of authority and never persisted as
+        #: state (the next iteration re-derives everything from the repository).
+        self._last_autonomy: AutonomyResult | None = None
 
     # -- observation -------------------------------------------------------- #
 
@@ -202,6 +300,12 @@ class ExecutionHost:
             },
             "gate_signals": dict(gate_signals or observation.gate_signals),
             "validation_signals": list(observation.validation_signals),
+            # Evidence of the SAE frontier (plan 135): what the host was about to
+            # do, whether the granted autonomy covered it, and — when it did not —
+            # the authority that decides instead. ``None`` when the gate is off.
+            "autonomy": (
+                None if self._last_autonomy is None else self._last_autonomy.to_dict()
+            ),
             "delegation_id": delegation_id,
             "result_id": result_id,
             # What the persisted result said about *this* content state, so the
@@ -275,6 +379,10 @@ class ExecutionHost:
             gate_signals=observation.gate_signals,
         )
 
+        # Supervised Autonomous Execution frontier (plan 135), before acting.
+        action, autonomy = self._apply_autonomy_gate(observation, action, boundary)
+        self._last_autonomy = autonomy
+
         if action.terminal:
             return self._record(observation, action, iteration)
 
@@ -293,6 +401,50 @@ class ExecutionHost:
             return self._execute_delegation(observation, action, iteration)
 
         return self._apply_record(observation, action, iteration)
+
+    def _apply_autonomy_gate(
+        self, observation: ChangeObservation, action: NextAction, boundary: AuthorityBoundary
+    ) -> tuple[NextAction, AutonomyResult | None]:
+        """Stop at an SAE frontier instead of conducting the derived action.
+
+        The host derives an action from the change; the frontier decides whether
+        that action is inside the autonomy the approved plan declares. A frontier
+        reached here is reported as a real stop with the frontier's own authority
+        and reason — never converted into a continuation, and never widened by
+        inference.
+        """
+        if not self.autonomy_gate or action.terminal:
+            return action, None
+        envelope = envelope_from_observation(observation, self.plan)
+        result = evaluate_autonomy(
+            envelope,
+            [
+                AutonomyCandidate(
+                    action_class=_AUTONOMY_CLASS_BY_ACTION.get(
+                        action.kind, action.kind
+                    ),
+                    target_path=_autonomy_target_path(action.kind, observation),
+                    description=action.rationale,
+                )
+            ],
+        )
+        self._last_autonomy = result
+        if result.continues or result.stop_condition is None:
+            return action, result
+        stop_kind = _AUTONOMY_STOP_TO_ACTION.get(
+            result.stop_condition, STOP_AUTHORITY_REQUIRED
+        )
+        stop = stop_action(
+            stop_kind,
+            (
+                f"supervised-autonomous-execution frontier: {result.reason} "
+                f"(authority: {result.authority})"
+            ),
+            boundary,
+        )
+        # The stop carries the action it refused to conduct, so the escalation
+        # says exactly what the host was about to do.
+        return stop, result
 
     def _execute_delegation(
         self, observation: ChangeObservation, action: NextAction, iteration: int
@@ -753,6 +905,7 @@ class ExecutionHost:
             "store del orquestador. No se usa memoria de sesión.",
             "",
         ]
+        lines += self._autonomy_block(records)
         for record in records:
             observed = record.get("observed") or {}
             lines += [
@@ -780,3 +933,28 @@ class ExecutionHost:
         if not records:
             lines.append("_Sin records persistidos para este run (GAP declarado)._")
         return "\n".join(lines) + "\n"
+
+    def _autonomy_block(self, records: Sequence[Mapping[str, Any]]) -> list[str]:
+        """The execution/autonomy summary of a run, derived from its own records.
+
+        It is a **view** over the journal the host already persists: no new
+        tracking system, no database, no metric store. When the frontier gate is
+        off the block declares that absence instead of reporting a fabricated
+        count, and a human authority decision is reported separately from a human
+        operational intervention, because only the latter measures autonomy.
+        """
+        if not self.autonomy_gate:
+            return [
+                "_SAE (plan 135): el gate de frontera no está habilitado en esta "
+                "corrida; no se computa resumen de autonomía (ausencia declarada)._",
+                "",
+            ]
+        observation = self.observe()
+        envelope = envelope_from_observation(observation, self.plan)
+        summary = summarize_autonomy(
+            envelope,
+            records,
+            findings_detected=len(observation.findings),
+            findings_escalated=len(observation.open_findings),
+        )
+        return [summary.render(), ""]

@@ -72,8 +72,14 @@ La política de versionado, changelog, tags y estados de planes vive en
   pruebas ancladas al payload real, sólo lectura). **No** se agregó el checker a
   la batería canónica: `docs/VERSIONING.md` §4.1 intacto, porque hacerlo crearía
   una obligación de gobernanza sobre todo Change futuro y el Plan no la autorizó.
-  `ROADMAP.md` reconciliado: la entrada `Mechanical D01 subset` sale de trabajo
-  activo y `EARS structural validator` pasa a próximo dogfood. Sin entidad,
+  `ROADMAP.md` fue modificado **fuera del `Scope`** autorizado: el mantenedor
+  determinó que `Roadmap Impact: REQUIRED` no autoriza por sí sola la escritura de
+  un artefacto excluido del scope (`<PLAN-136>:PC-4`). La resolución posterior
+  (`<PLAN-136>:F-3`, sección «Resolución post-cierre de F-3 (A y B)») confirmó la
+  retirada de la entrada `Mechanical D01 subset` como reconciliación factual y que
+  `EARS structural validator` pasa a próximo dogfood, y **restituyó `Media`** a su
+  prioridad, que la ejecución había cambiado a `Alta` sin evidencia documental.
+  Sin entidad,
   registry, state machine, authority, identity ni subsistema de ejecución nuevos;
   sin RFC/ADR nuevo, sin cambio de payload, sin `VERSION` bump y sin tag.
 

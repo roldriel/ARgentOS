@@ -13,15 +13,16 @@ propia autorización (RFC-56) antes de ejecutarse.
 
 | Prioridad | Trabajo | Origen | Estado |
 | --- | --- | --- | --- |
-| Alta | EARS structural validator | B-2 derivado · `docs/plans/33-ears-criteria-canonical-form.md` | **Próximo dogfood** |
+| Media | EARS structural validator | B-2 derivado · `docs/plans/33-ears-criteria-canonical-form.md` | **Próximo dogfood** |
 
 `Mechanical D01 subset — DEV checker for discovery output structure and provenance`
 (`B-1` derivado) **se ejecutó** (plan 136): el checker DEV del subconjunto mecánico
-de D01 existe en `tools/check_discovery_output.py`, con su suite y su dogfood. La
-entrada se retira de trabajo activo porque ya no representa trabajo futuro; su
-estado detallado vive en `docs/plans/INDEX.md` y en el Plan 136, que es donde este
-documento delega la trazabilidad. Los residuos de payload que D01 no podía resolver
-(`F-17`, `F-16`) siguen en la sección de pendientes que requieren autorización.
+de D01 existe en `tools/check_discovery_output.py`, con su suite y su dogfood, y el
+Plan 136 está `Executed` con condición derivada `Closed`. La entrada se retira de
+trabajo activo porque ya no representa trabajo futuro: su estado detallado vive en
+`docs/plans/INDEX.md` y en el Plan 136, que es donde este documento delega la
+trazabilidad. Los residuos de payload que D01 no podía resolver (`F-17`, `F-16`)
+siguen en la sección de pendientes que requieren autorización.
 
 Lo que sigue es **trabajo derivado nuevo**, no la reapertura de un ítem histórico.
 Los problemas originales `B-1` y `B-2` están resueltos; lo que sigue es una
@@ -29,9 +30,17 @@ extensión que el propio contrato de D01 declara como futura (la validación mec
 era inexistente y el contrato la admitía como extensión posible) y la secuencia de
 dogfood decidida después.
 
-**Criterio de prioridad.** La columna hereda la prioridad del ítem histórico del
-que la entrada deriva (`Alta` en `B-2`). No se recalifica ningún ítem histórico sin
-evidencia nueva.
+**Criterio de prioridad.** La prioridad de una entrada del mapa vigente es la que
+fija `ROADMAP.md` al registrarla, no el ítem histórico del que deriva: el ítem
+histórico `B-2` fue `Alta` **por su propio motivo y en su propio contexto** («un
+fallo de formato cuesta una fase RECOVERY completa», `docs/plans/INDEX.md`
+§Backlog evidenciado - plan 19), y la entrada derivada `EARS structural validator`
+fue registrada `Media` por el Plan 132 (`docs/plans/132-roadmap-current-state.md`).
+No se recalifica una entrada del mapa sin evidencia documental nueva. La secuencia
+de dogfood y la prioridad son dimensiones distintas: completar `B-1` **cumple la
+condición de secuencia** de `EARS` («después de `B-1`») y lo vuelve el próximo
+dogfood, pero **no** constituye evidencia nueva sobre su importancia intrínseca, de
+modo que su prioridad en el mapa permanece `Media`.
 
 ## Pendientes que requieren autorización
 

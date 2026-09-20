@@ -15,8 +15,12 @@ promotion. Autonomy is **operational, not decisional**.
 **Plan 138 hardened the enforcement of that frontier** after a real execution
 exceeded its scope (`<PLAN-136>:F-3`). §1.1 (scope precedes every obligation),
 §1.2 (the authorization checkpoint and no retroactivity) and §1.3 (a write is
-authorized as a whole) are the rules that closed the defect; §10 and §12 state
-what the enforcement does and does not cover.
+authorized as a whole) are the rules that closed the defect; **plan 139** closed the
+governance boundary that remained open — §1.4 declares that no autonomous Scope
+Expansion exists or is introduced (`<PLAN-138>:PC-2`, deferred) and the closure
+determinations state that an Impact classification is never an authorization
+(`<PLAN-138>:PC-1`, resolved). §10 and §12 state what the enforcement does and does
+not cover.
 
 Normative depth is unchanged and is not restated here: RFC-75 governs the Change
 Lifecycle, ADR-16 the authority classes and the conflict protocol, and RFC-56 the
@@ -138,6 +142,39 @@ authorized(action)  =  every write target ∈ authorized scope
 
 This check runs **before** the delegation exists and before any worker is
 invoked. It is what makes the refusal precede the persistent effect.
+
+### 1.4 There is no autonomous Scope Expansion (plan 139, `<PLAN-138>:PC-2`)
+
+**No mechanism exists — and none is introduced here — by which the host widens
+`Task`, `Scope` or `Authority` on its own.** The Orchestrator cannot expand them
+autonomously: not by deriving a broader reading of the plan, not by treating a
+larger set of paths as implied, not by promoting an obligation to a permission, and
+not by writing the widening into the artifact and then reading it back.
+
+A need to widen any of the three is a **human authority frontier**:
+
+```text
+continuation requires an action outside the authorized Scope
+        ⇒  STOP / REQUIRES_HUMAN
+```
+
+- The host stops, records the evidence and escalates. It does not continue "while
+  waiting", and it does not perform the part it believes is safe if that part is
+  what produces the widening.
+- **The legitimate path needs no new mechanism**: a human decision of scope —
+  approving or updating the plan, or issuing a new authorization — followed by the
+  re-authorization of the work it enables. The host then executes the newly
+  authorized work under the ordinary frontier; the checkpoint (§1.2) records the
+  declaration it executes under, so the widening is visible as an authorization
+  rather than inferred from a rewrite.
+- **Inventing a mechanism is forbidden**: no new protocol, command, state,
+  registry, API, workflow, authority class, entity or lifecycle state may be created
+  to represent or perform a scope expansion. That is architecture, and architecture
+  is not an operation (§5).
+- This is a **deferred decision, not a resolved gap**: whether such a mechanism
+  should exist is open (`<PLAN-138>:PC-2`, owner: maintainer). Until it is decided
+  and authorized, the boundary above is the whole of the mechanism — and it is
+  sufficient for the host to stop correctly.
 
 ## 2. The two gates, in order
 

@@ -37,6 +37,66 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Added
 
+- **SAE Governance Boundary Closure — cierre formal de las tres decisiones del
+  incidente F-3** (plan 139, vía plan; DEV-only, sin efecto en
+  `protocol/.agents/`): se redacta y **ejecuta** el Plan 139, que **materializa
+  decisiones humanas ya tomadas** —DEC-1, DEC-2 y DEC-3— sin tomar ninguna nueva,
+  sin crear mecanismo alguno y sin tocar `ROADMAP.md`. El enforcement que resuelve
+  las decisiones ya existía y está verificado desde el plan 138; lo que faltaba era
+  el registro formal y la frase normativa general. **DEC-1 —
+  `<PLAN-136>:F-3` → `resolved`**: el incidente ocurrió (el Plan 136 escribió
+  `ROADMAP.md` fuera de su `Scope`); el plan 138 corrigió el mecanismo preventivo con
+  enforcement **previo a la delegación** basado en el Scope autorizado; la regresión
+  específica demuestra que el intento equivalente se detiene **antes** de ejecutar al
+  Worker (`test_f3_regression_stops_before_the_write_and_leaves_everything_identical`:
+  sin delegación persistida, sin Worker Result, artefacto excluido byte-idéntico,
+  invoker nunca alcanzado; y
+  `test_the_old_single_path_check_would_have_authorized_this_action`, que fija la
+  ceguera estructural que produjo el incidente); la evidencia histórica **no** se
+  modifica. La transición se materializa con un bloque nuevo
+  `## Metadatos de estado (evolucionables)` en
+  `docs/plans/136-d01-mechanical-checker.md` —metadata **evolucionable** según
+  `docs/CONVENTIONS.md:Change Lifecycle — Findings y correcciones (regla operacional;
+  LC-1, Incremento 2)`—, preservando verbatim identidad, observación, evidencia,
+  estado Git observado y provenance originales, y sin tocar `## Scope`, `Task`,
+  Delegación agentiva, tabla de artefactos, anchor, checkpoint ni Nota de ejecución;
+  incluye nota explícita de **no retroactividad**: la transición no legitima la
+  escritura de `ROADMAP.md` ni `<PLAN-136>:C-3`, que conserva su autorización **no**
+  establecida. **DEC-2 — `<PLAN-138>:PC-1` → `resuelta`** con la regla
+  `Impact classification != authorization`: `Roadmap Impact: REQUIRED` **no autoriza**
+  `write outside authorized Scope`; `Scope`/`Task`/`Authority` tienen precedencia
+  sobre cualquier clasificación de Impact; la autorización **no** puede inferirse por
+  proximidad semántica, dependencia documental ni requisito de cierre; con el
+  artefacto fuera de Scope la única vía es `DEFERRED` con la pending decision
+  existente (PC-1). Se materializa en el lugar canónico **existente**, sin policy
+  paralela ni duplicación: `.agents/policies/validation-closure.md` §5.1/§5.2 (la
+  prohibición de inferir autorización se generaliza a las cuatro vías, referenciando
+  el incidente y `<PLAN-136>:PC-4`) y `.agents/policies/supervised-autonomous-execution.md`
+  §1.1. **DEC-3 — `<PLAN-138>:PC-2` → `deferred`**: **no existe ni se introduce**
+  ningún mecanismo autónomo de Scope Expansion. La policy SAE gana §1.4, que declara
+  que el Orchestrator no puede ampliar autónomamente `Task`/`Scope`/`Authority`; que
+  una necesidad de ampliarlos es frontera de autoridad humana y produce `STOP` /
+  `REQUIRES_HUMAN`; que la vía legítima **no requiere mecanismo nuevo** (decisión
+  humana de alcance + reautorización del trabajo que habilita); y que inventar
+  protocolo, comando, estado, registry, API, workflow, authority class, entidad o
+  estado de lifecycle para ello queda prohibido. **Verificación reutilizada, sin
+  tests redundantes**: los ocho puntos exigidos por el Change se mapean a la
+  regresión del plan 138 (`tests/test_sae_scope_enforcement.py` y
+  `tests/test_sae_scope_enforcement_dogfood.py`), con `runtime/`, `tests/`, `tools/`
+  y `protocol/` en **0 diff**. **Finding propio registrado sin forzar a éxito**:
+  `<PLAN-139>:F-1` — la premisa de `<PLAN-136>:PC-5` («la política vigente no
+  contempla la situación») queda superada por la regla que DEC-2 materializa, pero
+  PC-5 no es una de las tres decisiones de este Change y **no** se resuelve: se
+  registra la supersesión para que el mantenedor decida su estado formal—.
+  **Determinaciones**: `Documentation Impact: REQUIRED` (las dos policies, los
+  registros de estado de los planes 136/138, INDEX y CHANGELOG; `docs/CONVENTIONS.md`
+  **no** se toca: la regla es operacional y ya tiene lugar canónico);
+  `Roadmap Impact: DEFERRED` gobernado por `<PLAN-138>:PC-1` (owner: mantenedor) —
+  `ROADMAP.md` con **0 diff**, sin interpretar `REQUIRED` como permiso de escritura—.
+  Sin mecanismo, entidad, authority class, state machine, registry, protocolo,
+  comando, API ni workflow nuevos; sin RFC/ADR nuevo; sin cambio de payload; sin
+  `VERSION` bump, sin tag, sin push, sin merge, sin release y sin promotion.
+
 - **SAE Scope & Authority Hardening — enforcement previo al efecto** (plan 138,
   vía plan; DEV-only, sin efecto en `protocol/.agents/`): se implementa el
   endurecimiento del enforcement de Scope/Authority de Supervised Autonomous

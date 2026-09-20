@@ -442,15 +442,25 @@ baseline `b11e4a3` (sección `## Delegación agentiva` → `Scope` vs. sección
   frontera de Scope detectada al redactar este Plan por aplicación directa de la
   decisión humana `<PLAN-136>:PC-4` (a) —`Roadmap Impact: REQUIRED` no amplía el
   `Scope` autorizado— y de la regla que este mismo Plan formaliza; resolución:
-  **pendiente** — este Plan registra la obligación y **no** la resuelve, no crea
-  un cuarto valor de determinación, no modifica `.agents/policies/validation-closure.md`
-  para inventar una vía nueva y no toca `ROADMAP.md`; evidencia: `## Scope`
-  (exclusión explícita de `ROADMAP.md`), `## Roadmap Impact` (determinación
-  `DEFERRED`), `<PLAN-136>:PC-4` (a) y `<PLAN-136>:PC-5`, `ROADMAP.md` en el
-  baseline `ebdbfad` (entrada `EARS structural validator`, `Media`, `Próximo
-  dogfood`); efecto downstream: ninguno sobre la ejecución de este Plan; el
-  trabajo queda representado en `docs/plans/INDEX.md` mientras la decisión de
-  mapa esté pendiente; ADR-worthiness: no evaluado — es una decisión humana que
+  **resuelta** (decisión humana del mantenedor, materializada por el Plan 139 el
+  2026-09-20 — DEC-2): la relación queda fijada como
+  `Impact classification != authorization`. En particular,
+  `Roadmap Impact: REQUIRED` **no autoriza** `write outside authorized Scope`:
+  `Scope`/`Task`/`Authority` tienen precedencia sobre cualquier clasificación de
+  Impact, y la autorización **no** puede inferirse por proximidad semántica,
+  dependencia documental ni requisito de cierre. La regla operativa quedó
+  materializada en su lugar canónico existente —
+  `.agents/policies/validation-closure.md` §5.1/§5.2 y
+  `.agents/policies/supervised-autonomous-execution.md` §1.1— sin crear policy
+  paralela ni duplicar la norma. El estado de implementación de este Plan queda
+  registrado en `docs/plans/INDEX.md`, que es la fuente de verdad que lo posee, y
+  `ROADMAP.md` **no** se modifica; el remanente operativo —si el cierre de estas
+  decisiones se registra o no en el mapa y con qué prioridad— sigue gobernado por
+  esta misma decisión con owner mantenedor. Evidencia: este registro actualizado, la
+  regla en las dos policies y la regresión de `tests/test_sae_scope_enforcement.py`
+  (`test_a_required_obligation_outside_the_scope_is_refused_and_changes_nothing`);
+  efecto downstream: ninguno sobre la ejecución de este Plan; el
+  trabajo queda representado en `docs/plans/INDEX.md`; ADR-worthiness: no evaluado — es una decisión humana que
   este Plan no toma.
 
 - `<PLAN-138>:PC-2` — decisión: si SAE necesita un mecanismo para representar y
@@ -464,15 +474,25 @@ baseline `b11e4a3` (sección `## Delegación agentiva` → `Scope` vs. sección
   de F-3 y reformulación del gap registrado en `<PLAN-136>:PC-5`, que este Plan
   **no** resuelve ni reescribe: lo re-registra como boundary propio con el
   alcance mínimo que SAE necesita (detenerse correctamente); resolución:
-  **pendiente** — no se inventa un mecanismo de ampliación de scope dentro de
-  este Plan, no se crea un authority class nuevo y no se modifica `authority.md`;
-  evidencia: `## Scope` (exclusión de `.agents/policies/authority.md` y de
+  **deferred** (decisión humana del mantenedor, materializada por el Plan 139 el
+  2026-09-20 — DEC-3): **no se introduce en este Change ningún mecanismo autónomo de
+  Scope Expansion**, y la decisión sobre si debe existir queda **diferida**. La
+  frontera de autoridad vigente es: el Orchestrator **no** puede ampliar
+  autónomamente `Task`, `Scope` ni `Authority`; una necesidad de ampliarla es una
+  frontera de autoridad humana y produce `STOP` / `REQUIRES_HUMAN`; hasta que exista
+  un mecanismo explícitamente autorizado, el agente se detiene o escala cuando la
+  continuación requiera acciones fuera del Scope autorizado. La vía legítima
+  existente —sin mecanismo nuevo— es una nueva decisión humana de alcance: una
+  aprobación o actualización del Plan por el mantenedor, seguida de la
+  reautorización del trabajo que habilita. **No** se inventa protocolo, comando,
+  estado, registry, API ni workflow nuevos, ni se modifica `authority.md`; evidencia:
+  `## Scope` (exclusión de `.agents/policies/authority.md` y de
   `runtime/orchestrator/contracts.py`), `## Causa arquitectónica` §3 y §4,
-  `.agents/policies/supervised-autonomous-execution.md` §1 (la ampliación de
-  scope es autoridad humana); efecto downstream: si el mantenedor decide que hace
-  falta un mecanismo, su vía es una decisión normativa propia (posible
-  ADR-worthiness, no evaluada aquí); ADR-worthiness: no evaluado — es una decisión
-  humana que este Plan no toma.
+  `.agents/policies/supervised-autonomous-execution.md` §1 y §1.3 (la ampliación de
+  scope es autoridad humana; el estado de ampliación no existe como mecanismo);
+  efecto downstream: si el mantenedor decide que hace falta un mecanismo, su vía es
+  una decisión normativa propia (posible ADR-worthiness, no evaluada aquí);
+  ADR-worthiness: no evaluado — es una decisión humana que este Plan no toma.
 
 ## Causa arquitectónica
 

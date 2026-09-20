@@ -221,15 +221,23 @@ checker interprets prose or decides whether a document is up to date, and no
 checker is added for this. Absence of the determination, or a classification
 outside the three values, is a stop condition (see §7).
 
-**`REQUIRED` is an obligation of state, never a write authorization (plan 138).**
-A `REQUIRED` determination states what must be **true** of the repository; it does
-not authorize writing the artifact that would satisfy it, and it does not widen
-the scope the Change was authorized to modify
-(`.agents/policies/supervised-autonomous-execution.md` §1.1). When the artifact
-that owns the documentation is outside the authorized scope, the update is
+**`REQUIRED` is an obligation of state, never a write authorization (plan 138;
+generalized by plan 139, `<PLAN-138>:PC-1`).** A `REQUIRED` determination states
+what must be **true** of the repository; it does not authorize writing the artifact
+that would satisfy it, and it does not widen the scope the Change was authorized to
+modify (`.agents/policies/supervised-autonomous-execution.md` §1.1). When the
+artifact that owns the documentation is outside the authorized scope, the update is
 recorded `DEFERRED` with the **existing** pending decision (PC-1) that governs it,
 and the artifact is **not** written: the alternative is not "satisfy the
 obligation anyway" but "record the obligation and stop at the scope boundary".
+
+Authorization is **never inferred**. Not by the classification itself
+(`REQUIRED`/`DEFERRED`), not by semantic proximity (a similar name, a containing or
+contained path, a plural, a precedent), not by documentary dependency (the artifact
+is cited by, referenced from or conceptually part of the Change), and not by the
+closure requirement (the Change cannot be closed "cleanly" without it). None of
+those is a permission, and the host does not resolve a contradictory reading by
+inference: it records the obligation and escalates with evidence.
 
 ### 5.2 Roadmap impact (closure determination)
 
@@ -288,15 +296,23 @@ the commit message — `Roadmap impact: REQUIRED: <items> — <evidence>`,
 checker interprets prose; absence of the determination or a classification
 outside the three values is a stop condition.
 
-**`REQUIRED` is an obligation of state, never a write authorization (plan 138).**
-The rule below is what the incident `<PLAN-136>:F-3` established by human
-decision (`<PLAN-136>:PC-4`): `Roadmap Impact: REQUIRED` does **not** widen the
-authorized `Scope` of a Change. When the operational map is owned by an artifact
-outside that scope — canonically `ROADMAP.md` — the obligation is registered
-`DEFERRED` with the **existing** pending decision (PC-1) that governs it, and the
-artifact is **not** written. There is no exception for `ROADMAP.md`, and no
-determination of impact converts an obligation of state into a permission to
-write.
+**`REQUIRED` is an obligation of state, never a write authorization (plan 138;
+generalized by plan 139, `<PLAN-138>:PC-1`; the incident `<PLAN-136>:F-3`).** The
+rule below is what the incident established by human decision
+(`<PLAN-136>:PC-4`): `Roadmap Impact: REQUIRED` does **not** widen the authorized
+`Scope` of a Change. When the operational map is owned by an artifact outside that
+scope — canonically `ROADMAP.md` — the obligation is registered `DEFERRED` with the
+**existing** pending decision (PC-1) that governs it, and the artifact is **not**
+written. There is no exception for `ROADMAP.md`, and no determination of impact
+converts an obligation of state into a permission to write.
+
+The prohibition on inferring authorization is the same as §5.1 and admits no
+exception here either: not by the classification, not by semantic proximity, not by
+documentary dependency, and not by the closure requirement. `Scope`, `Task` and
+`Authority` take precedence over any Impact classification; the agent stops,
+defers the reconciliation, or escalates to human authority through the existing
+mechanisms — and it never turns an Impact classification into a write it was not
+authorized to make.
 
 Full normative semantics of both determinations:
 `docs/CONVENTIONS.md:Change Lifecycle — Determinaciones de cierre: impacto

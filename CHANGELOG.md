@@ -37,6 +37,40 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Added
 
+- **EARS Structural Validator — preparación del Plan 137 (auditoría de cobertura
+  EARS)** (plan 137, vía plan; DEV-only, sin efecto en `protocol/.agents/`): se
+  redacta el Plan 137 y **no se implementa nada**. **Hallazgo central**: el
+  validador estructural EARS **ya existe en el payload** —
+  `protocol/.agents/harness/gate_validator.py` (plan 66, RFC-57) activa el chequeo
+  EARS de H01 (`TRIGGERS["H01"]["ears"] = True`, regex con los cinco patrones),
+  está cubierto por `protocol/.agents/harness/tests/test_gate_validator.py`
+  (`test_valid_h01_passes`, `test_non_ears_bullet_fails`) y corre en el job
+  `check-protocol` de CI; verificado por ejecución (un bullet `should` produce
+  `ears FAIL` con `decision: FAIL`). La fricción `F-01` de `B-2` (contrato con
+  array TOML vs validador de bullets) está **resuelta** por el plan 33/RFC-34, que
+  declaró los bullets Markdown como forma canónica. **Subset mecánico
+  establecido**: R1 al menos un bullet en `## Acceptance Criteria`; R2 cada bullet
+  casa uno de los cinco patrones; R3 criterios sólo en el bloque TOML constituyen
+  violación de forma; R4 el validador del payload realmente chequea EARS para H01;
+  R5 paridad entre el conjunto declarado en el estándar y el implementado.
+  **Bloque no mecánico excluido por nombre**: especificidad y verificabilidad
+  (`[agent]`), no-compoundidad (`[agent]`), negaciones y vocabulario modal
+  (`protocol/.agents/standards/requirements/EARS.md:Writing rules` 2–3, sin marca `[gate]`), adecuación al dominio y
+  derivación desde assumptions (`[agent]`). **Diseño**: guarda DEV de sólo lectura
+  `tools/check_ears_coverage.py` que **deriva** el conjunto del payload e
+  **invoca** el validador existente —no lo reimplementa—, con las convenciones de
+  señales y exit codes vigentes. **Limitación declarada**: la validación EARS
+  aplica a `TASK_SPECIFICATION.md`, artefacto de sesión en `.project/` (efímero, no
+  versionado), y **no existe corpus real versionado**; la limitación se declara y
+  no se convierte en `PASS`. **`ROADMAP.md` fuera de `Scope`**: la obligación de
+  reconciliación (`Roadmap Impact: REQUIRED`) queda **pendiente** en
+  `<PLAN-137>:PC-1`, conforme a la decisión humana de `F-3`
+  (`<PLAN-136>:PC-4`: `Roadmap Impact: REQUIRED` no amplía el scope autorizado).
+  Pendientes `PC-1` (reconciliación del roadmap), `PC-2` (ampliar el conjunto
+  mecánico: cambio de payload, RFC-56) y `PC-3` (agregar la guarda a la batería
+  canónica). Sin modificar `protocol/`, `runtime/`, `.agents/` ni `ROADMAP.md`
+  (0 diff), sin RFC/ADR nuevo, sin `VERSION` bump y sin tag.
+
 - **D01 Mechanical Checker — subconjunto mecánico de D01 como checker DEV**
   (plan 136, vía plan; DEV-only, sin efecto en `protocol/.agents/`): materializa
   como verificación reproducible la parte de D01 que es objetivamente chequeable,

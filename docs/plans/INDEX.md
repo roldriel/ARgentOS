@@ -6,7 +6,12 @@
 > Las secciones `## Convenciones` y `## Serie de RFCs (documentos canónicos)`
 > se conservan como anclas de navegación para referencias históricas.
 
-Estado al 2026-09-15. El Plan 136 está `Executed` con condición derivada `Closed`
+Estado al 2026-09-15. El Plan 137 está `Aprobado para redacción`
+(EARS Structural Validator: auditoría de cobertura EARS y guarda DEV de paridad
+entre el estándar, el contrato y el validador del payload; **hallazgo: el
+validador ya existe** — plan 66/RFC-57 — y su reconciliación de roadmap queda
+pendiente; DEV-only `tools/` + `tests/`, sin release; Sexagésima novena serie).
+El Plan 136 está `Executed` con condición derivada `Closed`
 (D01 Mechanical Checker: checker DEV del subconjunto mecánico de D01 — estructura
 y procedencia resoluble —; DEV-only `tools/` + `tests/`, sin release;
 Sexagésima octava serie). El Plan 135 está `Executed` con condición derivada `Closed`
@@ -1021,6 +1026,23 @@ sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
 | `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. |
+
+## Sexagésima novena serie: EARS Structural Validator, preparación (Plan 137) (15 sep 2026)
+
+Plan 137 (vía plan; DEV-only — `tools/` + `tests/` + `docs/`, sin efecto en
+`protocol/.agents/`, RFC-56 no aplica; Change Level L1). **Sólo redacción: no
+implementa nada.** Reconstruye el estado real de la validación EARS y su hallazgo
+central es que **el validador estructural EARS ya existe en el payload**:
+`protocol/.agents/harness/gate_validator.py` (plan 66, RFC-57) incluye el chequeo
+EARS de H01 (`TRIGGERS["H01"]["ears"] = True`, regex con los cinco patrones),
+cubierto por `harness/tests/test_gate_validator.py` y corriendo en CI
+(`.github/workflows/check-protocol.yml`). La fricción `F-01` de `B-2` (contrato con
+array TOML vs validador de bullets) está **resuelta** por plan 33/RFC-34, que
+declaró los bullets Markdown como forma canónica.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `137-ears-structural-validator.md` | — (vía plan, DEV-only) | Aprobado para redacción | **Reconstrucción de la validación EARS**: estándar `protocol/.agents/standards/requirements/EARS.md` (cinco patrones + cinco reglas de redacción); forma canónica = bullets Markdown (`protocol/.agents/orchestrators/core/contracts/TASK_SPECIFICATION.md:Acceptance Criteria`); validador real = `gate_validator.py` invocado por la policy H01 §Decision Criteria. **Subset mecánico establecido (R1–R5)**: R1 al menos un bullet; R2 cada bullet casa uno de los cinco patrones; R3 criterios sólo en el bloque TOML constituyen violación de forma; R4 el validador del payload realmente chequea EARS para H01; R5 paridad entre el conjunto declarado y el implementado. **Bloque B excluido por nombre**: especificidad y verificabilidad (`H01` ítem 10 `[agent]`), no-compoundidad (`H01` ítem 12 `[agent]`), negaciones y vocabulario modal (`protocol/.agents/standards/requirements/EARS.md:Writing rules` 2–3, sin marca `[gate]`, enunciado léxico no cerrado), adecuación al dominio y derivación desde assumptions (`[agent]`). **Diseño**: `tools/check_ears_coverage.py` (nuevo) como guarda DEV **sólo lectura** que **deriva** el conjunto del payload y **invoca** el validador existente —no lo reimplementa—, con el vocabulario de señales y el contrato de exit codes existentes (`GAP` advisory, sólo `ANOMALY` cambia el exit code), texto + `--json`, determinista, `N/A` ante ausencia declarada. **Reutilización justificada por compatibilidad de contrato** con el checker DEV de D01 (mismo patrón, sin compartir código) y con `testsupport`/`pytest_isolation`; **no** se acopla a D01. **Dogfood**: la validación EARS aplica a `TASK_SPECIFICATION.md`, artefacto de **sesión** en `.project/` (efímero, no versionado) y **no existe corpus real versionado** — limitación **declarada** que no se convierte en `PASS`; el dogfood real es la auditoría del payload y el ejercicio del validador sobre los especímenes que el propio estándar y contrato declaran. **Falsación**: incluye casos que la guarda **debe dejar pasar aunque sean malos** (compound, negación, `should`) y casos que **deben fallar aunque parezcan buenos**. **Scope de siete rutas**: el checker, tres suites (comportamiento, falsación, dogfood) y el registro documental. `ROADMAP.md` **fuera de Scope**: la obligación de reconciliación (`Roadmap Impact: REQUIRED`) queda **pendiente** en `<PLAN-137>:PC-1` por la decisión humana de `F-3` (`<PLAN-136>:PC-4`: `REQUIRED` no amplía el scope). Pendientes `PC-1` (reconciliación del roadmap), `PC-2` (ampliar el conjunto mecánico: cambio de payload, RFC-56) y `PC-3` (agregar la guarda a la batería canónica). Documentation impact `REQUIRED` (CHANGELOG, INDEX, el propio Plan; `docs/VERSIONING.md` §4.1 **no** autorizado; fuentes normativas **no** se tocan); Roadmap impact `REQUIRED`. Sin implementación, sin modificar `protocol/`, `runtime/`, `.agents/` ni `ROADMAP.md`, sin release ni tag. |
 
 ## Sexagésima octava serie: D01 Mechanical Checker, preparación (Plan 136) (15 sep 2026)
 

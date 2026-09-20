@@ -13,20 +13,25 @@ propia autorización (RFC-56) antes de ejecutarse.
 
 | Prioridad | Trabajo | Origen | Estado |
 | --- | --- | --- | --- |
-| Alta | Mechanical D01 subset — DEV checker for discovery output structure and provenance | B-1 derivado · `protocol/.agents/orchestrators/discovery/harness/policies/D01-discovery-output.md` | **Próximo dogfood** |
-| Media | EARS structural validator | B-2 derivado · `docs/plans/33-ears-criteria-canonical-form.md` | Siguiente dogfood, después de B-1 |
+| Alta | EARS structural validator | B-2 derivado · `docs/plans/33-ears-criteria-canonical-form.md` | **Próximo dogfood** |
 
-Ambas entradas son **trabajo derivado nuevo**, no la reapertura de un ítem
-histórico. Los problemas originales `B-1` y `B-2` están resueltos; lo que sigue
-es una extensión que el propio contrato de D01 declara como futura (la
-validación mecánica es hoy inexistente y el contrato la admite como extensión
-posible) y la secuencia de dogfood decidida después.
+`Mechanical D01 subset — DEV checker for discovery output structure and provenance`
+(`B-1` derivado) **se ejecutó** (plan 136): el checker DEV del subconjunto mecánico
+de D01 existe en `tools/check_discovery_output.py`, con su suite y su dogfood. La
+entrada se retira de trabajo activo porque ya no representa trabajo futuro; su
+estado detallado vive en `docs/plans/INDEX.md` y en el Plan 136, que es donde este
+documento delega la trazabilidad. Los residuos de payload que D01 no podía resolver
+(`F-17`, `F-16`) siguen en la sección de pendientes que requieren autorización.
+
+Lo que sigue es **trabajo derivado nuevo**, no la reapertura de un ítem histórico.
+Los problemas originales `B-1` y `B-2` están resueltos; lo que sigue es una
+extensión que el propio contrato de D01 declara como futura (la validación mecánica
+era inexistente y el contrato la admitía como extensión posible) y la secuencia de
+dogfood decidida después.
 
 **Criterio de prioridad.** La columna hereda la prioridad del ítem histórico del
-que la entrada deriva (`Alta` en `B-1`, `Alta` en `B-2`), salvo que la secuencia
-de dogfood fije un orden explícito: el validador EARS se registra `Media` porque
-se ejecuta **después** del checker D01. No se recalifica ningún ítem histórico
-sin evidencia nueva.
+que la entrada deriva (`Alta` en `B-2`). No se recalifica ningún ítem histórico sin
+evidencia nueva.
 
 ## Pendientes que requieren autorización
 

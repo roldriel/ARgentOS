@@ -37,6 +37,47 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Added
 
+- **D01 Mechanical Checker — subconjunto mecánico de D01 como checker DEV**
+  (plan 136, vía plan; DEV-only, sin efecto en `protocol/.agents/`): materializa
+  como verificación reproducible la parte de D01 que es objetivamente chequeable,
+  dejando el juicio donde está. **`tools/check_discovery_output.py`** (nuevo)
+  inspecciona `.project/knowledge/discovery/` y valida **once puntos
+  deterministas**: existencia y no-vaciedad; front matter TOML delimitado y
+  parseable; campos requeridos del entry con su tipo; `artifact` =
+  `KB_DISCOVERY_ENTRY.md` y `kind` = `snapshot`; coincidencia del `#` con `title`;
+  secciones requeridas; resolución de cada path de `source_files` con
+  `system_probe` admitido sólo para la entrada de environment; coherencia
+  bidireccional `[entries] active` ↔ archivos presentes; coherencia de front
+  matter entrada ↔ manifest; `## Project Shape` presente, primera sección de
+  contenido y coincidente con el manifest; `distribution.md` presente cuando el
+  shape es `library` o `cli`. Los requisitos se resuelven **desde los contratos
+  del payload**, leídos como datos de sólo lectura: el mapeo contrato → artefacto
+  runtime se lee de la sección `## Location` de cada contrato (18 contratos
+  per-entry) y las secciones requeridas de las declaraciones de cada contrato, sin
+  lista propia ni tabla de artefactos, preservando el single-source del plan
+  47/RFC-48. Reporte en texto y `--json`; contrato de exit codes existente (`0` sin
+  `ANOMALY`, `GAP` advisory, `1` ante `ANOMALY`, `2` ante error de lectura); un
+  proyecto sin KB es `N/A` y no un fallo; sólo lectura (nada se escribe, repara ni
+  archiva). **Los seis ítems de juicio de D01 quedan fuera por nombre** (stack
+  real, dependencias reales, patrones con ejemplo, secretos, claims sin fuente,
+  merge consistente, api↔shape) y un test de frontera verifica que el checker no
+  los reporta. **Fronteras de payload respetadas sin resolverlas:** `F-17`
+  (`source_files` sin valor de procedencia para ausencias y hechos de árbol) se
+  reporta `GAP` advisory y **nunca** `ANOMALY`, sin exención ad-hoc; `F-16`
+  (`project_shape` de repos documentales) acepta los seis valores del enum y no
+  decide el shape correcto — ambos quedan como pendientes de payload (`PC-2`,
+  `PC-3`). **Suites nuevas**: `tests/test_check_discovery_output.py` (42 pruebas:
+  positivos, negativos, falsación, fronteras, determinismo, ausencia, invalidez,
+  sólo-lectura, stdlib-only y CLI) y `tests/test_discovery_output_dogfood.py` (12
+  pruebas ancladas al payload real, sólo lectura). **No** se agregó el checker a
+  la batería canónica: `docs/VERSIONING.md` §4.1 intacto, porque hacerlo crearía
+  una obligación de gobernanza sobre todo Change futuro y el Plan no la autorizó.
+  `ROADMAP.md` reconciliado: la entrada `Mechanical D01 subset` sale de trabajo
+  activo y `EARS structural validator` pasa a próximo dogfood. Sin entidad,
+  registry, state machine, authority, identity ni subsistema de ejecución nuevos;
+  sin RFC/ADR nuevo, sin cambio de payload, sin `VERSION` bump y sin tag.
+
+### Modelo conceptual
 - **Supervised Autonomous Execution (SAE) para el DEV Autonomous Orchestrator**
   (plan 135, vía plan; DEV-only, sin efecto en `protocol/.agents/`): política
   operacional nueva `.agents/policies/supervised-autonomous-execution.md` que

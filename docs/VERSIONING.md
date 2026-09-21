@@ -115,7 +115,7 @@ Reglas:
   (`protocol/.agents/harness/policies/H13-protocol-taxonomy.md`) se aplica por
   juicio en todo cambio de estructura del payload; `tools/check_taxonomy_coherence.py`
   restaura mecánicamente los invariantes del ex `test_protocol_taxonomy.py`
-  (H13 rules 2/5/10) como red de seguridad de desarrollo.
+  (H13 rules 2/5/10/11) como red de seguridad de desarrollo.
 - **`check_session_artifacts.py`:** valida los bloques `ENTRY`/`METRIC` y los
   `state.json` bajo `.project/`; sin `.project/` es OK.
 - **Gates de lifecycle C-1/C-2/C-3 (adicionales, advisory/factuales):**

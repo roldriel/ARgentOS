@@ -64,13 +64,21 @@ vive en `docs/plans/INDEX.md`, en los planes 141/142 y en la RFC-79.
   `protocol/.agents/contracts/METRICS.md` tiene el evento de sesión `session_risk` con el
   que el modo single-instance registra su riesgo, y `PROTOCOL_METRICS.md` declara su clase
   de verifiabilidad.
-- **Dogfood diferido (no payload).** El dogfooding medido del perfil `trivial`
-  (`docs/plans/25-task-profile-model.md`, plan 25) sigue sin verificación: exige una
-  sesión de protocolo real con el usuario en un proyecto adoptante, y `dist` (`11.2.0`)
-  no contiene el payload de `dev`. El blocker y la acción mínima que lo remueve quedan
-  registrados en `<PLAN-141>:PC-2`. El dogfood del modo enforced (plan 26) está
-  **satisfecho**: su RFC de origen (RFC-47) admitía una simulación de harness con fixtures
-  y el plan 46 la ejecutó y la verificó.
+- **Dogfood del perfil `trivial` — actividad externa de adopción, no backlog.** La
+  medición del dogfood del perfil `trivial` (`docs/plans/25-task-profile-model.md`, plan
+  25) **no es trabajo del repositorio** y deja de figurar como pendiente: exige una
+  versión promovida a `master` con `dist` regenerado y una sesión de protocolo real con un
+  usuario en un proyecto adoptante, y ninguna de las dos cosas es autoridad del agente
+  (`Promoted`/`Released` se reportan `FORBIDDEN`). El trabajo estructural que el plan 25
+  pedía está declarado e implementado —el perfil `trivial` con sus tres artefactos y sus
+  gates `H00, H04, H06` en
+  `protocol/.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md:Task Profiles`, con
+  comportamiento profile-aware verificado—, de modo que lo que resta es una actividad de
+  **adopción/operación** con su criterio de éxito y su procedimiento, registrada como no
+  ejecutada. El Plan 143 resolvió el residual de backlog y `<PLAN-141>:PC-2` quedó
+  `resuelta`. El dogfood del modo enforced (plan 26) está **satisfecho**: su RFC de origen
+  (RFC-47) admitía una simulación de harness con fixtures y el plan 46 la ejecutó y la
+  verificó.
 
 ## Candidatos futuros
 

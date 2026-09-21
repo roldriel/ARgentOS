@@ -57,6 +57,7 @@ entities:
     kind: contract
     domain: core
     artifact: SAMPLE.md
+    lifecycle: task
     produced_by: [core:A]
     consumed_by: [core:B]
     file: .agents/orchestrators/core/contracts/SAMPLE.md
@@ -123,6 +124,15 @@ phase = "00"
 produced_by = "task_analyst"
 schema_version = "1.0.0"
 +++
+---
+taxonomy: ".agents/standards/runtime/PROTOCOL_TAXONOMY.md"
+kind: contract
+domain: core
+artifact: SAMPLE.md
+lifecycle: task
+produced_by: [core:A]
+consumed_by: [core:B]
+---
 """
 
 
@@ -314,3 +324,186 @@ def test_transition_header_dead_gate(tmp_path):
     )
     v = ctc.violations_for_root(root, root / "protocol")
     assert any("gates core:A -> core:C not named in transition header" in x for x in v)
+
+
+# --- H13 rule 11: contract file <-> `kind: contract` entity (check 9) ---
+
+
+def taxonomy_path(root: Path) -> Path:
+    return root / "protocol" / ".agents" / "standards" / "runtime" / "PROTOCOL_TAXONOMY.md"
+
+
+def contract_path(root: Path) -> Path:
+    return (
+        root
+        / "protocol"
+        / ".agents"
+        / "orchestrators"
+        / "core"
+        / "contracts"
+        / "SAMPLE.md"
+    )
+
+
+def drop_contract_entity(root: Path) -> None:
+    """Remove the SAMPLE `kind: contract` entity from the generated taxonomy."""
+    taxonomy = taxonomy_path(root)
+    text = taxonomy.read_text(encoding="utf-8")
+    start = text.index("  contract:SAMPLE.md:")
+    end = text.index("```", start)
+    taxonomy.write_text(text[:start] + text[end:], encoding="utf-8")
+
+
+def test_contract_metadata_matches_its_entity(tmp_path):
+    """Valid case: the file and its entity agree on all five rule-11 fields."""
+    root = make_payload(tmp_path)
+    assert ctc.violations_for_root(root, root / "protocol") == []
+
+
+def test_contract_file_metadata_divergence_is_reported(tmp_path):
+    """Metadata divergent in the file: `domain` differs from the entity."""
+    root = make_payload(tmp_path)
+    p = contract_path(root)
+    p.write_text(
+        CONTRACT.replace("domain: core", "domain: discovery"), encoding="utf-8"
+    )
+    v = ctc.violations_for_root(root, root / "protocol")
+    assert any(
+        "domain mismatch (entity 'core' vs file 'discovery')" in x for x in v
+    ), v
+
+
+def test_contract_entity_divergence_is_reported(tmp_path):
+    """Entity divergent: the taxonomy declares a different lifecycle."""
+    root = make_payload(tmp_path)
+    taxonomy = taxonomy_path(root)
+    taxonomy.write_text(
+        taxonomy.read_text(encoding="utf-8").replace(
+            "    lifecycle: task\n", "    lifecycle: execution\n"
+        ),
+        encoding="utf-8",
+    )
+    v = ctc.violations_for_root(root, root / "protocol")
+    assert any(
+        "lifecycle mismatch (entity 'execution' vs file 'task')" in x for x in v
+    ), v
+
+
+def test_contract_artifact_divergence_is_reported(tmp_path):
+    """`artifact` is compared like the other four rule-11 fields."""
+    root = make_payload(tmp_path)
+    p = contract_path(root)
+    p.write_text(
+        CONTRACT.replace("artifact: SAMPLE.md", "artifact: OTHER.md"),
+        encoding="utf-8",
+    )
+    v = ctc.violations_for_root(root, root / "protocol")
+    assert any("artifact mismatch" in x for x in v), v
+
+
+def test_contract_file_without_entity_is_reported(tmp_path):
+    """Nonexistent reference: a contract file with no `kind: contract` entity."""
+    root = make_payload(tmp_path)
+    drop_contract_entity(root)
+    v = ctc.violations_for_root(root, root / "protocol")
+    assert any(
+        "has no kind: contract taxonomy entity (H13 rule 11)" in x for x in v
+    ), v
+
+
+def test_contract_entity_without_file_is_reported(tmp_path):
+    """Reverse direction: a `kind: contract` entity whose file does not exist."""
+    root = make_payload(tmp_path)
+    taxonomy = taxonomy_path(root)
+    text = taxonomy.read_text(encoding="utf-8")
+    ghost = (
+        "  contract:GHOST.md:\n"
+        "    kind: contract\n"
+        "    domain: core\n"
+        "    artifact: GHOST.md\n"
+        "    produced_by: [core:A]\n"
+        "    consumed_by: [core:B]\n"
+        "    file: .agents/orchestrators/core/contracts/GHOST.md\n"
+    )
+    idx = text.rindex("```")
+    taxonomy.write_text(text[:idx] + ghost + text[idx:], encoding="utf-8")
+    v = ctc.violations_for_root(root, root / "protocol")
+    assert any(
+        "CONTRACT entity contract:GHOST.md has no contract file on disk" in x
+        for x in v
+    ), v
+
+
+def test_contract_multiple_references_mismatch_is_reported(tmp_path):
+    """Multiple references: one extra `consumed_by` entry is reported."""
+    root = make_payload(tmp_path)
+    p = contract_path(root)
+    p.write_text(
+        CONTRACT.replace("consumed_by: [core:B]", "consumed_by: [core:A, core:B]"),
+        encoding="utf-8",
+    )
+    v = ctc.violations_for_root(root, root / "protocol")
+    assert any(
+        "consumed_by mismatch" in x and "core:A" in x and "core:B" in x for x in v
+    ), v
+
+
+def test_contract_reference_order_and_list_form_are_normalized(tmp_path):
+    """Declared normalization: set comparison and inline/block list forms."""
+    root = make_payload(tmp_path)
+    p = contract_path(root)
+    p.write_text(
+        CONTRACT.replace(
+            "produced_by: [core:A]\nconsumed_by: [core:B]",
+            "produced_by:\n  - core:A\nconsumed_by:\n  - core:B",
+        ),
+        encoding="utf-8",
+    )
+    assert ctc.violations_for_root(root, root / "protocol") == []
+
+
+def test_contract_optional_lifecycle_null_matches_absent_field(tmp_path):
+    """Declared normalization: YAML null and an absent field are the same value."""
+    root = make_payload(tmp_path)
+    p = contract_path(root)
+    p.write_text(CONTRACT.replace("lifecycle: task\n", ""), encoding="utf-8")
+    taxonomy = taxonomy_path(root)
+    taxonomy.write_text(
+        taxonomy.read_text(encoding="utf-8").replace(
+            "    lifecycle: task\n", "    lifecycle: null\n"
+        ),
+        encoding="utf-8",
+    )
+    assert ctc.violations_for_root(root, root / "protocol") == []
+
+
+def test_contract_lifecycle_null_vs_declared_value_is_reported(tmp_path):
+    """Optional field divergent: null in the file, a value in the entity."""
+    root = make_payload(tmp_path)
+    p = contract_path(root)
+    p.write_text(
+        CONTRACT.replace("lifecycle: task\n", "lifecycle: null\n"), encoding="utf-8"
+    )
+    v = ctc.violations_for_root(root, root / "protocol")
+    assert any(
+        "lifecycle mismatch (entity 'task' vs file None)" in x for x in v
+    ), v
+
+
+def test_every_rule_11_field_is_checked(tmp_path):
+    """Falsification: no field of rule 11 can diverge unnoticed."""
+    mutations = {
+        "domain": ("domain: core", "domain: discovery"),
+        "artifact": ("artifact: SAMPLE.md", "artifact: OTHER.md"),
+        "lifecycle": ("lifecycle: task", "lifecycle: execution"),
+        "produced_by": ("produced_by: [core:A]", "produced_by: [core:B]"),
+        "consumed_by": ("consumed_by: [core:B]", "consumed_by: [core:A]"),
+    }
+    for field, (old, new) in sorted(mutations.items()):
+        case = tmp_path / field
+        case.mkdir()
+        root = make_payload(case)
+        p = contract_path(root)
+        p.write_text(CONTRACT.replace(old, new), encoding="utf-8")
+        v = ctc.violations_for_root(root, root / "protocol")
+        assert any(f"{field} mismatch" in x for x in v), (field, v)

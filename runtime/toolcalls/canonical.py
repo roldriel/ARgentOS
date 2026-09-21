@@ -48,7 +48,7 @@ from .segment_resolution import SegmentResolution, SegmentResolutionError
 # never reads the payload at import or use time (self-contained runtime, plan
 # 89); `tools/check_version_state.py` enforces the equality so the anchor
 # cannot silently drift on future version bumps.
-PROTOCOL_VERSION = "11.6.0"
+PROTOCOL_VERSION = "11.6.1"
 
 # Canonical serialization version of the envelope (RFC-72 section 2:
 # serialization is always part of MaterializationIdentity).

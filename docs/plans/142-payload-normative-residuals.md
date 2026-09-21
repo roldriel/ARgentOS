@@ -300,8 +300,8 @@ documenta el resultado. La ejecución del Plan es la materialización descrita a
 
 ### Findings
 
-- `<PLAN-142>:F-1` — estado: `deferred` (owner: mantenedor; destino: un Change DEV propio); observación: `tools/check_taxonomy_coherence.py` verifica que las referencias de la metadata de un contrato **resuelvan** contra `PROTOCOL_TAXONOMY.md`, pero no que la metadata **coincida** con la entidad, que es lo que exige H13 (`protocol/.agents/harness/policies/H13-protocol-taxonomy.md:Metadata block placement` regla 11); por eso la divergencia que la decisión 7 de RFC-79 corrige era invisible para la batería, y una divergencia futura de la misma clase seguiría siéndolo; evidencia original: la regla 11 citada frente a la corrida de `python tools/check_taxonomy_coherence.py` (verde antes y después de corregir la metadata de los dos contratos), y los metadatos `produced_by`/`consumed_by` divergentes de `protocol/.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md` e `INTER_WORKER_MESSAGE.md` en el baseline; estado Git observado: baseline `3b0a3218242466d3b7397917424fde0466888849` más los cambios de este Plan sin commitear; provenance original: Paso 8 (decisión 7) de la ejecución del Plan 142 (2026-09-21); resolución: **deferred** con owner y destino declarados — extender un checker de la batería canónica cambia su semántica y merece su propio Change autorizado; este Plan no lo hace (está excluido de su `Scope`) y la divergencia efectiva sí queda corregida.
-- `<PLAN-142>:F-2` — estado: `deferred` (owner: mantenedor; destino: transición humana del estado de `<PLAN-136>:F-1`); observación: `<PLAN-136>:F-1` —la frontera `F-17`, registrada como `deferred` con destino «RFC-79 decisión 2 + Plan 142»— tiene su destino **cumplido**: el contrato expresa la clase de ausencia y hecho de árbol (`project_scan`), el ítem 5 de D01 la admite y el checker DEV la verifica, de modo que el defecto que el finding describe ya no existe; la transición de estado del finding es una decisión humana (CL-8) y `docs/plans/136-d01-mechanical-checker.md` está fuera del `Scope` de este Plan, así que este Plan registra el hecho y **no** lo escribe; evidencia original: la redacción de `<PLAN-136>:F-1` y su `resolución: deferred` con ese destino, frente a la clase `project_scan` materializada en `protocol/.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md:Optional Front Matter (provenance)` y `protocol/.agents/orchestrators/discovery/harness/policies/D01-discovery-output.md:Checklist` ítem 5; estado Git observado: baseline `3b0a3218242466d3b7397917424fde0466888849` más los cambios de este Plan sin commitear; provenance original: Paso 12 (chequeo de residuales) de la ejecución del Plan 142 (2026-09-21); resolución: **deferred** con owner y destino declarados, sin escribir el artefacto ajeno al `Scope`.
+- `<PLAN-142>:F-1` — estado: `resolved` (transición `deferred` → `resolved` aplicada el 2026-09-21 por decisión humana del mantenedor, Change del Plan 143 —el Change de destino que este registro declaraba—; ver `## Metadatos de estado (evolucionables)` al final de este registro); observación: `tools/check_taxonomy_coherence.py` verifica que las referencias de la metadata de un contrato **resuelvan** contra `PROTOCOL_TAXONOMY.md`, pero no que la metadata **coincida** con la entidad, que es lo que exige H13 (`protocol/.agents/harness/policies/H13-protocol-taxonomy.md:Metadata block placement` regla 11); por eso la divergencia que la decisión 7 de RFC-79 corrige era invisible para la batería, y una divergencia futura de la misma clase seguiría siéndolo; evidencia original: la regla 11 citada frente a la corrida de `python tools/check_taxonomy_coherence.py` (verde antes y después de corregir la metadata de los dos contratos), y los metadatos `produced_by`/`consumed_by` divergentes de `protocol/.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md` e `INTER_WORKER_MESSAGE.md` en el baseline; estado Git observado: baseline `3b0a3218242466d3b7397917424fde0466888849` más los cambios de este Plan sin commitear; provenance original: Paso 8 (decisión 7) de la ejecución del Plan 142 (2026-09-21); resolución: **resuelta** (decisión humana del mantenedor, materializada por el Plan 143 el 2026-09-21): el Change de destino declarado existe y ejecutó la verificación. `tools/check_taxonomy_coherence.py` extiende su check 9 a la relación exacta que la H13 regla 11 declara —los cinco campos `domain`/`artifact`/`lifecycle`/`produced_by`/`consumed_by` comparados en las dos direcciones, con el conjunto de archivos de contrato que el `## Input` de la policy fija por ubicación y sólo las dos normalizaciones representacionales declaradas—, con regresiones y falsaciones en `tests/test_check_taxonomy_coherence.py` (28 passed) que demuestran `metadata mismatch → deterministic failure` y `matching metadata → valid`. La corrida sobre el corpus real reveló, además, una condición preexistente de la misma clase —`CHANGE_GOVERNANCE.md` declaraba `kind: contract` sin entidad contractual—, registrada y resuelta en el mismo Change con autorización explícita del mantenedor. La cobertura que este finding pedía existe; el hueco del corpus que la motivaba está cerrado.
+- `<PLAN-142>:F-2` — estado: `resolved` (transición `deferred` → `resolved` aplicada el 2026-09-21 por decisión humana del mantenedor, Change del Plan 143, que ejecutó la transición de `<PLAN-136>:F-1` que este registro dejaba al humano; ver `## Metadatos de estado (evolucionables)` al final de este registro); observación: `<PLAN-136>:F-1` —la frontera `F-17`, registrada como `deferred` con destino «RFC-79 decisión 2 + Plan 142»— tiene su destino **cumplido**: el contrato expresa la clase de ausencia y hecho de árbol (`project_scan`), el ítem 5 de D01 la admite y el checker DEV la verifica, de modo que el defecto que el finding describe ya no existe; la transición de estado del finding es una decisión humana (CL-8) y `docs/plans/136-d01-mechanical-checker.md` está fuera del `Scope` de este Plan, así que este Plan registra el hecho y **no** lo escribe; evidencia original: la redacción de `<PLAN-136>:F-1` y su `resolución: deferred` con ese destino, frente a la clase `project_scan` materializada en `protocol/.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md:Optional Front Matter (provenance)` y `protocol/.agents/orchestrators/discovery/harness/policies/D01-discovery-output.md:Checklist` ítem 5; estado Git observado: baseline `3b0a3218242466d3b7397917424fde0466888849` más los cambios de este Plan sin commitear; provenance original: Paso 12 (chequeo de residuales) de la ejecución del Plan 142 (2026-09-21); resolución: **resuelta** (decisión humana del mantenedor, materializada por el Plan 143 el 2026-09-21): la transición de estado que este registro dejaba al humano se ejecutó —`<PLAN-136>:F-1` pasa a `resolved` por CL-8, con sus elementos inmutables preservados verbatim y su bloque append-only en el Plan 136— sobre la base del destino cumplido que este finding verificó. El artefacto ajeno al `Scope` del Plan 142 no se escribió desde el Plan 142: lo escribió, con autorización propia, el Change que poseía la decisión.
 
 ### Correcciones
 
@@ -363,4 +363,48 @@ mecanismo ni checker nuevos; no se modificó `PROTOCOL_TAXONOMY.md`, `docs/adr/`
 ni `dist/`; el Ordering Contract, la región estable y `SemanticContextIdentity` quedaron
 intactos; no se aceptó ninguna decisión normativa nueva; sin promoción, tag, release ni
 push.
+
+## Metadatos de estado (evolucionables)
+
+*Registro posterior al cierre, agregado por el Plan 143 (2026-09-21). **No** modifica el
+`Scope`, el `Task`, la Delegación agentiva, el anchor, el checkpoint, la Nota de ejecución
+ni ninguna sección normativa de este Plan: es la transición de estado de dos findings, que
+es metadata **evolucionable** según `docs/CONVENTIONS.md:Change Lifecycle — Findings y
+correcciones (regla operacional; LC-1, Incremento 2)`. Los elementos inmutables de ambos
+—identidad, observación original, evidencia original, estado Git observado y provenance
+original— se conservan **verbatim** en el registro de `### Findings`.*
+
+**`<PLAN-142>:F-1` — transición `deferred` → `resolved` (Plan 143, 2026-09-21).**
+
+- **Acto.** Decisión humana del mantenedor, ejercida por la autorización del Change del
+  Plan 143, que implementa la cobertura que este finding pedía. El agente no infirió la
+  resolución (CL-8; ADR-16 `AU-3`).
+- **Fundamento.** El finding declaraba `deferred` **con destino**: «un Change DEV propio»,
+  porque extender un checker de la batería canónica cambia su semántica. Ese Change existe
+  —el Plan 143— y ejecutó la verificación de la H13 regla 11 en el checker existente, con
+  sus regresiones y falsaciones, y el propio Plan 142 dejó constancia de que la divergencia
+  efectiva de los dos contratos de discovery ya estaba corregida.
+- **Elementos inmutables preservados verbatim.** Identidad (`<PLAN-142>:F-1`), observación
+  original, evidencia original, estado Git observado (baseline
+  `3b0a3218242466d3b7397917424fde0466888849` más los cambios del Plan 142 sin commitear) y
+  provenance original (Paso 8 de la ejecución del Plan 142, 2026-09-21).
+- **Efecto.** `<PLAN-142>:F-1` queda formalmente `resolved`; no requiere acción adicional.
+
+**`<PLAN-142>:F-2` — transición `deferred` → `resolved` (Plan 143, 2026-09-21).**
+
+- **Acto.** Decisión humana del mantenedor, ejercida por la autorización del Change del
+  Plan 143, que ejecutó la transición de `<PLAN-136>:F-1` que este finding dejaba al
+  humano. El agente no infirió la resolución (CL-8; ADR-16 `AU-3`).
+- **Fundamento.** El finding registraba un **hecho consumado** —el destino de
+  `<PLAN-136>:F-1` estaba cumplido por RFC-79 decisión 2 y el Plan 142— y se mantenía
+  `deferred` sólo porque la transición de estado es una decisión humana (CL-8) y el
+  artefacto que la hospeda está fuera del `Scope` del Plan 142. Tomada la decisión, el
+  hecho que el finding registraba quedó completamente consumado.
+- **Elementos inmutables preservados verbatim.** Identidad (`<PLAN-142>:F-2`), observación
+  original, evidencia original, estado Git observado (baseline
+  `3b0a3218242466d3b7397917424fde0466888849` más los cambios del Plan 142 sin commitear) y
+  provenance original (Paso 12 de la ejecución del Plan 142, 2026-09-21).
+- **Efecto.** `<PLAN-142>:F-2` queda formalmente `resolved`. `<PLAN-142>:C-1` conserva su
+  carácter FACTUAL/TRACEABILITY y no se toca.
+
 

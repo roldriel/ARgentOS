@@ -69,7 +69,7 @@ CLOSED_PLAN_METADATA_HEADING = "## Metadatos de estado (evolucionables)"
 # digest and fails the test. Recompute it only when a legitimate lifecycle
 # transition changes the canonical content.
 CLOSED_PLAN_NORMATIVE_SHA256 = (
-    "5ef36941f6445d82fb5b4501ca88259a4c8e641677bedc7c37e83a7aa346a40f"
+    "380ac29a457dfc615cddbdb8cfac8c43e07ca4d72c7bf38a5d11f2edd384f7f0"
 )
 
 
@@ -192,10 +192,12 @@ def test_the_determinations_declare_that_required_is_not_a_write_authorization()
 def test_the_closed_plan_of_the_incident_keeps_its_history():
     """`Closed is terminal` for the **content**: the incident was used, not rewritten.
 
-    The closed plan received two lifecycle transitions: Plan 139 closed
-    `<PLAN-136>:F-3` (`open` -> `resolved`) and Plan 140 closed
-    `<PLAN-136>:PC-5` (`pendiente` -> `superseded`). Both are metadata
-    **evolvable** by the lineage convention (LC-1) and human decisions (CL-8).
+    The closed plan received three lifecycle transitions: Plan 139 closed
+    `<PLAN-136>:F-3` (`open` -> `resolved`), Plan 140 closed
+    `<PLAN-136>:PC-5` (`pendiente` -> `superseded`) and Plan 143 closed
+    `<PLAN-136>:F-1` (`deferred` -> `resolved`, its declared destination
+    fulfilled). All three are metadata **evolvable** by the lineage convention
+    (LC-1) and human decisions (CL-8).
     What must never change is the historical content: the observation, the
     evidence, the observed Git state, the provenance, the human decision of
     `<PLAN-136>:PC-4` and the recorded out-of-scope write.

@@ -37,6 +37,33 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Added
 
+- **Empty Remaining Backlog — resolución final de los cuatro residuales del backlog
+  operativo** (plan 143, vía plan; DEV-only sobre `docs/`, `tools/`, `tests/`,
+  `ROADMAP.md` y `CHANGELOG.md`, con **una excepción de payload declarada y autorizada**:
+  la entidad que la H13 regla 11 exige, publicada como PATCH **11.6.1**; ver más abajo el
+  apartado `Fixed`): **`HD-10`/plan 25** queda resuelto —la medición del dogfood del perfil
+  `trivial` **no es una capacidad implementable del repositorio**: exige una versión
+  promovida y una sesión de protocolo real con el usuario, actos externos al lifecycle
+  autónomo, de modo que se reclasifica como **actividad de adopción/operación externa** y
+  sale del backlog; el perfil está declarado e implementado
+  (`protocol/.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md:Task Profiles` con
+  gates `H00, H04, H06` y comportamiento profile-aware verificado en
+  `test_gate_validator.py`), la sesión real permanece **no ejecutada** y `<PLAN-141>:PC-2`
+  pasa a `resuelta`—. **`<PLAN-142>:F-1`** se implementa: la verificación de la H13 regla
+  11 entra en el checker existente de la batería (`tools/check_taxonomy_coherence.py`, check
+  9) comparando los cinco campos que la regla nombra en las dos direcciones, con catorce
+  casos nuevos y falsación por campo; la corrida sobre el corpus real revela una condición
+  preexistente —`CHANGE_GOVERNANCE.md` declaraba `kind: contract` sin entidad contractual
+  desde el plan 115—, invisible para una batería que nunca cubrió la regla 11, y su
+  registro se autoriza explícitamente bajo este Change (`Clase B`, `Scope` ampliado antes
+  del efecto). **`<PLAN-142>:F-2`/`<PLAN-136>:F-1`** se transicionan por CL-8 a `resolved`
+  —el destino declarado (RFC-79 decisión 2 + Plan 142) está cumplido—, con sus elementos
+  inmutables verbatim. **`C-2 GAP` del plan 116** queda `HISTORICAL / NON-ACTIONABLE /
+  RESOLVED` como residual de backlog (`<PLAN-133>:F-1` → `resolved`), sin modificar el plan
+  116 ni el contrato de `C-2` y con el `GAP` aún emitido. Sin mecanismos, policies, estados,
+  registries, authority classes, taxonomías ni workflows nuevos; sin reapertura de RFC-56/75,
+  ADR-15/16 ni C-2/CI; sin promoción, tag, release ni push.
+
 - **Human Decision Backlog Resolution — cierre del backlog `HD-1`…`HD-12` y apertura de
   la vía de payload de RFC-79** (plan 141, vía plan; DEV-only sobre `docs/`,
   `ROADMAP.md`, `CHANGELOG.md`, `tests/` y `tools/`; RFC-79 y plan 142 como vía de
@@ -1032,6 +1059,27 @@ La política de versionado, changelog, tags y estados de planes vive en
 `docs/VERSIONING.md` §3)
 
 ---
+
+## [11.6.1] — 2026-09-21
+
+### Fixed
+
+- **Registro de taxonomía del contrato `CHANGE_GOVERNANCE.md`** (plan 143, vía
+  plan; `Clase B` de RFC-56 — adición documental compatible, sin cambio de
+  significado ni de compatibilidad): la regla 11 de
+  `protocol/.agents/harness/policies/H13-protocol-taxonomy.md` exige que todo
+  archivo de contrato tenga una entidad `kind: contract` cuyos `domain`,
+  `artifact`, `lifecycle`, `produced_by` y `consumed_by` coincidan con su bloque
+  de metadata, en las dos direcciones. `CHANGE_GOVERNANCE.md` sólo estaba
+  registrado en la sección `# Artifacts` (`kind: artifact`, con puntero
+  `contract:`) desde el plan 115, de modo que el archivo declaraba
+  `kind: contract` sin entidad contractual que lo respaldara: la entidad
+  `contract:CHANGE_GOVERNANCE.md` se registra con los mismos valores que el
+  contrato y su entidad de artefacto ya declaraban. El hueco era invisible para
+  la batería porque ninguna verificación mecánica cubría la regla 11; la
+  cobertura se agrega en el mismo Change a `tools/check_taxonomy_coherence.py`
+  (checker DEV, no distribuido). Sin cambio de contenido en el contrato ni en
+  ninguna otra parte del payload.
 
 ## [11.6.0] — 2026-09-21
 

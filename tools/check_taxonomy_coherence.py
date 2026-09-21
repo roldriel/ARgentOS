@@ -31,6 +31,30 @@ Checks:
    matches the policy's declared ``state``, and the policy's TOML
    ``transition`` header and its ``gates`` name the same transitions
    (bidirectional).
+9. Every contract file on disk has a ``kind: contract`` taxonomy entity whose
+   ``domain``, ``artifact``, ``lifecycle``, ``produced_by`` and ``consumed_by``
+   match the file's taxonomy metadata block, and vice versa (H13 rule 11).
+
+Check 9 is the exact relation H13 rule 11 declares, and nothing else:
+
+- the contract file set is the one H13's ``## Input`` fixes by location
+  (``.agents/contracts/*.md`` and ``.agents/orchestrators/*/contracts/*.md``);
+- the metadata block is the YAML taxonomy block, which for contracts follows
+  the TOML block (``H13-protocol-taxonomy.md:Metadata block placement``);
+- the five compared fields are exactly the five rule 11 names; the entity is
+  resolved by its ``file`` field or by the file's declared ``artifact``;
+- the reverse direction requires every ``kind: contract`` entity to have its
+  contract file on disk.
+
+Two representational normalizations are declared, both non-semantic: a list
+compares as a set (inline ``[a, b]`` and block lists are the same list), and a
+YAML ``null`` and an absent field are the same value (the contract does not
+distinguish them). No other normalization exists: a difference in any of the
+five fields is a violation.
+
+The presence of the taxonomy metadata block itself is H13 rule 8 and is owned
+by ``tools/check_protocol_invariants.py``; this check compares the block, so a
+file without one is reported there, not here.
 
 Usage:
   python tools/check_taxonomy_coherence.py [--root REPO_ROOT]
@@ -163,6 +187,58 @@ def parse_toml_front_matter(text: str) -> dict:
         else:
             data[key] = value
     return data
+
+
+# H13 rule 11: the fields a `kind: contract` entity must match against the
+# contract file's taxonomy metadata block, bidirectionally.
+_CONTRACT_MATCH_FIELDS = (
+    "domain",
+    "artifact",
+    "lifecycle",
+    "produced_by",
+    "consumed_by",
+)
+
+
+def normalize_optional_field(value):
+    """Resolve the YAML null representations (``null``, ``~``, empty) to None.
+
+    Declared normalization (check 9): the contract does not distinguish an
+    explicit YAML null from an absent field, so both compare as the same value.
+    """
+    if value is None:
+        return None
+    text = str(value).strip()
+    if not text or text.lower() in ("null", "~"):
+        return None
+    return text
+
+
+def normalize_reference_list(value) -> list[str]:
+    """Normalize a scalar-or-list metadata field to a sorted list of refs.
+
+    Declared normalization (check 9): a list compares as a set, because the
+    inline ``[a, b]`` and block list forms are the same list.
+    """
+    if value is None:
+        return []
+    items = value if isinstance(value, list) else [value]
+    return sorted(str(item).strip() for item in items if str(item).strip())
+
+
+def contract_field_mismatch(field: str, declared, entity) -> str | None:
+    """Return a mismatch message for one H13 rule 11 field, or None."""
+    if field in ("produced_by", "consumed_by"):
+        left = normalize_reference_list(declared)
+        right = normalize_reference_list(entity)
+        if left != right:
+            return f"{field} mismatch (entity {right} vs file {left})"
+        return None
+    left = normalize_optional_field(declared)
+    right = normalize_optional_field(entity)
+    if left != right:
+        return f"{field} mismatch (entity {right!r} vs file {left!r})"
+    return None
 
 
 def parse_taxonomy_entities(payload: Path) -> tuple[dict, list[str]]:
@@ -544,6 +620,61 @@ def violations_for_root(
                 out.append(
                     f"CONTRACT {rel} produced_by {value!r} is not a canonical producer name"
                 )
+
+    # 9. H13 rule 11: contract file <-> `kind: contract` entity, bidirectional.
+    # The contract file set is the one H13's `## Input` fixes by location.
+    contract_entities = {
+        key: ent for key, ent in entities.items() if ent.get("kind") == "contract"
+    }
+    contract_files = sorted(
+        list((payload / ".agents" / "contracts").glob("*.md"))
+        + list((payload / ".agents" / "orchestrators").rglob("contracts/*.md")),
+        key=lambda p: p.relative_to(payload).as_posix(),
+    )
+    entity_by_file: dict[str, list[str]] = {}
+    entity_by_artifact: dict[str, list[str]] = {}
+    for key, ent in contract_entities.items():
+        if ent.get("file"):
+            entity_by_file.setdefault(ent["file"], []).append(key)
+        if ent.get("artifact"):
+            entity_by_artifact.setdefault(ent["artifact"], []).append(key)
+    declared_artifacts: set[str] = set()
+    for contract in contract_files:
+        rel = contract.relative_to(payload).as_posix()
+        fm = read_front_matter(
+            contract.read_text(encoding="utf-8", errors="replace"), after_toml=True
+        )
+        declared_artifact = fm.get("artifact") or contract.name
+        declared_artifacts.add(declared_artifact)
+        keys = entity_by_file.get(rel, [])
+        if not keys:
+            keys = entity_by_artifact.get(declared_artifact, [])
+        if not keys:
+            out.append(
+                f"CONTRACT {rel} has no kind: contract taxonomy entity "
+                "(H13 rule 11)"
+            )
+            continue
+        if len(keys) > 1:
+            out.append(
+                f"CONTRACT {rel} matches several taxonomy entities: {sorted(keys)}"
+            )
+        ent = contract_entities[keys[0]]
+        for field in _CONTRACT_MATCH_FIELDS:
+            mismatch = contract_field_mismatch(field, fm.get(field), ent.get(field))
+            if mismatch:
+                out.append(f"CONTRACT {rel} {mismatch}")
+    # Reverse direction: every `kind: contract` entity must have its file.
+    for key, ent in contract_entities.items():
+        if ent.get("file") and ent["file"] in {
+            c.relative_to(payload).as_posix() for c in contract_files
+        }:
+            continue
+        if ent.get("artifact") and ent["artifact"] in declared_artifacts:
+            continue
+        out.append(
+            f"CONTRACT entity {key} has no contract file on disk (H13 rule 11)"
+        )
 
     # 5c. Profiles catalog <-> taxonomy worker entities.
     profiles_dir = payload / ".agents" / "roles" / "profiles"

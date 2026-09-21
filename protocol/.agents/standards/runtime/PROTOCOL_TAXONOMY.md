@@ -2391,6 +2391,19 @@ entities:
       - core:COMPLETED
     file: .agents/contracts/METRICS.md
 
+  contract:CHANGE_GOVERNANCE.md:
+    kind: contract
+    domain: cross-cutting
+    artifact: CHANGE_GOVERNANCE.md
+    lifecycle: null
+    produced_by:
+      - core:TASK_RECEIVED
+    consumed_by:
+      - core:TASK_RECEIVED
+      - core:ANALYZING_TASK
+      - core:PLANNING
+    file: .agents/contracts/CHANGE_GOVERNANCE.md
+
   contract:DELIBERATION_REPORT.md:
     kind: contract
     domain: cross-cutting

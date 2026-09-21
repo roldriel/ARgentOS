@@ -6,7 +6,13 @@
 > Las secciones `## Convenciones` y `## Serie de RFCs (documentos canónicos)`
 > se conservan como anclas de navegación para referencias históricas.
 
-Estado al 2026-09-21. El Plan 142 está `Executed` con condición derivada `Closed`
+Estado al 2026-09-21. El Plan 143 está `Executed` con condición derivada `Closed` (payload
+con release pendiente; vaciado del backlog operativo residual: resolución final de
+`HD-10`/plan 25, implementación de la verificación de la H13 regla 11 en
+`tools/check_taxonomy_coherence.py`, transición CL-8 de `<PLAN-136>:F-1`/`<PLAN-142>:F-2` y
+formalización del `C-2 GAP` histórico del plan 116 como `HISTORICAL / NON-ACTIONABLE /
+RESOLVED`; `Clase B` para el registro faltante de `PROTOCOL_TAXONOMY.md`, que produce la
+versión 11.6.1 PATCH; Septuagésima cuarta serie). El Plan 142 está `Executed` con condición derivada `Closed`
 (payload con release pendiente; remisión a la RFC-79: materializa las siete decisiones de
 los residuos normativos —`F-14`, `F-17`, `F-16`, `B-8` residual, `F-18`, `F-4` y la
 metadata contractual de taxonomía— con `VERSION` 11.6.0 MINOR; Clase A y B;
@@ -1056,6 +1062,49 @@ sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
 |---|---|---|---|
 | `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. |
 
+## Septuagésima cuarta serie: vaciado del backlog operativo residual (Plan 143) (21 sep 2026)
+
+Serie del Change que resuelve definitivamente los cuatro residuos que permanecían en el
+backlog operativo: `HD-10`/plan 25, `<PLAN-142>:F-1`, `<PLAN-142>:F-2` y el `C-2 GAP`
+histórico del plan 116. Plan 143 (vía plan; DEV-only sobre `docs/`, `tools/`, `tests/`,
+`ROADMAP.md` y `CHANGELOG.md`, con **una excepción de payload declarada y autorizada**:
+la entidad `contract:CHANGE_GOVERNANCE.md` que la H13 regla 11 exige, `Clase B`, que
+produce la versión 11.6.1 PATCH; Change Level L2).
+
+**Plan 143 — los cuatro residuales, uno por uno.** **`HD-10`/plan 25:** la medición del
+dogfood del perfil `trivial` no es una capacidad implementable del repositorio —exige una
+versión promovida y una sesión real con el usuario, actos externos al lifecycle—, de modo
+que se reclasifica como actividad de adopción/operación externa y deja de ser backlog;
+`<PLAN-141>:PC-2` pasa a `resuelta`, `ROADMAP.md` deja de declararla pendiente y el espejo
+de este INDEX corrige la fila del plan 25, que declaraba verificado el perfil `trivial`
+con la simulación del modo enforced del plan 46. **`<PLAN-142>:F-1`:** la verificación de
+la H13 regla 11 se implementa en el checker existente (`tools/check_taxonomy_coherence.py`,
+check 9) —los cinco campos `domain`/`artifact`/`lifecycle`/`produced_by`/`consumed_by` en
+las dos direcciones, con el conjunto de archivos que fija el `## Input` de la policy y sólo
+dos normalizaciones representacionales declaradas— con 14 casos nuevos (metadata
+divergente, entidad divergente, referencia inexistente, referencias múltiples, campos
+opcionales y normalización) y falsación de los cinco campos; la corrida sobre el corpus
+real revela una condición **preexistente**: `CHANGE_GOVERNANCE.md` declaraba
+`kind: contract` sin entidad contractual desde el plan 115, invisibles para una batería que
+nunca cubrió la regla 11. La escritura del payload es una frontera RFC-56 y el agente la
+registró y la escaló: el mantenedor autorizó la entidad bajo este Change, declarada
+`Clase B` con justificación documentada y `## Scope` ampliado **antes** del efecto
+(`.agents/policies/supervised-autonomous-execution.md` §1.2), y el checker pasa a `exit 0` sobre el corpus
+real. **`<PLAN-142>:F-2`/`<PLAN-136>:F-1`:** se ejecuta la transición CL-8 autorizada —
+`<PLAN-136>:F-1` pasa a `resolved` por el destino cumplido (RFC-79 decisión 2 +
+`"project_scan"` materializado y verificado por el Plan 142) y `<PLAN-142>:F-2` a
+`resolved` como consecuencia— con elementos inmutables preservados verbatim y bloques
+append-only. **`C-2 GAP` del plan 116:** se formaliza la clasificación del Plan 140
+(`HISTORICAL / NON-ACTIONABLE`) y se resuelve el residual de backlog —`<PLAN-133>:F-1` pasa
+a `resolved`—; el `GAP` **sigue emitiéndose** porque ese es el comportamiento contractual
+vigente de `C-2`, y el plan 116 queda con **0 diff**. Sin mecanismos, policies, estados,
+registries, authority classes, taxonomías ni workflows nuevos; sin reapertura del plan 116,
+del plan 142, de RFC-56/75, de ADR-15/16 ni de C-2/CI; sin promoción, tag, release ni push.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `143-empty-remaining-backlog.md` | — (vía plan; `Clase B` de RFC-56 sólo para la entidad faltante de `PROTOCOL_TAXONOMY.md`) | Executed | **Vaciado del backlog operativo residual.** **`HD-10`/plan 25:** resolución final — el perfil `trivial` está declarado e implementado (`protocol/.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md:Task Profiles`: tres artefactos y gates `H00, H04, H06`; comportamiento profile-aware verificado en `protocol/.agents/harness/tests/test_gate_validator.py`), y la medición real se reclasifica como actividad externa de adopción/operación **no ejecutada** que sale del backlog; `<PLAN-141>:PC-2` → `resuelta`. **`<PLAN-142>:F-1`:** implementación de la H13 regla 11 en `tools/check_taxonomy_coherence.py` (check 9, bidireccional, cinco campos, dos normalizaciones declaradas) con 14 casos nuevos y falsación por campo; la corrida real revela que `CHANGE_GOVERNANCE.md` no tenía entidad `kind: contract` desde el plan 115, y el registro faltante se agrega con autorización explícita del mantenedor (`Clase B`, `Scope` ampliado antes del efecto), produciendo el PATCH 11.6.1 (`VERSION`, changelog y ancla `PROTOCOL_VERSION`). **`<PLAN-142>:F-2`/`<PLAN-136>:F-1`:** transición CL-8 a `resolved` por destino cumplido, con elementos inmutables verbatim y bloque append-only. **`C-2 GAP` del plan 116:** `HISTORICAL / NON-ACTIONABLE / RESOLVED` como residual de backlog (`<PLAN-133>:F-1` → `resolved`), sin modificar el plan 116 ni el contrato de `C-2`, y con el `GAP` aún emitido. `docs/VERSIONING.md` §4.1 alineado con la cobertura nueva; `ROADMAP.md` y este INDEX reconciliados. |
+
 ## Septuagésima tercera serie: resolución del backlog de decisiones humanas (Planes 141–142) (21 sep 2026)
 
 Serie del Change que cierra el backlog de decisiones humanas `HD-1`…`HD-12` y de la vía de
@@ -1494,7 +1543,7 @@ Serie derivada del análisis crítico de adopción (5 ago 2026): enforcement vol
 |---|---|---|---|
 | `23-skill-lifecycle.md` | Executed | — | Cable-or-kill de skills: ~30 skills huérfanas se cablean a fases/policies o se eliminan del catálogo activo (RFC-24). |
 | `24-single-source-required-sections.md` | Executed | — | El runner resuelve `required_sections` del contrato por referencia (8 policies derivadas; 7 conservan override explícito); `sync_required_sections.py` eliminado (RFC-25). |
-| `25-task-profile-model.md` | Executed (dogfooding verificado 12 ago 2026, plan 46) | recomienda 24 | Perfiles `trivial`/`standard`/`complex` con bifurcación de artefactos y gates; meta: tarea trivial ≤ 5 archivos, ≤ 3 gates (RFC-26). |
+| `25-task-profile-model.md` | Executed (dogfood del perfil `trivial`: **actividad externa de adopción**, no backlog — determinación del Plan 143; el modo enforced del plan 26 sí quedó verificado por el plan 46) | recomienda 24 | Perfiles `trivial`/`standard`/`complex` con bifurcación de artefactos y gates; meta: tarea trivial ≤ 5 archivos, ≤ 3 gates (RFC-26). La **medición** real exige una versión promovida y una sesión con el usuario: se registra como actividad externa no ejecutada (`docs/plans/143-empty-remaining-backlog.md`); el perfil está declarado e implementado en `protocol/.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md:Task Profiles`. |
 | `26-hook-enforcement.md` | Executed (dogfooding verificado 12 ago 2026, plan 46) | recomienda 25 | `state.json` escrito solo por el runner + hooks bloqueantes `PreToolUse`/`Stop` compartidos entre CLIs, con defensa en capas (RFC-27). |
 | `27-harness-coverage-closure.md` | Executed | 24 | Declaración `enforcement` en los 25 contratos + checks semánticos mecánicos (citas existentes, evidencia de tests) en el runner (RFC-28). |
 

@@ -334,8 +334,10 @@ documentos de estado actual.
   `35fef6d93510579d495d88487988ed4218d0cf3c`; provenance original: barrido de
   coherencia de índices y de la batería; resolución: corregido dentro de este
   mismo Change por `<PLAN-133>:C-2`.
-- `<PLAN-133>:F-1` — estado: `deferred` (owner: mantenedor; destino: decisión
-  humana); severidad: `low`; observación: el gate C-2 clasifica
+- `<PLAN-133>:F-1` — estado: `resolved` (transición `deferred` → `resolved`
+  aplicada el 2026-09-21 por decisión humana del mantenedor, Change del Plan
+  143; ver `## Metadatos de estado (evolucionables)` al final de este
+  registro); severidad: `low`; observación: el gate C-2 clasifica
   `docs/plans/116-adversarial-deliberation-mvp-closure.md` como `GAP` («multiple
   declared revalidations could correspond to the closure state; ambiguity,
   evidence insufficient»), es decir, ese plan cerrado tiene más de una
@@ -346,11 +348,19 @@ documentos de estado actual.
   ANOMALY, 132 planes inspeccionados); estado Git observado: `dev` @
   `35fef6d93510579d495d88487988ed4218d0cf3c`, working tree limpio; provenance
   original: barrido del universo documental de este Change; resolución:
-  **no resuelta aquí** — GAP es advisory y nunca cambia el exit code
-  (`policies/lifecycle-checkers.md`), el Plan 116 está cerrado y no se reabre
-  (`Closed` es terminal; RFC-75 Mecanismo 12), y la ambigüedad es BOUNDARY de
-  revisión humana, que este Change no puede tie-breakear sin inventar una
-  decisión; no se modificó el Plan 116 ni el checker C-2.
+  **resuelta** (decisión humana del mantenedor, materializada por el Plan 143 el
+  2026-09-21): el `GAP` es el comportamiento contractual vigente de `C-2` sobre
+  el registro de un plan cerrado —advisory, `exit 0`, `ANOMALY=0`—; lo que
+  quedaba abierto no era el `GAP` sino su condición de **residual accionable de
+  backlog**, y el Plan 140 la clasificó formalmente `HISTORICAL /
+  NON-ACTIONABLE` (modelo del Plan 134: el estado de cierre se identifica por
+  correspondencia con el anchor aplicable, y la ambigüedad reportada es
+  propiedad del registro del Plan 116, no del contrato). Resolverlo exigiría
+  reescribir el `## Validation anchor` de un plan cerrado —prohibido: `Closed`
+  es terminal y RFC-46 preserva la traza— o cambiar el contrato de `C-2`
+  —prohibido por el modelo del Plan 134—, y ninguna de las dos es necesaria: no
+  bloquea ningún lifecycle. El Plan 116 **no** se modifica y el `GAP` sigue
+  emitiéndose; owner: mantenedor.
 - `<PLAN-133>:F-2` — estado: `deferred` (owner: mantenedor; destino: decisión
   humana de gobernanza); severidad: `low`; observación: el vocabulario del
   `[Unreleased]` del `CHANGELOG.md` se aparta de la convención que su propia
@@ -566,3 +576,39 @@ prosa; sin `protocol/.agents/`, `dist/`, `tools/`, `runtime/`, CI, VERSION ni
 tags; sin reapertura de C-2/CI, Plan 121/122/123, Placement Contract, Plan 132,
 RFC-75, ADR-15/16/17/18, Jury Trial, Prompt Cache ni ningún MVP cerrado; sin
 `pytest`, sin push, sin merge, sin release, sin promoción.
+
+## Metadatos de estado (evolucionables)
+
+*Registro posterior al cierre, agregado por el Plan 143 (2026-09-21). **No**
+modifica el `Scope`, el `Task`, la Delegación agentiva, el anchor, el checkpoint,
+la Nota de ejecución ni ninguna sección normativa de este Plan: es la transición
+de estado de un finding, que es metadata **evolucionable** según
+`docs/CONVENTIONS.md:Change Lifecycle — Findings y correcciones (regla
+operacional; LC-1, Incremento 2)`. Los elementos inmutables del finding
+—identidad, observación original, evidencia original, estado Git observado y
+provenance original— se conservan **verbatim** en el registro de `### Findings`.*
+
+**`<PLAN-133>:F-1` — transición `deferred` → `resolved` (Plan 143, 2026-09-21).**
+
+- **Acto.** Decisión humana del mantenedor, ejercida por la autorización del
+  Change del Plan 143, que enumera el `C-2 GAP` del Plan 116 entre los cuatro
+  residuos a resolver de forma definitiva. El agente no infirió la resolución
+  (CL-8; ADR-16 `AU-3`).
+- **Fundamento.** El finding describía un `GAP` advisory del gate `C-2` sobre un
+  plan cerrado; el `GAP` **no** es el residual. El residual era que este registro
+  lo conservara como deuda accionable, con destino «decisión humana», mientras su
+  pending decision homónima ya leía `resuelta` desde el Plan 141. El Plan 140
+  determinó la clasificación `HISTORICAL / NON-ACTIONABLE` y el Plan 143 la
+  formaliza: el residual de backlog queda resuelto y el `GAP` continúa
+  emitiéndose porque ese es el comportamiento contractual vigente de `C-2`.
+- **Elementos inmutables preservados verbatim.** Identidad (`<PLAN-133>:F-1`),
+  observación original, evidencia original (la corrida de
+  `tools/check_lifecycle_checkpoint.py` con `GAP=1, ANOMALY=0` y 132 planes
+  inspeccionados), estado Git observado
+  (`dev` @ `35fef6d93510579d495d88487988ed4218d0cf3c`, working tree limpio) y
+  provenance original (barrido del universo documental del Plan 133).
+- **Efecto.** `<PLAN-133>:F-1` queda formalmente `resolved`. El Plan 116 no se
+  modifica: **0 diff**. La prosa de la Nota de ejecución de este Plan que lo
+  declaraba «Diferido» se conserva como contexto histórico (RFC-46) y no se
+  reescribe; la determinación corriente es la de este bloque.
+

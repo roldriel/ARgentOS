@@ -31,7 +31,10 @@ never the product payload.
   import `pytest_isolation`, `testsupport` and the `tools/` modules directly;
   a per-file `sys.path.insert` is duplication. `tools/` stays a directory of
   executable scripts (it is invoked as `python tools/check_*.py` by the battery
-  and by CI), not an importable package — see plan 124, F-01.
+  and by CI), not an importable package — see plan 124, F-01. The bootstrap
+  deliberately does **not** put the repository root on `sys.path`: a suite that
+  imports `runtime.*` still inserts the root itself, and that insertion is
+  **not** the duplication this rule forbids.
 - New dev tools get their suite in this directory, following the existing
   style: fake-repo fixtures via `tmp_path`, CLI exit-code coverage, and a
   stdlib-only test for the tool using
@@ -68,6 +71,11 @@ The anchored set, and what each protects:
 | `test_prompt_cache_dogfood.py` (whole module) | the ten verifiable points of RFC-78 / plan 121 materialized **over the real `protocol/` payload** |
 | `test_repo_containment.py` (whole module) | RFC-69 I2 over the real tree: a cited document must not exist only as an untracked file |
 | `test_pytest_isolation.py` (whole module) | the real working tree carries no pytest temporary before or after a session |
+| `test_placement_dogfood.py` (whole module) | the placement resolver agrees with the real tree: canonical namespaces, its own artifacts placed by its own rules, and the generated area the host actually uses (`plan 131`) |
+| `test_autonomous_scope_dogfood.py` (whole module) | the SAE frontier over the repository's own Change and the reconstructibility of its autonomy evidence (`plan 135`) |
+| `test_sae_scope_enforcement_dogfood.py` (whole module) | the Scope/Authority enforcement point, the untouched history of the incident's closed plan and `ROADMAP.md`, and the end-to-end refusal before the effect (`plan 138`) |
+| `test_discovery_output_dogfood.py` (whole module) | the D01 mechanical subset against the **real** discovery contracts and the real payload (`plan 136`) |
+| `test_check_ears_coverage_dogfood.py` (whole module) | the three sources of truth of the real payload in parity: the standard's patterns, the contract's canonical form, and the validator's activation of `ears` for H01 (`plan 137`) |
 
 `tests/fixtures/skills/` is **not** in this list: those are synthetic fixtures
 that stand in for payload skills so the isolated tests above do not read

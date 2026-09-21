@@ -6,7 +6,12 @@
 > Las secciones `## Convenciones` y `## Serie de RFCs (documentos canónicos)`
 > se conservan como anclas de navegación para referencias históricas.
 
-Estado al 2026-09-21. El Plan 143 está `Executed` con condición derivada `Closed` (payload
+Estado al 2026-09-21. El Plan 144 está `Executed` con condición derivada `Closed` (higiene
+documental y de tests del backlog DEV residual: la tabla del conjunto anclado de
+`tests/AGENTS.md` pasa de 8 a 13 módulos, se eliminan las dos sentencias `sys.path.insert`
+redundantes de `tools/` en las suites de discovery y se reconcilian tres espejos
+documentales —fila de RFC-75 en `docs/rfc/INDEX.md`, registro de investigaciones y registro
+de auditorías—; DEV-only `tests/` + `docs/`, sin release; Septuagésima quinta serie). El Plan 143 está `Executed` con condición derivada `Closed` (payload
 con release pendiente; vaciado del backlog operativo residual: resolución final de
 `HD-10`/plan 25, implementación de la verificación de la H13 regla 11 en
 `tools/check_taxonomy_coherence.py`, transición CL-8 de `<PLAN-136>:F-1`/`<PLAN-142>:F-2` y
@@ -1061,6 +1066,20 @@ sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
 | `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. |
+
+## Septuagésima quinta serie: higiene documental y de tests del backlog DEV residual (Plan 144) (21 sep 2026)
+
+Serie del Change que resuelve los tres residuales accionables que dejó abiertos el inventario
+read-only posterior al Plan 143: `AW-1` (el conjunto anclado declarado en `tests/AGENTS.md` no
+representaba el corpus real), `AW-2` (dos suites repetían la manipulación de `sys.path` para
+`tools/` que el bootstrap único de la sesión ya realiza) y `AW-3` (tres espejos documentales
+describían un estado que su propia fuente contradice). Plan 144 (vía plan; DEV-only sobre
+`tests/` y `docs/`, sin efecto en `protocol/.agents/`, por lo que RFC-56 no aplica; Change
+Level L1).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `144-dev-documentation-test-hygiene.md` | — (vía plan; DEV-only `tests/` + `docs/`) | Executed | **Higiene documental y de tests del backlog DEV residual.** **`AW-1`:** la tabla del conjunto anclado de `tests/AGENTS.md` pasa de **8 a 13** filas —se agregan `test_placement_dogfood.py`, `test_autonomous_scope_dogfood.py`, `test_sae_scope_enforcement_dogfood.py`, `test_discovery_output_dogfood.py` y `test_check_ears_coverage_dogfood.py`, los cinco anclados que **citan esa misma tabla como su contrato**— sin cambiar la definición de «anclado», sin retirar ninguna entrada previa y sin alterar las demás instrucciones; los tres módulos que se declaran `isolated` quedan fuera. **`AW-2`:** se eliminan las dos sentencias `sys.path.insert` redundantes de `tools/` (en `tests/test_check_discovery_output.py` y `tests/test_discovery_output_dogfood.py`), con el ajuste de imports que corresponde (`sys` deja de importarse donde quedó sin uso; `Path` se conserva donde se usa como anotación); las nueve inserciones restantes agregan la raíz del repositorio para importar `runtime/` y se verificaron **necesarias**, de modo que quedan intactas y el Change no hace un refactor generalizado. **`AW-3`:** se reconcilian tres espejos contra su fuente autoritativa sin tocar la fuente —la columna `Status` de la fila de RFC-75 en `docs/rfc/INDEX.md` (declaraba implementación pendiente; el header de la RFC declara los Incrementos 0–4 materializados y el Incremento 5 fuera de alcance), la fila faltante de `PROMPT_CACHE_PHASE_1_REPORT.md` en `docs/working/research/INDEX.md` (documento versionado y `Origen` de RFC-78) y la fila de `AUDITORIA_SISTEMA.md` en `docs/working/audits/INDEX.md` (declarada activa contra su propio banner de cierre del 2026-08-14)—. `docs/VERSIONING.md`, `ROADMAP.md`, `protocol/`, `runtime/`, `docs/adr/` y `dist/` con **0 diff**; sin mecanismos, policies, checkers, estados, registries, authority classes, taxonomías ni workflows nuevos; sin RFC, sin ADR, sin `VERSION` bump, sin tag, sin release, sin promoción y sin push. |
 
 ## Septuagésima cuarta serie: vaciado del backlog operativo residual (Plan 143) (21 sep 2026)
 

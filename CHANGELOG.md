@@ -382,6 +382,36 @@ La política de versionado, changelog, tags y estados de planes vive en
   registry, state machine, authority, identity ni subsistema de ejecución nuevos;
   sin RFC/ADR nuevo, sin cambio de payload, sin `VERSION` bump y sin tag.
 
+- **Higiene documental y de tests del backlog DEV residual** (plan 144, vía plan;
+  DEV-only sobre `tests/` y `docs/`, sin efecto en `protocol/.agents/`, por lo que
+  RFC-56 no aplica): resuelve los tres residuales accionables que dejó abiertos el
+  inventario read-only posterior al Plan 143. **`AW-1`** — la tabla del conjunto
+  anclado de `tests/AGENTS.md` pasa de **8 a 13** filas: se agregan
+  `test_placement_dogfood.py`, `test_autonomous_scope_dogfood.py`,
+  `test_sae_scope_enforcement_dogfood.py`, `test_discovery_output_dogfood.py` y
+  `test_check_ears_coverage_dogfood.py`, los cinco módulos anclados que **citan esa
+  misma tabla como su propio contrato**; la definición de «anclado» del contrato
+  vigente se aplica, no se reescribe, ninguna fila previa se retira y las demás
+  instrucciones del archivo quedan intactas. **`AW-2`** — se eliminan las dos
+  sentencias `sys.path.insert` redundantes de `tools/` (`tests/test_check_discovery_output.py`
+  y `tests/test_discovery_output_dogfood.py`), duplicación que el bootstrap único de
+  la sesión (la raíz `conftest.py`) ya realiza y que `tests/AGENTS.md:Rules` declara
+  como tal; se ajustan los imports (`sys` deja de importarse donde quedó sin uso,
+  `Path` se conserva donde se usa como anotación) y **no** se toca ninguna de las
+  nueve inserciones restantes: agregan la raíz del repositorio para importar
+  `runtime/`, se verificaron necesarias y quedan fuera del alcance. **`AW-3`** — se
+  reconcilian tres espejos documentales contra su fuente autoritativa, sin tocar la
+  fuente: la columna `Status` de la fila de RFC-75 en `docs/rfc/INDEX.md` (declaraba
+  implementación pendiente; el header de la RFC declara los Incrementos 0–4
+  materializados y el Incremento 5 fuera de alcance), la fila faltante de
+  `PROMPT_CACHE_PHASE_1_REPORT.md` en `docs/working/research/INDEX.md` (documento
+  versionado y `Origen` de RFC-78) y la fila de `AUDITORIA_SISTEMA.md` en
+  `docs/working/audits/INDEX.md` (declarada activa contra su propio banner de cierre
+  del 2026-08-14). `docs/rfc/75-…`, `docs/rfc/78-…`, el informe de Phase 1 y la
+  auditoría de sistema quedan con **0 diff**. Sin payload, sin `runtime/`, sin
+  `docs/adr/`, sin `dist/`, sin `ROADMAP.md`, sin `docs/VERSIONING.md`, sin RFC/ADR
+  nuevo, sin `VERSION` bump, sin tag y sin push.
+
 ### Modelo conceptual
 - **Supervised Autonomous Execution (SAE) para el DEV Autonomous Orchestrator**
   (plan 135, vía plan; DEV-only, sin efecto en `protocol/.agents/`): política

@@ -6,7 +6,7 @@ de decisiones, RFCs, inventarios o auditorías.
 
 | Archivo | Fecha | Status |
 |---|---|---|
-| `AUDITORIA_SISTEMA.md` | vigente | active (tracker vivo de remediación) |
+| `AUDITORIA_SISTEMA.md` | 2026-08-14 | archived (todos los hallazgos y la remediación resueltos el 2026-08-14; el trabajo restante es RFCs futuros opcionales, no ítems de auditoría abiertos) |
 | `AUDITORIA_SISTEMA_2026-08-16.md` | 2026-08-16 | archived (remediación completada, planes 69–74) |
 | `AUDITORIA_REUTILIZACION_2026-08-25.md` | 2026-08-25 | active (evidencia de investigación) |
 | `DEV_AUTONOMOUS_ORCHESTRATOR_DOGFOOD_2026-09-14.md` | 2026-09-14 | active (evidencia de la corrida real del DEV Autonomous Orchestrator, Plan 122) |

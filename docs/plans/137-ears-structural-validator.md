@@ -199,8 +199,21 @@ Determinado para que la ejecución lo reconcilie; **no** se anticipa ninguna edi
 ## Roadmap Impact
 
 ```text
-Roadmap Impact: REQUIRED
+Roadmap Impact: DEFERRED
 ```
+
+*Reclasificación (Plan 140, 2026-09-20).* El Plan 137 declaró `REQUIRED` —la
+obligación de reconciliar `ROADMAP.md`— y delegó su continuidad en
+`<PLAN-137>:PC-1`, con `ROADMAP.md` explícitamente fuera del `Scope`. La regla
+vigente (`.agents/policies/validation-closure.md` §5.2) fija que una determinación de
+impacto es una **obligación de estado y nunca una autorización de escritura**, y que
+cuando el artefacto que posee el estado está fuera del `Scope` la clasificación
+correcta es `DEFERRED` con la pending decision **existente** que la gobierna. Este
+Plan no escribió `ROADMAP.md` en ningún momento, de modo que la determinación se
+reclasifica a `DEFERRED` sin cambiar ningún hecho: la obligación queda gobernada por
+`<PLAN-137>:PC-1` (owner: mantenedor), que conserva la decisión futura y no requiere
+acción del agente en el estado actual. El texto original de esta determinación, con
+su contenido y su evidencia, se conserva íntegro en el historial de Git (RFC-46).
 
 Determinado para que la ejecución lo reconcilie; **no** se ejecuta ahora y **no** se usa para escribir `ROADMAP.md`.
 
@@ -260,7 +273,7 @@ Findings **esperables** durante la ejecución (se registran con refs `<PLAN-137>
 
 ## Pending decisions
 
-- `<PLAN-137>:PC-1`: decisión: si corresponde reconciliar `ROADMAP.md` retirando la entrada `EARS structural validator` de `## Trabajo activo / dogfood`, dado que la capacidad ya existe en el payload (plan 66, RFC-57) y la entrada declara un estado que la evidencia contradice; blocking: **sí** para la reconciliación, **no** para ejecutar este Plan (la guarda no depende del roadmap); owner: mantenedor; escalación: `ROADMAP.md` **no** está en el `Scope` de este Plan y, por la decisión humana de `F-3` (`<PLAN-136>:PC-4`), `Roadmap Impact: REQUIRED` **no** amplía el scope autorizado; el agente no la resuelve por inferencia; resolución: pendiente; evidencia: `ROADMAP.md:Trabajo activo / dogfood`, `protocol/.agents/harness/gate_validator.py` (spec H01 con `ears: True`), `protocol/.agents/harness/tests/test_gate_validator.py` (`test_non_ears_bullet_fails`), `.github/workflows/check-protocol.yml` job `check-protocol` líneas 32–33, `docs/rfc/57-harness-structural-validator.md:Alcance`, `docs/plans/66-harness-structural-validator.md`; efecto downstream: el mapa operativo sigue declarando como futuro un trabajo ya realizado; el Plan 137 se ejecuta igual; ADR-worthiness: no aplica.
+- `<PLAN-137>:PC-1`: decisión: si corresponde reconciliar `ROADMAP.md` retirando la entrada `EARS structural validator` de `## Trabajo activo / dogfood`, dado que la capacidad ya existe en el payload (plan 66, RFC-57) y la entrada declara un estado que la evidencia contradice; blocking: **sí** para la reconciliación, **no** para ejecutar este Plan (la guarda no depende del roadmap); owner: mantenedor; escalación: `ROADMAP.md` **no** está en el `Scope` de este Plan y, por la decisión humana de `F-3` (`<PLAN-136>:PC-4`), `Roadmap Impact: REQUIRED` **no** amplía el scope autorizado; el agente no la resuelve por inferencia; resolución: **deferred** (clasificación materializada por el Plan 140 el 2026-09-20): la decisión sigue siendo del mantenedor y **no** está tomada; el Plan 140 la clasifica como **no accionable actualmente** —`ROADMAP.md` está fuera del `Scope` autorizado y no se ejecutó ninguna escritura— y su continuidad permanece en esta misma pending decision, sin acción pendiente del agente; evidencia: `ROADMAP.md:Trabajo activo / dogfood`, `protocol/.agents/harness/gate_validator.py` (spec H01 con `ears: True`), `protocol/.agents/harness/tests/test_gate_validator.py` (`test_non_ears_bullet_fails`), `.github/workflows/check-protocol.yml` job `check-protocol` líneas 32–33, `docs/rfc/57-harness-structural-validator.md:Alcance`, `docs/plans/66-harness-structural-validator.md`; efecto downstream: el mapa operativo sigue declarando como futuro un trabajo ya realizado; el Plan 137 se ejecuta igual; ADR-worthiness: no aplica.
 - `<PLAN-137>:PC-2`: decisión: si el conjunto mecánico de EARS debe **ampliarse** para cubrir las reglas de redacción de `protocol/.agents/standards/requirements/EARS.md:Writing rules` 1–3 (un criterio por bullet —ya cubierto estructuralmente por R1—, usar `shall`, evitar negaciones) y la no-compoundidad (hoy `[agent]`); blocking: **no** para este Plan; owner: mantenedor; escalación: ampliar el conjunto mecánico **cambia el contrato del payload** (`EARS.md`, la policy H01 y su clasificación `[gate]`/`[agent]`) y por lo tanto requiere la vía RFC-56 (RFC + plan); el Plan 137 lo registra como frontera y **no** lo implementa; resolución: pendiente; evidencia: `protocol/.agents/standards/requirements/EARS.md:Writing rules`, `protocol/.agents/orchestrators/core/harness/policies/H01-task-specification.md:Checklist` ítems 10/11/12; efecto downstream: sin esta decisión, la guarda documenta esas reglas como juicio y no las chequea, lo que es el comportamiento correcto y autorizado; ADR-worthiness: no evaluado — requiere decisión humana.
 - `<PLAN-137>:PC-3`: decisión: si corresponde agregar `tools/check_ears_coverage.py` a la batería canónica (`docs/VERSIONING.md` §4.1); blocking: **no**; owner: mantenedor; escalación: incorporar un checker a la batería crea una obligación de gobernanza sobre todo Change futuro y este Plan no la autoriza; resolución: pendiente; evidencia: `docs/plans/136-d01-mechanical-checker.md` (precedente: D01 no se agregó); efecto downstream: la guarda se valida por su propia suite y por el dogfood; ADR-worthiness: no aplica.
 
@@ -317,3 +330,49 @@ Released   = tag anotado en master (acción del mantenedor)
 ## Nota de redacción
 
 Este Plan se redactó **sin implementar nada**: no existe `tools/check_ears_coverage.py` ni ninguna suite nueva, y `protocol/`, `runtime/`, `.agents/` y `ROADMAP.md` tienen 0 diff. Su hallazgo central —que el validador estructural EARS ya existe en el payload (plan 66, RFC-57) y que la entrada del roadmap lo describe como trabajo futuro— se registra como evidencia y se convierte en la pending decision `<PLAN-137>:PC-1`, **sin** resolverla por inferencia ni editar `ROADMAP.md`.
+
+## Determinaciones del Plan 140 (B-2 y Roadmap Impact)
+
+*Registro posterior a la redacción, agregado por el Plan 140 (2026-09-20). **No**
+modifica el `## Objetivo`, el `## Contrato del validator`, el `## Scope`, la
+Delegación agentiva, los `## Artefactos afectados`, la `## Documentación Impact`, el
+`## Human authority boundary`, las `## Stop conditions` ni la `## Nota de redacción` de
+este Plan: registra la determinación de estado de `B-2` y la reconciliación de su
+determinación de `Roadmap Impact`.*
+
+**1. `B-2` está satisfecho y no deja residual de trabajo.** El ítem histórico `B-2`
+tenía dos partes —`F-01` (desalineación contrato ↔ validador EARS) y `F-02` (rama de
+retry de formato)— y ambas están resueltas: `F-01` por el plan 33/RFC-34, que declaró
+los bullets Markdown como forma canónica de `## Acceptance Criteria`, alineada con el
+validador, y `F-02` por el plan 29. El **mecanismo responsable** existe en el payload y
+opera: `protocol/.agents/harness/gate_validator.py` activa el chequeo EARS para H01
+(`TRIGGERS["H01"]["ears"] = True`), implementa los cinco patrones del estándar en
+`EARS_RE` y produce la señal `ears` PASS/FAIL. Cobertura y ejecución: la suite
+`protocol/.agents/harness/tests/test_gate_validator.py` (incluye el caso de bullet no
+EARS) y el job `check-protocol` de `.github/workflows/check-protocol.yml`. Evidencia
+adicional obtenida por el Plan 140 con el validador real, de forma read-only y sobre
+especímenes con procedencia: un bullet EARS produce `ears` PASS con
+`decision: PASS`; el bullet no aceptable del estándar
+(`- The API should handle errors gracefully.`) produce
+`ears FAIL — 1 bullets do not match EARS` con `decision: FAIL`. **No se implementó
+nada nuevo** para llegar a esta determinación.
+
+**2. Lo que este Plan proponía no es un residual de `B-2`.** La guarda DEV de paridad
+(`tools/check_ears_coverage.py` y sus suites) es trabajo **nuevo** de aseguramiento,
+no una parte pendiente de `B-2`. Su ejecución no está autorizada: el `**Status:**` de
+este Plan es `Aprobado para redacción` y su propio `## Criterio de entrada` exige
+`Aprobado para ejecución`. `Superseded` **no** es una salida disponible, porque el
+ciclo de status de planes exige indicar el plan reemplazante y no existe ninguno
+(`docs/CONVENTIONS.md:Convenciones`; precedente del plan 87 ante la misma situación).
+En consecuencia **no se cambia el status de este Plan** y la disposición de su guarda
+—ejecutarla o retirarla— sigue siendo una decisión humana ya declarada en el
+`## Criterio de entrada` y el `## Human authority boundary` de este mismo Plan.
+
+**3. `Roadmap Impact` reclasificado a `DEFERRED`.** Ver `## Roadmap Impact`: la
+obligación de reconciliar `ROADMAP.md` queda gobernada por la pending decision
+existente `<PLAN-137>:PC-1` (owner: mantenedor), clasificada como no accionable
+actualmente. `ROADMAP.md` permanece con **0 diff** en todo momento.
+
+**4. No-acciones explícitas.** El Plan 140 **no** implementa la guarda, **no** modifica
+`protocol/`, `tools/`, `tests/`, `runtime/`, `.agents/` ni `ROADMAP.md`, **no** cambia
+el status de este Plan y **no** resuelve `<PLAN-137>:PC-2` ni `<PLAN-137>:PC-3`.

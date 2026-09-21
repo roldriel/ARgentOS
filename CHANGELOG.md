@@ -37,6 +37,64 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Added
 
+- **Governance Residual Closure — cierre del inventario de gobernanza accionable**
+  (plan 140, vía plan; DEV-only, sin efecto en `protocol/.agents/`): se redacta y
+  **ejecuta** el Plan 140, que revisa, reconcilia y clasifica los cinco pendientes de
+  gobernanza conocidos **sin crear gobernanza nueva** — sin mecanismos, estados,
+  registries, checkers, workflows ni authority classes nuevos, y sin modificar
+  `ROADMAP.md`, `protocol/`, `runtime/`, `tools/`, `.agents/`, RFCs, ADRs ni los planes
+  116 y 138. **A — `<PLAN-136>:PC-5` → `superseded` y `<PLAN-139>:F-1` → `resolved`**:
+  la premisa de `PC-5` («la política vigente no contempla qué ocurre cuando una
+  determinación de cierre obliga a reconciliar un artefacto excluido del `Scope`»)
+  queda superada por la regla vigente, que sí lo define
+  (`.agents/policies/validation-closure.md` §5.1/§5.2 y §7;
+  `.agents/policies/supervised-autonomous-execution.md` §1.1/§1.4), y no subsiste
+  cuestión independiente: la continuidad de la frontera vive en `<PLAN-138>:PC-2`.
+  Sólo se actualiza metadata **evolucionable** (LC-1) —el campo `resolución` de `PC-5`
+  y el estado de `F-1` más un bloque `## Metadatos de estado (evolucionables)`
+  append-only—, preservando observación, evidencia, estado Git y provenance verbatim.
+  **B — `B-2` (EARS) satisfecho sin residual**: el mecanismo responsable ya existe en
+  el payload (`protocol/.agents/harness/gate_validator.py` con
+  `TRIGGERS["H01"]["ears"] = True` y `EARS_RE` con los cinco patrones del estándar),
+  con cobertura en `protocol/.agents/harness/tests/test_gate_validator.py` y ejecución
+  en el job `check-protocol` de CI; `F-01` quedó resuelta por el plan 33/RFC-34 (bullets
+  canónicos) y `F-02` por el plan 29. El dogfood read-only de este Change lo confirma
+  (un bullet EARS produce `ears` PASS; el bullet no aceptable del estándar produce
+  `ears FAIL`). La guarda de paridad que el Plan 137 proponía **no** es un residual de
+  `B-2` sino trabajo nuevo no autorizado (el Plan sigue `Aprobado para redacción`, y
+  `Superseded` exige un plan reemplazante inexistente): **no se implementa nada
+  nuevo**. **C — `Roadmap Impact` del Plan 137 → `DEFERRED`**: la obligación de
+  reconciliar `ROADMAP.md` se gobierna con la pending decision existente
+  `<PLAN-137>:PC-1` (owner mantenedor), porque una determinación de impacto es
+  obligación de estado y **nunca** autorización de escritura; `ROADMAP.md` queda con
+  **0 diff**. **D — `<PLAN-138>:PC-2` clasificada `DEFERRED` y no accionable
+  actualmente**, sin introducir Scope Expansion y sin inventar una taxonomía nueva.
+  **E — `C-2 GAP` del Plan 116 clasificado histórico/no accionable**: es un `GAP`
+  advisory (`exit 0`, `ANOMALY=0`) causado por la ambigüedad `Tier 2` del anchor de un
+  plan cerrado bajo la convención anti-auto-referencia; resolverlo exigiría reescribir
+  un artefacto cerrado o cambiar el contrato de C-2, ambos prohibidos, y no bloquea
+  ningún lifecycle. **Findings propios, corregidos dentro del Scope**: `<PLAN-140>:F-1`
+  —el test anclado que el Plan 139 dejó en `tests/test_sae_scope_enforcement_dogfood.py`
+  afirmaba que el plan cerrado debía mostrar un diff contra `HEAD`, invariante que sólo
+  valía sin commitear, de modo que la suite y CI quedaban rojos en el estado
+  comprometido— corregido por `<PLAN-140>:C-1`, que reemplaza la aserción dependiente
+  del estado de Git por aserciones de contenido, la regla de que el bloque de metadatos
+  es la última región del artefacto y un digest normalizado del contenido normativo
+  (los valores de `estado` y `resolución` se canonicalizan por LC-1), **endureciendo**
+  la protección en lugar de relajarla; y `<PLAN-140>:F-2` —el `## Checkpoint / cierre`
+  del Plan 139 declaraba `e284f98d8915f8c3e917f40218420caf604328b2` como árbol material
+  del commit de cierre, cuando el árbol real es
+  `2bc144d76ffe2c17432638d1c1208525bc97f3f5` y difiere exactamente en el propio registro
+  de gobernanza del cierre— corregido por `<PLAN-140>:C-2` mediante registro factual en
+  artefacto nuevo (el plan cerrado no se reabre) y sin afectar la correspondencia R2 del
+  estado de cierre. **`<PLAN-140>:F-3`** (`deferred`, owner mantenedor) registra las
+  transiciones de estado pendientes y las pending decisions abiertas del Plan 136, fuera
+  de los cinco pendientes autorizados. **Inventario final**: `OPEN / ACTIONABLE = 0`,
+  con `DEFERRED` e `HISTORICAL / NON-ACTIONABLE` enumerados con su razón, su evidencia y
+  su continuidad. Batería canónica PASS; `pytest tests/` PASS; C-1/C-2/C-3 sin
+  `ANOMALY`; `ROADMAP.md` con **0 diff**. Sin RFC/ADR nuevo, sin cambio de payload, sin
+  `VERSION` bump y sin tag (DEV-only, RFC-69).
+
 - **SAE Governance Boundary Closure — cierre formal de las tres decisiones del
   incidente F-3** (plan 139, vía plan; DEV-only, sin efecto en
   `protocol/.agents/`): se redacta y **ejecuta** el Plan 139, que **materializa

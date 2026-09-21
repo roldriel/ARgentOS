@@ -271,7 +271,7 @@ metadata de estado de los dos Planes, nunca una sección normativa.
 
 ### Findings
 
-- `<PLAN-139>:F-1` — estado: `open` (transición de estado reservada al humano); observación: `<PLAN-136>:PC-5` quedó registrada como gap de gobernanza («la política vigente no contempla qué ocurre cuando una determinación de cierre obliga a reconciliar un artefacto que el `Scope` excluye») y su premisa queda **superada** por la regla que este Change materializa en `.agents/policies/validation-closure.md` §5.1/§5.2 y en `.agents/policies/supervised-autonomous-execution.md` §1.1; PC-5 **no** es una de las tres decisiones que este Plan debe resolver (DEC-1/DEC-2/DEC-3) y este Plan no la resuelve ni la reescribe: registra la supersesión para que el mantenedor decida su estado formal; evidencia original: `<PLAN-136>:PC-5` y `<PLAN-136>:F-3` tal como están publicados, y la regla nueva en las dos policies; estado Git observado: `9998894`, working tree limpio; provenance original: Paso 1 (observación read-only) de la ejecución del Plan 139 (2026-09-20). Autoridad aplicable: ninguno de los actos previstos por DEC-1/DEC-2/DEC-3 cubre el estado de PC-5, y resolver una decisión no definida en el pedido excedería la autorización; por eso se registra como finding y no se actúa.
+- `<PLAN-139>:F-1` — estado: `resolved` (decisión humana del mantenedor, materializada por el Plan 140 — ver `## Metadatos de estado (evolucionables)` al final de este registro); observación: `<PLAN-136>:PC-5` quedó registrada como gap de gobernanza («la política vigente no contempla qué ocurre cuando una determinación de cierre obliga a reconciliar un artefacto que el `Scope` excluye») y su premisa queda **superada** por la regla que este Change materializa en `.agents/policies/validation-closure.md` §5.1/§5.2 y en `.agents/policies/supervised-autonomous-execution.md` §1.1; PC-5 **no** es una de las tres decisiones que este Plan debe resolver (DEC-1/DEC-2/DEC-3) y este Plan no la resuelve ni la reescribe: registra la supersesión para que el mantenedor decida su estado formal; evidencia original: `<PLAN-136>:PC-5` y `<PLAN-136>:F-3` tal como están publicados, y la regla nueva en las dos policies; estado Git observado: `9998894`, working tree limpio; provenance original: Paso 1 (observación read-only) de la ejecución del Plan 139 (2026-09-20). Autoridad aplicable: ninguno de los actos previstos por DEC-1/DEC-2/DEC-3 cubre el estado de PC-5, y resolver una decisión no definida en el pedido excedería la autorización; por eso se registra como finding y no se actúa en el Plan 139; resolución: la transición `open` → `resolved` la materializa el Plan 140 (2026-09-20) como decisión humana del mantenedor, sobre la base de que `<PLAN-136>:PC-5` queda `superseded` por la regla vigente y no deja una cuestión independiente que requiera una decisión nueva; el agente no infirió la resolución.
 
 - `<PLAN-139>:F-2` — estado: `resolved` (corregido autónomamente dentro del Scope por `<PLAN-139>:C-1`); observación: cerrar `<PLAN-136>:F-3` (DEC-1) invalida la invariante que la suite anclada del Plan 138 verificaba con `test_the_closed_plan_of_the_incident_is_not_modified`, cuya aserción era «el Plan 136 no tiene ningún diff contra `HEAD`»; al ejecutar la batería el test falló exactamente por la transición de estado autorizada, de modo que la aserción ya no describía una invariante verdadera: el Plan 136 **debe** cambiar en su metadata de estado para que F-3 quede cerrado; evidencia original: la corrida de `pytest tests/` durante la validación de este Change (`1 failed, 1008 passed`, el fallo siendo esa aserción) y el diff de la línea de `<PLAN-136>:F-3`; estado Git observado: `9998894`, working tree limpio; provenance original: Paso 7 (verificación) de la ejecución del Plan 139 (2026-09-20). Autoridad aplicable: `tests/AGENTS.md` define el contrato de estabilidad de los tests anclados al repositorio real —«pueden nombrar paths, números de artefacto y estados canónicos, de modo que **deben actualizarse cuando ese estado canónico cambia legítimamente**»—, y el cambio de estado de F-3 es exactamente eso; la corrección no relaja la protección: reemplaza una aserción de archivo por aserciones de **contenido histórico** (observación, evidencia, estado Git, provenance, `<PLAN-136>:PC-4`, la clasificación `REQUIRED` y `<PLAN-136>:C-3` con su autorización no establecida) y por una regla de diff que sólo admite cambios en la línea de metadata del finding y en la sección append-only de metadatos, de modo que cualquier alteración de una sección normativa sigue fallando.; Resolución: corregida de forma autónoma por `<PLAN-139>:C-1` dentro del Scope autorizado: la aserción se reemplazó por verificación de contenido histórico y por una regla de diff restringida a la metadata del finding y a la sección append-only, con lo que la protección del Plan 136 se conserva y se endurece en el punto que importa.
 
@@ -342,3 +342,37 @@ la evidencia de los Planes 136 y 138 más allá de la metadata de estado que las
 reglas de lineage definen como evolucionable; no se introdujo Scope Expansion; no se
 resolvió `<PLAN-136>:PC-5` (registrado como `<PLAN-139>:F-1`); EARS no avanzó. Sin
 push, sin merge, sin tag, sin release y sin promotion.
+
+## Metadatos de estado (evolucionables)
+
+*Registro posterior al cierre, agregado por el Plan 140 (2026-09-20) en cumplimiento
+de su determinación A. **No** modifica el `Scope`, el `Task`, la Delegación agentiva,
+los Entregables, las tres decisiones, el anchor, el checkpoint, la Nota de ejecución
+ni ninguna sección normativa de este Plan: es la transición de estado del finding,
+que es metadata **evolucionable** según
+`docs/CONVENTIONS.md:Change Lifecycle — Findings y correcciones (regla operacional;
+LC-1, Incremento 2)`. Los elementos inmutables del finding —identidad, observación
+original, evidencia original, estado Git observado y provenance original— se
+conservan **verbatim** en el registro de `### Findings`.*
+
+**`<PLAN-139>:F-1` — transición `open` → `resolved`.**
+
+- **Acto.** Decisión humana del mantenedor (2026-09-20), materializada por el Plan
+  140; el agente no infirió la resolución (CL-8; ADR-16 `AU-3`). El Plan 139 había
+  registrado la supersesión de `<PLAN-136>:PC-5` **sin** tomar su estado formal, que
+  es exactamente lo que este acto cierra.
+- **Justificación mínima.** (1) `PC-5` preguntaba si la gobernanza debe definir
+  explícitamente qué ocurre cuando una determinación `REQUIRED` obliga a reconciliar
+  un artefacto excluido del `Scope`: la regla vigente ya lo define
+  (`.agents/policies/validation-closure.md` §5.1/§5.2 y §7;
+  `.agents/policies/supervised-autonomous-execution.md` §1.1/§1.4). (2) `PC-5` queda
+  `superseded` en `docs/plans/136-d01-mechanical-checker.md` por el Plan 140, con su
+  observación, su evidencia y su provenance intactas. (3) No subsiste una cuestión
+  independiente: la continuidad de la frontera —si debe existir un mecanismo de
+  ampliación legítima de Scope— vive en `<PLAN-138>:PC-2`, `deferred` con owner.
+- **Efecto.** `<PLAN-139>:F-1` queda formalmente `resolved`. Este registro es el acto
+  de transición; su continuidad no requiere ninguna acción adicional.
+- **Nota de no retroactividad.** La transición **no** autoriza escritura alguna fuera
+  del Scope del Plan 140 ni modifica la evidencia histórica del incidente del Plan
+  136; `<PLAN-136>:C-3` conserva su declaración de autorización **no** establecida y
+  `ROADMAP.md` permanece con 0 diff.

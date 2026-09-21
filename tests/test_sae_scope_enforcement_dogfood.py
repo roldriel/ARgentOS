@@ -26,6 +26,8 @@ Nothing here mutates repository state.
 
 from __future__ import annotations
 
+import hashlib
+import re
 import subprocess
 from pathlib import Path
 
@@ -55,9 +57,43 @@ CLOSED_PLAN = "docs/plans/136-d01-mechanical-checker.md"
 ROADMAP = "ROADMAP.md"
 PLAN_138 = "docs/plans/138-sae-scope-authority-hardening.md"
 
+# The append-only region the Change Lifecycle appends to a closed plan when a
+# lifecycle record's state metadata transitions (LC-1).
+CLOSED_PLAN_METADATA_HEADING = "## Metadatos de estado (evolucionables)"
+
+# sha256 of the closed plan's **normative** content: the plan text up to the
+# append-only metadata section, with the *values* of the evolvable lifecycle
+# metadata canonicalized — a finding's `estado` and a pending decision's
+# `resolución` (LC-1). Every other character is pinned: editing an observation,
+# an evidence string, an immutable element or any normative section changes the
+# digest and fails the test. Recompute it only when a legitimate lifecycle
+# transition changes the canonical content.
+CLOSED_PLAN_NORMATIVE_SHA256 = (
+    "8d2948401ced09cabe421541fcaf79d5ce6d0ea952338255bf31bf0d1ebce985"
+)
+
 
 def _text(rel: str) -> str:
     return (REPO_ROOT / rel).read_text(encoding="utf-8")
+
+
+def _normative_digest(text: str) -> str:
+    """Digest of a closed plan's content with its evolvable metadata normalized."""
+    # The heading, located as a line: other records may *reference* its title.
+    heading = re.search(
+        r"^" + re.escape(CLOSED_PLAN_METADATA_HEADING) + r"\s*$",
+        text,
+        re.MULTILINE,
+    )
+    content = text[: heading.start()] if heading else text
+    content = re.sub(r"estado: `[^`]+`", "estado: `<evolvable>`", content)
+    content = re.sub(
+        r"resolución:.*?(?=; evidencia:)",
+        "resolución: <evolvable>",
+        content,
+        flags=re.DOTALL,
+    )
+    return hashlib.sha256(content.encode("utf-8")).hexdigest()
 
 
 def _git(*args: str) -> str:
@@ -156,54 +192,55 @@ def test_the_determinations_declare_that_required_is_not_a_write_authorization()
 def test_the_closed_plan_of_the_incident_keeps_its_history():
     """`Closed is terminal` for the **content**: the incident was used, not rewritten.
 
-    Plan 139 closed `<PLAN-136>:F-3` with a state transition, which is metadata
-    **evolvable** by the lineage convention (LC-1) and a human decision (CL-8). What
-    must never change is the historical content: the observation, the evidence, the
-    observed Git state, the provenance, the human decision of `<PLAN-136>:PC-4` and
-    the recorded out-of-scope write. This test pins that distinction — it asserts the
-    content, and it asserts that the only modified lines of the closed plan are the
-    ones carrying the finding's status metadata.
+    The closed plan received two lifecycle transitions: Plan 139 closed
+    `<PLAN-136>:F-3` (`open` -> `resolved`) and Plan 140 closed
+    `<PLAN-136>:PC-5` (`pendiente` -> `superseded`). Both are metadata
+    **evolvable** by the lineage convention (LC-1) and human decisions (CL-8).
+    What must never change is the historical content: the observation, the
+    evidence, the observed Git state, the provenance, the human decision of
+    `<PLAN-136>:PC-4` and the recorded out-of-scope write.
+
+    The invariant is deliberately state-independent: it asserts the content, it
+    pins the normative text by digest with the evolvable metadata canonicalized,
+    and it asserts that the append-only metadata section is the last region of
+    the artifact. It does not depend on `git diff` against `HEAD` — that
+    formulation only held while the transition was uncommitted and left the
+    suite red on the committed state (`<PLAN-140>:F-1`).
     """
     text = _text(CLOSED_PLAN)
-    # The finding, the human decision and the incident are still there, verbatim.
+    # The finding, the human decisions and the incident are still there, verbatim.
     assert "<PLAN-136>:F-3" in text
     assert "estado: `resolved`" in text
     assert "<PLAN-136>:PC-4" in text
     assert "Roadmap Impact: REQUIRED" in text
     assert "la modificación **excedió el Scope**" in text
-    # The immutable elements of the finding survive the transition.
+    # The immutable elements of the finding survive every transition.
     assert "`f0d9c0334c6256a1b4187d30a1cf37fe0ab0f816`, working tree limpio" in text
     assert "provenance original: lectura del propio Plan" in text
     # The correction that records the out-of-scope write keeps its finding
-    # unauthorized: the transition legitimizes nothing retroactively.
+    # unauthorized: the transitions legitimize nothing retroactively.
     assert "**Autorización: NO establecida.**" in text
-    # Only metadata may differ from the committed baseline: the finding's record and
-    # the append-only state-metadata section. Every normative section is untouched.
-    diff = _git("diff", "-U0", "HEAD", "--", CLOSED_PLAN)
-    changed = [
-        line
-        for line in diff.splitlines()
-        if (line.startswith("+") or line.startswith("-"))
-        and not line.startswith(("+++", "---"))
-    ]
-    assert changed, "the F-3 closure must be visible as a change"
-    metadata_heading = "## Metadatos de estado (evolucionables)"
-    in_metadata_section = False
-    for line in changed:
-        if metadata_heading in line:
-            in_metadata_section = True
-            continue
-        if in_metadata_section:
-            # Append-only section: the transition record itself.
-            assert line.startswith("+"), (
-                "the state-metadata section is append-only; it removed a line: "
-                + line[:120]
-            )
-            continue
-        # Outside it, only the finding's own record may have changed.
-        assert "<PLAN-136>:F-3" in line, (
-            "the closed plan changed outside its finding status metadata: " + line[:120]
-        )
+    # Both lifecycle transitions are recorded in the artifact that owns them.
+    assert "resolución: **superseded**" in text
+    # The metadata section is the designated append-only region, and it is last:
+    # nothing may be appended after it outside that contract.
+    metadata_line = re.search(
+        r"^" + re.escape(CLOSED_PLAN_METADATA_HEADING) + r"\s*$",
+        text,
+        re.MULTILINE,
+    )
+    assert metadata_line is not None, "the state-metadata section is missing"
+    tail = text[metadata_line.start():]
+    assert not any(
+        line.startswith("## ") and CLOSED_PLAN_METADATA_HEADING not in line
+        for line in tail.splitlines()
+    ), "content was appended to the closed plan after the metadata section"
+    # Everything outside the evolvable lifecycle metadata is pinned by digest.
+    assert _normative_digest(text) == CLOSED_PLAN_NORMATIVE_SHA256, (
+        "the closed plan changed outside its evolvable lifecycle metadata: an "
+        "observation, an evidence string, an immutable element or a normative "
+        "section was edited"
+    )
 
 
 def test_the_governance_boundary_decisions_are_closed_as_decided():

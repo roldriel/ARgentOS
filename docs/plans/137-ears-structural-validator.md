@@ -1,6 +1,6 @@
 # Plan 137 — EARS Structural Validator (auditoría de cobertura EARS y guarda de paridad)
 
-**Status:** Aprobado para redacción
+**Status:** Executed
 **Fecha:** 2026-09-15
 **RFC:** — (vía plan; DEV-only: `tools/` + `tests/` + `docs/`, sin efecto en `protocol/.agents/`; RFC-56 no aplica)
 **Clase:** — (sin efecto payload: no toca `protocol/.agents/` ni el layout del payload fuente)
@@ -273,9 +273,9 @@ Findings **esperables** durante la ejecución (se registran con refs `<PLAN-137>
 
 ## Pending decisions
 
-- `<PLAN-137>:PC-1`: decisión: si corresponde reconciliar `ROADMAP.md` retirando la entrada `EARS structural validator` de `## Trabajo activo / dogfood`, dado que la capacidad ya existe en el payload (plan 66, RFC-57) y la entrada declara un estado que la evidencia contradice; blocking: **sí** para la reconciliación, **no** para ejecutar este Plan (la guarda no depende del roadmap); owner: mantenedor; escalación: `ROADMAP.md` **no** está en el `Scope` de este Plan y, por la decisión humana de `F-3` (`<PLAN-136>:PC-4`), `Roadmap Impact: REQUIRED` **no** amplía el scope autorizado; el agente no la resuelve por inferencia; resolución: **deferred** (clasificación materializada por el Plan 140 el 2026-09-20): la decisión sigue siendo del mantenedor y **no** está tomada; el Plan 140 la clasifica como **no accionable actualmente** —`ROADMAP.md` está fuera del `Scope` autorizado y no se ejecutó ninguna escritura— y su continuidad permanece en esta misma pending decision, sin acción pendiente del agente; evidencia: `ROADMAP.md:Trabajo activo / dogfood`, `protocol/.agents/harness/gate_validator.py` (spec H01 con `ears: True`), `protocol/.agents/harness/tests/test_gate_validator.py` (`test_non_ears_bullet_fails`), `.github/workflows/check-protocol.yml` job `check-protocol` líneas 32–33, `docs/rfc/57-harness-structural-validator.md:Alcance`, `docs/plans/66-harness-structural-validator.md`; efecto downstream: el mapa operativo sigue declarando como futuro un trabajo ya realizado; el Plan 137 se ejecuta igual; ADR-worthiness: no aplica.
+- `<PLAN-137>:PC-1`: decisión: si corresponde reconciliar `ROADMAP.md` retirando la entrada `EARS structural validator` de `## Trabajo activo / dogfood`, dado que la capacidad ya existe en el payload (plan 66, RFC-57) y la entrada declara un estado que la evidencia contradice; blocking: **sí** para la reconciliación, **no** para ejecutar este Plan (la guarda no depende del roadmap); owner: mantenedor; escalación: `ROADMAP.md` **no** está en el `Scope` de este Plan y, por la decisión humana de `F-3` (`<PLAN-136>:PC-4`), `Roadmap Impact: REQUIRED` **no** amplía el scope autorizado; el agente no la resuelve por inferencia; resolución: **resuelta** (determinada por el Plan 141 el 2026-09-21): este Change reconcilia `ROADMAP.md` retirando la entrada `EARS structural validator` del trabajo activo, que es exactamente lo que esta pending decision pedía; evidencia: `ROADMAP.md:Trabajo activo / dogfood`, `protocol/.agents/harness/gate_validator.py` (spec H01 con `ears: True`), `protocol/.agents/harness/tests/test_gate_validator.py` (`test_non_ears_bullet_fails`), `.github/workflows/check-protocol.yml` job `check-protocol` líneas 32–33, `docs/rfc/57-harness-structural-validator.md:Alcance`, `docs/plans/66-harness-structural-validator.md`; efecto downstream: el mapa operativo sigue declarando como futuro un trabajo ya realizado; el Plan 137 se ejecuta igual; ADR-worthiness: no aplica.
 - `<PLAN-137>:PC-2`: decisión: si el conjunto mecánico de EARS debe **ampliarse** para cubrir las reglas de redacción de `protocol/.agents/standards/requirements/EARS.md:Writing rules` 1–3 (un criterio por bullet —ya cubierto estructuralmente por R1—, usar `shall`, evitar negaciones) y la no-compoundidad (hoy `[agent]`); blocking: **no** para este Plan; owner: mantenedor; escalación: ampliar el conjunto mecánico **cambia el contrato del payload** (`EARS.md`, la policy H01 y su clasificación `[gate]`/`[agent]`) y por lo tanto requiere la vía RFC-56 (RFC + plan); el Plan 137 lo registra como frontera y **no** lo implementa; resolución: pendiente; evidencia: `protocol/.agents/standards/requirements/EARS.md:Writing rules`, `protocol/.agents/orchestrators/core/harness/policies/H01-task-specification.md:Checklist` ítems 10/11/12; efecto downstream: sin esta decisión, la guarda documenta esas reglas como juicio y no las chequea, lo que es el comportamiento correcto y autorizado; ADR-worthiness: no evaluado — requiere decisión humana.
-- `<PLAN-137>:PC-3`: decisión: si corresponde agregar `tools/check_ears_coverage.py` a la batería canónica (`docs/VERSIONING.md` §4.1); blocking: **no**; owner: mantenedor; escalación: incorporar un checker a la batería crea una obligación de gobernanza sobre todo Change futuro y este Plan no la autoriza; resolución: pendiente; evidencia: `docs/plans/136-d01-mechanical-checker.md` (precedente: D01 no se agregó); efecto downstream: la guarda se valida por su propia suite y por el dogfood; ADR-worthiness: no aplica.
+- `<PLAN-137>:PC-3`: decisión: si corresponde agregar `tools/check_ears_coverage.py` a la batería canónica (`docs/VERSIONING.md` §4.1); blocking: **no**; owner: mantenedor; escalación: incorporar un checker a la batería crea una obligación de gobernanza sobre todo Change futuro y este Plan no la autoriza; resolución: **resuelta** (decisión humana del mantenedor, determinada por el Plan 141 el 2026-09-21): **no** se incorpora `tools/check_ears_coverage.py` a la batería canónica —agregar un checker crea una obligación de gobernanza sobre todo Change futuro y el precedente de D01 (plan 136) es no incorporarlo—; evidencia: `docs/plans/136-d01-mechanical-checker.md` (precedente: D01 no se agregó); efecto downstream: la guarda se valida por su propia suite y por el dogfood; ADR-worthiness: no aplica.
 
 ## Criterio de entrada
 
@@ -376,3 +376,76 @@ actualmente. `ROADMAP.md` permanece con **0 diff** en todo momento.
 **4. No-acciones explícitas.** El Plan 140 **no** implementa la guarda, **no** modifica
 `protocol/`, `tools/`, `tests/`, `runtime/`, `.agents/` ni `ROADMAP.md`, **no** cambia
 el status de este Plan y **no** resuelve `<PLAN-137>:PC-2` ni `<PLAN-137>:PC-3`.
+
+## Ejecución del Plan 137 (2026-09-21, por el Change del Plan 141)
+
+El mantenedor autorizó la ejecución de este Plan dentro del Change del Plan 141
+(«resolver el backlog de decisiones humanas `HD-1`…`HD-12`»), que es la autorización
+explícita de ejecución que el `## Criterio de entrada` exigía. El retiro no era una salida
+expresable: el ciclo de status de planes no tiene estado de retiro y `Superseded` exige
+indicar el plan reemplazante, que no existe. La guarda se ejecutó y este registro pasa a
+`Executed`.
+
+**Qué se implementó.** `tools/check_ears_coverage.py` —guarda DEV de sólo lectura, stdlib
+pura, que **invoca** el validador del payload (`protocol/.agents/harness/gate_validator.py`,
+`validate("H01", artifact)`) y **no** reimplementa la validación EARS— con R1–R5, señales
+`VALID`/`GAP`/`ANOMALY`/`BOUNDARY`/`N/A`, exit `0`/`1`/`2`, texto y `--json`, y `--payload`
+/ `--root` / `--corpus` repetible. R5 es genuinamente derivada: lee los cinco bloques de
+plantilla de `protocol/.agents/standards/requirements/EARS.md:Patterns`, sustituye cada
+placeholder y contrasta el resultado contra `EARS_RE`. Y las tres suites
+`tests/test_check_ears_coverage.py`, `tests/test_check_ears_coverage_falsification.py` y
+`tests/test_check_ears_coverage_dogfood.py` (91 tests).
+
+**Resultado.** `python tools/check_ears_coverage.py --payload protocol/.agents` → exit 0,
+`Summary: N/A=1, VALID=3`: R3 `VALID`, R4 `VALID` (`validator decision: PASS; ears result:
+PASS`) y R5 `VALID` sobre el payload real; R1/R2 `N/A` declarado, porque el repositorio no
+tiene corpus versionado de `TASK_SPECIFICATION.md` y esa limitación **no** se convierte en
+`PASS`. Los tres suites: **91 passed**. El defecto real que la ejecución encontró —cargar el
+módulo del payload por su ruta hacía que CPython escribiera `__pycache__` dentro de
+`protocol/.agents/harness/`— se corrigió con `sys.dont_write_bytecode = True` alrededor de
+`exec_module`, con dos tests que lo guardan; la guarda es de sólo lectura de forma
+verificada.
+
+**Diferencia declarada respecto de la especificación.** El §`Tests` del Plan declara
+`ANOMALY` para criterios presentes sólo en el bloque TOML y el §`Contrato del validator` 9
+prohíbe `VALID` por vacío; donde las dos cláusulas se separan se implementó R1 = `GAP`
+advisory (exit 0) nombrando el bloque TOML como la violación de forma, y R3 = `ANOMALY`
+cuando es el **contrato** el que contradice o no sostiene la forma canónica. No se relajó
+ninguna regla. La asimetría de `EARS_RE` (un `.+` codicioso por placeholder sin
+backreference acepta oraciones construidas desde un patrón declarado pero no equivalentes a
+él) se registró como límite declarado y **no** se resolvió inventando una regla: R5
+comprueba paridad estructural —mismo número de alternativas, mismo `.+` por placeholder,
+mismo orden— y es `VALID`.
+
+## Validation anchor
+
+*Validación A1 — registrada al ejecutar el Plan 137 dentro del Change del Plan 141 (VC-1).*
+
+- **Declared scope:** `tools/check_ears_coverage.py`, `tests/test_check_ears_coverage.py`, `tests/test_check_ears_coverage_falsification.py`, `tests/test_check_ears_coverage_dogfood.py`, `docs/plans/137-ears-structural-validator.md`, `docs/plans/INDEX.md`, `CHANGELOG.md`.
+- **Validation command-set:** `python tools/check_ears_coverage.py --payload protocol/.agents`; `python -m pytest tests/test_check_ears_coverage.py tests/test_check_ears_coverage_falsification.py tests/test_check_ears_coverage_dogfood.py -q`; `python -m pytest tests/ -q`; `python -m pytest protocol/.agents/harness/tests/ -q`; los seis checkers canónicos; `python tools/check_lifecycle_anchor.py`, `check_lifecycle_checkpoint.py` y `check_lifecycle_lineage.py`.
+- **Effective inputs (repo content):** el scope declarado (7 paths), el payload que la guarda lee (`protocol/.agents/standards/requirements/EARS.md`, `orchestrators/core/contracts/TASK_SPECIFICATION.md`, `harness/gate_validator.py`) y el corpus de `docs/` que consume la batería.
+- **Observed dependencies:** `git` (identidad de contenido y estado), `python` (intérprete de la guarda, de los checkers y de las suites); el resto no instrumentado.
+- **Environmental factors:** Windows; Python 3.14.3; git 2.55.0.windows.5; sin red.
+- **Scoped Content Identity:**
+  - **State identity (estado validado):** T1 = `44ac204a5db53fc433459fb9095ff877fbcc2d03` (`git write-tree` sobre el índice staged con el cambio completo del Plan 141).
+  - **Delta scoped identity (scope S = los 7 paths, ordenados; serialización `scoped-v1`):** `6c26af5ab04092af0388086703bdde95465e026352250cc81fdf470a63781d5e`.
+  - **Límite declarado:** T1 y el delta se midieron sobre el índice staged **antes** de transcribir los literales de identidad de este registro y del Checkpoint del Plan 141; esa transcripción es la única diferencia declarada entre el estado medido y el estado de cierre (convención anti-auto-referencia, precedente Planes 114/116/134/140).
+  - **Scope set (repo-relative paths, ordenados; reconstruible desde este artifact):** `CHANGELOG.md`, `docs/plans/137-ears-structural-validator.md`, `docs/plans/INDEX.md`, `tests/test_check_ears_coverage.py`, `tests/test_check_ears_coverage_dogfood.py`, `tests/test_check_ears_coverage_falsification.py`, `tools/check_ears_coverage.py`.
+- **Validity / stale:** vigente; revalidado por A2 sobre el estado de cierre (ver el Checkpoint del Plan 141).
+
+*Resultado real:* R3/R4/R5 `VALID` sobre el payload real, R1/R2 `N/A` declarado por ausencia de corpus, **91 passed** en las tres suites; batería canónica completa y gates C-1/C-2/C-3 registrados en el `## Checkpoint / cierre` del Plan 141.
+
+## Checkpoint / cierre
+
+*Registrado al cerrar el Plan 137 (GC-1), dentro del Change del Plan 141.*
+
+- **Commits de cierre:** el commit atómico del Change del Plan 141, identificado por su mensaje: `docs(governance): resolve the human decision backlog HD-1..HD-12 (plan 141)`.
+- **Estado validado (ref al Validation anchor):** A1 (arriba).
+- **Estado de cierre (identidad):** delta scoped identity + state identity del anchor aplicable (A1): `6c26af5ab04092af0388086703bdde95465e026352250cc81fdf470a63781d5e` / `44ac204a5db53fc433459fb9095ff877fbcc2d03`. Es el estado que este checkpoint **certifica** por correspondencia GC-1, y **no** es el árbol del commit de cierre.
+- **Árbol material del commit de cierre (tree id):** no declarado como identidad; el commit de cierre incluye governance, de modo que su árbol puede diferir legítimamente.
+- **Consistencia checkpoint↔anchor:** PASS — la identidad scoped del estado de cierre es la del anchor aplicable (A1) y los factores ambientales no cambiaron.
+- **Governance aplicada:** este Plan pasa a `Executed`; `docs/plans/INDEX.md` registra el cambio de status; `CHANGELOG.md` con el ítem `[Unreleased]` del Plan 141.
+- **Documentation impact:** `REQUIRED` — reconciliado: `docs/plans/INDEX.md` (status del Plan 137) y `CHANGELOG.md`.
+- **Roadmap impact:** `REQUIRED` — reconciliado por el Plan 141: `ROADMAP.md` retira la entrada `EARS structural validator` del trabajo activo.
+- Condición derivada: **`Closed` (docs-only/tooling DEV, sin release)**.
+

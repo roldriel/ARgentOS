@@ -69,7 +69,7 @@ CLOSED_PLAN_METADATA_HEADING = "## Metadatos de estado (evolucionables)"
 # digest and fails the test. Recompute it only when a legitimate lifecycle
 # transition changes the canonical content.
 CLOSED_PLAN_NORMATIVE_SHA256 = (
-    "8d2948401ced09cabe421541fcaf79d5ce6d0ea952338255bf31bf0d1ebce985"
+    "5ef36941f6445d82fb5b4501ca88259a4c8e641677bedc7c37e83a7aa346a40f"
 )
 
 
@@ -86,7 +86,7 @@ def _normative_digest(text: str) -> str:
         re.MULTILINE,
     )
     content = text[: heading.start()] if heading else text
-    content = re.sub(r"estado: `[^`]+`", "estado: `<evolvable>`", content)
+    content = re.sub(r"estado: [^;]+;", "estado: <evolvable>;", content)
     content = re.sub(
         r"resolución:.*?(?=; evidencia:)",
         "resolución: <evolvable>",
@@ -283,9 +283,19 @@ def test_the_roadmap_is_not_modified_by_this_change():
     This is the living demonstration of the rule: the Change that formalizes
     "`REQUIRED` is not a write authorization" is itself closed with a deferred
     roadmap obligation and a clean `ROADMAP.md`.
+
+    Asserted over the plan's **own commits**, not over the working tree: the claim
+    is historical — what this Change did — and a working-tree diff against `HEAD`
+    makes the suite red for any later Change that legitimately reconciles the
+    operational map (the same class of Git-state dependency as
+    ``<PLAN-140>:F-1``).
     """
-    diff = _git("diff", "--name-only", "HEAD", "--", ROADMAP)
-    assert diff.strip() == "", f"ROADMAP.md was modified: {diff}"
+    shas = _git("log", "--format=%H", "--grep=(plan 138)").split()
+    assert shas, "the plan-138 commits are not in history"
+    moved: set[str] = set()
+    for sha in shas:
+        moved.update(_git("log", "-1", "--name-only", "--format=", sha).split())
+    assert ROADMAP not in moved, f"ROADMAP.md was modified by plan 138: {sorted(moved)}"
     assert (REPO_ROOT / ROADMAP).is_file()
 
 
@@ -297,18 +307,28 @@ def test_the_plan_records_the_deferral_with_its_governing_pending_decision():
 
 
 def test_no_protected_path_moved():
-    """Payload, RFCs, ADRs and the explicitly excluded policy are untouched."""
-    diff = _git(
-        "diff",
-        "--name-only",
-        "HEAD",
-        "--",
-        "protocol/",
-        "docs/rfc/",
-        "docs/adr/",
-        ".agents/policies/authority.md",
+    """The plan's own commits left the payload, RFCs, ADRs and the authority policy
+    untouched.
+
+    Asserted over **immutable history**, not over the working tree. The claim is
+    about what this plan's change did, so it is verified on the plan's own commits.
+    Comparing the working tree against ``HEAD`` (the previous form, the same class
+    as ``<PLAN-140>:F-1``) made the suite red for any later, legitimate governance
+    change to the same paths and green again only once the commit existed — a
+    dependency on the Git state, not an invariant of the repository.
+    """
+    shas = _git("log", "--format=%H", "--grep=(plan 138)").split()
+    assert shas, "the plan-138 commits are not in history"
+    moved: set[str] = set()
+    for sha in shas:
+        moved.update(_git("log", "-1", "--name-only", "--format=", sha).split())
+    protected = sorted(
+        path
+        for path in moved
+        if path.startswith(("protocol/", "docs/rfc/", "docs/adr/"))
+        or path == ".agents/policies/authority.md"
     )
-    assert diff.strip() == "", f"a protected path was modified: {diff}"
+    assert protected == [], f"a protected path was modified: {protected}"
 
 
 # --------------------------------------------------------------------------- #

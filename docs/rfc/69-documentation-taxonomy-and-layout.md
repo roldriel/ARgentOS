@@ -412,3 +412,9 @@ automatización de la promoción working → canonical.
   status ADR en `docs/CONVENTIONS.md` y cobertura de `docs/adr/` en
   `tools/check_plan_structure.py` y `tools/check_plan_citations.py`. El modelo
   ADR de esta RFC no cambia.
+- 2026-09-21 — Determinación registrada por el Plan 141 (`HD-8`). El ingreso de
+  `check_architecture_traceability.py` a CI que esta RFC dejó en su evolución
+  futura **no se adopta**: la decisión sigue siendo explícita y futura, no
+  automática, y el checker permanece una ayuda de navegación DEV fuera de la
+  batería canónica. La determinación cierra la continuidad de esa evolución sin
+  modificar el checker, CI ni el modelo de esta RFC.

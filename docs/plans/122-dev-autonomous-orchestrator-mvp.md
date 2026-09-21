@@ -393,8 +393,8 @@ verificable con `git rev-parse HEAD^{tree}` tras el commit.
   (`python -m pytest tests/`, sandbox del agente sin mecánica de directorios
   temporales de pytest); blocking: **no** (el comando se clasifica `GAP`, nunca
   `PASS`, y el loop continúa); owner: mantenedor; escalación: mantenedor;
-  resolución: **pendiente — decisión humana** (la declaración la lee el host del
-  Plan autorizado; no la juzga el host); evidencia: `## Verificación` de este
+  resolución: **resuelta** (decisión humana del mantenedor, determinada por el Plan 141 el 2026-09-21): la materialidad ya tiene lugar asignado —las «Environmental factors» del Validation Anchor (`.agents/policies/validation-closure.md` §1), donde el corpus declara la clase de basetemp— de modo que no queda pregunta independiente; la declaración la lee el host del
+  Plan autorizado; evidencia: `## Verificación` de este
   Plan y los factores ambientales del `## Validation anchor`; efecto downstream:
   determina si esa pierna de la batería es exigible en este entorno;
   ADR-worthiness: no aplica.
@@ -416,8 +416,7 @@ verificable con `git rev-parse HEAD^{tree}` tras el commit.
 - `<PLAN-122>` — decisión: **alcance del track de coordinación/handoff
   (RFC-75, Incremento 5, Deferred / Future Track)**; blocking: **no** para este
   MVP (el host no lo requiere ni lo reclama); owner: mantenedor; escalación:
-  mantenedor; resolución: **pendiente y explícitamente NO resuelta por este
-  Plan**; evidencia: `docs/rfc/75-change-lifecycle.md:Rollout incremental` y
+  mantenedor; resolución: **deferred** (owner: mantenedor; determinada por el Plan 141 el 2026-09-21): la RFC-75 declara el Incremento 5 fuera de su propio alcance y requiere una decisión de track dedicada, sin trigger ocurrido; su continuidad es la ya registrada como `DF-5`; evidencia: `docs/rfc/75-change-lifecycle.md:Rollout incremental` y
   `docs/rfc/75-change-lifecycle.md:Preguntas abiertas`; efecto downstream:
   determina si ARgentOS abre un track de coordinación entre agentes; este Plan
   **no** lo abre, **no** lo implementa y **no** reabre RFC-75; ADR-worthiness: no

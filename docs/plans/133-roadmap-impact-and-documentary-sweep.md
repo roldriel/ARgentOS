@@ -443,13 +443,13 @@ documentos de estado actual.
   clase de revisión humana (BOUNDARY) lo resuelve, y si corresponde una
   desambiguación del propio Plan 116 o del checker C-2; blocking: no; owner:
   mantenedor; escalación: revisión humana de gobernanza de lifecycle (el Plan 116
-  está `Closed` y no se reabre); resolución: pendiente; evidencia:
+  está `Closed` y no se reabre); resolución: **resuelta** (decisión humana del mantenedor, determinada por el Plan 141 el 2026-09-21); evidencia:
   `<PLAN-133>:F-1`.
 - `<PLAN-133>` — decisión: si corresponde alinear el vocabulario de secciones de
   `[Unreleased]` del `CHANGELOG.md` con la convención que su cabecera declara
   (`<PLAN-133>:F-2`), y con qué alcance (sólo ítems nuevos desde ahora, o
   también los ya acumulados); blocking: no; owner: mantenedor; escalación:
-  decisión de convención sobre el changelog; resolución: pendiente; evidencia:
+  decisión de convención sobre el changelog; resolución: **resuelta** (decisión humana del mantenedor, determinada por el Plan 141 el 2026-09-21); evidencia:
   `<PLAN-133>:F-2`.
 
 ## Riesgos

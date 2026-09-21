@@ -95,7 +95,7 @@ git diff --name-status
 
 ### Findings
 
-- `<PLAN-130>:F-1` — estado: `open`; severidad: `low`; observación: el namespace textual `PC-n` representaba simultáneamente decisiones de nivel de plan (Plan 129) y reglas normativas internas del Placement Contract (`PC-1`…`PC-80`), de modo que el significado de un identificador sólo podía determinarse por contexto; evidencia original: `docs/plans/129-pc1-pc2-pc3-closure.md` (identificadores de decisión) frente a `docs/placement-contract.md` (etiquetas de regla); estado Git observado: `dev` @ `4608176`, working tree limpio; provenance original: `<PLAN-129>:F-2` y decisión humana de corrección (2026-09-15); resolución: corregido por `<PLAN-130>:C-1`.
+- `<PLAN-130>:F-1` — estado: `resolved` (transición `open` → `resolved` aplicada el 2026-09-21 por decisión humana del mantenedor, Change del Plan 141); severidad: `low`; observación: el namespace textual `PC-n` representaba simultáneamente decisiones de nivel de plan (Plan 129) y reglas normativas internas del Placement Contract (`PC-1`…`PC-80`), de modo que el significado de un identificador sólo podía determinarse por contexto; evidencia original: `docs/plans/129-pc1-pc2-pc3-closure.md` (identificadores de decisión) frente a `docs/placement-contract.md` (etiquetas de regla); estado Git observado: `dev` @ `4608176`, working tree limpio; provenance original: `<PLAN-129>:F-2` y decisión humana de corrección (2026-09-15); resolución: corregido por `<PLAN-130>:C-1`.
 
 ### Correcciones
 
@@ -103,8 +103,8 @@ git diff --name-status
 
 ### Pending decisions
 
-- `<PLAN-130>:PC-1` — decisión: si conviene adoptar de forma **general** una convención de identificadores de decisión a nivel de plan (por ejemplo `PLAN-<N>:DEC-<N>`) para todos los planes, o mantener la práctica actual. **No decidida aquí**: esta corrección arregla únicamente Plan 129 y **no** generaliza la convención; blocking: no; owner: mantenedor; escalación: decisión directa si la ambigüedad reaparece en otro plan; resolución: pendiente; evidencia: el brief prohíbe explícitamente crear una política global en este Change.
-- `<PLAN-130>:PC-2` — decisión: implementar el enforcement mecánico autorizado por `PLAN-129:DEC-2` (heredada, sin cambios); blocking: no; owner: mantenedor; escalación: nuevo Change/Plan autorizado; resolución: pendiente; evidencia: `docs/placement-contract.md:22. Enforcement` y `24. Enforcement deferred`.
+- `<PLAN-130>:PC-1` — decisión: si conviene adoptar de forma **general** una convención de identificadores de decisión a nivel de plan (por ejemplo `PLAN-<N>:DEC-<N>`) para todos los planes, o mantener la práctica actual. **No decidida aquí**: esta corrección arregla únicamente Plan 129 y **no** generaliza la convención; blocking: no; owner: mantenedor; escalación: decisión directa si la ambigüedad reaparece en otro plan; resolución: **resuelta** (decisión humana del mantenedor, determinada por el Plan 141 el 2026-09-21): **no** se adopta una convención general `PLAN-<N>:DEC-<N>` —el identificador del Plan 129 es local, la ambigüedad no reapareció en otro plan y no se crea taxonomía nueva—; evidencia: el brief prohíbe explícitamente crear una política global en este Change.
+- `<PLAN-130>:PC-2` — decisión: implementar el enforcement mecánico autorizado por `PLAN-129:DEC-2` (heredada, sin cambios); blocking: no; owner: mantenedor; escalación: nuevo Change/Plan autorizado; resolución: **superseded** (determinada por el Plan 141 el 2026-09-21): ownership duplicado de `<PLAN-129>:DEC-2`; evidencia: `docs/placement-contract.md:22. Enforcement` y `24. Enforcement deferred`.
 
 ## Riesgos
 

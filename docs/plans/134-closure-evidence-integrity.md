@@ -567,7 +567,7 @@ la divergencia produce `GAP` advisory y R2 sigue produciendo `ANOMALY`.
   datos y la materialización quede verificada en todos los Planes y no solo en
   aquellos que declaren locators; blocking: no; owner: mantenedor; escalación:
   cambio de práctica del Change Lifecycle (afecta a todos los Planes futuros);
-  resolución: pendiente; evidencia: `<PLAN-134>:F-3` y el contrato R4.
+  resolución: **resuelta** (decisión humana del mantenedor, determinada por el Plan 141 el 2026-09-21): se adopta como **práctica recomendada**, no obligatoria, que es exactamente lo que la regla vigente ya declara (`.agents/policies/validation-closure.md` §5: embeber el SHA o el tree id una vez que el commit existe «is legal and recommended»); evidencia: `<PLAN-134>:F-3` y el contrato R4.
 
 ## Riesgos
 

@@ -13,64 +13,64 @@ propia autorización (RFC-56) antes de ejecutarse.
 
 | Prioridad | Trabajo | Origen | Estado |
 | --- | --- | --- | --- |
-| Media | EARS structural validator | B-2 derivado · `docs/plans/33-ears-criteria-canonical-form.md` | **Próximo dogfood** |
+| — | — | — | **Sin trabajo activo.** |
+
+`EARS structural validator` (`B-2` derivado) **se ejecutó** (plan 137, 2026-09-21): el
+validador estructural del payload existía desde el plan 66/RFC-57 y lo que restaba era la
+guarda DEV de paridad `tools/check_ears_coverage.py` con sus tres suites, que audita la
+coherencia entre el estándar (`EARS.md`), el contrato (`TASK_SPECIFICATION.md`) y el
+validador del payload **sin** reimplementarlo. El Plan 137 está `Executed` con condición
+derivada `Closed`. La entrada se retira de trabajo activo porque ya no representa trabajo
+futuro: su estado detallado vive en `docs/plans/INDEX.md` y en el Plan 137, que es donde
+este documento delega la trazabilidad.
 
 `Mechanical D01 subset — DEV checker for discovery output structure and provenance`
-(`B-1` derivado) **se ejecutó** (plan 136): el checker DEV del subconjunto mecánico
-de D01 existe en `tools/check_discovery_output.py`, con su suite y su dogfood, y el
-Plan 136 está `Executed` con condición derivada `Closed`. La entrada se retira de
-trabajo activo porque ya no representa trabajo futuro: su estado detallado vive en
-`docs/plans/INDEX.md` y en el Plan 136, que es donde este documento delega la
-trazabilidad. Los residuos de payload que D01 no podía resolver (`F-17`, `F-16`)
-siguen en la sección de pendientes que requieren autorización.
+(`B-1` derivado) **se ejecutó** (plan 136): el checker DEV del subconjunto mecánico de
+D01 existe en `tools/check_discovery_output.py`, con su suite y su dogfood, y el Plan 136
+está `Executed` con condición derivada `Closed`. Los residuos de payload que D01 no podía
+resolver (`F-17`, `F-16`) quedaron **resueltos** por la RFC-79 y el Plan 142 (2026-09-21,
+versión 11.6.0): el contrato expresa la procedencia de ausencias y hechos de árbol y el
+shape documental, y el checker del subconjunto mecánico dejó de tolerar un `source_files`
+no resoluble.
 
-Lo que sigue es **trabajo derivado nuevo**, no la reapertura de un ítem histórico.
-Los problemas originales `B-1` y `B-2` están resueltos; lo que sigue es una
-extensión que el propio contrato de D01 declara como futura (la validación mecánica
-era inexistente y el contrato la admitía como extensión posible) y la secuencia de
-dogfood decidida después.
-
-**Criterio de prioridad.** La prioridad de una entrada del mapa vigente es la que
-fija `ROADMAP.md` al registrarla, no el ítem histórico del que deriva: el ítem
-histórico `B-2` fue `Alta` **por su propio motivo y en su propio contexto** («un
-fallo de formato cuesta una fase RECOVERY completa», `docs/plans/INDEX.md`
-§Backlog evidenciado - plan 19), y la entrada derivada `EARS structural validator`
-fue registrada `Media` por el Plan 132 (`docs/plans/132-roadmap-current-state.md`).
-No se recalifica una entrada del mapa sin evidencia documental nueva. La secuencia
-de dogfood y la prioridad son dimensiones distintas: completar `B-1` **cumple la
-condición de secuencia** de `EARS` («después de `B-1`») y lo vuelve el próximo
-dogfood, pero **no** constituye evidencia nueva sobre su importancia intrínseca, de
-modo que su prioridad en el mapa permanece `Media`.
+**Criterio de prioridad.** La prioridad de una entrada del mapa vigente es la que fija
+`ROADMAP.md` al registrarla, no el ítem histórico del que deriva: el ítem histórico `B-2`
+fue `Alta` **por su propio motivo y en su propio contexto** («un fallo de formato cuesta
+una fase RECOVERY completa», `docs/plans/INDEX.md` §Backlog evidenciado - plan 19), y la
+entrada derivada `EARS structural validator` fue registrada `Media` por el Plan 132
+(`docs/plans/132-roadmap-current-state.md`). No se recalifica una entrada del mapa sin
+evidencia documental nueva; con la entrada ya retirada, `B-2` y su trabajo derivado no
+conservan estado en este mapa.
 
 ## Pendientes que requieren autorización
 
-Ninguno de estos ítems es implementable de inmediato: los tres afectan contratos
-del payload (`protocol/.agents/`) y por lo tanto requieren autorización RFC-56 y
-un plan aprobado antes de tocarse.
+**Ninguno.** Los tres residuos de payload que esta sección registraba (`F-14`/`F-17`,
+`F-16`, `B-8` residual) están **implementados** desde el Plan 142 (2026-09-21, RFC-79
+`Accepted`, versión 11.6.0): el marcado legacy tiene representación, `source_files` admite
+`project_scan` para ausencias y hechos de árbol, `project_shape` admite `documentation` y
+el catálogo de métricas tiene el evento de sesión `session_risk`. La sección queda como
+constancia de que no hay trabajo de payload pendiente de autorización; el estado detallado
+vive en `docs/plans/INDEX.md`, en los planes 141/142 y en la RFC-79.
 
-| Prioridad | Trabajo | Origen | Estado |
-| --- | --- | --- | --- |
-| Media | Resolver `F-14` y `F-17` de discovery | B-4 residual · `docs/plans/19-anexo-a-bitacora-fricciones.md` | **PENDIENTE — PAYLOAD / REQUIERE AUTORIZACIÓN** (RFC-56) |
-| Baja | Incorporar `project_shape` para repositorios documentales/protocolo (`F-16`) | B-7 residual · `docs/plans/19-anexo-a-bitacora-fricciones.md` | **PENDIENTE — PAYLOAD / REQUIERE AUTORIZACIÓN** (RFC-56) |
-| Baja | Registrar el session risk de single-instance en métricas | B-8 residual · `protocol/.agents/contracts/METRICS.md` | **PENDIENTE — PAYLOAD / BAJA PRIORIDAD** (requiere cambio de payload) |
-
-- **`B-4` residual.** El ítem histórico `B-4` está resuelto por los planes 37–43,
-  53 y 58; lo que sigue abierto son dos fricciones concretas: `F-14` (el manifest
-  no puede expresar marcado legacy) y `F-17` (procedencia de `source_files` para
-  ausencias y hechos de árbol). Ambas tocan contratos de discovery, es decir el
-  payload.
-- **`B-7` residual.** El ítem histórico `B-7` está resuelto por los planes 29 y
-  52; su residuo real es que `project_shape` no contempla repositorios
-  documentales/de protocolo (`F-16`), lo que afecta contratos del payload. **No**
-  debe confundirse con la corrección de trazabilidad de `docs/plans/INDEX.md`
-  registrada en el Plan 132: son problemas distintos —uno arquitectónico, uno
-  documental— y se atienden por vías separadas.
-- **`B-8` residual.** El ítem histórico `B-8` está resuelto por el plan 49: el
-  modelo de ejecución de delegaciones en runtimes de contexto único **existe**.
-  Lo único pendiente es que la mitigación de session risk para single-instance no
-  tiene slot ni evento correspondiente en el catálogo de
-  `protocol/.agents/contracts/METRICS.md`. Es deuda de payload de baja prioridad,
-  no el modelo principal de single-instance.
+- **`B-4` residual — resuelto.** `F-14` (el manifest no podía expresar marcado legacy) y
+  `F-17` (procedencia de `source_files` para ausencias y hechos de árbol) quedaron
+  decididos por el Plan 141 y materializados por el Plan 142. `F-18` (delimitador del
+  front matter de KB entry) viajó en la misma RFC y está materializado.
+- **`B-7` residual — resuelto.** `project_shape` contempla desde el Plan 142 el shape
+  `documentation`, de modo que un repositorio documental deja de clasificar `unknown`. La
+  corrección de trazabilidad de `docs/plans/INDEX.md` registrada en el Plan 132 sigue
+  siendo un problema **documental** distinto, fuera del alcance del Plan 141.
+- **`B-8` residual — resuelto.** El catálogo de
+  `protocol/.agents/contracts/METRICS.md` tiene el evento de sesión `session_risk` con el
+  que el modo single-instance registra su riesgo, y `PROTOCOL_METRICS.md` declara su clase
+  de verifiabilidad.
+- **Dogfood diferido (no payload).** El dogfooding medido del perfil `trivial`
+  (`docs/plans/25-task-profile-model.md`, plan 25) sigue sin verificación: exige una
+  sesión de protocolo real con el usuario en un proyecto adoptante, y `dist` (`11.2.0`)
+  no contiene el payload de `dev`. El blocker y la acción mínima que lo remueve quedan
+  registrados en `<PLAN-141>:PC-2`. El dogfood del modo enforced (plan 26) está
+  **satisfecho**: su RFC de origen (RFC-47) admitía una simulación de harness con fixtures
+  y el plan 46 la ejecutó y la verificó.
 
 ## Candidatos futuros
 

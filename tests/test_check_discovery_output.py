@@ -6,15 +6,19 @@ Two halves, deliberately:
   a project with no knowledge base is a declared absence, not a failure;
 - **falsification** — the checker *refuses* to accept: a title that does not
   match, a wrong ``artifact``/``kind``, a missing required section, a
-  ``system_probe`` used outside the environment entry, a manifest that disagrees
-  with the files, a shape outside the enum, a shape that contradicts
-  ``executive_summary``, ``distribution.md`` absent for a ``library``/``cli``
-  shape, corrupt front matter.
+  ``system_probe`` used outside the environment entry, a ``project_scan`` used in
+  the environment entry, an unresolvable ``source_files`` entry that is not a
+  reserved value, a manifest that disagrees with the files, a shape outside the
+  enum, a shape that contradicts ``executive_summary``, ``distribution.md``
+  absent for a ``library``/``cli`` shape, corrupt front matter.
 
 The frontier tests are the point of the suite: the checker must **not** silently
-perform the judgement items of D01, must **not** report an unresolvable
-``source_files`` path as ``ANOMALY`` (that is the declared ``F-17`` boundary), and
-must **not** grant an ad-hoc exemption for it either.
+perform the judgement items of D01 and must **not** grant an ad-hoc exemption for
+an unresolvable ``source_files`` entry. Since RFC-79 decision 2 the contract can
+express the absence/tree-fact class (``project_scan``), so an unresolvable entry
+that is not a reserved value is a violation of D01 item 5 and is reported
+``ANOMALY``; while the class had no value, the same case was the declared ``F-17``
+boundary and was reported ``GAP``.
 
 Everything here is isolated (``tests/AGENTS.md``): the fixtures are synthetic and
 the contracts are a synthetic payload, so the real payload can evolve without
@@ -71,6 +75,10 @@ artifact = "KB_DISCOVERY_ENTRY.md"
 
 # KB Discovery Entry Contract
 
+## Required Front Matter
+
+TOML front matter delimited by `+++`.
+
 ## Sections
 
 ### `## Summary`
@@ -79,7 +87,11 @@ artifact = "KB_DISCOVERY_ENTRY.md"
 
 ## Optional Front Matter (provenance)
 
-`system_probe` is a valid source only for environment entries.
+`status` is `active`, `stale` or `legacy`.
+
+`system_probe` is a valid source only for environment entries. `project_scan` is
+a valid source only for an absence or a tree fact, and never in an environment
+entry.
 """
 
 MANIFEST_CONTRACT = """# DISCOVERY_MANIFEST Contract
@@ -103,6 +115,7 @@ MANIFEST_CONTRACT = """# DISCOVERY_MANIFEST Contract
 
 - `active`: list of strings
 - `stale`: list of strings
+- `legacy`: list of strings
 
 ### `[workers]`
 
@@ -228,7 +241,9 @@ def write_manifest(
     shape: str = "application",
     active: tuple[str, ...] = (),
     stale: tuple[str, ...] = (),
+    legacy: tuple[str, ...] = (),
     omit_shape: bool = False,
+    omit_legacy: bool = False,
     corrupt: bool = False,
     extra: str = "",
 ) -> Path:
@@ -238,6 +253,10 @@ def write_manifest(
         shape_line = "" if omit_shape else f'project_shape = "{shape}"\n'
         active_list = ", ".join(f'"{name}"' for name in active)
         stale_list = ", ".join(f'"{name}"' for name in stale)
+        legacy_list = ", ".join(f'"{name}"' for name in legacy)
+        # ``[entries] legacy`` is a required list of the contract (RFC-79
+        # decision 1): absent means the manifest violates its own contract.
+        legacy_line = "" if omit_legacy else f"legacy = [{legacy_list}]\n"
         body = f"""[knowledge_base]
 version = "1.0.0"
 generated_at = "2026-09-15T00:00:00Z"
@@ -253,7 +272,7 @@ config_files_hash = "sha256:aaa"
 [entries]
 active = [{active_list}]
 stale = [{stale_list}]
-
+{legacy_line}
 [workers]
 invoked = ["stack_worker"]
 {extra}"""
@@ -504,17 +523,18 @@ def test_an_unparseable_manifest_is_an_anomaly(tmp_path):
 
 
 # --------------------------------------------------------------------------- #
-# Negatives: provenance and the F-17 boundary
+# Negatives: provenance (RFC-79 decision 2 replaces the F-17 boundary)
 # --------------------------------------------------------------------------- #
 
 
-def test_an_unresolvable_source_file_is_gap_and_never_anomaly(tmp_path):
-    """The declared ``F-17`` boundary: missing evidence, never a contradiction.
+def test_an_unresolvable_source_file_is_an_anomaly(tmp_path):
+    """D01 item 5 now has a value for the absence class, so an unresolvable path
+    that is not reserved is a violation, not missing evidence.
 
-    ``containers.md``/``database.md`` declare absences and ``file_map.md``
-    declares tree facts, and the contract has no provenance value for that. The
-    checker reports ``GAP`` (advisory) and must **not** upgrade it to ``ANOMALY``
-    nor exempt the entry ad hoc.
+    ``F-17`` was a declared boundary only while the contract had no provenance
+    value for absences and tree facts. RFC-79 decision 2 added ``project_scan``,
+    so the ambiguity is gone: a path that does not resolve and is not a reserved
+    value contradicts D01 item 5.
     """
     root, payload, kb = make_project(tmp_path)
     write_entry(
@@ -528,11 +548,65 @@ def test_an_unresolvable_source_file_is_gap_and_never_anomaly(tmp_path):
         kb, active=("stack.md", "executive_summary.md", "containers.md")
     )
     code, report = run(root, payload)
+    assert code == 1, reasons(report)
+    assert checker.ANOMALY in signals(report, "containers.md")
+    assert checker.GAP not in signals(report, "containers.md")
+    assert "project_scan" in reasons(report)
+
+
+def test_project_scan_is_valid_for_an_absence_outside_the_environment_entry(tmp_path):
+    """The reserved value RFC-79 decision 2 introduced, in its legal class."""
+    root, payload, kb = make_project(tmp_path)
+    write_entry(
+        kb,
+        "containers.md",
+        tag="containers",
+        sources=("project_scan",),
+        custom_sections=("Container Definitions",),
+    )
+    write_manifest(
+        kb, active=("stack.md", "executive_summary.md", "containers.md")
+    )
+    code, report = run(root, payload)
     assert code == 0, reasons(report)
-    assert checker.GAP in signals(report, "containers.md")
+    assert checker.VALID in signals(report, "containers.md")
     assert checker.ANOMALY not in signals(report, "containers.md")
-    assert "F-17" in reasons(report)
-    assert "never exempted ad hoc" in reasons(report)
+
+
+def test_project_scan_in_the_environment_entry_is_an_anomaly(tmp_path):
+    """The boundary case: ``project_scan`` is never the environment class."""
+    root, payload, kb = make_project(tmp_path)
+    write_entry(
+        kb,
+        "environment.md",
+        tag="environment",
+        sources=("project_scan",),
+    )
+    write_manifest(
+        kb, active=("stack.md", "executive_summary.md", "environment.md")
+    )
+    code, report = run(root, payload)
+    assert code == 1
+    assert "only for an absence or a tree fact" in reasons(report)
+
+
+def test_both_reserved_values_are_rejected_outside_their_class(tmp_path):
+    """Cross-check: neither reserved value leaks into the other's class."""
+    root, payload, kb = make_project(tmp_path)
+    write_entry(kb, "stack.md", tag="stack", sources=("system_probe",))
+    write_entry(
+        kb,
+        "environment.md",
+        tag="environment",
+        sources=("project_scan",),
+    )
+    write_manifest(
+        kb, active=("stack.md", "executive_summary.md", "environment.md")
+    )
+    code, report = run(root, payload)
+    assert code == 1
+    assert "valid source only for environment entries" in reasons(report)
+    assert "only for an absence or a tree fact" in reasons(report)
 
 
 def test_system_probe_outside_the_environment_entry_is_an_anomaly(tmp_path):
@@ -625,11 +699,29 @@ def test_a_missing_project_shape_is_reported(tmp_path):
     assert "missing the required field `project_shape`" in reasons(report)
 
 
-def test_a_shape_outside_the_enum_is_not_silently_accepted(tmp_path):
-    """``F-16``: the tool accepts only the enum; it never decides the right shape."""
-    root, payload, kb = make_project(tmp_path)
+def test_the_documentation_shape_is_admitted(tmp_path):
+    """RFC-79 decision 3: ``documentation`` is a declared shape, not ``unknown``.
+
+    A documentary/standards/protocol product with no software surface of its own
+    is determinable, so the enum admits it; ``unknown`` would assert that the
+    shape could not be determined, and ``distribution.md`` stays legitimately
+    absent because it is mandatory only for ``library``/``cli``.
+    """
+    root, payload, kb = make_project(tmp_path, shape="documentation")
     write_manifest(
         kb, shape="documentation", active=("stack.md", "executive_summary.md")
+    )
+    code, report = run(root, payload)
+    assert code == 0, reasons(report)
+    assert checker.ANOMALY not in signals(report, "stack.md")
+
+
+def test_a_shape_outside_the_enum_is_not_silently_accepted(tmp_path):
+    """``F-16``: the tool accepts only the declared enum; it never decides the
+    right shape, and it never admits an undeclared synonym."""
+    root, payload, kb = make_project(tmp_path)
+    write_manifest(
+        kb, shape="monolith", active=("stack.md", "executive_summary.md")
     )
     code, report = run(root, payload)
     assert code == 1
@@ -748,13 +840,41 @@ def test_no_ad_hoc_exemption_is_granted_for_f17(tmp_path):
     )
     write_manifest(kb, active=("stack.md", "executive_summary.md", "file_map.md"))
     code, report = run(root, payload)
-    assert code == 0
+    assert code == 1
     unresolved = [
         finding
         for finding in report.findings
-        if finding.target == "file_map.md" and finding.signal == checker.GAP
+        if finding.target == "file_map.md" and finding.signal == checker.ANOMALY
     ]
     assert len(unresolved) == 2, reasons(report)
+
+
+def test_a_manifest_without_the_legacy_list_is_an_anomaly(tmp_path):
+    """RFC-79 decision 1: ``[entries] legacy`` is part of the manifest contract.
+
+    The manifest declares its ``[entries]`` fields as required, and ``legacy`` is
+    now one of them; a manifest that omits it violates its own contract.
+    """
+    root, payload, kb = make_project(tmp_path)
+    write_manifest(
+        kb, omit_legacy=True, active=("stack.md", "executive_summary.md")
+    )
+    code, report = run(root, payload)
+    assert code == 1
+    assert "missing the required field `legacy`" in reasons(report)
+
+
+def test_a_manifest_with_a_legacy_list_is_valid(tmp_path):
+    """The added list is admitted, and an empty one is the ordinary case."""
+    root, payload, kb = make_project(tmp_path)
+    write_manifest(
+        kb,
+        legacy=("stack.md",),
+        active=("stack.md", "executive_summary.md"),
+    )
+    code, report = run(root, payload)
+    assert code == 0, reasons(report)
+    assert checker.ANOMALY not in signals(report, checker.MANIFEST_NAME)
 
 
 def test_an_entry_with_no_contract_is_not_silently_approved(tmp_path):
@@ -801,24 +921,26 @@ def test_the_report_is_deterministic(tmp_path):
 
 
 def test_gap_does_not_change_the_exit_code_but_anomaly_does(tmp_path):
+    """``GAP`` is advisory missing evidence; ``ANOMALY`` is a contradiction.
+
+    The unresolvable ``source_files`` case that used to demonstrate ``GAP`` is a
+    violation of D01 item 5 since RFC-79 decision 2 (the contract can express the
+    absence/tree-fact class), so the remaining advisory case of this checker is the
+    absent manifest: the knowledge base exists and is valid, but the evidence that
+    indexes it does not.
+    """
     root, payload, kb = make_project(tmp_path)
-    write_entry(
-        kb,
-        "containers.md",
-        tag="containers",
-        sources=("missing.yml",),
-        custom_sections=("Container Definitions",),
-    )
-    write_manifest(kb, active=("stack.md", "executive_summary.md", "containers.md"))
+    write_entry(kb, "stack.md", tag="stack")
+    (kb / checker.MANIFEST_NAME).unlink()
     code, report = run(root, payload)
-    assert checker.GAP in signals(report)
+    assert checker.GAP in signals(report), reasons(report)
     assert checker.ANOMALY not in signals(report), reasons(report)
     assert code == 0
 
     # A real contradiction now: the body heading no longer matches ``title``.
-    path = kb / "containers.md"
+    path = kb / "stack.md"
     path.write_text(
-        path.read_text(encoding="utf-8").replace("\n# Containers\n", "\n# Mismatch\n"),
+        path.read_text(encoding="utf-8").replace("\n# Stack\n", "\n# Mismatch\n"),
         encoding="utf-8",
     )
     code, report = run(root, payload)

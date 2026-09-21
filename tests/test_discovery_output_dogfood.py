@@ -129,17 +129,19 @@ def test_the_manifest_contract_yields_its_required_tables_and_fields():
     assert "project_shape" in tables["knowledge_base"]
     assert "active" in tables["entries"]
     assert "stale" in tables["entries"]
+    assert "legacy" in tables["entries"]
     # ``[runtime]`` is declared optional by the contract and must not be required.
     assert "model_used" in tables.get("runtime", ())
 
 
 def test_the_project_shape_enum_matches_the_manifest_contract():
-    """The six admitted shapes are the contract's, not an invention of the tool."""
+    """The admitted shapes are the contract's, not an invention of the tool."""
     text = (PAYLOAD / checker.CONTRACTS_DIR / checker.MANIFEST_CONTRACT).read_text(
         encoding="utf-8"
     )
     for shape in sorted(checker.PROJECT_SHAPES):
         assert shape in text, shape
+    assert len(checker.PROJECT_SHAPES) == 7
 
 
 def test_distribution_is_mandatory_for_the_shapes_the_contract_names():
@@ -167,7 +169,31 @@ def test_the_tool_targets_only_the_mechanical_subset():
     assert "What it deliberately does **not** do" in source
     assert "F-17" in source
     assert "F-16" in source
-    assert "never** ``ANOMALY``" in source
+    assert "project_scan" in source
+    assert "documentation" in source
+
+
+def test_the_real_payload_declares_the_reserved_provenance_values():
+    """RFC-79 decisions 1, 2 and 5 are materialized in the real contracts."""
+    base = (PAYLOAD / checker.CONTRACTS_DIR / checker.BASE_CONTRACT).read_text(
+        encoding="utf-8"
+    )
+    assert "project_scan" in base
+    assert "`legacy`" in base
+    # The delimiter decision (F-18) is stated in the contract, not left implicit.
+    assert "`+++`" in base
+    manifest = (PAYLOAD / checker.CONTRACTS_DIR / checker.MANIFEST_CONTRACT).read_text(
+        encoding="utf-8"
+    )
+    assert "`legacy`: list of strings" in manifest
+    assert "`documentation`" in manifest
+
+
+def test_the_real_discovery_contracts_route_absences_to_project_scan():
+    """The three contracts that declare absences/tree facts name the value."""
+    for name in ("CONTAINERS.md", "DATABASE.md", "FILE_MAP.md"):
+        text = (PAYLOAD / checker.CONTRACTS_DIR / name).read_text(encoding="utf-8")
+        assert "project_scan" in text, name
 
 
 def test_the_real_payload_is_never_written(tmp_path):

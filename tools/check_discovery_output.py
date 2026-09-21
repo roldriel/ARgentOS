@@ -20,8 +20,10 @@ What it checks (deterministic; decided by reading bytes and comparing them):
 5.  the ``#`` heading of the body matches the ``title`` field;
 6.  the required sections are present: ``## Discovered Facts`` plus the
     sections its per-entry contract declares;
-7.  every ``source_files`` path resolves in the project, with ``system_probe``
-    admitted only for the environment entry;
+7.  every ``source_files`` path resolves in the project, with the reserved
+    values ``system_probe`` (environment entries only) and ``project_scan``
+    (absences and tree facts only, never in an environment entry) admitted
+    under their declared classes;
 8.  ``[entries] active`` and the files present agree in both directions;
 9.  a manifest entry's front matter agrees with the manifest entry list;
 10. ``executive_summary.md`` declares ``## Project Shape`` as its first content
@@ -36,16 +38,21 @@ whether secrets leaked, whether a qualitative claim has a source, whether the
 merge was consistent, and whether ``api.md`` matches the shape's variant rules.
 Silence about them is a declared boundary, not an approval.
 
-Two declared payload boundaries are honoured rather than resolved:
+Two payload decisions that were formerly boundaries are now **materialized** by
+RFC-79 (plan 142) and enforced here:
 
 * ``F-17`` — ``containers.md``/``database.md`` declare absences and
-  ``file_map.md`` declares tree facts, and no provenance value exists to
-  represent that (``system_probe`` is legal only for environment entries). A
-  ``source_files`` path that does not resolve is reported ``GAP`` (advisory
-  missing evidence), **never** ``ANOMALY``, and no ad-hoc exemption is granted.
-* ``F-16`` — which ``project_shape`` a documentation/protocol repository should
-  have is a classification-model decision, not a check. The six enum values are
-  accepted; the tool never decides the right one.
+  ``file_map.md`` declares tree facts. The base contract now admits the reserved
+  value ``project_scan`` for exactly that class, so ``project_scan`` is
+  ``VALID`` outside an environment entry and ``ANOMALY`` inside one; an
+  unresolvable entry that is not a reserved value is a **violation** of D01 item
+  5 (``ANOMALY``), not missing evidence. The ``GAP`` that this tool reported
+  while the contract had no value for the class was a declared boundary, and it
+  is gone because the underlying contract gap is gone.
+* ``F-16`` — the classification model now admits ``documentation`` for a
+  documentary/standards/protocol product. Which shape a repository *should* have
+  remains a classification decision, so a *missing* shape is still reported as a
+  boundary (human review); an out-of-enum value is an ``ANOMALY``.
 
 Requirements are resolved **from the contracts**, never from a list maintained
 here: the per-entry contracts declare both their runtime KB path and their
@@ -94,9 +101,9 @@ EXCLUDED = "EXCLUDED"
 
 _SIGNAL_PRECEDENCE = (ANOMALY, BOUNDARY, GAP, NOT_APPLICABLE, EXCLUDED, VALID)
 
-#: The six values the manifest contract admits for ``project_shape``.
+#: The seven values the manifest contract admits for ``project_shape``.
 PROJECT_SHAPES = frozenset(
-    {"library", "cli", "service", "application", "monorepo", "unknown"}
+    {"library", "cli", "service", "application", "monorepo", "documentation", "unknown"}
 )
 
 #: Shapes that make ``distribution.md`` mandatory (D01 item 10 / DISTRIBUTION.md).
@@ -119,6 +126,11 @@ REQUIRED_ARTIFACT = "KB_DISCOVERY_ENTRY.md"
 
 #: The provenance token the base contract admits only for environment entries.
 SYSTEM_PROBE = "system_probe"
+
+#:: The reserved provenance value for an absence or a tree/structural fact
+#: observed by scanning the project tree (RFC-79 decision 2). Valid only outside
+#: an environment entry, whose reserved value is :data:`SYSTEM_PROBE`.
+PROJECT_SCAN = "project_scan"
 
 _FRONT_MATTER_RE = re.compile(r"\A\+\+\+\r?\n(.*?)\r?\n\+\+\+\s*(?:\r?\n|\Z)", re.DOTALL)
 _H1_RE = re.compile(r"^#\s+(.+?)\s*$", re.MULTILINE)
@@ -529,12 +541,14 @@ def _check_sections(
 def _check_provenance(
     entry: Entry, contract: Contract | None, root: Path, report: Report
 ) -> None:
-    """Resolve every ``source_files`` path.
+    """Resolve every ``source_files`` entry.
 
-    A path that does not resolve is ``GAP`` (advisory missing evidence), never
-    ``ANOMALY``: declared absences and tree facts have no provenance value in the
-    contract yet (``F-17``), and inventing one here would grant an ad-hoc
-    exemption the payload does not define.
+    Two reserved values are admitted under the classes the base contract
+    declares: ``system_probe`` for environment entries and ``project_scan`` for
+    an absence or a tree fact outside one. Each is an ``ANOMALY`` in the wrong
+    class. Any other entry must resolve: since the contract can express the
+    absence/tree-fact class (RFC-79 decision 2), an unresolvable path is a
+    violation of D01 item 5 and is reported ``ANOMALY``.
     """
     sources = entry.front_matter.get("source_files")
     if not isinstance(sources, list):
@@ -576,6 +590,32 @@ def _check_provenance(
                     )
                 )
             continue
+        if candidate == PROJECT_SCAN:
+            if is_environment:
+                report.add(
+                    Finding(
+                        entry.name,
+                        ANOMALY,
+                        f"`{PROJECT_SCAN}` is a valid source only for an absence or a "
+                        f"tree fact outside an environment entry, and this entry is "
+                        f"the environment entry",
+                        f"{BASE_CONTRACT}:Optional Front Matter (provenance)",
+                        "5",
+                    )
+                )
+            else:
+                report.add(
+                    Finding(
+                        entry.name,
+                        VALID,
+                        f"`{PROJECT_SCAN}` is admitted: a reserved provenance value "
+                        f"for an absence or a tree fact established by scanning the "
+                        f"project tree",
+                        f"{BASE_CONTRACT}:Optional Front Matter (provenance)",
+                        "5",
+                    )
+                )
+            continue
         if candidate.startswith("/") or ".." in Path(candidate).parts:
             report.add(
                 Finding(
@@ -592,11 +632,12 @@ def _check_provenance(
         report.add(
             Finding(
                 entry.name,
-                GAP,
-                f"`source_files` entry `{candidate}` does not resolve in the project "
-                "(declared absence or tree fact with no provenance value in the "
-                "contract: `F-17`; reported as missing evidence, never as a "
-                "contradiction and never exempted ad hoc)",
+                ANOMALY,
+                f"`source_files` entry `{candidate}` does not resolve in the project, "
+                f"and it is not a reserved value: D01 item 5 requires every "
+                f"`source_files` entry to point to an existing path, and an absence "
+                f"or a tree fact is declared with `{PROJECT_SCAN}` "
+                f"(RFC-79 decision 2)",
                 f"{BASE_CONTRACT}:Optional Front Matter (provenance)",
                 "5",
             )

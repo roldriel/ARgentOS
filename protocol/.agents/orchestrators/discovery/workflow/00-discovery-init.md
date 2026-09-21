@@ -63,8 +63,8 @@ The discovery run cannot enter `core:NEEDS_CLARIFICATION` directly: the Discover
 
 1. Verify the discovery request scope and required inputs.
 2. Classify the `project_shape` (`library`, `cli`, `service`, `application`,
-   `monorepo` or `unknown`) and record it in `discovery_input.json` for the
-   downstream workers.
+   `monorepo`, `documentation` or `unknown`) and record it in `discovery_input.json`
+   for the downstream workers.
 3. Produce the discovery report artifact according to `.agents/orchestrators/discovery/contracts/KB_DISCOVERY_REPORT.md`.
 4. Produce the annotated project map `file_map.md` under
    `.project/knowledge/discovery/` and the `structure_hash` for manifest

@@ -35,6 +35,7 @@ Define the format of the `api.md` knowledge-base entry produced by the `framewor
 - `cli`: commands, subcommands, flags, exit codes.
 - `application`: main screens, jobs and startup commands.
 - `monorepo`: one section per sub-project, each following the variant of its own shape.
+- `documentation`: state explicitly that the project exposes **no software surface** — no importable library, no command-line program, no service and no application — and document the documentary/standards surface it does publish (the artifacts of the protocol or standard and their consumers).
 - `unknown`: state explicitly that the project shape could not be determined and list the best-effort surface observed.
 
 ## Constraints

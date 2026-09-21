@@ -66,6 +66,7 @@ Every event carries `timestamp` (ISO-8601) and `type`. Required fields per type:
 | `discovery_consent` | `condition`, `options`, `decision` | A discovery consent gate presented by the Orchestrator: the detection condition that triggered it, the options offered, and the decision (chosen scope, rejection, or non-interactive bypass). |
 | `reuse_event` | `layer` (`discovery` \| `knowledge` \| `materialization`), `operation` (`lookup` \| `eligibility` \| `reuse_attempt` \| `post_use`) | A reuse/cache-layer observation. Optional fields per operation: `lookup_result` (`HIT`\|`MISS`), `eligibility_decision` (`ACCEPTED`\|`REJECTED`), `reason` (`semantic`\|`policy`\|`budget`\|`identity`\|`provider`\|`availability`), `reuse_outcome` (`SUCCESSFUL`\|`FAILED`), `invalidated` (bool). A lookup result is never semantic validity, eligibility or a reuse decision, and vice versa. |
 | `provider_cache_event` | `result` (`hit`\|`miss`\|`unavailable`) | Provider prompt-cache state observed through the provider adapter. Optional: `tokens_cached` (int), `tokens_uncached` (int), `latency_ms` (int), `reference_present` (bool). Provider-dependent; a hit or a miss never determines semantic validity. |
+| `session_risk` | `risk` (string), `mitigations` (list of strings) | A session-level risk condition declared when it is detected, normally at session start. `risk` is a value of the vocabulary declared by this contract; the only value today is `single_instance_delegation` (the single-instance delegation execution mode of `.agents/orchestrators/core/roles/orchestrator.md`, §5. Worker Delegation). `mitigations` lists the identifiers of the mandatory mitigations applied: `separate_verification_pass` (the verification phase is an explicit, separate judgment pass with written evidence per checklist item) and `no_self_acceptance_without_evidence` (the Orchestrator does not accept its own recommendation without recorded evidence). An unknown value is not admitted. |
 
 Every event carries `seq` (an integer, strictly increasing per session;
 EI-003/TR-004), `timestamp` (ISO-8601) and `clock` (`utc` | `agent_clock`):
@@ -76,10 +77,10 @@ accepts any ISO-8601 timestamp. Execution-scoped events additionally carry
 `iteration` (the numeric iteration folder of the execution): `state_transition`,
 `reviewer_retry`, `failure`, `delegation`, `skill_override`, `flag_evidence`,
 `context_budget`, `context_candidates`, `discovery_consent`, `reuse_event`
-and `provider_cache_event`. `session_start` is session-level and does not
-carry `iteration`. The event key of an execution-scoped event is
-`(session_uuid, iteration, seq)` (D-002, EI-003); `session_start` is keyed by
-`(session_uuid, seq)`.
+and `provider_cache_event`. `session_start` and `session_risk` are session-level
+and do not carry `iteration`. The event key of an execution-scoped event is
+`(session_uuid, iteration, seq)` (D-002, EI-003); `session_start` and
+`session_risk` are keyed by `(session_uuid, seq)`.
 
 Notes:
 

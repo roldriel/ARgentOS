@@ -37,6 +37,44 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Added
 
+- **Human Decision Backlog Resolution — cierre del backlog `HD-1`…`HD-12` y apertura de
+  la vía de payload de RFC-79** (plan 141, vía plan; DEV-only sobre `docs/`,
+  `ROADMAP.md`, `CHANGELOG.md`, `tests/` y `tools/`; RFC-79 y plan 142 como vía de
+  autorización del trabajo de payload que este Change **decide** y **no ejecuta**): se
+  procesan los doce elementos del backlog uno por uno contra el repositorio. **`HD-1`**:
+  el Plan 137 **se ejecuta** —el retiro no es expresable en el ciclo de status de planes
+  y la guarda tiene valor propio: R3 (coherencia de la forma canónica del contrato) y R5
+  (paridad del conjunto de patrones entre `EARS.md` y `EARS_RE`) no están cubiertos por
+  ningún otro test, mientras que R4 ya lo cubre
+  `protocol/.agents/harness/tests/test_gate_validator.py` (test `test_non_ears_bullet_fails`)— y
+  crea `tools/check_ears_coverage.py` y tres suites (91 tests, R3/R4/R5 `VALID` sobre el
+  payload real, R1/R2 `N/A` por ausencia de corpus versionado de `TASK_SPECIFICATION.md`).
+  **`HD-2`**: `ROADMAP.md` retira del trabajo activo la entrada `EARS structural
+  validator`, que declaraba futuro un mecanismo existente desde el plan 66/RFC-57.
+  **`HD-3`…`HD-6`** (`F-14`, `F-17`, `F-16`, `B-8` residual) más `F-18`, la metadata
+  contractual de taxonomía y el `F-4` de `HD-12`: las representaciones quedan
+  **decididas y especificadas** en `docs/rfc/79-payload-normative-residuals.md` (siete
+  decisiones: `status: legacy` + `[entries] legacy`; valor reservado `"project_scan"` con
+  endurecimiento del checker de `GAP` a `ANOMALY`; shape `documentation`; evento de sesión
+  `session_risk`; delimitador `+++` del front matter de KB entry; frontera
+  composición↔materialización en `COMPOSITION_OPTIMIZATION.md`; metadata contractual
+  alineada con `PROTOCOL_TAXONOMY.md`), con
+  `docs/plans/142-payload-normative-residuals.md` como vía de materialización; el
+  mantenedor, consultado, decidió **redactar sin aceptar**, de modo que esos elementos
+  cierran **bloqueados** con el blocker concreto de la aceptación RFC-56 Clase A.
+  **`HD-7`**: catorce findings corregidos y nunca transicionados pasan a `resolved` con
+  autoridad humana registrada, preservando verbatim sus elementos inmutables, y
+  `<PLAN-136>:F-1`/`F-2` conservan su residual exacto. **`HD-8`**: cada pending decision
+  del bundle recibe su determinación individual sin inventar taxonomía. **`HD-9`/`HD-11`**:
+  la premisa de RFC-72 §4 queda refutada —el orden normativo existe desde la RFC-78 §5 y
+  está implementado y testeado— y la RFC se corrige por su `Amendment Log` junto con el
+  enunciado falso sobre el contrato de materialización canónica. **`HD-10`**: el dogfood
+  del plan 26 queda satisfecho (su RFC de origen admitía la simulación de fixtures, que el
+  plan 46 ejecutó) y el del plan 25 conserva un blocker externo demostrado. **`HD-12`**:
+  `F-4` decidido y enrutado; `F-6`/`F-8` corregidos en el espejo de `docs/plans/INDEX.md`;
+  `F-7` aclarado en el `Amendment Log` de RFC-74 sin reescribir el plan 91. Sin `VERSION`
+  bump y sin tag (DEV-only, RFC-69).
+
 - **Governance Residual Closure — cierre del inventario de gobernanza accionable**
   (plan 140, vía plan; DEV-only, sin efecto en `protocol/.agents/`): se redacta y
   **ejecuta** el Plan 140, que revisa, reconcilia y clasifica los cinco pendientes de
@@ -994,6 +1032,65 @@ La política de versionado, changelog, tags y estados de planes vive en
 `docs/VERSIONING.md` §3)
 
 ---
+
+## [11.6.0] — 2026-09-21
+
+### Added
+
+- **Residuales normativos del payload** (plan 142, RFC-79): se materializan las
+  siete decisiones con las que la RFC-79 cierra los residuos normativos
+  registrados por `ROADMAP.md` y por la bitácora de fricciones del plan 19.
+  **`F-14` — marcado legacy:** `status` de la entrada de KB admite `legacy`
+  (entrada heredada sin campos de procedencia y no revalidada: se trata como
+  confianza baja hasta que un worker la revalide o la invalide) y el manifest
+  gana la lista `[entries] legacy`, con la misma forma que `active` y `stale`; las
+  instrucciones de `discovery_orchestrator.md` e `init_worker.md` se corrigen para
+  que la orden sea expresable —el estado por entrada vive en la entrada y el
+  manifest lo indexa— y se retira la mención a un campo `confidence` que el
+  manifest no tiene ni necesita. **`F-17` — procedencia de ausencias y hechos de
+  árbol:** `source_files` admite el valor reservado `"project_scan"` (el hecho se
+  estableció escaneando el árbol del proyecto), válido sólo para una ausencia o un
+  hecho de árbol y nunca en una entrada de entorno, del mismo modo que
+  `"system_probe"` sólo es válido para entradas de entorno; el ítem 5 de D01
+  amplía su excepción y los contratos `CONTAINERS.md`, `DATABASE.md` y
+  `FILE_MAP.md` fijan el valor para esa clase. **`F-16` — `project_shape`
+  documental:** el enum gana `documentation` (producto documental, de estándares o
+  de datos de protocolo, sin librería, CLI, servicio ni aplicación propias; el
+  tooling interno no cambia la forma) con su variante en `API_SURFACE.md`, de modo
+  que un repositorio determinable deja de clasificar `unknown`. **`B-8` residual —
+  riesgo de sesión:** el catálogo de `METRICS.md` gana el evento de sesión
+  `session_risk` (`risk`, `mitigations`; valor declarado hoy
+  `single_instance_delegation`) y `PROTOCOL_METRICS.md` registra su clase de
+  verifiabilidad, de modo que la mitigación (c) del modo single-instance de
+  `orchestrator.md` deja de apuntar a un contrato sin lugar donde registrarla.
+  **`F-18` — delimitador:** el front matter de una entrada de KB queda declarado
+  como delimitado por `+++`, que es lo que la práctica y el checker ya usaban.
+  **Frontera composición ↔ materialización:** el criterio 1 de
+  `COMPOSITION_OPTIMIZATION.md` declara que gobierna la composición conceptual del
+  payload y **no** el orden de la materialización provider-bound, cuya región
+  estable primero y sufijo dinámico después es una capa distinta
+  (`protocol/.agents/standards/context/CONTEXT.md:Identity and ordering`); el runtime y el contrato de orden quedan
+  intactos. **Metadata contractual:** `KB_DISCOVERY_ENTRY.md` e
+  `INTER_WORKER_MESSAGE.md` alinean su `produced_by`/`consumed_by` con sus
+  entidades de `PROTOCOL_TAXONOMY.md` (H13 regla 11), resolviendo
+  `<PLAN-126>:PC-1` con la lectura contractual de `tags.kind`. Clase A en seis
+  decisiones y Clase B en dos; cambio **aditivo**: ningún valor admitido se
+  retira y ninguna sección desaparece. Versión 11.6.0 (MINOR).
+
+### Changed
+
+- `tools/check_discovery_output.py` (plan 142, RFC-79): el checker DEV de D01
+  implementa las decisiones 2 y 3. Acepta `"project_scan"` como procedencia
+  resuelta —y lo reporta `ANOMALY` en la entrada de entorno, que es la clase de
+  `"system_probe"`—, admite el shape `documentation`, y **deja de tratar un
+  `source_files` no resoluble y no reservado como frontera declarada**: con el
+  contrato capaz de expresar la clase de ausencia y hecho de árbol, ese caso es
+  una violación del ítem 5 de D01 y se reporta `ANOMALY` en lugar de `GAP`. La
+  ausencia de evidencia sigue siendo `GAP` advisory y no cambia el exit code. Las
+  suites `tests/test_check_discovery_output.py` y
+  `tests/test_discovery_output_dogfood.py` cubren los casos positivos, negativos y
+  de frontera nuevos, y el dogfood verifica los valores declarados en el payload
+  real.
 
 ## [11.5.0] — 2026-09-14
 

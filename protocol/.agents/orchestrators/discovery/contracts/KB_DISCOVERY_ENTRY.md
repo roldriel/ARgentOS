@@ -15,8 +15,8 @@ kind: contract
 domain: discovery
 artifact: KB_DISCOVERY_ENTRY.md
 lifecycle: discovery
-produced_by: [discovery:DISCOVERY_INIT]
-consumed_by: [core:GATHERING_CONTEXT]
+produced_by: [discovery:DISCOVERY_INIT, discovery:DISCOVERY_ENV, discovery:DISCOVERY_STACK, discovery:DISCOVERY_FRAMEWORK, discovery:DISCOVERY_PATTERNS, discovery:DISCOVERY_BUSINESS, discovery:DISCOVERY_MERGE]
+consumed_by: [discovery:DISCOVERY_MERGE, core:GATHERING_CONTEXT]
 ---
 
 # KB Discovery Entry Contract
@@ -65,6 +65,10 @@ previous_versions = []
 
 Every discovery entry MUST include TOML front matter with:
 
+- The block is delimited by **`+++`** on its own line, opening the file and
+  closing the block. `+++` is the front-matter delimiter of a KB entry; the
+  taxonomy metadata block of `.agents/` artifacts, delimited with `---`, is a
+  different block and is not used in KB entries.
 - `artifact`: must be `KB_DISCOVERY_ENTRY.md`.
 - `kind`: must be `snapshot`. Every discovery entry is a snapshot:
   point-in-time knowledge with TTL and hashes (see
@@ -81,10 +85,25 @@ Entries of the accumulative KB MAY also include:
 - `updated_at`: ISO 8601 timestamp of the last update.
 - `source_workers`: list of workers that produced or revalidated the entry.
 - `source_sessions`: list of sessions that contributed facts to the entry.
-- `status`: `active` or `stale`.
+- `status`: `active`, `stale` or `legacy`.
+  - `active`: current knowledge.
+  - `stale`: invalidated; kept as trace, not consumed as current.
+  - `legacy`: inherited from a KB written **without provenance fields** and not
+    yet revalidated by a worker. A `legacy` entry is treated as low-confidence
+    until a worker revalidates it (it becomes `active`) or it is invalidated (it
+    becomes `stale`); it is never deleted without a trace.
 - `previous_versions`: list of references to previous versions of the entry (optional).
 
-`source_files` may include `"system_probe"` for environment entries, whose facts come from probing the execution environment rather than from project files. `"system_probe"` is a valid source **only for environment entries**.
+`source_files` admits two reserved values besides project paths:
+
+- `"system_probe"`: the fact comes from probing the execution environment rather
+  than from project files. It is a valid source **only for environment entries**.
+- `"project_scan"`: the fact was established by **scanning the project tree** —
+  an absence or a structural/tree fact — not by reading a project file. It is
+  valid **only** for that class of claim: it does not substitute for a resolvable
+  path when a file evidences the fact, and it is **not** valid in an environment
+  entry (that class belongs to `"system_probe"`). Conversely, `"system_probe"`
+  is not valid outside an environment entry.
 
 Provenance applies per claim: every fact bullet of `## Discovered Facts` is a
 claim whose reuse requires its `source_files`/`source_sessions` to resolve.

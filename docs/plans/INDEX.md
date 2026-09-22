@@ -1081,6 +1081,25 @@ sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
 |---|---|---|---|
 | `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. |
 
+## Septuagésima novena serie: promoción de `dev` a `master` y release de gobernanza 11.6.2 (Plan 148) (22 sep 2026)
+
+Serie del Change que publica el estado verificado de `dev` posterior al plan 147 como release de
+gobernanza, ejecutando `release commit → dev → origin/dev → master → tag 11.6.2 → dist`. El
+preflight detectó un conflicto de contrato: Plan 147 no tiene diff de contenido bajo `protocol/`,
+de modo que `docs/VERSIONING.md` §3 prohibía una versión y un tag, mientras §1/§2 exigían un tag
+para todo lo que entra a `master`; la rama se detuvo, se escaló y el mantenedor autorizó enmendar
+§3 para admitir las releases de gobernanza como excepción de promoción. La release tiene además
+una función de nivelación: el tag `11.6.1` quedó sobre `8dbd92e`, que no contiene el commit de
+cierre del Plan 146 (`7a9d393`), y la promoción lo incorpora junto con los commits del plan 147,
+de modo que `master` vuelve a contener toda la historia de `dev`. Plan 148 (vía plan; acto de
+release, sin cambio de contenido de payload — la única escritura bajo `protocol/` es
+`protocol/.agents/VERSION`, metadata de versión de la release; Change Level L2).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `148-promote-plan147-to-master-release-11-6-2.md` | — (vía plan; Change de release, sin cambio de contenido de payload) | Executed | **Promoción de `dev` a `master` y release de gobernanza `11.6.2`.** Versión determinada como **sucesora PATCH** de la última publicada en `master` (`11.6.1` → `11.6.2`) según la viñeta «Releases de gobernanza» que el propio Change incorpora a `docs/VERSIONING.md` §3 con autorización del mantenedor, tras detener la rama por el conflicto entre la prohibición de releases de gobernanza y la exigencia de tag para `master`. **No hay cambio de protocolo:** el diff `dev` vs `master` no contiene ninguna diferencia de contenido bajo `protocol/` (11 archivos, ninguno de payload salvo `VERSION`), de modo que la release publica la versión del repositorio y no una capacidad nueva; `VERSION` = `PROTOCOL_VERSION` = `11.6.2`. Contenido publicado: la corrección post-release del plan 147 (C-1, C-2, dogfoods SAE y resolución de segmentos, con CI verde en `8173e77`) y el registro de cierre del plan 146, que **nivela `master`** (el tag `11.6.1` quedó sobre `8dbd92e`, que no contiene `7a9d393`). Se registra el release intent antes de tocar cualquier referencia remota, se promueve por merge `dev` → `master` sin fast-forward artificial ni squash, se crea el tag anotado `11.6.2` sobre el commit de promoción y se materializa `dist` por `publish-dist`. Sin force-push, sin reescritura de historia, sin mover ni alterar tags existentes; `ROADMAP.md` con 0 diff. Resuelve `<PLAN-147>:PC-1`. |
+
+
 ## Septuagésima octava serie: integridad post-release y compatibilidad de CI (Plan 147) (22 sep 2026)
 
 Serie del Change que corrige, en una única pasada autorizada, las cuatro causas raíz que

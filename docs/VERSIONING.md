@@ -58,6 +58,44 @@ Reglas:
   `CHANGELOG.md` bajo `[Unreleased]` con `(plan, RFC-N)`, sin bump de
   `protocol/.agents/VERSION` y sin tag. No existe una "release de gobernanza"
   con tag sin versión: violaría la invariante versión ↔ changelog ↔ tag.
+- **Releases de gobernanza (excepción de promoción; enmienda del plan 148,
+  autorizada por el mantenedor).** Un Change **docs-only** (§3, viñeta
+  anterior) puede sin embargo **promoverse y taggearse** cuando su propósito es
+  la **promoción de release** misma: nivelar `master` con el estado verificado
+  de `dev` y publicar los artefactos de gobernanza y de tooling DEV que `master`
+  no tenía. Esta es la única excepción a "un plan docs-only se cierra sin
+  release" y no amplía el alcance de ninguna otra regla:
+
+  - **El contenido del protocolo no cambia:** la promoción no puede introducir
+    ninguna diferencia de **contenido** bajo `protocol/` (documentos, contratos,
+    skills, taxonomía). La única escritura permitida bajo `protocol/` es
+    `protocol/.agents/VERSION`, que es la metadata de versión de la release
+    misma y la razón de ser de este bump: las demás rutas del payload tienen 0
+    diff. Si hubiera cualquier otro cambio bajo `protocol/`, deja de ser una
+    release de gobernanza y el número de versión se determina por la tabla de
+    arriba según el cambio real, no por esta viñeta.
+  - **La versión de la release es la sucesora PATCH de la última publicada en
+    `master`** (`X.Y.(Z+1)`), nunca MINOR ni MAJOR: la release publica un
+    correctivo y no una capacidad nueva. Se calcula siempre desde la última
+    versión publicada en `master` (§3, viñeta anterior).
+  - **Sí produce:** bump de `protocol/.agents/VERSION` y de `PROTOCOL_VERSION`
+    (`runtime/toolcalls/canonical.py`, ancla semántica del runtime — la release
+    de gobernanza es real y el invariante versión ↔ changelog ↔ tag exige que
+    las dos fuentes concuerden), una sección `## [X.Y.Z] — fecha` en
+    `CHANGELOG.md` que mueve allí los ítems de `[Unreleased]` y describe la
+    corrección post-release, la reconciliación del snapshot de §9, el commit de
+    release en `dev`, la promoción `dev` → `master` y un tag anotado (§6). El
+    **contenido** del payload transportado es idéntico al publicado: lo que
+    cambia es la versión **publicada del repositorio**, `protocol/.agents/VERSION`
+    como metadata de esa release y no el contenido del protocolo.
+  - **Trazabilidad:** el ítem del changelog y el mensaje del tag citan el plan
+    que autorizó la release y los cambios que publica; ninguna release de
+    gobernanza puede agrupar cambios de payload sin clasificarlos por la tabla
+    de arriba.
+  - **Precedente:** las promociones previas (`dc21458`, `2dfb99f`, `70a4736`)
+    publicaron commits de gobernanza DEV acumulados en `dev` junto con sus
+    bumps de payload; esta viñeta nombra ese comportamiento para el caso en que
+    **no** hay bump de payload, que es el único que quedaba sin vía.
 - La versión se asigna en el commit del plan (en `dev`); se oficializa cuando la
   promoción la taggea en `master`.
 - La versión siguiente se calcula siempre desde la **última versión publicada en
@@ -233,46 +271,51 @@ Condiciones derivadas del Change Lifecycle (semántica; RFC-75
   tocar `VERSION`/changelog, o los ítems se acumulan en `[Unreleased]` y la
   numeración se asigna en la promoción.
 
-## 9. Estado actual (2026-09-22)
+## 9. Estado actual (2026-09-22, release de gobernanza `11.6.2`)
 
 Snapshot del estado al 2026-09-22, reconciliado en el punto de promoción que §5
-declara (promoción del rango `11.3.0`–`11.6.1`, plan 146) y actualizado por la
-corrección post-release del plan 147 (divergencia `dev`/`master` del punto de
-cierre del Plan 146 y requisito de historia completa en CI). La fuente inmutable
-de la verdad son `git tag` + `protocol/.agents/VERSION`: este snapshot es un
-resumen de lectura, no una segunda fuente, y una divergencia se resuelve
-siempre a favor de git.
+declara. Sucesión de puntos de reconciliación: la promoción del rango
+`11.3.0`–`11.6.1` (plan 146), la corrección post-release del plan 147 y la
+**release de gobernanza `11.6.2`** (plan 148), que es el punto vigente. La
+fuente inmutable de la verdad son `git tag` + `protocol/.agents/VERSION`: este
+snapshot es un resumen de lectura, no una segunda fuente, y una divergencia se
+resuelve siempre a favor de git.
 
-- `master` = `11.6.1` (promoción del rango `11.3.0`–`11.6.1`: planes 119, 120,
-  121, 142 y 143; RFC-76, RFC-77, RFC-78 y RFC-79; Change de release del plan
-  146). Tags anotados `11.0.0`, `11.0.1`, `11.1.0` y `11.2.0` de promociones
-  anteriores, más `11.3.0`, `11.4.0`, `11.5.0`, `11.6.0` y `11.6.1` de esta
-  promoción, todos sobre el commit de promoción correspondiente de `master`.
+- `master` = `11.6.2` (release de gobernanza del plan 148: nivelación de
+  `master` con el estado verificado de `dev` tras el plan 147, **sin cambio de
+  contenido de protocolo** — §3, viñeta «Releases de gobernanza»). Contenido
+  publicado: la corrección post-release del plan 147 y el registro de cierre del
+  plan 146. Tags anotados `11.0.0`, `11.0.1`, `11.1.0` y `11.2.0` de promociones
+  anteriores, más `11.3.0`, `11.4.0`, `11.5.0`, `11.6.0` y `11.6.1` —que
+  oficializaron el rango cuya implementación quedó en `dev`— y `11.6.2`,
+  todos sobre el commit de promoción correspondiente de `master`.
 - `dist` = publicado desde `master` (`publish-dist` a partir de la promoción
-  de `11.6.1`).
-- `dev` = `11.6.1` (sin secciones del changelog con fecha pendientes de tag:
-  el rango que estaba en curso desde `11.3.0` quedó oficializado por esta
-  promoción; últimos planes ejecutados 124–147).
+  de `11.6.2`).
+- `dev` = `11.6.2` (sin secciones del changelog con fecha pendientes de tag: el
+  `[Unreleased]` acumula ítems de gobernanza no asignados a una versión; últimos
+  planes ejecutados 124–148).
+- El **contenido del protocolo** (todo bajo `protocol/` salvo
+  `protocol/.agents/VERSION`) es idéntico entre `dev` y `master`: la release
+  `11.6.2` publica la versión del repositorio, no una versión nueva del
+  protocolo. `VERSION` = `PROTOCOL_VERSION` = `11.6.2` en las dos ramas.
 
 Notas:
 
-- **`dev` va un commit por delante de `master` (hecho registrado por el plan
-  147).** El commit de cierre del Plan 146 (`7a9d393`, que transcribe los
-  literales de identidad de su Validation Anchor) se registró en `dev`
-  **después** de la promoción, y `git merge-base --is-ancestor 7a9d393 master`
-  es falso: `master` = `8dbd92e` es el merge de `dc21458` y `54171d8`, de modo
-  que el árbol publicado conserva la revisión previa del artefacto del Plan
-  146. La consecuencia es de contenido, no de CI: el plan 146 describe ese cierre
-  como ya incluido, y la afirmación «`master` contiene toda la historia de
-  `dev`» de su artefacto **no se cumple** para ese único commit. Ninguna
-  corrección se aplicó retroactivamente sobre `master`, los tags `11.3.0`–`11.6.1`
-  ni `dist`: la divergencia queda registrada aquí y en el Plan 147, y una
-  eventual nivelación de `master` es una promoción y por lo tanto requiere
-  autorización explícita del mantenedor (§5, paso 7).
+- **La divergencia `dev`/`master` registrada por el plan 147 quedó resuelta por
+  esta promoción.** El commit de cierre del Plan 146 (`7a9d393`, que transcribe
+  los literales de identidad de su Validation Anchor) se había registrado en
+  `dev` **después** de la promoción de `11.6.1`, de modo que `master` =
+  `8dbd92e` (merge de `dc21458` y `54171d8`) conservaba la revisión previa del
+  artefacto del Plan 146 y `git merge-base --is-ancestor 7a9d393 master` era
+  falso. La release de gobernanza `11.6.2` promueve ese commit y los del plan
+  147, de modo que `master` vuelve a contener toda la historia de `dev`. El
+  hecho histórico sigue registrado sin reescribirse: `master` tuvo esa
+  divergencia y la corrección fue una promoción autorizada (`<PLAN-147>:PC-1`,
+  resuelta por el plan 148).
 - El rango `11.3.0`–`11.6.1` estaba implementado y registrado en `dev` con
   secciones del changelog sin tag. La promoción (`dev` → `master` + tags
   anotados + regeneración de `dist`) se ejecutó en el Change del plan 146, que
-  es el punto de reconciliación de este snapshot.
+  es el primer punto de reconciliación de este snapshot.
 - Mientras `dev` contenga planes sin publicar respecto de `master`/`dist`,
   `check_dist_sync.py` se espera rojo en `dev` por diseño (ver §4.1).
 - El job `check-protocol` de CI necesita **historia completa** del repositorio:

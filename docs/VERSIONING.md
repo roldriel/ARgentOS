@@ -233,10 +233,12 @@ Condiciones derivadas del Change Lifecycle (semántica; RFC-75
   tocar `VERSION`/changelog, o los ítems se acumulan en `[Unreleased]` y la
   numeración se asigna en la promoción.
 
-## 9. Estado actual (2026-09-21)
+## 9. Estado actual (2026-09-22)
 
-Snapshot del estado al 2026-09-21, reconciliado en el punto de promoción que §5
-declara (promoción del rango `11.3.0`–`11.6.1`, plan 146). La fuente inmutable
+Snapshot del estado al 2026-09-22, reconciliado en el punto de promoción que §5
+declara (promoción del rango `11.3.0`–`11.6.1`, plan 146) y actualizado por la
+corrección post-release del plan 147 (divergencia `dev`/`master` del punto de
+cierre del Plan 146 y requisito de historia completa en CI). La fuente inmutable
 de la verdad son `git tag` + `protocol/.agents/VERSION`: este snapshot es un
 resumen de lectura, no una segunda fuente, y una divergencia se resuelve
 siempre a favor de git.
@@ -250,16 +252,34 @@ siempre a favor de git.
   de `11.6.1`).
 - `dev` = `11.6.1` (sin secciones del changelog con fecha pendientes de tag:
   el rango que estaba en curso desde `11.3.0` quedó oficializado por esta
-  promoción; últimos planes ejecutados 124–145).
+  promoción; últimos planes ejecutados 124–147).
 
 Notas:
 
+- **`dev` va un commit por delante de `master` (hecho registrado por el plan
+  147).** El commit de cierre del Plan 146 (`7a9d393`, que transcribe los
+  literales de identidad de su Validation Anchor) se registró en `dev`
+  **después** de la promoción, y `git merge-base --is-ancestor 7a9d393 master`
+  es falso: `master` = `8dbd92e` es el merge de `dc21458` y `54171d8`, de modo
+  que el árbol publicado conserva la revisión previa del artefacto del Plan
+  146. La consecuencia es de contenido, no de CI: el plan 146 describe ese cierre
+  como ya incluido, y la afirmación «`master` contiene toda la historia de
+  `dev`» de su artefacto **no se cumple** para ese único commit. Ninguna
+  corrección se aplicó retroactivamente sobre `master`, los tags `11.3.0`–`11.6.1`
+  ni `dist`: la divergencia queda registrada aquí y en el Plan 147, y una
+  eventual nivelación de `master` es una promoción y por lo tanto requiere
+  autorización explícita del mantenedor (§5, paso 7).
 - El rango `11.3.0`–`11.6.1` estaba implementado y registrado en `dev` con
   secciones del changelog sin tag. La promoción (`dev` → `master` + tags
   anotados + regeneración de `dist`) se ejecutó en el Change del plan 146, que
   es el punto de reconciliación de este snapshot.
 - Mientras `dev` contenga planes sin publicar respecto de `master`/`dist`,
   `check_dist_sync.py` se espera rojo en `dev` por diseño (ver §4.1).
+- El job `check-protocol` de CI necesita **historia completa** del repositorio:
+  los gates de lifecycle (C-2) resuelven tree ids declarados con `git rev-parse`
+  y los dogfoods anclados leen commits históricos con `git log`. El workflow usa
+  `fetch-depth: 0` por esa razón (plan 147); un checkout superficial no invalida
+  ningún contrato, pero degrada C-2 a `GAP` y hace fallar esos dogfoods.
 - **Branch protection no habilitada (decisión del owner, 15 ago 2026):** el
   repo es privado en el plan gratuito de GitHub, que no incluye protected
   branches ni rulesets (el API responde `Upgrade to GitHub Pro or make this

@@ -9,7 +9,20 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
+      # Full history is required, not an optimization. The lifecycle gates and
+      # the dogfoods resolve Git *objects*, not just the working tree: C-2
+      # resolves each plan's declared tree ids with
+      # `git rev-parse --verify <sha>^{tree}` (an advisory GAP for every anchor
+      # it cannot resolve), and the SAE dogfoods read the commits of an earlier
+      # Change with `git log --grep`. The default shallow checkout
+      # (`fetch-depth: 1`) makes both silently degrade on CI — C-2 reported
+      # GAP=27 and the dogfoods reported "the plan-138 commits are not in
+      # history" — while the same suites are green on a full local clone.
+      # Providing the history keeps the checkers' contract intact; weakening
+      # them instead would accept missing evidence as valid.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"

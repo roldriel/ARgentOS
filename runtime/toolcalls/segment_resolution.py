@@ -47,7 +47,8 @@ permissive duplicate of a contract decision that is not this module's to make.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PurePosixPath
+import re
 
 # Ordering contract v2 field order (RFC-78, section 5). The slug of each stable
 # kind is the `field_order` entry that identifies it in the representation.
@@ -142,7 +143,69 @@ def stable_segment_refs(context) -> tuple[SegmentRef, ...]:
     return tuple(refs)
 
 
-def _relative_path(kind: str, logical_id: str) -> Path:
+def _has_foreign_separator(fragment: str) -> bool:
+    """True when a delivered identifier carries a Windows separator.
+
+    The declared payload layout is POSIX: `.agents/`-relative paths use `/`
+    (`protocol/.agents/delegation/WORKER_DELEGATION_CONTRACT.md:Required
+    Invocation Payload`). `\\` is therefore never a separator of the declared
+    layout — on POSIX it is an ordinary filename character, and on Windows it
+    would silently split the path. Accepting it would make the traversal
+    verdict depend on the host platform, so it is rejected as a non-payload
+    path on every platform.
+    """
+    return "\\" in fragment
+
+
+_DRIVE_PREFIX_RE = re.compile(r"^[A-Za-z]:")
+
+
+def _is_drive_qualified(fragment: str) -> bool:
+    """True when a delivered identifier names a Windows drive.
+
+    A Windows drive-rooted or drive-relative identifier (`C:/x.md`, `C:x.md`,
+    `C:\\x.md`) must be rejected by name on every platform, and it cannot be
+    left to `PurePosixPath.is_absolute()`: to POSIX semantics `C:` is an
+    ordinary first component, so that class reports `False` for exactly the
+    input that escapes under native Windows semantics.
+    """
+    return bool(_DRIVE_PREFIX_RE.match(fragment))
+
+
+def _guard_payload_relative(kind: str, logical_id: str) -> PurePosixPath:
+    """Validate that the delivered identifier stays inside the payload layout.
+
+    The delivered path must stay inside the payload: a path that escapes
+    `.agents/` is not payload content and is rejected, never followed.
+
+    The verdict must not depend on the host platform. The identifier is
+    delivered in the declared POSIX form, so it is validated with POSIX path
+    semantics everywhere: `PurePosixPath` splits on `/` on every platform,
+    whereas the platform-native class is permissive where the layout is not —
+    on Windows `\\` is a separator, and a drive- or root-relative identifier
+    (`C:/x.md`, `C:x.md`, `/x.md`) escapes under that class while being one
+    opaque component to POSIX. Validating on the native class would therefore
+    accept, on one platform, exactly what it rejects on the other.
+    """
+    if _has_foreign_separator(logical_id):
+        raise SegmentResolutionError(
+            f"stable segment {kind}:{logical_id!r} is not a payload-relative "
+            f"path: the declared payload layout uses POSIX separators"
+        )
+    pure_posix = PurePosixPath(logical_id)
+    if (
+        _is_drive_qualified(logical_id)
+        or pure_posix.is_absolute()
+        or ".." in pure_posix.parts
+    ):
+        raise SegmentResolutionError(
+            f"stable segment {kind}:{logical_id!r} resolves outside the payload: "
+            f"{logical_id!r} is not a payload-relative path"
+        )
+    return pure_posix
+
+
+def _relative_path(kind: str, logical_id: str) -> PurePosixPath:
     """The payload-relative path of a stable segment (declared layout).
 
     `target_phase` and `harness_policy` are `.agents`-relative paths already
@@ -152,28 +215,32 @@ def _relative_path(kind: str, logical_id: str) -> Path:
     delivered path as delivered and never re-derives its directory. The role,
     profile and skill names are logical identifiers, resolved under their
     declared directories.
+
+    The result is a `PurePosixPath`: the declared layout is POSIX, and rebuilding
+    it through the host-native class would re-parse it under different rules (on
+    Windows, `Path("C:/Windows/x.md")` is again a drive-absolute path, which is
+    what the guard above just rejected).
     """
     if kind in (KIND_WORKFLOW_MODULE, KIND_HARNESS_POLICY):
-        candidate = Path(logical_id)
+        candidate = _guard_payload_relative(kind, logical_id)
     elif kind == KIND_ROLE:
-        candidate = ROLES_DIR / f"{logical_id}.md"
+        candidate = PurePosixPath(ROLES_DIR.as_posix()) / f"{logical_id}.md"
     elif kind == KIND_PROFILE:
-        candidate = PROFILES_DIR / f"{logical_id}.md"
+        candidate = PurePosixPath(PROFILES_DIR.as_posix()) / f"{logical_id}.md"
     elif kind == KIND_SKILL:
-        candidate = SKILLS_DIR / logical_id / "SKILL.md"
+        candidate = (
+            PurePosixPath(SKILLS_DIR.as_posix()) / logical_id / "SKILL.md"
+        )
     else:
         raise SegmentResolutionError(
             f"unknown stable segment kind {kind!r}: no declared payload layout"
         )
-    # The delivered path must stay inside the payload: a path that escapes
-    # `.agents/` is not payload content and is rejected, never followed.
-    normalized = Path(candidate)
-    if normalized.is_absolute() or ".." in normalized.parts:
+    if candidate.is_absolute() or ".." in candidate.parts:
         raise SegmentResolutionError(
             f"stable segment {kind}:{logical_id!r} resolves outside the payload: "
             f"{logical_id!r} is not a payload-relative path"
         )
-    return normalized
+    return candidate
 
 
 def resolve_stable_segments(

@@ -1,6 +1,6 @@
 # Plan 144 — Higiene documental y de tests del backlog DEV residual (DEV Documentation and Test Hygiene)
 
-**Status:** Aprobado para ejecución
+**Status:** Executed (2026-09-21; metadata evolucionable actualizada por el Plan 145, ver `## Checkpoint / cierre`)
 **Fecha:** 2026-09-21
 **RFC:** — (vía plan; DEV-only sobre `tests/` y `docs/`, sin efecto en `protocol/.agents/`, por lo que RFC-56 no aplica)
 **Clase:** — (sin efecto de payload; ningún archivo de `protocol/.agents/` se toca)

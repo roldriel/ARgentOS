@@ -55,7 +55,11 @@ from runtime.orchestrator.governance import (  # noqa: E402
     record_validation_anchor,
 )
 from runtime.orchestrator.host import ExecutionHost  # noqa: E402
-from runtime.orchestrator.observation import observe  # noqa: E402
+from runtime.orchestrator.observation import (  # noqa: E402
+    ObservationError,
+    git_state,
+    observe,
+)
 from runtime.orchestrator.store import OrchestratorStore  # noqa: E402
 from runtime.orchestrator.worker import (  # noqa: E402
     CommandWorker,
@@ -1094,3 +1098,61 @@ def test_closed_derivation_never_releases_and_reports_human_authority():
     assert "Released: sí" not in text
     assert run.derived_conditions["Released"] is False
     assert run.derived_conditions["Promoted"] is False
+
+
+# --------------------------------------------------------------------------- #
+# The observation never substitutes a missing vital resource for an absent one
+# (plan 145, I-1)
+# --------------------------------------------------------------------------- #
+
+
+def test_unreadable_repository_is_an_error_not_a_false_absent_state(
+    tmp_path: Path,
+) -> None:
+    """A present root with a present git CLI must not read as "no repository".
+
+    Substituting "could not read" for "does not exist" is what let a vanished
+    throw-away repository surface as an ordinary state instead of a loud
+    failure. The two facts are kept apart: this one raises.
+    """
+    (tmp_path / "docs" / "plans").mkdir(parents=True, exist_ok=True)
+    (tmp_path / "docs" / "plans" / PLAN_NAME).write_text(
+        plan_text(), encoding="utf-8"
+    )
+
+    assert git_state(tmp_path).is_repository is False
+    assert git_state(tmp_path).git_available is True
+    with pytest.raises(ObservationError, match="could not be read"):
+        observe(tmp_path, PLAN_NUMBER)
+
+
+def test_an_absent_git_cli_stays_a_declared_gap_not_an_error(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A host without git is an environmental factor, reported as GAP.
+
+    The distinction is the point: an unpinned environment is declared, while a
+    broken reading of a readable root is a defect. Neither is silently turned
+    into the other.
+    """
+    (tmp_path / "docs" / "plans").mkdir(parents=True, exist_ok=True)
+    (tmp_path / "docs" / "plans" / PLAN_NAME).write_text(
+        plan_text(), encoding="utf-8"
+    )
+    monkeypatch.setattr(
+        "runtime.orchestrator.observation.git_available", lambda: False
+    )
+
+    observation = observe(tmp_path, PLAN_NUMBER)
+
+    assert observation.git.is_repository is False
+    assert observation.git.git_available is False
+    assert any("git CLI is not resolvable" in gap for gap in observation.gaps)
+
+
+def test_git_state_reports_the_cli_availability_explicitly() -> None:
+    """The availability fact is part of the observation, not an inference."""
+    state = git_state(REPO_ROOT)
+    assert state.is_repository is True
+    assert state.git_available is True
+    assert state.to_dict()["git_available"] is True

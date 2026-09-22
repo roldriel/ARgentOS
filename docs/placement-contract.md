@@ -377,6 +377,14 @@ git commit        = an OPERATION, governed by the Change Lifecycle and its
 
 **PC-72.** Mechanical, deterministic enforcement of this contract **is authorized as a future implementation direction** (decision PC-2, plan 129). It is **not implemented** by this contract, and this contract's existence does not imply that it exists.
 
+**PC-72.1.** *Current state of the authorized direction (reconciled by plan 145, 2026-09-21).* The direction is no longer only a plan: plan 131 materialized a **read-only mechanical realization of this contract's rule table** — `runtime/placement/rules.py` (the families, namespaces, kinds, canonicality statuses and STOP vocabulary re-expressed from §6, §8, §20 and §21) and `runtime/placement/resolver.py` (the `PLACE | STOP` evaluation), verified by `tests/test_placement_resolver.py`, `tests/test_placement_dogfood.py` and `tests/test_placement_contract_drift.py`. Three qualifications keep the statement exact, and they are part of it:
+
+- the realization is a **library**, and it is **not integrated**: nothing invokes it automatically. It is not a hook, not a CLI step, not a CI gate and not an Orchestrator behaviour;
+- it is **advisory** in the same sense as the DEV lifecycle gates: it produces a placement or a STOP, and it holds no authority to create, move, commit or release anything (§22 `PC-76`, invariant E-6; ADR-16);
+- the **contract remains the normative source** and governs any disagreement (`PC-75`), which `test_placement_contract_drift.py` enforces mechanically.
+
+So `PC-73`'s boundary holds, and what §23/§24 still defer is *enforcement as an operational obligation* — not the existence of a mechanical realization of the rules.
+
 **PC-73.** The architectural boundary is:
 
 ```text
@@ -412,13 +420,13 @@ Orchestrator         = a consumer of the enforcement result
 - an authority mechanism;
 - a migration authorization;
 - a code or content standard;
-- **an implemented enforcement mechanism.** Mechanical enforcement is an authorized future direction (§22) but is **not implemented**: no checker, resolver, service, Orchestrator hook, CI integration, registry, schema, database or state machine exists or is implied by this contract. See §24.
+- **an implemented enforcement mechanism.** Mechanical enforcement as an *operational obligation* is an authorized future direction (§22) and is **NOT implemented**: no checker, service, Orchestrator hook, CI integration, registry, schema, database or state machine is implied by this contract, and nothing invokes placement automatically. The rule-table realization `PC-72.1` describes is a read-only library, not enforcement: see §22 and §24.
 
 ## 24. Enforcement deferred
 
-**PC-79.** **Mechanical enforcement is authorized as a future implementation direction and is NOT implemented.** This section is the planning boundary for that future work; it creates no mechanism.
+**PC-79.** **Mechanical enforcement as an operational obligation is authorized as a future implementation direction and is NOT implemented.** This section is the planning boundary for that future work; it creates no mechanism. What *does* exist is the read-only rule-table realization recorded in `PC-72.1`: a library no consumer invokes, which is not enforcement.
 
-**PC-80.** It is the subject of decision PC-2 (plan 129), closed as a decision with its implementation deferred. The invariants any future implementation must preserve are recorded in §22 (`PC-76`).
+**PC-80.** It is the subject of decision PC-2 (plan 129), closed as a decision with its implementation deferred. The invariants any future implementation must preserve are recorded in §22 (`PC-76`), and the materialization that did happen (plan 131) is recorded in `PC-72.1` rather than promoted into enforcement by inference.
 
 ---
 

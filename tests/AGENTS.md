@@ -26,6 +26,15 @@ never the product payload.
   repository root, not even under the ephemeral `.project/`. Running the suite
   must leave the repository surface unchanged;
   `tests/test_pytest_isolation.py` is the regression.
+  **The throw-away repositories are owned by one session.** `conftest.py`
+  declares a session token at import time and `scratch_root` resolves under it,
+  so a second pytest session cannot destroy a running session's scratch (and an
+  operating-system temp cleanup cannot, for that matter). A new suite must not
+  invent its own scratch root or a shared path: ask
+  `pytest_isolation.scratch_root(<suite>)`. Cleanup is bounded and age-based
+  (`prune_stale_sessions`): a live session is never a candidate, and an
+  undeclared session is refused rather than handed a shared directory — see
+  plan 145, I-1.
 - **Import first-party code through the session bootstrap, not per file.** The
   root `conftest.py` puts `tests/` and `tools/` on `sys.path` once. Suites
   import `pytest_isolation`, `testsupport` and the `tools/` modules directly;
@@ -70,8 +79,9 @@ The anchored set, and what each protects:
 | `test_check_protocol_invariants.py:test_source_layout_documents_intentionally_broken_links` | `docs/source-layout.md` still declares the allowlisted intentionally-broken payload links, so an agent does not "fix" them |
 | `test_prompt_cache_dogfood.py` (whole module) | the ten verifiable points of RFC-78 / plan 121 materialized **over the real `protocol/` payload** |
 | `test_repo_containment.py` (whole module) | RFC-69 I2 over the real tree: a cited document must not exist only as an untracked file |
-| `test_pytest_isolation.py` (whole module) | the real working tree carries no pytest temporary before or after a session |
+| `test_pytest_isolation.py` (whole module) | the real working tree carries no pytest temporary before or after a session, and this session's throw-away repositories are owned by it alone (a second session cannot destroy them; `plan 145`, I-1) |
 | `test_placement_dogfood.py` (whole module) | the placement resolver agrees with the real tree: canonical namespaces, its own artifacts placed by its own rules, and the generated area the host actually uses (`plan 131`) |
+| `test_placement_contract_drift.py` (whole module) | `docs/placement-contract.md` and `runtime/placement/rules.py` stay in lockstep: every realized namespace and family is declared by the real contract, the STOP triggers are the contract's, and the `kind` vocabulary is not read as a closed enum (`plan 131`; added to this table by `plan 145`) |
 | `test_autonomous_scope_dogfood.py` (whole module) | the SAE frontier over the repository's own Change and the reconstructibility of its autonomy evidence (`plan 135`) |
 | `test_sae_scope_enforcement_dogfood.py` (whole module) | the Scope/Authority enforcement point, the untouched history of the incident's closed plan and `ROADMAP.md`, and the end-to-end refusal before the effect (`plan 138`) |
 | `test_discovery_output_dogfood.py` (whole module) | the D01 mechanical subset against the **real** discovery contracts and the real payload (`plan 136`) |

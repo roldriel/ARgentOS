@@ -443,6 +443,37 @@ human_authority_decision         a decision that exceeds the granted autonomy;
 journal and the Worker Results; the run report carries it. It is a **view**, not a
 tracking system: no new metric store, no database, no registry.
 
+Two of those fields have a meaning narrow enough to be worth stating, because
+counting the wrong thing makes the summary describe a recovery or a correction
+that never happened (plan 145, I-7/I-8):
+
+```text
+recoveries                       an iteration that RE-CONDUCTED work the change
+                                 had already produced evidence for: the
+                                 derivation's own RUN_REVALIDATION branch,
+                                 reached when the recorded Validation Anchor is
+                                 stale for the current scoped content. An
+                                 ordinary first-time step — the implementation
+                                 task, the first validation, a gate reading
+                                 before or after a checkpoint — is conduction,
+                                 never recovery.
+findings_autonomously_corrected  DERIVED from the correction records the journal
+                                 persists, under the same anti-fabrication rule as
+                                 `findings_corrected_autonomously`: a record that
+                                 declares it wrote a finding lifecycle state is
+                                 not an autonomous correction (CL-8). Zero means
+                                 the evidence says zero; it is never a constant
+                                 standing in for a value the host does not
+                                 compute.
+```
+
+The host's current derivation stops on an open finding
+(`STOP_OPEN_FINDINGS` / `STOP_FINDING_REQUIRES_HUMAN`) instead of conducting a
+correction, so a correction record cannot yet arise from the loop. That boundary
+is declared in the summary's own notes rather than hidden behind a heuristic;
+wiring the loop to conduct corrections is a separate decision, not an inference
+this policy authorizes.
+
 The metric answers one question:
 
 > How much authorized work did the host execute without human operational

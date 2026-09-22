@@ -625,6 +625,143 @@ def test_corrections_counts_refuse_a_fabricated_autonomy():
     assert credited == 2
 
 
+# --------------------------------------------------------------------------- #
+# 15. `recoveries` counts recovery, never ordinary conduction (plan 145, I-7)
+# --------------------------------------------------------------------------- #
+
+
+def test_a_normal_run_without_recovery_reports_zero_recoveries():
+    """A complete autonomous run that never recovered must not claim to have.
+
+    The regression for the observed defect: a run that reached `CLOSED_DERIVED`
+    with zero stops reported `Recoveries: 3`, because the ordinary first-time
+    steps were being counted as recoveries.
+    """
+    journal = [
+        {"action": "RUN_IMPLEMENTATION_TASK"},
+        {"action": "RUN_VALIDATION"},
+        {"action": "RECORD_VALIDATION_ANCHOR"},
+        {"action": "RUN_LIFECYCLE_GATES"},
+        {"action": "RECORD_PLAN_STATUS_EXECUTED"},
+        {"action": "RECORD_CHECKPOINT"},
+        {"action": "RUN_LIFECYCLE_GATES"},
+        {"action": "CLOSED_DERIVED"},
+    ]
+    summary = summarize_autonomy(envelope(), journal)
+    assert summary.recoveries == 0
+    assert summary.stop_conditions == ()
+    assert "Recoveries: 0" in summary.render()
+
+
+@pytest.mark.parametrize(
+    "action",
+    ["RUN_IMPLEMENTATION_TASK", "RUN_VALIDATION", "RUN_LIFECYCLE_GATES"],
+)
+def test_an_ordinary_step_does_not_increment_recoveries(action):
+    """Each ordinary step is conduction, not a repair of stale evidence."""
+    summary = summarize_autonomy(envelope(), [{"action": action}])
+    assert summary.recoveries == 0
+    assert summary.autonomous_actions == 1
+
+
+def test_a_real_recovery_increments_recoveries():
+    """`RUN_REVALIDATION` is the derivation's own recovery branch (stale A1)."""
+    summary = summarize_autonomy(envelope(), [{"action": "RUN_REVALIDATION"}])
+    assert summary.recoveries == 1
+    assert summary.autonomous_actions == 1
+
+
+def test_multiple_real_recoveries_are_counted_correctly():
+    journal = [
+        {"action": "RUN_IMPLEMENTATION_TASK"},
+        {"action": "RUN_VALIDATION"},
+        {"action": "RUN_REVALIDATION"},
+        {"action": "RECORD_REVALIDATION_ANCHOR"},
+        {"action": "RUN_LIFECYCLE_GATES"},
+        {"action": "RUN_REVALIDATION"},
+        {"action": "RECORD_REVALIDATION_ANCHOR"},
+        {"action": "CLOSED_DERIVED"},
+    ]
+    summary = summarize_autonomy(envelope(), journal)
+    assert summary.recoveries == 2
+    # Ordinary steps in the same journal are still not recoveries.
+    assert summary.autonomous_actions == 8
+
+
+def test_the_recoveries_field_and_its_render_agree():
+    summary = summarize_autonomy(
+        envelope(), [{"action": "RUN_REVALIDATION"}, {"action": "RUN_REVALIDATION"}]
+    )
+    assert summary.recoveries == 2
+    assert f"- Recoveries: {summary.recoveries}" in summary.render()
+    assert summary.to_dict()["recoveries"] == summary.recoveries
+
+
+# --------------------------------------------------------------------------- #
+# 16. `findings_autonomously_corrected` is derived, never hardcoded
+#    (plan 145, I-8)
+# --------------------------------------------------------------------------- #
+
+
+def _correction_record(*, authorized=True, wrote_state=False):
+    return {
+        "action": "RECORD_FINDING_CORRECTION",
+        "authorized_existing": authorized,
+        "finding_state_written": wrote_state,
+    }
+
+
+def test_zero_autonomous_corrections_is_derived_from_an_empty_evidence_set():
+    summary = summarize_autonomy(envelope(), [{"action": "RUN_VALIDATION"}])
+    assert summary.findings_autonomously_corrected == 0
+    assert "Findings corrected autonomously: 0" in summary.render()
+    # The boundary that makes zero the current truth is declared, not implied.
+    assert any("no autonomous finding correction" in note for note in summary.notes)
+
+
+def test_one_autonomous_correction_is_counted():
+    summary = summarize_autonomy(envelope(), [_correction_record()])
+    assert summary.findings_autonomously_corrected == 1
+    assert "Findings corrected autonomously: 1" in summary.render()
+
+
+def test_multiple_autonomous_corrections_are_counted():
+    summary = summarize_autonomy(
+        envelope(),
+        [_correction_record(), _correction_record(), _correction_record()],
+    )
+    assert summary.findings_autonomously_corrected == 3
+    assert summary.to_dict()["findings_autonomously_corrected"] == 3
+
+
+def test_an_escalated_finding_is_never_counted_as_autonomously_corrected():
+    """A record that wrote a finding state is an authority act, not a correction."""
+    summary = summarize_autonomy(
+        envelope(),
+        [
+            _correction_record(wrote_state="resolved"),
+            _correction_record(authorized=False),
+            _correction_record(),
+        ],
+    )
+    assert summary.findings_autonomously_corrected == 1
+
+
+def test_the_corrected_count_reflects_exactly_the_available_evidence():
+    journal = [
+        {"action": "RUN_IMPLEMENTATION_TASK"},
+        _correction_record(),
+        {"action": "STOP_FINDING_REQUIRES_HUMAN"},
+    ]
+    summary = summarize_autonomy(
+        envelope(), journal, findings_detected=2, findings_escalated=1
+    )
+    assert summary.findings_autonomously_corrected == 1
+    assert summary.findings_detected == 2
+    assert summary.findings_escalated == 1
+    assert summary.autonomous_actions == 2
+
+
 def test_the_evaluation_is_deterministic():
     candidates = [
         AutonomyCandidate(REQUIRE_RFC),

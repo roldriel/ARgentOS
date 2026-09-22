@@ -32,7 +32,7 @@ Producir la **verificación reproducible de que la validación EARS está efecti
 
 El objetivo **no** es implementar un validador EARS: ya existe en el payload. El objetivo es **auditar la cobertura EARS y convertirla en una guarda de paridad DEV** que falle si el contrato, el conjunto mecánico declarado y el validador del payload dejan de coincidir. Eso es trabajo real, acotado y no duplicativo: no reimplementa la validación, la **verifica desde afuera** y protege la coherencia que `F-01` rompió una vez.
 
-**Este Plan se aprueba sólo para redacción.** Su `**Status:**` es `Aprobado para redacción`: **no** está autorizado para ejecución. La autorización de ejecución es una decisión humana posterior (§«Criterio de entrada»).
+> **Estado corriente (metadata evolucionable; actualizada por el Plan 145, 2026-09-21).** Este Plan fue redactado bajo `Aprobado para redacción` y su ejecución la determinó el Plan 141 el 2026-09-21. El `**Status:**` del header es hoy `Executed`: la guarda `tools/check_ears_coverage.py` existe, la paridad entre el estándar, el contrato y el validador del payload está verificada por tres suites propias y su dogfood, y el registro de ejecución vive en `## Validation anchor`, `## Checkpoint / cierre` y `## Nota de ejecución`. Las líneas que siguen conservan el texto de redacción original: describen la clase de entregable que este Plan era **al crearse**, no su estado corriente (RFC-46: la evidencia histórica no se reescribe).
 
 ## Problema
 
@@ -287,6 +287,8 @@ Findings **esperables** durante la ejecución (se registran con refs `<PLAN-137>
 - [ ] **Precondición de coherencia:** `protocol/.agents/harness/gate_validator.py`, `EARS.md` y el contrato de `TASK_SPECIFICATION.md` presentes y legibles; si alguno falta, la ejecución arranca con un `GAP` declarado y evalúa si el Plan sigue siendo ejecutable.
 - [ ] Sin pending decision bloqueante para la ejecución (`PC-1`, `PC-2` y `PC-3` no bloquean).
 - [ ] Dependencias conocidas: planes 33/RFC-34 y 66/RFC-57 cerrados; plan 136 cerrado; batería canónica verde.
+
+> **Nota de reconciliación (Plan 145, 2026-09-21).** Las casillas anteriores se transcriben del Plan tal como se redactó y **no** se marcan retrospectivamente: marcar una casilla que el autor no marcó sería reescribir el registro de entrada. Lo que sí se corrige es la descripción corriente que las contradice. Al ejecutarse el Plan (Plan 141, 2026-09-21), la primera casilla —«`**Status:**` de este Plan es `Aprobado para ejecución` (hoy es `Aprobado para redacción`)»— quedó satisfecha por la vía real: el header pasó a `Executed`, que es el estado terminal de la misma secuencia de status, y el `**Status:**` ya no declara `Aprobado para redacción`. La segunda y la tercera casilla quedaron satisfechas por los entregables declarados en `## Validation anchor`. Las restantes son de naturaleza verificable y su evidencia vive en `## Nota de ejecución`.
 
 ## Criterios de salida
 

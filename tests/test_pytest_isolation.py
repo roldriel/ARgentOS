@@ -18,6 +18,11 @@ session (no mocks):
 
 ``tests/pytest_isolation.py`` defines the single repository-external root for
 all three; the root ``conftest.py`` pins the session to it.
+
+Section 6 adds the plan-145 (I-1) regressions: the throw-away repositories are
+owned by **one** session, so a second session cannot destroy the live scratch
+of the first — which is what made the suite non-deterministic under concurrent
+runs.
 """
 
 from __future__ import annotations
@@ -58,6 +63,13 @@ LEGACY_IN_REPO_SCRATCH = (
     Path(".project") / "agent-worker-test",
     Path(".project") / "orchestrator-test",
 )
+
+
+def _now() -> float:
+    """The current wall clock, read once so a threshold is asserted stably."""
+    import time
+
+    return time.time()
 
 
 def _temporaries_in_working_tree() -> list[str]:
@@ -201,3 +213,192 @@ def test_isolated_scratch_root_supports_throw_away_repositories() -> None:
 
     assert not pytest_isolation.is_within(root, REPO_ROOT)
     assert "tracked.txt" in repository_snapshot(root)
+
+
+# --------------------------------------------------------------------------- #
+# 6. Scratch is owned by one session: a second session cannot destroy it
+#    (plan 145, I-1)
+# --------------------------------------------------------------------------- #
+
+
+def test_scratch_root_is_scoped_to_the_declared_session() -> None:
+    """The scratch root carries the session token, so it is not a shared path."""
+    token = pytest_isolation.session_id()
+    own = pytest_isolation.scratch_root()
+    assert own == pytest_isolation.sessions_root() / token
+    assert own.name == token
+    assert pytest_isolation.session_scratch_root(own.name) == own
+
+
+def test_two_sessions_do_not_share_a_scratch_root() -> None:
+    """Two tokens resolve to two disjoint directories under the same parent."""
+    first = pytest_isolation.session_scratch_root("session-one")
+    second = pytest_isolation.session_scratch_root("session-two")
+
+    assert first != second
+    assert pytest_isolation.sessions_root() in first.parents
+    assert pytest_isolation.sessions_root() in second.parents
+    assert not pytest_isolation.is_within(first, second)
+    assert not pytest_isolation.is_within(second, first)
+
+
+def _declare_session(token: str, *, age_seconds: float | None = None) -> Path:
+    """Create a sibling session scratch directory, optionally backdated.
+
+    Mirrors what a real session start does (a directory plus its ownership
+    marker); ``age_seconds`` moves the marker into the past so the age-based
+    sweep can be exercised deterministically, without sleeping.
+    """
+    root = pytest_isolation.session_scratch_root(token)
+    root.mkdir(parents=True, exist_ok=True)
+    marker = root / pytest_isolation.SESSION_MARKER
+    marker.write_text(f"{token}\n", encoding="utf-8")
+    if age_seconds is not None:
+        when = _now() - age_seconds
+        os.utime(marker, (when, when))
+    return root
+
+
+def test_a_session_directory_is_marked_with_its_own_ownership() -> None:
+    """The marker is the ownership declaration the sweep reads."""
+    own = pytest_isolation.clear_own_scratch()
+    marker = own / pytest_isolation.SESSION_MARKER
+    assert marker.is_file()
+    assert marker.read_text(encoding="utf-8").strip() == own.name
+
+
+def test_starting_a_second_session_leaves_the_first_session_scratch_alive() -> None:
+    """A session's cleanup touches only its own directory.
+
+    This is the direct regression for I-1. Under the previous *shared* root,
+    every session start removed the whole scratch parent, so a concurrent
+    session lost the throw-away repositories it was still using. The surviving
+    file below is exactly what the old implementation destroyed.
+    """
+    own = pytest_isolation.clear_own_scratch()
+    live = own / "in-flight-repository"
+    live.mkdir(parents=True, exist_ok=True)
+    (live / "plan.md").write_text("in flight\n", encoding="utf-8")
+
+    # A *second* session starting, aged past the threshold so it is a real
+    # pruning candidate: it must still not touch the first session's directory.
+    second = _declare_session("second-session", age_seconds=10 * 24 * 60 * 60)
+    assert not pytest_isolation.is_within(own, second)
+    assert not pytest_isolation.is_within(second, own)
+
+    # What the second session does on start: clear only its own, then sweep the
+    # abandoned leftovers.
+    removed = pytest_isolation.prune_stale_sessions(now=_now())
+
+    assert (live / "plan.md").read_text(encoding="utf-8") == "in flight\n"
+    assert own.exists()
+    # The aged sibling was collected — the sweep really ran — and the deciding
+    # session survived it.
+    assert "second-session" in removed
+    assert pytest_isolation.session_scratch_root().name not in removed
+
+
+def test_cleanup_of_an_abandoned_session_does_not_touch_a_live_one() -> None:
+    """Age, not presence, decides. A fresh sibling session is never pruned."""
+    own = pytest_isolation.session_scratch_root()
+    live_sibling = _declare_session("live-sibling")
+    marker = live_sibling / "still-working.txt"
+    marker.write_text("live\n", encoding="utf-8")
+
+    removed = pytest_isolation.prune_stale_sessions(now=_now())
+
+    assert "live-sibling" not in removed
+    assert marker.exists()
+    assert live_sibling.exists()
+    assert own.exists()
+
+
+def test_cleanup_removes_an_abandoned_session_and_reports_it() -> None:
+    """A session whose marker is older than the threshold is removed."""
+    abandoned = _declare_session(
+        "abandoned-session", age_seconds=10 * 24 * 60 * 60
+    )
+    (abandoned / "old-repository").mkdir(parents=True, exist_ok=True)
+
+    removed = pytest_isolation.prune_stale_sessions(now=_now())
+
+    assert "abandoned-session" in removed
+    assert not abandoned.exists()
+    # The deciding session is never a candidate, however old it looks.
+    assert pytest_isolation.session_scratch_root().name not in removed
+
+
+def test_pruning_leaves_directories_it_does_not_recognise_alone() -> None:
+    """No ownership marker, no ownership claim: the sweep does not infer one."""
+    foreign = pytest_isolation.sessions_root() / "not-a-session"
+    foreign.mkdir(parents=True, exist_ok=True)
+    payload = foreign / "someone-elses-data.txt"
+    payload.write_text("keep\n", encoding="utf-8")
+    ancient = _now() - 30 * 24 * 60 * 60
+    os.utime(payload, (ancient, ancient))
+    os.utime(foreign, (ancient, ancient))
+
+    removed = pytest_isolation.prune_stale_sessions(now=_now())
+
+    assert "not-a-session" not in removed
+    assert payload.exists()
+    shutil.rmtree(foreign, ignore_errors=True)
+
+
+def test_pruning_never_removes_the_current_session_even_when_it_looks_ancient() -> None:
+    """The deciding session is excluded by ownership, not by freshness."""
+    own = pytest_isolation.clear_own_scratch()
+    marker = own / pytest_isolation.SESSION_MARKER
+    ancient = _now() - 10 * 24 * 60 * 60
+    os.utime(marker, (ancient, ancient))
+    os.utime(own, (ancient, ancient))
+
+    removed = pytest_isolation.prune_stale_sessions(now=_now())
+
+    assert removed == []
+    assert marker.exists()
+
+
+def test_an_undeclared_session_is_refused_instead_of_shared(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """No token, no session-owned path: a shared fallback is not provided.
+
+    A silent shared fallback is precisely how one session would end up with
+    another's directory, so the absence is reported instead.
+    """
+    monkeypatch.setattr(pytest_isolation, "_session_id", None)
+    monkeypatch.delenv(pytest_isolation.ENV_SESSION_ID, raising=False)
+
+    with pytest.raises(RuntimeError, match="no pytest session token is declared"):
+        pytest_isolation.session_id()
+    with pytest.raises(RuntimeError, match="no pytest session token is declared"):
+        pytest_isolation.session_scratch_root()
+
+
+def test_a_session_token_cannot_be_redeclared_in_one_process() -> None:
+    """One process is one session; a second token is a programming error."""
+    declared = pytest_isolation.session_id()
+    assert pytest_isolation.set_session_id(declared) == declared
+    with pytest.raises(RuntimeError, match="cannot be redeclared"):
+        pytest_isolation.set_session_id(f"{declared}-other")
+
+
+def test_the_session_token_is_exported_to_child_processes() -> None:
+    """A child adopts the session it belongs to instead of inventing one."""
+    token = pytest_isolation.session_id()
+    assert os.environ.get(pytest_isolation.ENV_SESSION_ID) == token
+
+    code = (
+        "import sys; sys.path.insert(0, r'%s'); import pytest_isolation as p; "
+        "print(p.session_id())" % (REPO_ROOT / "tests")
+    )
+    child = subprocess.run(
+        [sys.executable, "-c", code], capture_output=True, text=True, check=True
+    )
+    assert child.stdout.strip() == token
+
+
+def test_pruning_has_a_documented_default_threshold() -> None:
+    """The bound is declared, not incidental."""
+    assert pytest_isolation.STALE_SESSION_SECONDS == 24 * 60 * 60

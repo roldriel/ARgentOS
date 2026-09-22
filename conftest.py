@@ -29,13 +29,28 @@ Behaviour of the knobs:
   override (``-o cache_dir=...``) does not move it.  ``-p no:cacheprovider``
   remains a valid way to run without a cache at all.
 
+Session ownership of scratch (plan 145, I-1)
+--------------------------------------------
+
+The throw-away repositories the suites build are owned by **one session**, and
+this file declares that ownership before anything else runs.  The previous
+arrangement cleared a single *shared* scratch root at every session start, so a
+second pytest session destroyed the live scratch of a session that was still
+running — the cause of the non-deterministic suite failures.  Now the token is
+generated here, and a session clears only its own directory.
+
+The token is a declared value, never a guess: it is generated once at import
+time from independent entropy (pid, monotonic wall-clock nanoseconds and
+``os.urandom``), and exported through ``ARGENTOS_PYTEST_SESSION`` so a child
+process — including a nested pytest, or a subprocess a suite launches — adopts
+the session it belongs to instead of inventing a second one.
+
 Scope: DEV test execution only.  Nothing here is product payload; the
 regressions that assert the property live in ``tests/test_pytest_isolation.py``.
 """
 
 from __future__ import annotations
 
-import shutil
 import sys
 import tempfile
 from pathlib import Path
@@ -61,6 +76,15 @@ sys.path.insert(0, str(_HERE / "tools"))
 
 import pytest  # noqa: E402
 import pytest_isolation as isolation  # noqa: E402
+
+# Declare this session's ownership of the throw-away repositories it will build
+# (plan 145, I-1).  Done at import time — before any test module is imported and
+# before `pytest_configure` — because the suites ask for their scratch root at
+# *module* import time (`SCRATCH_ROOT = pytest_isolation.scratch_root(...)`).
+# Generating it here, once, also means every process that imports this file
+# agrees on the owner, and a nested pytest adopts the same token instead of
+# opening a second, colliding session.
+SESSION_ID = isolation.set_session_id(isolation.new_session_id())
 
 
 @pytest.hookimpl(tryfirst=True)
@@ -91,14 +115,25 @@ def pytest_configure(config: pytest.Config) -> None:
     cache_dir.parent.mkdir(parents=True, exist_ok=True)
     config.inicfg["cache_dir"] = str(cache_dir)
 
-    # 3. Throw-away repositories owned by the test suites. Cleared at session
-    #    start so an interrupted run cannot accumulate scratch repositories.
-    scratch = isolation.scratch_root()
-    if scratch.exists():
-        shutil.rmtree(scratch, ignore_errors=True)
-    scratch.mkdir(parents=True, exist_ok=True)
+    # 3. Throw-away repositories owned by the test suites. This session clears
+    #    **only its own** directory, which is empty by construction, so the
+    #    cleanup policy holds without a race: no session can destroy another
+    #    session's live scratch (plan 145, I-1).
+    isolation.clear_own_scratch()
+
+    # 4. Bounded cleanup of the leftovers of sessions that are long gone. Age is
+    #    the discriminator, never presence, so a live keyed-by-token session is
+    #    untouched. Reported in the header so the decision is observable.
+    config._argentos_pruned_sessions = isolation.prune_stale_sessions()  # type: ignore[attr-defined]
 
 
 def pytest_report_header(config: pytest.Config) -> str:
     """Make the isolation visible in the session header (diagnostics)."""
-    return f"argentos test temporaries: {isolation.pytest_temp_root()}"
+    pruned = getattr(config, "_argentos_pruned_sessions", [])
+    pruned_text = (
+        f"; pruned {len(pruned)} stale session(s)" if pruned else ""
+    )
+    return (
+        f"argentos test temporaries: {isolation.pytest_temp_root()} "
+        f"(session {SESSION_ID}{pruned_text})"
+    )

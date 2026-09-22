@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import importlib
 import re
+import shutil
 import subprocess
 import sys
 from dataclasses import dataclass, field
@@ -66,6 +67,10 @@ class GitState:
     head: str | None
     branch: str | None
     dirty_paths: tuple[str, ...]
+    #: Whether the ``git`` executable itself could be resolved. A missing CLI and
+    #: an unreadable repository are different facts: the first is an
+    #: environmental factor of the host, the second is a defect of the change.
+    git_available: bool = True
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -73,11 +78,25 @@ class GitState:
             "head": self.head,
             "branch": self.branch,
             "dirty_paths": list(self.dirty_paths),
+            "git_available": self.git_available,
         }
 
 
+def git_available() -> bool:
+    """Whether the ``git`` executable can be resolved at all."""
+    return shutil.which("git") is not None
+
+
 def _run_git(root: Path, *args: str) -> str | None:
-    """Run a local read-only git command; ``None`` when it cannot be resolved."""
+    """Run a local read-only git command; ``None`` when it cannot be resolved.
+
+    ``None`` is deliberately ambiguous at this level — it means "this command
+    produced no usable answer" — and ``git_state`` below is what turns that into
+    an **observable** fact instead of leaving the caller to guess. A *timeout*
+    is not ambiguity and never becomes ``None``: a git operation that does not
+    return is a defect of the environment, and reporting it as "no repository"
+    would be exactly the silent substitution this module must avoid.
+    """
     try:
         proc = subprocess.run(
             ["git", "-C", str(root), *args],
@@ -85,6 +104,8 @@ def _run_git(root: Path, *args: str) -> str | None:
             capture_output=True,
             text=True,
         )
+    except subprocess.TimeoutExpired:
+        raise
     except OSError:
         return None
     if proc.returncode != 0:
@@ -93,12 +114,23 @@ def _run_git(root: Path, *args: str) -> str | None:
 
 
 def git_state(root: Path) -> GitState:
-    """Head, branch and modified tracked paths; ``is_repository=False`` if not git."""
+    """Head, branch and modified tracked paths; ``is_repository=False`` if not git.
+
+    The two reasons a repository reading can be absent are kept apart
+    (``git_available``), because they call for different responses:
+
+    - the ``git`` CLI is not resolvable: the host cannot pin the repository
+      state at all. This is an environmental factor, reported as ``GAP``.
+    - the CLI is present but this root does not read as a repository: a real
+      defect of the change or of the environment, reported by ``observe`` as
+      ``ObservationError`` — never as an ordinary "no repository" state.
+    """
+    available = git_available()
     head = _run_git(root, "rev-parse", "HEAD")
     branch = _run_git(root, "rev-parse", "--abbrev-ref", "HEAD")
     status = _run_git(root, "status", "--porcelain")
     if head is None or branch is None or status is None:
-        return GitState(False, None, None, ())
+        return GitState(False, None, None, (), git_available=available)
     dirty = tuple(
         sorted(
             line[3:].strip()
@@ -106,7 +138,7 @@ def git_state(root: Path) -> GitState:
             if line.strip() and not line.startswith("??")
         )
     )
-    return GitState(True, head.strip(), branch.strip(), dirty)
+    return GitState(True, head.strip(), branch.strip(), dirty, git_available=available)
 
 
 def scoped_content_identity(
@@ -729,6 +761,23 @@ def observe(
     store = store or OrchestratorStore(root_path)
     git = git_state(root_path)
 
+    # A vital resource that could not be read is not the same fact as a resource
+    # that is absent, and it must never be reported as one (plan 145, I-1). When
+    # the CLI is available and the root is a real, readable directory, an
+    # unreadable repository reading is a defect: the change's repository state
+    # cannot be pinned, and every derived condition that depends on it
+    # (Committed, checkpoints, dirty paths) would otherwise be silently computed
+    # over a fabricated "not a repository". An absent CLI, or an absent root, is
+    # an environmental factor and stays a declared GAP below.
+    if not git.is_repository and git.git_available and root_path.is_dir():
+        raise ObservationError(
+            f"the git repository at {root_path} could not be read although the "
+            "git CLI is available and the root exists: the repository state "
+            "cannot be pinned, and this is not the same fact as 'not a "
+            "repository'. Fix the repository reading or the environment before "
+            "observing the change."
+        )
+
     plan_path = find_plan_path(root_path, plan)
     text = ""
     if plan_path is not None:
@@ -895,7 +944,12 @@ def observe(
     if plan_path is not None and not index_registered:
         gaps.append("plan is not registered in docs/plans/INDEX.md")
     if not git.is_repository:
-        gaps.append("root is not a git repository")
+        gaps.append(
+            "root is not a git repository"
+            if git.git_available
+            else "the git CLI is not resolvable: the repository state cannot be "
+            "pinned (environmental factor, never a substitute for the reading)"
+        )
     missing_artifacts = [
         path for path in artifacts if not (root_path / path).is_file()
     ]

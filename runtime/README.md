@@ -233,6 +233,23 @@ Operational policy: `.agents/policies/autonomous-orchestration.md`. Suite:
 Content Identity algorithm, and it never writes `protocol/.agents/`, `dist/` or
 an artifact of another plan.
 
+**A missing vital resource is never reported as an absent one** (plan 145, I-1).
+Reading the repository state has two distinguishable failure modes and the
+observation keeps them apart:
+
+- the `git` CLI is not resolvable — the host cannot pin the repository state at
+  all. `GitState.git_available` is `False` and the observation records a
+  declared `GAP`: an environmental factor, reported, never hidden.
+- the CLI is present and the root is a readable directory, but the repository
+  reading fails — `observe()` raises `ObservationError`. It does **not** degrade
+  to "not a repository": every derived condition that depends on the repository
+  state (`Committed`, checkpoints, dirty paths) would otherwise be computed over
+  a fabricated absence. This is the boundary that made a vanished throw-away
+  repository surface as an ordinary state instead of a loud failure.
+
+A `subprocess.TimeoutExpired` is likewise never converted into `None`: a git
+operation that does not return is a defect of the environment, not ambiguity.
+
 ## Supervised Autonomous Execution (Plan 135, hardened by Plan 138)
 
 `runtime/orchestrator/autonomy.py` is the **frontier**: it decides what the host
@@ -287,7 +304,23 @@ reconciled by reinterpreting the policy.
   Worker Results. It is a **view**, not a tracking system, and it keeps
   `human_operational_intervention` strictly apart from
   `human_authority_decision`: only the first measures incomplete autonomy, the
-  second is the boundary working as designed.
+  second is the boundary working as designed. Two of its fields are evidence
+  rules, not decorations (plan 145, I-7/I-8):
+  - `recoveries` counts only iterations that **re-conducted** work the change had
+    already produced evidence for — the derivation's own `RUN_REVALIDATION`
+    branch, reached when the recorded Validation Anchor is stale for the current
+    scoped content. An ordinary first-time step (the plan's implementation task,
+    its first validation, a gate reading before or after a checkpoint) is
+    conduction and never increments it.
+  - `findings_autonomously_corrected` is **derived** from the correction records
+    the journal persists, under the same anti-fabrication rule as
+    `findings_corrected_autonomously`: a correction that declares it wrote a
+    finding lifecycle state is not an autonomous correction. When no record
+    exists the count is zero *because the evidence says zero*, and the summary
+    says so in a note. The host's current derivation stops on an open finding
+    (`STOP_OPEN_FINDINGS` / `STOP_FINDING_REQUIRES_HUMAN`) instead of conducting
+    a correction, so a correction record cannot yet arise from the loop; that
+    boundary is declared rather than papered over with a heuristic.
 
 **Opt-in and non-regressive.** The host takes `autonomy_gate=` (CLI: `--sae`).
 Without it the loop behaves exactly as before this change, so the frontier is

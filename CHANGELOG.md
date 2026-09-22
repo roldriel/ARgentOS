@@ -37,6 +37,41 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Added
 
+- **Integral Closure of the Actionable DEV Backlog `I-1`…`I-8`** (plan 145, vía plan;
+  DEV-only sobre `tests/`, `runtime/`, `conftest.py`, `docs/` y `.agents/policies/`, sin
+  efecto en `protocol/.agents/`, por lo que RFC-56 no aplica): los ocho items accionables
+  del inventario posterior al Plan 144 se resuelven por **causa**, cada uno con su
+  regresión y su falsación. **`I-1` — aislamiento del pytest harness:** el scratch root
+  deja de ser compartido y pasa a ser **propio de cada sesión** —`tests/pytest_isolation.py`
+  declara un token explícito, resuelve `scratch_root` bajo `scratch/<token>`, limpia sólo
+  su propio directorio y poda por **edad** los de sesiones abandonadas (umbral declarado
+  de 24 h, un `stat` por vecino)—, y `conftest.py` declara el token en import time y lo
+  exporta por entorno para que un proceso hijo adopte su sesión en vez de inventar otra;
+  una sesión sin token se **rechaza** en lugar de recibir un directorio compartido. En el
+  runtime DEV, `GitState` gana `git_available` y `observe()` eleva `ObservationError`
+  cuando el CLI está disponible y el root existe pero el repositorio no se lee, en lugar
+  de degradar a un estado indistinguible de «no existe»; el CLI ausente sigue siendo un
+  `GAP` declarado y un `TimeoutExpired` nunca se convierte en `None`. **`I-7`:** la
+  métrica `recoveries` deja de contar conducción ordinaria —`_RECOVERY_ACTIONS` queda
+  reducido a `RUN_REVALIDATION`, la rama de recuperación de la derivación—, de modo que
+  una corrida autónoma sin stops reporta `Recoveries: 0` en lugar de `3`.
+  **`I-8`:** `findings_autonomously_corrected` deja de ser una constante y se **deriva**
+  de los registros de corrección del journal bajo la regla anti-fabricación existente,
+  con la frontera corriente declarada en una nota del resumen en lugar de disimulada.
+  **`I-2`…`I-6`:** los headers de los Planes 143 y 144 se transicionan a `Executed`; la
+  fila y la serie del Plan 137 en `docs/plans/INDEX.md` y su autodescripción corriente se
+  reconcilian; el backlog evidenciado del plan 19 deja de presentar `B-4`/`B-7`/`B-8` como
+  abiertos y nombra a la RFC-79 y al Plan 142 como quienes materializaron esos residuos;
+  `docs/placement-contract.md` registra `PC-72.1` con el estado corriente del enforcement
+  autorizado —librería de tabla de reglas materializada por el Plan 131, **no integrada** y
+  advisory— y distingue esa realización mecánica de un enforcement como obligación
+  operativa; y `tests/AGENTS.md` completa su conjunto anclado (14 filas) con
+  `test_placement_contract_drift.py` y declara la propiedad de sesión del scratch. Sin
+  mecanismos, policies, checkers, estados, registries, authority classes, taxonomías ni
+  workflows nuevos; `protocol/.agents/`, `dist/`, `ROADMAP.md` y `docs/adr/` con **0 diff**;
+  sin RFC, sin ADR, sin `VERSION` bump, sin tag, sin release, sin promoción y sin push.
+  Suite **1147 passed** (27 tests nuevos sobre los 1120 del baseline).
+
 - **Empty Remaining Backlog — resolución final de los cuatro residuales del backlog
   operativo** (plan 143, vía plan; DEV-only sobre `docs/`, `tools/`, `tests/`,
   `ROADMAP.md` y `CHANGELOG.md`, con **una excepción de payload declarada y autorizada**:

@@ -1,6 +1,6 @@
 # Plan 143 — Vaciar el backlog operativo residual (Empty Remaining Backlog)
 
-**Status:** Aprobado para ejecución
+**Status:** Executed (2026-09-21; metadata evolucionable actualizada por el Plan 145, ver `## Checkpoint / cierre`)
 **Fecha:** 2026-09-21
 **RFC:** — (vía plan; DEV-only sobre `docs/`, `tools/`, `tests/`, `ROADMAP.md` y `CHANGELOG.md`, con **una excepción de payload declarada**: el registro faltante de `PROTOCOL_TAXONOMY.md` que la H13 regla 11 exige, autorizado como `Clase B` — ver `## Frontera de payload autorizada`)
 **Clase:** B — sólo para `protocol/.agents/standards/runtime/PROTOCOL_TAXONOMY.md` (registro faltante de una entidad `kind: contract` que el contrato H13 regla 11 exige; adición documental compatible, sin cambio de significado, de contrato ni de compatibilidad, con justificación documentada y batería de checkers en verde; `docs/rfc/56-governance-fast-track.md:Decisión propuesta`). El resto del Change no toca el payload: `Clase —`.

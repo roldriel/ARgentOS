@@ -78,6 +78,8 @@ from .contracts import (
     FORBIDDEN as VERDICT_FORBIDDEN,
     HUMAN_AUTHORITY_STOPS,
     RECORD_ACTIONS,
+    RECORD_FINDING_CORRECTION,
+    RUN_REVALIDATION,
     STOP_ACTIONS,
 )
 
@@ -1355,11 +1357,22 @@ _STOP_ACTIONS = frozenset(STOP_ACTIONS)
 #: Stops that a human must resolve; the rest are host-level guards.
 _AUTHORITY_STOPS = frozenset(HUMAN_AUTHORITY_STOPS)
 
-#: Stop actions that represent a recovery the host performed rather than a
-#: frontier it reached: a corrective retry inside the authorized work.
-_RECOVERY_ACTIONS = frozenset(
-    {"RUN_REVALIDATION", "RUN_LIFECYCLE_GATES", "RUN_IMPLEMENTATION_TASK"}
-)
+#: Actions that **are** a recovery: the host re-conducts work the change had
+#: already produced evidence for, because that evidence stopped applying to the
+#: current state.
+#:
+#: ``RUN_REVALIDATION`` is the only such action, and it is the derivation's own
+#: recovery branch: the recorded Validation Anchor is stale for the current
+#: scoped content, so the same contract is re-run over the new state (A2).
+#:
+#: The ordinary executable steps are deliberately **not** here. A plan's first
+#: implementation task, its first validation run, its first gate reading and its
+#: first "record the anchor" are conduction, not recovery: counting them made a
+#: fully autonomous run that reached ``CLOSED_DERIVED`` with zero stops report
+#: ``Recoveries: 3``, which describes a recovery that never happened (plan 145,
+#: I-7). ``RUN_LIFECYCLE_GATES`` is reached again after a checkpoint as part of
+#: the normal closure sequence — a second reading, not a repair.
+_RECOVERY_ACTIONS = frozenset({RUN_REVALIDATION})
 
 
 def summarize_autonomy(
@@ -1375,6 +1388,20 @@ def summarize_autonomy(
     Read-only and deterministic. Nothing is counted that the records do not
     show: an unreadable or absent record contributes no positive fact, and a
     human authority decision is never counted as an operational intervention.
+
+    ``recoveries`` counts the iterations that re-conducted work the change had
+    already produced evidence for (:data:`_RECOVERY_ACTIONS`) — an ordinary
+    first-time step never increments it (plan 145, I-7).
+
+    ``findings_autonomously_corrected`` is **derived**, not asserted: it is
+    counted from the correction records the journal itself persists, through
+    the same anti-fabrication rule as :func:`findings_corrected_autonomously`
+    (plan 145, I-8). A correction that declares it wrote a finding lifecycle
+    state is not an autonomous correction, and is never counted as one. When no
+    correction record exists the count is zero because the evidence says zero —
+    and the boundary that makes that the current truth is recorded in the
+    notes, so a reader is never left to assume the host attempted corrections
+    it did not perform.
     """
     authorized = 0
     autonomous = 0
@@ -1382,6 +1409,7 @@ def summarize_autonomy(
     authority_decisions = 0
     operational_interventions = 0
     recoveries = 0
+    corrections: list[Mapping[str, Any]] = []
     notes: list[str] = []
 
     for record in journal:
@@ -1392,6 +1420,10 @@ def summarize_autonomy(
                 "count (declared absence, never inferred)"
             )
             continue
+        if action == RECORD_FINDING_CORRECTION:
+            # The correction evidence the host persisted: counted below, under
+            # the same rule that decides whether it was autonomous at all.
+            corrections.append(record)
         if action in _AUTONOMOUS_RECORD_ACTIONS:
             authorized += 1
             autonomous += 1
@@ -1413,6 +1445,18 @@ def summarize_autonomy(
             "vocabulary of this summary: it is reported, not counted"
         )
 
+    corrected = findings_corrected_autonomously(corrections)
+    if corrected == 0:
+        notes.append(
+            "no autonomous finding correction is recorded in this journal: "
+            "zero is the evidence, not a disabled capability. The host's "
+            "current derivation stops on an open finding "
+            "(`STOP_OPEN_FINDINGS` / `STOP_FINDING_REQUIRES_HUMAN`) instead of "
+            "conducting a correction, and resolving a finding's state is a "
+            "human act (CL-8) — so a correction record cannot yet arise from "
+            "the loop"
+        )
+
     summary = AutonomySummary(
         declared=envelope.declared,
         authorized_actions=authorized,
@@ -1420,7 +1464,7 @@ def summarize_autonomy(
         human_operational_interventions=operational_interventions,
         human_authority_decisions=authority_decisions,
         findings_detected=findings_detected,
-        findings_autonomously_corrected=0,
+        findings_autonomously_corrected=corrected,
         findings_escalated=findings_escalated,
         recoveries=recoveries,
         stop_conditions=tuple(stops),

@@ -233,28 +233,31 @@ Condiciones derivadas del Change Lifecycle (semántica; RFC-75
   tocar `VERSION`/changelog, o los ítems se acumulan en `[Unreleased]` y la
   numeración se asigna en la promoción.
 
-## 9. Estado actual (2026-09-15)
+## 9. Estado actual (2026-09-21)
 
-Snapshot del estado al 2026-09-15 (verificado contra git). La fuente inmutable
+Snapshot del estado al 2026-09-21, reconciliado en el punto de promoción que §5
+declara (promoción del rango `11.3.0`–`11.6.1`, plan 146). La fuente inmutable
 de la verdad son `git tag` + `protocol/.agents/VERSION`: este snapshot es un
 resumen de lectura, no una segunda fuente, y una divergencia se resuelve
 siempre a favor de git.
 
-- `master` = `11.2.0` (promoción de `11.1.0`–`11.2.0`: plan 115, RFC-76; tags
-  anotados `11.0.0`, `11.0.1`, `11.1.0` y `11.2.0`).
+- `master` = `11.6.1` (promoción del rango `11.3.0`–`11.6.1`: planes 119, 120,
+  121, 142 y 143; RFC-76, RFC-77, RFC-78 y RFC-79; Change de release del plan
+  146). Tags anotados `11.0.0`, `11.0.1`, `11.1.0` y `11.2.0` de promociones
+  anteriores, más `11.3.0`, `11.4.0`, `11.5.0`, `11.6.0` y `11.6.1` de esta
+  promoción, todos sobre el commit de promoción correspondiente de `master`.
 - `dist` = publicado desde `master` (`publish-dist` a partir de la promoción
-  de `11.2.0`).
-- `dev` = `11.5.0` (secciones del changelog `[11.3.0]`, `[11.4.0]` y
-  `[11.5.0]` sin tag: releases en curso según §5; últimos planes ejecutados
-  121, 122 y 123).
+  de `11.6.1`).
+- `dev` = `11.6.1` (sin secciones del changelog con fecha pendientes de tag:
+  el rango que estaba en curso desde `11.3.0` quedó oficializado por esta
+  promoción; últimos planes ejecutados 124–145).
 
 Notas:
 
-- `11.3.0`–`11.5.0` están implementados y registrados en `dev` (secciones del
-  changelog sin tag) y no están promovidos a `master`; `dist` no fue
-  regenerado con ellos. La promoción (`dev` → `master` + tag anotado +
-  regeneración de `dist`) es una decisión independiente y posterior a este
-  snapshot.
+- El rango `11.3.0`–`11.6.1` estaba implementado y registrado en `dev` con
+  secciones del changelog sin tag. La promoción (`dev` → `master` + tags
+  anotados + regeneración de `dist`) se ejecutó en el Change del plan 146, que
+  es el punto de reconciliación de este snapshot.
 - Mientras `dev` contenga planes sin publicar respecto de `master`/`dist`,
   `check_dist_sync.py` se espera rojo en `dev` por diseño (ver §4.1).
 - **Branch protection no habilitada (decisión del owner, 15 ago 2026):** el

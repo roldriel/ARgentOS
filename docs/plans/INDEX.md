@@ -6,7 +6,12 @@
 > Las secciones `## Convenciones` y `## Serie de RFCs (documentos canónicos)`
 > se conservan como anclas de navegación para referencias históricas.
 
-Estado al 2026-09-21. El Plan 145 está `Executed` con condición derivada `Closed` (cierre
+Estado al 2026-09-21. El Plan 146 está `Executed` (Change de release: promoción de `dev` a
+`master` y release del rango `11.3.0`–`11.6.1`, con los tags anotados `11.3.0`, `11.4.0`,
+`11.5.0`, `11.6.0` y `11.6.1` sobre el commit de promoción y `dist` regenerado por
+`publish-dist`; DEV-only sobre `CHANGELOG.md`, `docs/VERSIONING.md`, este INDEX y su propio
+artefacto, sin efecto en `protocol/.agents/`, por lo que RFC-56 no aplica; Change Level L2
+con impacto de release 2; Septuagésima séptima serie). El Plan 145 está `Executed` con condición derivada `Closed` (cierre
 integral del backlog accionable DEV `I-1`…`I-8`: aislamiento del pytest harness por sesión,
 frontera de observación que no confunde un recurso vital ilegible con uno ausente, semántica
 corregida de `recoveries` y derivación real de `findings_autonomously_corrected`, y la
@@ -1075,6 +1080,24 @@ sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
 | `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. |
+
+## Septuagésima séptima serie: promoción de `dev` y release del protocolo 11.3.0–11.6.1 (Plan 146) (21 sep 2026)
+
+Serie del Change que cierra el ciclo de los 33 commits que `dev` tenía por delante de
+`origin/dev`, ejecutando `dev → origin/dev → master → tag 11.6.1 → release 11.6.1` como una
+única Change integral: reconstrucción uno por uno de los 33 commits desde Git, verificación
+de la topología (`master` en `dc21458`, merge-base `f85b558`, árbol de `master` idéntico al
+del merge-base), de la versión (`VERSION` = `PROTOCOL_VERSION` = `11.6.1`) y del changelog,
+batería canónica completa, harness del protocolo y gates C-1/C-2/C-3, publicación de `dev`,
+promoción a `master` por merge y creación de los tags anotados del rango no publicado
+completo —`11.3.0`, `11.4.0`, `11.5.0`, `11.6.0` y `11.6.1`— sobre el commit de promoción,
+con `dist` regenerado por `publish-dist`. Plan 146 (vía plan; DEV-only sobre `CHANGELOG.md`,
+`docs/VERSIONING.md`, este INDEX y su propio artefacto, sin efecto en `protocol/.agents/`,
+por lo que RFC-56 no aplica; Change Level L2 con impacto de release 2).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `146-release-promotion-11-6-1.md` | — (vía plan; Change de release, sin efecto de payload) | Executed | **Promoción de `dev` y release del protocolo 11.3.0–11.6.1.** Reconstruye los **33** commits de `origin/dev..dev` uno por uno (SHA, tipo, mensaje, plan, área y relación con el release) y verifica que ninguno queda fuera de la línea de desarrollo; verifica la topología completa —`master` en `dc21458`, merge-base `f85b558`, árbol de `master` idéntico al del merge-base, `dev` 42 commits por delante de `master` y 33 por delante de `origin/dev`, fast-forward imposible por diseño y estrategia documentada de merge (`docs/VERSIONING.md:4. Flujo por plan (playbook)`, paso 7)—, la versión (`VERSION` = `PROTOCOL_VERSION` = `11.6.1`, cadena de bumps `11.3.0`→`11.4.0`→`11.5.0`→`11.6.0`→`11.6.1` desde la última versión publicada `11.2.0`; sin fuentes de versión duplicadas ni divergentes), el `CHANGELOG.md` y el estado de los planes 135–145 (todos `Executed`, ninguno reabierto). Corre la batería canónica completa (**seis checkers PASS**, `pytest tests/` **1147 passed**, harness **109 passed**, C-1 `VALID=51, GAP=0, ANOMALY=0`, C-2 `VALID=50, GAP=1, ANOMALY=0` —el `GAP` histórico del Plan 116, conservado y no reabierto—, C-3 `VALID=27, GAP=0, ANOMALY=0`, `check_ears_coverage.py` y `check_discovery_output.py` PASS), registra el **release intent** antes de tocar cualquier referencia remota, publica `dev` en su upstream, promueve a `master` por merge de `dev` y crea los **tags anotados** `11.3.0`, `11.4.0`, `11.5.0`, `11.6.0` y `11.6.1` sobre el commit de promoción —el rango no publicado completo, porque el invariante versión ↔ changelog ↔ tag no admite dejar versiones sin tag en `master` y el precedente `dc21458` oficializó dos versiones en un solo commit de release—, con `dist` regenerado por `publish-dist`. Corrige las dos afirmaciones «Tag pendiente de promoción» de `[11.4.0]` y `[11.3.0]` que la promoción vuelve falsas y reconcilia el snapshot `docs/VERSIONING.md` §9 en el punto de promoción que su §5 declara. Sin force-push, sin force-tag, sin reescritura de historia y sin operaciones destructivas; `protocol/.agents/`, `dist/`, `ROADMAP.md` y `docs/adr/` con **0 diff**. Declara dos `GAP` preexistentes sin resolver: el plan 126 materializó payload sin bump de `VERSION` (exención declarada por ese artefacto cerrado) y el commit `65a1113` (plan 131) no cita su plan en el asunto. |
 
 ## Septuagésima sexta serie: cierre integral del backlog accionable DEV `I-1`…`I-8` (Plan 145) (21 sep 2026)
 

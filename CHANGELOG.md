@@ -37,6 +37,32 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Added
 
+- **Promoción de `dev` y release del protocolo 11.3.0–11.6.1** (plan 146, vía plan;
+  Change de release — no toca `protocol/.agents/`, por lo que RFC-56 no aplica): cierra el
+  ciclo de los 33 commits que `dev` tenía por delante de `origin/dev` con la operación
+  `dev → origin/dev → master → tag 11.6.1 → release 11.6.1`, ejecutada como una única
+  Change integral. Se reconstruyeron los 33 commits uno por uno desde Git y se verificó que
+  ninguno queda fuera de la línea de desarrollo; se verificó la topología completa
+  (`master` en `dc21458`, merge-base `f85b558`, árbol de `master` idéntico al del
+  merge-base y `dev` 42 commits por delante), la versión (`VERSION` = `PROTOCOL_VERSION` =
+  `11.6.1`, calculada desde la última versión publicada `11.2.0` por la cadena de bumps de
+  los planes 119/120/121/142/143), el changelog y el estado de los planes 135–145; y se
+  corrió la batería canónica completa, el harness del protocolo, los gates C-1/C-2/C-3 y
+  los checkers específicos de release. El release oficializa el rango no publicado completo
+  —`11.3.0`, `11.4.0`, `11.5.0`, `11.6.0` y `11.6.1`— con tags anotados sobre el commit de
+  promoción de `master` y `dist` regenerado por `publish-dist`: el invariante
+  versión ↔ changelog ↔ tag no admite dejar versiones sin tag en `master`, y el precedente
+  de la promoción anterior oficializó dos versiones en un solo commit de release. Se
+  corrigen además las dos afirmaciones «Tag pendiente de promoción» que la promoción vuelve
+  falsas y se reconcilia el snapshot `docs/VERSIONING.md` §9 en el punto de promoción que su
+  §5 declara. Sin force-push, sin force-tag, sin reescritura de historia y sin operaciones
+  destructivas; `protocol/.agents/`, `dist/`, `ROADMAP.md` y `docs/adr/` con 0 diff. Quedan
+  declarados sin resolver dos `GAP` preexistentes: el plan 126 materializó payload sin bump
+  de `VERSION` (exención declarada por ese artefacto cerrado) y el commit `65a1113` no cita
+  su plan en el asunto. El SHA de promoción, los tags, la publicación de `dist` y la
+  verificación post-release se registran en el artefacto de cierre del Plan 146
+  (`docs/plans/146-release-promotion-11-6-1.md`).
+
 - **Integral Closure of the Actionable DEV Backlog `I-1`…`I-8`** (plan 145, vía plan;
   DEV-only sobre `tests/`, `runtime/`, `conftest.py`, `docs/` y `.agents/policies/`, sin
   efecto en `protocol/.agents/`, por lo que RFC-56 no aplica): los ocho items accionables
@@ -1266,7 +1292,8 @@ La política de versionado, changelog, tags y estados de planes vive en
   independencia es una **condición de procedencia declarada**
   (`ejecutores: mismo | distinto`), nunca una garantía epistemológica; el
   resultado es `attestation`/recomendación advisory y no satisface ningún ítem
-  `[gate]`. `MVP CLOSED != RELEASE AUTHORIZED`. Tag pendiente de promoción.
+  `[gate]`. `MVP CLOSED != RELEASE AUTHORIZED`. El tag anotado `11.4.0` se
+  crea como entregable del release en la promoción del Plan 146.
 
 ## [11.3.0] — 2026-09-13
 
@@ -1286,7 +1313,8 @@ La política de versionado, changelog, tags y estados de planes vive en
   append**, con la consecuencia declarada de que los estados intermedios del
   artifact no se preservan. Sin runtime, campos, endpoints, eventos, estados ni
   métodos nuevos; `runtime/toolcalls/change_governance.py` sin cambios. Cambio
-  MINOR (11.2.0 → 11.3.0); tag pendiente de promoción.
+  MINOR (11.2.0 → 11.3.0); el tag anotado `11.3.0` se crea como entregable del
+  release en la promoción del Plan 146.
 
 ## [11.2.0] — 2026-09-12
 

@@ -210,7 +210,8 @@ tagged in the aggregated report:
   gate records and `HARNESS_REPORT.md` entries.
 - **Recorded** — the event is the only record; its value is accepted as the
   report of what happened: `state_transition`, `failure`, `delegation`,
-  `reviewer_retry`, `skill_override`, `flag_evidence`, `discovery_consent`.
+  `reviewer_retry`, `skill_override`, `flag_evidence`, `discovery_consent`,
+  `session_risk`.
 - **Verified** — corroborated by a second artifact the reporter does not
   control in that step: `context.budget_declared` / `context.budget_consumed`
   against the estimation rule of `BUDGET_MATERIALIZATION.md` when the payload

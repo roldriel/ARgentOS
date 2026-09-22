@@ -58,8 +58,10 @@ following the intermediate-working-directory mechanism (Option A).
    and compare them against the `[hashes]` section of the manifest to determine
    which entries are stale.
 4. On the first run over a legacy KB (entries without provenance fields), mark
-   those entries in the manifest with `confidence: low` and `status: legacy`.
-   Legacy entries are never deleted without a trace.
+   those entries `status = "legacy"` in their own front matter and list them
+   under `[entries] legacy` in the manifest. The `legacy` state expresses the
+   low confidence of an unrevalidated inherited entry; `confidence` is not a
+   manifest field. Legacy entries are never deleted without a trace.
 5. Prepare `discovery_input.json` for the workers selected by the scope,
    reading `discovery_context_budget`, `discovery_sample_size` and
    `discovery_sample_size_per_language` from `.agents/features.toml` and
@@ -67,14 +69,19 @@ following the intermediate-working-directory mechanism (Option A).
    `sample_size_per_language`, plus the list of previous KB entries
    each worker must consider.
 6. Classify the project into a `project_shape` — one of `library`, `cli`,
-   `service`, `application`, `monorepo` or `unknown` — using deterministic
-   signals:
+   `service`, `application`, `monorepo`, `documentation` or `unknown` — using
+   deterministic signals:
    - Distributable package manifest without run scripts and with an empty
      entry-point table → `library`.
    - `console_scripts` entry points or a `bin/` directory → `cli`.
    - A web framework in the dependencies → `service`.
    - A `Dockerfile` plus a main entry → `application`.
    - Multiple package manifests of the shapes above → `monorepo`.
+   - A documentary/standards/protocol product with no importable library, no
+     command-line program, no service and no application of its own →
+     `documentation`. Internal tooling does not change the shape: scripts without
+     packaging are still `documentation`, and with packaging they are `library`
+     or `cli`.
    Signal priority when several match: `cli` > `service` > `library` >
    `application`; `monorepo` overrides every other shape when multiple
    sub-projects exist. If no signal matches, the shape is `unknown`.

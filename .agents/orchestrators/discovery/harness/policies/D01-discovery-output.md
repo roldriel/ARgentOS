@@ -67,7 +67,12 @@ it only validates the per-task `KB_RECOMMENDATION.md` artifact in
 4. **Environment without secrets:** `environment.md` contains no sensitive
    strings and no environment variable values. `[agent]`
 5. **Real source files:** every `source_files` entry points to an existing
-   path, except `"system_probe"` (valid only for environment entries). `[agent]`
+   path, except the two reserved values: `"system_probe"` (valid only for
+   environment entries, whose facts come from probing the execution environment)
+   and `"project_scan"` (valid only for an absence or a tree/structural fact
+   established by scanning the project tree, and never in an environment entry).
+   An unresolvable entry that is not a reserved value is a violation of this
+   item, not missing evidence. `[agent]`
 6. **No unsourced claims:** qualitative claims are backed by `source_files` or
    by session artifacts. `[agent]`
 7. **Consistent merge:** the `synthesis_worker` did not lose information and

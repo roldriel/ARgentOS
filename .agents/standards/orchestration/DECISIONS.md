@@ -60,9 +60,17 @@ Every transition to `ABORT` requires a cause recorded in `SESSION_LOG.md`: a use
 - **Inputs:** the protocol health result; the existence of explicit user authorization.
 - **Authority and rule:** a protocol health `FAIL` blocks the handoff to the core Orchestrator; the only exception is explicit user authorization, recorded in `SESSION_LOG.md`. The canonical statement of this rule lives in `.agents/orchestrators/system/states/SYSTEM_STATE_MACHINE.md` (`BOOTSTRAP_FAILED`); this point models it conceptually without reformulating it. Only the user may degrade the verified environment, and that degradation is always logged as a warning.
 
+### D7 — Deliberation invocation
+
+- **Question:** does this candidate decision warrant adversarial deliberation?
+- **Inputs:** the declared decision frame (problem reference, candidate with a local label, mandatory evaluable criteria, mode, declared limits); the presence of at least two material directions or a genuine doubt about viability; whether the outcome can change what will be done; any registered motive (material uncertainty, competing viable alternatives, unresolved disagreement, high risk, ambiguous evidence, an explicit request for adversarial challenge); an explicit human request.
+- **Authority:** the Orchestrator decides and **records the motive** in `SESSION_LOG.md`; the human may request it. `PROHIBITED:` an automatic classifier that decides whether to invoke, how deep to go, or which posture to assign, and any automatic routing. Invocation creates no obligation, marks no state, and is not a gate. The deliberation never enables a transition: its verdict is advisory evidence, and the Orchestrator treats it with recommendation confidence, recording any override and its reason. When the residue is a **criterion disagreement** (what to prioritize), more deliberation does not converge: it terminates and escalates to the authority.
+- **Boundary:** invoking deliberation does not create a workflow phase, a state, a lifecycle state, a gate or an authority class. The capability and its record are defined in `.agents/orchestrators/core/roles/orchestrator.md` (§4.4 Deliberation Invocation) and `.agents/contracts/DELIBERATION_REPORT.md`.
+
 ## Relationship to other standards
 
-- `.agents/standards/quality/CONFIDENCE.md` — general confidence model; its recommendation-confidence specialization feeds D1 and D3.
+- `.agents/standards/quality/CONFIDENCE.md` — general confidence model; its recommendation-confidence specialization feeds D1 and D3, and the interpretation of a deliberation verdict under D7.
 - `.agents/standards/requirements/INTENT_CONFIDENCE.md` — intent-interpretation specialization; feeds D3.
 - `.agents/standards/requirements/NO_ASSUMPTIONS.md` — biases D3 toward `NEEDS_CLARIFICATION`.
-- `.agents/orchestrators/core/roles/orchestrator.md` — the role applies this catalog; operational procedures (reviewer invocation, discovery invocation, recovery mapping) live there.
+- `.agents/orchestrators/core/roles/orchestrator.md` — the role applies this catalog; operational procedures (reviewer invocation, discovery invocation, deliberation invocation, recovery mapping) live there.
+- `.agents/contracts/DELIBERATION_REPORT.md` — the artifact contract of the capability D7 invokes.

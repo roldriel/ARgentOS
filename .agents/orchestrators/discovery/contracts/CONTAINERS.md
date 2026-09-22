@@ -86,7 +86,11 @@ One bullet per definition, with the evidence file:
 - Every definition must trace to a real container file (`source_files`);
   ground truth is validated by `D01-discovery-output`.
 - If the project has no container definitions, the section states
-  `_No container definitions found._`.
+  `_No container definitions found._`. An absence is a claim established by
+  scanning the project tree, so its `source_files` carries the reserved value
+  `"project_scan"` (`.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md`,
+  §Optional Front Matter (provenance)); it does not name a file that does not
+  exist.
 
 ## Validation
 

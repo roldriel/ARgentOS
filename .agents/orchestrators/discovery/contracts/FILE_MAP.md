@@ -91,6 +91,11 @@ Annotated index of the main folders and relevant files. One bullet per entry:
   when the directory tree shape changes.
 - Every claim must trace to real project paths; ground truth is validated by
   `D01-discovery-output`.
+- Claims about the **shape of the tree** (structure, folder responsibilities,
+  what is absent from a subtree) are established by scanning the project tree, so
+  their `source_files` carries the reserved value `"project_scan"`
+  (`.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md`, §Optional
+  Front Matter (provenance)); claims about a specific file name it as usual.
 
 ## Validation
 

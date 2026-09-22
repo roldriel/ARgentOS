@@ -350,3 +350,93 @@ A namespace inconsistency is expressed as a difference or invalidity of
 (inconsistent composition anchors); it is not an independent category. TTL and
 freshness govern lifecycle, never correctness; physical deletion (garbage
 collection) is storage cleanup and does not redefine semantic identity.
+
+## Stable prefix (provider-bound materialization)
+
+The **stable prefix** is a property of a canonical materialization: the leading
+region of the representation directed at the provider that carries the resolved
+Stable Context and no dynamic content. It is not a Segment, not an identity and
+not an object of persistence. Stable Context (above) is semantic; the stable
+prefix is representational — the same distinction the provider prompt cache
+capability model draws between a Stable Context and a Stable Prefix.
+
+### Eligibility rule
+
+A context element belongs to the stable prefix only when all three hold:
+
+```text
+(a) it is Stable Context (see "Context classification");
+(b) it belongs to the scope of the delegation (Core or Worker);
+(c) the protocol directs the Worker to consume it, or it is deterministically
+    resolvable from the Delegation Payload.
+```
+
+An element that does not satisfy the rule is **not** included. A stable element
+that the delegation names but that cannot be resolved is reported as a deviation
+by the Worker (`WORKER_DELEGATION_CONTRACT.md`, `skills`); the runtime never
+invents its content.
+
+### Scope of the stable prefix
+
+Under the current model the stable prefix covers **Core + Worker** in the scope
+of the delegated Worker:
+
+| Step | Content | Status |
+| --- | --- | --- |
+| Protocol bootstrap | — | **Declared, empty in the Worker scope.** The bootstrap sequence loads the system role, the state machine and the orchestrator role into the **Orchestrator** (`_AGENTS.md`, "Before any task"); the Worker execution contract does not direct the Worker to read any bootstrap document |
+| Workflow module | `orchestrators/<domain>/workflow/<phase>` | Eligible |
+| Role / profile | `roles/<role>.md`, `roles/profiles/<profile>.md` | Eligible |
+| Harness policy | `orchestrators/<domain>/harness/policies/<trigger>` | Eligible |
+| Skills | `skills/<name>/SKILL.md` | Eligible |
+
+The **Project** segment (the discovery knowledge base) is **not** part of the
+stable prefix: its freshness and lifecycle introduce an invalidation dynamic
+distinct from invalidation by identity. This exclusion is deliberate and
+deferred, not a prohibition.
+
+The **dynamic suffix** comprises the task-specific content, the
+`input_artifacts` **references** and the execution/session metadata
+(`session_uuid`, `current_state`, `target_phase`, `context_budget`). Artifact
+**content** never enters the prefix: full artifacts are not Stable Context and
+`## 2. Omission rules` governs their inclusion.
+
+### Boundary with the composition policies
+
+This section governs the **representation produced by the runtime** from the
+already-composed Execution Context. It does not modify the composition policies
+of this directory: **Compression** (`## 8`, `COMPOSITION_COMPRESSION.md`) governs
+the form of the protocol payload — stable documented content is cited by
+reference there, not pasted inline — and **Optimization**
+(`COMPOSITION_OPTIMIZATION.md`) governs its final ordering. The three magnitudes
+stay distinct: semantic budget, physical/provider cost, and prompt
+materialization cost.
+
+The stable prefix does not change the semantic limits of the Context Budget
+(`BUDGET_MATERIALIZATION.md`, "Interaction with caching and persistence").
+
+### Identity and ordering
+
+The ordering of the representation belongs to the **materialization**, not to the
+semantic identity: it is identified by `ordering_contract_version` within the
+materialization identity, and a change of ordering produces a different
+materialization identity with an unchanged `SemanticContextIdentity`. No
+identity primitive is introduced for the stable prefix.
+
+Two different content sets must not share one materialization identity: a
+materialization contract that changes which stable content it carries names that
+content explicitly in its own identity.
+
+### Non-equivalences
+
+```text
+Stable Context      ≠ Stable Prefix
+Stable Prefix       ≠ Segment
+Stable Prefix       ≠ identity
+Stable Prefix       ≠ persistence
+Stable Prefix       ≠ authorization to reuse across sessions
+resolving content   ≠ provider cache hit
+```
+
+The Provider owns its cache: creation, reuse, eviction, lifetime and billing.
+A cache miss never invalidates a semantically valid context, and no part of this
+model asserts that a provider reuses the prefix it receives.

@@ -235,8 +235,8 @@ plan 121 el de resolución de segmentos; ninguno se modifica.
   diferencia de plataforma e intérprete es precisamente el factor que reveló F4
   y que la corrección vuelve irrelevante.
 - **Scoped Content Identity:**
-  - **State identity (estado validado):** T1 = `d53e96231da30f74fb906c4fad6b853d8a9ddab8` (árbol del índice staged sobre el scope declarado, `git write-tree` vía `tools/scoped_content_identity.py`).
-  - **Delta scoped identity (scope S = las nueve rutas del `## Declared scope`, ordenadas; serialización `scoped-v1`):** `ef53919418d4f69b01b0f23a375252a0c77fdff4b299fd1aef32007dad4f4d3d` (`python tools/scoped_content_identity.py` sobre las nueve rutas).
+  - **State identity (estado validado):** T1 = `f2c42c5e1ad11578d627e2f4f128c93d021ea97e` (árbol del índice staged sobre el scope declarado, `git write-tree` vía `tools/scoped_content_identity.py`; coincide con `git rev-parse 'c901d56^{tree}'`, el commit del Change, porque ese commit contiene exactamente el estado staged validado).
+  - **Delta scoped identity (scope S = las nueve rutas del `## Declared scope`, ordenadas; serialización `scoped-v1`):** `24a860dc627fe4073c3a24ff0369917ff52ff97cfed42ecaed045413eb3575c3` (`python tools/scoped_content_identity.py` sobre las nueve rutas, tras `git add` de los cambios del Change — precondición de reproducibilidad de `tools/scoped_content_identity.py`, plan 96 §13.2).
   - **Límite declarado:** el scope excluye deliberadamente este artefacto, de modo que la escritura del ancla y del checkpoint no altera la identidad del estado que el checkpoint certifica (convención anti-auto-referencia, precedente Planes 114/116/134/140–146).
   - **Scope set (repo-relative paths, ordenados; reconstruible desde este artifact):** `.agents/policies/lifecycle-checkers.md`, `.github/workflows/check-protocol.yml`, `CHANGELOG.md`, `docs/VERSIONING.md`, `docs/plans/INDEX.md`, `runtime/toolcalls/segment_resolution.py`, `tests/test_check_lifecycle_anchor.py`, `tests/test_segment_resolution.py`, `tools/check_lifecycle_anchor.py`.
 - **Validity / stale:** vigente para el estado validado que el checkpoint certifica.
@@ -252,7 +252,7 @@ plan 121 el de resolución de segmentos; ninguno se modifica.
   el cierre multi-commit; los SHA y los tree id quedan como locators, no como
   identidad (precedente: Planes 138, 144, 145 y 146).
 - **Estado validado (ref al Validation anchor):** A1 (arriba).
-- **Estado de cierre (identidad):** delta scoped identity + state identity del anchor aplicable (A1): `ef53919418d4f69b01b0f23a375252a0c77fdff4b299fd1aef32007dad4f4d3d` / `d53e96231da30f74fb906c4fad6b853d8a9ddab8`. Es el estado que el checkpoint **certifica** por correspondencia GC-1.
+- **Estado de cierre (identidad):** delta scoped identity + state identity del anchor aplicable (A1): `24a860dc627fe4073c3a24ff0369917ff52ff97cfed42ecaed045413eb3575c3` / `f2c42c5e1ad11578d627e2f4f128c93d021ea97e`. Es el estado que el checkpoint **certifica** por correspondencia GC-1.
 - **Árbol material del commit de cierre (tree id):** registrado por el commit de cierre (2), que transcribe el SHA y el tree id del commit (1); no es la identidad del estado de cierre, porque el commit incluye governance (este registro) y su árbol puede diferir legítimamente del estado validado (RFC-75 `Mecanismo 7`).
 - **Consistencia checkpoint↔anchor:** PASS — verificada por C-2 sobre el artefacto de este Plan en el estado de cierre (`VALID`, o `N/A` mientras el ancla no esté registrada; nunca `ANOMALY`).
 - **Governance aplicada:** `docs/plans/INDEX.md` registra el Plan 147 y su serie; `CHANGELOG.md` con el ítem `[Unreleased]` del Plan 147; `docs/VERSIONING.md` §9 reconciliado (divergencia `dev`/`master` del cierre del Plan 146 y requisito de historia completa en CI); `.agents/policies/lifecycle-checkers.md` con el contrato de C-1 actualizado; sin RFC nueva, sin ADR, sin cambio de payload, sin `VERSION` bump propio, sin tag.
@@ -337,6 +337,17 @@ válidos se aceptan (`test_every_payload_escaping_identifier_is_rejected`,
 (`dd47e01f…`), `11.4.0` (`f6760524…`), `11.5.0` (`35371c33…`), `11.6.0`
 (`905941a2…`) y `11.6.1` (`06022f31…`) conservan exactamente los objetos que
 registró el Plan 146. Ningún force-push, force-tag ni reescritura de historia.
+
+**Commit del Change y estado validado.** El commit (1) es
+`c901d56ff082335abd60fcb1da63068799291ac8`, con árbol
+`f2c42c5e1ad11578d627e2f4f128c93d021ea97e`. Los cinco blobs del scope tienen el
+mismo id en el índice y en `HEAD` (`git hash-object` vs. `git rev-parse
+HEAD:<ruta>`, los nueve coinciden), y el delta scoped identity del índice staged
+y el del ref `c901d56` coinciden en `24a860dc…`: el estado validado **es** ese
+árbol, sin diferencia declarada entre el estado medido y el commiteado. Este
+registro de cierre (commit (2)) modifica únicamente el artefacto del Plan, que
+**no** forma parte del scope declarado, de modo que la identidad del estado de
+cierre no cambia por su propia escritura.
 
 **Reporte de la release.** No se publica una nueva release. La corrección es
 corriente (código y documentación DEV: `tools/`, `tests/`, `runtime/`,

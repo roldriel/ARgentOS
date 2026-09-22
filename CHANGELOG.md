@@ -35,6 +35,22 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ## [Unreleased]
 
+### Changed
+
+- **Promoción de release: release de gobernanza `11.6.2`** (plan 148, vía plan — Change de
+  release, sin efecto de payload): promueve a `master` el estado verificado de `dev` tras el
+  plan 147, publicando los artefactos de gobernanza y de tooling DEV que `master` no tenía y
+  nivelando el artefacto del plan 146, cuya revisión previa había quedado en el árbol
+  publicado por el tag `11.6.1`. **No hay cambio de protocolo:** el payload bajo
+  `protocol/` es idéntico entre `dev` y `master` y `protocol/.agents/VERSION` es `11.6.1` en
+  ambos, de modo que la release publica la versión **del repositorio**, no una versión nueva
+  del protocolo; el bump a `11.6.2` y su tag son la excepción de promoción que
+  `docs/VERSIONING.md` §3 declara («Releases de gobernanza»), con la justificación registrada
+  por el mantenedor. El contenido publicado es: la corrección post-release del plan 147
+  (C-1, C-2, dogfoods SAE y resolución de segmentos) y el registro de cierre del plan 146.
+  Sin force-push, sin reescritura de historia, sin mover ni alterar tags existentes;
+  `ROADMAP.md` y `protocol/` con 0 diff.
+
 ### Added
 
 - **Promoción de `dev` y release del protocolo 11.3.0–11.6.1** (plan 146, vía plan;
@@ -1109,6 +1125,7 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Fixed
 
+
 - **Guía de adopción sin `git subtree --prefix=.`** (plan 85): `docs/ADOPTION.md`
   ya no recomienda `git subtree` con prefijo raíz — el `dist` solo trae el
   payload (`.agents/` + `AGENTS.md`) y un `subtree pull` con `--prefix=.`
@@ -1150,6 +1167,39 @@ La política de versionado, changelog, tags y estados de planes vive en
 `docs/VERSIONING.md` §3)
 
 ---
+
+## [11.6.2] — 2026-09-22
+
+### Fixed
+
+- **Integridad post-release y compatibilidad de CI** (plan 147, vía plan; DEV-only sobre
+  `tools/`, `tests/`, `runtime/toolcalls/`, `.github/workflows/`, `.agents/policies/` y la
+  documentación corriente, sin efecto en `protocol/.agents/`, `protocol/_AGENTS.md` ni
+  `dist`, por lo que RFC-56 no aplica): corrige, en la causa y no en el síntoma, las cuatro
+  causas raíz que dejaron rojo el job `check-protocol` después de la release `11.6.1` (runs
+  `35689196717` en `dev`: 4 failed / 1143 passed, y `35688773540` en `master`: 5 failed /
+  1142 passed). **C-1:** el árbol publicado por el tag `11.6.1` (`master` = `8dbd92e`, merge
+  de `dc21458` y `54171d8`) contiene la revisión **previa** del Plan 146 —`7a9d393`, que
+  transcribe los literales de identidad, no es ancestro de `master`—, y su
+  `## Validation anchor` difiere los literales al checkpoint por la convención
+  anti-auto-referencia del corpus; R-C1-4 traducía esa **ausencia declarada** en `ANOMALY`
+  («invalid State identity format», «invalid Delta scoped identity format»). Ahora distingue
+  ausencia declarada (`GAP`, advisory) de valor presente e inválido (`ANOMALY`), sin aceptar
+  ningún literal malformado (falsificación explícita). **C-2 y dogfoods SAE:** C-2 resuelve
+  cada tree id declarado con `git rev-parse --verify <sha>^{tree}` y los dogfoods leen los
+  commits del Plan 138 con `git log --grep`; con el checkout superficial por defecto
+  (`fetch-depth: 1`) C-2 degradaba a `GAP=27` y los dogfoods reportaban «the plan-138 commits
+  are not in history». Se da **historia completa** al job (`actions/checkout@v4` con
+  `fetch-depth: 0`) en lugar de debilitar los checkers. **Resolución de segmentos:** el guard
+  de contención validaba con la clase de path nativa, de modo que en POSIX
+  `C:/Windows/x.md` no es absoluto ni tiene componente `..` y no se rechazaba —el test
+  `test_path_escaping_the_payload_is_rejected` fallaba sólo en el runner Linux—; ahora valida
+  con semántica POSIX (`PurePosixPath`) en toda plataforma y rechaza además el separador
+  foráneo `\` y el identificador calificado por unidad (`C:`, `C:/`, `C:x`). Sin reescribir
+  ningún plan cerrado, sin tocar `master`, los tags `11.3.0`–`11.6.1` ni `dist`. Se publica
+  como **release de gobernanza** `11.6.2` del plan 148: es una promoción de release, no un
+  cambio del protocolo, de modo que el payload transportado sigue siendo `11.6.1`
+  (`docs/VERSIONING.md` §3, viñeta «Releases de gobernanza»).
 
 ## [11.6.1] — 2026-09-21
 

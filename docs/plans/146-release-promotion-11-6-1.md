@@ -149,13 +149,13 @@ Planes 141 y 131, también dentro del conjunto, están igualmente `Executed`. Ni
 | **RG-3 — Version** | **PASS** | `VERSION` = `PROTOCOL_VERSION` = `11.6.1`; cadena de bumps desde `11.2.0` conforme a VERSIONING §3; sección `[11.6.1]` presente |
 | **RG-4 — Changelog** | **PASS** | Secciones descendentes, `[Unreleased]` arriba, ítems trazables, sin contenido inventado; dos afirmaciones «tag pendiente» corregidas por §5 |
 | **RG-5 — Change lifecycle** | **PASS** | Planes 135–145 `Executed`; `I-1`…`I-8` resueltos; ningún plan cerrado reabierto |
-| **RG-6 — Tests** | **PASS** | `python -m pytest tests/` → **1147 passed, 0 failed**; `python -m pytest protocol/.agents/harness/tests/ -q` → **109 passed** |
+| **RG-6 — Tests** | **PASS** | `python -m pytest tests/` → **1147 passed, 0 failed**; `python -m pytest protocol/.agents/harness/tests/ -q` → **109 passed**. La definición normativa de «verde» es la batería canónica local (`docs/VERSIONING.md:4.1 Batería canónica de verificación`), que pasa íntegra. El job de CI `check-protocol` está rojo por causas ambientales ajenas a este Change: ver `GAP-3` |
 | **RG-7 — Canonical validation** | **PASS** | Seis checkers canónicos OK; C-1 `VALID=51, GAP=0, ANOMALY=0`; C-2 `VALID=50, GAP=1, ANOMALY=0` (el `GAP` histórico del Plan 116, conservado y no reabierto); C-3 `VALID=27, GAP=0, ANOMALY=0` |
 | **RG-8 — Protocol integrity** | **PASS** | `git diff HEAD --name-only -- protocol/ dist/ ROADMAP.md docs/adr/` → vacío (0 diff); ningún archivo de `protocol/.agents/` se modifica en este Change |
-| **RG-9 — Release artifacts** | **PASS** | `VERSION`, ancla `PROTOCOL_VERSION`, secciones del changelog, los planes 119/120/121/142/143 `Executed`, el workflow `publish-dist.yml` y la rama `dist` presentes y coherentes |
-| **RG-10 — Tag** | **PASS** | Convención real verificada: tag **anotado** con el nombre semver desnudo `X.Y.Z` sobre `master` (`docs/VERSIONING.md:6. Tags`). Ninguno de los cinco tags del rango existe todavía: creación sin conflicto y sin force-tag |
+| **RG-9 — Release artifacts** | **PASS** | `VERSION`, ancla `PROTOCOL_VERSION`, secciones del changelog, los planes 119/120/121/142/143 `Executed`, el workflow `publish-dist.yml` y la rama `dist` presentes y coherentes. Verificado en el estado publicado: `publish-dist` **completed / success** (run `35688773541`) con `origin/dist` = `c07abdd9ca50c459f7df5b075057f7b8d5f9762b`, y `python tools/check_dist_sync.py` sobre `master` → **«dist is in sync with protocol/»** |
+| **RG-10 — Tag** | **PASS** | Convención real verificada: tag **anotado** con el nombre semver desnudo `X.Y.Z` sobre `master` (`docs/VERSIONING.md:6. Tags`). Ninguno de los cinco tags del rango existía antes de crearlo; los cinco se crearon sin conflicto y sin force-tag, todos apuntando al commit de promoción `8dbd92e0f006643412d21d562c5532be30f67647` (ver `## Verificación post-release`) |
 | **RG-11 — Promotion topology** | **PASS** | Promoción por **merge** `dev` → `master` (playbook §4 paso 7), no destructiva; árbol de `master` idéntico al merge-base, de modo que el merge es contenido-trivial |
-| **RG-12 — Release cleanliness** | **GAP declarado** | No hay blockers nuevos que impidan el release. Se declara **1 GAP preexistente** (ruleset de versionado del plan 126) y **1 límite declarado** (GitHub Releases no es parte del mecanismo de este repositorio). Ver `## GAP declarado` |
+| **RG-12 — Release cleanliness** | **GAP declarado** | No hay blockers nuevos que impidan el release. Se declaran **3 GAP preexistentes / ambientales** (`GAP-1`, `GAP-2`, `GAP-3`) y **1 límite declarado** (GitHub Releases no es parte del mecanismo de este repositorio). Ver `## GAP declarado` |
 
 Ningún `GAP` se convirtió en `PASS` por interpretación, y ningún resultado incierto se declaró `PASS`.
 
@@ -184,7 +184,7 @@ git push --dry-run origin master                                -> Everything up
 
 El `GAP` de C-2 es el histórico del Plan 116 (`HISTORICAL / NON-ACTIONABLE / RESOLVED` desde el Plan 143): se sigue emitiendo por contrato, es advisory y **no** se reabre ni se reinterpreta. No apareció ningún `FAIL`, `ERROR`, `BOUNDARY` ni `ANOMALY` nuevos.
 
-Dos observaciones de la corrida, registradas y no convertidas en gates: (a) el conteo de referencias del checker de invariantes es 10334 frente a las 10256 del inventario externo del Plan 140, porque entre ambos estados entraron los planes 141–145 — es crecimiento esperado, no una anomalía; (b) `check_dist_sync.py` **no** se ejecuta aquí: es local-only y se espera verde **sólo en `master`** (`docs/VERSIONING.md:4.1 Batería canónica de verificación`), por lo que su verificación corresponde al estado posterior a la promoción.
+Tres observaciones de la corrida, registradas y no convertidas en gates: (a) el conteo de referencias del checker de invariantes es 10334 frente a las 10256 del inventario externo del Plan 140, porque entre ambos estados entraron los planes 141–145 — es crecimiento esperado, no una anomalía; (b) `check_dist_sync.py` es local-only y se espera verde **sólo en `master`** (`docs/VERSIONING.md:4.1 Batería canónica de verificación`), de modo que se ejecutó sobre el estado publicado y pasó — ver `## Verificación post-release`; (c) el job de CI `check-protocol` está rojo por causas ambientales y preexistentes, registradas como `GAP-3` y **no** como `PASS`.
 
 ## GAP declarado
 
@@ -202,6 +202,13 @@ Dos observaciones de la corrida, registradas y no convertidas en gates: (a) el c
 - **Hecho.** El commit `65a1113` («feat(runtime): implement the placement contract as a deterministic resolver») implementa el plan 131 y no cita el número de plan en el asunto, a diferencia del resto de la línea, que sí lo hace (Conventional Commits con `(plan N)`).
 - **Clasificación.** `GAP` de trazabilidad **cosmético y no bloqueante**: el plan 131 existe, está `Executed` y su cierre está registrado; la asociación commit → plan se reconstruye desde `docs/plans/131-placement-contract-mechanical-implementation.md` y desde el índice.
 - **Qué NO se hace.** No se reescribe el mensaje del commit (reescritura de historia, prohibida por este Plan). Queda registrado como observación.
+
+### `GAP-3` — el job de CI `check-protocol` está rojo por causas ambientales
+
+- **Hecho.** El job `check-protocol` (`.github/workflows/check-protocol.yml`) falla tanto en el push de `dev` (run `35688754598`) como en el de `master` (run `35688773540`) con **5 failed, 1142 passed**. Las cinco fallas son ambientales, no de contenido: (a) `actions/checkout@v4` corre con `fetch-depth: 1` —verificado en el log del run (`fetch-depth: 1`, `git fetch --no-tags … --depth=1`)—, de modo que los tests que resuelven identidades de árbol históricas o buscan commits en la historia no encuentran los objetos. Es el caso del test `test_real_repo_expected_classifications` de `tests/test_check_lifecycle_checkpoint.py` (C-1 con `ANOMALY=1` y C-2 con `GAP=27` por anclas irresolubles) y de los tests `test_the_roadmap_is_not_modified_by_this_change` y `test_no_protected_path_moved` de `tests/test_sae_scope_enforcement_dogfood.py` («the plan-138 commits are not in history»); y (b) el test `test_path_escaping_the_payload_is_rejected` de `tests/test_segment_resolution.py` falla en el runner Linux (`DID NOT RAISE SegmentResolutionError`) y pasa localmente en Windows — una diferencia de semántica de paths entre plataformas.
+- **Preexistencia verificada.** Las dos fallas que ya existían el 2026-09-15 (run `35010230360`) son exactamente las mismas dos clases: el test `test_real_repo_expected_classifications` de `tests/test_check_lifecycle_checkpoint.py` y el test `test_path_escaping_the_payload_is_rejected` de `tests/test_segment_resolution.py`. El job está rojo en todas las corridas de `dev` visibles del historial de Actions, incluidas las de planes muy anteriores a este Change. Las tres fallas restantes corresponden a tests anclados que se incorporaron después de esa corrida (planes 136–138) y son de la misma clase: dependen de historia que el checkout shallow no trae.
+- **Clasificación.** `GAP` ambiental **no bloqueante y no causado por este Change**. La definición normativa de «verde» del repositorio es la **batería canónica local** (`docs/VERSIONING.md:4.1 Batería canónica de verificación`), que pasa íntegra, incluido `python -m pytest tests/` con **1147 passed**. El propio repositorio documenta que no hay branch protection y que la mitigación aceptada es la batería local más el job de CI (`docs/VERSIONING.md:9. Estado actual (2026-09-21)`), de modo que el job no es el verificador normativo de este release.
+- **Qué NO se hace.** No se modifica el workflow, ni los tests, ni `fetch-depth`, ni `docs/VERSIONING.md` §4.1 para hacer pasar el job: cambiar el verificador para que el gate pase está prohibido por este Plan. Tampoco se declara `PASS`: el job está rojo y así queda registrado. Su corrección —historia completa en el checkout y/o expectativa de path multiplataforma— requiere un Change autorizado propio, fuera del Scope de este Plan.
 
 ### Límite declarado — superficie de release
 
@@ -221,25 +228,51 @@ Registrado **antes** de modificar cualquier referencia remota. Ninguna operació
 | Rango no publicado a oficializar | `11.3.0`, `11.4.0`, `11.5.0`, `11.6.0`, `11.6.1` |
 | Tag esperado del release | `11.6.1` (anotado, sobre el commit de promoción de `master`) |
 | Árbol esperado tras la promoción | el árbol de `dev` en el commit de este Change (`master` no aporta contenido: su árbol es idéntico al merge-base) |
-| Resultado de los gates | RG-1…RG-11 `PASS`; RG-12 con 1 `GAP` preexistente declarado y 1 límite declarado; ningún `ANOMALY` |
+| Resultado de los gates | RG-1…RG-11 `PASS`; RG-12 con 3 `GAP` preexistentes/ambientales declarados (`GAP-1`, `GAP-2`, `GAP-3`) y 1 límite declarado; ningún `ANOMALY` |
 | Operaciones previstas | push de `dev`; merge `dev` → `master`; push de `master`; creación y push de los tags anotados del rango |
+| Resultado de la ejecución | **las cuatro operaciones se ejecutaron y se verificaron** — ver `## Ejecución del release` y `## Verificación post-release` |
 
 **Por qué el release intent abarca cinco tags y no sólo `11.6.1`.** La convención real del repositorio no admite dejar versiones sin tag en `master`: `docs/VERSIONING.md` §2 invariante 1 exige que toda versión publicada tenga tag, §3 establece «un plan = una versión = un tag», y §10 enumera el tag anotado como condición de publicación. El precedente directo es la promoción anterior, que oficializó **dos** versiones en un solo commit de release (`dc21458` lleva los tags `11.1.0` y `11.2.0` y su mensaje dice «promote protocol 11.1.0-11.2.0»). Taggear sólo `11.6.1` dejaría `11.3.0`–`11.6.0` con sección de changelog, versión implementada y **sin** tag en `master`, rompiendo exactamente el invariante que RG-3/RG-4 verifican. La cadena `dev → origin/dev → master → tag 11.6.1` del Change se cumple íntegra; el rango completo es la lectura que la regla vigente impone.
 
 ## Ejecución del release
 
-Secuencia autorizada y su resultado, registrada paso a paso:
+Secuencia autorizada y resultado real de cada paso:
 
-1. **Push de `dev`** a su upstream. Sin force. *(resultado en `## Checkpoint / cierre`)*
-2. **Promoción a `master`** por merge de `dev`, revalidando antes `dev`, `master`, la ancestría y este release intent. Mensaje del commit de promoción siguiendo la convención existente: `release: promote protocol 11.3.0-11.6.1 (plans 119-121, 142, 143; RFCs 76-79)`.
-3. **Push de `master`.** Sin force.
-4. **Tags anotados** `11.3.0`, `11.4.0`, `11.5.0`, `11.6.0`, `11.6.1` sobre el commit de promoción, con el mensaje que cita la sección del changelog y los planes/RFC incluidos. Sin force-tag.
-5. **Regeneración de `dist`** por el workflow `publish-dist` (se dispara con el push a `master` que toca `protocol/`), verificada contra `origin/dist`.
-6. **Verificación post-release** de la cadena completa.
+1. **Push de `dev`** a su upstream. Sin force. → **OK**: `4aa2617..54171d8 dev -> dev`; tras el push, `origin/dev` = `54171d86…` = `dev` y `git rev-list --count origin/dev..dev` = **0**.
+2. **Promoción a `master`** por merge de `dev`, revalidando antes `dev`, `master`, la ancestría y este release intent. Revalidación registrada justo antes del merge: `dev` = `54171d86…`, `master` = `dc21458c…`, merge-base = `f85b558e…`, árbol de `master` = `e76af36c…` = árbol del merge-base. Mensaje del commit de promoción siguiendo la convención existente: `release: promote protocol 11.3.0-11.6.1 (plans 119-121, 142, 143; RFCs 76-79)`. → **OK**: merge commit **`8dbd92e0f006643412d21d562c5532be30f67647`**, padres `dc21458` (master anterior) y `54171d8` (tip de `dev`), sin conflictos; árbol del merge = `bc280abdec836e2286562f2fe0390aef9bac81cc` = árbol de `dev`, exactamente el árbol esperado en el release intent.
+3. **Push de `master`.** Sin force. → **OK**: `dc21458..8dbd92e master -> master`; `origin/master` = `8dbd92e0…`.
+4. **Tags anotados** `11.3.0`, `11.4.0`, `11.5.0`, `11.6.0`, `11.6.1` sobre el commit de promoción, con el mensaje que cita la sección del changelog y los planes/RFC incluidos. Sin force-tag. → **OK**: cinco tag objects creados y empujados (`* [new tag]` × 5), los cinco apuntando a `8dbd92e0…`; los tags preexistentes `11.0.0`/`11.0.1`/`11.1.0`/`11.2.0` intactos.
+5. **Regeneración de `dist`** por el workflow `publish-dist` (se dispara con el push a `master` que toca `protocol/`), verificada contra `origin/dist`. → **OK**: run `35688773541` **completed / success** (16 s); `origin/dist` pasó de `93f50b9` a `c07abdd9ca50c459f7df5b075057f7b8d5f9762b`; `python tools/check_dist_sync.py` sobre `master` → «dist is in sync with protocol/».
+6. **Verificación post-release** de la cadena completa. → **OK**: ver `## Verificación post-release`.
+
+Ninguna operación se ejecutó después de que el estado real dejara de coincidir con el release intent, y ninguna requirió force.
 
 ## Verificación post-release
 
-*(completada por el commit de cierre `C-1`)*
+Cadena completa `dev → origin/dev → master → tag 11.6.1 → release 11.6.1` verificada tras la publicación:
+
+| Elemento | Valor verificado |
+|---|---|
+| `dev` | `54171d8637a922f65f86f36647e62829d42a73d5` |
+| `origin/dev` | `54171d8637a922f65f86f36647e62829d42a73d5` (idéntico; `dev` no está adelante) |
+| `master` | `8dbd92e0f006643412d21d562c5532be30f67647` |
+| `origin/master` | `8dbd92e0f006643412d21d562c5532be30f67647` |
+| Commit de promoción | `8dbd92e0f006643412d21d562c5532be30f67647` (merge de `dc21458` y `54171d8`), mensaje `release: promote protocol 11.3.0-11.6.1 (plans 119-121, 142, 143; RFCs 76-79)` |
+| Árbol de `master` | `bc280abdec836e2286562f2fe0390aef9bac81cc` = árbol de `dev` |
+| `dev` contenida en `master` | `git rev-list --count master..dev` = **0**: `master` contiene toda la historia de `dev` |
+| Tag `11.3.0` | tag object `dd47e01f33f3eacd169901b0d05a8c501595ebe1` → `8dbd92e0f006643412d21d562c5532be30f67647` |
+| Tag `11.4.0` | tag object `f67605241be0201941ec4c73fcce0f7a4803be9a` → `8dbd92e0f006643412d21d562c5532be30f67647` |
+| Tag `11.5.0` | tag object `35371c3300ad5254cd63cfc5565a503a0b64e24f` → `8dbd92e0f006643412d21d562c5532be30f67647` |
+| Tag `11.6.0` | tag object `905941a208c17035bef537e685bdc3d41b3a4056` → `8dbd92e0f006643412d21d562c5532be30f67647` |
+| **Tag `11.6.1`** | tag object **`06022f31889b759143699aa4fc0c8475f8131c01`** → **`8dbd92e0f006643412d21d562c5532be30f67647`** |
+| Tags preexistentes | `11.0.0`, `11.0.1`, `11.1.0`, `11.2.0` intactos (mismos objetos que antes de este Change) |
+| `dist` | `c07abdd9ca50c459f7df5b075057f7b8d5f9762b` (`origin/dist` = `dist` local), regenerado por `publish-dist` desde `master` |
+| `VERSION` | `11.6.1` (`protocol/.agents/VERSION`) y `PROTOCOL_VERSION` = `11.6.1` |
+| `CHANGELOG` | secciones `[11.6.1]`, `[11.6.0]`, `[11.5.0]`, `[11.4.0]` y `[11.3.0]` presentes y ya con tag; ninguna afirmación «tag pendiente» |
+| Working tree | `git status --porcelain` → sólo el artefacto externo untracked `MASTER_PENDING_WORK_INVENTORY.md` (0 modificaciones rastreadas) |
+| CI del release | `publish-dist` **success** (`35688773541`); `check-protocol` **failure** (`35688773540` en `master`, `35688754598` en `dev`) por `GAP-3` |
+
+La tabla se construyó con `git status`, `git branch -vv`, `git log`, `git rev-parse`, `git describe`, `git ls-remote --tags origin` y `gh run list`. Ninguna referencia remota quedó en un estado distinto del release intent, y `check_dist_sync.py` —el check que `docs/VERSIONING.md:4.1 Batería canónica de verificación` declara verde sólo en `master`— pasa sobre el estado publicado.
 
 ## Validation anchor
 
@@ -249,30 +282,30 @@ Secuencia autorizada y su resultado, registrada paso a paso:
 - **Observed dependencies:** stdlib únicamente; el CLI `git` disponible; el CLI `gh` autenticado como `roldriel` con scope `repo` (verificado con `gh auth status`); conectividad con `https://github.com/roldriel/ARgentOS.git`, confirmada por `git ls-remote` y por los dry-run de push.
 - **Environmental factors:** Windows 11 + PowerShell; Python 3.14.3; pytest 9.0.3; repositorio bajo OneDrive (`C:\Users\rolda\OneDrive\Escritorio\Proyectos\ARgentOS`); `master` sin branch protection (decisión del owner registrada en `docs/VERSIONING.md:9. Estado actual (2026-09-21)`), de modo que el push no depende de rulesets server-side; la publicación de `dist` depende de que el runner de GitHub Actions y el token `DIST_PUSH_TOKEN` (o el `GITHUB_TOKEN` por defecto) funcionen.
 - **Scoped Content Identity:**
-  - **State identity (estado validado):** resuelta sobre el árbol del commit de este Change — ver `## Checkpoint / cierre`.
-  - **Delta scoped identity (scope S = las cuatro rutas del `## Declared scope`, ordenadas; serialización `scoped-v1`):** resuelta por `tools/scoped_content_identity.py` sobre el estado del Change — ver `## Checkpoint / cierre`.
+  - **State identity (estado validado):** T1 = `bc280abdec836e2286562f2fe0390aef9bac81cc` (`git rev-parse 54171d8637a922f65f86f36647e62829d42a73d5^{tree}`; idéntico al árbol del commit de promoción `8dbd92e0f006643412d21d562c5532be30f67647`, que es el árbol publicado).
+  - **Delta scoped identity (scope S = las cuatro rutas del `## Declared scope`, ordenadas; serialización `scoped-v1`):** `db805eb222510f77929ed0c88eb42623d75328db87d23c6ee486a2f23b10064e` (`python tools/scoped_content_identity.py --ref 54171d8637a922f65f86f36647e62829d42a73d5 CHANGELOG.md docs/VERSIONING.md docs/plans/146-release-promotion-11-6-1.md docs/plans/INDEX.md`).
   - **Límite declarado:** las literales de identidad se transcriben en el commit de cierre una vez resuelto el SHA del commit del Change; esa transcripción es la única diferencia declarada entre el estado medido y el estado de cierre (convención anti-auto-referencia, precedente Planes 114/116/134/140/141/142/143/144/145).
   - **Scope set (repo-relative paths, ordenados; reconstruible desde este artifact):** `CHANGELOG.md`, `docs/VERSIONING.md`, `docs/plans/146-release-promotion-11-6-1.md`, `docs/plans/INDEX.md`.
 - **Validity / stale:** vigente para el estado validado que el checkpoint certifica.
 
 ## Checkpoint / cierre
 
-- **Commits de cierre:** dos (2) commits en `dev`, identificados por sus mensajes: (1) el commit del Change de release (release intent, gates, corrección current-state del changelog y del snapshot de versiones, registro del Plan en el INDEX); (2) el commit de cierre `C-1`, que registra el SHA del primero, la promoción, los tags, la publicación de `dist` y la verificación post-release. GC-1 admite el cierre multi-commit; los SHA y los tree id quedan como locators, no como identidad. *(SHA y tree id registrados por el commit de cierre.)*
+- **Commits de cierre:** dos (2) commits en `dev`, identificados por sus mensajes: (1) `docs(release): register the plan 146 release intent and release gates (plan 146)` —el Change de release: release intent, gates, corrección current-state del changelog y del snapshot de versiones y registro del Plan en el INDEX—, SHA `54171d8637a922f65f86f36647e62829d42a73d5`; (2) `docs(plans): record the plan 146 release checkpoint (plan 146, C-1)` —este registro de cierre, que añade la promoción, los tags, la publicación de `dist` y la verificación post-release. GC-1 admite el cierre multi-commit; los SHA y los tree id quedan como locators, no como identidad. El commit de promoción `8dbd92e0f006643412d21d562c5532be30f67647` vive en `master` —no es un commit de cierre de `dev`— y su árbol es idéntico al del commit (1).
 - **Estado validado (ref al Validation anchor):** A1 (arriba).
-- **Estado de cierre (identidad):** delta scoped identity + state identity del anchor aplicable (A1). *(literales registrados por el commit de cierre)*
-- **Árbol material del commit de cierre (tree id):** *(resuelto por el commit de cierre)*. Es un hecho de Git y **no** la identidad del estado de cierre: el commit de cierre incluye governance (este registro), de modo que su árbol difiere legítimamente del estado validado.
+- **Estado de cierre (identidad):** delta scoped identity + state identity del anchor aplicable (A1): `db805eb222510f77929ed0c88eb42623d75328db87d23c6ee486a2f23b10064e` / `bc280abdec836e2286562f2fe0390aef9bac81cc`. Es el estado que el checkpoint **certifica** por correspondencia GC-1.
+- **Árbol material del commit de cierre (tree id):** `bc280abdec836e2286562f2fe0390aef9bac81cc` (resuelto de `54171d8`; idéntico al árbol del commit de promoción `8dbd92e`). Es un hecho de Git y **no** la identidad del estado de cierre: el commit de cierre incluye governance (este registro), de modo que su árbol difiere legítimamente del estado validado.
 - **Consistencia checkpoint↔anchor:** PASS — verificada por C-2 sobre el artefacto de este Plan en el estado de cierre.
 - **Governance aplicada:** `docs/plans/INDEX.md` registra el Plan 146 y su serie; `CHANGELOG.md` con el ítem `[Unreleased]` del Plan 146 y las dos constancias de tag; `docs/VERSIONING.md` §9 reconciliado en el punto de promoción; sin RFC nueva, sin ADR, sin cambio de payload, sin `VERSION` bump propio.
-- **Documentation impact:** `REQUIRED` — reconciliado. Documentos afectados: `docs/VERSIONING.md` §9 (snapshot de estado actual, reconciliado en el punto de promoción que la propia §5 declara) y `CHANGELOG.md` (las dos afirmaciones «tag pendiente» que la promoción vuelve falsas). `docs/plans/INDEX.md` registra el Plan y su serie. Nada más queda obsoleto: el resto de la documentación current-state no describe el estado de versiones.
+- **Documentation impact:** `REQUIRED` — reconciliado. Documentos afectados: `docs/VERSIONING.md` §9 (snapshot de estado actual, reconciliado en el punto de promoción que la propia §5 declara) y `CHANGELOG.md` (las dos afirmaciones «tag pendiente» que la promoción vuelve falsas). `docs/plans/INDEX.md` registra el Plan y su serie. Nada más se modifica **por decisión**, no por omisión: las filas del INDEX de los planes 142 y 143 conservan su descripción de estado **al momento de su cierre** («payload con release pendiente»), que es exactamente el comportamiento que el repositorio ya mantiene para el plan 115 tras el release de `11.1.0`/`11.2.0` —su fila sigue diciendo «con release pendiente» y «sin tag, sin push, sin merge»—: el INDEX es un espejo descriptivo del cierre, nunca una segunda fuente de estado, y la autoridad del estado publicado es `git tag` + `protocol/.agents/VERSION` (`docs/VERSIONING.md:7. Estados de planes y RFCs` y `docs/VERSIONING.md:9. Estado actual (2026-09-21)`). Retocar esas filas retroactivamente sería reescribir la descripción histórica de un cierre ajeno a este Change.
 - **Roadmap impact:** `NOT_REQUIRED` — razón explícita: `ROADMAP.md` no registra trabajo de release, promoción ni tag en ninguna de sus secciones (`## Trabajo activo / dogfood`, `## Pendientes que requieren autorización`, `## Candidatos futuros`, `## Trazabilidad histórica`, `## Proceso`), y este Change no altera el mapa operativo del trabajo futuro. `ROADMAP.md` queda con **0 diff**.
-- **GAPs declarados:** `GAP-1` (ruleset de versión por plan del commit `50771b6`, exención declarada por el plan 126, no bloqueante, fuera de la autoridad de este Plan) y `GAP-2` (cita de plan ausente en el mensaje de `65a1113`, cosmético, no bloqueante). Ninguno se convierte en `PASS` y ninguno se silencia.
-- **Condición derivada:** `Executed` ∧ governance aplicada ∧ checkpoint ∧ consistencia checkpoint↔anchor ∧ evidencia `PASS` para el estado de cierre. `Promoted` y `Released` quedan determinados por la promoción verificada y el tag inmutable, según `docs/VERSIONING.md:7. Estados de planes y RFCs`.
+- **GAPs declarados:** `GAP-1` (ruleset de versión por plan del commit `50771b6`, exención declarada por el plan 126, no bloqueante, fuera de la autoridad de este Plan), `GAP-2` (cita de plan ausente en el mensaje de `65a1113`, cosmético, no bloqueante) y `GAP-3` (job de CI `check-protocol` rojo por checkout shallow y una expectativa de path no multiplataforma, ambiental y no bloqueante). Ninguno se convierte en `PASS` y ninguno se silencia.
+- **Condición derivada:** `Executed` ∧ governance aplicada ∧ checkpoint ∧ consistencia checkpoint↔anchor ∧ evidencia `PASS` para el estado de cierre. `Promoted` —merge `dev` → `master` verificado en `8dbd92e0f006643412d21d562c5532be30f67647`— y `Released` —tag inmutable `11.6.1` sobre ese commit, empujado a `origin`—, según `docs/VERSIONING.md:7. Estados de planes y RFCs`.
 
 ## Findings / Correcciones / Pending
 
 ### Findings
 
-No findings detected / N/A — declaración de ausencia: la ejecución no detectó ningún defecto **propio** dentro del `Scope` que exigiera una corrección posterior a la verificación. Las dos observaciones que sí aparecieron (`GAP-1` y `GAP-2`) son condiciones **preexistentes** de artefactos y commits ajenos a este Change; se registran en `## GAP declarado` con su evidencia y su clasificación, y no se abren como findings de este Plan porque su resolución exigiría reabrir artefactos cerrados, que este Plan prohíbe.
+No findings detected / N/A — declaración de ausencia: la ejecución no detectó ningún defecto **propio** dentro del `Scope` que exigiera una corrección posterior a la verificación. Las tres observaciones que sí aparecieron (`GAP-1`, `GAP-2` y `GAP-3`) son condiciones **preexistentes o ambientales** de artefactos, commits y del job de CI, ajenas a este Change; se registran en `## GAP declarado` con su evidencia y su clasificación, y no se abren como findings de este Plan porque su resolución exigiría reabrir artefactos cerrados o cambiar el verificador, dos cosas que este Plan prohíbe.
 
 ### Correcciones
 
@@ -285,7 +318,8 @@ No se registran pending decisions nuevas. Este Change no abre ninguna decisión:
 - la publicación de `dev`, la promoción a `master` y la creación de los tags no necesitan autoridad adicional: son exactamente lo que el mantenedor autorizó en el Change de origen;
 - la corrección de las dos frases de tag y del snapshot §9 está determinada por `docs/VERSIONING.md` §5 y no cambia ninguna norma;
 - `GAP-1` **no** se convierte en pending decision de este Plan: su resolución sería un Change autorizado propio sobre una regla de versionado de un artefacto cerrado, y este Plan no dispone de esa autoridad;
-- `GAP-2` no requiere decisión: es una observación de trazabilidad cosmética cuya única corrección posible (reescribir el mensaje del commit) está prohibida aquí.
+- `GAP-2` no requiere decisión: es una observación de trazabilidad cosmética cuya única corrección posible (reescribir el mensaje del commit) está prohibida aquí;
+- `GAP-3` **no** se convierte en pending decision de este Plan: corregir el job de CI (historia completa en el checkout y/o expectativa de path multiplataforma) exige tocar el workflow y los tests, superficies fuera del `Scope` autorizado de este Change.
 
 Las pending decisions que siguen abiertas en el repositorio (`<PLAN-125>:PC-1`/`PC-2`, `<PLAN-126>:PC-2`/`PC-3`, `<PLAN-131>:PC-1`/`PC-2`, `<PLAN-137>:PC-2`/`PC-3`, `<PLAN-138>:PC-2`, la materialidad ambiental de `<PLAN-122>`/`<PLAN-123>`) conservan su estado, su owner y su vía: ninguna está en el `Scope` de este Plan y este Plan no las resuelve por inferencia.
 
@@ -295,13 +329,23 @@ Las pending decisions que siguen abiertas en el repositorio (`<PLAN-125>:PC-1`/`
 - Ninguna RFC, ADR ni plan cerrado reabierto, reescrito o retransicionado.
 - Ninguna reescritura de historia; ningún `git push --force`, `--force-with-lease` ni force-tag; ninguna operación destructiva.
 - Ninguna autoridad, state machine, registry, Change mechanism, checker, metadata ni workflow nuevos.
-- Ningún `FAIL`, `GAP` ni `ANOMALY` oculto: los dos `GAP` declarados son visibles en la tabla de gates y en su propio apartado.
+- Ningún `FAIL`, `GAP` ni `ANOMALY` oculto: los tres `GAP` declarados son visibles en la tabla de gates y en su propio apartado.
 - Ningún resultado incierto declarado `PASS`.
 - `dist/` no se edita a mano: lo regenera el workflow.
 
 ## Resultado
 
-**`PREPARED` (release en ejecución).** El release intent y los gates están registrados y verificados; la promoción, los tags, la publicación de `dist` y el resultado final (`RELEASED` / `PREPARED_BUT_BLOCKED` / `FAILED`) quedan registrados por el commit de cierre `C-1`. Ningún estado `Promoted` o `Released` se declara antes de contar con la evidencia de la operación real.
+**`RELEASED`.** El release `11.6.1` fue publicado y verificado por el mecanismo oficial del repositorio: `dev` publicado en su upstream, promovido a `master` por merge (`8dbd92e0f006643412d21d562c5532be30f67647`), con los tags anotados `11.3.0`–`11.6.1` sobre ese commit —incluido el tag del release, `11.6.1`— y `dist` regenerado por `publish-dist`, con `check_dist_sync.py` verde en `master`. La cadena completa `dev → origin/dev → master → tag 11.6.1 → release 11.6.1` está verificada en `## Verificación post-release`.
+
+Estados finales, cada uno con su evidencia:
+
+- **`Executed` = TRUE** — el Plan se ejecutó y se validó.
+- **`Committed` = TRUE** — commits atómicos en `dev` (`54171d8` y este registro de cierre).
+- **`Closed` = TRUE** — condición derivada: `Executed` + governance aplicada + checkpoint + consistencia checkpoint↔anchor.
+- **`Promoted` = TRUE** — merge `dev` → `master` verificado.
+- **`Released` = TRUE** — tag anotado `11.6.1` inmutable sobre el commit de promoción, empujado a `origin`, y `dist` regenerado desde `master`.
+
+Tres `GAP` preexistentes/ambientales quedan declarados y **no** resueltos (`GAP-1`, `GAP-2`, `GAP-3`); ninguno bloquea el release y ninguno se declara `PASS`. **GitHub Releases** sigue siendo `N/A` como superficie del mecanismo de este repositorio (ver `### Límite declarado — superficie de release`): el release se publicó por el mecanismo documentado, no por un mecanismo inventado.
 
 ## Nota de ejecución
 
@@ -309,6 +353,8 @@ Las pending decisions que siguen abiertas en el repositorio (`<PLAN-125>:PC-1`/`
 
 **Qué se hizo.** Se reconstruyeron los 33 commits de `origin/dev..dev` uno por uno desde Git (SHA, mensaje, tipo, plan, área y relación con el release) y se verificó que ninguno queda fuera de la línea de desarrollo. Se verificó la topología completa —`dev`, `origin/dev`, `master`, `origin/master`, `origin/dist`, merge-base, ancestría y la imposibilidad del fast-forward—, determinando que la estrategia documentada es el merge de promoción y que el árbol de `master` es idéntico al del merge-base, de modo que el merge es contenido-trivial. Se verificó la versión contra las reglas vigentes (`11.6.1`, con `PROTOCOL_VERSION` coincidente y sin fuentes duplicadas divergentes), el changelog (secciones, orden, trazabilidad, contenido no inventado) y el estado de los planes 135–145. Se corrió la batería canónica completa, el harness del protocolo, los gates C-1/C-2/C-3 y los checkers específicos de release. Se registró el release intent antes de tocar cualquier referencia remota. En la superficie documental se corrigieron las dos afirmaciones «Tag pendiente de promoción» que la propia promoción vuelve falsas y se reconcilió el snapshot de versiones `docs/VERSIONING.md` §9, que la §5 de esa política manda reconciliar exactamente en el punto de promoción; ambas son correcciones current-state determinadas por las reglas vigentes y acotadas a lo necesario. Se registró el Plan y su serie en `docs/plans/INDEX.md` y su ítem en `CHANGELOG.md`.
 
-**Observaciones registradas.** `GAP-1`: el plan 126 materializó cambios de payload sin bump de `VERSION`, con exención declarada por ese artefacto cerrado; no se resuelve ni se reabre. `GAP-2`: el commit `65a1113` (plan 131) no cita su plan en el asunto; no se reescribe el mensaje. Ambas quedan visibles y clasificadas.
+**Ejecución del release.** Con los gates satisfechos y el release intent registrado, se publicó `dev` (`4aa2617..54171d8`), se promovió a `master` por merge contenido-trivial (`8dbd92e`, árbol `bc280abd…` idéntico al de `dev`) y se empujó `master` (`dc21458..8dbd92e`). Se crearon y empujaron los cinco tags anotados del rango no publicado —`11.3.0`, `11.4.0`, `11.5.0`, `11.6.0` y `11.6.1`— sobre el commit de promoción. `publish-dist` regeneró `dist` (run `35688773541`, success; `origin/dist` = `c07abdd9…`) y `check_dist_sync.py` pasó sobre `master`. La cadena completa quedó verificada y el working tree quedó limpio (0 modificaciones rastreadas). No se usó force-push, force-tag ni ninguna operación destructiva, y `protocol/.agents/`, `ROADMAP.md` y `docs/adr/` quedaron con 0 diff propio de este Change.
 
-**Verificación.** Documentada completa en `## Verificación completa (batería)`, con los valores reales de cada comando.
+**Observaciones registradas.** `GAP-1`: el plan 126 materializó cambios de payload sin bump de `VERSION`, con exención declarada por ese artefacto cerrado; no se resuelve ni se reabre. `GAP-2`: el commit `65a1113` (plan 131) no cita su plan en el asunto; no se reescribe el mensaje. `GAP-3`: el job de CI `check-protocol` está rojo por un checkout shallow (`fetch-depth: 1`) y una expectativa de path no multiplataforma; es preexistente, no lo causa este Change y no se toca el verificador para hacerlo pasar. Los tres quedan visibles y clasificados.
+
+**Verificación.** Documentada completa en `## Verificación completa (batería)`, `## Ejecución del release` y `## Verificación post-release`, con los valores reales de cada comando.

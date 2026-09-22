@@ -211,6 +211,99 @@ def test_invalid_identity_format_is_anomaly(tmp_path):
     assert "invalid State identity format" in findings[0].reasons[0]
 
 
+# --- Deferred identity literals (plan 147, F1) -----------------------------------
+#
+# The corpus anti-self-reference convention (plan 96 §13; plans 114/116/134/
+# 140-146) lets the Validation anchor declare its identity resolved outside
+# itself and transcribe the literals in the closing commit. The released
+# `master` tree of plan 146 carries exactly that revision, and C-1 used to
+# reject it as an ANOMALY (invalid format) even though no value was presented.
+
+DEFERRED_ANCHOR_FIELDS = """
+- Declared scope: release change of the repository.
+- Validation command-set: `python -m pytest tests/`
+- Effective inputs (repo content): repo content consumed by the battery.
+- Observed dependencies: no instrumentado
+- Environmental factors: OS Linux; Python 3.12; sin red.
+- Scoped Content Identity:
+  - State identity (estado validado): resuelta sobre el árbol del commit de
+    este Change — ver `## Checkpoint / cierre`.
+  - Delta scoped identity (scope S): resuelta por
+    `tools/scoped_content_identity.py` sobre el estado del Change — ver
+    `## Checkpoint / cierre`.
+  - Límite declarado: las literales de identidad se transcriben en el commit de
+    cierre (convención anti-auto-referencia).
+- Validity / stale: vigente
+"""
+
+
+def test_deferred_identity_literals_are_gap_not_anomaly(tmp_path):
+    """A declared absence of the literal is missing evidence, not a contradiction."""
+    root = make_repo(tmp_path, {
+        "docs/plans/99-sample.md": plan_doc("Executed", DEFERRED_ANCHOR_FIELDS),
+    })
+    findings = cla.verify_all(root)
+    assert findings[0].classification == "GAP"
+    assert any(
+        "declares it resolved outside itself" in reason
+        for reason in findings[0].reasons
+    )
+    assert run_tool(root).returncode == 0
+
+
+def test_deferral_falsification_malformed_literal_is_still_anomaly(tmp_path):
+    """The deferral rule must not become a way to smuggle an invalid value.
+
+    A malformed literal carries no hex token, exactly like a deferral, so the
+    rule must not treat "no hex" as sufficient. Here the subfield declares
+    ``T1 = `not-a-tree-id` `` *and* the anchor also points at the checkpoint
+    section: the declared value decides, and it is still an ANOMALY.
+    """
+    body = ANCHOR_FIELDS.replace(
+        f"`{TREE_ID}`", "`not-a-tree-id`"
+    ).replace(
+        "- Validity / stale: `vigente`",
+        "- Validity / stale: `vigente` (identidad resuelta fuera; "
+        "ver `## Checkpoint / cierre`)",
+    )
+    assert "not-a-tree-id" in body
+    root = make_repo(tmp_path, {"docs/plans/99-sample.md": plan_doc("Executed", body)})
+    findings = cla.verify_all(root)
+    assert findings[0].classification == "ANOMALY"
+    assert "invalid State identity format" in findings[0].reasons[0]
+    assert run_tool(root).returncode == 1
+
+
+def test_absent_identity_without_deferral_is_anomaly(tmp_path):
+    """Absence without a declared deferral is still the invalid-format signal."""
+    body = ANCHOR_FIELDS.replace(f"`{TREE_ID}`", "`pending`").replace(
+        f"`{DELTA_ID}`", "`pending`"
+    )
+    root = make_repo(tmp_path, {"docs/plans/99-sample.md": plan_doc("Executed", body)})
+    findings = cla.verify_all(root)
+    assert findings[0].classification == "ANOMALY"
+
+
+def test_identity_divergent_from_the_materialized_commit_tree_stays_valid(
+    tmp_path,
+):
+    """Closure identity and the closing commit tree are not the same concept.
+
+    C-1 checks the anchor's own structure: a state identity that differs from the
+    tree of some other commit is not a C-1 contradiction (the closing commit may
+    legitimately carry governance; RFC-75 `Mecanismo 7`).
+    """
+    other_tree = "c" * 40
+    body = ANCHOR_FIELDS.replace(
+        "- Validity / stale: `vigente`",
+        "- Validity / stale: `vigente`\n"
+        f"- Árbol material del commit de cierre: `{other_tree}`",
+    )
+    root = make_repo(tmp_path, {"docs/plans/99-sample.md": plan_doc("Executed", body)})
+    findings = cla.verify_all(root)
+    assert findings[0].classification == "VALID"
+
+
 # --- A1 / A2 lineage -----------------------------------------------------------
 
 
@@ -298,6 +391,13 @@ def test_real_repo_expected_classifications():
     )
     assert "94-change-lifecycle-master-action-plan.md: EXCLUDED" in res.stdout
     assert "95-change-lifecycle-unit-a-increment-0.md: EXCLUDED" in res.stdout
+    # Plan 146 is never an ANOMALY. On `dev` its anchor carries the literals
+    # (VALID); on the released `master` tree its anchor declares them deferred
+    # to the checkpoint section (GAP). Both are non-blocking; neither is an
+    # invalid value (plan 147, F1).
+    assert re.search(
+        r"146-release-promotion-11-6-1\.md: (?:VALID|GAP)", res.stdout
+    ), res.stdout
     assert "ANOMALY=0" in res.stdout
 
 

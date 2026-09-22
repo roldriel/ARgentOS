@@ -93,6 +93,47 @@ _SUB_FIELD_RE = re.compile(
     + r")\b"
 )
 
+# A declared deferral of the Scoped Content Identity literals: the anchor states
+# that the identity is resolved outside itself, in the section the anti-self-
+# reference convention already designates (the checkpoint / the closing commit).
+# This is a *declared absence*, not an invalid value: RFC-75 Mecanismo 7 lets
+# the closing commit carry governance and the corpus convention transcribes the
+# literals there, so the anchor that defers them is compliant with the plan
+# format (plan 96 §13; precedent plans 114/116/134/140-146). C-1 must report it
+# as missing evidence (GAP, advisory) and never as a contradiction (ANOMALY).
+_IDENTITY_DEFERRAL_RE = re.compile(
+    r"ver\s+`?#{1,6}\s*checkpoint"          # "see `## Checkpoint / cierre`"
+    r"|literales\s+registrados\s+por\s+el\s+commit"
+    r"|registrad[oa]s?\s+por\s+el\s+commit\s+de\s+cierre"
+    r"|identidad\s+resuelta\s+fuera",
+    re.IGNORECASE,
+)
+
+# A Scoped Content Identity subfield either declares a value or it does not.
+# The subfield's bullet carries the label and then its content, so the content
+# is what follows the label's `:`; an assignment there (`T1 = ...`) declares a
+# value, and prose that only explains where the identity is resolved does not.
+# This is the discriminator, not the token shape: a *malformed* literal carries
+# no hex of the declared width either, so a width test alone could not separate
+# `T1 = \`not-a-tree-id\`` from a compliant deferral.
+_LABEL_PREFIX_RE = re.compile(r"^\s*[-*]\s+\*{0,2}[^:\n]*:\s*")
+_VALUE_ASSIGNMENT_RE = re.compile(r"[=:]\s*\S")
+
+
+def presents_identity_value(blocks: list[str]) -> bool:
+    """True when a subfield declares a value in its own bullet.
+
+    Only the bullet that opens the subfield is read: a block also carries the
+    continuation lines up to the next field, and a following sibling field
+    (``Límite declarado:`` …) would otherwise be mistaken for this subfield's
+    assignment.
+    """
+    for block in blocks:
+        declaration = _LABEL_PREFIX_RE.sub("", block, count=1).split("\n", 1)[0]
+        if _VALUE_ASSIGNMENT_RE.search(declaration):
+            return True
+    return False
+
 
 @dataclass
 class AnchorFinding:
@@ -230,6 +271,48 @@ def validity_tokens(content: str) -> set[str]:
     return found
 
 
+def declares_identity_deferral(anchor_text: str, blocks: list[str]) -> bool:
+    """True when a subfield declares its literal resolved outside the anchor.
+
+    A deferral is a declared *absence* of the literal and is classified GAP
+    (advisory). It is not a presented value that contradicts the format, which
+    is what R-C1-4 treats as ANOMALY.
+    """
+    if not blocks or not _IDENTITY_DEFERRAL_RE.search(anchor_text):
+        return False
+    return not presents_identity_value(blocks)
+
+
+def identity_format_reasons(anchor_text: str) -> list[str]:
+    """R-C1-4 reasons for the Scoped Content Identity literals.
+
+    Only a **present but malformed** literal is a contradiction. When the
+    anchor declares the literal resolved elsewhere and presents no value, the
+    evidence is absent from the anchor — a GAP, never an ANOMALY (RFC-75
+    `Mecanismo 7`; the corpus anti-self-reference convention). Classifying the
+    deferral as invalid rejected a compliant plan format and produced a false
+    ANOMALY on the released `master` tree of plan 146, whose anchor defers the
+    literals to its own checkpoint section.
+    """
+    reasons: list[str] = []
+    checks = (
+        ("State identity", _HEX40_RE, "40-hex tree id"),
+        ("Delta scoped identity", _HEX64_RE, "64-hex sha256"),
+    )
+    for label, pattern, expected in checks:
+        blocks = subfield_blocks(anchor_text, label)
+        if not blocks or any(pattern.search(block) for block in blocks):
+            continue
+        if declares_identity_deferral(anchor_text, blocks):
+            reasons.append(
+                f"{label} not verified in the anchor: the anchor declares it "
+                f"resolved outside itself (expected {expected})"
+            )
+        else:
+            reasons.append(f"invalid {label} format (expected {expected})")
+    return reasons
+
+
 def classify_anchor(rel: Path, text: str) -> AnchorFinding:
     """Run C-1 rules over one numbered plan artifact (R-C1-1..R-C1-5)."""
     headings = level2_headings(text)
@@ -296,19 +379,9 @@ def classify_anchor(rel: Path, text: str) -> AnchorFinding:
                 + ", ".join(missing_sub)
             )
 
-    # R-C1-4: declared identity present but outside the expected v1 format.
-    state_blocks = subfield_blocks(anchor_text, "State identity")
-    delta_blocks = subfield_blocks(anchor_text, "Delta scoped identity")
-    if state_blocks and not any(
-        _HEX40_RE.search(block) for block in state_blocks
-    ):
-        reasons.append("invalid State identity format (expected 40-hex tree id)")
-    if delta_blocks and not any(
-        _HEX64_RE.search(block) for block in delta_blocks
-    ):
-        reasons.append(
-            "invalid Delta scoped identity format (expected 64-hex sha256)"
-        )
+    # R-C1-4: declared identity present but outside the expected v1 format, or
+    # declared resolved outside the anchor (GAP, never ANOMALY).
+    reasons.extend(identity_format_reasons(anchor_text))
 
     # R-C1-4: duplicated fields with distinct values -> contradiction.
     for label in _ANCHOR_FIELDS:

@@ -30,6 +30,21 @@ only on unrecoverable read errors.
 - Meaning: `VALID` = anchor present and structurally consistent with the v1
   minimum fields; `GAP` = field missing/not verifiable; `ANOMALY` =
   contradiction (e.g., declared FAIL as PASS).
+- **Identity literals present vs. deferred (contract fixed by Plan 147).** The
+  Scoped Content Identity literals are `State identity` (40-hex tree id) and
+  `Delta scoped identity` (64-hex sha256). R-C1-4 judges their **format**: a
+  literal that is **present but malformed** is an `ANOMALY` (contradiction). A
+  subfield that presents no value and **declares the identity resolved outside
+  the anchor** — the corpus anti-self-reference convention (plan 96 §13;
+  precedent plans 114/116/134/140–146), which transcribes the literals in the
+  closing commit and is what `master`'s released revision of plan 146 carries —
+  is a declared **absence**, classified `GAP` (advisory), never `ANOMALY`.
+  Missing evidence is not a contradiction (`.agents/AGENTS.md` rule 7). The
+  discriminator is whether the subfield **declares a value after its label**,
+  not the shape of the token: a malformed literal also carries no hex, so a
+  width test alone could not separate an invalid value from a legitimate
+  deferral. The rule does not weaken format checking: any presented value that
+  is not the expected hex remains an `ANOMALY`.
 - Action: on `VALID`, cite the output as anchor evidence; on `GAP`, fill the
   missing fields or record the gap; on `ANOMALY`, STOP and follow the
   finding/correction path.

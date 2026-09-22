@@ -239,6 +239,91 @@ def test_path_escaping_the_payload_is_rejected(payload_root: Path):
         segment_resolution._relative_path(KIND_HARNESS_POLICY, "C:/Windows/x.md")
 
 
+# Regression matrix (plan 147, F4). The verdict used to be taken from the
+# host-native path class, so it was platform-dependent: to POSIX semantics
+# `C:/Windows/x.md` is one opaque component (neither absolute nor a `..`
+# parent), which is why the CI runner accepted what a Windows checkout
+# rejected. These cases pin the verdict to the declared POSIX layout and are
+# asserted to be identical on every platform.
+_TRAVERSAL_OUTSIDE_THE_PAYLOAD = [
+    # parent traversal
+    "../../etc/passwd",
+    "../payload",
+    "..",
+    "orchestrators/../../etc/passwd",
+    # absolute, POSIX and Windows
+    "/etc/passwd",
+    "//etc/passwd",
+    "C:/Windows/x.md",
+    "C:x.md",
+    "c:/windows/system32/config/sam",
+    # Windows separator (never a separator of the declared POSIX layout)
+    "..\\..\\evil.md",
+    "orchestrators\\core\\workflow\\06-execute.md",
+    # normalization that only escapes after the fact
+    "./../../etc/passwd",
+    "a/../../b.md",
+]
+
+
+@pytest.mark.parametrize("logical_id", _TRAVERSAL_OUTSIDE_THE_PAYLOAD)
+@pytest.mark.parametrize(
+    "kind", [KIND_WORKFLOW_MODULE, KIND_HARNESS_POLICY]
+)
+def test_every_payload_escaping_identifier_is_rejected(kind, logical_id):
+    """None of these resolve, and none is followed; the payload is the bound."""
+    from runtime.toolcalls import segment_resolution
+
+    with pytest.raises(SegmentResolutionError):
+        segment_resolution._relative_path(kind, logical_id)
+
+
+@pytest.mark.parametrize(
+    "kind,logical_id,expected",
+    [
+        (KIND_WORKFLOW_MODULE, WORKFLOW, WORKFLOW),
+        (KIND_WORKFLOW_MODULE, "./" + WORKFLOW, WORKFLOW),
+        (KIND_HARNESS_POLICY, POLICY, POLICY),
+        (KIND_ROLE, "executor", ROLE),
+        (KIND_ROLE, "worker", WORKER_ROLE),
+        (KIND_PROFILE, "backend_engineer", PROFILE),
+        (KIND_SKILL, "self-review", SKILL),
+        # a role/name segment may be nested; only leaving the payload is refused
+        (KIND_ROLE, "team/executor", "roles/team/executor.md"),
+    ],
+)
+def test_valid_payload_relative_identifiers_are_accepted(
+    kind, logical_id, expected, payload_root: Path
+):
+    """The guard preserves every legal form the declared layout already had."""
+    from runtime.toolcalls import segment_resolution
+
+    assert segment_resolution._relative_path(kind, logical_id).as_posix() == expected
+
+
+def test_declared_relative_payload_path_resolves_inside_the_payload(tmp_path: Path):
+    """A rejection is lexical, not reachability: a valid relative path resolves.
+
+    The guard must not turn into a blanket refusal — the same call that rejects
+    the escaping identifiers still resolves the declared layout, and the file
+    it names is read from inside `.agents/`.
+    """
+    from runtime.toolcalls import segment_resolution
+
+    build_payload(tmp_path)
+    (tmp_path / "outside.md").write_text("outside\n", encoding="utf-8")
+
+    inside = segment_resolution._relative_path(
+        KIND_WORKFLOW_MODULE, "orchestrators/core/workflow/06-execute.md"
+    )
+    assert (tmp_path / ".agents" / inside).is_file()
+
+    with pytest.raises(SegmentResolutionError):
+        segment_resolution._relative_path(
+            KIND_WORKFLOW_MODULE, "../outside.md"
+        )
+
+
 def test_absolute_phase_path_is_rejected(payload_root: Path):
     ctx = make_context(target_phase=("/absolute/path.md",))
     with pytest.raises(SegmentResolutionError):

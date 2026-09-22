@@ -1081,6 +1081,37 @@ sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
 |---|---|---|---|
 | `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. |
 
+## Octogésima serie: roadmap estratégico de capacidades y autonomía — Etapas A → B → C (Plan 149) (22 sep 2026)
+
+Serie del Change que materializa en `ROADMAP.md` el roadmap estratégico acordado por el
+mantenedor, con tres etapas dependientes entre sí: **Etapa A — Capability & Guarantee
+Retrospective** (revisión de las capacidades y garantías que ARgentOS afirma proporcionar,
+con unidad de análisis *capacidad + garantía + evidencia*, niveles de madurez explícitos
+—implementado / testeado / dogfoodeado / demostrado bajo condiciones reales / parcialmente
+demostrado / dependiente de una condición externa / no demostrado / limitado por un boundary
+conocido— y un Capability & Guarantee Matrix; no es una auditoría documental), **Etapa B —
+Complete ARgentOS Autonomy** (comienza a partir de los resultados de A, sin lista rígida de
+features, para cerrar las fronteras que impiden ejecutar un objetivo amplio de forma autónoma
+bajo supervisión humana dentro de `Autonomy ⊆ Scope ∩ Authority`; sus fronteras —provider/model
+real, persistencia y consumo de Worker Results, derivación de la siguiente acción, ejecución
+multi-step, recuperación ante fallos reales, fallos del provider, salidas inválidas del
+Worker, presupuestos de ejecución, garantías de terminación, ejecución multi-worker,
+deliberación cuando aporte valor, integración real de Prompt Cache y persistencia de
+Project/Knowledge— se declaran **candidatas, no compromisos de implementación**) y **Etapa C —
+New Features** (subordinada al conocimiento obtenido en A y a las necesidades descubiertas en
+B; ninguna feature entra por disponibilidad tecnológica o por simetría con otro sistema). El
+Change es exclusivamente de planificación y documentación: no ejecuta ninguna etapa, no
+construye la matriz, no implementa features ni autonomía, no crea RFCs, ADRs, checkers,
+mecanismos, autoridades ni artefactos nuevos, y no reabre las iniciativas históricas (Planes
+146–148, Change Lifecycle MVP, SAE MVP, Prompt Cache MVP, Jury Trial MVP, Placement Contract,
+RFC-75, ADR-15, ADR-16). Plan 149 (vía plan; docs-only sobre `ROADMAP.md`, `CHANGELOG.md`,
+`docs/plans/INDEX.md` y su propio artefacto, sin efecto en `protocol/.agents/`, por lo que
+RFC-56 no aplica; Change Level L1).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `149-argentos-capability-and-autonomy-roadmap.md` | — (vía plan; docs-only, sin efecto de payload) | Executed | **ARgentOS Capability & Autonomy Roadmap.** `ROADMAP.md` declara el roadmap estratégico vigente y su dependencia explícita **A → B → C**, con la regla de que primero se determina qué capacidades y garantías están realmente demostradas, luego se completan las fronteras de autonomía y recién después se incorporan nuevas features basadas en las necesidades descubiertas. La **Etapa A** fija la unidad de análisis *capacidad + garantía + evidencia*, la pregunta central («¿qué puede afirmar ARgentOS que hace, qué mecanismo lo implementa y qué evidencia tenemos de que funciona bajo las condiciones en las que pretendemos utilizarlo?»), el alcance conceptual mínimo (Change Lifecycle; Authority; Scope enforcement; Validation / Closure; C1/C2/C3; SAE; Autonomous Orchestrator; Agent Worker; WorkerResult; Delegation; Context engineering; Context identity; Materialization; Prompt Cache; Placement; Discovery; Discovery KB; Protocol gates; enforced mode / hooks; EARS; Skills; Deliberation; Change Governance; Metrics / health; Feature flags; recovery; CI / validation; y distribución y sincronización de `dist`) y un **Capability & Guarantee Matrix** con las nueve dimensiones por capacidad (qué afirma, qué mecanismo, qué tests, qué dogfooding, qué condiciones se probaron y cuáles no, qué garantía está demostrada y cuál no, y qué limitaciones existen); su regla fundamental es que evalúa la validez de las garantías operacionales y no es una limpieza documental. La **Etapa B** parte de los resultados de A y expresa la dirección `Human → authorized objective / scope → ARgentOS Orchestrator` (observe, derive, plan, delegate, execute, ingest, verify, correct, revalidate, continue, stop), con las fronteras pendientes declaradas **candidatas** y la frontera humana explícita (decisiones normativas, ampliación de Scope o Authority, cambios de objetivos, decisiones de release y las reservadas al mantenedor). La **Etapa C** exige necesidad identificada, sustento en la retrospectiva o en experiencia operacional, justificación clara y contribución a una capacidad o garantía real. El documento declara además qué **no** es una entrada del roadmap (auditorías documentales, checkers, RFCs sin necesidad, capas de governance, state machines, registries, entidades globales, artefactos administrativos, métricas sin hipótesis, features copiadas e integraciones por disponibilidad) y el estado del que parte (Protocol `11.6.2`, DEV y Protocol como dominios separados, `dist` publicando el payload, sin feature de Protocol pendiente de publicación y sin divergencia de publicación que resolver). No se ejecutó ninguna etapa del roadmap. |
+
 ## Septuagésima novena serie: promoción de `dev` a `master` y release de gobernanza 11.6.2 (Plan 148) (22 sep 2026)
 
 Serie del Change que publica el estado verificado de `dev` posterior al plan 147 como release de

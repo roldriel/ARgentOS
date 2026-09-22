@@ -9,11 +9,230 @@ cerrada.
 Los ítems marcados como **payload** tocan `protocol/.agents/` y requieren su
 propia autorización (RFC-56) antes de ejecutarse.
 
+El documento declara además, desde el 2026-09-22, el **roadmap estratégico
+vigente** (Etapas A → B → C, sección siguiente), del que el mapa operativo es
+consecuencia: las etapas se ejecutan **en ese orden** y ninguna entrada de
+trabajo se incorpora fuera de él. El mapa operativo —trabajo activo, pendientes
+que requieren autorización y candidatos futuros— sigue más abajo.
+
+## Roadmap estratégico — Etapas A → B → C
+
+ARgentOS ya posee una cantidad significativa de mecanismos: governance, Change
+Lifecycle, autoridad, checkpoints, validación, SAE, Agent Worker, context
+engineering, materialización, delegación, deliberación, Discovery, harness,
+métricas, CI y distribución del Protocol. El objetivo siguiente **no** es seguir
+agregando features de forma incremental sin validar primero las garantías que
+esas features pretenden proporcionar.
+
+El cambio de enfoque que este roadmap registra es:
+
+> Primero determinar qué capacidades y garantías de ARgentOS están realmente
+> demostradas; luego completar las fronteras necesarias para alcanzar una
+> autonomía operacional mayor; recién después incorporar nuevas features basadas
+> en las necesidades descubiertas.
+
+Las tres etapas y su dependencia son:
+
+```text
+Etapa A — Capability & Guarantee Retrospective
+                    |
+                    v
+Etapa B — Complete ARgentOS Autonomy
+                    |
+                    v
+Etapa C — New Features
+```
+
+No son tres iniciativas independientes: **B depende de A** y **C depende de los
+resultados de A y B**. Ninguna etapa se ejecuta desde este documento; cada una
+es un Change propio que requiere su propia autorización.
+
+### Etapa A — Capability & Guarantee Retrospective
+
+**Objetivo.** Revisión integral de las capacidades y garantías que ARgentOS
+afirma proporcionar. La unidad de análisis **no** es el archivo ni la feature
+individual, sino:
+
+> capacidad + garantía + evidencia
+
+La pregunta central es:
+
+> ¿Qué puede afirmar ARgentOS que hace, qué mecanismo lo implementa y qué
+> evidencia tenemos de que realmente funciona bajo las condiciones en las que
+> pretendemos utilizarlo?
+
+**Alcance conceptual mínimo.** La retrospectiva examina, como mínimo: Change
+Lifecycle; Authority; Scope enforcement; Validation / Closure; C1/C2/C3; SAE;
+Autonomous Orchestrator; Agent Worker; WorkerResult; Delegation; Context
+engineering; Context identity; Materialization; Prompt Cache; Placement;
+Discovery; Discovery KB; Protocol gates; enforced mode / hooks; EARS; Skills;
+Deliberation; Change Governance; Metrics / health; Feature flags; recovery;
+CI / validation; y distribución y sincronización de `dist`.
+
+No se asume que todas estas capacidades tengan el mismo nivel de madurez. La
+revisión debe distinguir explícitamente entre:
+
+| Nivel | Qué significa |
+| --- | --- |
+| implementado | el mecanismo existe en el repositorio |
+| testeado | existe cobertura automatizada que lo ejercita |
+| dogfoodeado | fue ejercitado en el propio repositorio |
+| demostrado bajo condiciones reales | funcionó en las condiciones de uso pretendidas |
+| parcialmente demostrado | sólo un subconjunto de esas condiciones fue ejercitado |
+| dependiente de una condición externa | su garantía depende de algo fuera del control de ARgentOS |
+| no demostrado | existe sin evidencia de que funcione |
+| limitado por un boundary conocido | funciona dentro de un límite declarado |
+
+**Resultado esperado.** Un **Capability & Guarantee Matrix** que permita
+distinguir, para cada capacidad relevante:
+
+- qué afirma hacer;
+- qué mecanismo lo implementa;
+- qué tests existen;
+- qué dogfooding existe;
+- qué condiciones se probaron;
+- qué condiciones no se probaron;
+- qué garantía puede considerarse demostrada;
+- qué garantía permanece sin demostrar;
+- qué limitaciones existen.
+
+No se asume que una feature está "completa" simplemente porque exista código o
+tests.
+
+**Regla fundamental.** La Etapa A **no** es una limpieza documental ni una
+auditoría de archivos: evalúa la validez de las garantías operacionales.
+
+### Etapa B — Complete ARgentOS Autonomy
+
+La Etapa B comienza a partir de los resultados de la Etapa A. No se define aquí
+una lista rígida de features a implementar: la Etapa A determina cuáles
+fronteras son realmente necesarias.
+
+**Objetivo.**
+
+> Cerrar las fronteras reales que impiden que ARgentOS pueda recibir un objetivo
+> suficientemente amplio y ejecutarlo de manera autónoma bajo supervisión
+> humana, manteniendo sus garantías de autoridad, contexto, evidencia,
+> recuperación y terminación.
+
+**Dirección.**
+
+```text
+Human
+  |
+  | authorized objective / scope
+  v
+ARgentOS Orchestrator
+  |
+  +-- observe
+  +-- derive
+  +-- plan
+  +-- delegate
+  +-- execute
+  +-- ingest
+  +-- verify
+  +-- correct
+  +-- revalidate
+  +-- continue
+  +-- stop
+```
+
+**Fronteras a investigar y completar**, según lo que la Etapa A demuestre
+necesario: las que separan Orchestrator, Agent Worker real, provider/model,
+contexto, delegación, resultado de ejecución, evidencia, verificación,
+recuperación, continuación y terminación.
+
+**Fronteras candidatas conocidas** — explícitamente **candidatas, no
+compromisos de implementación**; no se convierten automáticamente en features
+del roadmap, y la Etapa A determina cuáles son realmente necesarias:
+
+- ejecución real mediante provider/model;
+- persistencia y consumo de Worker Results;
+- derivación de la siguiente acción;
+- ejecución multi-step;
+- recuperación ante fallos reales;
+- fallos del provider (provider failures);
+- salidas inválidas del Worker (invalid Worker outputs);
+- presupuestos de ejecución (execution budgets);
+- garantías de terminación (termination guarantees);
+- ejecución multi-worker;
+- deliberación cuando realmente aporte valor;
+- integración real de Prompt Cache;
+- persistencia de Project/Knowledge.
+
+**Resultado esperado.** Una ARgentOS capaz de avanzar autónomamente dentro de
+
+```text
+Autonomy ⊆ Scope ∩ Authority
+```
+
+manteniendo la frontera humana para: decisiones normativas; ampliación de
+Scope; ampliación de Authority; cambios de objetivos; decisiones de release; y
+decisiones explícitamente reservadas al mantenedor.
+
+### Etapa C — New Features
+
+Las nuevas features vuelven a incorporarse **después** de completar A y B. La
+regla es:
+
+> No agregar features por disponibilidad tecnológica o porque exista un
+> mecanismo equivalente en otro sistema.
+
+Una nueva feature entra al roadmap cuando:
+
+1. existe una necesidad identificada;
+2. esa necesidad está sustentada por la retrospectiva o por experiencia
+   operacional;
+3. existe una justificación clara;
+4. la feature contribuye a una capacidad o garantía real de ARgentOS.
+
+La expansión funcional queda **subordinada** al conocimiento obtenido en A y a
+las necesidades descubiertas durante B.
+
+### Qué no es una entrada de este roadmap
+
+Este documento es **estratégico**, no un backlog de implementación. No se
+convierten en ítems del roadmap, por el hecho de existir o de ser técnicamente
+posibles:
+
+- nuevas auditorías documentales;
+- nuevos checkers por el simple hecho de existir;
+- nuevos RFCs sin necesidad identificada;
+- nuevas capas de governance;
+- nuevas state machines;
+- nuevos registries;
+- nuevas entidades globales;
+- más artefactos administrativos;
+- más métricas sin hipótesis operacional;
+- features copiadas de otros proyectos;
+- integraciones de providers únicamente por disponibilidad tecnológica.
+
+### Estado del que parte este roadmap
+
+- ARgentOS DEV ya posee un conjunto significativo de mecanismos de ejecución y
+  governance.
+- El Protocol está publicado en `11.6.2`; DEV y Protocol son dominios
+  separados.
+- `dist` publica el payload del Protocol.
+- No existe actualmente una feature de Protocol pendiente de publicación
+  simplemente por estar en `dev`.
+- El siguiente objetivo estratégico **no** es resolver una supuesta divergencia
+  de publicación.
+- El estado histórico sobre el que se construye este roadmap —Planes 146, 147 y
+  148, Change Lifecycle MVP, SAE MVP, Prompt Cache MVP, Jury Trial MVP,
+  Placement Contract, RFC-75, ADR-15 y ADR-16— no se reabre: es el punto de
+  partida, no trabajo pendiente.
+
 ## Trabajo activo / dogfood
 
 | Prioridad | Trabajo | Origen | Estado |
 | --- | --- | --- | --- |
 | — | — | — | **Sin trabajo activo.** |
+
+La tabla está **sin trabajo activo**: ninguna etapa del roadmap estratégico está
+en ejecución. El **próximo trabajo declarado es la Etapa A — Capability &
+Guarantee Retrospective**; su ejecución es un Change propio que requiere su
+propia autorización, y este documento no la concede ni la sustituye.
 
 `EARS structural validator` (`B-2` derivado) **se ejecutó** (plan 137, 2026-09-21): el
 validador estructural del payload existía desde el plan 66/RFC-57 y lo que restaba era la
@@ -115,3 +334,9 @@ capacidad** para los dogfoods siguientes, sin trabajo adicional.
    categoría. El estado detallado de cada plan se consulta en
    `docs/plans/INDEX.md`, que es la fuente descriptiva; este Roadmap no lo
    duplica.
+4. Las etapas del roadmap estratégico **no** son entradas de trabajo ejecutables
+   desde este documento: cada una requiere su propio Change autorizado, y este
+   mapa registra la dirección y el estado, no autoriza trabajo. Ninguna entrada
+   nueva se incorpora por disponibilidad tecnológica ni por simetría con otro
+   sistema, y las fronteras candidatas de la Etapa B no se convierten en
+   features sin que la Etapa A determine que son necesarias.

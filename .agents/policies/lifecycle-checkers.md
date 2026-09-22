@@ -38,19 +38,33 @@ only on unrecoverable read errors.
 
 - Tool: `python tools/check_lifecycle_checkpoint.py` (optional `--root`).
 - What: verifies the checkpoint/closure record (`## Checkpoint / cierre`)
-  and its consistency with the applicable validation anchor (GC-1). Closure
-  state = Git **tree id** of the final closing commit; commit SHAs are
-  locators only. Anchor selection is by correspondence of validated state to
-  closure state — never by recency ("latest A2 wins") and never by generic
-  tree membership.
+  and its consistency with the applicable validation anchor (GC-1).
+- **What it verifies, and what it does not (contract fixed by Plan 134).** C-2
+  distinguishes three concepts that are not interchangeable — the **validated
+  state**, the **closure state** (what the checkpoint certifies) and the
+  **materialized closing commit tree** — and verifies only the normative
+  relations: (R2) the declared closure state corresponds to the applicable
+  anchor's validated state, selected by correspondence; (R3) `Closed` carries
+  PASS evidence for that state; (R4) a declared materialized closing commit is
+  resolved and checked. It does **not** require the declared closure state to
+  equal the tree of the final closing commit: RFC-75
+  `docs/rfc/75-change-lifecycle.md:Mecanismo 7 — Git Checkpoints` allows the
+  closing commit to carry governance, so `validated tree == commit tree` is not
+  a requirement. The closure state is the Git **tree id** of the staged index at
+  closure time; commit SHAs are locators only. Anchor selection is by
+  correspondence of validated state to closure state — never by recency
+  ("latest A2 wins") and never by generic tree membership.
 - When: before declaring `Closed` (GC-1 gate) and after any revalidation
   that changes the applicable anchor.
 - Meaning: `VALID` = checkpoint present and consistent (A1 or A2 per
   correspondence); `GAP` = insufficient evidence; `ANOMALY` = contradiction
-  (tree identity mismatch, A2 without A1 lineage, declared FAIL while
-  Closed, etc.).
+  (declared closure state contradicting a declared materialized commit tree,
+  A2 without A1 lineage, declared FAIL while Closed, etc.).
 - Action: on `VALID`, derive `Closed`; on `GAP`, complete the checkpoint
   record; on `ANOMALY`, STOP — do not close; correct and revalidate first.
+- Model: `docs/CONVENTIONS.md:Change Lifecycle — Estado de cierre, grafo de
+  commit y árbol material (modelo, Plan 134)`. Plan 134 declared C-1 and C-3
+  `NOT_REQUIRED` for this chain: neither reads the closure state.
 
 ## C-3 — Lifecycle lineage check
 

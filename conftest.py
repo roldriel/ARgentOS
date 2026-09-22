@@ -1,0 +1,139 @@
+"""DEV test-session configuration: every pytest temporary stays outside the repo.
+
+Both canonical test legs resolve their ``rootdir`` to this repository's root,
+and pytest's defaults then write into the working tree:
+
+- the cache directory defaults to ``<rootdir>/.pytest_cache``, and the
+  cacheprovider materializes it through a transient ``pytest-cache-files-*``
+  sibling created in that directory's *parent* — the repository root;
+- ``tmp_path``/``tmpdir`` base their ``pytest-of-<user>/pytest-<N>`` tree on
+  ``tempfile.gettempdir()``, which is inside the repository as soon as
+  ``TMPDIR``/``TEMP`` points there;
+- the Orchestrator and Agent Worker suites build throw-away git repositories.
+
+This file pins every session temporary to one repository-external directory, so
+running the suite is transparent with respect to the repository surface: the
+state before ``pytest`` equals the state after it.  Location, override and
+rationale live in ``tests/pytest_isolation.py``; nothing here is
+machine-specific.
+
+Behaviour of the knobs:
+
+- ``--basetemp`` is honoured, but rejected with a clear usage error when it
+  resolves inside the repository working tree.  The in-repository basetemps
+  used as ad-hoc workarounds in this repository's history
+  (``--basetemp=.pytest-basetemp-<plan>``) are exactly the pollution this file
+  exists to prevent.
+- ``cache_dir`` is always pinned to the isolated root: the session cache must
+  not be materialized inside the working tree, so an external ``cache_dir``
+  override (``-o cache_dir=...``) does not move it.  ``-p no:cacheprovider``
+  remains a valid way to run without a cache at all.
+
+Session ownership of scratch (plan 145, I-1)
+--------------------------------------------
+
+The throw-away repositories the suites build are owned by **one session**, and
+this file declares that ownership before anything else runs.  The previous
+arrangement cleared a single *shared* scratch root at every session start, so a
+second pytest session destroyed the live scratch of a session that was still
+running — the cause of the non-deterministic suite failures.  Now the token is
+generated here, and a session clears only its own directory.
+
+The token is a declared value, never a guess: it is generated once at import
+time from independent entropy (pid, monotonic wall-clock nanoseconds and
+``os.urandom``), and exported through ``ARGENTOS_PYTEST_SESSION`` so a child
+process — including a nested pytest, or a subprocess a suite launches — adopts
+the session it belongs to instead of inventing a second one.
+
+Scope: DEV test execution only.  Nothing here is product payload; the
+regressions that assert the property live in ``tests/test_pytest_isolation.py``.
+"""
+
+from __future__ import annotations
+
+import sys
+import tempfile
+from pathlib import Path
+
+# The single import bootstrap of the DEV test session. Tests live in ``tests/``
+# (not a package) and the repository tooling lives in ``tools/`` (plain
+# executable scripts, not a package), so both directories go on ``sys.path``
+# once, here, instead of repeating ``sys.path.insert`` in every suite:
+#
+# - ``tests`` so the suites can ``import pytest_isolation`` / ``import
+#   testsupport``;
+# - ``tools`` so a suite can ``import check_plan_citations`` and friends.
+#
+# ``tools/`` deliberately stays a directory of scripts: it is invoked directly
+# (``python tools/check_*.py``) by the canonical battery, by CI and by the
+# suites themselves, and three tools import their siblings with flat module
+# names (``legacy_paths``, ``scoped_content_identity``). Adding a package
+# ``__init__.py`` would break those package-style imports while changing
+# nothing for script execution — see plan 124, F-01.
+_HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(_HERE / "tests"))
+sys.path.insert(0, str(_HERE / "tools"))
+
+import pytest  # noqa: E402
+import pytest_isolation as isolation  # noqa: E402
+
+# Declare this session's ownership of the throw-away repositories it will build
+# (plan 145, I-1).  Done at import time — before any test module is imported and
+# before `pytest_configure` — because the suites ask for their scratch root at
+# *module* import time (`SCRATCH_ROOT = pytest_isolation.scratch_root(...)`).
+# Generating it here, once, also means every process that imports this file
+# agrees on the owner, and a nested pytest adopts the same token instead of
+# opening a second, colliding session.
+SESSION_ID = isolation.set_session_id(isolation.new_session_id())
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_configure(config: pytest.Config) -> None:
+    """Relocate every pytest temporary of this session outside the repository."""
+    repository = isolation.repo_root()
+    given_basetemp = config.option.basetemp
+    if given_basetemp and isolation.is_within(Path(given_basetemp), repository):
+        raise pytest.UsageError(
+            f"--basetemp={given_basetemp} is inside the repository working tree "
+            f"({repository}). A pytest session must not write its temporary "
+            f"directories into the repository: drop --basetemp to use the "
+            f"isolated session temp root ({isolation.tmp_root()}), or point it "
+            f"at a directory outside the repository."
+        )
+
+    # 1. Session temp directory: `tmp_path` creates `pytest-of-<user>/pytest-N`
+    #    under it, and every other stdlib temporary of the session lands here.
+    tmp_root = isolation.tmp_root()
+    tmp_root.mkdir(parents=True, exist_ok=True)
+    tempfile.tempdir = str(tmp_root)
+
+    # 2. pytest cache directory. The cacheprovider reads `cache_dir` when it
+    #    builds its Cache during `pytest_configure`; `tryfirst` on this hook
+    #    (pluggy contract: tryfirst implementations run before plain ones)
+    #    guarantees the value below is already in place.
+    cache_dir = isolation.cache_root() / ".pytest_cache"
+    cache_dir.parent.mkdir(parents=True, exist_ok=True)
+    config.inicfg["cache_dir"] = str(cache_dir)
+
+    # 3. Throw-away repositories owned by the test suites. This session clears
+    #    **only its own** directory, which is empty by construction, so the
+    #    cleanup policy holds without a race: no session can destroy another
+    #    session's live scratch (plan 145, I-1).
+    isolation.clear_own_scratch()
+
+    # 4. Bounded cleanup of the leftovers of sessions that are long gone. Age is
+    #    the discriminator, never presence, so a live keyed-by-token session is
+    #    untouched. Reported in the header so the decision is observable.
+    config._argentos_pruned_sessions = isolation.prune_stale_sessions()  # type: ignore[attr-defined]
+
+
+def pytest_report_header(config: pytest.Config) -> str:
+    """Make the isolation visible in the session header (diagnostics)."""
+    pruned = getattr(config, "_argentos_pruned_sessions", [])
+    pruned_text = (
+        f"; pruned {len(pruned)} stale session(s)" if pruned else ""
+    )
+    return (
+        f"argentos test temporaries: {isolation.pytest_temp_root()} "
+        f"(session {SESSION_ID}{pruned_text})"
+    )

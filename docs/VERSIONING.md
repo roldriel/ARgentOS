@@ -115,9 +115,20 @@ Reglas:
   (`protocol/.agents/harness/policies/H13-protocol-taxonomy.md`) se aplica por
   juicio en todo cambio de estructura del payload; `tools/check_taxonomy_coherence.py`
   restaura mecánicamente los invariantes del ex `test_protocol_taxonomy.py`
-  (H13 rules 2/5/10) como red de seguridad de desarrollo.
+  (H13 rules 2/5/10/11) como red de seguridad de desarrollo.
 - **`check_session_artifacts.py`:** valida los bloques `ENTRY`/`METRIC` y los
   `state.json` bajo `.project/`; sin `.project/` es OK.
+- **Gates de lifecycle C-1/C-2/C-3 (adicionales, advisory/factuales):**
+  `tools/check_lifecycle_anchor.py` (C-1, Validation Anchor, VC-1),
+  `tools/check_lifecycle_checkpoint.py` (C-2, checkpoint y consistencia con el
+  anchor aplicable, GC-1) y `tools/check_lifecycle_lineage.py` (C-3, lineage de
+  findings/correcciones, LC-1) verifican los invariantes del Change Lifecycle
+  DEV (RFC-75 Incremento 4, plan 98; C-3 en plan 100). **No forman parte del
+  bloque de comandos de arriba ni de CI:** son gates de lifecycle que se corren
+  en los momentos que fija `.agents/policies/lifecycle-checkers.md`, y su salida
+  es evidencia factual, nunca autoridad normativa (ADR-16). Su contrato de exit
+  code es el de esa policy: `GAP` es advisory y nunca cambia el exit code; solo
+  `ANOMALY` lo vuelve no-cero.
 - **`check_version_state.py`:** invariante versión ↔ changelog ↔ tag; en `dev`
   las secciones/versión sin tag son warning (excepción declarada), y es error
   cuando una versión no tiene sección o un tag no la tiene.
@@ -145,6 +156,15 @@ Reglas:
   la versión se promueve y taggea.
 - Un solo editor por versión; en ejecución paralela los ítems se agregan a
   `[Unreleased]` y la promoción los consolida (ver §8).
+- **Reconciliación del snapshot current-state (§9):** el snapshot de versiones
+  de §9 es documentación current-state y se reconcilia en los puntos de
+  promoción/release apropiados, o cuando un Change tiene impacto explícito
+  sobre él; **no** se actualiza en cada Change. La autoridad sobre el estado
+  efectivo es el estado Git real (`git tag` + `protocol/.agents/VERSION`); una
+  divergencia entre snapshot y Git nunca se usa para inventar una versión ni
+  para modificar este documento arbitrariamente
+  (`.agents/policies/validation-closure.md:5.1 Documentation impact (closure
+  determination)`).
 
 ## 6. Tags
 
@@ -213,26 +233,31 @@ Condiciones derivadas del Change Lifecycle (semántica; RFC-75
   tocar `VERSION`/changelog, o los ítems se acumulan en `[Unreleased]` y la
   numeración se asigna en la promoción.
 
-## 9. Estado actual (2026-09-05)
+## 9. Estado actual (2026-09-21)
 
-Snapshot del estado al 2026-09-05 (verificado contra git); se actualiza en
-cada release. La fuente inmutable de la verdad son `git tag` +
-`protocol/.agents/VERSION`.
+Snapshot del estado al 2026-09-21, reconciliado en el punto de promoción que §5
+declara (promoción del rango `11.3.0`–`11.6.1`, plan 146). La fuente inmutable
+de la verdad son `git tag` + `protocol/.agents/VERSION`: este snapshot es un
+resumen de lectura, no una segunda fuente, y una divergencia se resuelve
+siempre a favor de git.
 
-- `master` = `10.3.0` (promoción de `10.1.0`–`10.3.0`: planes 88–93 y RFCs
-  71–74; tags anotados hasta `10.3.0` inclusive).
+- `master` = `11.6.1` (promoción del rango `11.3.0`–`11.6.1`: planes 119, 120,
+  121, 142 y 143; RFC-76, RFC-77, RFC-78 y RFC-79; Change de release del plan
+  146). Tags anotados `11.0.0`, `11.0.1`, `11.1.0` y `11.2.0` de promociones
+  anteriores, más `11.3.0`, `11.4.0`, `11.5.0`, `11.6.0` y `11.6.1` de esta
+  promoción, todos sobre el commit de promoción correspondiente de `master`.
 - `dist` = publicado desde `master` (`publish-dist` a partir de la promoción
-  de `10.3.0`).
-- `dev` = `11.0.0` pre-release (plan 78 `Executed` con condición derivada
-  `Closed`; RFC-64 implementada, release pendiente).
+  de `11.6.1`).
+- `dev` = `11.6.1` (sin secciones del changelog con fecha pendientes de tag:
+  el rango que estaba en curso desde `11.3.0` quedó oficializado por esta
+  promoción; últimos planes ejecutados 124–145).
 
 Notas:
 
-- `11.0.0` está implementado y registrado en `dev` (sección del changelog
-  `[11.0.0]` sin tag: release en curso según §5); no está promovido a
-  `master`, no tiene tag y `dist` no fue regenerado con él. La promoción
-  (`dev` → `master` + tag anotado `11.0.0` + regeneración de `dist`) es una
-  decisión independiente y posterior a este snapshot.
+- El rango `11.3.0`–`11.6.1` estaba implementado y registrado en `dev` con
+  secciones del changelog sin tag. La promoción (`dev` → `master` + tags
+  anotados + regeneración de `dist`) se ejecutó en el Change del plan 146, que
+  es el punto de reconciliación de este snapshot.
 - Mientras `dev` contenga planes sin publicar respecto de `master`/`dist`,
   `check_dist_sync.py` se espera rojo en `dev` por diseño (ver §4.1).
 - **Branch protection no habilitada (decisión del owner, 15 ago 2026):** el
@@ -276,6 +301,25 @@ Un plan está terminado cuando:
       bumped.
 - [ ] Para cambios docs-only (RFC-69): ítem en `[Unreleased]` del changelog
       con `(plan, RFC-N)`; sin `VERSION` bump ni tag.
+- [ ] Determinaciones de impacto del cierre (Change Lifecycle DEV): **dos**
+      determinaciones **independientes**, cada una exactamente `REQUIRED` /
+      `NOT_REQUIRED` / `DEFERRED` con su evidencia, registradas en
+      `## Checkpoint / cierre` del Plan (para un cambio sin Plan, en el mensaje
+      de commit, según
+      `.agents/policies/validation-closure.md:5.1 Documentation impact (closure
+      determination)` y `.agents/policies/validation-closure.md:5.2 Roadmap
+      impact (closure determination)`): **Documentation impact** (¿quedó
+      documentación de estado actual obsoleta o incompleta?) y **Roadmap
+      impact** (¿se alteró el mapa operativo del trabajo futuro?). En ambas,
+      `REQUIRED` exige los documentos/ítems afectados y evidencia;
+      `NOT_REQUIRED` exige razón explícita; `DEFERRED` exige una pending
+      decision existente (PC-1) con owner. `Roadmap impact: REQUIRED` **no**
+      significa editar `ROADMAP.md`: el artefacto a reconciliar se determina
+      por ownership/source of truth. Las dos son independientes: no se fusionan
+      ni se sustituyen (`docs/CONVENTIONS.md:Change Lifecycle — Determinaciones
+      de cierre: impacto documental e impacto de Roadmap (regla operacional)`).
+      La ausencia de cualquiera de las dos bloquea el cierre; no hay
+      checker semántico ni campo obligatorio de template.
 - [ ] Commit atómico en `dev`.
 
 Una versión está publicada cuando, además:

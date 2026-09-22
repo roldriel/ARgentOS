@@ -27,7 +27,7 @@ import os
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable
+from typing import Callable
 
 from .project_segment import (
     kb_canonical_content,

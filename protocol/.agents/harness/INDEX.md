@@ -45,6 +45,24 @@ review, and the third is development-side:
    protocol (adopters get `.agents/` + `AGENTS.md` only) and never block an
    adopting session.
 
+**Distribution boundary — what ships and what does not.** The two sides are
+distinct and the distinction is intentional:
+
+- **Ships with the payload:** everything under `.agents/`, including the harness
+  scripts (`hook_gate.py`, `runner_state.py`, `health_check.py`,
+  `gate_validator.py`), the harness policies, this INDEX, and **the harness
+  regression tests at `.agents/harness/tests/`**. The tests exercise the shipped
+  harness scripts — not development tooling — and are part of the harness
+  deliverable; anything inside `.agents/` is distributed as it stands.
+- **Does not ship (DEV-only):** the five development checkers listed in point 3
+  above live in `tools/` in the development repository, are run by the canonical
+  battery in the development workspace and CI, and are never handed to an
+  adopter. `runtime/` and `tests/` are likewise DEV-only.
+
+"Dev-only checkers" (point 3) and "harness tests" (inside `.agents/`) are
+therefore different categories: the checkers are development tooling, while the
+harness tests are the regression suite of the distributed harness.
+
 This declaration is canonical for how the words "enforced", "reviewed" and
 "verified" are used across `.agents/`: "enforced" = the hook shell, "reviewed"
 = gate evaluation by judgment, "verified" = dev-only checkers of the

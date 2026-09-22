@@ -188,10 +188,14 @@ The KB is a **project memory**, not a disposable snapshot:
 5. Every entry carries `generated_at` / `updated_at` and provenance
    (`source_workers`, `source_sessions`).
 
-Legacy KB entries (no provenance fields) are marked `confidence: low` +
-`status: legacy` in the manifest on the first `DISCOVERY_INIT`, and only survive
-if a worker revalidates them. Entries are never deleted without a trace: obsolete
-entries are marked `status: stale` in the manifest.
+Legacy KB entries (no provenance fields) are marked `status = "legacy"` in their own
+front matter and listed under `[entries] legacy` in the manifest on the first
+`DISCOVERY_INIT`; they are treated as low-confidence and only leave that state if a
+worker revalidates them (they become `active`) or invalidates them (they become
+`stale`). Entries are never deleted without a trace: obsolete entries are marked
+`status = "stale"` in the manifest. The manifest is an index of entry state, not a
+second source of it: `confidence` is not a manifest field — the `legacy` state is
+the expression of the low confidence while the entry is unrevalidated.
 
 ## Guardrails
 

@@ -247,6 +247,82 @@ def test_semantic_context_identity_covers_delivered_composition():
     assert a != b
 
 
+# --- F-2 correction (plan 121): the previous test asserted coverage of the
+# "delivered composition" while varying only `session_uuid`. These tests
+# actually prove it: every delivered-context field of the Delegation Payload
+# changes the identity, and execution metadata does not.
+_DELIVERED_CONTEXT_VARIANTS = {
+    "session_uuid": dict(session_uuid="00000000-0000-0000-0000-0000000000ff"),
+    "current_state": dict(current_state="core:VERIFYING"),
+    "target_phase": dict(target_phase="06-execute.md"),
+    "harness_policy": dict(harness_policy=("H06-verification-report.md",)),
+    "role_to_adopt": dict(role_to_adopt="verifier"),
+    "profile": dict(profile="backend_engineer"),
+    "task_summary": dict(task_summary="A different task."),
+    "context_budget": dict(context_budget=2000),
+    "knowledge_entries": dict(knowledge_entries=("kb-001",)),
+    "input_artifacts": dict(input_artifacts=("01-EXECUTION_PLAN.md",)),
+}
+
+
+@pytest.mark.parametrize("field", sorted(_DELIVERED_CONTEXT_VARIANTS))
+def test_semantic_context_identity_covers_every_delivered_context_field(field):
+    """PC-004: no delivered-context field may be invisible to the identity.
+
+    A field that does not reach the identity lets two distinct delivered
+    compositions share one `SemanticContextIdentity` — a false hit, which the
+    governing policy forbids (RFC-78, section 6).
+    """
+    baseline = semantic_context_identity_from_context(
+        make_context(), PROTOCOL_VERSION
+    )
+    varied = semantic_context_identity_from_context(
+        make_context(**_DELIVERED_CONTEXT_VARIANTS[field]), PROTOCOL_VERSION
+    )
+    assert baseline != varied, f"{field} does not participate in the identity"
+
+
+@pytest.mark.parametrize(
+    "field",
+    ["communication_style", "technical_approach"],
+)
+def test_execution_metadata_does_not_change_the_identity(field):
+    """RFC-78 section 6: execution metadata is delivered, not semantic context."""
+    baseline = semantic_context_identity_from_context(
+        make_context(), PROTOCOL_VERSION
+    )
+    varied = semantic_context_identity_from_context(
+        make_context(**{field: "enabled"}), PROTOCOL_VERSION
+    )
+    assert baseline == varied
+
+
+def test_materialization_identity_distinguishes_content_contracts():
+    """Requirement 9: different content sets never share one identity."""
+    base = MaterializationVersion(
+        variant="prompt",
+        ordering_contract_version="2",
+        serialization_version="1",
+        content_contract_version="1",
+    )
+    other = dataclasses.replace(base, content_contract_version="2")
+    assert materialization_identity(
+        materialization_version=base
+    ) != materialization_identity(materialization_version=other)
+
+
+def test_materialization_identity_v1_omits_the_content_contract():
+    """Existing v1 identities stay valid byte for byte."""
+    v1 = materialization_identity(
+        materialization_version=MaterializationVersion(
+            variant="prompt",
+            ordering_contract_version="1",
+            serialization_version="1",
+        )
+    )
+    assert "content_contract_version" not in v1
+
+
 def test_semantic_context_identity_order_independent():
     seg_a = Segment("project", PROTOCOL_VERSION, "project-a", b"kb")
     seg_b = Segment("worker", PROTOCOL_VERSION, "protocol-global", b"worker")

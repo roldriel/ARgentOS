@@ -104,6 +104,31 @@ def render_prompt(context: ExecutionContext) -> str:
     return "\n".join(lines) + "\n"
 
 
+def render_dynamic_suffix(context: ExecutionContext) -> str:
+    """Render the dynamic suffix of the canonical payload (ordering v2).
+
+    Same delivered fields as the prompt variant's suffix; this variant carries
+    the same dynamic content, so the v2 suffix is identical across the two
+    materializations (RFC-78, section 3: effective capability and content are
+    equivalent across variants; only the representation of the stable skills
+    block differs, and under v2 the stable block is resolved once).
+    """
+    lines = [
+        "suffix: task",
+        f"task: {context.task_summary}",
+        "suffix: knowledge_entries",
+    ]
+    lines.extend(f"  - {entry}" for entry in context.knowledge_entries)
+    lines.append("suffix: artifacts")
+    lines.extend(f"  - {ref}" for ref in context.input_artifacts)
+    lines.append("suffix: execution_metadata")
+    lines.append(f"session_uuid: {context.session_uuid}")
+    lines.append(f"current_state: {context.current_state}")
+    lines.append("target_phase: " + ", ".join(context.phases()))
+    lines.append(f"context_budget: {context.context_budget}")
+    return "\n".join(lines) + "\n"
+
+
 def materialize(context: ExecutionContext) -> tuple[str, MaterializationCost]:
     """Materialize the Execution Context as tool calls and report its cost.
 

@@ -6,24 +6,114 @@
 > Las secciones `## Convenciones` y `## Serie de RFCs (documentos canónicos)`
 > se conservan como anclas de navegación para referencias históricas.
 
-Estado al 2026-08-16. La **serie de remediación de la auditoría 2.0.1** está
-completa: RFC-29…56 `Accepted` (las 23 RFCs de la serie 32…54 se revisaron una
-por una vía RFC-56, plan 57) y todos los planes numerados `Executed`. El
-trabajo activo es la remediación de la **auditoría de sistema 3.1**
-(`AUDITORIA_SISTEMA_2026-08-16.md`). `master`/`dist` están en `3.19.0` (tags
-anotados `3.16.0`–`3.19.0`); `dev` lleva las versiones en curso `3.20.0`–
-`3.25.0` sin publicar. El 12 ago 2026 se
-completó la remediación de la auditoría de documentación
+Estado al 2026-09-21. El Plan 146 está `Executed` (Change de release: promoción de `dev` a
+`master` y release del rango `11.3.0`–`11.6.1`, con los tags anotados `11.3.0`, `11.4.0`,
+`11.5.0`, `11.6.0` y `11.6.1` sobre el commit de promoción y `dist` regenerado por
+`publish-dist`; DEV-only sobre `CHANGELOG.md`, `docs/VERSIONING.md`, este INDEX y su propio
+artefacto, sin efecto en `protocol/.agents/`, por lo que RFC-56 no aplica; Change Level L2
+con impacto de release 2; Septuagésima séptima serie). El Plan 145 está `Executed` con condición derivada `Closed` (cierre
+integral del backlog accionable DEV `I-1`…`I-8`: aislamiento del pytest harness por sesión,
+frontera de observación que no confunde un recurso vital ilegible con uno ausente, semántica
+corregida de `recoveries` y derivación real de `findings_autonomously_corrected`, y la
+reconciliación de los espejos documentales de los Planes 137/143/144, el backlog evidenciado
+`B-4`/`B-7`, el Placement Contract y el conjunto anclado de `tests/AGENTS.md`; DEV-only
+`tests/` + `runtime/` + `conftest.py` + `docs/` + `.agents/policies/`, sin release;
+Septuagésima sexta serie). El Plan 144 está `Executed` con condición derivada `Closed` (higiene
+documental y de tests del backlog DEV residual: la tabla del conjunto anclado de
+`tests/AGENTS.md` pasa de 8 a 13 módulos, se eliminan las dos sentencias `sys.path.insert`
+redundantes de `tools/` en las suites de discovery y se reconcilian tres espejos
+documentales —fila de RFC-75 en `docs/rfc/INDEX.md`, registro de investigaciones y registro
+de auditorías—; DEV-only `tests/` + `docs/`, sin release; Septuagésima quinta serie). El Plan 143 está `Executed` con condición derivada `Closed` (payload
+con release pendiente; vaciado del backlog operativo residual: resolución final de
+`HD-10`/plan 25, implementación de la verificación de la H13 regla 11 en
+`tools/check_taxonomy_coherence.py`, transición CL-8 de `<PLAN-136>:F-1`/`<PLAN-142>:F-2` y
+formalización del `C-2 GAP` histórico del plan 116 como `HISTORICAL / NON-ACTIONABLE /
+RESOLVED`; `Clase B` para el registro faltante de `PROTOCOL_TAXONOMY.md`, que produce la
+versión 11.6.1 PATCH; Septuagésima cuarta serie). El Plan 142 está `Executed` con condición derivada `Closed`
+(payload con release pendiente; remisión a la RFC-79: materializa las siete decisiones de
+los residuos normativos —`F-14`, `F-17`, `F-16`, `B-8` residual, `F-18`, `F-4` y la
+metadata contractual de taxonomía— con `VERSION` 11.6.0 MINOR; Clase A y B;
+Septuagésima tercera serie). El Plan 141 está `Executed` con condición derivada `Closed`
+(resolución del backlog de decisiones humanas `HD-1`…`HD-12`: ejecución del Plan 137 y
+reconciliación de `ROADMAP.md`, decisiones de payload enrutadas por RFC-79, transiciones de
+estado de findings y pending decisions, y correcciones de registro en RFC-69/72/74 y en este
+INDEX; DEV-only `docs/` + `ROADMAP.md` + `CHANGELOG.md` + `tests/` + `tools/`, sin release;
+Septuagésima tercera serie). El Plan 140 está `Executed` con condición derivada `Closed`
+(Governance Residual Closure: cierre de `<PLAN-136>:PC-5` como `superseded` y de
+`<PLAN-139>:F-1` como `resolved`, determinación de `B-2`/EARS como satisfecho sin
+residual, reconciliación del `Roadmap Impact` del Plan 137 a `DEFERRED` con
+`<PLAN-137>:PC-1` como pending decision que lo gobierna, clasificación de
+`<PLAN-138>:PC-2` como `DEFERRED` no accionable y del `C-2 GAP` del Plan 116 como
+histórico/no accionable, con `OPEN / ACTIONABLE = 0`; DEV-only `docs/plans/` +
+`CHANGELOG.md` + un test anclado, sin release; Septuagésima segunda serie). El Plan 139 está `Executed` con condición derivada `Closed`
+(SAE Governance Boundary Closure: cierre formal de `<PLAN-136>:F-3` como `resolved`,
+de `<PLAN-138>:PC-1` como `resuelta` —la regla `Impact classification !=
+authorization`— y de `<PLAN-138>:PC-2` como `deferred` —no se introduce ningún
+mecanismo autónomo de Scope Expansion—; DEV-only `docs/` + policies `.agents/`, sin
+release; Septuagésima primera serie). El Plan 138 está `Executed` con condición derivada `Closed`
+(SAE Scope & Authority Hardening: enforcement previo al efecto del Scope/Authority
+de Supervised Autonomous Execution a partir del incidente `<PLAN-136>:F-3` — la
+determinación de cierre no amplía el Scope autorizado, la escritura fuera de Scope
+se detiene **antes** del efecto y el contrato de autorización no se puede reescribir
+retroactivamente; DEV-only `runtime/` + `tests/` + policies `.agents/`, sin release;
+Septuagésima serie). El Plan 137 está `Executed`
+(EARS Structural Validator: ejecutado por el Plan 141 el 2026-09-21 — guarda DEV de
+paridad `tools/check_ears_coverage.py` y tres suites, 91 tests, R3/R4/R5 `VALID` sobre el
+payload real y R1/R2 `N/A` por ausencia de corpus versionado de `TASK_SPECIFICATION.md`;
+**hallazgo: el validador ya existía** — plan 66/RFC-57 — y `B-2` quedó determinado como
+**satisfecho sin residual** por el Plan 140; DEV-only `tools/` + `tests/`, sin release;
+Sexagésima novena serie).
+El Plan 136 está `Executed` con condición derivada `Closed`
+(D01 Mechanical Checker: checker DEV del subconjunto mecánico de D01 — estructura
+y procedencia resoluble —; DEV-only `tools/` + `tests/`, sin release;
+Sexagésima octava serie). El Plan 135 está `Executed` con condición derivada `Closed`
+(Supervised Autonomous Execution para el DEV Autonomous Orchestrator; DEV-only,
+sin release; Sexagésima séptima serie). El Plan 134 está `Executed` con condición derivada `Closed`
+(integridad de la evidencia de cierre: modelo del estado de cierre vs. árbol
+material del commit y contrato de C-2; docs-only + tooling DEV, sin release;
+Sexagésima sexta serie). El Plan 133 está `Executed` con condición derivada `Closed`
+(formalización del Roadmap Impact en el Change Lifecycle DEV y barrido documental
+integral; docs-only, sin release; Sexagésima quinta serie). El Plan 132 está `Executed` con condición derivada `Closed`
+(actualización del Roadmap al estado real; docs-only, sin release; Sexagésima
+cuarta serie). El Plan 131 está `Executed` con condición derivada `Closed`
+(implementación mecánica del Placement Contract como resolver determinista; DEV
+`runtime/` + `tests/`, sin release; Sexagésima tercera serie). El Plan 130 está
+`Executed` con condición derivada `Closed`
+(corrección nomenclatural de Plan 129; docs-only, sin release; Sexagésima segunda
+serie). El Plan 129 está `Executed` con condición derivada `Closed`
+(cierre de `PLAN-129:DEC-1/DEC-2/DEC-3` del Placement Contract; docs-only, sin release;
+Sexagésima primera serie). El Plan 128 está `Executed` con condición derivada
+`Closed` (materialización del Placement Contract; docs-only, sin release;
+Sexagésima serie). El Plan 127 está `Executed` con condición derivada `Closed`
+(**diseño cerrado**; `Placement Contract: NOT CREATED` en ese momento; sin
+release; Quincuagésima novena serie). El Plan 126 está `Executed` con condición
+derivada `Closed` (Quincuagésima octava serie, materialización de las decisiones
+C–K; Clase B; release pendiente); el Plan 125 está `Executed` con condición
+derivada `Closed` (docs-only, sin release; Quincuagésima séptima serie,
+decisiones arquitectónicas de estructura del repositorio); el Plan 124 está `Executed` con condición
+derivada `Closed` (docs-only, sin release; Quincuagésima sexta serie, cierre de
+hallazgos de arquitectura de `tests/`); el resto de los planes numerados están
+`Executed`, y la última serie ejecutada con anterioridad es la Quincuagésima
+quinta (Plan 123, 15 sep 2026). El
+protocolo publicado es `11.2.0` (`master`/`dist`, tags anotados `11.0.0`,
+`11.0.1`, `11.1.0` y `11.2.0`); `dev` lleva los releases en curso
+`11.3.0`–`11.5.0` sin publicar (ver `docs/VERSIONING.md` §9, que es el
+snapshot vigente de versiones; este header no lo duplica). La **serie de
+remediación de la auditoría 2.0.1** está completa: RFC-29…56 `Accepted` (las 23
+RFCs de la serie 32…54 se revisaron una por una vía RFC-56, plan 57). El 12 ago
+2026 se completó la remediación de la auditoría de documentación
 (`docs/AUDITORIA_DOCUMENTACION.md`, fuera del payload): AGENTS.md raíz
 operativo, plantillas de plan/RFC + `tools/check_plan_structure.py`, tests
 centralizados en `tests/`, batería en CI sin path filters, disolución de `dev/`
 (`tools/`, `runtime/`, `docs/` en raíz) y `tools/check_dist_sync.py`. El 14 ago
-2026 se agregó `AUDITORIA_SISTEMA.md` (tracker vivo de remediación del sistema)
-y se unificó la definición de batería en `docs/VERSIONING.md` §4.1. El 14–15
-ago 2026 se ejecutaron los planes 58–68 (remediación de la auditoría de
-sistema, cierre de backlog B-6 y validador obligatorio F1-B, versiones
-3.9.0–3.19.0). Los planes de construcción del protocolo (dominios, taxonomía,
-discovery) están implementados; sus versiones históricas viven en `archive/`.
+2026 se agregó el tracker de remediación del sistema
+(`docs/working/audits/AUDITORIA_SISTEMA.md`, cerrado el 14 ago 2026 según su
+propio status) y se unificó la definición de batería en `docs/VERSIONING.md`
+§4.1. El 14–15 ago 2026 se ejecutaron los planes 58–68 (remediación de la
+auditoría de sistema, cierre de backlog B-6 y validador obligatorio F1-B,
+versiones 3.9.0–3.19.0). Los planes de construcción del protocolo (dominios,
+taxonomía, discovery) están implementados; sus versiones históricas viven en
+`archive/`.
 
 ## Novena serie: remediación de la auditoría de sistema 3.1 (16 ago 2026)
 
@@ -148,8 +238,8 @@ RFC-73 y RFC-74 quedan registradas en la Vigésima quinta serie (planes 92/93,
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
 | `89-rfc72-provider-prompt-cache-implementation.md` | RFC-72 | Executed | Implementa la capacidad de Provider Prompt Cache en el runtime de referencia: `MaterializationIdentity` (reglas condicionales), Canonical Materialization con I-MAT-001 verificable, Ordering Contract v1 del runtime (orden de facto de los renderers; no resuelve el OPEN/DEFERRED normativo), Stable Prefix, capacidad abstracta del provider + Provider Adapter Boundary, `ProviderCacheReference` opaca, flujo lookup/hit/miss/request/reference update con invalidación en tres dominios y admisión sin umbrales. Sin cambios en `protocol/.agents/` (runtime de referencia): sin `VERSION` bump ni changelog de protocolo; gate de gobernanza = RFC-72 `Accepted` (plan 87). **Ejecución (2026-08-31):** U1–U6 completados (identity, canonical, provider_cache, cache_coordinator, README, tests I-MAT-001…I-MAT-012); gate RFC-72 `Accepted` cumplido (plan 87 `Executed`); batería canónica en verde y pytest 279 passed; `protocol/.agents/`, VERSION y CHANGELOG intactos. |
-| `90-rfc73-project-persistence-implementation.md` | RFC-73 | Executed | Implementa la persistence semántica de proyecto: Project Segment derivado sobre la KB existente (namespace = `ProjectIdentity` sin identidad nueva; `SegmentContentIdentity`/`SegmentIdentity(project)`), reuse eligibility (`FRESH`/`STALE`/`UNKNOWN`) con non-equivalencia de los hashes de discovery, store derivado `.project/knowledge/project_segment.json` (filesystem, atómico, rebuildable, no autoritativo) y regla aditiva en `PROTOCOL_BOUNDARIES.md`. Clase A; versión 10.2.0 (MINOR). **Blocker arquitectónico resuelto (2026-08-31):** `project_namespace` = `PROJECT_REGISTRY.project_id` (única identidad lógica existente); sin Project ID ⇒ sin store (KB persiste como artifacts). **Ejecución (2026-08-31):** U1–U6 completados (project_segment, project_store, PROTOCOL_BOUNDARIES, standards/INDEX, 37 tests, gobernanza); gate RFC-73 `Accepted` cumplido (plan 92 `Executed`); batería canónica en verde y pytest 316 passed; `protocol/.agents/VERSION` → 10.2.0 (MINOR) y changelog `[10.2.0]`; commit atómico en `dev` (`feat(runtime): implement project context persistence (plan 90, RFC-73)`); Discovery persistence reutilizada (mecanismo existente, sin cambios); revalidation = pipeline preexistente + cómputo de reuse eligibility; sin integración automática con Context Composition. Esta fila y la fila RFC-73 de `docs/rfc/INDEX.md` quedan en el working tree dentro de cambios preexistentes de los planes 87/92/93, para el commit del mantenedor. |
-| `91-rfc74-cache-observability-implementation.md` | RFC-74 | Executed | Implementa la medición y economía del cache: eventos `reuse_event`/`provider_cache_event` en `METRICS.md` (schema 1.2.0, aditivo), catálogo `### Reuse and cache` + invariantes I-ECO en `PROTOCOL_METRICS.md` (sin thresholds), agregación en `tools/aggregate_metrics.py` con derivación de Discovery reuse y productores de los planes 89/90 expuestos como metadata/estado con seam host/orchestrator documentado (U1–U5; sin writer de referencia). Clase A (RFC-74 `Accepted`, plan 93); versión 10.3.0 (MINOR). **Ejecución (2026-08-31):** U1–U5 completados (METRICS.md 1.2.0 con `reuse_event`/`provider_cache_event`; catálogo `Reuse and cache` + economía I-ECO; agregador con agregación por capa y sin doble conteo; derivación de Discovery reuse; metadata/estado de productores consumido sin duplicación); batería canónica en verde y pytest 316 passed (basetemp fresco por ACL de `pytest-of-rolda` en sandbox Windows); `protocol/.agents/VERSION` → 10.3.0 (MINOR) y changelog `[10.3.0]`; RFC-74 con Amendment Log e "Impacto en el protocolo" corregidos; sin pricing, thresholds ni telemetry backend. Commit atómico: no realizado en esta ejecución (entrelazado con cambios preexistentes de planes 87/92/93 en archivos compartidos; ver `Nota de ejecución` del plan) — pendiente de decisión del mantenedor. |
+| `90-rfc73-project-persistence-implementation.md` | RFC-73 | Executed | Implementa la persistence semántica de proyecto: Project Segment derivado sobre la KB existente (namespace = `ProjectIdentity` sin identidad nueva; `SegmentContentIdentity`/`SegmentIdentity(project)`), reuse eligibility (`FRESH`/`STALE`/`UNKNOWN`) con non-equivalencia de los hashes de discovery, store derivado `.project/knowledge/project_segment.json` (filesystem, atómico, rebuildable, no autoritativo) y regla aditiva en `PROTOCOL_BOUNDARIES.md`. Clase A; versión 10.2.0 (MINOR). **Blocker arquitectónico resuelto (2026-08-31):** `project_namespace` = `PROJECT_REGISTRY.project_id` (única identidad lógica existente); sin Project ID ⇒ sin store (KB persiste como artifacts). **Ejecución (2026-08-31):** U1–U6 completados (project_segment, project_store, PROTOCOL_BOUNDARIES, standards/INDEX, 37 tests, gobernanza); gate RFC-73 `Accepted` cumplido (plan 92 `Executed`); batería canónica en verde y pytest 316 passed; `protocol/.agents/VERSION` → 10.2.0 (MINOR) y changelog `[10.2.0]`; commit atómico en `dev` (`feat(runtime): implement project context persistence (plan 90, RFC-73)`); Discovery persistence reutilizada (mecanismo existente, sin cambios); revalidation = pipeline preexistente + cómputo de reuse eligibility; sin integración automática con Context Composition. Commit atómico: `bf63b21` — `feat(runtime): implement project context persistence (plan 90, RFC-73)` (registrado por corrección del Plan 141, `HD-12 F-6`/`F-8`). |
+| `91-rfc74-cache-observability-implementation.md` | RFC-74 | Executed | Implementa la medición y economía del cache: eventos `reuse_event`/`provider_cache_event` en `METRICS.md` (schema 1.2.0, aditivo), catálogo `### Reuse and cache` + invariantes I-ECO en `PROTOCOL_METRICS.md` (sin thresholds), agregación en `tools/aggregate_metrics.py` con derivación de Discovery reuse y productores de los planes 89/90 expuestos como metadata/estado con seam host/orchestrator documentado (U1–U5; sin writer de referencia). Clase A (RFC-74 `Accepted`, plan 93); versión 10.3.0 (MINOR). **Ejecución (2026-08-31):** U1–U5 completados (METRICS.md 1.2.0 con `reuse_event`/`provider_cache_event`; catálogo `Reuse and cache` + economía I-ECO; agregador con agregación por capa y sin doble conteo; derivación de Discovery reuse; metadata/estado de productores consumido sin duplicación); batería canónica en verde y pytest 331 passed (basetemp fresco por ACL de `pytest-of-rolda` en sandbox Windows); `protocol/.agents/VERSION` → 10.3.0 (MINOR) y changelog `[10.3.0]`; RFC-74 con Amendment Log e "Impacto en el protocolo" corregidos; sin pricing, thresholds ni telemetry backend. Commit atómico: `9dd8703` — `feat(protocol): implement RFC-74 observability and economics (plan 91, RFC-74)` (registrado por corrección del Plan 141, `HD-12 F-8`; el plan 91 registra **331 passed** en su `Nota de ejecución`, no 316). |
 
 ## Vigésima quinta serie: aceptación de las RFCs 73–74 (30 ago 2026)
 
@@ -162,8 +252,8 @@ changelog bajo `[Unreleased]` y registro del plan). Sin `VERSION` bump ni tag
 
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
-| `92-rfc73-acceptance.md` | RFC-73 | Executed | Formaliza la RFC-73 (Project & Discovery Context Persistence) como modelo de persistence del contexto de proyecto y Discovery (Project Knowledge, isolation por `ProjectIdentity`, hashes de discovery ≠ `SegmentContentIdentity`, frescura/revalidación, invariantes I-PROJ-001…I-PROJ-012): RFC-73 pasa a `Accepted`, con Amendment Log, INDEX de RFCs y changelog. Cambio docs-only: sin `VERSION` bump ni tag (RFC-69); la implementación queda en el plan 90 (gated a RFC-73 `Accepted`). **Ejecución (2026-08-31):** RFC-73 pasa a `Accepted (plan 92, 2026-08-30)` con entrada en su Amendment Log, INDEX de RFCs y changelog; plan marcado `Executed`. Sin cambios en `protocol/.agents/`, `runtime/` ni `tests/`; RFCs 71/72/74 intactas; plan 90 sigue gated (NO ejecutado). |
-| `93-rfc74-acceptance.md` | RFC-74 | Executed | Formaliza la RFC-74 (Cache Observability & Economics) como modelo de medición y economía del cache (capas de economía, avoided work, eventos de reuse, taxonomía de misses, invariantes I-ECO-001…I-ECO-006): RFC-74 pasa a `Accepted`, con Amendment Log, INDEX de RFCs y changelog. Depende de RFCs 71–73 `Accepted` (planes 86/87/92). Cambio docs-only: sin `VERSION` bump ni tag (RFC-69); la implementación queda en el plan 91 (`Aprobado para ejecución`, NO ejecutado). **Ejecución (2026-08-31):** RFC-74 pasa a `Accepted (plan 93, 2026-08-31)` con entrada en su Amendment Log, INDEX de RFCs y changelog; plan marcado `Executed`. Sin cambios en `protocol/.agents/`, `runtime/`, `tests/` ni `tools/`; RFCs 71–73 intactas; plan 91 NO ejecutado (gate de RFC-74 cumplido; permanece `Aprobado para ejecución`). |
+| `92-rfc73-acceptance.md` | RFC-73 | Executed | Formaliza la RFC-73 (Project & Discovery Context Persistence) como modelo de persistence del contexto de proyecto y Discovery (Project Knowledge, isolation por `ProjectIdentity`, hashes de discovery ≠ `SegmentContentIdentity`, frescura/revalidación, invariantes I-PROJ-001…I-PROJ-012): RFC-73 pasa a `Accepted`, con Amendment Log, INDEX de RFCs y changelog. Cambio docs-only: sin `VERSION` bump ni tag (RFC-69); la implementación queda en el plan 90 (gated a RFC-73 `Accepted`). **Ejecución (2026-08-31):** RFC-73 pasa a `Accepted (plan 92, 2026-08-30)` con entrada en su Amendment Log, INDEX de RFCs y changelog; plan marcado `Executed`. Sin cambios en `protocol/.agents/`, `runtime/` ni `tests/`; RFCs 71/72/74 intactas; plan 90 seguía sin ejecutar en ese momento (gate de RFC-73 `Accepted` cumplido después) y se ejecutó con el commit `bf63b21` (aclarado por el Plan 141, `HD-12 F-6`). |
+| `93-rfc74-acceptance.md` | RFC-74 | Executed | Formaliza la RFC-74 (Cache Observability & Economics) como modelo de medición y economía del cache (capas de economía, avoided work, eventos de reuse, taxonomía de misses, invariantes I-ECO-001…I-ECO-006): RFC-74 pasa a `Accepted`, con Amendment Log, INDEX de RFCs y changelog. Depende de RFCs 71–73 `Accepted` (planes 86/87/92). Cambio docs-only: sin `VERSION` bump ni tag (RFC-69); la implementación queda en el plan 91 (`Aprobado para ejecución`, NO ejecutado). **Ejecución (2026-08-31):** RFC-74 pasa a `Accepted (plan 93, 2026-08-31)` con entrada en su Amendment Log, INDEX de RFCs y changelog; plan marcado `Executed`. Sin cambios en `protocol/.agents/`, `runtime/`, `tests/` ni `tools/`; RFCs 71–73 intactas; plan 91 seguía sin ejecutar en ese momento (gate de RFC-74 cumplido) y se ejecutó con el commit `9dd8703` (aclarado por el Plan 141, `HD-12 F-6`). |
 
 ## Vigésima sexta serie: Master Action Plan del Change Lifecycle DEV (01 sep 2026)
 
@@ -778,13 +868,671 @@ adicional ni cambios de plantillas. Sin cambios en `protocol/.agents/`,
 |---|---|---|---|
 | `117-adversarial-deliberation-feature-adoption.md` | — | Executed | Adopción de la feature DEV de deliberación adversarial (Adversarial Deliberation Feature Adoption): materializa el contrato de adopción de Phase 4 —`DEFINITION-B` aceptada— y el predicate `JURY_TRIAL_DEV_FEATURE_CLOSED` con C1–C8, cierra el `GAP-02` (record home) en la Working Convention con el mínimo texto derivado de PC-1/LC-1, declara el standing `ADOPTED + WORKING + NON-NORMATIVE` (sin lifecycle state nuevo) y registra la decisión humana de cierre como acto separado. **Creación (2026-09-12):** artifact creado con `Status` `Aprobado para ejecución` y GO del mantenedor registrado como H1 (decisiones D-1…D-8 del prompt de Phase 5). **Ejecución (2026-09-12):** definición final de la feature, contrato de adopción de 15 elementos, frontera de autoridad, contratos de independencia y de valor, evidencia (cuatro Trials reales en dos Planes, dos configuraciones de ejecutor, confrontación acotada, NO CHANGE y reconstruibilidad) y limitaciones declaradas; validación A1 (tree `56e4407f…`, delta `f725d0c0…`) y segunda validación sobre el estado staged de cierre con los 6 checkers canónicos PASS, C-1 Plan 117 `VALID`, C-2 Plan 117 `VALID`, C-3 `N/A` (ausencia declarada, con `GAP=0` y `ANOMALY=0`), los tests content-sensitive `2 passed` y la pierna `pytest` con la clase ambiental preexistente sin fallos nuevos; tabla C1–C8 verificada con evidencia y `JURY_TRIAL_DEV_FEATURE_CLOSED = TRUE` derivado (no declarado); condición derivada **`Closed` (docs-only, sin release)** con commit atómico `feat(dev): adopt adversarial deliberation as a reusable DEV capability (plan 117)`. Sin code, tool, checker, registry, state machine, entidad `Trial`, ID global, telemetría, métricas, routing operacional, integración al Change Lifecycle, dogfood adicional ni arquitectura nueva; sin cambios en `protocol/`, `dist/`, `runtime/`, `tools/`, `tests/`, `.agents/`, `ROADMAP.md`, `AGENTS.md`, plantillas, `docs/CONVENTIONS.md` ni `docs/VERSIONING.md`; sin RFC/ADR, sin `VERSION` bump, sin tag, sin push, sin merge. |
 
+## Quincuagésima serie: cierre del MVP de Change Lifecycle DEV — reconciliación normativa de RFC-75 (Plan 118) (13 sep 2026)
+
+Plan 118 (cambio DEV docs-only autorizado por el mantenedor, 2026-09-13: cierre
+del MVP de Change Lifecycle DEV materializando la decisión humana H-1 mediante el
+Plan P-1; régimen RFC-75/RFC-69; clase RFC-56 B; sin RFC/ADR nuevo): reconcilia
+normativamente RFC-75 con el estado real alcanzado por sus Incrementos 0–4, sin
+rediseñarla. Registra en su `## Amendment Log` las cuatro materializaciones que
+ningún plan había autorizado a registrar (Incremento 4 / Unidad D, plan 98; F-1
+sobre la selección del anchor aplicable en C-2, plan 99; C-3 lineage checker,
+plan 100; capa operacional `.agents/`, plan 101), corrige el header `**Status:**`
+que declaraba implementación pendiente y marca los diez criterios de aceptación
+con evidencia rastreable (`ruta:sección`, plan y commit). Registra en
+`docs/VERSIONING.md:4.1 Batería canónica de verificación` los gates de lifecycle
+C-1/C-2/C-3 como conjunto **adicional advisory/factual** (no se agregan al bloque
+de comandos de la batería ni a CI). Sin cambios de mecanismos, invariantes ni
+decisiones de RFC-75; sin cambios en `protocol/`, `runtime/`, `tools/`, `tests/`,
+`dist/`, `master` ni tags; sin `VERSION` bump ni tag (RFC-69).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `118-change-lifecycle-dev-mvp-closure.md` | RFC-75 | Executed | Cierre del MVP de Change Lifecycle DEV (reconciliación normativa de RFC-75, H-1/P-1): registra en el `## Amendment Log` las cuatro materializaciones posteriores no registradas (Incremento 4 `669a576`/`9b5b8a1`/`0d2d7fd`/`aa68704`; F-1 `42da250`/`51cabb2`; C-3 `1ffe24c`/`d93d234`; capa `.agents/` `3706570`/`7bcda08`), corrige el header que declaraba implementación pendiente y marca los diez criterios de aceptación con evidencia rastreable. Registra C-1/C-2/C-3 como gates adicionales advisory/factuales en `docs/VERSIONING.md:4.1`. Diff limitado a header, `## Criterios de aceptación` y `## Amendment Log` de RFC-75, más la regla de §4.1: ningún mecanismo, invariante ni decisión cambia. Validación: batería canónica PASS, C-1 Plan 118 `VALID`, C-2 Plan 118 `VALID`, C-3 `N/A` (sin registros de lineage; `GAP=0`/`ANOMALY=0`), citas resolubles. Condición derivada **`Closed` (docs-only, sin release)**. Sin RFC/ADR, sin `VERSION` bump, sin tag, sin push, sin merge. |
+
+## Quincuagésima primera serie: cierre del MVP de Change Lifecycle Protocol — H-3 (deferral de append/current/governance_position) (Plan 119) (13 sep 2026)
+
+Plan 119 (cambio de payload autorizado por el mantenedor, 2026-09-13: cierre del
+MVP de Change Lifecycle Protocol materializando la decisión humana H-3 = OPTION B
+mediante el Plan P-2; RFC-76 `Accepted` + plan `Aprobado para ejecución`; clase
+RFC-56 B; cambio MINOR 11.2.0 → 11.3.0): declara **DEFERRED** la operación de
+**append**, la derivación de **current** y la derivación de **governance_position**
+para el MVP, y reconcilia el contrato `CHANGE_GOVERNANCE.md` con el runtime
+existente, que no implementa ninguna de las tres. El contrato incorpora
+`## Implemented scope (MVP)` (qué está implementado: materialización, identidad
+RFC-71, persistencia, estructura de colecciones como historia acumulada, registro
+de decisiones/autorizaciones/cierre provisto por el llamador, reconstrucción por
+recomputación de identidad y lectura) y `## Deferred semantics` (las tres
+semánticas diferidas + invariante nuevo `CGA-010`), y precisa que "append-only"
+describe la **forma** del artifact y no una operación disponible: la acumulación
+posterior se realiza por **re-materialización completa con historia acumulada**,
+que **no es append**. RFC-76 registra la decisión en su `## Amendment Log`, marca
+sus criterios de aceptación distinguiendo diseñado / implementado / verificado /
+dogfoodeado / diferido, y `docs/MIGRATION.md:16` documenta el cambio como
+compatible. **Dogfood del Change Lifecycle Protocol:** el Change se gobernó con un
+Change Governance Artifact (`target` = `protocol/.agents/contracts/CHANGE_GOVERNANCE.md`)
+materializado **antes** de la ejecución, con decisión y autorización registradas y
+`closure_decision` incorporada por re-materialización completa. Sin runtime,
+campos, endpoints, eventos, estados, métodos, state machine, registry, identity
+service, gate ni checker nuevos; `runtime/toolcalls/change_governance.py` y
+`tests/test_change_governance.py` sin cambios. Release pendiente (tag en la
+promoción).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `119-change-lifecycle-protocol-mvp-closure-h3-deferral.md` | RFC-76 | Executed | Cierre del MVP de Change Lifecycle Protocol (H-3/P-2): declara DEFERRED append, current y governance_position; reconcilia `protocol/.agents/contracts/CHANGE_GOVERNANCE.md` con el runtime (sección `## Implemented scope (MVP)` + `## Deferred semantics` + `CGA-010`); registra la decisión en el `## Amendment Log` de RFC-76 y actualiza sus criterios de aceptación; `VERSION` 11.3.0, `CHANGELOG.md` `[11.3.0]`, `docs/MIGRATION.md:16`. Dogfood real del Change Lifecycle Protocol con Change Governance Artifact materializado antes del Change. Sin implementar append/current/governance_position; sin runtime nuevo. Validación: batería canónica PASS, `tests/test_change_governance.py` verde, `CGA-001`…`CGA-010` verificados, C-1/C-2/C-3 sin `ANOMALY`. Condición derivada **`Closed` (con release pendiente)**. Sin tag, sin push, sin merge. |
+
+## Quincuagésima segunda serie: MVP Protocol-native de deliberación adversarial (Plan 120) (14 sep 2026)
+
+Plan 120 (cambio de payload autorizado por RFC-77 `Accepted`, 2026-09-14; clase
+RFC-56 A; Change Level L2): materializa la capacidad
+**`adversarial-deliberation`** definida por RFC-77 como composición de una
+Skill nueva (`skills/adversarial-deliberation/SKILL.md`), una subsección de
+comportamiento del Orchestrator existente, un contrato de artefacto nuevo
+(`contracts/DELIBERATION_REPORT.md`, sesión-scoped e `informational`) y los
+registros mínimos (taxonomía `kind: artifact` + `kind: contract`, boundaries,
+inventario de skills, punto de decisión `D7`). La deliberación es
+**evidencia**, nunca autoridad: su resultado es una `attestation` /
+recomendación advisory, con procedencia declarada
+(`ejecutores: mismo | distinto`) y **sin** afirmación de independencia
+epistemológica. Sin entidad, `kind`, rol, perfil, fase, estado, lifecycle
+state, authority class, registry, ID global, primitive de identidad, feature
+flag, gate, clasificador automático, voting, confrontación, Prompt Cache ni
+rediseño del Change Lifecycle nuevos. Dogfood real: el propio Change que
+materializa la feature, gobernado por su Change Governance Artifact desde el
+inicio. **Autorización de ejecución del Plan pendiente** (el Plan se crea en
+`Aprobado para redacción`; su entregable es de implementación, por lo que su
+`Status` de ejecución requiere autoridad humana). **[Estado corriente, Plan 145,
+2026-09-21: esa autorización se otorgó y el Plan 120 está `Executed`; la frase
+anterior se conserva como el estado de redacción y no describe el estado de hoy.]**
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `120-adversarial-deliberation-materialization.md` | RFC-77 | Executed | Materialización del MVP Protocol-native de deliberación adversarial: contrato `DELIBERATION_REPORT.md` (`enforcement: informational`, sesión-scoped, sin lifecycle propio), Skill `adversarial-deliberation` (con condiciones de uso para candidatura por juicio y consumidor declarado), subsección de invocación y construcción de contextos en el rol del Orchestrator (dos pasadas con contextos distintos, compromiso previo a la revelación, comparación por criterio, preservación del desacuerdo, síntesis, veredicto, recomendación advisory opcional, interpretación), punto de decisión `D7`, entidades de taxonomía y boundaries, suite `tests/test_adversarial_deliberation.py` (75 tests: contrato, skill, orquestación, autoridad, contexto y negativos) y el dogfood real del propio Change con reconstrucción por un tercero y evaluación `J1..J11`. Baseline: 6 checkers canónicos PASS y `pytest` **535 passed / 0 failed**; resultado: batería 6/6 PASS y `pytest` **610 passed / 0 failed** (sin regresiones). **H-5 (2026-09-14):** autorizado para ejecución, alcance limitado a los 14 entregables; clasificación MINOR `11.3.0` → `11.4.0` confirmada. **H-6 (2026-09-14):** cierre aceptado por el mantenedor — `JURY_TRIAL_PROTOCOL_MVP_CLOSED = TRUE` (J1..J10 verificados; J11 por acto humano), aceptando como limitación declarada del MVP el hallazgo de contaminación entre pasadas del dogfood (Pass 2 con exposición potencial al path del reporte vivo que ya contenía la conclusión de Pass 1), sin autorizar enforcement, aislamiento, diversidad de modelo/proveedor ni confrontación adicionales. Condición derivada **`Closed` (con release pendiente)**. Sin tag, sin push, sin merge. |
+
+## Quincuagésima tercera serie: stable prefix provider-bound de Prompt Cache Protocol (Plan 121) (14 sep 2026)
+
+Plan 121 (cambio de payload autorizado por RFC-78 `Accepted (plan 121,
+2026-09-14)` — gate satisfecho; clase RFC-56 A; Change Level L3):
+materializa el **stable prefix provider-bound** Core + Worker decidido por las
+decisiones humanas HD-1b/HD-1b-bootstrap/HD-2b/HD-3/HD-4/HD-5/HD-6/HD-7
+(mantenedor, 2026-09-14). Alcance: resolución determinística del contenido
+estable (workflow module, role, profile, harness policy, skills, worker
+bootstrap); `OrderingContract` v2 con el paso `protocol-bootstrap` declarado
+vacío y el prefijo estable antes del sufijo dinámico; reconciliación
+`ExecutionContext` ↔ Delegation Payload (cierra F-1); corrección de completitud
+de la derivación de identidad **sin** tocar `session_uuid` ni el aislamiento; y
+corrección de F-2. Objetivo declarado: **INFRASTRUCTURE / READINESS MVP**, no
+ahorro económico. **Sin** provider real, **sin** Project/KB como prefijo, **sin**
+identidad/registry/estado/fase/authority class/cache database nuevos, **sin**
+evidencia de provider simulada y **sin** release. Origen:
+`docs/working/research/PROMPT_CACHE_PHASE_1_REPORT.md` (Phase 1) y el Phase 2
+Report (`PHASE_2_STOPPED_AT_AUTHORIZATION_GATE`). **Ejecutado (2026-09-14)** con
+autorización humana explícita del mantenedor y alcance limitado a los
+entregables; commit atómico pendiente de la acción del mantenedor, por lo que la
+condición derivada es `Executed` y el cierre requiere ese commit. La
+autorización **no** incluye release, tag, promoción a `master` ni publicación.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `121-provider-bound-stable-prefix-readiness-mvp.md` | RFC-78 | Executed | Materialización del stable prefix provider-bound Core + Worker (readiness MVP): `runtime/toolcalls/segment_resolution.py` nuevo (resolución determinística del contenido estable, regla de pertenencia, orden por contrato, `SegmentResolutionError` ante elemento irresoluble y rechazo de rutas que escapan de `.agents/`), `ORDERING_CONTRACT_V2` (`protocol-bootstrap` como step declarado y **vacío**; prefijo estable antes del sufijo dinámico; `ORDERING_CONTRACT_V1` conservado), composición *banner de identidad → región estable → ancla SCI → sufijo dinámico* para que `stable_prefix_bytes` sea prefijo de bytes e invariante a `session_uuid`/task/artefactos y `stable_region` sea el contenido reusable idéntico entre variantes, reconciliación `ExecutionContext` ↔ Delegation Payload por HD-7 (`harness_policy`/`profile`/`input_artifacts` como referencias; `communication_style`/`technical_approach` metadata de ejecución), `content_contract_version` en `MaterializationVersion` para que dos conjuntos de contenido nunca compartan una `MaterializationIdentity`, corrección de completitud de la derivación de identidad con `session_uuid` y aislamiento intactos (cierra **F-1**), corrección de **F-2** (test parametrizado sobre los diez campos del contexto entregado), sección «Stable prefix (provider-bound materialization)» en `CONTEXT.md`, bump MINOR `11.4.0` → `11.5.0` con ancla `PROTOCOL_VERSION` sincronizada, `CHANGELOG.md` `[11.5.0]` y `docs/MIGRATION.md` §18, y dogfood de los diez puntos verificables sobre el payload real. Verificación: seis checkers canónicos PASS (`check_protocol_invariants` 215 files / 10227 references) y `pytest` **704 passed / 4 failed** — los 4 son ajenos al cambio (3 verificados contra el baseline sin el cambio: `3 failed / 607 passed`; el cuarto es el informe de Phase 1 sin commitear, target de citas, que cierra al commitear). Validation Anchor A1 (delta `f6841e23…`; tree `8acfd149…`); `check_lifecycle_anchor`/`check_lifecycle_checkpoint` → Plan 121 `VALID`; `check_lifecycle_lineage` `GAP=0`. Condición derivada **`Closed` (con release pendiente)**; `Committed` es estado del repositorio y el commit atómico en `dev` es acción del mantenedor. **Sin release, sin tag, sin promoción a `master`, sin `dist`.** Beneficio económico `UNKNOWN`; evidencia de provider **DEFERRED / NOT VERIFICABLE**; `NullProviderAdapter` permanece. |
+
+## Quincuagésima cuarta serie: DEV Autonomous Orchestrator MVP (Plan 122) (14 sep 2026)
+
+Plan 122 (vía plan; sin efecto en `protocol/.agents/`, por lo que RFC-56 no
+aplica; régimen aplicable RFC-75, cuya sección `Preguntas abiertas` declara la
+orquestación/handoff **fuera de su alcance** — el Plan **no** modifica ni reabre
+RFC-75 y **no** reclama ser su Incremento 5, que sigue `Deferred / Future
+Track` por decisión de la propia RFC; Change Level L2): materializa el **MVP del
+DEV Autonomous Orchestrator**, el mecanismo que conduce un Change de ARgentOS DEV
+de principio a fin después de la autoridad humana inicial. Frontera humana
+declarada: «el humano no opera el workflow; el humano es la autoridad». Las dos
+piezas ausentes identificadas por la investigación de autonomía: **M1 —
+Execution Host** (`runtime/orchestrator/host.py`: loop
+`observe → derive → authorize → delegate → execute → ingest → verify → decide →
+continue/stop`, stop conditions explícitas, recovery sin memoria conversacional)
+y **M4 — Persistent Worker Result** (contrato persistente y reconstruible con
+los doce campos exigidos y la relación inequívoca
+`delegation → worker result → ingestion → next action`). El host se implementa
+como mecanismo de **DEV/runtime/host**, no como extensión del Change Lifecycle
+conceptual: la conducción se **deriva** del estado, Git, artifacts, evidence,
+authority, gates aplicables, pending decisions y stop conditions, sin state
+machine nueva, sin segunda representación persistente del estado, sin registry,
+sin base de datos global y sin autoridad nueva. Relación DEV ↔ Protocol:
+**conformance + reference** (el host se conforma a los contratos de
+comportamiento del Protocol — Orchestrator, Worker, delegation, Execution
+Context, context assembly, recovery, frontera de autoridad — sin importar ni
+compartir sus mecanismos). Diferencias obligatorias preservadas: `GAP` no detiene
+el loop si no es bloqueante; `ANOMALY`/`BOUNDARY` escalan; `exit code 0` nunca se
+interpreta como workflow completo; C-1/C-2/C-3 se interpretan por su
+clasificación real; una recomendación del Worker **nunca** es autorización.
+Dogfood real: el host conduce la ejecución de este mismo Change (Plan 122) con
+`run → stop → restart → reconstruct → continue`, derivando `Closed` cuando las
+condiciones se satisfacen y deteniéndose ante toda decisión que requiera
+autoridad humana, sin ejecutar release. Autorizado para ejecución por el
+mantenedor (2026-09-14) como unidad única; la autorización **no** incluye
+release, tag, promoción a `master` ni publicación.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `122-dev-autonomous-orchestrator-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Autonomous Orchestrator: paquete nuevo `runtime/orchestrator/` (`contracts.py` con vocabularios cerrados y el contrato M4 —doce campos, validación, serialización determinista, `recommended_next_action` advisory ≠ autoridad—; `store.py` persistente append-only en `.project/orchestrator/` con escritura atómica y lecturas fail-closed; `observation.py` read-only del Change; `authority.py` con veredictos `AUTHORIZED_EXISTING`/`REQUIRES_HUMAN`/`FORBIDDEN` y release prohibido; `derivation.py` sin `next_state` persistido; `worker.py` con `CommandWorker` real que clasifica por señal y no por exit code; `governance.py` escritor mecánico acotado por sección e idempotente; `host.py` M1 con stop conditions y recovery; `__main__.py` CLI), suite determinista `tests/test_autonomous_orchestrator.py`, sección del host en `runtime/README.md`, policy operacional `.agents/policies/autonomous-orchestration.md`, y registro verbatim del dogfood real en `docs/working/audits/`. Sin payload, sin `VERSION`, sin tag, sin promoción, sin commit. **Ejecutado
+(2026-09-14)** con autorización humana explícita del mantenedor y alcance
+limitado a los entregables: el dogfood real condujo 19 iteraciones en cuatro
+corridas del host (`run-01` validación + detección del defecto real
+`<PLAN-122>:F-1`; `run-02` detención en `STOP_OPEN_FINDINGS` por autoridad
+humana; `run-03` reanudación desde evidencia, revalidación A2 y `CLOSED_DERIVED`
+tras la resolución humana del finding; `run-04` revalidación A2 que cubre el
+registro durable del dogfood), sin que el humano transportara resultados entre
+iteraciones. Verificación: seis checkers canónicos PASS, suite nueva **25
+passed**, C-1 `VALID` / C-2 `VALID` con A2 / C-3 `VALID`; la pierna
+`python -m pytest tests/` queda como **GAP** por clase ambiental declarada
+(sandbox sin mecánica de directorios temporales de pytest), nunca como `PASS`.
+Validation Anchor A1 + revalidaciones A2 (última delta `97d79196…`, tree
+`a640c483…`). Condición derivada **`Closed` (con release pendiente)**; el commit
+atómico consolidado de los Planes 122 + 123 se realizó como acción de repositorio
+autorizada por el mantenedor (2026-09-15), identificado por su mensaje
+(auto-referencia: el árbol no embebe su propia identidad), con revalidación A2
+sobre el estado consolidado (delta `2de38ad8…`, tree `8576dea2…`). Sin release,
+sin tag, sin promoción a `master`, sin `dist`. |
+
+## Quincuagésima quinta serie: MVP del DEV Agent Worker (Plan 123) (15 sep 2026)
+
+Plan 123 (vía plan; sin efecto en `protocol/.agents/`, por lo que RFC-56 no
+aplica; régimen aplicable RFC-75, que declara la orquestación/handoff **fuera de
+su alcance** — el Plan **no** modifica ni reabre RFC-75 y **no** reclama ser su
+Incremento 5; Change Level L2): materializa el **MVP del DEV Agent Worker**, una
+tercera implementación de la frontera `WorkerAdapter` que ya existe (junto a
+`CommandWorker` y `NullWorker`), sin segunda arquitectura, sin state machine, sin
+registry, sin `state.json` y sin autoridad nueva. Decisión humana H-1 consumida:
+`AgentInvoker` = **protocolo inyectable + `NullAgentInvoker` por defecto** — sin
+proveedor real, sin modelo, sin API keys, sin credenciales, sin red y sin
+dependencia de servicios externos. El Worker recibe una `Delegation` válida
+(extendida de forma **aditiva-optional** con `task` e `input_artifacts`),
+reconstruye el `ExecutionContext` que el host entregó reutilizando
+`runtime/toolcalls/context.py` y `render_prompt`, observa el repositorio por
+contenido (no por claim), ejecuta la verificación externa declarada con
+`worker.classify`, se corrige dentro de su autoridad y produce **exactamente un**
+`WorkerResult` (contrato M4 intacto: `claims.self_reported_completion = false`,
+`recommended_next_action` advisory con `action: None`). El host extiende la
+derivación con `RUN_IMPLEMENTATION_TASK` (antes de la validación, para no validar
+un estado que la implementación va a cambiar) y agrega **verificación de scope
+determinista y externa al Worker** (`artifacts_modified ⊄ declared_scope` ⇒
+`STOP_FORBIDDEN_ACTION` + `REQUIRES_HUMAN`). Dogfood real: el Agent Worker ejecuta
+trabajo real del repositorio (endurecimiento del camino de recuperación del
+propio host: el journal declara las líneas que no puede leer en vez de
+descartarlas en silencio), con transcript persistido, `WorkerResult` persistido,
+ingestión, verificación y reconstrucción por un tercero. Hallazgos reales
+detectados por el dogfood y corregidos bajo la autorización del Plan:
+`<PLAN-123>:F-01` (paths untracked no contaban como no committeados en
+`_committed`), `<PLAN-123>:F-02` (una modificación del Worker a un path ya sucio
+era invisible: la observación pasa a comparar **snapshots de contenido**),
+`<PLAN-123>:F-03` (un resultado de implementación que no cambia nada en el estado
+actual se re-derivaba indefinidamente), `<PLAN-123>:F-04` (tres defectos de los
+registros de gobernanza: Plan equivocado en el anchor, idempotencia vacua de la
+revalidación y auto-referencia del artefacto de gobernanza en la identidad de
+contenido validada). Los cuatro hallazgos fueron **aceptados formalmente como
+`resolved` por el mantenedor (2026-09-15)** sobre la base de las correcciones
+`<PLAN-123>:C-1`..`C-4`, su evidencia y el lineage verificado, autorizando al
+Orchestrator a continuar con la derivación del Change. Sin payload, sin `VERSION`,
+sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
+(2026-09-15), identificado por su mensaje.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. |
+
+## Septuagésima séptima serie: promoción de `dev` y release del protocolo 11.3.0–11.6.1 (Plan 146) (21 sep 2026)
+
+Serie del Change que cierra el ciclo de los 33 commits que `dev` tenía por delante de
+`origin/dev`, ejecutando `dev → origin/dev → master → tag 11.6.1 → release 11.6.1` como una
+única Change integral: reconstrucción uno por uno de los 33 commits desde Git, verificación
+de la topología (`master` en `dc21458`, merge-base `f85b558`, árbol de `master` idéntico al
+del merge-base), de la versión (`VERSION` = `PROTOCOL_VERSION` = `11.6.1`) y del changelog,
+batería canónica completa, harness del protocolo y gates C-1/C-2/C-3, publicación de `dev`,
+promoción a `master` por merge y creación de los tags anotados del rango no publicado
+completo —`11.3.0`, `11.4.0`, `11.5.0`, `11.6.0` y `11.6.1`— sobre el commit de promoción,
+con `dist` regenerado por `publish-dist`. Plan 146 (vía plan; DEV-only sobre `CHANGELOG.md`,
+`docs/VERSIONING.md`, este INDEX y su propio artefacto, sin efecto en `protocol/.agents/`,
+por lo que RFC-56 no aplica; Change Level L2 con impacto de release 2).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `146-release-promotion-11-6-1.md` | — (vía plan; Change de release, sin efecto de payload) | Executed | **Promoción de `dev` y release del protocolo 11.3.0–11.6.1.** Reconstruye los **33** commits de `origin/dev..dev` uno por uno (SHA, tipo, mensaje, plan, área y relación con el release) y verifica que ninguno queda fuera de la línea de desarrollo; verifica la topología completa —`master` en `dc21458`, merge-base `f85b558`, árbol de `master` idéntico al del merge-base, `dev` 42 commits por delante de `master` y 33 por delante de `origin/dev`, fast-forward imposible por diseño y estrategia documentada de merge (`docs/VERSIONING.md:4. Flujo por plan (playbook)`, paso 7)—, la versión (`VERSION` = `PROTOCOL_VERSION` = `11.6.1`, cadena de bumps `11.3.0`→`11.4.0`→`11.5.0`→`11.6.0`→`11.6.1` desde la última versión publicada `11.2.0`; sin fuentes de versión duplicadas ni divergentes), el `CHANGELOG.md` y el estado de los planes 135–145 (todos `Executed`, ninguno reabierto). Corre la batería canónica completa (**seis checkers PASS**, `pytest tests/` **1147 passed**, harness **109 passed**, C-1 `VALID=51, GAP=0, ANOMALY=0`, C-2 `VALID=50, GAP=1, ANOMALY=0` —el `GAP` histórico del Plan 116, conservado y no reabierto—, C-3 `VALID=27, GAP=0, ANOMALY=0`, `check_ears_coverage.py` y `check_discovery_output.py` PASS), registra el **release intent** antes de tocar cualquier referencia remota, publica `dev` en su upstream, promueve a `master` por merge de `dev` y crea los **tags anotados** `11.3.0`, `11.4.0`, `11.5.0`, `11.6.0` y `11.6.1` sobre el commit de promoción —el rango no publicado completo, porque el invariante versión ↔ changelog ↔ tag no admite dejar versiones sin tag en `master` y el precedente `dc21458` oficializó dos versiones en un solo commit de release—, con `dist` regenerado por `publish-dist`. Corrige las dos afirmaciones «Tag pendiente de promoción» de `[11.4.0]` y `[11.3.0]` que la promoción vuelve falsas y reconcilia el snapshot `docs/VERSIONING.md` §9 en el punto de promoción que su §5 declara. Sin force-push, sin force-tag, sin reescritura de historia y sin operaciones destructivas; `protocol/.agents/`, `dist/`, `ROADMAP.md` y `docs/adr/` con **0 diff**. Declara dos `GAP` preexistentes sin resolver: el plan 126 materializó payload sin bump de `VERSION` (exención declarada por ese artefacto cerrado) y el commit `65a1113` (plan 131) no cita su plan en el asunto. |
+
+## Septuagésima sexta serie: cierre integral del backlog accionable DEV `I-1`…`I-8` (Plan 145) (21 sep 2026)
+
+Serie del Change que resuelve, por causa y en una única iteración autorizada, los ocho
+items accionables que dejó abiertos el inventario global posterior al Plan 144: el
+aislamiento del pytest harness (`I-1`), los headers de los Planes 143/144 (`I-2`), la fila
+y la autodescripción del Plan 137 (`I-3`), el backlog evidenciado `B-4`/`B-7` (`I-4`), el
+estado corriente del Placement Contract (`I-5`), el conjunto anclado de `tests/AGENTS.md`
+(`I-6`), la métrica `recoveries` (`I-7`) y la derivación de
+`findings_autonomously_corrected` (`I-8`). Plan 145 (vía plan; DEV-only sobre `tests/`,
+`runtime/`, `conftest.py`, `docs/` y `.agents/policies/`, sin efecto en `protocol/.agents/`,
+por lo que RFC-56 no aplica; Change Level L2).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `145-integral-dev-backlog-closure.md` | — (vía plan, DEV-only) | Executed | **Cierre integral del backlog accionable DEV `I-1`…`I-8`.** **`I-1` — determinismo del harness:** el scratch root pasa de **compartido** a **propio de cada sesión** (`tests/pytest_isolation.py`: token declarado, `session_scratch_root`, `clear_own_scratch`, `prune_stale_sessions` por edad con umbral declarado de 24 h y un `stat` por vecino; `conftest.py`: token declarado en import time, exportado por entorno y limpieza de lo propio). La causa de la no-determinancia era que cada inicio de sesión ejecutaba `rmtree` sobre el scratch **compartido**, de modo que una segunda sesión (o una limpieza de temporales del sistema operativo) destruía los repositorios desechables que otra sesión seguía usando: en siete corridas completas de la suite, cuatro fallaron, cada una en un test distinto. Una sesión sin token se **rechaza** en vez de recibir un directorio compartido. En el runtime DEV, `GitState` gana `git_available` y `observe()` eleva `ObservationError` cuando el CLI está disponible y el root existe pero el repositorio no se lee, en vez de degradar a un estado indistinguible de «no existe»; el CLI ausente sigue siendo un `GAP` declarado y un `TimeoutExpired` nunca se convierte en `None`. **`I-7`:** `_RECOVERY_ACTIONS` queda reducido a `RUN_REVALIDATION` —la rama de recuperación de la derivación, alcanzada con el anchor A1 stale—, con lo que una corrida autónoma sin stops reporta `Recoveries: 0` en lugar de `3`. **`I-8`:** `findings_autonomously_corrected` se **deriva** de los registros `RECORD_FINDING_CORRECTION` del journal bajo la regla anti-fabricación de `findings_corrected_autonomously`, y cuando el conteo es cero el resumen **declara la frontera** (el host detiene la iteración ante un finding abierto en vez de conducir una corrección) en lugar de presentar una constante como valor derivado. **`I-2`/`I-3`/`I-4`:** headers de los Planes 143 y 144 a `Executed`; fila y serie del Plan 137 a `Executed` sin «preparación», con su §Objetivo reconciliado y nota de reconciliación en `## Criterio de entrada`; `## Backlog evidenciado - plan 19` con banner de registro histórico, `B-4`/`B-7`/`B-8` anotados como resueltos y párrafo de resolución corriente que nombra la RFC-79 y el Plan 142 (11.6.0). **`I-5`:** `PC-72.1` registra el estado corriente del enforcement autorizado —librería de tabla de reglas materializada por el Plan 131, **no integrada** y advisory— y §23/§24 distinguen enforcement como obligación operativa de realización mecánica. **`I-6`:** `test_placement_contract_drift.py` entra al conjunto anclado (14 filas) y la fila de `test_pytest_isolation.py` declara la propiedad de sesión. **Falsación**: 12 regresiones de `I-1` y 9 de `I-7`/`I-8` ejecutadas contra la implementación anterior fallan todas y pasan contra la nueva; corrida concurrente de una sesión larga (127 tests SAE) junto a tres sesiones cortas sin interferencia; corrida real por el host con `Recoveries: 0`. Suite **1147 passed**, harness **109 passed**, seis checkers canónicos PASS, C-1 `VALID=50, GAP=0, ANOMALY=0`, C-2 `VALID=49, GAP=1, ANOMALY=0` (el `GAP` histórico del Plan 116, no reabierto) y C-3 `VALID=27, GAP=0, ANOMALY=0`. `protocol/.agents/`, `dist/`, `ROADMAP.md` y `docs/adr/` con **0 diff**; sin mecanismos, policies, checkers, estados, registries, authority classes, taxonomías ni workflows nuevos; sin RFC, sin ADR, sin `VERSION` bump, sin tag, sin release, sin promoción y sin push. |
+
+## Septuagésima quinta serie: higiene documental y de tests del backlog DEV residual (Plan 144) (21 sep 2026)
+
+Serie del Change que resuelve los tres residuales accionables que dejó abiertos el inventario
+read-only posterior al Plan 143: `AW-1` (el conjunto anclado declarado en `tests/AGENTS.md` no
+representaba el corpus real), `AW-2` (dos suites repetían la manipulación de `sys.path` para
+`tools/` que el bootstrap único de la sesión ya realiza) y `AW-3` (tres espejos documentales
+describían un estado que su propia fuente contradice). Plan 144 (vía plan; DEV-only sobre
+`tests/` y `docs/`, sin efecto en `protocol/.agents/`, por lo que RFC-56 no aplica; Change
+Level L1).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `144-dev-documentation-test-hygiene.md` | — (vía plan; DEV-only `tests/` + `docs/`) | Executed | **Higiene documental y de tests del backlog DEV residual.** **`AW-1`:** la tabla del conjunto anclado de `tests/AGENTS.md` pasa de **8 a 13** filas —se agregan `test_placement_dogfood.py`, `test_autonomous_scope_dogfood.py`, `test_sae_scope_enforcement_dogfood.py`, `test_discovery_output_dogfood.py` y `test_check_ears_coverage_dogfood.py`, los cinco anclados que **citan esa misma tabla como su contrato**— sin cambiar la definición de «anclado», sin retirar ninguna entrada previa y sin alterar las demás instrucciones; los tres módulos que se declaran `isolated` quedan fuera. **`AW-2`:** se eliminan las dos sentencias `sys.path.insert` redundantes de `tools/` (en `tests/test_check_discovery_output.py` y `tests/test_discovery_output_dogfood.py`), con el ajuste de imports que corresponde (`sys` deja de importarse donde quedó sin uso; `Path` se conserva donde se usa como anotación); las nueve inserciones restantes agregan la raíz del repositorio para importar `runtime/` y se verificaron **necesarias**, de modo que quedan intactas y el Change no hace un refactor generalizado. **`AW-3`:** se reconcilian tres espejos contra su fuente autoritativa sin tocar la fuente —la columna `Status` de la fila de RFC-75 en `docs/rfc/INDEX.md` (declaraba implementación pendiente; el header de la RFC declara los Incrementos 0–4 materializados y el Incremento 5 fuera de alcance), la fila faltante de `PROMPT_CACHE_PHASE_1_REPORT.md` en `docs/working/research/INDEX.md` (documento versionado y `Origen` de RFC-78) y la fila de `AUDITORIA_SISTEMA.md` en `docs/working/audits/INDEX.md` (declarada activa contra su propio banner de cierre del 2026-08-14)—. `docs/VERSIONING.md`, `ROADMAP.md`, `protocol/`, `runtime/`, `docs/adr/` y `dist/` con **0 diff**; sin mecanismos, policies, checkers, estados, registries, authority classes, taxonomías ni workflows nuevos; sin RFC, sin ADR, sin `VERSION` bump, sin tag, sin release, sin promoción y sin push. |
+
+## Septuagésima cuarta serie: vaciado del backlog operativo residual (Plan 143) (21 sep 2026)
+
+Serie del Change que resuelve definitivamente los cuatro residuos que permanecían en el
+backlog operativo: `HD-10`/plan 25, `<PLAN-142>:F-1`, `<PLAN-142>:F-2` y el `C-2 GAP`
+histórico del plan 116. Plan 143 (vía plan; DEV-only sobre `docs/`, `tools/`, `tests/`,
+`ROADMAP.md` y `CHANGELOG.md`, con **una excepción de payload declarada y autorizada**:
+la entidad `contract:CHANGE_GOVERNANCE.md` que la H13 regla 11 exige, `Clase B`, que
+produce la versión 11.6.1 PATCH; Change Level L2).
+
+**Plan 143 — los cuatro residuales, uno por uno.** **`HD-10`/plan 25:** la medición del
+dogfood del perfil `trivial` no es una capacidad implementable del repositorio —exige una
+versión promovida y una sesión real con el usuario, actos externos al lifecycle—, de modo
+que se reclasifica como actividad de adopción/operación externa y deja de ser backlog;
+`<PLAN-141>:PC-2` pasa a `resuelta`, `ROADMAP.md` deja de declararla pendiente y el espejo
+de este INDEX corrige la fila del plan 25, que declaraba verificado el perfil `trivial`
+con la simulación del modo enforced del plan 46. **`<PLAN-142>:F-1`:** la verificación de
+la H13 regla 11 se implementa en el checker existente (`tools/check_taxonomy_coherence.py`,
+check 9) —los cinco campos `domain`/`artifact`/`lifecycle`/`produced_by`/`consumed_by` en
+las dos direcciones, con el conjunto de archivos que fija el `## Input` de la policy y sólo
+dos normalizaciones representacionales declaradas— con 14 casos nuevos (metadata
+divergente, entidad divergente, referencia inexistente, referencias múltiples, campos
+opcionales y normalización) y falsación de los cinco campos; la corrida sobre el corpus
+real revela una condición **preexistente**: `CHANGE_GOVERNANCE.md` declaraba
+`kind: contract` sin entidad contractual desde el plan 115, invisibles para una batería que
+nunca cubrió la regla 11. La escritura del payload es una frontera RFC-56 y el agente la
+registró y la escaló: el mantenedor autorizó la entidad bajo este Change, declarada
+`Clase B` con justificación documentada y `## Scope` ampliado **antes** del efecto
+(`.agents/policies/supervised-autonomous-execution.md` §1.2), y el checker pasa a `exit 0` sobre el corpus
+real. **`<PLAN-142>:F-2`/`<PLAN-136>:F-1`:** se ejecuta la transición CL-8 autorizada —
+`<PLAN-136>:F-1` pasa a `resolved` por el destino cumplido (RFC-79 decisión 2 +
+`"project_scan"` materializado y verificado por el Plan 142) y `<PLAN-142>:F-2` a
+`resolved` como consecuencia— con elementos inmutables preservados verbatim y bloques
+append-only. **`C-2 GAP` del plan 116:** se formaliza la clasificación del Plan 140
+(`HISTORICAL / NON-ACTIONABLE`) y se resuelve el residual de backlog —`<PLAN-133>:F-1` pasa
+a `resolved`—; el `GAP` **sigue emitiéndose** porque ese es el comportamiento contractual
+vigente de `C-2`, y el plan 116 queda con **0 diff**. Sin mecanismos, policies, estados,
+registries, authority classes, taxonomías ni workflows nuevos; sin reapertura del plan 116,
+del plan 142, de RFC-56/75, de ADR-15/16 ni de C-2/CI; sin promoción, tag, release ni push.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `143-empty-remaining-backlog.md` | — (vía plan; `Clase B` de RFC-56 sólo para la entidad faltante de `PROTOCOL_TAXONOMY.md`) | Executed | **Vaciado del backlog operativo residual.** **`HD-10`/plan 25:** resolución final — el perfil `trivial` está declarado e implementado (`protocol/.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md:Task Profiles`: tres artefactos y gates `H00, H04, H06`; comportamiento profile-aware verificado en `protocol/.agents/harness/tests/test_gate_validator.py`), y la medición real se reclasifica como actividad externa de adopción/operación **no ejecutada** que sale del backlog; `<PLAN-141>:PC-2` → `resuelta`. **`<PLAN-142>:F-1`:** implementación de la H13 regla 11 en `tools/check_taxonomy_coherence.py` (check 9, bidireccional, cinco campos, dos normalizaciones declaradas) con 14 casos nuevos y falsación por campo; la corrida real revela que `CHANGE_GOVERNANCE.md` no tenía entidad `kind: contract` desde el plan 115, y el registro faltante se agrega con autorización explícita del mantenedor (`Clase B`, `Scope` ampliado antes del efecto), produciendo el PATCH 11.6.1 (`VERSION`, changelog y ancla `PROTOCOL_VERSION`). **`<PLAN-142>:F-2`/`<PLAN-136>:F-1`:** transición CL-8 a `resolved` por destino cumplido, con elementos inmutables verbatim y bloque append-only. **`C-2 GAP` del plan 116:** `HISTORICAL / NON-ACTIONABLE / RESOLVED` como residual de backlog (`<PLAN-133>:F-1` → `resolved`), sin modificar el plan 116 ni el contrato de `C-2`, y con el `GAP` aún emitido. `docs/VERSIONING.md` §4.1 alineado con la cobertura nueva; `ROADMAP.md` y este INDEX reconciliados. |
+
+## Septuagésima tercera serie: resolución del backlog de decisiones humanas (Planes 141–142) (21 sep 2026)
+
+Serie del Change que cierra el backlog de decisiones humanas `HD-1`…`HD-12` y de la vía de
+autorización que abre para el trabajo de payload que decide. Plan 141 (vía plan; DEV-only —
+`docs/`, `ROADMAP.md`, `CHANGELOG.md`, `tests/` y el registro del Plan 137, sin efecto en
+`protocol/.agents/`; Change Level L2). Plan 142 (vía RFC-79; `Clase A` y `B`;
+**ejecutado** el 2026-09-21 por autorización explícita del mantenedor —el acto Clase A que
+RFC-56 exige— en la versión 11.6.0 MINOR; Change Level L2).
+
+**Plan 141 — resolución de `HD-1`…`HD-12`.** `HD-1`: el Plan 137 **se ejecuta** —el retiro
+no es expresable en el ciclo de status de planes y la guarda tiene valor propio: R3 y R5 no
+están cubiertos por ningún otro artefacto, mientras que R4 ya lo cubre el test del payload—.
+`HD-2`: `ROADMAP.md` retira del trabajo activo la entrada `EARS structural validator`, que
+declaraba futuro un mecanismo existente desde el plan 66/RFC-57. `HD-3`…`HD-6`: las cuatro
+representaciones de payload quedan **decididas y especificadas** en RFC-79 (siete decisiones,
+incluidas `F-18`, la metadata de taxonomía que resuelve `<PLAN-126>:PC-1`, y la frontera de
+composición de `F-4`), con el Plan 142 como vía de materialización; el mantenedor, consultado,
+decidió **redactar sin aceptar**, de modo que esos elementos cierran **bloqueados** con el
+blocker concreto de la aceptación RFC-56 Clase A. `HD-7`: catorce findings corregidos y nunca
+transicionados pasan a `resolved` con autoridad humana registrada, preservando los elementos
+inmutables, y `<PLAN-136>:F-1`/`F-2` conservan su residual exacto. `HD-8`: cada pending
+decision del bundle recibe su determinación individual sin inventar taxonomía. `HD-9`/`HD-11`:
+la premisa de RFC-72 §4 queda **refutada** —el orden normativo existe desde RFC-78 §5 y está
+implementado y testeado— y la RFC se corrige por su `Amendment Log` junto con el enunciado
+falso sobre el contrato de materialización canónica. `HD-10`: el dogfood del plan 26 queda
+**satisfecho** (su RFC de origen admitía la simulación de fixtures, que el plan 46 ejecutó) y
+el del plan 25 conserva un blocker externo demostrado. `HD-12`: `F-4` decidido y enrutado;
+`F-6`/`F-8` corregidos en el espejo de este INDEX; `F-7` aclarado en el `Amendment Log` de
+RFC-74 sin reescribir el plan 91. **Findings propios**: `<PLAN-141>:F-1` (el test anclado
+`test_no_protected_path_moved` afirmaba como invariante corriente un hecho histórico del Plan
+138 comparando el árbol de trabajo contra `HEAD`) corregido por `<PLAN-141>:C-1`, que verifica
+el hecho sobre los commits del Plan 138 y preserva la protección. Sin mecanismos, policies,
+checkers, estados, registries, authority classes, taxonomías ni workflows nuevos;
+`protocol/`, `runtime/`, `.agents/`, `docs/adr/` y `dist/` con **0 diff**; sin `VERSION` bump
+y sin tag.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `141-human-decision-backlog-resolution.md` | — (vía plan, DEV-only; RFC-79 como vía del payload decidido) | Executed | **Resolución del backlog de decisiones humanas `HD-1`…`HD-12`.** Ejecuta el Plan 137 (guarda EARS de paridad + tres suites, 91 tests) y reconcilia `ROADMAP.md`; decide las siete representaciones de payload en RFC-79 y abre su vía de materialización con el Plan 142 (bloqueada en la aceptación Clase A); transiciona catorce findings a `resolved` con autoridad humana y conserva el residual exacto de los dos que no tienen corrección; resuelve elemento por elemento el bundle de pending decisions de `HD-8`; corrige el `Amendment Log` de RFC-69/72/74 (`F-3`, §4, `F-7` y la evolución futura del checker de trazabilidad) y el espejo de este INDEX (`F-6`/`F-8`); determina que el dogfood del plan 26 está satisfecho y que el del plan 25 tiene blocker externo. Corrección autónoma `<PLAN-141>:C-1` sobre un test anclado dependiente del estado de Git. |
+| `142-payload-normative-residuals.md` | RFC-79 (`Accepted`, plan 142) | Executed | **Materialización de RFC-79** en la versión **11.6.0** (MINOR, adiciones compatibles). **`F-14`**: `status: legacy` en la entrada de KB y `[entries] legacy` en el manifest, con las instrucciones de `discovery_orchestrator.md` e `init_worker.md` corregidas para que la orden sea expresable. **`F-17`**: valor reservado `project_scan` en `source_files` —válido sólo para ausencias y hechos de árbol, nunca en la entrada de entorno— con el ítem 5 de D01 ampliado y los tres contratos de ausencia/árbol fijándolo; el checker DEV acepta el valor y reporta `ANOMALY` —no `GAP`— para un `source_files` no resoluble y no reservado. **`F-16`**: shape `documentation` en el manifest, en las señales de `init_worker`, en `00-discovery-init.md`, en `EXECUTIVE_SUMMARY.md` y en la variante de `API_SURFACE.md`; el checker lo admite y sigue rechazando un valor fuera del enum. **`B-8` residual**: evento de sesión `session_risk` (`risk`, `mitigations`) en el catálogo de `METRICS.md` y su clase `Recorded` en `PROTOCOL_METRICS.md`, con la obligación del modo single-instance precisada en `orchestrator.md`. **`F-18`**: delimitador `+++` del front matter de KB entry declarado. **`F-4`**: el criterio 1 de `COMPOSITION_OPTIMIZATION.md` declara que gobierna la composición conceptual y no el orden provider-bound, citando sólo anclas internas del payload. **Metadata de taxonomía**: `KB_DISCOVERY_ENTRY.md` e `INTER_WORKER_MESSAGE.md` alinean `produced_by`/`consumed_by` con sus entidades (H13 regla 11), resolviendo `<PLAN-126>:PC-1`. Tooling DEV: `tools/check_discovery_output.py` y sus dos suites (62 passed). `CHANGELOG.md` con la sección `[11.6.0]`, `protocol/.agents/VERSION` → 11.6.0 y el ancla `PROTOCOL_VERSION` del runtime alineada. Sin promoción, tag, release ni push. |
+
+## Septuagésima segunda serie: Governance Residual Closure (Plan 140) (20 sep 2026)
+
+Plan 140 (vía plan; DEV-only — `docs/plans/` + `CHANGELOG.md` + un test anclado, sin
+efecto en `protocol/.agents/`, RFC-56 no aplica; Change Level L1). **Cierra el
+inventario de gobernanza sin crear gobernanza nueva**: los cinco pendientes conocidos
+se reconcilian reutilizando las reglas y los mecanismos existentes, con la evidencia
+del repositorio y sin forzar ningún estado. **`<PLAN-136>:PC-5` → `superseded`**: su
+premisa («la política vigente no contempla la situación») queda superada porque la
+regla vigente sí la define —una determinación de impacto es obligación de estado y
+nunca autorización de escritura, con el artefacto fuera de `Scope` la vía es
+`DEFERRED` con la pending decision existente, y un impacto diferido sin ella es una
+condición bloqueante sin resolver—, sin cuestión independiente residual: su frontera
+viva es `<PLAN-138>:PC-2`. **`<PLAN-139>:F-1` → `resolved`** con bloque append-only
+de metadatos, preservando observación, evidencia, estado Git y provenance verbatim.
+**`B-2` (EARS) satisfecho sin residual**: el validador EARS del payload
+(`protocol/.agents/harness/gate_validator.py`, H01 `ears: True`, cinco patrones),
+su suite de harness y el job `check-protocol` de CI son el mecanismo responsable, con
+dogfood read-only del propio Change (PASS con bullet EARS, FAIL con el bullet no
+aceptable del estándar); la guarda de paridad que el Plan 137 proponía es trabajo
+nuevo no autorizado (el Plan sigue `Aprobado para redacción` y `Superseded` exige un
+plan reemplazante inexistente), no un residual de `B-2`. **`Roadmap Impact` del Plan
+137 → `DEFERRED`** por la regla que `REQUIRED` no autoriza escribir el artefacto que
+nombra, con `<PLAN-137>:PC-1` (owner mantenedor) como continuidad y `ROADMAP.md` con
+**0 diff**. **`<PLAN-138>:PC-2` y el `C-2 GAP` del Plan 116** quedan clasificados
+`DEFERRED` / histórico-no-accionable con su razón y su evidencia, sin crear taxonomía
+nueva y sin reabrir C-2/CI, Plan 121, R4, closure identity ni los planes 116 y 138.
+**Findings propios**: `<PLAN-140>:F-1` (el test anclado del Plan 139 dejaba la suite
+roja en el estado comprometido, corregido por `<PLAN-140>:C-1` con una invariante
+independiente del estado de Git y un digest del contenido normativo del plan cerrado,
+que **endurece** la protección) y `<PLAN-140>:F-2` (el checkpoint del Plan 139
+declaraba como árbol material del commit de cierre un tree distinto del real,
+corregido por registro en artefacto nuevo, `<PLAN-140>:C-2`, sin reabrir el plan
+cerrado). **Inventario final**: `OPEN / ACTIONABLE = 0`; `DEFERRED` e
+`HISTORICAL / NON-ACTIONABLE` enumerados con su continuidad. Sin mecanismo, policy,
+checker, estado, registry, authority class ni workflow nuevos; sin RFC/ADR nuevo; sin
+cambio de payload; sin `VERSION` bump y sin tag.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `140-governance-residual-closure.md` | — (vía plan, DEV-only) | Executed | **Cierre de los cinco pendientes de gobernanza accionables.** **A** `<PLAN-136>:PC-5` → `superseded` (campo `resolución` únicamente) y `<PLAN-139>:F-1` → `resolved` con bloque `## Metadatos de estado (evolucionables)` append-only, elementos inmutables preservados verbatim. **B** `B-2`/EARS determinado como **satisfecho sin residual**, con el mecanismo responsable (`protocol/.agents/harness/gate_validator.py`: `TRIGGERS["H01"]["ears"] = True`, `EARS_RE` con los cinco patrones, señal `ears` PASS/FAIL), su cobertura (`protocol/.agents/harness/tests/test_gate_validator.py`, job `check-protocol` de `.github/workflows/check-protocol.yml`) y dogfood read-only ejecutado en este Change; no se implementa nada nuevo y el Plan 137 no cambia de status. **C** `Roadmap Impact` del Plan 137 reclasificado de `REQUIRED` a `DEFERRED` (la determinación es obligación de estado, nunca autorización de escritura), con `<PLAN-137>:PC-1` como pending decision existente que la gobierna y `ROADMAP.md` con **0 diff**. **D** `<PLAN-138>:PC-2` clasificada `DEFERRED` y no accionable actualmente, sin introducir Scope Expansion ni taxonomía nueva. **E** `C-2 GAP` del Plan 116 clasificado histórico/no accionable (`GAP` advisory, `exit 0`, `ANOMALY=0`; causa: ambigüedad `Tier 2` del anchor de un plan cerrado bajo la convención anti-auto-referencia), sin reabrir C-2/CI, Plan 121, R4, closure identity ni el artefacto cerrado. **Findings**: `<PLAN-140>:F-1` (test anclado del Plan 139 rojo en el estado comprometido: afirmaba un diff contra `HEAD` que sólo existe sin commitear) corregido por `<PLAN-140>:C-1`, que reemplaza la aserción dependiente de Git por aserciones de contenido, la regla de que el bloque de metadatos es la última región del artefacto y un digest normalizado del contenido normativo (los valores de `estado` y `resolución` se canonicalizan por LC-1), endureciendo la protección; `<PLAN-140>:F-2` (el checkpoint del Plan 139 declaraba `e284f98d8915f8c3e917f40218420caf604328b2` como árbol material del commit de cierre, cuando el árbol real es `2bc144d76ffe2c17432638d1c1208525bc97f3f5` y difiere exactamente en el propio plan 139) corregido por `<PLAN-140>:C-2` mediante registro factual en artefacto nuevo, sin modificar el plan cerrado y sin afectar la correspondencia R2 del estado de cierre; `<PLAN-140>:F-3` (`deferred`, owner mantenedor) registra las transiciones de estado pendientes y las pending decisions abiertas del Plan 136, fuera de los cinco pendientes autorizados. **Inventario**: `OPEN / ACTIONABLE = 0`; `DEFERRED` (`<PLAN-137>:PC-1`, ejecución de la guarda EARS, `<PLAN-138>:PC-2`, PC-2/PC-3 del Plan 136, `B-8` residual, findings sin transición del Plan 136, `<PLAN-114>:F-1`/`F-2`/`F-3`, releases `11.1.0`/`11.2.0` y `11.3.0`–`11.5.0`) e `HISTORICAL / NON-ACTIONABLE` (`C-2 GAP` del Plan 116, `<PLAN-136>:C-3`, entry EARS del mapa, observaciones de frontera ya materializadas). Sin mecanismo, policy, checker, estado, registry, authority class ni workflow nuevos; `protocol/`, `runtime/`, `tools/`, `.agents/`, `ROADMAP.md`, RFCs, ADRs y los planes 116/138 con **0 diff**; batería canónica PASS, `pytest tests/` PASS, C-1/C-2/C-3 sin `ANOMALY`; sin RFC/ADR nuevo; sin `VERSION` bump y sin tag. |
+
+## Septuagésima primera serie: SAE Governance Boundary Closure (Plan 139) (20 sep 2026)
+
+Plan 139 (vía plan; DEV-only — `docs/` + policies `.agents/`, sin efecto en
+`protocol/.agents/`, RFC-56 no aplica; Change Level L1). **Materializa decisiones
+humanas ya tomadas, no toma ninguna nueva.** Cierra las tres decisiones que quedaron
+abiertas por el incidente del Plan 136 y por el cierre del Plan 138, sin crear
+mecanismo alguno (el enforcement ya existía y está verificado desde el Plan 138) y
+sin tocar `ROADMAP.md` ni la evidencia histórica. **DEC-1**: `<PLAN-136>:F-3` pasa a
+`resolved` —el incidente ocurrió; el Plan 138 corrigió el mecanismo preventivo; la
+regresión demuestra que el intento equivalente se detiene antes de ejecutar al
+Worker; la evidencia original queda verbatim— mediante un bloque de **metadatos de
+estado (evolucionables)** agregado al Plan 136, que no toca ninguna sección
+normativa, anchor ni checkpoint. **DEC-2**: `<PLAN-138>:PC-1` pasa a `resuelta` con
+la regla `Impact classification != authorization`, generalizada en su lugar canónico
+existente (`.agents/policies/validation-closure.md` §5.1/§5.2 y la policy SAE §1.1):
+la autorización **no** se infiere por la clasificación, ni por proximidad semántica,
+ni por dependencia documental, ni por requisito de cierre; con el artefacto fuera de
+Scope la única vía es `DEFERRED` con la pending decision existente. **DEC-3**:
+`<PLAN-138>:PC-2` pasa a `deferred` y la policy SAE gana §1.4, que declara que **no
+existe ni se introduce** ningún mecanismo autónomo de Scope Expansion: ampliar
+`Task`/`Scope`/`Authority` es frontera de autoridad humana y produce `STOP` /
+`REQUIRES_HUMAN`, la vía legítima es una nueva decisión de alcance del mantenedor
+—sin mecanismo nuevo— y inventar protocolo, comando, estado, registry, API, workflow,
+authority class, entidad o estado de lifecycle queda prohibido. **Finding propio
+registrado sin forzar a éxito**: `<PLAN-139>:F-1` —la premisa de
+`<PLAN-136>:PC-5` («la política vigente no contempla la situación») queda superada
+por la regla que DEC-2 materializa, pero PC-5 **no** es una de las tres decisiones de
+este Plan y **no** se resuelve: se registra la supersesión para que el mantenedor
+decida su estado formal—. **Verificación reutilizada, sin tests redundantes**: los
+ocho puntos exigidos se mapean a la regresión del Plan 138 (`tests/test_sae_scope_enforcement.py`
+y su dogfood), con `runtime/`, `tests/` y `tools/` en **0 diff**. **Determinaciones**:
+`Documentation Impact: REQUIRED` (las dos policies + los registros de estado de los
+Planes 136/138), `Roadmap Impact: DEFERRED` con `<PLAN-138>:PC-1` como pending
+decision que lo gobierna —`ROADMAP.md` con **0 diff**, no se interpreta `REQUIRED`
+como permiso—. Sin RFC/ADR nuevo, sin `VERSION` bump, sin tag, sin push, sin merge,
+sin release y sin promotion.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `139-sae-governance-boundary-closure.md` | — (vía plan, DEV-only) | Executed | **Cierre formal de las tres decisiones de gobernanza del incidente F-3.** DEC-1: `<PLAN-136>:F-3` → `resolved`, con bloque `## Metadatos de estado (evolucionables)` en `docs/plans/136-d01-mechanical-checker.md` (elemento evolucionable por LC-1; observación, evidencia, estado Git y provenance originales preservados verbatim; nota explícita de no retroactividad: la transición no legitima la escritura de `ROADMAP.md` ni `<PLAN-136>:C-3`, que conserva su autorización **no** establecida). DEC-2: `<PLAN-138>:PC-1` → `resuelta` con la regla `Impact classification != authorization` materializada en `.agents/policies/validation-closure.md` §5.1/§5.2 (prohibición de inferir autorización por clasificación, proximidad semántica, dependencia documental o requisito de cierre; `DEFERRED` + pending decision existente como única vía con el artefacto fuera de Scope) y en `.agents/policies/supervised-autonomous-execution.md` §1.1. DEC-3: `<PLAN-138>:PC-2` → `deferred` con §1.4 nueva en la policy SAE (no existe ni se introduce mecanismo autónomo de Scope Expansion; `STOP`/`REQUIRES_HUMAN`; vía legítima sin mecanismo nuevo; prohibición de inventar protocolo, comando, estado, registry, API, workflow, authority class, entidad o estado de lifecycle). **Registros**: `docs/plans/INDEX.md` (serie + header), `CHANGELOG.md` (ítem `[Unreleased]`). **Verificación**: los ocho puntos exigidos por el pedido mapeados a la regresión existente del Plan 138 (autorización de un target en Scope, `REQUIRED` fuera de Scope rechazado, parada previa a la delegación, no ampliación retrospectiva de `Task`/`Scope`/`Authority`, `ROADMAP.md` sin modificar, Planes 136/138 históricamente consistentes, F-3 cerrado sin alterar su evidencia, PC-2 explícitamente diferido); sin tests nuevos (redundantes); `runtime/`, `tests/`, `tools/` y `protocol/` con **0 diff**; seis checkers canónicos PASS; C-1/C-2/C-3 sin `ANOMALY`; `pytest tests/` PASS. **Finding**: `<PLAN-139>:F-1` (supersesión de `<PLAN-136>:PC-5`, registrada y no resuelta). Sin mecanismo, entidad, authority class, state machine, registry, protocolo, comando, API ni workflow nuevos; sin RFC/ADR nuevo; sin cambio de payload; sin `VERSION` bump y sin tag. `Committed` (C1), `Closed`, `Promoted` = no, `Released` = no. |
+
+## Septuagésima serie: SAE Scope & Authority Hardening (Plan 138) (20 sep 2026)
+
+Plan 138 (vía plan; DEV-only — `.agents/`, `runtime/`, `tests/`, `docs/`, sin
+efecto en `protocol/.agents/`, RFC-56 no aplica; Change Level L2). Nace del
+incidente `<PLAN-136>:F-3` (exceso de Scope y auto-autorización retrospectiva
+durante la ejecución del Plan 136) y de las decisiones humanas `<PLAN-136>:PC-4`
+(a) y `<PLAN-136>:PC-5`. Formaliza cinco propiedades —P1 Scope precede a Impact,
+P2 Scope como precondición operacional, P3 STOP antes de escribir, P4 no
+retroactividad del contrato de autorización, P5 impacto no es autorización— y ubica
+el enforcement en `ExecutionHost._apply_autonomy_gate`, **antes** de
+`_execute_delegation`, que es el último punto en el que el efecto persistente
+todavía no ocurrió. **Ejecutado y cerrado el 2026-09-20** (commits C1/C2 en `dev`;
+pytest `1030 passed`; batería canónica PASS; C-1/C-2/C-3 `ANOMALY=0`; Validation
+Anchor y Checkpoint registrados). `<PLAN-136>:F-3` **no** se cerró, el Plan 136 no
+se modificó, `ROADMAP.md` quedó con **0 diff** y `<PLAN-136>:PC-5` no se resolvió
+(se re-registró como `<PLAN-138>:PC-2`). El propio Change es la demostración de la
+frontera: su obligación de Roadmap quedó `DEFERRED` con pending decision existente
+en lugar de convertirse en una escritura fuera de Scope.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `138-sae-scope-authority-hardening.md` | — (vía plan, DEV-only) | Executed | **Enforcement de Scope/Authority antes del efecto.** Tres piezas sobre mecanismos existentes: **E1** precondición de escritura sobre el **conjunto completo** de write targets (all-or-nothing; target vacío o no resoluble ⇒ STOP) verificada contra el Scope que el Plan **declara** —`## Entregables` + el `Scope set` del anchor + el propio Plan— y **no** contra la declaración que se está verificando, que era la circularidad que volvía vacua la comprobación de un solo path (`host._autonomy_target_path` → `resolved[0]`); **E2** *checkpoint de autorización*: proyección canónica de `Task` + familia de status autorizante + `Scope` autorizado, registrada en el journal al autorizar y comparada en toda iteración posterior, con la proyección partida en dos mitades —contrato y scope— para que una reescritura que el bound de Scope filtra igual siga siendo visible como divergencia, y con el pin tomado de la autorización **más temprana** del plan (una reescritura entre corridas no se re-pinea); **E3** evidencia en el campo `autonomy` del registro de iteración que ya existe (targets, decisión de scope, decisión de autoridad, stop condition, checkpoint, `authorization_drift`) sin telemetría, store ni registry nuevos. **La detección posterior se conserva** como defensa en profundidad para la escritura que ocurre dentro del `AgentInvoker` —límite que el host no puede interponer y que se declara como tal, sin fingir una garantía que la arquitectura no da—. **Policies**: `.agents/policies/supervised-autonomous-execution.md` §1.1/§1.2/§1.3 (+ §5 stop conditions, §9 impacto, §10 observabilidad, §12 límites declarados), `.agents/policies/validation-closure.md` §5.1/§5.2 (`REQUIRED` no es autorización de escritura; §7 condiciones de stop) y `.agents/policies/autonomous-orchestration.md` §11.3 (prevención vs. detección; el punto de enforcement). **Regresión F-3**: artefacto excluido **parametrizado** (`docs/ROADMAP-LIKE.md`, nunca `ROADMAP.md` hardcodeado) con Plan temporal, `Scope` que lo excluye, obligación `REQUIRED` que lo nombra e invoker inyectado que realmente escribe; demuestra STOP previo, ausencia de delegación persistida, artefacto byte-idéntico, elementos de autorización byte-idénticos, evidencia reconstruible, no legitimación retrospectiva y que el caso **no** puede satisfacerse con el comportamiento previo (detección posterior con el artefacto ya modificado). **Falsificación**: 44 pruebas con target/acción permitidos y no permitidos, `REQUIRED` dentro y fuera de Scope, conjuntos múltiples con uno fuera, target vacío y no resoluble, reescritura retrospectiva de `Task` y de `Scope`, vaciado de la declaración, proximidad semántica (contenedor, descendiente, plural, prefijo, `./`, separadores, mayúsculas), `DEFERRED` sin pending decision gobernante, records legítimos del host y escritura dentro del worker. **Dogfood**: 12 pruebas ancladas (punto de enforcement, policies, Plan 136 y `ROADMAP.md` sin modificar, ausencia de registry/state machine/authority class nuevos, y el envelope del propio Plan 138 pasando su propia frontera) más dogfood funcional end-to-end del escenario F-3 y de la divergencia entre corridas. **Finding propio detectado y corregido**: `tests/test_sae_scope_enforcement_dogfood.py` figuraba en `## Scope` y en la `Delegación agentiva` pero **no** en `## Entregables` —exactamente la clase de divergencia que el Change detecta— y se corrigió dentro del Scope autorizado (`<PLAN-138>:F-1` / `<PLAN-138>:C-1`). **Sin** state machine, entidad, authority class, registry, lifecycle, sistema de permisos paralelo, mecanismo de Scope independiente ni caso especial para `ROADMAP.md`/`Documentation Impact`; `contracts.py`, `derivation.py`, `worker.py`, `agent_worker.py` y `observation.py` **sin cambios** (se reutiliza `STOP_SCOPE_VIOLATION`); sin RFC/ADR nuevo, sin `VERSION` bump, sin tag y sin push. **Determinaciones**: `Documentation Impact: REQUIRED` (policies de SAE/validation-closure/autonomous-orchestration + `runtime/README.md`, reconciliadas en la ejecución) y `Roadmap Impact: DEFERRED` con `<PLAN-138>:PC-1` (owner: mantenedor) — `ROADMAP.md` con 0 diff. **Pendientes**: `<PLAN-138>:PC-1` (registro/prioridad del trabajo en el mapa) y `<PLAN-138>:PC-2` (si SAE necesita un mecanismo de ampliación legítima de Scope), ambos no bloqueantes; **cerrados por el Plan 139** (2026-09-20): PC-1 → `resuelta` (regla `Impact classification != authorization`) y PC-2 → `deferred` (no se introduce mecanismo autónomo de Scope Expansion). |
+
+## Sexagésima novena serie: EARS Structural Validator (Plan 137) (15 sep 2026; ejecutado el 21 sep 2026 por el Plan 141)
+
+Plan 137 (vía plan; DEV-only — `tools/` + `tests/` + `docs/`, sin efecto en
+`protocol/.agents/`, RFC-56 no aplica; Change Level L1). Redactado **sólo para
+redacción** y **ejecutado** el 2026-09-21 por el Change del Plan 141: la guarda
+`tools/check_ears_coverage.py` existe y sus tres suites la verifican. Reconstruye
+el estado real de la validación EARS y su hallazgo
+central es que **el validador estructural EARS ya existe en el payload**:
+`protocol/.agents/harness/gate_validator.py` (plan 66, RFC-57) incluye el chequeo
+EARS de H01 (`TRIGGERS["H01"]["ears"] = True`, regex con los cinco patrones),
+cubierto por `harness/tests/test_gate_validator.py` y corriendo en CI
+(`.github/workflows/check-protocol.yml`). La fricción `F-01` de `B-2` (contrato con
+array TOML vs validador de bullets) está **resuelta** por plan 33/RFC-34, que
+declaró los bullets Markdown como forma canónica.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `137-ears-structural-validator.md` | — (vía plan, DEV-only) | Executed | **Reconstrucción de la validación EARS**: estándar `protocol/.agents/standards/requirements/EARS.md` (cinco patrones + cinco reglas de redacción); forma canónica = bullets Markdown (`protocol/.agents/orchestrators/core/contracts/TASK_SPECIFICATION.md:Acceptance Criteria`); validador real = `gate_validator.py` invocado por la policy H01 §Decision Criteria. **Subset mecánico establecido (R1–R5)**: R1 al menos un bullet; R2 cada bullet casa uno de los cinco patrones; R3 criterios sólo en el bloque TOML constituyen violación de forma; R4 el validador del payload realmente chequea EARS para H01; R5 paridad entre el conjunto declarado y el implementado. **Bloque B excluido por nombre**: especificidad y verificabilidad (`H01` ítem 10 `[agent]`), no-compoundidad (`H01` ítem 12 `[agent]`), negaciones y vocabulario modal (`protocol/.agents/standards/requirements/EARS.md:Writing rules` 2–3, sin marca `[gate]`, enunciado léxico no cerrado), adecuación al dominio y derivación desde assumptions (`[agent]`). **Diseño**: `tools/check_ears_coverage.py` (nuevo) como guarda DEV **sólo lectura** que **deriva** el conjunto del payload y **invoca** el validador existente —no lo reimplementa—, con el vocabulario de señales y el contrato de exit codes existentes (`GAP` advisory, sólo `ANOMALY` cambia el exit code), texto + `--json`, determinista, `N/A` ante ausencia declarada. **Reutilización justificada por compatibilidad de contrato** con el checker DEV de D01 (mismo patrón, sin compartir código) y con `testsupport`/`pytest_isolation`; **no** se acopla a D01. **Dogfood**: la validación EARS aplica a `TASK_SPECIFICATION.md`, artefacto de **sesión** en `.project/` (efímero, no versionado) y **no existe corpus real versionado** — limitación **declarada** que no se convierte en `PASS`; el dogfood real es la auditoría del payload y el ejercicio del validador sobre los especímenes que el propio estándar y contrato declaran. **Falsación**: incluye casos que la guarda **debe dejar pasar aunque sean malos** (compound, negación, `should`) y casos que **deben fallar aunque parezcan buenos**. **Scope de siete rutas**: el checker, tres suites (comportamiento, falsación, dogfood) y el registro documental. `ROADMAP.md` **fuera de Scope**: la obligación de reconciliación (`Roadmap Impact: REQUIRED`) queda **pendiente** en `<PLAN-137>:PC-1` por la decisión humana de `F-3` (`<PLAN-136>:PC-4`: `REQUIRED` no amplía el scope). Pendientes `PC-1` (reconciliación del roadmap), `PC-2` (ampliar el conjunto mecánico: cambio de payload, RFC-56) y `PC-3` (agregar la guarda a la batería canónica). Documentation impact `REQUIRED` (CHANGELOG, INDEX, el propio Plan; `docs/VERSIONING.md` §4.1 **no** autorizado; fuentes normativas **no** se tocan); Roadmap impact `REQUIRED`. Sin implementación, sin modificar `protocol/`, `runtime/`, `.agents/` ni `ROADMAP.md`, sin release ni tag. |
+
+## Sexagésima octava serie: D01 Mechanical Checker, preparación (Plan 136) (15 sep 2026)
+
+Plan 136 (vía plan; DEV-only — `tools/` + `tests/`, sin efecto en
+`protocol/.agents/`, RFC-56 no aplica; Change Level L2). **Sólo preparación: no
+implementa D01.** Redacta el Plan que materializa el **subconjunto mecánico y
+determinista** de D01 (estructura y procedencia resoluble) como checker DEV,
+reconstruyendo el estado actual de D01 desde el repositorio en lugar del diseño
+histórico. Queda en `Aprobado para redacción`: la autorización de ejecución es una
+decisión humana posterior (`<PLAN-136>:PC-1`). **[Estado corriente, Plan 145,
+2026-09-21: `<PLAN-136>:PC-1` se resolvió, el Plan 136 está `Executed` con
+condición derivada `Closed` y sus residuales están cerrados; la frase anterior
+describe el estado de redacción, no el de hoy.]**
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `136-d01-mechanical-checker.md` | — (vía plan, DEV-only) | Executed | **Reconstrucción de D01**: es una harness policy del payload (trigger `D01`, `DISCOVERY_VALIDATE → DISCOVERY_READY`, único gate del dominio discovery) que cubre validación estructural **y** ground truth; el runner no existe y hoy sus 12 ítems son juicio `[agent]`; el propio contrato declara los ítems de estructura determinista como candidatos `[gate]`. Origen: `B-1` **derivado** (`F-11` resuelta por planes 40 y 47/RFC-48; modelo D01 aclarado por plan 60). **Once puntos deterministas** entran en el checker (existencia y no-vaciedad; front matter TOML y campos requeridos; `artifact`/`kind`; `#` ↔ `title`; `## Discovered Facts` y secciones por contrato de tipo; existencia de `source_files` con `system_probe` sólo para environment; `[entries] active` ↔ archivos; front matter ↔ manifest; `## Project Shape` primera sección de contenido y coincidente con el manifest; `distribution.md` condicional a shape `library`/`cli`). **Seis ítems de juicio quedan fuera por nombre** (stack real, dependencias reales, patrones con ejemplo, secretos, claims sin fuente, merge consistente, api↔shape): no se convierten artificialmente en checker. Requisitos resueltos **desde los contratos** (single-source, plan 47/RFC-48), nunca desde una lista propia. Reporte con el vocabulario de señales y el contrato de exit codes existentes (`GAP` advisory, sólo `ANOMALY` cambia el exit code); ausencia de KB = `N/A` válido. **Scope exacto de seis rutas**: `tools/check_discovery_output.py`, `tests/test_check_discovery_output.py`, `tests/test_discovery_output_dogfood.py`, este Plan, `docs/plans/INDEX.md` y `CHANGELOG.md`. **Fronteras registradas, no resueltas:** `F-1` (`F-17`: `source_files` sin valor de procedencia para ausencias y hechos de árbol → el checker reporta `GAP`, nunca `ANOMALY`, y la corrección de fondo es payload, `<PLAN-136>:PC-2`) y `F-2` (`F-11`: contradicción textual `artifact_validated: KB_DISCOVERY_ENTRY.md` vs las entradas reales, conservada como evidencia sin editar el payload). Pendientes `PC-1` (autorización de ejecución), `PC-2` (`F-17`) y `PC-3` (`F-16`). Documentation impact `REQUIRED` (CHANGELOG, INDEX, el propio Plan; `docs/VERSIONING.md` §4.1 deliberadamente **no** autorizado); Roadmap impact `REQUIRED` (la fila «Mechanical D01 subset» de `ROADMAP.md:Trabajo activo / dogfood` deja de estar activa y el orden de la secuencia de dogfood cambia; reconciliación **al ejecutar**, no ahora). Sin implementación, sin modificar `protocol/`, `runtime/`, `.agents/` ni `ROADMAP.md`, sin release ni tag. **Ejecutado** (`**Status:** Executed`, condición derivada **`Closed`**, DEV-only sin release): `tools/check_discovery_output.py` (checker del subconjunto mecánico: resolución de contratos desde el payload en sólo lectura, validación por entrada, validación del manifest, resolución de procedencia, reporte texto + `--json`, contrato de exit codes `0`/`1`/`2` con `GAP` advisory), `tests/test_check_discovery_output.py` (42 pruebas) y `tests/test_discovery_output_dogfood.py` (12 pruebas ancladas al payload real). Los once puntos deterministas implementados; los seis ítems de juicio **no** convertidos en checks. `F-17` reporta `GAP` y nunca `ANOMALY`, sin exención ad-hoc y sin tocar el payload; `F-16` acepta el enum y no decide el shape. Validation Anchor A1 (delta `d4547527…`, tree `5f6c4fab…`), consistencia PASS verificada por C-2, C-1 y C-3 `VALID`; `pytest tests/` 953 passed, 0 failed. Findings `F-3` a `F-6` (contradicción scope↔Roadmap Impact del propio Plan, mapeo de contratos por convención inexistente, status de entrada y cobertura de la rama `BOUNDARY`) corregidos por `C-3` a `C-6`; `PC-1` resuelta por la autorización humana explícita. `ROADMAP.md` fue modificado **fuera del `Scope` autorizado** del Plan: el mantenedor decidió (`<PLAN-136>:PC-4`) que `Roadmap Impact: REQUIRED` **no** autoriza por sí sola la escritura de un artefacto excluido del scope. Resuelto después en la sección «Resolución post-cierre de F-3 (A y B)» del Plan: **A** (retirada de la fila de D01) confirmado como reconciliación factual; **B1** (`EARS structural validator` pasa a `Próximo dogfood`) confirmado; **B2** (prioridad `Media` → `Alta`) **no sustentado** y restituido a `Media`. `<PLAN-136>:F-3` queda `ready for human resolution` (la transición a `resolved` es decisión humana, CL-8 / ADR-16 AU-3); **cerrada como `resolved` por el Plan 139** (2026-09-20), que materializó la decisión del mantenedor sin alterar la evidencia original del finding; el gap de gobernanza sobre `REQUIRED` + artefacto fuera de scope queda registrado como observación en `<PLAN-136>:PC-5`, sin modificar la gobernanza. Sin modificar `protocol/`, `runtime/` ni `.agents/` (0 diff), sin agregar el checker a la batería canónica, sin release ni tag. |
+
+## Sexagésima séptima serie: Supervised Autonomous Execution (Plan 135) (15 sep 2026)
+
+Plan 135 (vía plan; DEV-only — `.agents/`, `runtime/`, `tests/`, `docs/`, sin
+efecto en `protocol/.agents/`, RFC-56 no aplica; Change Level L2). Formaliza y
+materializa **Supervised Autonomous Execution (SAE)**: la política operacional
+que permite al DEV Autonomous Orchestrator ejecutar, corregir, revalidar,
+recuperar y continuar todo paso que ya esté dentro del scope y la autoridad
+concedidos, deteniéndose exactamente ante una frontera de autoridad. Separa
+explícitamente **Authority** (qué está autorizado), **Scope** (qué trabajo está
+autorizado) y **Autonomy** (qué acciones puede ejecutar el host sin nueva
+autorización), con la regla `autonomy ⊆ authorized scope ∧ autonomy ⊆ granted
+authority`. Investiga primero si la arquitectura existente ya expresa SAE y
+concluye que sí: no crea entidad, registry, state machine, lifecycle, authority
+class, identity primitive, worker type, daemon, database ni sistema de tracing.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `135-supervised-autonomous-execution.md` | — (vía plan, DEV-only) | Executed | Supervised Autonomous Execution. **Policy nueva** `.agents/policies/supervised-autonomous-execution.md`: definición operacional de SAE, separación Authority/Scope/Autonomy, continuación autónoma, política de findings, findings bloqueados vs. branches independientes, stop conditions, human boundary, scope verification, determinaciones de impacto, recovery, evidencia, execution summary y métrica de autonomía (reusa artifacts existentes; no introduce sistema de métricas). **Runtime nuevo** `runtime/orchestrator/autonomy.py`: `AutonomyEnvelope` (derivado de lo que el Plan ya declara), `AutonomyCandidate`, `verify_action_scope` (pertenencia exacta; nunca por proximidad semántica), `evaluate_autonomy` (CONTINUE / STOP / REQUIRES_AUTHORITY / FORBIDDEN con justificación reconstruible) y `summarize_autonomy` (derivado del journal y de los Worker Results; distingue intervención operacional humana de decisión de autoridad humana). **Vocabulario cerrado ampliado** en `contracts.py` (corrección autónoma + condiciones de parada de frontera) y **gate opt-in** en `host.py` (sin envelope declarado el comportamiento es idéntico al actual) con el resumen de autonomía en el run report. **Suite nueva** `tests/test_autonomous_scope.py`: los catorce casos exigidos y la falsación explícita (scope expansion disfrazado, authority expansion, RFC/ADR implícito, cambio de Protocol, cambio de lifecycle, resolución autónoma de decisión humana, release/promotion, documentación normativa inventada). **Decisión de frontera** (`<PLAN-135>:PC-02`): la resolución de un finding —su transición de estado— permanece autoridad humana (CL-8, ADR-16 AU-3); SAE pre-autoriza la **acción de corregir** dentro del scope, que ya autoriza el Plan aprobado, de modo que no se adquiere autoridad nueva ni se modifica ninguna regla normativa. Findings `<PLAN-135>:F-01` (conflicto entre el pedido literal del Change y la regla vigente) corregido por `<PLAN-135>:C-01`. D01 queda habilitado como primer Change funcional ejecutable bajo SAE. `**Status:** Executed` con condición derivada **`Closed`** (docs-only, sin release), Validation Anchor A1 (delta `47042c06…`, tree `16a592c5…`), checkpoint con consistencia PASS verificada por C-2, C-1 `VALID` y C-3 `VALID` (F-1, F-2, C-1, C-2). Findings `<PLAN-135>:F-1` (frontera de autoridad de findings) y `<PLAN-135>:F-2` (registros de lineage no legibles por C-3, detectado por la batería, no por inspección del agente) corregidos por `C-1` y `C-2`, sin marcarlos `resolved` porque esa transición es decisión humana (CL-8, ADR-16 AU-3). Sin `VERSION` bump ni tag. |
+
+## Sexagésima sexta serie: integridad de la evidencia de cierre (Plan 134) (15 sep 2026)
+
+Plan 134 (vía plan; docs-only + tooling DEV, sin efecto en `protocol/.agents/`,
+RFC-56 no aplica; Change Level L2). Determina la semántica exacta de la cadena de
+evidencia de cierre del Change Lifecycle DEV —baseline, anchor, estado validado,
+checkpoint, estado de cierre, árbol del commit de cierre, estado commiteado y
+`Closed`— y corrige el mecanismo donde la evidencia demuestra defecto. El Plan
+133 (`<PLAN-133>:F-5`) había detectado que el closure tree declarado no coincide
+con el árbol material del commit de cierre.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `134-closure-evidence-integrity.md` | — (vía plan, docs-only + tooling DEV) | Executed | Integridad de la evidencia de cierre. **Modelo normativo** (nuevo, en `docs/CONVENTIONS.md`): «Estado de cierre, grafo de commit y árbol material» define que el **estado validado**, el **estado de cierre** (lo que el checkpoint certifica, por correspondencia GC-1 con el anchor aplicable) y el **árbol material del commit de cierre** (hecho de Git) son tres conceptos que no se colapsan; `A ≠ B` es **esperado** porque RFC-75 `Mecanismo 7 — Git Checkpoints` declara que el commit de cierre puede incluir governance (INDEX, CHANGELOG, ADR, docs), de modo que `Closed` **no** exige `validated tree == commit tree`; la auto-referencia de un artifact de cierre se resuelve declarativamente (scope fijo antes de escribir los registros; identidad del estado de cierre = par delta + state identity del anchor aplicable; commit localizable por mensaje). **Defecto confirmado (Resultado A) en C-2**: su contrato documentado decía «closure state = tree del commit de cierre final», relación que contradice RFC-75 y que además era **código muerto** en el corpus real —las entradas de commit de cierre de los Planes 120–133 no embeben SHA, así que `ordered_closing_commits` devuelve vacío y la rama de contradicción nunca se ejecutaba—, mientras la relación que sí aplicaba (identidad declarada vs. estado validado del anchor) solo estaba documentada como fallback. Contrato de C-2 fijado en R1–R4 (`docs/CONVENTIONS.md` + `.agents/policies/validation-closure.md:5`, `.agents/policies/lifecycle-checkers.md`, docstring del checker): la divergencia estado-de-cierre ↔ árbol-material es **GAP advisory con requisito de atribución**, no ANOMALY; el nivel ANOMALY del estado de cierre es R2 (correspondencia con un anchor registrado). C-1 y C-3 declarados **NOT_REQUIRED**. **12 Planes históricos (120, 123–133) clasificados CORRECT**: su declaración es la del estado validado, que es exactamente lo que GC-1 exige; no se modificó ninguno. Template de Plan con los tres conceptos separados. Corregidas 2 regresiones de la suite de C-2 que codificaban la semántica superada. Sin RFC/ADR nuevo, sin `VERSION` bump ni tag. |
+
+## Sexagésima quinta serie: Roadmap Impact y barrido documental integral (Plan 133) (15 sep 2026)
+
+Plan 133 (vía plan; docs-only, sin efecto en `protocol/.agents/`, RFC-56 no
+aplica; Change Level L2). Formaliza en el Change Lifecycle DEV una determinación
+de cierre nueva, **Roadmap impact**, independiente de **Documentation impact** y
+con los mismos tres valores (`REQUIRED` / `NOT_REQUIRED` / `DEFERRED`), sin crear
+segunda lifecycle, fase, estado, entidad, registry, tracker, checker ni campo
+obligatorio nuevos. Además recorre el universo documental real del repositorio y
+corrige únicamente la documentación de estado actual materialmente obsoleta,
+dejando clasificado lo histórico, lo diferido y lo que requiere autoridad.
+Cierra la continuidad de `<PLAN-132>:F-2` / `<PLAN-132>:PC-1`.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `133-roadmap-impact-and-documentary-sweep.md` | — (vía plan, docs-only) | Executed | Formalización del **Roadmap impact** en el Change Lifecycle DEV y barrido documental integral. **Mecanismo**: subsección normativa nueva en `docs/CONVENTIONS.md` (`### Change Lifecycle — Determinaciones de cierre: impacto documental e impacto de Roadmap (regla operacional)`), que además da fuente canónica al **Documentation impact** —que hasta ahora vivía sólo en la policy operativa y en el DoD—; semántica operativa en `.agents/policies/validation-closure.md` §5.2 (con §5.1 y la condición de stop ajustadas); `.agents/workflows/change-lifecycle.md:9. Closure and handoff` con las dos determinaciones; `docs/VERSIONING.md` §10 con las dos en el DoD; y campo `Roadmap impact` en el `## Checkpoint / cierre` de `docs/plans/_TEMPLATE.md`. Regla central: `Roadmap impact: REQUIRED` **no** significa editar `ROADMAP.md` — el artefacto a reconciliar se determina por ownership/source of truth, y `ROADMAP.md` sigue siendo un mapa operativo, no un changelog; las dos determinaciones son independientes en todas sus combinaciones. No se reclama el rótulo «Incremento 5» de RFC-75 (track de coordinación/handoff, fuera de alcance por decisión de la propia RFC). **Barrido y correcciones** (las cuatro confirmadas por el mantenedor): `CHANGELOG.md` header con rutas pre-disolución corregidas (`plans/20-release-adoption.md` → `docs/plans/`, `plans/rfc/` → `docs/rfc/`, `.agents/harness/policies/` y `.agents/orchestrators/*` → `protocol/.agents/…`); `docs/CONVENTIONS.md` con el ancla de migración (`plans/INDEX.md` → `docs/plans/INDEX.md`), la lista de la batería canónica completada a los **seis** checkers + pytest (antes enumeraba tres) y el path histórico de `archive/` explicitado; `docs/plans/INDEX.md` con la atribución de `B-7` corregida (planes 29 y 52; el Plan 43 corresponde a `B-4`, F-04) y el título de la sección del roadmap EC corregido a histórico (sus cuatro planes están `Executed` desde agosto 2026, no son «planes activos»). Documentos **no** modificados con razón verificable: `ROADMAP.md` (su mapa operativo no cambia), `README.md`, `AGENTS.md`, `.agents/AGENTS.md`, `runtime/README.md`, `tests/AGENTS.md`, `protocol/.agents/` completo, `docs/VERSIONING.md` §9 (sin release), RFCs, ADRs y planes cerrados. Sin ADR, sin migración, sin `VERSION` bump ni tag. |
+
+## Sexagésima cuarta serie: actualización del Roadmap al estado real (Plan 132) (15 sep 2026)
+
+Plan 132 (vía plan; docs-only, sin efecto en `protocol/.agents/`, RFC-56 no
+aplica). Devuelve a `ROADMAP.md` su función de **mapa operativo actual**:
+elimina la tabla histórica B-1…B-8 como backlog y separa explícitamente trabajo
+derivado, pendiente arquitectónico que requiere autoridad y candidato futuro. No
+implementa ninguna de las tareas que lista, no reabre ítems históricos y no crea
+backlog.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `132-roadmap-current-state.md` | — (vía plan, docs-only) | Executed | Reescritura de `ROADMAP.md` como mapa operativo actual. **Desaparece** la tabla `Backlog resuelto` de B-1…B-8 y toda formulación que sugiera que los problemas originales siguen abiertos; `B-5` y `B-6` dejan de figurar como trabajo pendiente. **Trabajo activo / dogfood**: `Mechanical D01 subset — DEV checker for discovery output structure and provenance` (`B-1` **derivado**, próximo dogfood; el contrato D01 declara la validación mecánica como extensión futura inexistente) y `EARS structural validator` (`B-2` **derivado**, siguiente dogfood después de `B-1`; plan 33). **Pendientes que requieren autorización** (los tres afectan contratos del payload): `F-14`+`F-17` de discovery (`B-4` residual), `project_shape` para repositorios documentales/protocolo (`B-7` residual, `F-16`) y el slot de session risk de single-instance en el catálogo de `protocol/.agents/contracts/METRICS.md` (`B-8` residual, baja prioridad). **Candidato futuro**: checker mecánico de `.last_discovery` (`B-3` extensión, plan 50), no autorizado ni planificado. El Roadmap declara el criterio de prioridad —herencia del ítem histórico, salvo el orden de dogfood— y no recalifica prioridades sin evidencia nueva. Registró el hallazgo `<PLAN-132>:F-1` (el Plan 133 citado como evidencia principal **no existe**; la clasificación B-1…B-8 se re-verificó de forma independiente contra `docs/plans/INDEX.md`, el anexo A de bitácora de fricciones, el contrato D01 y `METRICS.md`; el mantenedor autorizó ejecutar el Change con el próximo número libre) y el hallazgo diferido `<PLAN-132>:F-2` (la atribución de `B-7` al Plan 43 en este mismo INDEX corresponde a `B-4`; no corregida aquí por scope, continuidad en `<PLAN-132>:PC-1`). Sin tareas nuevas, sin ADR, sin migración, sin `VERSION` bump ni tag. |
+
+## Sexagésima tercera serie: implementación mecánica del Placement Contract (Plan 131) (15 sep 2026)
+
+Plan 131 (vía plan; DEV `runtime/` + `tests/`, sin efecto en `protocol/.agents/`,
+RFC-56 no aplica). Materializa `docs/placement-contract.md` como un resolver
+determinista: `PLACE` con el namespace canónico y la regla que lo autoriza, o
+`STOP` con el disparador que falta. Consume `PLAN-129:DEC-2` (enforcement
+autorizado como dirección futura) y no reinterpreta el contrato.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `131-placement-contract-mechanical-implementation.md` | — (vía plan, DEV runtime/tests) | Executed | Implementación mecánica del Placement Contract. **Nuevo paquete `runtime/placement/`**: `rules.py` (realización de la tabla de familias del contrato §6 con la procedencia de sección de cada fila, el discriminante estructural `flat` de las formas `(root)`/`(flat)`, familias root-anchored y artefactos de path exacto), `resolver.py` (algoritmo §7 en su orden: identificación semántica → dominio → kind/familia dentro del dominio → namespace canónico → canonicality como cualificador → autoridad/lifetime como metadata → constraints → `PLACE`; más `verify_path()` para `§16 PC-51`), `__init__.py` (superficie pública). **Tres suites nuevas**: `tests/test_placement_resolver.py` (comportamiento y falsación de la propiedad central), `tests/test_placement_contract_drift.py` (guarda de deriva: namespaces, familias, disparadores de STOP, canonicalities y semántica de Git persistence sin interpretar prosa) y `tests/test_placement_dogfood.py` (módulo anclado al repo real, sólo lectura: evidencia `PLACE` citando §6 y `STOP` con lo requerido). Propiedad garantizada: `regla explícita → PLACE`; `sin regla / ambigua / información insuficiente → STOP`; `guess plausible → NUNCA PLACE`. `canonicality` nunca selecciona ni crea namespace; `kind` no es un enum global cerrado; las excepciones son entrada del llamador, no registry. **Es una librería, no un hook**: `PC-78`/`PC-79` excluyen el hook del Orchestrator y `PC-73` lo define como consumidor, así que no se integra en `runtime/orchestrator/`. Findings `F-1`..`F-3` (tabla realizada más amplia que el contrato; `historical` como licencia de ubicación; nombre de familia sin contrapartida) corregidos por `C-1`. `docs/placement-contract.md` con **0 diff**. Sin entidad/registry/ID/state machine/autoridad/lifecycle/taxonomía global nuevos; sin CI, hook, branch protection ni enforcement global; sin ADR; sin migración. Sin `VERSION` bump ni tag. |
+
+## Sexagésima segunda serie: corrección nomenclatural de Plan 129 (Plan 130) (15 sep 2026)
+
+Plan 130 (vía plan; docs-only, sin efecto en `protocol/.agents/`, RFC-56 no aplica).
+Corrige la colisión de identificadores detectada en `<PLAN-129>:F-2`: los
+identificadores de decisión de Plan 129 pasan a `PLAN-129:DEC-1/2/3`, sin tocar
+las etiquetas de regla del Placement Contract. No crea ADR, no introduce
+convención global de nomenclatura, no migra nada y no altera ninguna semántica.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `130-nomenclature-fix-plan-129-identifiers.md` | — (vía plan, docs-only) | Executed | Corrección nomenclatural: renombra **únicamente** los identificadores de decisión de Plan 129 —`PC-1`/`PC-2`/`PC-3` → `PLAN-129:DEC-1`/`PLAN-129:DEC-2`/`PLAN-129:DEC-3`— para que el namespace textual de decisión deje de colisionar con las etiquetas de regla internas de `docs/placement-contract.md` (`PC-1`…`PC-80`, más `PC-31a`…`PC-31c`). El contrato queda **con 0 diff**: 80 reglas y 3 variantes intactas, sin renumerar ni cambiar contenido normativo. Marca `<PLAN-129>:F-2` como `resolved` y registra `<PLAN-129>:C-2`; retira el pending de nomenclatura. Alinea además dos referencias al pending de persistencia heredado del Plan 128 (`docs/plans/INDEX.md`, `CHANGELOG.md`) que usaban la misma etiqueta para la misma decisión. **No** generaliza la convención a otros planes. Semántica de `DEC-1`/`DEC-2`/`DEC-3` sin cambios. Sin `VERSION` bump ni tag. |
+
+## Sexagésima primera serie: cierre de DEC-1, DEC-2 y DEC-3 del Placement Contract (Plan 129) (15 sep 2026)
+
+Plan 129 (vía plan; docs-only, sin efecto en `protocol/.agents/`, RFC-56 no aplica).
+Cierra las tres decisiones pendientes del Repository/Artifact Placement Contract
+como un único Change integral, sin implementar el enforcement. No crea ADR, no
+migra nada y no modifica el Change Lifecycle.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `129-pc1-pc2-pc3-closure.md` | — (vía plan, docs-only) | Executed | **`PLAN-129:DEC-1` = CLOSED**: `.project/changes/` es **project-durable** y **Git-persisted**, con las tres propiedades separadas literalmente (`project-durable` = persistencia · `git-persisted` = preservación/versionado por Git · `git commit` = **operación** gobernada por el Change Lifecycle y su autoridad); sin auto-commit, sin `always`/`never commit`, sin `auto-ignore`; el contrato no adquiere autoridad para ejecutar commits ni modifica el Change Lifecycle (§6, §7 paso 6, §21 `PC-67`…`PC-71`). **`PLAN-129:DEC-2` = CLOSED con implementación diferida**: el enforcement mecánico y determinista queda **autorizado como dirección futura** con boundary `Contract = fuente normativa · Enforcement = realización mecánica · Orchestrator = consumidor`, prohibición de segunda fuente normativa, regla «si implementación y contrato discrepan, gobierna el contrato», y las ocho invariantes **E-1…E-8** (determinismo; placement explícito; STOP; no guessing; el enforcement no es source of truth; separación de autoridad; el Orchestrator no reinterpreta STOP como PLACE; escalado humano). **NO implementado**: sin checker, resolver, servicio, hook, integración CI, registry, schema, database ni state machine (§22 `PC-72`…`PC-77`, §23, §24 `PC-79`/`PC-80`). **`PLAN-129:DEC-3` = CLOSED**: las excepciones son **documentales por defecto**, sin representación estructurada ni identificadores, con el procedimiento localizar → verificar owner → interpretar → aplicar → STOP, y **sin** prohibición permanente de una representación futura (§9 `PC-31a`…`PC-31c`). Equivalencias del apéndice actualizadas (`project-durable ≠ git commit operation`, `exception ≠ registry`, `enforcement ≠ source of truth`, `STOP ≠ GUESS`). Registró como finding la colisión de etiquetas entre las decisiones de plan (`PC-1/2/3`) y las reglas internas del contrato (`PC-1`…`PC-80`), resuelta por el renombrado autorizado de Plan 130 a `PLAN-129:DEC-1/2/3`, sin renumerar las reglas del contrato ni generalizar la convención. Sin `VERSION` bump ni tag. |
+
+## Sexagésima serie: materialización del Repository/Artifact Placement Contract (Plan 128) (15 sep 2026)
+
+Plan 128 (vía plan; docs-only, sin efecto en `protocol/.agents/`, RFC-56 no aplica).
+Materializa el **Repository/Artifact Placement Contract** como documento normativo
+independiente bajo `docs/`, derivado del diseño cerrado en Plan 127 y de las
+decisiones humanas `OQ-2 = NO`, `OQ-3 = A`, `OQ-4 = NO`, con `DEC-1` (persistencia) mantenido
+`OPEN / DEFERRED`. No crea registry, checker, schema, namespace, state machine,
+clase de autoridad ni ADR; no integra enforcement en runtime/Orchestrator/CI; no
+autoriza migración.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `128-placement-contract-materialization.md` | — (vía plan, docs-only) | Executed | Materializa `docs/placement-contract.md`: 22 secciones numeradas con reglas normativas `PC-1`..`PC-70` (purpose/scope, applicability, domain identification, kind/family, canonicality qualification, namespace selection con tablas domain-scoped, algoritmo de 8 pasos, STOP semantics, excepciones, move/rename, distribución, históricos, fixtures, scratch, generado/derivado, responsabilidades del agente, frontera de autoridad humana, relación con `AGENTS.md`, navegación INDEX, relación con ADR-17/ADR-18, `Deferred: PC-1` y non-goals). **OQ-2 = NO**: las excepciones se registran en el artefacto que posee la decisión, acotadas al artefacto o la familia, sin registry/schema/database/índice global/identity primitive, y sin prohibir que una decisión futura introduzca una representación machine-locatable. **OQ-3 = A**: documento independiente `docs/placement-contract.md`, sin namespace nuevo, con `AGENTS.md` sólo referenciándolo para discovery. **OQ-4 = NO**: sin ADR nuevo; el contrato materializa ADR-17 y ADR-18 y se declara downstream de ambos. **PC-1**: sección `Deferred: PC-1` que registra `project-durable ≠ git-committed` sin establecer política de Git. Regla central: *canonicality qualifies placement; it does NOT determine placement*; el algoritmo termina en `PLACE` o `STOP` y `GUESS` no es admisible. Sin `VERSION` bump ni tag. |
+
+## Quincuagésima novena serie: cierre de diseño del Repository/Artifact Placement Contract (Plan 127) (15 sep 2026)
+
+Plan 127 (vía plan; docs-only, sin efecto en `protocol/.agents/`, RFC-56 no aplica).
+Registra el cierre formal del **diseño** del Repository/Artifact Placement Contract y
+persiste como traza versionada su modelo semántico corregido, su algoritmo de
+resolución, su modelo de STOP y sus decisiones pendientes. El plan **no** materializa
+el contrato, no crea registry, checker, schema, namespace ni ADR, y no autoriza
+migración alguna. Depende de ADR-17 y ADR-18 como arquitectura upstream, que no
+modifica. **`Design: CLOSED` · `Placement Contract: NOT CREATED` · `Migration: NOT STARTED`.**
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `127-repository-artifact-placement-contract-design.md` | — (vía plan, docs-only) | Executed | Diseño del Repository/Artifact Placement Contract: tesis central `domain/owner → kind/family → family rule → canonical namespace → canonicality qualification → constraints → PLACE \| STOP`; **dos discriminadores** (dominio/owner, kind/family) y **un cualificador** (canonicality), con la regla universal de que canonicality nunca selecciona ni crea namespace; `kind` **no** es enum global cerrado (tabla domain-scoped, alineada con ADR-18 `RS-11`); **15 familias canónicas + 3 reglas root-anchored + 2 no-familias**; modelo de canonicalidad corregido (`generated ≠ non-canonical`, `derived ≠ same namespace`; la ubicación proviene siempre de una regla explícita y su ausencia produce `STOP (UNDEFINED PLACEMENT)`, sin STOP nuevo); algoritmo de 8 pasos; 9 triggers de STOP mapeados al vocabulario existente (GAP / ANOMALY / `REQUIRES_HUMAN`) sin crear clase de autoridad, estado de lifecycle ni estado de state machine; modelo de excepciones acotado al artefacto que posee la decisión (sin registry); move/rename separado del placement nuevo (`RS-7`, RFC-46); distribución declarada **domain+namespace-scoped** (`protocol/.agents/` se distribuye; el `.agents/` de DEV nunca); lifetime semántico, sin topología (`RS-2`/`RS-5`); contrato del agente para 5 casos (nuevo, dudoso, no canónico pedido, familia nueva, cross-domain); tabla de machine-verifiability; integración con el Orchestrator como consulta (preflight antes de delegar, verificación de scope después, evidencia en el cierre) sin gate ni registry; current→target sin migración; y registro de las correcciones C1–C9 con BEFORE/AFTER/REASON. Recomendación (no decisión): variante **B — Structured placement**. Deja **explícitamente abiertas** `OQ-2` (excepciones machine-locatable), `OQ-3` (ubicación canónica del contrato), `OQ-4` (ADR-worthiness de la materialización) y `PC-1` (persistencia Git de `.project/changes/`). Sin `VERSION` bump ni tag. |
+
+## Quincuagésima octava serie: materialización de las decisiones C–K (Plan 126) (15 sep 2026)
+
+Plan 126 (vía plan, **Clase B** de RFC-56: mejora documental compatible). Materializa
+las decisiones arquitectónicas C–K aceptadas por el mantenedor a partir de la
+síntesis posterior a ADR-17, y deja el Repository/Artifact Placement Contract como
+trabajo posterior no diseñado. No crea entidad, registry, estado de lifecycle,
+clase de autoridad ni mecanismo nuevos; no migra artefactos.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `126-repository-architecture-decisions-ck.md` | — (vía plan, Clase B RFC-56) | Executed | Materialización de **C1** (los harness tests de `.agents/harness/tests/` son parte del payload distribuido y suite de regresión del harness; los cinco checkers de `tools/` siguen DEV-only: declarado en `.agents/harness/INDEX.md`), **D4** (el payload conserva sus dos citas de fuente normativa `docs/rfc/` mediante una excepción acotada al par (archivo citante, target exacto), explícita y auditable; `functional_writer.md` aclarado como carpeta del proyecto adoptante), **E1** (`docs` añadido al boundary declarado del checker existente —sin checker nuevo— más la allowlist de provenance, con 4 tests: `docs/` ordinario rechazado, provenance allowlisted aceptada, la allowlist no autoriza otros `docs/`, no aplica a archivo no listado), **G2+G1** (`tags` declarado vocabulario documentado y no cerrado; `tags.kind` no exhaustivo/extensible; `state_machine` y `taxonomy` añadidos; ningún consumidor reescrito), **H** derivada de A3+B4 (clasificación documental corregida **en el lugar**: `docs/architecture/` → Historical/`archived`, `docs/AUDITORIA_DOCUMENTACION.md` → Working/Audit de raíz, mapa folder→clase con columna de lifecycle; sin movimiento ni clases nuevas), **I** derivada de C1 (harness sin reestructurar), **J1** (INDEX opcional y semántico, nunca autoridad; ningún INDEX creado) y **K3** (`health_check.py` sin cambios; el directorio efímero del probe aceptado como correcto; clarificación documental mínima). Registrado en `docs/adr/18-payload-boundary-provenance-and-classification.md`. Sin `VERSION` bump ni tag. |
+
+## Quincuagésima séptima serie: decisiones arquitectónicas de estructura del repositorio (Plan 125) (15 sep 2026)
+
+Plan 125 (vía plan; docs-only, sin efecto en `protocol/.agents/`, por lo que
+RFC-56 no aplica). Registra las decisiones arquitectónicas humanas tomadas por
+el mantenedor sobre la estructura del repositorio, derivadas de la Repository
+Structure Architecture Review (read-only, `dev` @ `4cd11ed`) y de su Repository
+Architecture Decision Set (A–K, L). El plan **no** diseña el Repository/Artifact
+Placement Contract, **no** migra artefactos, **no** resuelve las decisiones
+abiertas C, D, E, G, H, I, J y K, y no introduce entidad, registry, estado de
+lifecycle, clase de autoridad ni mecanismo de governance nuevos.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `125-repository-architecture-decisions.md` | — (vía plan; RFC-56 no aplica) | Executed | Registro formal de las decisiones humanas **A3** (lifetime permanece como propiedad semántica en `docs/`, sin dimensión física general del árbol; se admite separación física específica dentro de `.project/` entre estado durable y session-ephemeral), **B4** (arquitectura estructural compuesta por namespace/dominio; ninguna estrategia física global obligatoria; B4 no autoriza migración por sí mismo), **F1** (`.project/changes/` conserva su path; el contrato Protocol debe distinguir explícitamente project-durable de session-ephemeral; «durable» no implica Git-committed; sin mover, sin cambiar `.gitignore`, sin tocar runtime resolvers) y **L1** (A y B son ADR-worthy; materializado como `docs/adr/17-repository-lifetime-and-composite-structure.md` dentro del mismo Change, conforme a `docs/CONVENTIONS.md:Convenciones`). Incluye la sección explícita de decisiones **ABIERTAS** C/D/E/G/H/I/J/K con su autoridad requerida y dependencia, el límite del siguiente paso (Repository/Artifact Placement Contract, derivado de artifact/nature, owner/domain, authority, lifecycle, persistence, scope, consumption, creation, mutation, discovery, canonicality e historical status, **no diseñado**) y los pendientes `PC-1` (semántica de lifetime/persistence en el contrato Protocol → RFC-56), `PC-2` (separación física dentro de `.project/`) y `PC-3` (las ocho decisiones abiertas). Docs-only: sin `VERSION` bump ni tag (RFC-69). |
+
+## Quincuagésima sexta serie: cierre de hallazgos de arquitectura de `tests/` (Plan 124) (15 sep 2026)
+
+Plan 124 (vía plan; sin efecto en `protocol/.agents/`, por lo que RFC-56 no
+aplica; régimen aplicable RFC-75). Cierra los tres hallazgos accionables de la
+revisión integral de arquitectura de `tests/` (read-only, `dev` @ `4aa2617`),
+cuyo veredicto global fue `KEEP + REFACTOR SELECTIVE`: la organización plana de
+`tests/` es intencional y se conserva, `tests/fixtures/skills/` permanece donde
+está (fixture sintético, no Skill canónica), `.agents/skills/` no se crea y no
+se introduce split `unit/`/`integration/`/`contract/`. El plan **no** modifica el
+payload, no reabre RFC/ADR/planes cerrados y no altera la arquitectura del
+Change Lifecycle.
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `124-tests-architecture-findings.md` | — (vía plan; RFC-56 no aplica) | Executed | Cierre de F-01/F-02/F-03 de la revisión de arquitectura de `tests/`: mecanismo único de importación de `tools/` en la sesión de test (`conftest.py`) en lugar de `sys.path.insert` por archivo (18 archivos; F-01), corrección de `tests/AGENTS.md` para distinguir tests aislados de repositorio sintético frente a tests anclados intencionalmente al repositorio real y al dogfood sobre `protocol/` (F-02), y consolidación del chequeo «solo stdlib» duplicado en siete suites en un helper acotado `tests/testsupport.py` conservando el conjunto de módulos locales de cada caso, incluido el conjunto vacío de lineage (F-03). Verificación: seis checkers canónicos PASS, `pytest -k stdlib` 7 passed; la pierna completa `python -m pytest tests/` queda como **GAP** por clase ambiental declarada (sandbox sin mecánica de directorios temporales de pytest), nunca como `PASS`. Validation Anchor A1 (delta `64810a61…`, tree `192997ae…`); C-1/C-2/C-3 `VALID` sobre el árbol final. Condición derivada **`Closed`** (docs-only, sin release). Sin payload, sin `VERSION`, sin tag, sin promoción. |
+
 ## Serie de RFCs (documentos canónicos)
 
 > Registro migrado a `docs/rfc/INDEX.md` (RFC-69). Las RFCs viven en
 > `docs/rfc/`; esta sección se conserva como ancla de navegación para
 > referencias históricas.
 
-## Roadmap de implementación (planes activos)
+## Roadmap de implementación del Execution Context (histórico: planes 04–07, todos `Executed`)
+
+> Sección histórica: es el roadmap del Execution Context Pipeline, cerrado en
+> los planes 04–07 (agosto 2026). No es el mapa de trabajo activo —el mapa
+> operativo actual es `ROADMAP.md`— y se conserva como traza de navegación.
 
 ```text
 Nivel 1  Cierre del pipeline principal ──┐ (paralelizable)
@@ -867,7 +1615,7 @@ Serie derivada del análisis crítico de adopción (5 ago 2026): enforcement vol
 |---|---|---|---|
 | `23-skill-lifecycle.md` | Executed | — | Cable-or-kill de skills: ~30 skills huérfanas se cablean a fases/policies o se eliminan del catálogo activo (RFC-24). |
 | `24-single-source-required-sections.md` | Executed | — | El runner resuelve `required_sections` del contrato por referencia (8 policies derivadas; 7 conservan override explícito); `sync_required_sections.py` eliminado (RFC-25). |
-| `25-task-profile-model.md` | Executed (dogfooding verificado 12 ago 2026, plan 46) | recomienda 24 | Perfiles `trivial`/`standard`/`complex` con bifurcación de artefactos y gates; meta: tarea trivial ≤ 5 archivos, ≤ 3 gates (RFC-26). |
+| `25-task-profile-model.md` | Executed (dogfood del perfil `trivial`: **actividad externa de adopción**, no backlog — determinación del Plan 143; el modo enforced del plan 26 sí quedó verificado por el plan 46) | recomienda 24 | Perfiles `trivial`/`standard`/`complex` con bifurcación de artefactos y gates; meta: tarea trivial ≤ 5 archivos, ≤ 3 gates (RFC-26). La **medición** real exige una versión promovida y una sesión con el usuario: se registra como actividad externa no ejecutada (`docs/plans/143-empty-remaining-backlog.md`); el perfil está declarado e implementado en `protocol/.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md:Task Profiles`. |
 | `26-hook-enforcement.md` | Executed (dogfooding verificado 12 ago 2026, plan 46) | recomienda 25 | `state.json` escrito solo por el runner + hooks bloqueantes `PreToolUse`/`Stop` compartidos entre CLIs, con defensa en capas (RFC-27). |
 | `27-harness-coverage-closure.md` | Executed | 24 | Declaración `enforcement` en los 25 contratos + checks semánticos mecánicos (citas existentes, evidencia de tests) en el runner (RFC-28). |
 
@@ -960,6 +1708,14 @@ los planes 34–36 quedaron `Executed` el 11 ago 2026 (RFC-35…37 permanecen en
 
 (5 ago 2026.)
 
+> **Registro histórico, no backlog abierto (reconciliado por el Plan 145, 2026-09-21).**
+> Esta sección es la traza del backlog evidenciado por el dogfooding del plan 19 al
+> 5 ago 2026 y **se conserva como historia** (RFC-46). No describe el trabajo
+> pendiente de hoy: la resolución corriente de cada ítem está en la columna `Destino`
+> de la tabla, en el párrafo «Resolución» y, sobre todo, en los planes que lo
+> materializaron. Leer las filas de abajo como trabajo abierto es leer un registro
+> de agosto contra el estado de septiembre.
+
 Ítems derivados del dogfooding end-to-end (sesión `.project/d4ab6a93-8e75-4880-baf3-676fce992936/`). Priorización por frecuencia × costo observado, no por intuición; evidencia por ítem en `19-anexo-a-bitacora-fricciones.md` (IDs F-xx). No son planes redactados: son entradas priorizadas de las cuales se redactan planes al tomarlas.
 
 | # | Ítem | Destino | Prioridad | Evidencia |
@@ -967,11 +1723,11 @@ los planes 34–36 quedaron `Executed` el 11 ago 2026 (RFC-35…37 permanecen en
 | B-1 | Gate D01 superable: especial-casing del runner para `KB_DISCOVERY_ENTRY.md` fuera de la iteración, o artefacto de sesión definido por el workflow de discovery | policy | Alta — se repite en cada discovery; hoy exige artefacto-puente | F-11 |
 | B-2 | Recovery económico para fallos de formato: rama `RETRY_WORKER` en tablas de recovery (H01 primero) — implementada por el plan 29 (2026-08-11); alineación contrato↔validador EARS (bullets canónicos) cubierta por el plan 33 (2026-08-11) | policy | Alta — un fallo de formato cuesta una fase RECOVERY completa | F-01, F-02 |
 | B-3 | Marcador `.last_discovery` único y canónico (ruta `.project/.last_discovery`, JSON de spec) + validación en health-check | policy | Media — dispara full discoveries evitables | F-12 |
-| B-4 | Tanda de inconsistencias de contratos/policies: `discovery_context_budget` en features.toml, campos legacy en DISCOVERY_MANIFEST, "primera línea" de EXECUTIVE_SUMMARY, procedencia "observado por scan" en KB_DISCOVERY_ENTRY, delimitador de front matter, actor único de hash calculation, INTENT_REFLECTION auto-confirmada en la máquina de estados, mandato de KB en delegaciones condicionado a disponibilidad, namespacing de `<order>` por dominio | policy | Media — costo unitario bajo, recurrente | F-04, F-07, F-13, F-14, F-15, F-17, F-18, F-19, F-20 |
+| B-4 | Tanda de inconsistencias de contratos/policies: `discovery_context_budget` en features.toml, campos legacy en DISCOVERY_MANIFEST, "primera línea" de EXECUTIVE_SUMMARY, procedencia "observado por scan" en KB_DISCOVERY_ENTRY, delimitador de front matter, actor único de hash calculation, INTENT_REFLECTION auto-confirmada en la máquina de estados, mandato de KB en delegaciones condicionado a disponibilidad, namespacing de `<order>` por dominio — **resuelto**: los residuos `F-14` (marcado legacy), `F-17` (procedencia `source_files`) y `F-18` (delimitador del front matter) quedaron decididos por la RFC-79 `Accepted` y materializados por el plan 142 en la versión 11.6.0 | policy | Media (histórica) | F-04, F-07, F-13, F-14, F-15, F-17, F-18, F-19, F-20 |
 | B-5 | Política de clarificación desatendida/asíncrona (defaults declarados + confirmación diferida) para sesiones sin usuario en línea | gap → plan nuevo | Media — toda ejecución automatizada choca con esto | F-05 |
 | B-6 | Subcomandos del runner para H15 (`validate-delegation`, `validate-return`) | gap → plan nuevo (acotado) | Media — hoy requiere importar el módulo a mano | F-08 |
-| B-7 | Enmiendas conceptuales: RFC-18 (recovery→fases tempranas en la máquina de estados), RFC-20 (candidatura de tareas de tooling/CLI), clasificación `project_shape` para repos documentales/de protocolo | modelo → enmienda RFC | Baja — no bloquean; mejoran fidelidad | F-03, F-06, F-16 |
-| B-8 | Modelo de ejecución de delegaciones en runtimes de contexto único + distinción "flag no aplica" vs "obligación ignorada" en métricas | gap → estudio/plan | Baja — dato registrado, sin costo observado | F-09, Anexo B §Métricas |
+| B-7 | Enmiendas conceptuales: RFC-18 (recovery→fases tempranas en la máquina de estados), RFC-20 (candidatura de tareas de tooling/CLI), clasificación `project_shape` para repos documentales/de protocolo — **resuelto**: el shape `documentation` de `project_shape` fue decidido por la RFC-79 `Accepted` y materializado por el plan 142 en la versión 11.6.0 | modelo → enmienda RFC | Baja (histórica) | F-03, F-06, F-16 |
+| B-8 | Modelo de ejecución de delegaciones en runtimes de contexto único + distinción "flag no aplica" vs "obligación ignorada" en métricas — **resuelto**: el evento de sesión `session_risk` fue decidido por la RFC-79 `Accepted` y materializado por el plan 142 en la versión 11.6.0 | gap → estudio/plan | Baja (histórica) | F-09, Anexo B §Métricas |
 
 Descartados como ruido (con justificación en el anexo A): F-10 (deriva de reloj autor-reportado), F-21 (merge de KB legada funcionó según diseño).
 
@@ -979,8 +1735,26 @@ Resolución: los ítems B-1…B-8 se redactan como pares RFC + plan en la **Sext
 serie** (tabla arriba); cada plan referencia su fricción F-xx. B-1 → plan 40
 (y 47), B-2 → planes 29 y 33, B-3 → plan 50, B-4 → planes 37-43 y 53, B-5 →
 plan 44, B-6 → planes 46 y 67 (tests del flujo enforced + subcomandos
-validate-delegation/validate-return), B-7 → planes 29, 43 y 52, B-8 → plan 49.
+validate-delegation/validate-return), B-7 → planes 29 y 52, B-8 → plan 49.
 El actor único de hashes de B-4 (F-17) se completa con el plan 58.
+El Plan 43 (`43-intent-reflection-auto-confirm.md`) corresponde a `B-4`
+(`INTENT_REFLECTION` auto-confirmada sin estado productor, F-04), no a `B-7`;
+la atribución anterior de `B-7` al Plan 43 era un error de trazabilidad,
+corregido en el Plan 133 (`<PLAN-132>:F-2` / `<PLAN-132>:PC-1`, resueltos).
+
+**Resolución corriente de los residuos de payload de B-4/B-7/B-8 (Plan 145,
+2026-09-21).** La primera resolución describe la **Sexta serie** (los planes 37-58)
+y es correcta como historia, pero quedó incompleta: los residuos de payload de
+`B-4`, `B-7` y `B-8` **no** los cerró esa serie. Los cerró la **RFC-79**
+(`Accepted`, `docs/rfc/79-payload-normative-residuals.md`) con su materialización
+por el **plan 142** en la versión **11.6.0** (`protocol/.agents/VERSION`), y el
+`ROADMAP.md:## Pendientes que requieren autorización` lo registra explícitamente:
+`F-14` (el manifest no podía expresar marcado legacy), `F-17` (procedencia de
+`source_files` para ausencias y hechos de árbol) y `F-18` (delimitador del front
+matter de KB entry) quedaron **implementados** dentro de `B-4`; el shape
+`documentation` de `project_shape` (**`B-7`**) y el evento de sesión
+`session_risk` (**`B-8`** residual) también. Ninguno de ellos es trabajo abierto
+hoy.
 
 ## Documentos de soporte
 

@@ -86,7 +86,11 @@ The main data models of the project. One bullet per model:
 - Every model and connection must trace to a real file (`source_files`);
   ground truth is validated by `D01-discovery-output`.
 - If the project has no database, the section states
-  `_No database configuration found._`.
+  `_No database configuration found._`. An absence is a claim established by
+  scanning the project tree, so its `source_files` carries the reserved value
+  `"project_scan"` (`.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md`,
+  §Optional Front Matter (provenance)); it does not name a file that does not
+  exist.
 
 ## Validation
 

@@ -75,6 +75,7 @@ _PROTOCOL_SEGMENTS = {
 _BOUNDARY_SEGMENTS = {
     "plans",
     "rfc",
+    "docs",
     "dev",
     "tools",
     "runtime",
@@ -104,6 +105,24 @@ _ENTRY_LINK_ALLOWLIST = frozenset({
     ".agents/standards/conduct/OPERATIONAL_RULES.md",
     ".agents/standards/quality/PREFLIGHT_CHECKLIST.md",
 })
+
+# Payload files allowed to name ONE specific non-distributed `docs/` path,
+# mapped to the exact path each may name. These are normative-source
+# (provenance) citations: the RFC that authorized the contract, which is
+# repository governance and is not part of the distributed payload
+# (adopters receive only `.agents/` + `AGENTS.md`). Preserving the citation
+# keeps the payload's own authority trail auditable; eliminating it would
+# erase provenance and vendoring the RFC would create a second source of
+# truth. The exception is per (citing file, exact target) pair: naming any
+# other `docs/` path from the same file is still a boundary violation, and
+# adding an entry requires its own authorization and documentation here.
+# Rationale and inventory: the plan that established this (docs/plans/).
+_DOCS_PROVENANCE_ALLOWLIST = {
+    ".agents/contracts/CHANGE_GOVERNANCE.md":
+        frozenset({"docs/rfc/76-change-governance-artifact.md"}),
+    ".agents/contracts/DELIBERATION_REPORT.md":
+        frozenset({"docs/rfc/77-protocol-native-adversarial-deliberation.md"}),
+}
 
 _SKIP_PREFIXES = (
     "http://",
@@ -269,6 +288,17 @@ def classify(
     return "skip"
 
 
+def is_allowed_docs_provenance(source_rel: str, filepart: str) -> bool:
+    """True when this exact (citing file, docs/ target) pair is allowlisted.
+
+    The exception is deliberately exact-match on both sides. It never
+    authorizes a `docs/` directory or prefix: a file listed here may name only
+    the one provenance path registered for it, and any other `docs/`
+    reference remains a boundary violation.
+    """
+    return filepart in _DOCS_PROVENANCE_ALLOWLIST.get(source_rel, frozenset())
+
+
 def verify_reference(
     ref: Reference,
     root: Path,
@@ -285,6 +315,9 @@ def verify_reference(
     if not filepart or not is_candidate(filepart):
         return None
     fp = filepart.replace("\\", "/")
+    source_rel = (root / ref.source).relative_to(payload).as_posix()
+    if is_allowed_docs_provenance(source_rel, fp):
+        return None
     if "/" in fp and Path(fp).name == "AGENTS.md":
         rel = (root / ref.source).relative_to(payload).as_posix()
         if rel not in _ENTRY_LINK_ALLOWLIST:

@@ -96,6 +96,8 @@ Persistent state directories:
 - `.project/skills/` — project-level skills (see `.agents/standards/orchestration/SKILLS.md`); a skill is not a session artifact.
 - `.project/changes/` — the durable, per-project Change Governance Artifacts (contract `.agents/contracts/CHANGE_GOVERNANCE.md`, RFC-76). A Change Governance Artifact is not a session artifact; its filename is derived from the Change identity.
 
+**Session-scoped cross-cutting artifact.** `DELIBERATION_REPORT.md` (contract `.agents/contracts/DELIBERATION_REPORT.md`, RFC-77) is a **session artifact**, not persistent state: it lives in `.project/<session-uuid>/<iteration>/<order>-DELIBERATION_REPORT.md` under the Artifact Safety Rule, is immutable within the session, and has no durable category, registry, global identifier, retention or cleanup mechanism. It MUST NOT be written to a persistent state directory, and it MUST NOT be written to `.project/changes/`.
+
 Rules:
 
 - Session artifacts MUST NOT be written to persistent state directories, and persistent state MUST NOT be placed inside `<session-uuid>/` folders.

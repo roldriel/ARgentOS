@@ -409,3 +409,138 @@ Change Governance Artifact (decisiones D-01/D-02/D-03).
   `declaration` / `protocol_version` / `namespace`), UTF-8, SHA-256;
   `declaration` con trim, `target` verbatim.
 - **Sin migración de datos:** no existe storage previo.
+
+## 16. Change Governance Artifact — alcance del MVP: append/current/governance_position diferidos — 11.3.0 (plan 119, RFC-76)
+
+Cambio **MINOR** (compatible): acota explícitamente el alcance del MVP del
+Change Lifecycle Protocol sin cambiar el modelo del Change Governance Artifact.
+No rompe contratos ni requiere migración.
+
+- **Qué se declara diferido.** La operación de **append**, la derivación de
+  **current** (`current decision` / `current authorization` / `current closure`) y
+  la derivación de **governance_position** quedan **DEFERRED** (invariante
+  `CGA-010`). No se implementa runtime, campo, endpoint, evento, estado ni método
+  para ellas.
+- **Por qué es compatible.** Ninguna de las tres operaciones existía: el runtime
+  sólo expone la materialización completa del artifact. Un adoptante no puede
+  consumir una capacidad que nunca estuvo disponible, por lo que no hay
+  comportamiento eliminado.
+- **Qué cambia en la lectura del contrato.** "Append-only" pasa a describir la
+  **forma** del artifact (historia acumulada que no admite sobrescritura parcial
+  de una colección), no una operación disponible. El contrato incorpora una
+  sección `## Implemented scope (MVP)` que separa lo implementado de lo diferido.
+- **Mecanismo disponible en el MVP.** La acumulación posterior de historia se
+  realiza por **re-materialización completa con historia acumulada**: se provee la
+  historia completa a la llamada de materialización y se reescribe el artifact.
+  **No es append** y no debe documentarse como tal. Consecuencia declarada: los
+  estados intermedios del artifact no se preservan, porque se reescribe el mismo
+  path.
+- **Adopción.** Leer `.agents/contracts/CHANGE_GOVERNANCE.md` (secciones
+  `## Implemented scope (MVP)` y `## Deferred semantics`) y
+  `docs/rfc/76-change-governance-artifact.md:Governance history`. Sin migración de
+  datos.
+
+## 17. Capacidad Protocol-native de deliberación adversarial — 11.4.0 (plan 120, RFC-77)
+
+- **Qué se agrega.** La capacidad `adversarial-deliberation`: una Skill
+  (`skills/adversarial-deliberation/SKILL.md`), un contrato de artefacto
+  (`contracts/DELIBERATION_REPORT.md`), un punto de decisión
+  (`standards/orchestration/DECISIONS.md`, `D7`) y una subsección del rol del
+  Orchestrator (§4.4 *Deliberation Invocation*), más sus registros en taxonomía,
+  boundaries e inventario de skills.
+- **Por qué es compatible (MINOR).** Es una adición **opcional y aditiva**: no
+  redefine ningún campo existente, no altera la semántica de ningún contrato
+  previo y no rompe payloads anteriores. Un adoptante que no invoque la capacidad
+  no observa ningún cambio de comportamiento: la Skill no se activa, no inyecta
+  contexto y no crea obligación alguna.
+- **Qué no cambia.** No se introduce ninguna entidad, `kind` de taxonomía, rol,
+  perfil de worker, fase de workflow, estado, lifecycle state, authority class,
+  registry, ID global de Trial/Jury ni primitive de identidad. No hay feature
+  flag, gate, clasificador automático, voting, confrontación, telemetría ni Prompt
+  Cache. La máquina de estados y el harness no se modifican: una deliberación
+  **no** produce transiciones y **no** satisface ningún ítem `[gate]`.
+- **Frontera de autoridad (importante para el adoptante).** El resultado de una
+  deliberación es `attestation` y recomendación **advisory**. Nunca es
+  verificación independiente, autoridad normativa, decisión humana, autorización,
+  resolución de findings, transición de estado, autorización de release ni
+  autorización de gobernanza. `Verdict ≠ Recommendation ≠ Decision`.
+- **Independencia.** La independencia se registra como **condición de
+  procedencia** (`ejecutores: mismo | distinto`), no como garantía
+  epistemológica. Afirmar independencia epistemológica o presentar la deliberación
+  como verificación independiente está **prohibido**. En ejecución de instancia
+  única debe declararse `ejecutores: mismo` y el resultado se trata como
+  `attestation`.
+- **Persistencia.** `DELIBERATION_REPORT.md` es un artefacto **de sesión**
+  (`.project/<session-uuid>/<iteration>/<order>-DELIBERATION_REPORT.md`),
+  inmutable dentro de la sesión e `informational`. No hay categoría durable,
+  registry, ID global, retención ni cleanup. No se escribe en `.project/changes/`.
+- **Adopción.** Leer `.agents/contracts/DELIBERATION_REPORT.md` (secciones
+  `## Authority boundary`, `## Provenance` y `## Limitations`),
+  `docs/rfc/77-protocol-native-adversarial-deliberation.md` y
+  `.agents/standards/orchestration/DECISIONS.md: D7 — Deliberation invocation`.
+  Sin migración de datos.
+
+## 18. Stable prefix provider-bound — 11.5.0 (plan 121, RFC-78)
+
+- **Qué se agrega.** La definición del **stable prefix** de la materialización
+  dirigida al provider en `standards/context/CONTEXT.md` («Stable prefix
+  (provider-bound materialization)»): la regla de pertenencia (Stable Context ∧
+  scope de la delegación ∧ consumido demostrablemente por el Worker o resoluble
+  determinísticamente del Delegation Payload), el alcance **Core + Worker** del
+  prefijo, el paso **`protocol-bootstrap` declarado y vacío** en el scope del
+  Worker, la exclusión **deliberada y diferida** del segmento **Project/KB**, la
+  frontera con las policies de composición y las no-equivalencias
+  (`Stable Context ≠ Stable Prefix`; `Stable Prefix ≠ Segment ≠ identity ≠
+  persistence ≠ autorización de reuso`; `resolver contenido ≠ cache hit`).
+- **Por qué es compatible (MINOR).** Es una **adición documental**: define una
+  semántica que hasta ahora no estaba escrita y **no** redefine ningún campo,
+  contrato, máquina de estados, workflow, rol, policy de composición ni límite
+  del Context Budget. Nada de lo que un adoptante hacía deja de ser válido.
+- **Qué NO cambia en el Protocol.**
+  - La definición de `SemanticContextIdentity` es la misma
+    (`{protocol_version, project_identity, segments[]}`).
+  - `session_uuid` mantiene su posición y su semántica en la derivación de
+    identidad: el aislamiento **cross-session** no se altera y el reuso del
+    prefijo es **intra-session**.
+  - El aislamiento por proyecto y la prohibición de reuso cross-project (I-008)
+    no se tocan.
+  - No se introduce identity primitive, registry, estado, fase de workflow,
+    authority class, base de datos de cache, feature flag ni gate nuevos.
+  - El Protocol **no** implementa prompt cache del provider: el Provider posee su
+    cache (creación, reuso, evicción, vida útil y billing). El Protocol **no**
+    declara ahorro alguno.
+- **Contrato de runtime (referencia, no Protocol).** La implementación de
+  referencia del runtime introduce el **Ordering Contract v2**
+  (`ordering_contract_version = "2"`) y un componente de contenido explícito en
+  la identidad de materialización (`content_contract_version`), de modo que dos
+  conjuntos de contenido distintos **nunca** comparten una misma
+  `MaterializationIdentity`. El contrato v1 se conserva y sigue siendo válido: un
+  runtime que implemente v1 sigue produciendo las mismas representaciones que
+  antes. Un runtime que **no** implemente un contrato de orden nombrado por la
+  identidad debe **rechazar** la materialización, no reinterpretarla.
+- **Contrato de orden v2 (referencia para un runtime que lo adopte).** El banner
+  de identidad (estático) precede a la **región estable** resuelta; el ancla
+  `SemanticContextIdentity` y el sufijo dinámico la siguen, porque
+  `session_uuid` participa de esa identidad. Así la región estable queda como
+  **prefijo de bytes** invariante a `session_uuid`, task y referencias de
+  artifacts. El paso `protocol-bootstrap` es **vacío** en el scope del Worker:
+  no incluye `_AGENTS.md`, `.agents/INDEX.md`, state machines ni el rol del
+  orquestador — su lectura corresponde al **Orchestrator**, y el contrato de
+  ejecución del Worker no ordena al Worker leerlos.
+- **Qué puede requerir atención del adoptante.** Si el adoptante tiene su propio
+  runtime de materialización y quiere beneficiarse del prefijo estable, debe
+  implementar el contrato v2 y resolver el contenido estable desde el payload:
+  módulo de workflow (`target_phase`), rol (`role_to_adopt`), perfil (`profile`),
+  policy del gate (`harness_policy`), skills (`skills`) y el rol del Worker. Los
+  `input_artifacts` participan **como referencias**; su contenido nunca entra al
+  prefijo. Un elemento nombrado que no se pueda resolver debe producir un **fallo
+  explícito**, nunca contenido inventado.
+- **Limitaciones declaradas.** El prefijo se envía en cada invocación y su
+  tamaño es sustancial; sin evidencia del provider **no** puede afirmarse que el
+  net benefit sea positivo. La evidencia de cache del provider
+  (hit / tokens cacheados / costo) permanece **DEFERRED / NOT VERIFICABLE**
+  porque no existe adapter real autorizado, y el beneficio económico permanece
+  **UNKNOWN**.
+- **Adopción.** Leer `docs/rfc/78-provider-bound-stable-prefix-materialization.md`
+  y `.agents/standards/context/CONTEXT.md` (sección «Stable prefix
+  (provider-bound materialization)»). Sin migración de datos.

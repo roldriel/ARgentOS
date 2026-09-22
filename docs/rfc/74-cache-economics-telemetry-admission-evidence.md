@@ -603,3 +603,12 @@ telemetry backend, sin cambios en contratos existentes ni en state machines.
   Distingue Observed/Estimated/Derived/Unavailable; sin pricing, sin
   thresholds, sin telemetry backend; no redefine RFC-71/72/73. Aceptada por
   plan 93; implementada por plan 91. Versión 10.3.0 (MINOR).
+- 2026-09-21 — **Aclaración de la línea de versiones de `schema_version`**
+  (Plan 141, `HD-12 F-7`). Las citas «`schema 1.2.0`» de la sección de impacto y
+  de esta bitácora describen correctamente el bump `1.1.0 → 1.2.0` que **el
+  propio plan 91** ejecutó sobre `protocol/.agents/contracts/METRICS.md`. El
+  contrato vigente ya **no** está en esa versión: el plan 78 (versión 11.0.0) lo
+  subió a **`2.0.0`**, que es el valor que declara hoy. Las entradas históricas
+  se conservan sin reescribir (RFC-46); esta entrada fija la línea de versiones
+  para que una lectura corriente no tome `1.2.0` como el estado actual. No
+  cambia ninguna decisión de esta RFC.

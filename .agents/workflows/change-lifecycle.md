@@ -164,16 +164,31 @@ correcciones; Incremento 2) and `policies/validation-closure.md`.
 
 Full semantics: `policies/validation-closure.md`; gate tool: C-2.
 
+Do not collapse three distinct concepts: the **validated state** (what the
+validation consumed), the **closure state** (what the checkpoint certifies, by
+GC-1 correspondence with the applicable anchor) and the **materialized closing
+commit tree** (a Git fact about the closing commit). The closing commit may
+carry governance (RFC-75 `Mecanismo 7 — Git Checkpoints`), so
+`validated tree == commit tree` is **not** a requirement.
+
 1. Before declaring `Closed`, complete the plan's
    `## Checkpoint / cierre` record: closure commits (list; multi-commit is
    legal), validated state (reference to the anchor whose validated state
-   corresponds to the closure state), closure state (Git **tree id**), and
-   consistency checkpoint↔anchor.
-2. Run C-2. Consistency requires the scoped content identity of the closure
-   state to equal the anchor's and the declared environmental factors to be
-   unchanged. If they differ → **revalidate first** (A2 on the closure state);
-   do not derive `Closed` with a stale anchor.
-3. `Closed` is derived, not written as a status: `Executed` + applicable
+   corresponds to the closure state), the **closure state identity** (the
+   anchor's delta scoped identity + state identity — the tree id of the staged
+   index at validation time), the **materialized closing commit tree** when the
+   commit already exists, and consistency checkpoint↔anchor.
+2. Keep the declared Scoped Content Identity scope **fixed before** writing the
+   closure records, so the closure state's identity over that scope is the
+   anchor's by construction and the self-reference of the closure artifact
+   cannot change it.
+3. Run C-2. Consistency requires the scoped content identity of the closure
+   state to equal the applicable anchor's and the declared environmental factors
+   to be unchanged. If they differ → **revalidate first** (A2 on the closure
+   state); do not derive `Closed` with a stale anchor. C-2 also verifies the
+   materialized closing commit when it is declared (see `policies/
+   validation-closure.md:5. Checkpoint (GC-1)`).
+4. `Closed` is derived, not written as a status: `Executed` + applicable
    governance + checkpoint + consistency + PASS validation evidence for the
    closure state. A docs-only plan closes without a release (RFC-69).
 
@@ -182,13 +197,58 @@ Full semantics: `policies/validation-closure.md`; gate tool: C-2.
 1. Governance applied: INDEX mirrors updated; RFC Amendment Log entries when
    applicable; findings resolved or explicitly deferred with owner; no
    blocking pending decision without resolution/escalation (PC-1).
-2. Changelog: docs-only plans add an `[Unreleased]` item `(plan N, RFC-N)`;
+2. **Impact determinations (closure).** Record in the Plan's
+   `## Checkpoint / cierre` exactly one of `REQUIRED` / `NOT_REQUIRED` /
+   `DEFERRED` for **each** of two independent determinations (no fourth value,
+   no silence, and never one value covering both):
+
+   **a. Documentation impact** — *did this Change leave any current-state
+   documentation obsolete or incomplete?* The documents that must stay correct
+   (`docs/VERSIONING.md` §9 snapshot, `docs/plans/INDEX.md`, `ROADMAP.md`,
+   `README.md`, `AGENTS.md` / `.agents/AGENTS.md` when active instructions
+   change, and the active policies, workflows or contracts this Change
+   modifies). Historical documents (RFCs, ADRs, closed plans, reports, audits,
+   historical changelog entries, archived documents) are never updated for
+   describing an old state (RFC-46). `REQUIRED` names the affected documents,
+   the aspect affected, the update and its evidence (an empty `REQUIRED` is not
+   acceptable); `NOT_REQUIRED` carries an explicit reason tied to the real
+   scope (the bare value is not acceptable); `DEFERRED` reuses an **existing**
+   pending decision (PC-1) with owner as its continuity — no new pending
+   mechanism.
+
+   **b. Roadmap impact** — *does this Change alter the operational map of
+   future work?* Not "was `ROADMAP.md` edited": `REQUIRED` covers creating,
+   completing, cancelling, reclassifying, re-prioritizing or re-dependency-ing
+   work, discovering new work, or moving an item between candidate / active /
+   blocked; `NOT_REQUIRED` covers changes with no effect on that map (internal
+   refactor without scope change, purely technical fix, historical correction,
+   documentation that does not move the map); `DEFERRED` covers a real impact
+   whose update needs a decision or an authority not yet available, and reuses
+   an **existing** pending decision (PC-1) with owner.
+
+   `REQUIRED` in either one means the represented state must be reconciled
+   before closure, **but it does not mean "always edit `ROADMAP.md`"**: the
+   artifact to update follows ownership / source of truth (`ROADMAP.md` for the
+   operational map, `docs/plans/INDEX.md` for the plan registry, the RFC/ADR
+   indexes, an active plan, or the operational documentation that owns the
+   state). `ROADMAP.md` stays an operational map, never a changelog. The two
+   determinations are independent: `Documentation impact: REQUIRED` with
+   `Roadmap impact: NOT_REQUIRED` is perfectly valid, and so are
+   `REQUIRED`/`REQUIRED` and `NOT_REQUIRED`/`REQUIRED`.
+
+   Payload changes keep their own changelog/`VERSION` rule; neither
+   determination adds a changelog obligation. Full semantics and the Plan-less
+   (Class C) form: `policies/validation-closure.md:5.1 Documentation impact
+   (closure determination)` and `policies/validation-closure.md:5.2 Roadmap
+   impact (closure determination)`. A missing determination blocks closure
+   (stop condition).
+3. Changelog: docs-only plans add an `[Unreleased]` item `(plan N, RFC-N)`;
    no `VERSION` bump, no tag.
-3. Mark the plan `Executed` and derive `Closed` only after the checkpoint
+4. Mark the plan `Executed` and derive `Closed` only after the checkpoint
    above. Committing on `dev` (atomic, Conventional Commit in English) is the
    maintainer's repository action; `Closed` may exist before the commit, but
    the checkpoint records the validated closure state.
-4. Post-close problems: create new artifacts referencing the closed plan
+5. Post-close problems: create new artifacts referencing the closed plan
    (post-close by reference); never reopen or rewrite it.
 
 ## 10. GAP vs ANOMALY vs STOP

@@ -126,7 +126,7 @@ Same SemanticContextIdentity
 = Same Canonical Materialization
 ```
 
-**Honestidad sobre el estado actual (FACT):** el repo no tiene hoy un contrato de materialización canónica: el runtime de referencia implementa dos materializaciones coexistentes y declara que la elección pertenece al runtime (`runtime/README.md:Materializaciones implementadas`). El contrato que falta es exactamente el **contrato de materialización canónica** (variant + serialization + ordering) que haga verificable I-MAT-001. Esta RFC define el invariante como requisito normativo del contrato futuro; no afirma que hoy se cumpla.
+**Honestidad sobre el estado actual (FACT) — actualizado el 2026-09-21; ver `## Amendment Log`.** El repositorio **sí** tiene hoy un contrato de materialización canónica: el runtime de referencia lo implementa desde el plan 89 (`runtime/toolcalls/canonical.py`: contrato de orden versionado, serialización y contrato de contenido) y el plan 121 agregó el orden v2 bajo la RFC-78 (`docs/rfc/78-provider-bound-stable-prefix-materialization.md:5. Ordering Contract v2`). I-MAT-001 es hoy verificable sobre el estado del repositorio, no sólo exigible como requisito futuro. **El enunciado original de esta RFC** —«el repo no tiene hoy un contrato de materialización canónica: el runtime de referencia implementa dos materializaciones coexistentes y declara que la elección pertenece al runtime (`runtime/README.md:Materializaciones implementadas`). El contrato que falta es exactamente el **contrato de materialización canónica** (variant + serialization + ordering) que haga verificable I-MAT-001. Esta RFC define el invariante como requisito normativo del contrato futuro; no afirma que hoy se cumpla.»— era correcto al momento de redactar la RFC y se conserva textualmente en la entrada del `## Amendment Log` del 2026-09-21 (RFC-46: la traza no se reescribe; el registro de qué decía antes es la bitácora).
 
 ### 4. Orden (Ordering Contract)
 
@@ -135,7 +135,7 @@ Same SemanticContextIdentity
 - **Ordering Contract:** contrato versionado que define el orden de materialización de los segmentos estables y del sufijo dinámico. Forma parte de `materialization_version.ordering_contract_version`.
 - **Current Ordering Choice:** la elección concreta que el runtime aplica en un momento dado, dentro de un Ordering Contract.
 
-**Estado del orden concreto: OPEN / DEFERRED.** No existe evidencia en el repo de un orden de materialización normativo: `protocol/.agents/standards/context/CONTEXT.md:1. Priority of information` define la prioridad de **inclusión** (semántica), no el orden de **bytes** de la materialización; RFC-00YL define variantes de rendering, no orden (`docs/rfc/14-prompt-rendering-model.md:Rendering Variants`). La hipótesis `core → project → worker → dynamic` queda registrada como candidato no normativo, sujeto a medición (RFC-D), no como invariant.
+**Estado del orden concreto: RESUELTO — no por esta RFC, sino por la RFC-78 §5.** (Actualizado el 2026-09-21; ver `## Amendment Log`.) El orden **no** pertenece a `SemanticContextIdentity` (RFC-71, sección 4): pertenece a la materialización, que es lo que esta sección establece. Lo que esta RFC dejó abierto fue el **orden concreto**, y `docs/rfc/78-provider-bound-stable-prefix-materialization.md:5. Ordering Contract v2` lo define hoy de forma normativa: ocho steps de contenido, región estable primero y sufijo dinámico después, regla de preservación del prefijo e incompatibilidad declarada para un runtime que no implemente el contrato; `runtime/toolcalls/canonical.py` lo implementa (`ORDERING_CONTRACT_V2`), preserva `ORDERING_CONTRACT_V1` como contrato histórico y rechaza una versión que no implementa, y los tests fijan ambos órdenes. El enunciado original de esta sección —«**Estado del orden concreto: OPEN / DEFERRED.** No existe evidencia en el repo de un orden de materialización normativo: `protocol/.agents/standards/context/CONTEXT.md:1. Priority of information` define la prioridad de **inclusión** (semántica), no el orden de **bytes** de la materialización; RFC-00YL define variantes de rendering, no orden (`docs/rfc/14-prompt-rendering-model.md:Rendering Variants`). La hipótesis `core → project → worker → dynamic` queda registrada como candidato no normativo, sujeto a medición (RFC-D), no como invariant.»— era correcto al momento de redactar la RFC y se conserva textualmente en la entrada del `## Amendment Log` del 2026-09-21.
 
 ### 5. Stable Prefix
 
@@ -436,3 +436,31 @@ Esta RFC **no define**:
   dominios, admisión; invariantes I-MAT-001…I-MAT-012); cambio docs-only, sin
   impacto en `protocol/.agents/`; la implementación de adapters, la telemetría
   y la economía quedan en las RFCs 73–74.
+- 2026-09-21 — **Enmienda del enunciado de estado (`F-3`) y del estado del orden
+  concreto (`HD-9`/`HD-11`), ejecutada por el Plan 141.** Los dos enunciados
+  originales, conservados textualmente aquí porque esta bitácora es el único
+  registro de «qué decía antes» (RFC-46), eran:
+  (a) en `### 3. Canonical Materialization`: «**Honestidad sobre el estado actual
+  (FACT):** el repo no tiene hoy un contrato de materialización canónica: el
+  runtime de referencia implementa dos materializaciones coexistentes y declara
+  que la elección pertenece al runtime (`runtime/README.md:Materializaciones
+  implementadas`). El contrato que falta es exactamente el **contrato de
+  materialización canónica** (variant + serialization + ordering) que haga
+  verificable I-MAT-001. Esta RFC define el invariante como requisito normativo
+  del contrato futuro; no afirma que hoy se cumpla.»;
+  (b) en `### 4. Orden (Ordering Contract)`: «**Estado del orden concreto:
+  OPEN / DEFERRED.** No existe evidencia en el repo de un orden de
+  materialización normativo […] La hipótesis `core → project → worker → dynamic`
+  queda registrada como candidato no normativo, sujeto a medición (RFC-D), no
+  como invariant.».
+  **Qué cambió y por qué.** El **plan 89** (`Executed`, commit `5df8d0e`)
+  implementó el contrato de materialización canónica en
+  `runtime/toolcalls/canonical.py` con `ORDERING_CONTRACT_V1`, y el **plan 121**
+  agregó `ORDERING_CONTRACT_V2` bajo la **RFC-78 §5**, que define el orden
+  concreto de forma normativa y declara la incompatibilidad de un runtime que no
+  implemente el contrato. El estado del repositorio contradecía por lo tanto los
+  dos enunciados. Esta entrada los corrige en el cuerpo de la RFC preservando su
+  texto original aquí, sin modificar el modelo, los invariantes
+  I-MAT-001…I-MAT-012, el alcance de la capacidad ni `runtime/`. El defecto y su
+  destino quedaron registrados por el Plan 121 como `F-3`; el Plan 141 los cierra.
+  Referencia vigente del orden: `docs/rfc/78-provider-bound-stable-prefix-materialization.md:5. Ordering Contract v2`.

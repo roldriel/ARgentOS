@@ -1,7 +1,7 @@
 # Convenciones — Repositorio ARgentOS
 
-> Normativa de gobernanza del repo, migrada desde
-> `plans/INDEX.md` (sección Convenciones) (RFC-69, Plan A). Los INDEX son
+> Normativa de gobernanza del repo, migrada desde la sección Convenciones de
+> `docs/plans/INDEX.md` (RFC-69, Plan A). Los INDEX son
 > registro/navegación; esta carta es normativa. La taxonomía documental
 > (naturaleza, lifecycle, identidad, referencias) vive en `docs/AGENTS.md`.
 
@@ -10,7 +10,9 @@
 - **Verificación**: la batería canónica es la de `docs/VERSIONING.md:4.1 Batería canónica de verificación`
   (`python tools/check_protocol_invariants.py --payload protocol .`,
   `python tools/check_plan_citations.py`, `python tools/check_plan_structure.py`,
-  `python -m pytest tests/`, H13 por juicio). `python tools/check_dist_sync.py`
+  `python tools/check_taxonomy_coherence.py`, `python tools/check_session_artifacts.py`,
+  `python tools/check_version_state.py`, `python -m pytest tests/`, H13 por
+  juicio). `python tools/check_dist_sync.py`
   es local-only y se espera verde solo en `master` (CI no la fetchea);
   `python protocol/.agents/harness/health_check.py` es la sonda del producto
   (adoptantes, modo enforced), no parte de la batería del repo. Los tests del
@@ -113,7 +115,8 @@
   estar trackeado de facto, y hubo una pérdida y restauración). Los planes
   ejecutados se conservan como traza histórica: no se borran; si quedan
   desfasados se marcan `Superseded`. Lo efímero del proyecto son los artefactos
-  de sesión (`.project/`), no los documentos de diseño. `plans/archive/` fue
+  de sesión (`.project/`), no los documentos de diseño. `plans/archive/`
+  (hoy `docs/plans/archive/`) fue
   eliminado del working tree; su contenido sigue disponible en la historia de
   git.
 - **Política de versionado, changelog, tags y estados**: definida en
@@ -426,6 +429,169 @@ determinista sobre los effective inputs repo
   validación realizada sobre un estado Git; el checkpoint relaciona
   posteriormente el closure con ese estado; `Closed` nunca es prerrequisito de
   un anchor ni de una revalidación.
+
+### Change Lifecycle — Estado de cierre, grafo de commit y árbol material (modelo, Plan 134)
+
+Estos tres conceptos **no son equivalentes** y no deben colapsarse. El modelo se
+deriva de ADR-15 (CL-3: el cierre exige un estado Git verificable que permita
+reconstruir el estado validado y gobernado; y su principio *persisted state ≠
+materialized view*) y de RFC-75
+`docs/rfc/75-change-lifecycle.md:Mecanismo 7 — Git Checkpoints`.
+
+| Concepto | Qué es | Identidad | Source of truth |
+|---|---|---|---|
+| **Estado validado** | el estado del repositorio sobre el que la validación se ejecutó | Scoped Content Identity (delta) + state identity (tree id del índice staged) | `## Validation anchor` del artifact |
+| **Estado de cierre** | el estado del repositorio que el checkpoint **certifica**, definido por la relación GC-1 con el anchor aplicable | el de su anchor aplicable (A1 o A2), declarado con el mismo par delta + state identity | `## Checkpoint / cierre` + el anchor referenciado |
+| **Árbol material del commit de cierre** | el tree id del commit de Git que materializa el cierre | tree id de Git, resuelto desde el commit | Git (`git rev-parse <commit>^{tree}`) |
+| **Grafo de commit de cierre** | el conjunto de commits del Plan (multi-commit es legal) | locators (SHA), nunca identidad semántica | Git (`git log`) |
+
+**Regla de consistencia (GC-1).** `Closed` exige que la **identidad scoped del
+estado de cierre** sea igual a la del **anchor aplicable** —la validación cuyo
+estado validado corresponde al estado de cierre— y que los factores ambientales
+declarados no hayan cambiado. Es una identidad de **contenido scoped**, no una
+igualdad de árboles de commit.
+
+**`A ≠ B` es esperado, no una violación.** Sean `A` el árbol del estado validado
+y `B` el del commit que registra el cierre. RFC-75 Mecanismo 7 declara
+explícitamente que *el commit de cierre puede incluir governance* (INDEX,
+CHANGELOG, ADR, docs). Por lo tanto:
+
+- `Closed` **no** requiere `A == B`. El estado de cierre es el estado validado
+  más los registros de gobernanza que el cierre produce; el commit de cierre es
+  su **materialización**, y su árbol puede diferir legítimamente del declarado.
+- Inversamente, `A == B` es posible y correcto cuando el cierre no agrega
+  governance posterior a la validación.
+- La relación que sí es normativa es la de GC-1 (identidad scoped del estado de
+  cierre = identidad del anchor aplicable), junto con la **localizabilidad de su
+  materialización** en Git.
+
+**Auto-referencia y su resolución.** Un artifact de cierre que embebe la
+identidad del estado que él mismo modifica es auto-referencial: si el estado
+fuera `S + registros de cierre`, escribir la identidad de ese estado cambiaría
+el estado, y la identidad no podría alcanzar un punto fijo. La resolución es
+declarativa y no requiere identidad nueva:
+
+1. El **scope declarado** (`Scoped Content Identity`) es el conjunto de paths
+   declarado por el Plan y **fijo antes de escribir los registros de cierre**.
+2. El **estado de cierre** es el estado validado más los registros de gobernanza
+   que el artifact de cierre escribe; su **identidad scoped sobre ese scope** es,
+   por construcción, la del anchor aplicable. Los registros de cierre no agregan
+   paths al scope y por eso no alteran la identidad scoped declarada.
+3. La **identidad del estado de cierre se declara como el par delta scoped
+   identity + state identity del anchor aplicable** (el tree id del índice staged
+   en el momento de la validación), que es recuperable y verificable por
+   correspondencia de estado. No se declara como identidad un elemento
+   auto-referencial del propio registro.
+4. El **commit de cierre se localiza por su mensaje** (el artifact no puede
+   embeber su propio SHA sin ampliar el scope después de validar), y su árbol
+   material se verifica desde Git. Es legítimo y recomendable embeber el SHA del
+   commit de cierre —o su tree id junto al SHA— en el registro **después** de que
+   el commit exista: es el pegamento que cierra la cadena de evidencia, y C-2 lo
+   verifica.
+
+**No confundir con el tree id del commit.** Un tree id solo no dice de qué
+estado es: para un estado de cierre su identidad es la Scoped Content Identity
+del scope declarado, mientras que el tree id del commit de cierre es un hecho de
+Git sobre ese commit. Declarar `Estado de cierre: <tree id del commit de cierre>`
+como identidad de estado es un error semántico: describe la materialización, no
+el estado certificado.
+
+### Change Lifecycle — Determinaciones de cierre: impacto documental e impacto de Roadmap (regla operacional)
+
+Toda Change DEV determina, **en el cierre**, dos impactos **independientes**
+sobre la documentación de estado actual. Las dos determinaciones se registran en
+el mismo cierre que ya existe; **no** son una fase, un estado, un gate, una
+entidad, una autoridad, un namespace de IDs, un registry ni un tracker. Git
+sigue siendo la autoridad sobre el estado efectivo del repositorio: una
+determinación es un enunciado sobre documentación, nunca una fuente de verdad
+del estado.
+
+Vocabulario único para las dos (exactamente un valor, nunca un cuarto valor y
+nunca silencio): **`REQUIRED`** / **`NOT_REQUIRED`** / **`DEFERRED`**.
+
+**Documentation impact** — impacto sobre la **documentación de estado actual**:
+los documentos que describen cómo funciona o en qué estado está el repositorio
+hoy y que por eso deben permanecer correctos (snapshot de
+`docs/VERSIONING.md:9. Estado actual`, `docs/plans/INDEX.md`, `ROADMAP.md`,
+`README.md`, `AGENTS.md` y `.agents/AGENTS.md` cuando cambia una instrucción
+activa, las policies y workflows activos de `.agents/` y los contratos activos
+cuya semántica el Change modifica; más cualquier otro documento que el propio
+Change identifique como estado actual).
+
+**Roadmap impact** — impacto sobre el **mapa operativo del trabajo futuro**. No
+es "¿se editó `ROADMAP.md`?": es *¿el Change altera la representación operativa
+del trabajo futuro, en la fuente de verdad que la posee?*
+
+- `REQUIRED` — el Change modifica materialmente el mapa operativo del trabajo
+  futuro: crea trabajo futuro; completa trabajo del mapa; cancela trabajo;
+  cambia el estado, la prioridad o la dependencia de un ítem; descubre trabajo
+  nuevo; convierte un candidato en trabajo activo o trabajo activo en
+  bloqueado/requiere autorización; o cambia sustancialmente la naturaleza de un
+  ítem.
+- `NOT_REQUIRED` — el Change no modifica el mapa operativo del trabajo futuro:
+  refactor interno sin cambio de alcance, corrección puramente técnica sin
+  impacto sobre el backlog, corrección histórica que no altera trabajo futuro,
+  o documentación que no cambia el mapa operativo.
+- `DEFERRED` — existe impacto o impacto potencial, pero su actualización
+  requiere una decisión o una autoridad que todavía no está disponible.
+
+Reglas:
+
+- **`REQUIRED` no significa "editar `ROADMAP.md`".** Significa que el estado
+  operativo representado por el mapa debe quedar **reconciliado antes del
+  cierre**, salvo un deferment autorizado explícito. El artefacto que debe
+  actualizarse se determina por **ownership / source of truth**: `ROADMAP.md`
+  (mapa operativo), `docs/plans/INDEX.md` (registro de planes),
+  `docs/rfc/INDEX.md` / `docs/adr/INDEX.md` (registro de RFCs/ADRs), un plan
+  activo o la documentación operativa que efectivamente posee el estado.
+- `ROADMAP.md` sigue siendo un **mapa operativo**, no un changelog: no cataloga
+  la historia cerrada ni duplica el estado detallado de los planes.
+- **Las dos determinaciones son independientes.** Cualquier combinación es
+  válida, por ejemplo `Documentation impact: REQUIRED` con
+  `Roadmap impact: NOT_REQUIRED` (el Change deja documentación obsoleta sin
+  alterar el mapa de trabajo futuro), o `Documentation impact: NOT_REQUIRED`
+  con `Roadmap impact: REQUIRED` (el Change sólo mueve el mapa). Una no implica
+  ni sustituye a la otra y no se fusionan en un único valor.
+- **Registro mínimo.** `REQUIRED` nombra los documentos afectados (rutas
+  repo-relative exactas), el aspecto afectado, la actualización correspondiente
+  y la evidencia de que se hizo o se incorporó correctamente antes del cierre;
+  un `REQUIRED` vacío no es aceptable. `NOT_REQUIRED` exige una razón explícita
+  y verificable ligada al alcance real del Change; el valor desnudo, o
+  "creo que no afecta" / "se revisó documentación" sin el resultado, no es
+  evidencia. `DEFERRED` reutiliza una **pending decision existente** (PC-1) como
+  continuidad, con owner; no crea un mecanismo de pending nuevo, y un impacto
+  diferido sin pending decision que lo gobierne no es `DEFERRED` sino una
+  condición bloqueante sin resolver.
+- **Exclusión histórica.** La documentación histórica nunca se actualiza por
+  describir un estado antiguo: RFCs históricas, ADRs históricos, planes
+  cerrados, reportes, auditorías, entradas históricas del changelog y
+  documentos archivados conservan su contexto (RFC-46); los problemas
+  post-cierre producen artefactos nuevos que referencian al cerrado.
+- **Preempción del payload.** Los cambios de `protocol/.agents/` conservan su
+  propia obligación (entrada en `CHANGELOG.md` y bump de
+  `protocol/.agents/VERSION` según `docs/VERSIONING.md:3. Versionado` y
+  `docs/VERSIONING.md:5. Changelog`). Estas determinaciones no la reemplazan ni
+  la debilitan, y nunca exigen una entrada de changelog por sí mismas.
+- **Snapshot de versiones.** El snapshot de `docs/VERSIONING.md:9. Estado
+  actual` se reconcilia en la promoción/release o cuando el Change tiene
+  impacto explícito sobre él; no se actualiza en cada Change, y una divergencia
+  frente a Git nunca se usa para inventar una versión ni para modificar ese
+  documento arbitrariamente (`git tag` + `protocol/.agents/VERSION` prevalecen).
+- **Dónde se registra.** En el registro `## Checkpoint / cierre` del Plan (el
+  template lleva los dos campos), de modo que las determinaciones forman parte
+  del cierre que el checkpoint documenta. Para un cambio sin Plan (Clase C /
+  acción directa) van con la clasificación de intake en el mensaje de commit
+  —`Documentation impact: REQUIRED: <rutas> — <evidencia>` y
+  `Roadmap impact: NOT_REQUIRED: <razón>`—, en el lugar donde el Change
+  Lifecycle ya exige clasificar un cambio sin Plan.
+- **Enforcement.** La obligación es de gobernanza, no una validación semántica:
+  no hay checker que interprete prosa ni que decida si un documento está
+  actualizado, y no se agrega uno. La ausencia de una determinación, o una
+  clasificación fuera de los tres valores, es una **condición de stop**.
+
+Semántica operativa y condiciones de stop:
+`.agents/policies/validation-closure.md:5.1 Impacto documental e impacto de
+Roadmap (determinaciones de cierre)`.
 
 ### Change Lifecycle — Findings y correcciones (regla operacional; LC-1, Incremento 2)
 

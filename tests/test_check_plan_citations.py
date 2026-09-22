@@ -7,7 +7,6 @@ codes, legacy path mapping (RFC-69) and the stdlib-only constraint.
 
 from __future__ import annotations
 
-import ast
 import subprocess
 import sys
 from pathlib import Path
@@ -17,9 +16,8 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[1]
 TOOL = REPO_ROOT / "tools" / "check_plan_citations.py"
 
-sys.path.insert(0, str(REPO_ROOT / "tools"))
-
 import check_plan_citations as cpc  # noqa: E402
+from testsupport import assert_tool_imports_only_stdlib  # noqa: E402
 
 
 def make_repo(tmp_path: Path, files: dict[str, str]) -> Path:
@@ -414,17 +412,5 @@ def test_legacy_bare_filename_does_not_hide_missing_file(tmp_path):
 
 # --- AC-7: stdlib only ----------------------------------------------------------
 
-_STDLIB = set(sys.stdlib_module_names)
-
-
 def test_tool_uses_only_stdlib():
-    tree = ast.parse(TOOL.read_text(encoding="utf-8"))
-    imported = set()
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            imported.update(a.name.split(".")[0] for a in node.names)
-        elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
-            imported.add(node.module.split(".")[0])
-    local = {"check_plan_citations", "legacy_paths"}
-    third_party = imported - _STDLIB - local
-    assert third_party == set(), f"third-party imports: {third_party}"
+    assert_tool_imports_only_stdlib(TOOL, {"check_plan_citations", "legacy_paths"})

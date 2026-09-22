@@ -27,6 +27,20 @@ Rules:
 - This dictionary is validated by the Orchestrator's judgment against harness
   policy `.agents/harness/policies/H13-protocol-taxonomy.md`.
 
+**The `tags` vocabularies are documented, not closed.** Each list under `tags`
+(`domain`, `lifecycle`, `artifact`, `harness`, `kind`) records the values in
+current use so that artifacts, filters and readers share one reference. A new
+value is a **documented vocabulary addition**, not a violation: `tags.kind` in
+particular is **non-exhaustive/extensible**. The lists are not an enum, no
+checker enforces membership, and adding a value here does not by itself change
+any artifact's meaning. What *is* normative is the metadata block itself —
+H13 requires every in-scope protocol file to declare `taxonomy`, `kind` and
+`domain`, and H13 rules 10/11 additionally require the declared `kind` to agree
+with the taxonomy for **workflow** and **contract** files specifically.
+`state_machine` and `taxonomy` are documented members of `tags.kind` for that
+reason: the four domain state machines and this dictionary use them, and the
+list records the vocabulary rather than constraining it.
+
 ```yaml
 domains:
   core:
@@ -1160,6 +1174,20 @@ entities:
       - core:ANALYZING_TASK
       - core:PLANNING
     contract: .agents/contracts/CHANGE_GOVERNANCE.md
+
+  DELIBERATION_REPORT.md:
+    kind: artifact
+    domain: cross-cutting
+    lifecycle: null
+    tag: deliberation
+    description: Structured, verifiable record of one adversarial-deliberation instance (RFC-77); session-scoped and informational; two attributed passes with commitment before revelation, comparative evaluation per criterion, synthesis with preserved disagreement, one advisory verdict and an optional advisory recommendation; carries no authority and satisfies no gate.
+    produced_by:
+      - core:TASK_RECEIVED
+    consumed_by:
+      - core:TASK_RECEIVED
+      - core:ANALYZING_TASK
+      - core:PLANNING
+    contract: .agents/contracts/DELIBERATION_REPORT.md
 
   # -------------------------------------------------------------------------
   # Harness policies
@@ -2363,6 +2391,32 @@ entities:
       - core:COMPLETED
     file: .agents/contracts/METRICS.md
 
+  contract:CHANGE_GOVERNANCE.md:
+    kind: contract
+    domain: cross-cutting
+    artifact: CHANGE_GOVERNANCE.md
+    lifecycle: null
+    produced_by:
+      - core:TASK_RECEIVED
+    consumed_by:
+      - core:TASK_RECEIVED
+      - core:ANALYZING_TASK
+      - core:PLANNING
+    file: .agents/contracts/CHANGE_GOVERNANCE.md
+
+  contract:DELIBERATION_REPORT.md:
+    kind: contract
+    domain: cross-cutting
+    artifact: DELIBERATION_REPORT.md
+    lifecycle: null
+    produced_by:
+      - core:TASK_RECEIVED
+    consumed_by:
+      - core:TASK_RECEIVED
+      - core:ANALYZING_TASK
+      - core:PLANNING
+    file: .agents/contracts/DELIBERATION_REPORT.md
+
   contract:KB_DISCOVERY_REPORT.md:
     kind: contract
     domain: discovery
@@ -2951,6 +3005,8 @@ tags:
     - delegation
   kind:
     - state
+    - state_machine
+    - taxonomy
     - artifact
     - workflow
     - harness

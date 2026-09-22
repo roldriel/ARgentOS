@@ -19,7 +19,8 @@ install.
 - `tools/` — repository verification tooling (the checkers run by CI and the
   local battery).
 - `runtime/` — reference implementation of Execution Context materialization
-  (prompt and tool calls). See `runtime/README.md`.
+  (prompt and tool calls) and the DEV Autonomous Orchestrator host
+  (`runtime/orchestrator/`, plan 122). See `runtime/README.md`.
 - `tests/` — centralized test suites for `tools/` and `runtime/`. They never
   depend on the `protocol/` payload and never include the harness tests; see
   `tests/AGENTS.md`.
@@ -35,6 +36,11 @@ install.
     documents.
   - `docs/glossary/` — descriptive terminology registry (DEV/Protocol bridge,
     non-normative; rules in `docs/CONVENTIONS.md`).
+- **Where does a new artifact belong?** `docs/placement-contract.md` is the
+  normative source for determining the canonical location of an artifact in this
+  repository. Read it before creating an artifact whose placement is not
+  obvious; it resolves placement deterministically or requires you to stop. It
+  is separate from this file and is not restated here.
 - `README.md`, `CHANGELOG.md`, `ROADMAP.md` — entry point and release
   documentation at the repository root.
 

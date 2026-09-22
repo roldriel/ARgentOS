@@ -14,8 +14,8 @@ kind: contract
 domain: discovery
 artifact: INTER_WORKER_MESSAGE.md
 lifecycle: discovery
-produced_by: [discovery:DISCOVERY_INIT]
-consumed_by: [discovery:DISCOVERY_MERGE]
+produced_by: [discovery:DISCOVERY_INIT, discovery:DISCOVERY_ENV, discovery:DISCOVERY_STACK, discovery:DISCOVERY_FRAMEWORK, discovery:DISCOVERY_PATTERNS, discovery:DISCOVERY_BUSINESS, discovery:DISCOVERY_MERGE]
+consumed_by: [discovery:DISCOVERY_INIT, discovery:DISCOVERY_ENV, discovery:DISCOVERY_STACK, discovery:DISCOVERY_FRAMEWORK, discovery:DISCOVERY_PATTERNS, discovery:DISCOVERY_BUSINESS, discovery:DISCOVERY_MERGE]
 ---
 
 # INTER_WORKER_MESSAGE Contract

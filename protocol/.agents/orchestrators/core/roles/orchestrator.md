@@ -230,6 +230,88 @@ This payload is an inter-orchestrator invocation (core → discovery), not an in
 
 The decision and the received status are recorded in `SESSION_LOG.md`.
 
+### 4.4 Deliberation Invocation (adversarial-deliberation)
+
+The Orchestrator MAY obtain **adversarial deliberation** on a candidate decision by invoking
+the Protocol capability `adversarial-deliberation`. This is decision point `D7` of
+`.agents/standards/orchestration/DECISIONS.md`.
+
+**What it is.** A bounded procedure that produces **attributed adversarial evidence** about a
+candidate decision before the decision is taken: two evaluation passes with declared posture
+whose conclusions are committed before revelation, a comparative evaluation per criterion, a
+synthesis that preserves disagreement, one advisory verdict, and an optional advisory
+recommendation. Its record is `.agents/contracts/DELIBERATION_REPORT.md`.
+
+**It is not a workflow phase, a state or a gate.** It creates no state transition, satisfies
+no `[gate]` item, and adds no obligation to any task that does not invoke it. It does not
+exist in the state machine and is never registered in `state.json`.
+
+**Invocation rules.**
+
+- **Who decides.** The Orchestrator decides, on an explicit human request, or on its own
+  judgment with a **registered motive**. The motive is recorded in `SESSION_LOG.md` as a
+  `Decision` entry with its `Evidence`.
+- **PROHIBITED:** an automatic classifier that decides whether to invoke, how deep to go, or
+  which posture to assign. There is no automatic routing and no autonomous invocation.
+- The capability **MUST NOT** invoke itself recursively, and a deliberation pass **MUST NOT**
+  delegate to another Worker.
+- Invocation is **opt-in**. It is not mandatory for any task profile, and it is not activated
+  merely because a task is classified `complex`.
+
+**When to invoke.** The decision has at least two material directions, or its viability is
+genuinely in doubt; and the outcome can change what will be done. Typical motives:
+material uncertainty; competing viable alternatives; unresolved disagreement; high-risk
+decision; ambiguous evidence; an explicit request for an adversarial challenge.
+
+**When not to invoke.** Mechanical or trivial changes; low-impact reversible decisions where
+deliberating costs more than deciding; cases whose real blocker is **missing evidence** (the
+action there is to obtain the evidence); cases whose criterion is already fixed by governing
+authority (there is no preference to dispute); and cases where no evidence would be recorded.
+
+**Procedure.** The Orchestrator:
+
+1. declares the **frame**: the problem as a **reference** (never a new entity), the
+   candidate(s) with **local** labels, the mandatory evaluable criteria, the mode
+   (`viability`), and the declared limits (two passes, no confrontation, one synthesis);
+2. registers the **invocation motive** in `SESSION_LOG.md`;
+3. constructs a **distinct Execution Context per pass** through the Execution Context
+   Assembly Process (§5), assigning each pass its posture, its received material and its
+   withheld material — the second pass MUST NOT receive the first pass's conclusion before
+   its own commitment;
+4. delegates each pass to a `worker` with the `adversarial-deliberation` skill activated and
+   the `DELIBERATION_REPORT.md` contract as its output contract;
+5. enforces **commitment before revelation** and records the revelation point;
+6. collects the attributed results, performs the comparative evaluation per criterion, and
+   preserves disagreement rather than adjudicating it;
+7. produces the synthesis, the verdict and the optional recommendation;
+8. materializes the artifact at
+   `.project/<session-uuid>/<iteration>/<order>-DELIBERATION_REPORT.md`;
+9. records its **interpretation** in the report's `## Orchestrator interpretation` section,
+   separate from the passes' raw conclusions.
+
+**Authority.** The verdict is **`attestation` evidence**, never verification
+(`.agents/standards/quality/EVIDENCE.md`). The Orchestrator treats it exactly as it treats
+any other advisory output: with **recommendation confidence**
+(`.agents/standards/quality/CONFIDENCE.md`, §Specialization: recommendation confidence),
+recording the acceptance or the **override** and its reason in `SESSION_LOG.md`. The verdict
+never enables a transition by itself, and the state machine and the harness continue to veto
+identically.
+
+The Orchestrator **MUST NOT**: declare independence or truth; select a winner because one
+pass sounds more confident; convert disagreement into consensus; manufacture authority it
+does not already possess; substitute the verdict for a human decision that existing authority
+requires; or resolve a Finding through a deliberation.
+
+The Orchestrator **MUST** preserve, as first-class information: agreement, disagreement,
+uncertainty, missing evidence and limitations.
+
+**Provenance.** Both passes declare `ejecutores: mismo | distinto`, their received, shared and
+withheld material, and their commitment. Affirming **epistemological independence** is
+PROHIBITED, as is presenting the deliberation as independent verification. When the same
+executor performs both passes, `ejecutores: mismo` MUST be recorded and the result is treated
+as an attestation. See `.agents/contracts/DELIBERATION_REPORT.md`, §Provenance, and the
+guarantee classification in `.agents/harness/INDEX.md`, §Guarantee catalog.
+
 ### 5. Worker Delegation
 
 Before each delegation, the Orchestrator performs the **Execution Context Assembly Process**: the conceptual decomposition of Context Assembly into seven responsibilities — **Source Discovery** (determine which sources participate: role, profile, project context, skills, standards, policies), **Context Collection** (obtain the information from those sources), **Context Organization** (classify it into the Execution Context categories: Identity Context, Task Context, Knowledge Context, Capability Context, Execution Metadata), **Context Candidate Prioritization** (establish a relative priority relation among the available context candidates before composition; the ordering may be partial and may contain equivalent-priority groups, and it implies neither inclusion nor exclusion — ordering without selection), **Context Resolution** (transform the prioritized candidates into a conceptually consistent **Resolved Candidate Set** — one in which no pending conflict remains — before composition; it does not administer the Context Budget, it only observes its constraints as a potential source of conflicts, and it defines no algorithms, policies, or tie-breaking rules), **Context Composition** (build the final Execution Context from the resolved candidate set under a **Context Budget** — a purely conceptual constraint on the amount of information that can be included; the protocol defines no size, unit, or administration for it; Composition operates only on an already-resolved set and does not decide conflicts between candidates), and **Context Delivery** (deliver it through the delegation payload). This is a conceptual decomposition, not a new workflow stage; the field list below already constitutes the process.
@@ -249,7 +331,7 @@ Before each delegation, the Orchestrator performs the **Execution Context Assemb
 **Delegation execution modes.** Two declared modes, recorded in `SESSION_LOG.md` at session start:
 
 - **Subagent mode (recommended):** each phase is executed by a fresh `worker` subagent, as described above.
-- **Single-instance mode (allowed with restrictions):** one instance adopts each role in turn. It is permitted only when the runtime cannot spawn subagents, and it carries mandatory mitigations: (a) the verification phase (07) is executed as a separate, explicit judgment pass with written evidence per checklist item, never as self-confirmation of one's own output; (b) the Orchestrator MUST NOT accept its own recommendation without recorded evidence; (c) the mode is recorded as a session risk in `METRICS.md`. The mode never changes the authority model: the harness and the state machine veto identically in both.
+- **Single-instance mode (allowed with restrictions):** one instance adopts each role in turn. It is permitted only when the runtime cannot spawn subagents, and it carries mandatory mitigations: (a) the verification phase (07) is executed as a separate, explicit judgment pass with written evidence per checklist item, never as self-confirmation of one's own output; (b) the Orchestrator MUST NOT accept its own recommendation without recorded evidence; (c) the mode is recorded as a session risk in `METRICS.md` — a session-level `session_risk` event carrying `risk = "single_instance_delegation"` and the applied `mitigations` (contract: `.agents/contracts/METRICS.md`, §Event catalog) — in addition to the mode declared in `SESSION_LOG.md`. The mode never changes the authority model: the harness and the state machine veto identically in both.
 - The worker executes exactly one phase, returns the output artifact, and terminates.
 
 ### 5.1 Profile Selection Before Execution

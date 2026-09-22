@@ -88,18 +88,235 @@ artifact, not "having a commit", not a SHA.
 
 Record (plan `## Checkpoint / cierre`):
 
-- Closure commits (list; multi-commit legal).
+- Closure commits (list; multi-commit legal). The closing commit is located by
+  its message; embedding its SHA (or its tree id next to the SHA) **after** the
+  commit exists is legal and recommended: it is the link that makes the
+  materialized closure verifiable.
 - Validated state (reference to the anchor whose validated state corresponds
   to the closure state).
-- Closure state (Git tree id).
+- Closure state identity: the **delta scoped identity + state identity of the
+  applicable anchor** (the tree id of the staged index at validation time),
+  declared as the identity of the state the checkpoint certifies. It is **not**
+  the tree of the closing commit.
+- Materialized closing commit tree (optional, once the commit exists): the tree
+  id resolved from the closing commit, recorded as a Git fact and verified by
+  C-2. Its divergence from the closure state identity is expected when the
+  closing commit carries governance records.
 - Consistency checkpoint↔anchor: PASS/FAIL + evidence.
 - Governance applied and derived condition.
+- Documentation impact determination (5.1).
+- Roadmap impact determination (5.2).
 
-Consistency rule: `Closed` requires the scoped content identity of the closure
-state to equal that of the applicable anchor **and** declared environmental
+**Three concepts that must not be collapsed** (full model:
+`docs/CONVENTIONS.md:Change Lifecycle — Estado de cierre, grafo de commit y
+árbol material (modelo, Plan 134)`): the **validated state** (what the
+validation consumed), the **closure state** (what the checkpoint certifies,
+identified by GC-1 against the applicable anchor), and the **materialized
+closing commit tree** (a Git fact about the closing commit).
+
+Consistency rule: `Closed` requires the **scoped content identity of the closure
+state** to equal that of the applicable anchor **and** declared environmental
 factors unchanged. If a revalidation A2 covers the closure state, evaluate
 against A2; if the closure state is still A1's state, against A1. Existence of
 A2 never removes A1. Any difference → **revalidate before `Closed`**.
+
+**Closure content identity vs. commit tree.** RFC-75 Mecanismo 7 states that the
+closing commit **may include governance** (INDEX, CHANGELOG, ADR, docs). The
+closure state is therefore the validated state plus the governance records the
+closure produces, and its identity is the applicable anchor's; the closing commit
+is that state's **materialization**, whose tree may legitimately differ. `Closed`
+does **not** require `validated tree == commit tree`. The self-reference of a
+closure artifact is resolved declaratively: the declared Scoped Content Identity
+scope is fixed before the closure records are written, and the closure state
+identity is declared as the anchor's identity pair (delta + state identity),
+never as an identity element that the record itself would change.
+
+**C-2 contract (what the checker verifies).** C-2 verifies the following
+relations and nothing else:
+
+| # | Relation | Evidence source | Signal |
+|---|---|---|---|
+| R1 | the checkpoint record is present and complete for a regime member | document | `N/A` / `GAP` |
+| R2 | the **closure state identity** corresponds to the applicable anchor's validated state identity, selected by **correspondence** (never recency) | declared identity + `## Validation anchor` | `ANOMALY` on contradiction |
+| R3 | `Closed` carries PASS evidence for that closure state | document | `ANOMALY` |
+| R4 | a declared **materialized closing commit tree** is consistent with the resolved closing commit; and any divergence between the declared closure state identity and the resolved closing commit tree is reported with its governance attribution requirement | Git | report / `ANOMALY` on a contradiction between two declared values |
+
+C-2 does **not** require a declared closure state to equal the tree of the final
+closing commit, because the closing commit may carry governance records — that
+divergence is expected, and treating it as a contradiction would forbid what
+RFC-75 explicitly allows. C-2 does require the declared closure state to
+correspond to a registered validation (R2), and it verifies the materialized
+locators when they are declared (R4) instead of leaving them unverified.
+
+### 5.1 Documentation impact (closure determination)
+
+Every DEV Change determines, at closure, its impact on **current-state
+documentation**. This is a governance record inside the closure that already
+exists, not a phase, a state, a gate, an entity, an authority, an ID
+namespace, a registry or a tracker. Git remains the authority on the effective
+state; the determination is a statement about documentation, never a source of
+truth for the repository state.
+
+Exactly one classification, never a fourth value and never silence:
+
+| Classification | Meaning |
+|---|---|
+| `REQUIRED` | the Change modifies, invalidates, makes obsolete or otherwise alters information that must stay correct in current-state documentation |
+| `NOT_REQUIRED` | the Change does not alter any current-state documentation that must stay in sync |
+| `DEFERRED` | a documentation impact is identified, but the update cannot or must not be made yet |
+
+Minimum record:
+
+- **`REQUIRED`** — affected documentation (exact repo-relative paths), the
+  aspect affected, the update that corresponds, and the evidence that the
+  update was made or correctly incorporated into the Change before closure. An
+  empty `REQUIRED` is not acceptable.
+- **`NOT_REQUIRED`** — an explicit, verifiable reason tied to the real scope of
+  the Change. The bare classification is not acceptable: "creo que no afecta",
+  "parece que no", "no fue necesario" or "se revisó documentación" without the
+  result are not evidence.
+- **`DEFERRED`** — the documentation left pending, why it is deferred, and the
+  **existing** pending decision (PC-1) that governs the deferral and holds the
+  continuity, with owner. `DEFERRED` creates no new pending mechanism: it
+  reuses per-artifact pending decisions. An impact deferred without an owning
+  pending decision is not `DEFERRED`; it is an unresolved blocking condition.
+
+**Current-state scope.** A document is current-state when it describes how the
+repository currently works or in what state it currently is. Consider at
+least: `docs/VERSIONING.md` (in particular its current-state snapshot),
+`docs/plans/INDEX.md` (navigation and current-state information), `ROADMAP.md`,
+`README.md`, `AGENTS.md` and `.agents/AGENTS.md` when active
+behaviour/instructions change, active policies under `.agents/policies/`,
+active workflows under `.agents/workflows/`, and active contracts whose
+semantics the Change modifies; plus any other document the Change itself
+identifies as current-state.
+
+**Historical exclusion.** Historical documentation is never updated merely
+because it describes an older state: historical RFCs, historical ADRs, closed
+plans, historical reports, audits, historical changelog entries and archived
+documents. Historical documentation keeps its historical context (RFC-46);
+post-close problems produce new artifacts that reference the closed one.
+
+**Preemption.** Changes to `protocol/.agents/` preempt this rule and keep their
+own obligation: the `CHANGELOG.md` entry and the `protocol/.agents/VERSION`
+bump per `docs/VERSIONING.md` §3/§5. This determination neither replaces nor
+weakens the changelog rule, and it never requires a changelog entry of its own.
+
+**VERSIONING snapshot.** The current-state snapshot of `docs/VERSIONING.md` §9
+is reconciled at promotion/release, or when the Change has an explicit impact
+on that snapshot; it is never updated in every Change. A divergence between the
+snapshot and Git is never used to invent a version or to modify that document
+arbitrarily; Git (`git tag` + `protocol/.agents/VERSION`) prevails.
+
+**Where it is recorded.** In the `## Checkpoint / cierre` record of the Plan
+(the template carries the field), so the determination is part of the closure
+the checkpoint documents. For a change with no Plan (Class C / direct action),
+it goes with the intake classification in the commit message — `REQUIRED:
+<paths> — <evidence>` or `NOT_REQUIRED: <reason>`, or `DEFERRED: <paths> —
+<pending-decision ref>` —, in the place where the Change Lifecycle already
+requires the classification of a Plan-less change.
+
+**Enforcement.** The obligation is governance, not a semantic validation. No
+checker interprets prose or decides whether a document is up to date, and no
+checker is added for this. Absence of the determination, or a classification
+outside the three values, is a stop condition (see §7).
+
+**`REQUIRED` is an obligation of state, never a write authorization (plan 138;
+generalized by plan 139, `<PLAN-138>:PC-1`).** A `REQUIRED` determination states
+what must be **true** of the repository; it does not authorize writing the artifact
+that would satisfy it, and it does not widen the scope the Change was authorized to
+modify (`.agents/policies/supervised-autonomous-execution.md` §1.1). When the
+artifact that owns the documentation is outside the authorized scope, the update is
+recorded `DEFERRED` with the **existing** pending decision (PC-1) that governs it,
+and the artifact is **not** written: the alternative is not "satisfy the
+obligation anyway" but "record the obligation and stop at the scope boundary".
+
+Authorization is **never inferred**. Not by the classification itself
+(`REQUIRED`/`DEFERRED`), not by semantic proximity (a similar name, a containing or
+contained path, a plural, a precedent), not by documentary dependency (the artifact
+is cited by, referenced from or conceptually part of the Change), and not by the
+closure requirement (the Change cannot be closed "cleanly" without it). None of
+those is a permission, and the host does not resolve a contradictory reading by
+inference: it records the obligation and escalates with evidence.
+
+### 5.2 Roadmap impact (closure determination)
+
+Every DEV Change determines, at closure and **independently of §5.1**, its
+impact on the **operational map of future work**. Same vocabulary — exactly one
+of `REQUIRED` / `NOT_REQUIRED` / `DEFERRED`, never a fourth value and never
+silence — and the same governance nature: a record inside the closure that
+already exists, not a phase, state, gate, entity, authority, ID namespace,
+registry or tracker.
+
+The question is not "was `ROADMAP.md` edited?" but *does this Change alter the
+operational representation of future work, in the source of truth that owns it?*
+
+| Classification | Meaning |
+|---|---|
+| `REQUIRED` | the Change materially modifies the operational map of future work: it creates future work, completes work of the map, cancels work, changes an item's state, priority or dependency, discovers new work, turns a candidate into active work or active work into blocked/requires-authorization, or substantially changes the nature of an item |
+| `NOT_REQUIRED` | the Change does not modify the operational map of future work: an internal refactor without scope change, a purely technical fix with no backlog impact, a historical correction that does not alter future work, or documentation that does not change the operational map |
+| `DEFERRED` | an impact or potential impact exists, but its update requires a decision or an authority that is not yet available |
+
+Rules:
+
+- **`REQUIRED` does not mean "always edit `ROADMAP.md`".** It means the
+  operational state the map represents must be **reconciled before closure**,
+  unless an explicit authorized deferment exists. Which artifact must be updated
+  follows **ownership / source of truth**: `ROADMAP.md` (the operational map),
+  `docs/plans/INDEX.md` (plan registry), `docs/rfc/INDEX.md` /
+  `docs/adr/INDEX.md` (RFC/ADR registries), an active plan, or the operational
+  documentation that actually owns the state.
+- `ROADMAP.md` remains an **operational map, not a changelog**: it does not
+  catalogue closed history and does not duplicate the detailed state of plans.
+- **The two determinations are independent.** Every combination is valid —
+  `Documentation impact: REQUIRED` with `Roadmap impact: NOT_REQUIRED`,
+  `Documentation impact: REQUIRED` with `Roadmap impact: REQUIRED`, or
+  `Documentation impact: NOT_REQUIRED` with `Roadmap impact: REQUIRED`. Neither
+  implies nor replaces the other and they are never merged into one value.
+- **Minimum record.** `REQUIRED` — the artifacts/items added, completed,
+  cancelled, reclassified or re-prioritized, the update made and its evidence.
+  `NOT_REQUIRED` — an explicit, verifiable reason tied to the real scope of the
+  Change (the bare classification is not acceptable). `DEFERRED` — the impact
+  left pending, why it is deferred, and the **existing** pending decision (PC-1)
+  that governs the deferral and holds the continuity, with owner. An impact
+  deferred without an owning pending decision is not `DEFERRED`; it is an
+  unresolved blocking condition.
+- **Historical exclusion and payload preemption** are the same as §5.1, and the
+  `docs/VERSIONING.md` current-state snapshot is likewise reconciled at
+  promotion/release, never in every Change.
+
+**Where it is recorded.** Next to the §5.1 determination in the Plan's
+`## Checkpoint / cierre` record (the template carries the field). For a change
+with no Plan (Class C / direct action) it goes with the intake classification in
+the commit message — `Roadmap impact: REQUIRED: <items> — <evidence>`,
+`Roadmap impact: NOT_REQUIRED: <reason>` or `Roadmap impact: DEFERRED: <items> —
+<pending-decision ref>`.
+
+**Enforcement.** Identical to §5.1: governance, not a semantic validation; no
+checker interprets prose; absence of the determination or a classification
+outside the three values is a stop condition.
+
+**`REQUIRED` is an obligation of state, never a write authorization (plan 138;
+generalized by plan 139, `<PLAN-138>:PC-1`; the incident `<PLAN-136>:F-3`).** The
+rule below is what the incident established by human decision
+(`<PLAN-136>:PC-4`): `Roadmap Impact: REQUIRED` does **not** widen the authorized
+`Scope` of a Change. When the operational map is owned by an artifact outside that
+scope — canonically `ROADMAP.md` — the obligation is registered `DEFERRED` with the
+**existing** pending decision (PC-1) that governs it, and the artifact is **not**
+written. There is no exception for `ROADMAP.md`, and no determination of impact
+converts an obligation of state into a permission to write.
+
+The prohibition on inferring authorization is the same as §5.1 and admits no
+exception here either: not by the classification, not by semantic proximity, not by
+documentary dependency, and not by the closure requirement. `Scope`, `Task` and
+`Authority` take precedence over any Impact classification; the agent stops,
+defers the reconciliation, or escalates to human authority through the existing
+mechanisms — and it never turns an Impact classification into a write it was not
+authorized to make.
+
+Full normative semantics of both determinations:
+`docs/CONVENTIONS.md:Change Lifecycle — Determinaciones de cierre: impacto
+documental e impacto de Roadmap (regla operacional)`.
 
 ## 6. Derived conditions
 
@@ -125,7 +342,16 @@ Blocking (STOP — do not close, escalate with evidence):
   covers it (GC-1 consistency fails).
 - Findings are open without resolution or explicit deferral with owner;
   a blocking pending decision persists without resolution/escalation (PC-1).
+- Closure without an explicit Documentation impact determination (5.1) or
+  without an explicit Roadmap impact determination (5.2), or with a
+  classification outside `REQUIRED` / `NOT_REQUIRED` / `DEFERRED` in either.
 - Attempted modification of closed history or out-of-scope artifacts.
+- A write whose target set cannot be established, or whose authorization
+  checkpoint diverged from the declaration the execution was authorized under
+  (plan 138; `.agents/policies/supervised-autonomous-execution.md` §1.2/§1.3).
+- An obligation of closure (documentation, roadmap, changelog) whose owner
+  artifact is outside the authorized scope, recorded without its governing
+  pending decision (plan 138; §5.1/§5.2 above).
 - A human decision is required for a mandatory resolution.
 
 Non-blocking debt (record, continue):

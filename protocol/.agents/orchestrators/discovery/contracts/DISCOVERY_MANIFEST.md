@@ -48,7 +48,7 @@ TOML.
 - `role_version`: string
 - `task_scope`: string
 - `project_root`: string
-- `project_shape`: string; one of `library`, `cli`, `service`, `application`, `monorepo` or `unknown` (classified by `init_worker`)
+- `project_shape`: string; one of `library`, `cli`, `service`, `application`, `monorepo`, `documentation` or `unknown` (classified by `init_worker`). `documentation` classifies a project whose product is documentation, standards or protocol data — no importable library, command-line program, service or application of its own; internal tooling does not change the shape.
 
 ### `[hashes]`
 
@@ -61,6 +61,7 @@ TOML.
 
 - `active`: list of strings
 - `stale`: list of strings
+- `legacy`: list of strings (entries inherited from a KB written without provenance fields and not yet revalidated by a worker; empty when there are none)
 
 ### `[workers]`
 
@@ -107,6 +108,9 @@ active = [
 stale = [
   "old_feature.md"
 ]
+legacy = [
+  "stack.md"
+]
 
 [workers]
 invoked = ["environment_worker", "stack_worker", "framework_worker", "patterns_worker", "business_worker", "synthesis_worker"]
@@ -120,4 +124,5 @@ execution_time_seconds = 42.5
 ## Notes
 
 - Entries are never deleted without a trace: invalidated entries move from `active` to `stale` in `[entries]`, following the KB merge rules.
+- An entry inherited from a KB written without provenance fields enters `legacy` on the first `DISCOVERY_INIT`, and leaves it when a worker revalidates it (it becomes `active`) or invalidates it (it becomes `stale`). The entry itself carries `status = "legacy"` in its own front matter (`.agents/orchestrators/discovery/contracts/KB_DISCOVERY_ENTRY.md`); the manifest list is the index of that state, not a second source of it.
 - `[runtime]` fields are optional; all other sections and fields are required.

@@ -18,7 +18,6 @@ state except the dogfooding test.
 
 from __future__ import annotations
 
-import ast
 import re
 import subprocess
 import sys
@@ -29,9 +28,8 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[1]
 TOOL = REPO_ROOT / "tools" / "check_lifecycle_lineage.py"
 
-sys.path.insert(0, str(REPO_ROOT / "tools"))
-
 import check_lifecycle_lineage as cll  # noqa: E402
+from testsupport import assert_tool_imports_only_stdlib  # noqa: E402
 
 
 def write_plan(root: Path, doc: str, name: str = "99-sample.md") -> Path:
@@ -641,16 +639,7 @@ def test_t27_real_repo_dogfooding():
 
 
 def test_t28_tool_uses_only_stdlib():
-    _STDLIB = set(sys.stdlib_module_names)
-    tree = ast.parse(TOOL.read_text(encoding="utf-8"))
-    imported = set()
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            imported.update(a.name.split(".")[0] for a in node.names)
-        elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
-            imported.add(node.module.split(".")[0])
-    third_party = imported - _STDLIB
-    assert third_party == set(), f"third-party imports: {third_party}"
+    assert_tool_imports_only_stdlib(TOOL)
 
 
 # --- Adversarial scenarios (plan 100 §20) -----------------------------------

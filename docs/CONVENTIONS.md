@@ -206,6 +206,30 @@ los checkers dev. No gobierna automáticamente la evolución del Protocol
   persistir ≠ materializar; separación entre evidencia factual y autoridad
   normativa) quedan como principios, no como mecanismos
   (`docs/rfc/75-change-lifecycle.md:Dev vs Protocol`).
+### premises(D), derivación y reglas HD-K (adoptado 2026-10-05)
+
+Reglas documentales, materializadas por acto humano explícito (checkpoint Human
+Authority, 2026-10-05; registros canónicos en `HDK §16.2` y `PLAN §21.2`). No
+crean machinery nueva ni un segundo mecanismo de autoridad.
+
+- **`premises(D)` obligatorio (`HD-K3`).** Un Plan/Note derivado declara la
+  sección `## Derivación y premisas` con las ocho clases `P-1`…`P-8`, cada una con
+  su valor y su fuente citada (`ruta:sección`). Es obligatorio para una derivación
+  completa; si una premisa obligatoria no puede establecerse, el resultado
+  documental correspondiente es `GAP` (falta de información), nunca una asunción.
+  (`HD-M5`: materialización completa de `P-1`…`P-8`, condicionada a `HD-K3`.)
+- **`MK-3` — premisa cambiada ⇒ derivación inválida.** Si `premises(D)` cambia, la
+  derivación previa deja de ser válida para el contenido nuevo y se re-deriva. Una
+  declaración humana añadida **no** se elimina por una re-derivación.
+- **`HD-K1` — scope.** Toda modificación de scope —expansión **o reducción**—
+  exige re-derivación (`R-4` incondicional); no existe una excepción general de
+  reducción «inocua».
+- **`HD-K2` — `work_type`.** Se deriva cuando hay evidencia suficiente; cuando no
+  puede determinarse, requiere decisión humana. `work_type` **no** tiene función de
+  autoridad adicional: la vía de autorización la determina la clase RFC-56.
+- **`HD-K4` — canal.** Estas reglas se elevan a `docs/CONVENTIONS.md` **sin** crear
+  un RFC/ADR nuevo por defecto.
+
 
 ### Change Lifecycle — Change Levels (modelo objetivo)
 

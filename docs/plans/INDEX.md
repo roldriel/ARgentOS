@@ -1081,6 +1081,23 @@ sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
 |---|---|---|---|
 | `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. |
 
+## Octogésima primera serie: implementación de Memory System (Plan 150) (06 oct 2026)
+
+Serie del Change que transforma RFC-80 `Accepted` en un Class A Implementation Plan de
+Memory System. El Plan 150 deriva normativamente de RFC-80 (contrato arquitectónico
+cerrado: Episodic/Semantic/Synthesis/Operational/Archive, extracción/curation, consolidation,
+retrieval y migración) y define catorce fases (Phase 0–13) con dependencias, entregables,
+verificación y riesgos, sin ejecutar nada y sin reabrir la arquitectura. El Change es
+exclusivamente de planificación y documentación: no implementa runtime, no toca
+`protocol/.agents/`, no migra datos ni ejecuta cutover. El Plan 150 queda en
+`Aprobado para redacción`; la ejecución requiere autorización humana explícita
+(`Aprobado para ejecución`) y la determinación de la familia placement (PC-20/RFC-56).
+Plan 150 (vía RFC-80; Class A; Change Level L3).
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `150-memory-system-implementation.md` | RFC-80 | Aprobado para redacción | **Implementación de Memory System (RFC-80).** Deriva la arquitectura cerrada de RFC-80 en una estrategia incremental y gobernada: Phase 0 (gobernanza/placement), Phase 1 (primitivas de persistencia —reusa `store.py`, `project_store.py`, `identity.py`, `change_governance.py`—), Phase 2 (Episodic: Session/Observation/Evidence + inmutabilidad), Phase 3 (Semantic: Claim/lifecycle/epistemic/applicability), Phase 4 (extracción y cuarentena de candidatos), Phase 5 (relaciones/contradicción/supersession), Phase 6 (Synthesis versionada + lineage), Phase 7 (consolidación idempotente + verificación + publicación atómica + NO_OP), Phase 8 (Operational Memory reconstruible no-autoritativa), Phase 9 (retrieval progresivo y acotado), Phase 10 (Archive rehidratable), Phase 11 (migración dual-read/dual-write), Phase 12 (métricas sin targets), Phase 13 (cutover/deprecación). Mapea los 30 invariantes I-001…I-030 a verificación, y define migración, rollback, failure recovery, compatibilidad legacy y testing. No implementa runtime, no toca `protocol/.agents/`, no migra ni ejecuta cutover; `Aprobado para redacción` (ejecución pendiente de autorización humana). |
+
 ## Octogésima serie: roadmap estratégico de capacidades y autonomía — Etapas A → B → C (Plan 149) (22 sep 2026)
 
 Serie del Change que materializa en `ROADMAP.md` el roadmap estratégico acordado por el

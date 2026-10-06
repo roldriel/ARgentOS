@@ -32,6 +32,25 @@ clasificación (regla operacional; Incremento 1)): se computa al crear el plan
 
 <!-- Qué logra el plan en uno o dos párrafos. Sin mecánica: eso va en Pasos. -->
 
+## Derivación y premisas (`premises(D)`)
+
+<!-- Obligatorio para una derivación completa (HD-K3, adoptado 2026-10-05; ver
+docs/CONVENTIONS.md:Change Lifecycle — premises(D), derivación y reglas HD-K).
+Si una premisa obligatoria no puede establecerse, el resultado documental
+correspondiente es `GAP` (falta de información): nunca se asume. Cada clase
+declara su valor y su fuente citada (`ruta:sección`). -->
+
+| Clase | Contenido | Dueño | Fuente / evidencia |
+|---|---|---|---|
+| `P-1` Intención | texto normalizado del pedido + su `origin_type` | humano | identidad del artifact de intake |
+| `P-2` Confianza de intención | nivel `HIGH`/`MEDIUM`/`LOW` + criterios aplicados | agente | `INTENT_CONFIDENCE.md` |
+| `P-3` Conjunto de contexto | fuentes efectivamente leídas | agente | lista de `ruta:sección` |
+| `P-4` Derivabilidad | condición con su señal (sin señal bloqueante · `GAP`/`ANOMALY`/`BOUNDARY` · `REQUIRES_HUMAN`) y su evidencia (una cita por ítem) | agente | el propio registro |
+| `P-5` `work_type` | valor derivado y su criterio de admisión | agente | §11 |
+| `P-6` Conocimiento vigente | lifecycle declarado de cada fuente citada | documento | §15 |
+| `P-7` Reglas aplicables | veredictos `APPLIES`/`NOT_APPLICABLE` con su cita | agente | §12 |
+| `P-8` Autoridad y scope | autoridad requerida y conjunto declarado de rutas | **humano** | declaración del humano |
+
 ## Criterio de entrada
 
 <!-- Checklist verificable de lo que debe existir ANTES de ejecutar: archivos,

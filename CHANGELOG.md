@@ -37,6 +37,28 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Changed
 
+- **Roadmap estratégico de capacidades y autonomía — Etapas A → B → C** (plan 149, vía plan;
+  docs-only sobre `ROADMAP.md`, este changelog, el Plan 149 y `docs/plans/INDEX.md`, sin
+  efecto en `protocol/`, `runtime/`, `tools/`, `tests/` ni `.agents/`, por lo que RFC-56 no
+  aplica): `ROADMAP.md` declara el roadmap estratégico vigente y su dependencia explícita
+  **A → B → C**. **Etapa A — Capability & Guarantee Retrospective:** revisión de las
+  capacidades y garantías que ARgentOS afirma proporcionar, con unidad de análisis
+  *capacidad + garantía + evidencia* y un **Capability & Guarantee Matrix** que separa
+  implementado / testeado / dogfoodeado / demostrado bajo condiciones reales / parcialmente
+  demostrado / dependiente de una condición externa / no demostrado / limitado por un
+  boundary conocido; no es una auditoría documental. **Etapa B — Complete ARgentOS
+  Autonomy:** comienza a partir de los resultados de A, sin lista rígida de features, para
+  cerrar las fronteras que impiden ejecutar un objetivo amplio de forma autónoma bajo
+  supervisión humana dentro de `Autonomy ⊆ Scope ∩ Authority`; las fronteras enumeradas
+  —provider/model real, persistencia de Worker Results, derivación de la siguiente acción,
+  ejecución multi-step, recuperación y fallos reales, budgets, terminación, multi-worker,
+  deliberación, Prompt Cache y persistencia Project/Knowledge— se declaran **candidatas, no
+  compromisos de implementación**. **Etapa C — New Features:** subordinada al conocimiento
+  obtenido en A y a las necesidades descubiertas en B; ninguna feature entra por
+  disponibilidad tecnológica. El Change no implementa ninguna etapa, no ejecuta la
+  retrospectiva, no crea RFCs, ADRs, checkers, mecanismos ni features, y no reabre las
+  iniciativas históricas (Planes 146–148, Change Lifecycle MVP, SAE MVP, Prompt Cache MVP,
+  Jury Trial MVP, Placement Contract, RFC-75, ADR-15, ADR-16).
 - **Promoción de release: release de gobernanza `11.6.2`** (plan 148, vía plan — Change de
   release, sin efecto de payload): promueve a `master` el estado verificado de `dev` tras el
   plan 147, publicando los artefactos de gobernanza y de tooling DEV que `master` no tenía y

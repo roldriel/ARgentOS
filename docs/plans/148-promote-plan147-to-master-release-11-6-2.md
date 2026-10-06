@@ -1,6 +1,6 @@
 # Plan 148 — Promoción de `dev` a `master` y release de gobernanza 11.6.2
 
-**Status:** Executed (parcial: promoción, tag y `dist` pendientes — ver `## Checkpoint / cierre`)
+**Status:** Executed (2026-09-22; release commit, promoción a `master`, tag anotado `11.6.2` y `dist` ejecutados y verificados — ver `## Checkpoint / cierre` y `## Nota de ejecución`)
 **Fecha:** 2026-09-22
 **RFC:** — (Change de release/promoción; no introduce ningún cambio de contenido en `protocol/`: publica el estado ya verificado de `dev` y sólo escribe la metadata de versión de la release. RFC-56 no aplica a un acto de promoción)
 **Clase:** — (acto de release; la única escritura bajo `protocol/` es `protocol/.agents/VERSION`, que es la metadata de versión de esta release)
@@ -120,15 +120,15 @@ Razonamiento, aplicando el contrato vigente y no una suposición:
 ## Criterios de salida
 
 - [x] Versión determinada conforme al contrato vigente y documentada.
-- [ ] Release commit creado en `dev`.
-- [ ] `dev` promovido a `master`.
-- [ ] Tag anotado `11.6.2` creado correctamente.
-- [ ] Tags anteriores intactos.
-- [ ] `dist` sincronizado y `check_dist_sync.py` verde en `master`.
-- [ ] Batería canónica post-promoción verde; `pytest` verde.
-- [ ] Sin cambios fuera del Scope; sin force-push; sin reescritura de historia.
-- [ ] Planes 146 y 147 intactos; `ROADMAP.md` sin modificación.
-- [ ] Working tree final limpio.
+- [x] Release commit creado en `dev`.
+- [x] `dev` promovido a `master`.
+- [x] Tag anotado `11.6.2` creado correctamente.
+- [x] Tags anteriores intactos.
+- [x] `dist` sincronizado y `check_dist_sync.py` verde en `master`.
+- [x] Batería canónica post-promoción verde; `pytest` verde.
+- [x] Sin cambios fuera del Scope; sin force-push; sin reescritura de historia.
+- [x] Planes 146 y 147 intactos; `ROADMAP.md` sin modificación.
+- [x] Working tree final limpio.
 
 ## Verificación
 
@@ -187,10 +187,10 @@ versión pendiente: `11.6.1` y todo el rango anterior ya tienen su tag, y la
 
 ## Checkpoint / cierre
 
-- **Commits de cierre:** dos (2) commits en `dev`: (1) el release commit —version bump, changelog, enmienda de §3, snapshot §9, el Plan 148 y su registro en el INDEX—, cuyo SHA registra este checkpoint; (2) el commit de registro de este checkpoint, que transcribe la promoción, el tag y la verificación post-promoción. GC-1 admite el cierre multi-commit; los SHA y los tree id quedan como locators, no como identidad.
+- **Commits de cierre:** dos (2) commits en `dev`: (1) el release commit `6f7dc7a9db14108aecee98548422e0f301b20666` (árbol `408137bd85eebcf6c86adb9996f270f1ca124a43`) —version bump a `11.6.2`, changelog, enmienda de §3, snapshot §9, el Plan 148 y su registro en el INDEX—; (2) el commit de registro de este checkpoint, que transcribe la promoción, el tag y la verificación post-promoción. GC-1 admite el cierre multi-commit; los SHA y los tree id quedan como locators, no como identidad.
 - **Estado validado (ref al Validation anchor):** A1 (arriba).
 - **Estado de cierre (identidad):** delta scoped identity + state identity del anchor aplicable (A1): `27f116874d232b763a9403771d933475856a08536827aa9299bc6a6424590324` / `c7ba119ec20df26c36ee6889d9fceb519f80ee2f`. Es el estado que el checkpoint **certifica** por correspondencia GC-1.
-- **Árbol material del commit de cierre (tree id):** registrado por el commit de registro (2), que transcribe el SHA y el árbol del release commit; el árbol del release commit incluye la governance del Change (este artefacto y el `INDEX`) además del estado medido, de modo que **no** es la identidad del estado de cierre y no tiene por qué coincidir con ella (RFC-75 `Mecanismo 7`; `docs/VERSIONING.md:8. Ejecución en paralelo` / modelo de cierre). El commit de registro (2) modifica únicamente artefactos de governance excluidos del scope medido y por lo tanto no altera la identidad certificada.
+- **Árbol material del commit de cierre (tree id):** el release commit (1) tiene árbol `408137bd85eebcf6c86adb9996f270f1ca124a43`, que incluye la governance del Change (este artefacto y el `INDEX`) además del estado medido, de modo que **no** coincide con la identidad del estado de cierre y no tiene por qué: `validated tree == commit tree` no es un requisito (RFC-75 `Mecanismo 7`). El commit de registro (2) modifica únicamente artefactos de governance excluidos del scope medido y por lo tanto no altera la identidad certificada.
 - **Consistencia checkpoint↔anchor:** PASS — verificada por C-2 sobre el artefacto de este Plan en el estado de cierre.
 - **Governance aplicada:** `docs/VERSIONING.md` §3 enmendado (viñeta «Releases de gobernanza») y §9 reconciliado en el punto de promoción que §5 declara; `CHANGELOG.md` con la sección `[11.6.2] — 2026-09-22` y el ítem de la promoción; `protocol/.agents/VERSION` y `PROTOCOL_VERSION` en `11.6.2`; `docs/plans/INDEX.md` registra el Plan y su serie. Sin RFC nueva, sin ADR, sin cambio de contenido de payload.
 - **Documentation impact:** `REQUIRED` — reconciliado. Documentos afectados: `docs/VERSIONING.md` §3 (la enmienda autorizada que da vía a la release de gobernanza) y §9 (snapshot corriente: `master`/`dev` en `11.6.2`, contenido del protocolo idéntico y divergencia del Plan 146 resuelta por esta promoción); `CHANGELOG.md` (sección de la release e ítem de la promoción). `docs/plans/INDEX.md` registra el Plan y su serie. `ROADMAP.md` **0 diff**: el procedimiento de release no lo exige. Los artefactos históricos (Planes 146 y 147, tags, releases anteriores) no se reescriben (RFC-46); la resolución de `<PLAN-147>:PC-1` se registra por referencia.
@@ -200,8 +200,148 @@ versión pendiente: `11.6.1` y todo el rango anterior ya tienen su tag, y la
 
 ## Findings / Correcciones / Pending
 
-<!-- Se completa sólo cuando el artifact posee registros reales (LC-1/PC-1). -->
+### Findings
+
+- `<PLAN-148>:F-1` — estado: `resolved`; resolución: corregido por `<PLAN-148>:C-1` (la transición de estado la registra el mantenedor, CL-8); observación: el contrato de versionado no tenía vía para publicar el estado de `dev` posterior al plan 147 — `docs/VERSIONING.md` §3 prohibía una versión y un tag para un cambio docs-only («no existe una "release de gobernanza" con tag sin versión»), mientras §1 y §2 invariante 2 exigen un tag para todo lo que entra a `master`, de modo que la promoción autorizada por el mantenedor no podía ejecutarse sin violar una de las dos reglas; evidencia original: `git diff --name-status 8dbd92e..dev` → 11 archivos, **0** bajo `protocol/`; `git diff 8dbd92e..dev -- protocol/.agents/VERSION` → vacío; preflight de este Plan, que detuvo la rama y escaló la decisión; estado Git observado: `dev` = `8173e77`, `master` = `8dbd92e`, `VERSION` = `11.6.1` en ambas ramas; provenance original: `docs/VERSIONING.md` §3 viñeta «Cambios docs-only (RFC-69)» y §1/§2.
+- `<PLAN-148>:F-2` — estado: `resolved`; resolución: corregido por `<PLAN-148>:C-2`; observación: el `GAP-3`/`<PLAN-147>:PC-1` (el árbol publicado de `master` conservaba la revisión previa del artefacto del Plan 146 porque `7a9d393` no era ancestro de `master`) quedaba registrado como hecho factual sin vía de resolución, dado que nivelar `master` es una promoción; evidencia original: `git merge-base --is-ancestor 7a9d393 8dbd92e` → exit 1; `git show 54171d8:docs/plans/146-release-promotion-11-6-1.md` con los literales de identidad diferidos al checkpoint; estado Git observado: `master` = `8dbd92e` (el tag `11.6.1`), sin `7a9d393` en su historia; provenance original: `docs/plans/147-post-release-integrity-and-ci-compatibility.md:## Findings / Correcciones / Pending` (`<PLAN-147>:PC-1`).
+
+### Correcciones
+
+- `<PLAN-148>:C-1` — refs origen: `<PLAN-148>:F-1`; alcance de revalidación: `docs/VERSIONING.md` (viñeta «Releases de gobernanza» en §3 y snapshot §9) y `protocol/.agents/VERSION` + `runtime/toolcalls/canonical.py`; evidencia: el preflight dejó la rama detenida y el mantenedor autorizó la enmienda; tras la enmienda, `python tools/check_version_state.py` → exit 0 con `VERSION` = `PROTOCOL_VERSION` = `11.6.2`, y la batería completa verde en `dev` y en `master`; carácter: FACTUAL / TRACEABILITY (la acción la autoriza este Plan y la autorización explícita del mantenedor; no es fuente normativa).
+- `<PLAN-148>:C-2` — refs origen: `<PLAN-148>:F-2`; alcance de revalidación: la promoción misma (`dev` → `master`) y el tag anotado; evidencia: `git merge-base --is-ancestor dev master` → exit 0 y `git rev-list --count master..dev` → **0** tras la promoción, de modo que `master` vuelve a contener toda la historia de `dev`; el árbol del commit de promoción `34cab97a…` (`408137bd…`) es idéntico al de `dev`; la afirmación del Plan 146 «`master` contiene toda la historia de `dev`» pasa a ser verdadera sin reescribir su artefacto.
+
+### Pending decisions
+
+No se registran pending decisions nuevas. `<PLAN-147>:PC-1` queda **resuelta por este Change** (su resolución se registra por referencia, sin reescribir el artefacto cerrado del Plan 147). Las pending decisions preexistentes de otros artefactos (`<PLAN-125>`, `<PLAN-126>`, `<PLAN-131>`, `<PLAN-132>`, `<PLAN-137>`, `<PLAN-138>` y la materialidad ambiental de `<PLAN-122>`/`<PLAN-123>` según el inventario del Plan 146) conservan su estado, su owner y su vía: ninguna está en el Scope de este Plan y ninguna bloquea la release.
 
 ## Nota de ejecución
 
-<!-- Se agrega al ejecutar. -->
+**Fecha:** 2026-09-22. **Ejecución:** completa; la cadena
+`release commit → dev → origin/dev → master → tag 11.6.2 → dist` se ejecutó y
+se verificó.
+
+**Preflight y decisión detenida.** El preflight (read-only) verificó refs,
+working tree, tags, el CI **posterior** a los commits a promover —run
+`35759774259` sobre `8173e77`, **success**— y el contrato de versionado. El
+hallazgo decisivo fue que el diff `dev` vs `master` no contenía **ninguna**
+diferencia de contenido bajo `protocol/` (11 archivos, 0 de payload; `VERSION`
+idéntico en ambas ramas), de modo que §3 prohibía versión y tag mientras §1/§2
+los exigían para `master`. La rama de release se **detuvo** y se escaló; el
+mantenedor autorizó enmendar `§3` para admitir las releases de gobernanza, y esa
+enmienda es el criterio vigente de la versión (`11.6.2`, sucesora PATCH de
+`11.6.1`).
+
+**Ejecución del release.** Registrado el release intent antes de tocar cualquier
+referencia remota, se ejecutó cada paso de la secuencia autorizada:
+
+1. **Release commit** en `dev`: `6f7dc7a9db14108aecee98548422e0f301b20666`
+   (árbol `408137bd85eebcf6c86adb9996f270f1ca124a43`), con el version bump, la
+   sección `[11.6.2] — 2026-09-22`, la enmienda de §3, el snapshot §9, el Plan
+   148 y su registro en el INDEX. → **OK**.
+2. **Push de `dev`**: `8173e77..6f7dc7a dev -> dev`. Sin force. → **OK**;
+   `origin/dev` = `6f7dc7a9…` = `dev`.
+3. **Promoción a `master`** por merge `--no-ff` de `dev`, revalidando antes el
+   estado real: `master` = `8dbd92e0…`, `dev` = `6f7dc7a9…`, merge-base =
+   `54171d86…`, **árbol de `master` = árbol del merge-base**
+   (`bc280abd…`), de modo que el merge es contenido-trivial. → **OK**: merge
+   commit **`34cab97a470f16709f762742eab2aad455e41703`**, padres `8dbd92e`
+   (`master` anterior) y `6f7dc7a` (tip de `dev`), sin conflictos; árbol del
+   merge = `408137bd…` = árbol de `dev`, exactamente el árbol esperado en el
+   release intent.
+4. **Push de `master`**: `8dbd92e..34cab97 master -> master`. Sin force. →
+   **OK**; `origin/master` = `34cab97a…`; `git merge-base --is-ancestor dev
+   master` → 0 y `git rev-list --count master..dev` → **0**.
+5. **Tag anotado `11.6.2`** sobre el commit de promoción, con mensaje que cita
+   la sección del changelog y los planes publicados. Sin force-tag. → **OK**:
+   tag object `0e7da7890d71ef50c939088f8c511b9576749ac4` → `34cab97a…`;
+   empujado (`* [new tag]`); los nueve tags anteriores intactos (mismos objetos
+   que antes del Change).
+6. **`dist`** regenerado por `publish-dist`, disparado por el push a `master`
+   que toca `protocol/` (la promoción toca `protocol/.agents/VERSION`). →
+   **OK**: run `35764055240` **completed / success**; `origin/dist` pasó de
+   `c07abdd` a `f390ebddf3800e54be57f5c54b5eb2650e15f554`
+   (`dist: publish from master @ 34cab97`), con `.agents/VERSION` = `11.6.2` y
+   el layout `.agents/` + `AGENTS.md`; `python tools/check_dist_sync.py` sobre
+   `master` → «dist is in sync with protocol/».
+7. **Verificación post-promoción** de la cadena completa. → **OK**, tabla
+   siguiente.
+
+**Batería post-promoción (sobre `master`, HEAD `34cab97a…`).** Seis checkers
+canónicos —`check_protocol_invariants` (`--payload protocol .`),
+`check_plan_citations`, `check_plan_structure`, `check_taxonomy_coherence`,
+`check_session_artifacts`, `check_version_state`— **exit 0**;
+`check_ears_coverage` y `check_discovery_output` **exit 0**;
+`check_dist_sync` **exit 0**; `python -m pytest tests/` → **1185 passed,
+1 skipped**; `python -m pytest protocol/.agents/harness/tests/` → **109
+passed**. Gates: C-1 `EXCLUDED=94, VALID=54, GAP=0, ANOMALY=0`; C-2
+`VALID=53, GAP=1, ANOMALY=0` (el `GAP` histórico del Plan 116, conservado);
+C-3 `VALID=28, GAP=0, ANOMALY=0`.
+
+**Intermitencia observada en los tests del host del orquestador (no atribuible
+a este Change).** Durante las corridas de la batería bajo carga se observaron
+**tres** fallos intermitentes, cada uno en una corrida distinta y nunca
+repetidos:
+`test_functional_dogfood_the_checkpoint_survives_a_rewrite_between_runs` de
+`tests/test_sae_scope_enforcement_dogfood.py`,
+`test_a_required_obligation_outside_the_scope_is_refused_and_changes_nothing`
+de `tests/test_sae_scope_enforcement.py`
+y, en la corrida sobre `master`, un tercero de la misma familia. La
+caracterización es factual, no una dispensa:
+
+- La suite completa **pasó** en la corrida de verificación final (`1185 passed,
+  1 skipped`) sobre el mismo commit.
+- Los tres tests pasan **aislados**: 12 corridas consecutivas de
+  `tests/test_sae_scope_enforcement.py` + `tests/test_sae_scope_enforcement_dogfood.py`
+  → **0 fallos**; los módulos del orquestador juntos → 152 passed.
+- Los tres ejercitan `ExecutionHost(...).run(max_iterations=2)` y afirman sobre
+  la secuencia exacta de acciones, de modo que dependen del número de
+  iteraciones que el host conduce; las corridas que fallaron fueron las que
+  corrieron **en paralelo** con otro proceso pesado de la batería.
+- Ninguno toca los cuatro contratos que este Change y el plan 147 modificaron
+  (C-1, la configuración de CI, los dogfoods de historia Git y la resolución de
+  segmentos); no hay mecanismo que los conecte.
+- No se silencia nada: no se agrega `xfail`, `skip`, `flaky` ni relajación de
+  aserción. La intermitencia queda registrada como observación factual para un
+  Change propio si vuelve a aparecer; no bloquea este release y no se oculta
+  como `PASS`.
+
+**Verificación post-promoción.**
+
+| Elemento | Valor verificado |
+|---|---|
+| `dev` | `6f7dc7a9db14108aecee98548422e0f301b20666` |
+| `origin/dev` | `6f7dc7a9db14108aecee98548422e0f301b20666` (idéntico) |
+| `master` | `34cab97a470f16709f762742eab2aad455e41703` |
+| `origin/master` | `34cab97a470f16709f762742eab2aad455e41703` |
+| Commit de release | `6f7dc7a9db14108aecee98548422e0f301b20666`, mensaje `release: promote dev to master and publish governance release 11.6.2 (plan 148)` |
+| Commit de promoción | `34cab97a470f16709f762742eab2aad455e41703` (merge de `8dbd92e` y `6f7dc7a`), mensaje `release: promote protocol governance release 11.6.2 (plan 148; plans 146-147)` |
+| Árbol de `master` | `408137bd85eebcf6c86adb9996f270f1ca124a43` = árbol de `dev` |
+| `dev` contenida en `master` | `git rev-list --count master..dev` = **0** |
+| Tag `11.6.2` | tag object `0e7da7890d71ef50c939088f8c511b9576749ac4` → `34cab97a470f16709f762742eab2aad455e41703` |
+| Tags anteriores | `11.0.0` (`f3dabdda…`), `11.0.1` (`d5076ace…`), `11.1.0` (`683a1cbd…`), `11.2.0` (`d7c853f6…`), `11.3.0` (`dd47e01f…`), `11.4.0` (`f6760524…`), `11.5.0` (`35371c33…`), `11.6.0` (`905941a2…`) y `11.6.1` (`06022f31…`) **intactos** |
+| `dist` | `f390ebddf3800e54be57f5c54b5eb2650e15f554` (`origin/dist` = `dist` local), `VERSION` = `11.6.2` |
+| `VERSION` / `PROTOCOL_VERSION` | `11.6.2` / `11.6.2` (coinciden) |
+| `CHANGELOG` | secciones `[11.6.2]` (2026-09-22) y anteriores presentes y con tag |
+| Working tree | `git status --porcelain` → sólo el artefacto externo untracked `MASTER_PENDING_WORK_INVENTORY.md` (0 modificaciones rastreadas) |
+| CI de la promoción | `check-protocol` **success** (`35764055173`, `master`) y `35764030834` (`dev`); `publish-dist` **success** (`35764055240`) |
+
+**Integridad.** Sin force-push, sin `--force-with-lease`, sin force-tag, sin
+borrado de commits y sin reescritura de historia: los únicos movimientos de refs
+fueron `dev` (fast-forward), `master` (fast-forward) y la creación del tag
+`11.6.2`. `protocol/` con 0 diff de contenido (`VERSION` es metadata de la
+release); `ROADMAP.md` con 0 diff; los Planes 146 y 147 intactos. La única
+irregularidad operativa fue local y no afectó al repositorio: la primera corrida
+de `check_dist_sync.py` comparó contra la rama local `dist` desactualizada
+(`c07abdd`); tras `git fetch origin dist:dist` el check quedó verde contra
+`f390ebd`.
+
+**Estados finales.**
+
+```text
+Executed  = TRUE  — implementación + validación anclada (VC-1), Plan `Executed`.
+Committed = TRUE  — commits atómicos en `dev` (`6f7dc7a` release, y este registro).
+Closed    = TRUE  — governance aplicada + checkpoint + consistencia checkpoint↔anchor (GC-1).
+Promoted  = TRUE  — merge `dev` → `master` verificado en `34cab97a…`, con `master..dev` = 0.
+Released  = TRUE  — tag anotado `11.6.2` inmutable sobre el commit de promoción,
+                    `dist` regenerado por `publish-dist` y CI verde en `master`.
+```

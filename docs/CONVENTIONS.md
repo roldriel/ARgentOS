@@ -280,6 +280,27 @@ materializa su mecanismo es aceptado
   "anchor missing" es un GAP, no una invalidación
   (`docs/rfc/75-change-lifecycle.md:Mecanismo 14 — Automation`).
 
+
+### Regla transversal — Evidence closure / anti-rework
+
+Una verificación satisfecha cierra la pregunta que verificó. Ante una solicitud
+de volver a auditar o verificar una cuestión ya resuelta, comprobar primero si
+existe evidencia previa suficiente y vigente; si existe y no hay condición de
+reapertura, reutilizar la conclusión y no repetir el análisis.
+
+- Una pregunta cerrada **no** se re-verifica ni se re-audita por defecto.
+- Sólo se reabre ante una condición explícita: nueva evidencia relevante, una
+  contradicción, un cambio material del objeto o del alcance, una modificación
+  posterior que pueda invalidar la evidencia, o una razón explícita que invalide
+  la evidencia anterior.
+- Cada gate tiene una condición de salida explícita; si está satisfecha, se avanza
+  y **no** se crea un gate nuevo salvo una condición de reapertura.
+- Verificar lo suficiente para reducir riesgo material, no repetir verificaciones
+  ya satisfechas por evidencia equivalente. Una verificación exitosa cierra su
+  pregunta; no genera automáticamente otra verificación.
+- Esto no elimina verificaciones necesarias: evita repetir aquellas cuya pregunta
+  ya quedó cerrada.
+
 ### Change Lifecycle — Intake y clasificación (regla operacional; Incremento 1)
 
 Todo cambio declara su clasificación en el **primer artifact del cambio**

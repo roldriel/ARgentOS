@@ -129,6 +129,13 @@ Reglas:
    (mensaje que cite la sección del changelog). `publish-dist` corre con el tag.
 8. **Registro:** el tag queda como checkpoint inmutable; nada de este plan se
    vuelve a tocar salvo por un plan nuevo.
+9. **Sincronización `master` → `dev`:** `dev` es la rama de desarrollo y la promoción
+   normal es `dev` → `master` (paso 7). Si la promoción agregó uno o más commits
+   propios a `master` (merge no fast-forward), `master` **MUST** sincronizarse de
+   vuelta a `dev` antes de iniciar el siguiente ciclo de desarrollo; antes de
+   comenzar nuevo desarrollo, `dev` **MUST** contener el HEAD publicado de `master`.
+   Si la promoción fue estrictamente fast-forward y no agregó commits propios, no
+   se requiere sincronización adicional.
 
 ### 4.1 Batería canónica de verificación
 

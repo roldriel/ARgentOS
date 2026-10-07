@@ -1,6 +1,6 @@
 # Plan 150 — Implementación de Memory System (RFC-80)
 
-**Status:** Aprobado para ejecución
+**Status:** Executed
 **Fecha:** 2026-10-06
 **RFC:** RFC-80 (`docs/rfc/80-memory-system.md`)
 **Clase:** A (toca `protocol/.agents/`; ver RFC-56)
@@ -340,11 +340,28 @@ Matriz de invariantes (I-001…I-030) → superficie → verificación:
 
 ## Validation anchor
 
-<!-- Se completa al validar (VC-1). No se completa en esta tarea. -->
+- **Declared scope:** el cambio de Plan 150 (28 archivos: RFC-80, Plan 150, índices de planes/RFC, estándar de protocolo `MEMORY_SYSTEM.md`, `runtime/memory/` (14 módulos), `tools/check_memory_store.py` y 8 suites de tests) validado por la batería canónica completa sobre el estado committeado `d668775`.
+- **Validation command-set:** `python tools/check_plan_structure.py --root .`; `python tools/check_plan_citations.py`; `python tools/check_protocol_invariants.py --payload protocol .`; `python tools/check_taxonomy_coherence.py`; `python tools/check_memory_store.py --root .`; `python -m pytest tests/ -q`.
+- **Effective inputs (repo content):** todo el repositorio (batería canónica sobre `docs/`, `protocol/.agents/`, `runtime/`, `tools/`, `tests/`).
+- **Observed dependencies:** no instrumentado.
+- **Environmental factors:** Python 3.11+ (stdlib), git CLI.
+- Scoped Content Identity:
+  - State identity (estado validado = árbol de `d668775`): `18ada8d80a42602a1a94245d5de4c1485f8df9d6` (tree id; igual a `git rev-parse d668775^{tree}`).
+  - Delta scoped identity (scope S = 28 archivos del cambio, orden ordinal; serialización `scoped-v1` + pares `path NUL blob NUL`): `0f62e641a948b4b0ef690927da11e3dfa6c72f4b29d9eed6748297de4bbd91da`.
+- **Validity / stale:** vigente (estado validado = `d668775`, working tree limpio).
 
 ## Checkpoint / cierre
 
-<!-- Se completa al cerrar (GC-1). No se completa en esta tarea. -->
+- **Commits de cierre:**
+  - C1 `d668775` — `feat(memory): implement Memory System reference runtime (plan 150, RFC-80)` (contenido de implementación validado por A1).
+  - C2 — este commit de registro (`docs(plans): close Plan 150 (plan 150, RFC-80)`); su SHA se identifica por el mensaje y el árbol no embebe su propia identidad (auto-referencia).
+- **Estado validado:** `## Validation anchor` de este plan (A1); State identity T1 = `18ada8d80a42602a1a94245d5de4c1485f8df9d6`; Delta scoped identity = `0f62e641a948b4b0ef690927da11e3dfa6c72f4b29d9eed6748297de4bbd91da`.
+- **Estado de cierre:** `18ada8d80a42602a1a94245d5de4c1485f8df9d6` (identidad del estado de cierre = State identity del anchor A1; el árbol material del commit de cierre C2 —que añade los registros de governance— se verifica por mensaje tras el commit y difiere legítimamente del declarado).
+- **Consistencia checkpoint↔anchor:** A1 ↔ C1: `git rev-parse d668775^{tree}` == T1 (`18ada8d8…`) → **PASS**; el estado final (C2) difiere de C1 únicamente en los registros de cierre (anchor/checkpoint de este plan + índice de planes).
+- **Governance aplicada:** RFC-56 Clase A (RFC-80 `Accepted`); Plan 150 `Aprobado para ejecución` (autorización humana 2026-10-06); placement `ADAPT` `.project/knowledge/`.
+- **Documentation impact (§5.1):** NOT_REQUIRED — el cambio añade artefactos nuevos (RFC-80, Plan 150, `MEMORY_SYSTEM.md`, `runtime/memory/`, checker, tests) y no modifica documentación de estado actual (`docs/VERSIONING.md`, `ROADMAP.md`, `README.md`, `AGENTS.md`, `.agents/`). La obligación de `CHANGELOG.md` + bump de `protocol/.agents/VERSION` (docs/VERSIONING.md §3/§5) corresponde al acto de release, fuera del alcance de este cierre.
+- **Roadmap impact (§5.2):** NOT_REQUIRED — el cambio es la implementación de referencia DEV del Memory System; no completa, cancela ni reclasifica ítems del mapa operativo de trabajo futuro (`ROADMAP.md`, gobernado por Plan 149).
+- **Condición derivada:** Closed (con release pendiente) — implementación committeada (`d668775`) y validada; el estándar de protocolo `MEMORY_SYSTEM.md` es un cambio de payload con release pendiente.
 
 ## Riesgos
 

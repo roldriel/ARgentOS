@@ -1087,16 +1087,15 @@ Serie del Change que transforma RFC-80 `Accepted` en un Class A Implementation P
 Memory System. El Plan 150 deriva normativamente de RFC-80 (contrato arquitectónico
 cerrado: Episodic/Semantic/Synthesis/Operational/Archive, extracción/curation, consolidation,
 retrieval y migración) y define catorce fases (Phase 0–13) con dependencias, entregables,
-verificación y riesgos, sin ejecutar nada y sin reabrir la arquitectura. El Change es
-exclusivamente de planificación y documentación: no implementa runtime, no toca
-`protocol/.agents/`, no migra datos ni ejecuta cutover. El Plan 150 queda en
-`Aprobado para redacción`; la ejecución requiere autorización humana explícita
-(`Aprobado para ejecución`) y la determinación de la familia placement (PC-20/RFC-56).
-Plan 150 (vía RFC-80; Class A; Change Level L3).
+verificación y riesgos. **Ejecutado:** `Aprobado para ejecución` (autorización humana
+2026-10-06), placement `ADAPT` `.project/knowledge/`, Phases 0–13 implementadas
+(`runtime/memory/` + estándar `MEMORY_SYSTEM.md` + checker + 63 tests), validación
+completa PASS (batería canónica + 1249 tests), committeado en `d668775`.
+Plan 150 (vía RFC-80; Class A; Change Level L3; `Closed` con release pendiente).
 
 | Plan | RFC | Status | Descripción |
 |---|---|---|---|
-| `150-memory-system-implementation.md` | RFC-80 | Aprobado para redacción | **Implementación de Memory System (RFC-80).** Deriva la arquitectura cerrada de RFC-80 en una estrategia incremental y gobernada: Phase 0 (gobernanza/placement), Phase 1 (primitivas de persistencia —reusa `store.py`, `project_store.py`, `identity.py`, `change_governance.py`—), Phase 2 (Episodic: Session/Observation/Evidence + inmutabilidad), Phase 3 (Semantic: Claim/lifecycle/epistemic/applicability), Phase 4 (extracción y cuarentena de candidatos), Phase 5 (relaciones/contradicción/supersession), Phase 6 (Synthesis versionada + lineage), Phase 7 (consolidación idempotente + verificación + publicación atómica + NO_OP), Phase 8 (Operational Memory reconstruible no-autoritativa), Phase 9 (retrieval progresivo y acotado), Phase 10 (Archive rehidratable), Phase 11 (migración dual-read/dual-write), Phase 12 (métricas sin targets), Phase 13 (cutover/deprecación). Mapea los 30 invariantes I-001…I-030 a verificación, y define migración, rollback, failure recovery, compatibilidad legacy y testing. No implementa runtime, no toca `protocol/.agents/`, no migra ni ejecuta cutover; `Aprobado para redacción` (ejecución pendiente de autorización humana). |
+| `150-memory-system-implementation.md` | RFC-80 | Executed | **Implementación de Memory System (RFC-80).** Deriva la arquitectura cerrada de RFC-80 en una estrategia incremental y gobernada: Phase 0 (gobernanza/placement), Phase 1 (primitivas de persistencia —reusa `store.py`, `project_store.py`, `identity.py`, `change_governance.py`—), Phase 2 (Episodic: Session/Observation/Evidence + inmutabilidad), Phase 3 (Semantic: Claim/lifecycle/epistemic/applicability), Phase 4 (extracción y cuarentena de candidatos), Phase 5 (relaciones/contradicción/supersession), Phase 6 (Synthesis versionada + lineage), Phase 7 (consolidación idempotente + verificación + publicación atómica + NO_OP), Phase 8 (Operational Memory reconstruible no-autoritativa), Phase 9 (retrieval progresivo y acotado), Phase 10 (Archive rehidratable), Phase 11 (migración dual-read/dual-write), Phase 12 (métricas sin targets), Phase 13 (cutover/deprecación). Mapea los 30 invariantes I-001…I-030 a verificación, y define migración, rollback, failure recovery, compatibilidad legacy y testing. Ejecutado: `runtime/memory/` (14 módulos) + `MEMORY_SYSTEM.md` + `tools/check_memory_store.py` + 63 tests; 30 invariantes verificados; commit `d668775`; `Closed` (con release pendiente). |
 
 ## Octogésima serie: roadmap estratégico de capacidades y autonomía — Etapas A → B → C (Plan 149) (22 sep 2026)
 

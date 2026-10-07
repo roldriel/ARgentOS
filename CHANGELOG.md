@@ -1190,6 +1190,20 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [11.7.0] — 2026-10-06
+
+### Added
+
+- **Memory System** (plan 150, RFC-80): nuevo estándar
+  `protocol/.agents/standards/context/MEMORY_SYSTEM.md` que define el Memory System
+  project-scoped — cinco capas (Episodic/Semantic/Synthesis/Operational/Archive),
+  entidades (Session/Observation/Evidence/Claim/Decision/Lesson), lifecycle y estado
+  epistémico separados, applicability, provenance, relaciones, contradicción y
+  supersession explícitas, consolidation con semantic non-regression, proyección
+  operacional reconstruible no-autoritativa, retrieval acotado y archive (≠ delete).
+  Adición compatible (MINOR); no modifica los estándares de conocimiento existentes
+  (`KNOWLEDGE_LIFECYCLE.md`, `KNOWLEDGE_CURATION.md`).
+
 ## [11.6.2] — 2026-09-22
 
 ### Fixed

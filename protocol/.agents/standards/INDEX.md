@@ -130,6 +130,7 @@ The technical-practice flags map each flag to the rubric that scores it and the 
 - `context/USING_PATTERNS.md` — how workers consume the discovery knowledge base (detected environment and development patterns).
 - `context/KNOWLEDGE_CURATION.md` — anti-noise inclusion rules and `curation_status` lifecycle (`active`/`noisy`/`retired`) for KB entries under `.project/knowledge/entries/`.
 - `context/KNOWLEDGE_LIFECYCLE.md` — knowledge lifecycle model: `snapshot`/`claim`/`lesson` types, per-claim freshness with resolvable provenance, post-execution invalidation (`invalidated_facts`) and pipeline-scoped revalidation. Separates semantic invalidation, freshness expiration and physical deletion into distinct domains.
+- `context/MEMORY_SYSTEM.md` — project-scoped Memory System: five layers (Episodic/Semantic/Synthesis/Operational/Archive), entities (Session/Observation/Evidence/Claim/Decision/Lesson), separate lifecycle and epistemic state, applicability, provenance, explicit contradiction/supersession, consolidation with semantic non-regression, rebuildable non-authoritative Operational Memory, bounded retrieval, and Archive (≠ deletion).
 
 ## Testing
 

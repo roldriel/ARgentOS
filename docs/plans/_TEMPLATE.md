@@ -16,7 +16,6 @@ duration/complexity)`; el número de commits no es dimensión; Change Level ≠
 clase RFC-56)
 **Depende de:** plan NN | —
 **Origen:** <auditoría, bitácora, decisión — con referencia verificable>
-
 <!-- El Status inicial define la clase de entregable (ciclo de status de
 planes en docs/CONVENTIONS.md:Convenciones). La RFC puede ser "—" solo por vía
 plan, con justificación documentada en este archivo. Al crear el plan,
@@ -34,8 +33,11 @@ clasificación (regla operacional; Incremento 1)): se computa al crear el plan
 
 ## Derivación y premisas (`premises(D)`)
 
-<!-- Obligatorio para una derivación completa (HD-K3, adoptado 2026-10-05; ver
-docs/CONVENTIONS.md:Change Lifecycle — premises(D), derivación y reglas HD-K).
+<!-- Obligatorio para una derivación completa (`HD-K3`, adoptado por el acto de autoridad del
+Plan 151, 2026-10-07; ver `docs/CONVENTIONS.md:premises(D), derivación y reglas HD-K`).
+La EXISTENCIA de esta sección depende de la adopción de `premises(D)`; `HD-K3` y `HD-M5`
+determinan contenido/forma y NO son precondiciones de existencia (ver
+`docs/plans/151-autonomy-authority-decision-closure.md`).
 Si una premisa obligatoria no puede establecerse, el resultado documental
 correspondiente es `GAP` (falta de información): nunca se asume. Cada clase
 declara su valor y su fuente citada (`ruta:sección`). -->
@@ -46,9 +48,9 @@ declara su valor y su fuente citada (`ruta:sección`). -->
 | `P-2` Confianza de intención | nivel `HIGH`/`MEDIUM`/`LOW` + criterios aplicados | agente | `INTENT_CONFIDENCE.md` |
 | `P-3` Conjunto de contexto | fuentes efectivamente leídas | agente | lista de `ruta:sección` |
 | `P-4` Derivabilidad | condición con su señal (sin señal bloqueante · `GAP`/`ANOMALY`/`BOUNDARY` · `REQUIRES_HUMAN`) y su evidencia (una cita por ítem) | agente | el propio registro |
-| `P-5` `work_type` | valor derivado y su criterio de admisión | agente | §11 |
-| `P-6` Conocimiento vigente | lifecycle declarado de cada fuente citada | documento | §15 |
-| `P-7` Reglas aplicables | veredictos `APPLIES`/`NOT_APPLICABLE` con su cita | agente | §12 |
+| `P-5` `work_type` | valor derivado y su criterio de admisión | agente | `docs/CONVENTIONS.md:premises(D), derivación y reglas HD-K` |
+| `P-6` Conocimiento vigente | lifecycle declarado de cada fuente citada | documento | `docs/AGENTS.md:Lifecycle` |
+| `P-7` Reglas aplicables | veredictos `APPLIES`/`NOT_APPLICABLE` con su cita | agente | `.agents/policies/authority.md:Document discovery` |
 | `P-8` Autoridad y scope | autoridad requerida y conjunto declarado de rutas | **humano** | declaración del humano |
 
 ## Criterio de entrada
@@ -96,6 +98,24 @@ condición derivada, y su recomendación es advisory. Ver
 
 - **Task:** ...
 - **Scope:** `<ruta/uno.py>`
+
+## Efectos declarados
+
+<!-- OPCIONAL: obligatoria únicamente si el Change prevé efectos fuera de la frontera inmediata.
+Decidido por el acto de autoridad del Plan 151 (2026-10-07): `D-2a` la frontera se decide y se
+declara en DEV; `D-2b` los efectos se declaran donde vive la autorización —el Plan—; `D-2d`
+`Effect` es ortogonal a `Scope` y un efecto puede no tener path. Ver
+`docs/CONVENTIONS.md:Modelo de autonomía — decisiones de autoridad del Plan 151` y
+`docs/plans/151-autonomy-authority-decision-closure.md`.
+
+Cada entrada declara: el nombre del efecto, qué produce, la referencia a su autorización
+(quién lo autorizó y dónde consta) y su estado. El **vocabulario cerrado de clases de efecto DEV
+no está adoptado** por ese acto: no se inventan clases aquí; una clase no reconocida se declara y
+se escala como `GAP`/`REQUIRES_HUMAN` en vez de asumirse. -->
+
+| Efecto | Qué produce | Autorización (referencia) | Estado |
+|---|---|---|---|
+| ... | ... | ... | ... |
 
 ## Criterios de salida
 

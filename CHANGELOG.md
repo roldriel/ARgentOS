@@ -37,6 +37,24 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Changed
 
+- **Cierre de autoridad del modelo de autonomía — D-1…D-6b, D-ADR, Q9 y Q9bis** (plan 151, vía plan;
+  DEV-only, docs-only sobre `docs/CONVENTIONS.md`, `docs/VERSIONING.md`, `docs/plans/_TEMPLATE.md`,
+  este changelog, el Plan 151, `docs/plans/INDEX.md`, `docs/adr/19-autonomy-envelope-authority.md`,
+  `docs/adr/INDEX.md` y los índices de `docs/working/`, sin efecto en `protocol/`, `runtime/`,
+  `tools/`, `tests/` ni `.agents/`, por lo que RFC-56 no aplica): el mantenedor ejerció **un único
+  acto de autoridad** (2026-10-07) que resolvió trece decisiones —`D-1` (unidad de aceptación = el
+  Change; objetivo global diferido), `D-2a`/`D-2b`/`D-2c`/`D-2d` (frontera de efectos DEV;
+  declaración en el Plan; enforcement antes de delegar; `Effect` ortogonal a `Scope`), `D-3` (sin eje
+  de recurso), `D-4` (actor acotado; provider/modelo diferido), `D-5` (`P-6` documental; Memory =
+  contexto), `D-6a` (sin autorización parcial), `D-6b` (sin derivación parcial), `D-ADR` (ADR-19),
+  `Q9` (ocho disposiciones: `premises(D)`, `HD-K3`, `HD-M5`, `MK-3`, `HD-K1`, `HD-K2`, `HD-K4` y el
+  claim `HD-INT-G`) y `Q9bis` (regla de evidence closure; paso 9 de sincronización)—, y que
+  **corrigió la provenance** de las dos materializaciones normativas sin autorización trazable
+  (`b556741`, `d8bd284`): su autoridad nace en este acto y **no** se afirma ningún acto humano del
+  2026-10-05 (`HISTORICAL_AUTHORITY_ACT = NOT_VERIFIED`). `DECISION_COUNT = 13`; `P-5`/`work_type`
+  permanece `DERIVED_FIELD` (condicionado a los ítems Q9 relevantes; sin valor derivado, porque el
+  criterio de admisión no fue adoptado). Plan 151 queda `Executed (parcial: HD-INT-A…HD-INT-J y
+  HD-M4 sin disposición autorizada; commit de cierre pendiente del mantenedor)`.
 - **Roadmap estratégico de capacidades y autonomía — Etapas A → B → C** (plan 149, vía plan;
   docs-only sobre `ROADMAP.md`, este changelog, el Plan 149 y `docs/plans/INDEX.md`, sin
   efecto en `protocol/`, `runtime/`, `tools/`, `tests/` ni `.agents/`, por lo que RFC-56 no

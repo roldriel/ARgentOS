@@ -135,7 +135,10 @@ Reglas:
    vuelta a `dev` antes de iniciar el siguiente ciclo de desarrollo; antes de
    comenzar nuevo desarrollo, `dev` **MUST** contener el HEAD publicado de `master`.
    Si la promoción fue estrictamente fast-forward y no agregó commits propios, no
-   se requiere sincronización adicional.
+   se requiere sincronización adicional. (Regla **adoptada por el acto de autoridad del
+   Plan 151**, mantenedor, 2026-10-07; su texto se materializó en el commit `d8bd284`
+   —2026-10-06, sin plan citado—, materialización histórica que **no** constituye el acto.
+   Ver `docs/plans/151-autonomy-authority-decision-closure.md`.)
 
 ### 4.1 Batería canónica de verificación
 

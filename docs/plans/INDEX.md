@@ -1081,6 +1081,32 @@ sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
 |---|---|---|---|
 | `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. |
 
+## Octogésima segunda serie: cierre de autoridad del modelo de autonomía (Plan 151) (07 oct 2026)
+
+Serie del Change que **registra y materializa** el acto humano de autoridad del modelo de autonomía de
+ARgentOS. El Plan registra, para decisión explícita del mantenedor, trece decisiones —
+`D-1` (unidad de aceptación), `D-2a`/`D-2b`/`D-2c`/`D-2d` (superficie, representación, enforcement
+y relación con Scope de los efectos), `D-3` (eje de recurso), `D-4` (clase de actor autónomo),
+`D-5` (semántica de conocimiento), `D-6a`/`D-6b` (autorización y derivación parciales), `D-ADR`
+(ADR-worthiness de dos invariantes), `Q9` (disposición, por ítem, de la materialización normativa
+introducida sin autorización trazable) y `Q9bis` (disposición, por regla, de una segunda
+materialización en la misma condición)—, más la disposición de los registros `HD-*` afectados.
+`DECISION_COUNT = 13`; `P-5`/`work_type` se resuelve como **campo derivado** condicionado a `Q9` y
+no como decisión adicional. El Plan incorpora las matrices de decisiones, de consecuencias por
+ítem, de disposición `HD-*` y de trazabilidad, el límite de ejecución (este acto materializa sólo
+documentos normativos, template, índices, changelog y —condicionalmente— un ADR), y el hecho
+verificado de que **no existe acto humano del 2026-10-05** (`HISTORICAL_AUTHORITY_ACT =
+NOT_VERIFIED`; `B556741_STATUS = MATERIALIZED_NOT_AUTHORIZED`), por lo que ninguna autoridad se
+retrodada. Plan 151 (vía plan; DEV-only, sin efecto en `protocol/.agents/`, por lo que RFC-56 no
+aplica; Change Level L2). **Estado: `Executed (parcial: …)` — el acto de autoridad fue ejercido por el
+mantenedor el 2026-10-07 y las trece decisiones se materializaron; quedan sin disposición autorizada las
+nueve decisiones `HD-INT-A`…`HD-INT-J` y `HD-M4`, y `Committed`/`Closed` permanecen pendientes del commit
+de cierre (acción del mantenedor).**
+
+| Plan | RFC | Status | Descripción |
+|---|---|---|---|
+| `151-autonomy-authority-decision-closure.md` | — (vía plan; DEV-only, sin efecto de payload) | Executed (parcial: `HD-INT-A`…`HD-INT-J` y `HD-M4` sin disposición autorizada; commit de cierre pendiente del mantenedor) | **Cierre de autoridad del modelo de autonomía.** Registra y materializa un único acto humano con trece decisiones (`D-1`, `D-2a`…`D-2d`, `D-3`, `D-4`, `D-5`, `D-6a`, `D-6b`, `D-ADR`, `Q9`, `Q9bis`) y la disposición de los registros `HD-*`; cada ítem declara `AUTHORITY_DECISION_REQUIRED`, propuesta de análisis no adoptada, alternativas y consecuencia para `ADOPT` / `REJECT` (con alternativa nominada) / `DEFER`. Incorpora la matriz `HD-*`, la disposición por ítem de `Q9` y por regla de `Q9bis`, el tratamiento condicional obligatorio de `D-ADR` (materialización del ADR dentro del propio acto), la regla condicional de `P-5` (`CONDITIONED_ON_RELEVANT_Q9_ITEMS`; existencia por el ítem `Q9[1]` `premises(D)`; valor derivable sólo con el criterio de admisión adoptado —hoy **no** adoptado— → `GAP`/determinación reservada), el límite de ejecución explícito y las determinaciones de cierre (`DOCUMENTATION_IMPACT = REQUIRED`; `ROADMAP_IMPACT = DEFERRED`, sin modificar `ROADMAP.md`). Registra como hecho verificado que no existe evidencia primaria de un acto de autoridad del 2026-10-05. El acto de autoridad (mantenedor, 2026-10-07) materializa las reglas del envelope en `docs/CONVENTIONS.md`, la provenance del paso 9 de `docs/VERSIONING.md`, la superficie de efectos declarados de `docs/plans/_TEMPLATE.md`, el ADR-19 y la provenance de los índices de `docs/working/`; **no** implementa autonomía, Effects, Budget, Memory ni provider/modelo, y **no** toca `protocol/`, `dist/`, `runtime/`, `tests/` ni `.agents/`. |
+
 ## Octogésima primera serie: implementación de Memory System (Plan 150) (06 oct 2026)
 
 Serie del Change que transforma RFC-80 `Accepted` en un Class A Implementation Plan de

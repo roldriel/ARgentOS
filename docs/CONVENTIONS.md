@@ -206,11 +206,21 @@ los checkers dev. No gobierna automáticamente la evolución del Protocol
   persistir ≠ materializar; separación entre evidencia factual y autoridad
   normativa) quedan como principios, no como mecanismos
   (`docs/rfc/75-change-lifecycle.md:Dev vs Protocol`).
-### premises(D), derivación y reglas HD-K (adoptado 2026-10-05)
+### premises(D), derivación y reglas HD-K (adoptado por el Plan 151, 2026-10-07)
 
-Reglas documentales, materializadas por acto humano explícito (checkpoint Human
-Authority, 2026-10-05; registros canónicos en `HDK §16.2` y `PLAN §21.2`). No
-crean machinery nueva ni un segundo mecanismo de autoridad.
+Reglas documentales **adoptadas por el acto de autoridad del Plan 151** (mantenedor,
+2026-10-07), cuyo registro canónico es `docs/plans/151-autonomy-authority-decision-closure.md`.
+No crean machinery nueva ni un segundo mecanismo de autoridad.
+
+> **Provenance histórica.** El texto de estas reglas se materializó en el commit `b556741`
+> (2026-10-06) afirmando un acto del 2026-10-05 que **no está verificado**
+> (`HISTORICAL_AUTHORITY_ACT = NOT_VERIFIED`). Esa materialización se conserva como evidencia
+> histórica y **no** constituye autorización: la autoridad de estas reglas nace en el acto del
+> Plan 151. Las referencias dueñas que aquella materialización citaba —una sección inexistente del
+> documento de investigación HD-K y una región de este documento que contiene la regla de findings y
+> **no** un registro de decisiones— quedan **sustituidas** por la referencia al Plan 151.
+> `HD-K3` y `HD-M5` se adoptan como **contenido/forma** de la sección; **no** son precondiciones
+> de su existencia (ver el Plan 151).
 
 - **`premises(D)` obligatorio (`HD-K3`).** Un Plan/Note derivado declara la
   sección `## Derivación y premisas` con las ocho clases `P-1`…`P-8`, cada una con
@@ -223,13 +233,56 @@ crean machinery nueva ni un segundo mecanismo de autoridad.
   declaración humana añadida **no** se elimina por una re-derivación.
 - **`HD-K1` — scope.** Toda modificación de scope —expansión **o reducción**—
   exige re-derivación (`R-4` incondicional); no existe una excepción general de
-  reducción «inocua».
+  reducción «inocua». (`R-4` se cita como **provenance**: el modelo de clasificación
+  de modificaciones humanas no se adopta por este acto.)
 - **`HD-K2` — `work_type`.** Se deriva cuando hay evidencia suficiente; cuando no
   puede determinarse, requiere decisión humana. `work_type` **no** tiene función de
   autoridad adicional: la vía de autorización la determina la clase RFC-56.
 - **`HD-K4` — canal.** Estas reglas se elevan a `docs/CONVENTIONS.md` **sin** crear
-  un RFC/ADR nuevo por defecto.
+  un RFC/ADR nuevo por defecto. («Por defecto»: la elevación retrospectiva a ADR por
+  ADR-worthiness (`AU-6`) no queda cerrada; es juicio humano.)
 
+### Modelo de autonomía — decisiones de autoridad del Plan 151 (adoptadas 2026-10-07)
+
+Decisiones del envelope de autonomía adoptadas por el acto de autoridad del Plan 151
+(mantenedor, 2026-10-07). Registran **principios**, no esquemas de implementación, y no crean
+autoridad, entidad, state machine ni mecanismo nuevo. Su implementación (gate de efectos,
+presupuesto de recurso, actor con provider/modelo, integración de Memory) queda **fuera** de
+ese acto.
+
+- **Unidad de aceptación (`D-1`).** La unidad primaria de aceptación es el **Change**;
+  `Executed` / `Committed` / `Closed` / `Released` permanecen distintos. El **objetivo global**
+  multi-Change queda **fuera del cierre actual**: requiere un mecanismo/trigger posterior
+  explícito y no se infiere.
+- **Frontera de efectos (`D-2a`, `D-2d`).** La admisión de efectos fuera de la frontera
+  inmediata se decide y se declara en **DEV**; **`Effect` es ortogonal a `Scope`** (Scope
+  responde por objetos/paths; Effect, por clases de acción que pueden no tener path). Los
+  efectos se declaran **donde vive la autorización** —el Plan—, que es su superficie de
+  declaración. No se hereda la política de efectos del Protocol.
+- **Momento de la autorización (`D-2c`).** La derivación de autoridad ocurre **antes de la
+  delegación**: no se delega una acción cuyo fundamento de autoridad requiera una derivación
+  posterior.
+- **Sin eje de recurso (`D-3`).** No se incorpora un `resource budget` como dimensión de
+  autorización. Los límites operativos existentes (iteraciones del bucle, timeout de comando,
+  pasos del worker, no-progress) **no** son autorización y **no** sustituyen a Scope ni a
+  Authority.
+- **Clase de actor (`D-4`).** El actor autorizado es el **acotado por la autoridad existente**.
+  La selección de provider/modelo queda **diferida** y no se materializa: no se introducen
+  provider, modelo, red, credenciales, sandbox ni mecanismos equivalentes de interposición. El
+  invoker inyectado **no** constituye una garantía de aislamiento.
+- **Conocimiento (`D-5`).** `P-6` es **conocimiento documental** (vigencia declarada de las
+  fuentes citadas). **Memory es contexto**: no es autoridad y no es premisa de derivación en
+  esta etapa.
+- **Sin autorización parcial (`D-6a`).** No existe un mecanismo separado de autorización
+  parcial: `Plan + Scope + execution state` **no** crean una segunda autoridad. `Executed
+  (parcial: …)` describe un estado de ejecución, no una clase de autoridad.
+- **Sin derivación parcial (`D-6b`).** No existe continuación válida sobre una derivación
+  incompleta: si la derivación requerida no puede completarse, se registra `GAP` / pendiente /
+  diferido según corresponda y **se detiene el paso que dependa de ella**; no se continúa sobre
+  una derivación incompleta ni se infiere autorización de ella.
+- **ADR (`D-ADR`).** Los invariantes arquitectónicos persistentes de este envelope se registran
+  en `docs/adr/19-autonomy-envelope-authority.md`. El ADR **documenta** la decisión; **no**
+  sustituye al Plan como mecanismo de autorización de ejecución.
 
 ### Change Lifecycle — Change Levels (modelo objetivo)
 
@@ -282,6 +335,11 @@ materializa su mecanismo es aceptado
 
 
 ### Regla transversal — Evidence closure / anti-rework
+
+Regla **adoptada por el acto de autoridad del Plan 151** (mantenedor, 2026-10-07), que es su
+registro canónico. Su texto se materializó en el commit `d8bd284` (2026-10-06) sin plan
+citado; esa materialización se conserva como evidencia histórica y **no** constituye el acto
+de autoridad (ver `docs/plans/151-autonomy-authority-decision-closure.md`).
 
 Una verificación satisfecha cierra la pregunta que verificó. Ante una solicitud
 de volver a auditar o verificar una cuestión ya resuelta, comprobar primero si

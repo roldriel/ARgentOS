@@ -12,7 +12,12 @@
 > 2026-09-15; plan 125; docs-only, sin `VERSION` bump ni tag). ADR-18 registra
 > las decisiones de frontera del payload, provenance y clasificación (C–K;
 > autorizadas por el mantenedor, 2026-09-15; plan 126; materializadas en el
-> mismo cambio, Clase B).
+> mismo cambio, Clase B). ADR-19 registra los invariantes del **envelope de
+> autonomía** DEV (unidad de aceptación, frontera de efectos, ortogonalidad
+> `Effect`/`Scope`, ausencia de eje de recurso, clase de actor, conocimiento,
+> ausencia de autorización y de derivación parciales), adoptados por el acto de
+> autoridad del Plan 151 (mantenedor, 2026-10-07; docs-only, sin `VERSION` bump
+> ni tag).
 
 ## Matriz D# ↔ ADR ↔ RFC ↔ plan
 
@@ -45,6 +50,7 @@ de autorización sigue siendo RFC `Accepted` + plan
 | [ADR-16](16-change-lifecycle-authority.md) | — | Change Lifecycle — Authority & Decision Model | Accepted | — | — | — |
 | [ADR-17](17-repository-lifetime-and-composite-structure.md) | — | Repository Structure — Lifetime Model & Composite Placement | Accepted | — | [plan 125](docs/plans/125-repository-architecture-decisions.md) | decisión registrada (docs-only); implementación derivada pendiente (semántica de lifetime/persistence en el contrato Protocol → RFC-56) |
 | [ADR-18](18-payload-boundary-provenance-and-classification.md) | — | Payload Boundary, Provenance and Classification | Accepted | — | [plan 126](docs/plans/126-repository-architecture-decisions-ck.md) | materializado en el mismo cambio (Clase B): checker de frontera + allowlist de provenance, declaración de distribución del harness, vocabulario `tags.kind` no exhaustivo, clasificación documental DEV en el lugar, INDEX semántico |
+| [ADR-19](19-autonomy-envelope-authority.md) | — | Autonomy Envelope: Authority Decisions | Accepted | — | [plan 151](docs/plans/151-autonomy-authority-decision-closure.md) | invariantes `AE-1`…`AE-10` registrados en `docs/CONVENTIONS.md` (sección «Modelo de autonomía — decisiones de autoridad del Plan 151»); docs-only, sin `VERSION` bump ni tag; los esquemas de implementación (gate de efectos, enum de clases, presupuesto de recurso, actor con provider/modelo, aislamiento, Memory, derivación parcial) quedan fuera del acto |
 
 ## Notas
 

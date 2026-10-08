@@ -37,6 +37,21 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Changed
 
+- **Instrumento Class B para el cierre residual del Plan 151** (plan 153, vía plan; DEV-only, docs-only
+  sobre el Plan 153 y `docs/plans/INDEX.md`, sin efecto en `protocol/`, `runtime/`, `tools/`, `tests/`
+  ni `.agents/`, por lo que RFC-56 no aplica): se materializa el vehículo que permite decidir, en un acto
+  de autoridad **posterior y explícito**, el tratamiento de los remanentes del Plan 151 —las diez filas
+  `HD-*` que su acto del 2026-10-07 dejó `SIN DISPOSICIÓN`—, preservando íntegramente el acto histórico y
+  prohibiendo la retroactividad (`RETROACTIVE_HISTORY_MUTATION = BLOCKED`). El Plan queda `Aprobado para
+  redacción` y **no decide**: `D-151-1` (tratamiento de las diez filas), `D-151-2` (estado residual) y
+  `D-151-3`/`CL-151-Q1` (¿puede un acto posterior satisfacer un criterio de salida anterior sin reescribir
+  el acto?) permanecen `PENDING_AUTHORITY`, con la opción retroactiva expresamente prohibida; `CL-151-Q5`
+  queda `RESOLVED_CURRENT_RULE` (el paréntesis de `Executed (parcial: <qué falta>)` describe lo que falta
+  y la forma legacy del Plan 41 no está disponible). Define las rutas A–F con sus precondiciones de
+  autoridad (`AUTHORITY_ACT = RECORDED`, `AUTHORITY_INFERRED = NO`, `HISTORICAL_AUTHORITY_REUSED = NO`),
+  la revalidación obligatoria si cambia el contenido en scope y la fórmula vigente de `Closed`. No
+  modifica el Plan 151 ni el Plan 152, no crea ADR, no deriva `work_type` (`P-5 = GAP`) y no ejecuta
+  ninguna decisión de autoridad.
 - **Materialización del acto de autoridad del Plan 152 — `GOV-1`…`GOV-10`** (plan 152, vía plan;
   DEV-only, docs-only sobre `docs/CONVENTIONS.md`, `docs/VERSIONING.md`, `docs/plans/_TEMPLATE.md`,
   `docs/rfc/_TEMPLATE.md`, `docs/adr/_TEMPLATE.md`, `docs/plans/INDEX.md`, `docs/rfc/INDEX.md`,

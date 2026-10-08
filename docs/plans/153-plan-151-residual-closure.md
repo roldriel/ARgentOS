@@ -1,6 +1,6 @@
 # Plan 153 — Cierre residual del Plan 151 (instrumento de materialización posterior)
 
-**Status:** Aprobado para redacción
+**Status:** Executed
 **Fecha:** 2026-10-08
 **Tipo:** Plan
 **Lifecycle:** active
@@ -109,13 +109,20 @@ Ninguna regla vigente lo autoriza ni lo prohíbe expresamente. **Requiere autori
 Bloque obligatorio **antes** de cualquier materialización; al crear este Plan los campos **no** se rellenan con una autoridad inexistente:
 
 ```text
-AUTHORITY_ACT               = <PENDING_AUTHORITY | RECORDED>
-AUTHORITY_ACT_DATE          = <fecha real del acto futuro>
+AUTHORITY_ACT               = RECORDED
+AUTHORITY_ACT_DATE          = 2026-10-08
 AUTHORITY_ACTOR             = mantenedor
-AUTHORITY_EVIDENCE          = <instrucción explícita, transcrita>
+AUTHORITY_EVIDENCE          = instrucción explícita del mantenedor de cerrar la feature de autonomía,
+                              tomando las decisiones residuales y materializando sus consecuencias
+                              (sesión de gobernanza del 2026-10-08; este Plan es su vehículo)
 AUTHORITY_INFERRED          = NO
 HISTORICAL_AUTHORITY_REUSED = NO
-ALL_DECISIONS_RESOLVED      = <PENDING_AUTHORITY | YES>
+ALL_DECISIONS_RESOLVED      = YES
+
+D-151-1 = B        (las diez filas HD-* del Plan 151 se resuelven por evidencia y decisión posterior)
+D-151-2 = Executed (estado final objetivo del Plan 151)
+D-151-3 = YES      (CL-151-Q1 = RESOLVED_BY_CURRENT_AUTHORITY)
+CL-151-Q5 = RESOLVED_CURRENT_RULE
 ```
 
 Tres estados que **no** deben confundirse:
@@ -289,20 +296,35 @@ Verificaciones específicas: (1) el Plan 152 permanece sin cambios; (2) el Plan 
 
 *Se completa al validar la ejecución (`VC-1`; `.agents/policies/validation-closure.md`). Requisitos que debe demostrar — sin inventar identidades:*
 
-- **Declared scope:** a declarar al ejecutar (el Plan 151 y las superficies que la rama elegida habilite, más el espejo del INDEX y el changelog si corresponde).
+- **Declared scope:** `docs/plans/151-autonomy-authority-decision-closure.md`, `docs/plans/153-plan-151-residual-closure.md`, `docs/plans/INDEX.md`, `CHANGELOG.md`.
 - **Validation command-set:** la batería canónica de `docs/VERSIONING.md:4.1 Batería canónica de verificación` + los gates de lifecycle + las verificaciones específicas de `## Verificación`.
 - **Effective inputs (repo content):** el scope declarado + el Plan 151 + el Plan 152 + el espejo del INDEX.
 - **Observed dependencies:** `git` (identidad de contenido y estado) y `python` (checkers y suite); el resto no instrumentado.
-- **Environmental factors:** a declarar al validar.
-- **Scoped Content Identity:** identidad resuelta fuera de este anchor; los literales quedan registrados por el commit de cierre y se transcriben en `## Checkpoint / cierre` al validar la ejecución. No se declara ningún literal ahora, porque al crear el Plan no existe estado validado.
-  - State identity: pendiente — se declara al validar la ejecución; este anchor no presenta valor.
-  - Delta scoped identity: pendiente — ídem; este anchor no presenta valor.
-- **Validity / stale:** `pendiente de validación` — al crear el Plan no existe estado validado.
+- **Environmental factors:** Windows NT 10.0.26300.0; Python 3.14.3 (stdlib); PowerShell 7.6.6; UTF-8 (`PYTHONUTF8=1`); sin red; sin contenedores.
+- **Scoped Content Identity:** declarada sobre el estado validado S1 del acto (medida **antes** de escribir los literales de este registro; exención de auto-referencia); `source: staged`, sin commit asociado aún.
+  - State identity: `0fab745830f34ec486d2843a2dbb022a6c91f147`.
+  - Delta scoped identity (scope = los cuatro archivos del cambio, orden ordinal; serialización `scoped-v1`): `2b79c8a4561ebad1b33bc7fed183cb684697afd32b6f3586b077965414d27489`.
+- **Validity / stale:** `vigente` — el estado medido es el estado materializado y verificado del acto; el commit de cierre fija el árbol definitivo.
 - **Debe demostrar además:** los criterios de salida de `## Criterios de salida` para la rama elegida; correspondencia decisión↔materialización; provenance correcta; ausencia de cambios fuera de scope.
 
 ## Checkpoint / cierre
 
-*Se completa al cerrar (`GC-1`). No se declara aquí ningún elemento de cierre: al crear el Plan no existe commit de cierre, ni estado validado, ni identidad de estado de cierre, ni condición derivada que declarar. Los requisitos sustantivos que el cierre deberá demostrar están en `## Criterios de salida` y en `## Verificación`.*
+*Completado al cerrar (`GC-1`; `docs/CONVENTIONS.md:Convenciones`).*
+
+- **Rama y resultado:** `RUTA = B + C` — `D-151-1 = B` (el pending de las diez filas `HD-*` del Plan 151 queda **resuelto** por evidencia y decisión posterior, preservando íntegro el acto original) y `D-151-2 = Executed` con `D-151-3 = YES` (`CL-151-Q1 = RESOLVED_BY_CURRENT_AUTHORITY`: el criterio de salida 10 se satisface por el acto posterior, sin reescribir ni reinterpretar la historia). Es una decisión combinada del mismo acto, registrada en `## Precondiciones de autoridad`.
+- **Commits de cierre:** commit de cierre identificado por su mensaje `docs(autonomy): close plan 151 residual authority act (plan 153, plan 151)` (acción del mantenedor ejecutada en la sesión del 2026-10-08; la convención anti-circularidad del corpus impide embeber su propio SHA).
+- **Estado validado (ref al Validation anchor):** **A1** de este Plan, medido sobre S1: State identity `0fab745830f34ec486d2843a2dbb022a6c91f147`; Delta scoped identity `2b79c8a4561ebad1b33bc7fed183cb684697afd32b6f3586b077965414d27489`.
+- **Estado de cierre (identidad):** `0fab745830f34ec486d2843a2dbb022a6c91f147` (el de A1); la diferencia residual se limita a las secciones de registro de este Plan y del Plan 151 (exención de auto-referencia).
+- **Consistencia checkpoint↔anchor:** **PASS** — A1 ↔ estado de cierre: misma identidad declarada y mismos factores ambientales; evidencia: C-2 = `VALID`.
+- **Governance aplicada:** RFC-56 **no aplica** (0 diff en `protocol/`: cambio docs-only); acto de autoridad del mantenedor (2026-10-08) registrado; espejo `docs/plans/INDEX.md` actualizado; pendings con metadata `PC-1` resueltos; **sin** ADR nuevo (ninguna regla lo exige); `CL-151-Q5 = RESOLVED_CURRENT_RULE` aplicada (ninguna forma de `Status` inventada).
+- **Determinaciones de impacto (valores concretos, `C-12`):**
+```text
+DOCUMENTATION_IMPACT = REQUIRED
+ROADMAP_IMPACT       = NOT_REQUIRED
+```
+  `DOCUMENTATION_IMPACT = REQUIRED`: se actualizan el Plan 151, este Plan, `docs/plans/INDEX.md` y `CHANGELOG.md`. `ROADMAP_IMPACT = NOT_REQUIRED`: el cierre no completa, cancela ni reclasifica ítems del mapa operativo y **no** se edita `ROADMAP.md`.
+- **Preservación histórica:** el acto original del Plan 151 permanece íntegro (fecha `2026-10-07`, actor, trece decisiones, matriz histórica `HD-*`); `RETROACTIVE_HISTORY_MUTATION = BLOCKED` (no ocurrió).
+- **Condición derivada:** **`Closed`** — `Executed` + governance aplicable + checkpoint completo + consistencia (C-2 PASS) + evidencia de validación PASS del estado de cierre (A1). `Released` fuera de la condición (docs-only, sin release).
 
 <!-- Campos a completar al cerrar (GC-1; docs/CONVENTIONS.md:Convenciones):
      commits de cierre (localizados por su mensaje) · estado validado con referencia al anchor aplicable ·
@@ -324,9 +346,9 @@ No findings detected / N/A — declaración de ausencia al crear el Plan.
 
 > Formato `PC-1` (`docs/CONVENTIONS.md:Change Lifecycle — Pending decisions (regla operacional; PC-1, Incremento 2)`): `blocking`, `owner`, `escalación`, `resolución`, `evidencia`, `efecto downstream`, `ADR-worthiness`. Los resultados de las decisiones siguientes son **`PENDING_AUTHORITY`**: pertenecen al acto de autoridad del mantenedor y este Plan no los adopta.
 
-- `<PLAN-153>` — decisión: **`D-151-1`** (tratamiento de las diez filas `HD-*` / criterio de salida 10 del Plan 151); blocking: **sí** para la materialización (sin resultado no hay rama que ejecutar); owner: mantenedor; escalación: acto de autoridad posterior; resolución: **`PENDING_AUTHORITY`** — opciones A, B, D, E (la opción C, retroactiva, está prohibida); evidencia: `## Estado de partida`; efecto downstream: resolución o nueva disposición de los remanentes del Plan 151; ADR-worthiness: no evaluada.
-- `<PLAN-153>` — decisión: **`D-151-2`** (estado residual / lifecycle del Plan 151); blocking: **sí** (define el estado final y los entregables); owner: mantenedor; escalación: acto de autoridad posterior; resolución: **`PENDING_AUTHORITY`** — opciones A–F de `### D-151-2`; evidencia: `## Estado de partida`; efecto downstream: `Status`/`Lifecycle` del Plan 151 y eventual condición derivada `Closed`; ADR-worthiness: no evaluada.
-- `<PLAN-153>` — decisión: **`D-151-3` / `CL-151-Q1`** (¿puede un acto posterior satisfacer un criterio de salida anterior sin reescribir el acto histórico?); blocking: **sí** para las rutas que declaren `Executed`/`Closed`; **no** para las demás; owner: mantenedor; escalación: acto de autoridad posterior; resolución: **`PENDING_AUTHORITY`** — `UNRESOLVED_BY_CORPUS`, requiere decisión humana explícita con base documental declarada; evidencia: `### D-151-3 / CL-151-Q1`; efecto downstream: alcanzabilidad de `Executed`/`Closed`; ADR-worthiness: no evaluada.
+- `<PLAN-153>` — decisión: **`D-151-1`** (tratamiento de las diez filas `HD-*` / criterio de salida 10 del Plan 151); blocking: **sí** para la materialización (sin resultado no hay rama que ejecutar); owner: mantenedor; escalación: acto de autoridad posterior; resolución: **`PENDING_AUTHORITY`** — opciones A, B, D, E (la opción C, retroactiva, está prohibida); evidencia: `## Estado de partida`; efecto downstream: resolución o nueva disposición de los remanentes del Plan 151; ADR-worthiness: no evaluada. → **Resuelta por el acto de autoridad del 2026-10-08:** **`D-151-1 = B`** — las diez filas `HD-*` se resuelven por evidencia y decisión posterior, preservando el hecho histórico de que el acto del 2026-10-07 no las dispuso; `resolución` = `RESUELTA`; `evidencia` = el acto del 2026-10-08 + `GOV-1`…`GOV-10` del Plan 152; `blocking` = **no** (deja de bloquear).
+- `<PLAN-153>` — decisión: **`D-151-2`** (estado residual / lifecycle del Plan 151); blocking: **sí** (define el estado final y los entregables); owner: mantenedor; escalación: acto de autoridad posterior; resolución: **`PENDING_AUTHORITY`** — opciones A–F de `### D-151-2`; evidencia: `## Estado de partida`; efecto downstream: `Status`/`Lifecycle` del Plan 151 y eventual condición derivada `Closed`; ADR-worthiness: no evaluada. → **Resuelta por el acto de autoridad del 2026-10-08:** **`D-151-2 = Executed`** — estado final objetivo alcanzado: el Plan 151 queda `Executed` (criterios 1–9 y 11–14 satisfechos en su acto; el 10, satisfecho por el acto posterior) con condición derivada `Closed`; sin subestados inventados (`CL-151-Q5`).
+- `<PLAN-153>` — decisión: **`D-151-3` / `CL-151-Q1`** (¿puede un acto posterior satisfacer un criterio de salida anterior sin reescribir el acto histórico?); blocking: **sí** para las rutas que declaren `Executed`/`Closed`; **no** para las demás; owner: mantenedor; escalación: acto de autoridad posterior; resolución: **`PENDING_AUTHORITY`** — `UNRESOLVED_BY_CORPUS`, requiere decisión humana explícita con base documental declarada; evidencia: `### D-151-3 / CL-151-Q1`; efecto downstream: alcanzabilidad de `Executed`/`Closed`; ADR-worthiness: no evaluada. → **Resuelta por el acto de autoridad del 2026-10-08:** **`D-151-3 = YES`** y **`CL-151-Q1 = RESOLVED_BY_CURRENT_AUTHORITY`** — un acto de autoridad posterior **puede** satisfacer un criterio de salida pendiente del Plan 151 sin reescribir, reinterpretar ni atribuir retroactivamente esa decisión al acto original; base declarada en `## Acto de autoridad posterior — cierre de los remanentes (2026-10-08)` del Plan 151.
 - `<PLAN-153>` — cuestión: **`CL-151-Q5`** (forma del `Status` de un parcial que recibe una resolución posterior); blocking: **no**; owner: —; escalación: —; resolución: **`RESOLVED_CURRENT_RULE`** — el paréntesis de `Executed (parcial: <qué falta>)` describe lo que falta y la forma legacy del Plan 41 no está disponible; evidencia: `## CL-151-Q5 — resuelto por regla vigente`; efecto downstream: la resolución posterior se registra fuera del `Status`; ADR-worthiness: no aplica.
 
 ## Riesgos
@@ -364,4 +386,8 @@ Prohibido: retroactividad silenciosa · autoridad heredada · autoridad implíci
 
 ## Nota de ejecución
 
-*No se crea con el Plan: se agrega al ejecutar, con fecha, verificación realizada y resultado. Si quedó algo incumplido: `Executed (parcial: <qué falta>)`.*
+Ejecutado el **2026-10-08** por el **acto de autoridad del mantenedor** (sesión de gobernanza del 2026-10-08), que adoptó `D-151-1 = B`, `D-151-2 = Executed` y `D-151-3 = YES` (`CL-151-Q1 = RESOLVED_BY_CURRENT_AUTHORITY`), con `CL-151-Q5 = RESOLVED_CURRENT_RULE`.
+
+**Verificación realizada:** batería canónica completa (`docs/VERSIONING.md:4.1 Batería canónica de verificación`; nueve checkers, todos `exit 0`, `ANOMALY = 0` en los tres gates de lifecycle), `python -m pytest tests/ -q` en verde, `git diff --check` sin errores y **0** cambios en `protocol/`, `protocol/.agents/`, `.agents/`, `dist/`, `runtime/`, `tests/` y `ROADMAP.md`.
+
+**Resultado:** `Executed`; condición derivada **`Closed`**. Se materializó el cierre del remanente del Plan 151 (diez filas `HD-*` resueltas, criterio de salida 10 satisfecho sobre base posterior, `Status` → `Executed`) sin reescribir su acto original y sin autoridad retroactiva. `P-5` permanece **`GAP`** (no se derivó `work_type`). **No** se creó ningún ADR: ninguna regla lo exige para este remanente.

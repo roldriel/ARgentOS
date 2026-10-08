@@ -37,6 +37,18 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Changed
 
+- **Cierre residual del Plan 151 — ejecución del Plan 153 (acto de autoridad del 2026-10-08)** (plan 153,
+  vía plan; DEV-only, docs-only sobre `docs/plans/151-autonomy-authority-decision-closure.md`, el Plan 153,
+  `docs/plans/INDEX.md` y este changelog, sin efecto en `protocol/`, `runtime/`, `tools/`, `tests/` ni
+  `.agents/`, por lo que RFC-56 no aplica): el mantenedor ejerció la autoridad residual sobre el remanente
+  del Plan 151 y se materializó el cierre de la feature de autonomía — `D-151-1 = B` (las diez filas `HD-*`
+  que el acto del 2026-10-07 dejó sin disposición quedan resueltas **por evidencia y decisión posterior**,
+  preservando íntegro el acto original), `D-151-2 = Executed` (el Plan 151 pasa de `Executed (parcial: …)` a
+  `Executed`, con condición derivada `Closed`) y `D-151-3 = YES`
+  (`CL-151-Q1 = RESOLVED_BY_CURRENT_AUTHORITY`: un acto de autoridad posterior puede satisfacer un criterio
+  de salida pendiente sin reescribir ni reinterpretar la historia). Revalidación `A2` PASS sobre el estado de
+  cierre; el Plan 152 permanece sin cambios y su espejo del INDEX queda alineado; `P-5` permanece `GAP` (sin
+  `work_type` inventado); sin ADR nuevo y sin autoridad retroactiva.
 - **Instrumento Class B para el cierre residual del Plan 151** (plan 153, vía plan; DEV-only, docs-only
   sobre el Plan 153 y `docs/plans/INDEX.md`, sin efecto en `protocol/`, `runtime/`, `tools/`, `tests/`
   ni `.agents/`, por lo que RFC-56 no aplica): se materializa el vehículo que permite decidir, en un acto

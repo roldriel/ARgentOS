@@ -1254,6 +1254,19 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [11.7.1] — 2026-10-08
+
+### Changed
+
+- **Release de gobernanza 11.7.1 — promoción de `master` al estado verificado de `dev`** (plan 151,
+  plan 152, plan 153; excepción de promoción de `docs/VERSIONING.md` §3, autorizada por el mantenedor):
+  nivelación de `master` con el estado verificado de `dev`, que publica los artefactos de gobernanza del
+  cierre de autoridad del modelo de autonomía (Planes 151–153) y el cierre residual del Plan 151.
+  **El contenido del protocolo no cambia**: 0 diff bajo `protocol/` salvo `protocol/.agents/VERSION`
+  —metadata de la release misma—, que pasa de `11.7.0` a `11.7.1` (sucesora PATCH de la última versión
+  publicada en `master`). Sin RFC nueva, sin ADR nuevo, sin reapertura de planes cerrados y sin cambio
+  de contenido de payload.
+
 ## [11.7.0] — 2026-10-06
 
 ### Added

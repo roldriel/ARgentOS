@@ -8,6 +8,8 @@
 
 **Status:** Aprobado para redacción | Aprobado para ejecución
 **Fecha:** YYYY-MM-DD
+**Tipo:** Plan | Nota (opcional; **ausencia ⇒ `Plan`**; `Nota` = forma mínima dentro de la **misma** familia)
+**Lifecycle:** active | archived | superseded | deprecated (opcional; **ausencia ⇒ `active`**)
 **RFC:** RFC-NN (`docs/rfc/NN-slug.md`) | —
 **Clase:** A | B (solo si el plan toca `protocol/.agents/`; ver RFC-56)
 **Change Level:** L0–L3 (ver RFC-75 Mecanismo 2:
@@ -16,6 +18,20 @@ duration/complexity)`; el número de commits no es dimensión; Change Level ≠
 clase RFC-56)
 **Depende de:** plan NN | —
 **Origen:** <auditoría, bitácora, decisión — con referencia verificable>
+**Work type:** <valor derivado por el criterio de admisión de `docs/CONVENTIONS.md` | GAP> (opcional: se declara **sólo** cuando el valor cambia una decisión de gobernanza; el valor **no** se inventa)
+**Superseded por:** <identidad del sucesor (RFC, ADR, plan o ruta) | —>
+**Motivo de retiro:** <razón explícita y verificable> (obligatorio **sólo** cuando no existe sucesor)
+
+<!-- Campos adoptados por el acto de autoridad del Plan 152 (2026-10-07; ver
+`docs/CONVENTIONS.md:Change Lifecycle — Vía de autorización por Note` y
+`docs/CONVENTIONS.md:Change Lifecycle — Vigencia materializada, retiro y work_type`):
+`**Tipo:** Nota` habilita la **forma mínima** de `Note` dentro de esta misma familia — nace de este
+template con las secciones mínimas, se registra en `docs/plans/INDEX.md` y **no** crea familia,
+namespace ni identidad nueva. `**Lifecycle:**` no se fusiona con `**Status:**`, su default es `active`
+por ausencia y la guarda es **hacia adelante**. `Abandoned` es una **condición derivada**
+(`Superseded` **sin** sucesor **∧** `Motivo de retiro`), nunca un valor nuevo. `**Work type:**` se
+declara sólo si el valor cambia una decisión de gobernanza, y **no** se deriva aquí. -->
+
 <!-- El Status inicial define la clase de entregable (ciclo de status de
 planes en docs/CONVENTIONS.md:Convenciones). La RFC puede ser "—" solo por vía
 plan, con justificación documentada en este archivo. Al crear el plan,

@@ -265,6 +265,11 @@ Condiciones derivadas del Change Lifecycle (semántica; RFC-75
   sigue el DoD de §10 sin exigir los campos nuevos.
 - `Promoted` = merge `dev → master` verificado; `Released` = tag inmutable;
   `Abandoned` = Plan `Superseded` con motivo.
+- Campos del retiro (adoptados por el acto del Plan 152, 2026-10-07): `**Superseded por:**` declara el
+  sucesor; `**Motivo de retiro:**` es obligatorio **sólo** cuando no existe sucesor; `Abandoned`
+  permanece como **condición derivada** (`Superseded` sin sucesor **∧** con motivo) y **no** es un
+  estado nuevo. `**Lifecycle:**` es un eje **distinto** de `**Status:**` y no se fusiona con él
+  (`docs/CONVENTIONS.md:Change Lifecycle — Vigencia materializada, retiro y work_type`).
 - Cadena de implicación (semántica objetivo): `Verified ⊆ Executed ⊆ Closed ⊆
   Promoted ⊆ Released`. Anomalías: `Closed` sin `Verified` es inválido;
   `Promoted` sin `Closed` es anomalía; `Released` sin `Verified` es violación

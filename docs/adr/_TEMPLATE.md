@@ -11,6 +11,9 @@
 
 **Status:** Proposal | Accepted | Superseded
 **Fecha:** YYYY-MM-DD
+**Lifecycle:** active | archived | superseded | deprecated (opcional; **ausencia ⇒ `active`**)
+**Superseded por:** <identidad del sucesor (RFC, ADR, plan o ruta) | —>
+**Motivo de retiro:** <razón explícita y verificable> (obligatorio **sólo** cuando no existe sucesor)
 **Decisión original:** <D# | —> (docs/architecture/ARCHITECTURAL_DECISION_MODEL.md)
 **RFC:** <RFC-NN | —>
 **Plan:** <plan NN | —>

@@ -9,7 +9,15 @@
 
 **Status:** Proposal
 **Fecha:** YYYY-MM-DD
+**Lifecycle:** active | archived | superseded | deprecated (opcional; **ausencia ⇒ `active`**)
+**Superseded por:** <identidad del sucesor (RFC, ADR, plan o ruta) | —>
+**Motivo de retiro:** <razón explícita y verificable> (obligatorio **sólo** cuando no existe sucesor)
 **Serie:** <serie a la que pertenece> | —
+
+<!-- `**Lifecycle:**` y los campos de retiro se adoptaron por el acto de autoridad del Plan 152
+(2026-10-07): `Lifecycle ≠ Status` (no se fusionan), default `active` por ausencia (no se escribe en el
+corpus histórico), guarda **hacia adelante**, y `Abandoned` es una **condición derivada** — no un valor
+nuevo. Ver `docs/CONVENTIONS.md:Change Lifecycle — Vigencia materializada, retiro y work_type`. -->
 **Change Level:** L0–L3 | — (opcional; solo si esta RFC es el primer artifact
 del cambio / intake fallback; si no, se declara en el Plan)
 **Origen:** <auditoría, bitácora, fricción — con referencia verificable>

@@ -37,6 +37,25 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Changed
 
+- **Materialización del acto de autoridad del Plan 152 — `GOV-1`…`GOV-10`** (plan 152, vía plan;
+  DEV-only, docs-only sobre `docs/CONVENTIONS.md`, `docs/VERSIONING.md`, `docs/plans/_TEMPLATE.md`,
+  `docs/rfc/_TEMPLATE.md`, `docs/adr/_TEMPLATE.md`, `docs/plans/INDEX.md`, `docs/rfc/INDEX.md`,
+  `docs/adr/INDEX.md`, `docs/working/proposals/INDEX.md` y el Plan 152, sin efecto en `protocol/`,
+  `runtime/`, `tools/`, `tests/` ni `.agents/`, por lo que RFC-56 no aplica): se materializaron las
+  consecuencias de las diez decisiones del acto de autoridad del 2026-10-07 —
+  `GOV-1` (reconciliación de identidad de los IDs divergentes, con las formulaciones históricas
+  conservadas), `GOV-2` (ausencia de evidencia de los actos del 2026-10-02/2026-10-05 y no
+  retroactividad), `GOV-3` (`Note` como forma dentro de la familia `Plan`, con `**Tipo:**` y registro
+  propio), `GOV-4` (vía normativa de autorización por `Note` con los criterios `C-1`…`C-13` y las
+  prohibiciones `N-1`…`N-7`), `GOV-5` (`**Lifecycle:**` por artefacto: valores, default `active` por
+  ausencia, no-fusión con `**Status:**`, guarda hacia adelante, alcance Plan/RFC/ADR), `GOV-6`
+  (`**Superseded por:**` y `**Motivo de retiro:**`; `Abandoned` como condición derivada, sin estados
+  nuevos), `GOV-7` (columna `Vigencia` derivada en los tres INDEX de gobernanza; `HEADER = fuente`,
+  `INDEX = vista`), `GOV-8` (criterio de admisión de `work_type`) y `GOV-9` (política de declaración de
+  `work_type`)—. `GOV-10` queda **diferida** por la propia decisión
+  (`COMMITMENT_NOW` / `MATERIALIZATION_LATER`): `INV-1` e `INV-3` **no** se elevan a norma en este
+  cambio. `P-5` permanece `GAP` (no se derivó ningún `work_type`); **no** se creó ADR ni se enmendó el
+  ADR-19 (ADR-worthiness `AU-6` no ejercida; queda como finding abierto); el Plan 151 **no** se modifica.
 - **Cierre de autoridad del modelo de autonomía — D-1…D-6b, D-ADR, Q9 y Q9bis** (plan 151, vía plan;
   DEV-only, docs-only sobre `docs/CONVENTIONS.md`, `docs/VERSIONING.md`, `docs/plans/_TEMPLATE.md`,
   este changelog, el Plan 151, `docs/plans/INDEX.md`, `docs/adr/19-autonomy-envelope-authority.md`,

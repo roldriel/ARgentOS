@@ -21,3 +21,14 @@ Registro/navegación de los working docs de propuesta (RFC-69). Son
 > (DEV solamente); `HD-M3` se eleva al `docs/adr/19-autonomy-envelope-authority.md`; las nueve
 > decisiones `HD-INT-A`…`HD-INT-J` del 2026-10-02 y `HD-M4` **permanecen sin disposición autorizada**
 > en ese acto.
+>
+> **Reconciliación de identidad (acto del Plan 152, mantenedor, 2026-10-07; `GOV-1 = C`).** Los IDs con
+> dos formulaciones en los Working docs quedan reconciliados por ítem: `HD-INT-F` (**superconjunto** — la
+> formulación operativa contiene la pregunta de campo; resueltas por `GOV-8`/`GOV-9`), `HD-INT-I`
+> (**desdoblamiento** — la pregunta por la columna es el objeto de `HD-M4`, la regla de derivación es el
+> principio; ambas resueltas por `GOV-7`) y `HD-INT-J` (**cumplimiento + distribución** — la formulación
+> histórica está cumplida y la operativa se distribuye entre `GOV-1`, `GOV-3` y `GOV-4`). Las
+> formulaciones históricas de este documento **se conservan sin reescribir** como provenance; la
+> identidad operativa y la tabla de equivalencias viven en
+> `docs/plans/152-authority-decisions-gov-1-10.md`. Esto **no** crea autoridad nueva: la reconciliación ya
+> fue autorizada por `GOV-1 = C`.

@@ -284,6 +284,93 @@ ese acto.
   en `docs/adr/19-autonomy-envelope-authority.md`. El ADR **documenta** la decisión; **no**
   sustituye al Plan como mecanismo de autorización de ejecución.
 
+### Change Lifecycle — Vía de autorización por `Note` (`Plan`/`Note`) (adoptado por el Plan 152, 2026-10-07)
+
+`Note` es un artefacto de la **familia `Plan`** — misma familia y mismo namespace que el Plan
+(`docs/placement-contract.md`). Vive en `docs/plans/`, nace del template con las **secciones mínimas**
+y su header declara `**Tipo:** Nota`; se registra en `docs/plans/INDEX.md`. **No** crea familia,
+namespace, mecanismo paralelo ni identidad nueva, y **no** crea una segunda autoridad.
+
+Contenido mínimo de la `Note`: identidad y commit · fecha · `**Tipo:** Nota` · `**Origen:**` ·
+`**Work type:**` · `**Change Level:**` · autorización (quién la autorizó y con qué referencia) ·
+intención · scope declarado completo · `## Derivación y premisas` en forma reducida · acción realizada
+y evidencia · `## Validation anchor` **sólo** si cita una validación registrada (VC-1) ·
+`## Checkpoint / cierre` con las dos determinaciones de impacto.
+
+**Criterios de selección `Plan`/`Note` (conjunto cerrado, evaluado sobre el trabajo derivado):**
+
+| # | Criterio | Pregunta | Si SÍ → |
+|---|---|---|---|
+| `C-1` | Implementación | ¿modifica código (`runtime/`, `tools/`, `tests/`)? | **Plan** |
+| `C-2` | Contenido normativo | ¿modifica `docs/CONVENTIONS.md`, `docs/VERSIONING.md`, `docs/placement-contract.md`, un RFC, un ADR, una policy o un workflow activo? | **Plan** |
+| `C-3` | Payload | ¿toca `protocol/.agents/`? | **Plan** + vía RFC-56 (el tipo **no** exime) |
+| `C-4` | Decisión de diseño/arquitectura | ¿requiere una decisión nueva de diseño o arquitectura? | **Plan** (+ ADR si `AU-6`) |
+| `C-5` | Duración / múltiples sesiones | ¿`duration/complexity` ≥ 2? | **Plan** |
+| `C-6` | Múltiples pasos / multi-capa | ¿el scope abarca ≥2 capas del repo? | **Plan** |
+| `C-7` | Validación nueva | ¿exige suites de verificación **nuevas** (no la batería canónica)? | **Plan** |
+| `C-8` | Findings / pending bloqueantes | ¿genera findings o pending bloqueantes? | **Plan** |
+| `C-9` | Release | ¿produce versión de protocolo? | **Plan** |
+| `C-10` | Efectos | ¿ejecuta efectos fuera de la frontera? | **Plan** |
+| `C-11` | Trazabilidad exigida | ¿la obligación de anchor + checkpoint + lineage es exigible por el trabajo? | **Plan** |
+| `C-12` | Ejecución autónoma | ¿se delega trabajo semántico a un Agent Worker? | **Plan** |
+| `C-13` | Basta un registro Working | ¿una decisión o un registro en la familia `Working` alcanza? | **Note** |
+
+**Regla de decisión (determinista, sin mapeo a Change Level):**
+
+```text
+si algún criterio C-1 … C-12 es SÍ    → Plan
+si C-13 es SÍ y C-1…C-12 son todos NO → Note
+si la clasificación no es determinable → UNDETERMINED → humano (§11.4 del diseño)
+```
+
+**Prohibiciones de la `Note`** (se determinan por las **rutas escritas** y el contenido, no por
+declaración del autor): `N-1` no puede contener una decisión normativa nueva · `N-2` no puede declarar
+un scope ampliado respecto de la autorización · `N-3` no puede sustituir una autorización que no existe
+(`PC-52`) · `N-4` no puede cerrarse salteando las determinaciones de impacto · `N-5` no puede usarse
+cuando `C-1`…`C-12` se cumple · `N-6` no puede llevar `## Delegación agentiva` · `N-7` no puede tocar
+`protocol/.agents/`.
+
+**Invariantes:** la autorización sigue siendo el **acto humano del status** (`Aprobado para ejecución`),
+idéntico para `Plan` y para `Note`; `APPROVE_PLAN` y `CHANGE_SCOPE` permanecen en la frontera humana.
+Queda explícito:
+
+```text
+Note ≠ autoridad autónoma
+Note ≠ autorización implícita
+Note ≠ sustitución del juicio humano
+Note ≠ Clase C/L0
+```
+
+### Change Lifecycle — Vigencia materializada, retiro y `work_type` (adoptado por el Plan 152, 2026-10-07)
+
+- **`**Lifecycle:**` — vigencia por artefacto.** Campo explícito con alcance **Plan/RFC/ADR**; valores
+  `active`, `archived`, `superseded`, `deprecated`; **default por ausencia ⇒ `active`** (no se escribe
+  en el corpus histórico: 0 ediciones retrospectivas); **`Lifecycle ≠ Status`** — son ejes distintos y
+  **no** se fusionan; guarda **hacia adelante** (se exige en los artefactos creados después de esta
+  convención).
+- **Campos de retiro.** `**Superseded por:**` declara el sucesor. `**Motivo de retiro:**` es
+  **obligatorio sólo cuando no existe sucesor**. Condición derivada:
+  `Abandoned ⇔ Status: Superseded ∧ sin sucesor ∧ con motivo`. `Abandoned` **no** es un valor de
+  lifecycle nuevo y **no** se crea ningún estado nuevo.
+- **Vista de vigencia en los INDEX de gobernanza.** `HEADER = fuente de verdad`;
+  `INDEX = vista derivada` (columna `Vigencia`). El INDEX **no** es segunda fuente de verdad, **no** se
+  edita a mano como autoridad y **no** se convierte en autoridad por existir (`AU-4`).
+- **`work_type` — criterio de admisión.** Un tipo de trabajo se admite **si y sólo si** modifica al
+  menos una de: **(i)** artefactos obligatorios · **(ii)** gates exigidos · **(iii)** verificación
+  exigida · **(iv)** registro · **(v)** cierre. Ninguna otra dimensión admite un tipo nuevo.
+- **`work_type` — política de declaración.** Se declara **sólo** cuando su valor cambia una decisión de
+  gobernanza; si no la cambia, no es necesario declararlo. **No** es un campo universal obligatorio ni
+  un campo prohibido. `work_type` **no** tiene función de autoridad (la vía la determina la clase
+  RFC-56).
+- **`P-5` — estado.** La adopción del criterio **no** resuelve `P-5`: el valor requiere **evidencia por
+  caso** y permanece `GAP` mientras no la haya. Ninguna de estas reglas autoriza a derivar un
+  `work_type`.
+- **`INV-1` / `INV-3` — diferidos.** Este acto **no** eleva `INV-1` (derivabilidad) ni `INV-3` (una
+  categoría por propiedad): quedan como `COMMITMENT_NOW` / `MATERIALIZATION_LATER` y se materializan
+  **junto con el Change de implementación del modelo**. Declarar que ya son norma vigente es
+  incorrecto.
+
+
 ### Change Lifecycle — Change Levels (modelo objetivo)
 
 - `Level = max(coordination, scope, architectural impact, release impact,

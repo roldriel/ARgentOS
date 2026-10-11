@@ -643,9 +643,9 @@ def check_spec_activation(module: Any, report: Report, specimen: Path) -> str | 
         return None
 
     try:
-        # The validator resolves the citation roots itself from the artifact path
-        # (its own default), so the guard passes no `root` override either: the
-        # invocation is the one H01 prescribes, with the trigger and the artifact.
+        # The guard passes no project root: this call only reads the `ears`
+        # verdict, and the validator reports the rooted checks (citations)
+        # explicitly as SKIP when PROJECT_ROOT is not provided.
         checks, decision = module.validate(TRIGGER, specimen)
     except Exception as exc:  # noqa: BLE001 - any failure is a missing verdict
         report.add(
@@ -1051,9 +1051,7 @@ def _check_bullets(
         return
 
     try:
-        # The validator resolves the citation roots itself from the artifact path
-        # (its own default), so the guard passes no override: the invocation is
-        # the one the policy prescribes, with the artifact and the trigger only.
+        # The guard passes no project root: it only reads the `ears` verdict.
         checks, _ = module.validate(TRIGGER, path)
     except Exception as exc:  # noqa: BLE001 - any failure is a missing verdict
         report.add(

@@ -89,6 +89,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -197,7 +198,11 @@ def determine_iteration(session: Path, iteration: Path) -> dict[str, Any]:
 
 
 def content_identity_for(
-    root: Path, session: Path, iteration: Path
+    root: Path,
+    session: Path,
+    iteration: Path,
+    *,
+    expected_toplevel: Path,
 ) -> dict[str, Any]:
     """Scoped Content Identity v1 of the content of one execution record.
 
@@ -208,6 +213,11 @@ def content_identity_for(
     record content and the state identity is the generator's staged-tree
     identity of the repository at inspection time. No file is written and no
     algorithm is duplicated here.
+
+    ``expected_toplevel`` is the declared PROJECT_ROOT of the adopted layout.
+    It is required: the generator fails closed if ``root`` resolves to a
+    different git repository (for example the payload's own repository when
+    ``ARGENTOS_ROOT/.agents`` is a submodule).
 
     Fail-closed (``applicable: false`` + deterministic reason), never
     fabricating an identity: empty record scope (``content_scope_empty``),
@@ -220,7 +230,11 @@ def content_identity_for(
     if not files:
         return {"applicable": False, "reason": "content_scope_empty"}
     try:
-        identity = sci.compute(root, [str(path) for path in files])
+        identity = sci.compute(
+            root,
+            [str(path) for path in files],
+            expected_toplevel=expected_toplevel,
+        )
     except sci.ToolError as exc:
         if "not a git repository" in str(exc):
             return {"applicable": False, "reason": "not_a_git_repository"}
@@ -234,6 +248,7 @@ def determine(
     iteration_filter: str | None = None,
     content_identity: bool = False,
     undetermined_only: bool = False,
+    project_root: Path | None = None,
 ) -> dict[str, Any]:
     """Determine the terminal Task State of executions under root.
 
@@ -251,6 +266,12 @@ def determine(
     Identity v1 of the execution record scope (see ``content_identity_for``);
     without it the report is exactly the existing one.
 
+    ``project_root`` is the declared PROJECT_ROOT of the adopted layout; when
+    ``content_identity`` is requested it is handed to the generator as the
+    expected repository root, so a scope that resolves to a different
+    repository (the payload submodule) fails closed instead of being silently
+    identified as project content.
+
     ``undetermined_only`` restricts the report to executions without a
     terminal determination (``determined: false`` with their existing
     reasons); it combines with ``session_filter`` and is incompatible with
@@ -264,6 +285,12 @@ def determine(
     ):
         raise ValueError(
             "content_identity requires session_filter and iteration_filter"
+        )
+    if content_identity and project_root is None:
+        raise ValueError(
+            "content_identity requires project_root: the declaring project "
+            "root is mandatory so the identity can never be computed against "
+            "the payload's own repository"
         )
     if undetermined_only and iteration_filter is not None:
         raise ValueError(
@@ -282,7 +309,7 @@ def determine(
             entry = determine_iteration(session, iteration)
             if content_identity:
                 entry["content_identity"] = content_identity_for(
-                    root, session, iteration
+                    root, session, iteration, expected_toplevel=project_root
                 )
             executions.append(entry)
     if undetermined_only:
@@ -378,7 +405,25 @@ def main(argv: list[str] | None = None) -> int:
             "record (state.json status) under .project/."
         )
     )
-    parser.add_argument("--root", type=Path, default=None)
+    parser.add_argument(
+        "--root",
+        type=Path,
+        default=None,
+        help=(
+            "directory that holds `.project/` (the ARGENTOS_ROOT of the "
+            "adopted layout)"
+        ),
+    )
+    parser.add_argument(
+        "--project-root",
+        type=Path,
+        default=None,
+        help=(
+            "declared PROJECT_ROOT of the adopted layout, used as the "
+            "expected repository root for --content-identity (default: the "
+            "ARGENTOS_PROJECT_ROOT environment variable)"
+        ),
+    )
     parser.add_argument(
         "--session",
         default=None,
@@ -440,6 +485,16 @@ def main(argv: list[str] | None = None) -> int:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     root = (args.root or Path(__file__).resolve().parents[1]).resolve()
+    declared_project_root = args.project_root
+    if declared_project_root is None:
+        env_root = os.environ.get("ARGENTOS_PROJECT_ROOT", "").strip()
+        declared_project_root = Path(env_root) if env_root else None
+    if args.content_identity and declared_project_root is None:
+        parser.error(
+            "--content-identity requires --project-root (or "
+            "ARGENTOS_PROJECT_ROOT): the declaring project root is mandatory, "
+            "so the identity is never computed against the payload repository"
+        )
     if args.session_summary:
         report = session_summaries(root, session_filter=args.session)
     else:
@@ -449,6 +504,7 @@ def main(argv: list[str] | None = None) -> int:
             iteration_filter=args.iteration,
             content_identity=args.content_identity,
             undetermined_only=args.undetermined,
+            project_root=declared_project_root,
         )
     print(json.dumps(report, indent=2, ensure_ascii=False))
     return 0

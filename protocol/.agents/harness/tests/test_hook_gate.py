@@ -25,10 +25,13 @@ HOOK_PATH = PROJECT_ROOT / ".agents" / "harness" / "hook_gate.py"
 def project(tmp_path, monkeypatch):
     """Isolated project root with a session the hook can resolve."""
     session_uuid = f"test-{uuid.uuid4()}"
-    project_dir = tmp_path / ".project"
+    resolved = hook_gate._roots.resolve(tmp_path)
+    project_dir = resolved.project_dir
     iter_dir = project_dir / session_uuid / "00"
     iter_dir.mkdir(parents=True)
-    monkeypatch.setattr(hook_gate, "PROJECT_ROOT", tmp_path)
+    monkeypatch.setattr(hook_gate, "PROJECT_ROOT", resolved.project_root)
+    monkeypatch.setattr(hook_gate, "ARGENTOS_ROOT", resolved.argentos_root)
+    monkeypatch.setattr(hook_gate, "PAYLOAD_ROOT", resolved.payload_root)
     monkeypatch.setattr(hook_gate, "PROJECT_DIR", project_dir)
     return session_uuid, project_dir, tmp_path
 
@@ -76,10 +79,108 @@ def test_non_write_tool_is_allowed(project):
 
 def test_writes_inside_protocol_dirs_are_allowed(project):
     session_uuid, _, _ = project
-    event = pre_tool_use(file_path=".project/x/00/TASK_ANALYSIS.md")
+    event = pre_tool_use(file_path=".argentos/.project/x/00/TASK_ANALYSIS.md")
     assert hook_gate.decide(event) == 0
-    event = pre_tool_use(tool="Edit", file_path=".agents/harness/INDEX.md")
+    event = pre_tool_use(tool="Edit", file_path=".argentos/.agents/harness/INDEX.md")
     assert hook_gate.decide(event) == 0
+
+
+def test_argentos_config_and_backup_are_not_deliverables(project):
+    """The ARgentOS space is not a set of project deliverables.
+
+    Without an H04 PASS a real deliverable write is denied; the same write to
+    `.argentos/features.toml` or `.argentos/.backup/` must be allowed.
+    """
+    session_uuid, _, project_root = project
+    targets = (
+        ".argentos/features.toml",
+        str(project_root / ".argentos" / "features.toml"),
+        ".argentos/.backup/_AGENTS.md",
+        str(project_root / ".argentos" / ".backup" / "_agents" / "INDEX.md"),
+    )
+    for target in targets:
+        assert hook_gate.decide(pre_tool_use(file_path=target)) == 0, target
+
+
+def test_project_deliverable_is_still_gated(project):
+    """A project file outside the ARgentOS space is a gated deliverable."""
+    session_uuid, _, project_root = project
+    target = str(project_root / "src" / "app.py")
+    assert (
+        hook_gate.decide(pre_tool_use(session_uuid=session_uuid, file_path=target))
+        == 2
+    )
+
+
+def test_traversal_never_classifies_as_argentos_space(project):
+    """F5 — a path that escapes the ARgentOS space is a gated deliverable."""
+    session_uuid, _, _ = project
+    for target in (
+        ".argentos/../src/app.py",
+        ".agents/../../src/app.py",
+        ".project/../src/app.py",
+        "src/../src/app.py",
+    ):
+        assert (
+            hook_gate.decide(pre_tool_use(session_uuid=session_uuid, file_path=target))
+            == 2
+        ), target
+
+
+def test_real_argentos_paths_stay_allowed(project):
+    """F5 — only resolved containment decides; the whole ARgentOS space passes."""
+    session_uuid, _, project_root = project
+    for rel in (
+        (".argentos", "features.toml"),
+        (".argentos", ".project", "x", "00", "a.md"),
+        (".argentos", ".agents", "harness", "roots.py"),
+        (".argentos", ".backup", "_AGENTS.md"),
+    ):
+        target = str(project_root.joinpath(*rel))
+        assert (
+            hook_gate.decide(pre_tool_use(session_uuid=session_uuid, file_path=target))
+            == 0
+        ), target
+
+
+def test_root_swap_to_argentos_root_is_detected(project, monkeypatch):
+    """F8 — the suite distinguishes PROJECT_ROOT from ARGENTOS_ROOT.
+
+    With the correct roots the ARgentOS configuration (absolute path) is not a
+    deliverable and a project file is gated. If PROJECT_ROOT silently became
+    the ARGENTOS_ROOT (the original `parents[2]` bug, with ARGENTOS_ROOT then
+    derived one level below), the real ARgentOS file stops being contained and
+    the gate denies it: the first assertion below is what fails under the
+    regression.
+    """
+    session_uuid, _, project_root = project
+    argentos_file = str(project_root / ".argentos" / "features.toml")
+    project_file = str(project_root / "src" / "app.py")
+
+    # Correct roots: ARgentOS space is allowed, the project file is gated.
+    assert (
+        hook_gate.decide(pre_tool_use(session_uuid=session_uuid, file_path=argentos_file))
+        == 0
+    )
+    assert (
+        hook_gate.decide(pre_tool_use(session_uuid=session_uuid, file_path=project_file))
+        == 2
+    )
+
+    # Simulate the regression: PROJECT_ROOT := ARGENTOS_ROOT, with
+    # ARGENTOS_ROOT derived from it (the structural parents[2] failure).
+    swapped_project = hook_gate.ARGENTOS_ROOT
+    swapped_argentos = swapped_project / ".argentos"
+    monkeypatch.setattr(hook_gate, "PROJECT_ROOT", swapped_project)
+    monkeypatch.setattr(hook_gate, "ARGENTOS_ROOT", swapped_argentos)
+    monkeypatch.setattr(hook_gate, "PROJECT_DIR", swapped_argentos / ".project")
+
+    # Under the bug the real ARgentOS file is misclassified as a deliverable
+    # and denied — the inverse of the correct verdict asserted above.
+    assert (
+        hook_gate.decide(pre_tool_use(session_uuid=session_uuid, file_path=argentos_file))
+        == 2
+    )
 
 
 def test_write_without_target_is_denied(project, capsys):
@@ -130,7 +231,7 @@ def test_deliverable_write_without_h04_is_denied(project, capsys):
     err = capsys.readouterr().err
     assert "H04" in err
     assert "Gate Checklist" in err
-    assert "python .agents/harness/runner_state.py" in err
+    assert "python .argentos/.agents/harness/runner_state.py" in err
 
 
 def test_deliverable_write_without_any_session_is_denied(project, capsys):
@@ -179,7 +280,7 @@ def test_stop_without_h06_is_denied(project, capsys):
     err = capsys.readouterr().err
     assert "H06" in err
     assert "Gate Checklist" in err
-    assert "python .agents/harness/runner_state.py" in err
+    assert "python .argentos/.agents/harness/runner_state.py" in err
 
 
 def test_stop_with_h06_pass_is_allowed(project):

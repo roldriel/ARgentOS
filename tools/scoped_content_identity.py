@@ -40,7 +40,8 @@ precondition (plan 96 §13.2): run after ``git add`` of the plan's intentional
 changes so the index represents the state to validate.
 
 Usage:
-  python tools/scoped_content_identity.py [--root REPO_ROOT] [--ref REF] PATH...
+  python tools/scoped_content_identity.py [--root REPO_ROOT] [--ref REF]
+      [--expected-root PROJECT_ROOT] PATH...
 
 Prints a deterministic JSON report on stdout and exits 0. Standard library
 only plus local read-only git invocations. No network.
@@ -149,14 +150,35 @@ def _state_identity(toplevel: Path, ref: str | None) -> dict:
     return {"source": "ref", "ref": ref, "tree": tree}
 
 
-def compute(root: Path, paths: list[str], ref: str | None = None) -> dict:
+def compute(
+    root: Path,
+    paths: list[str],
+    ref: str | None = None,
+    *,
+    expected_toplevel: Path | str | None = None,
+) -> dict:
     """Compute the v1 Scoped Content Identity of a declared scope.
 
     Returns a deterministic report with the sorted scope, the Delta scoped
     identity and the State identity. Raises ToolError (fail-closed) on any
     invalid input; never writes the working tree or the index.
+
+    ``expected_toplevel`` declares the repository root the scope belongs to.
+    When it is given, the git toplevel resolved from ``root`` must equal it;
+    otherwise the computation fails closed. This is the guard that keeps a
+    call rooted at the payload from silently identifying the payload's own
+    repository instead of the adopting project (e.g. when PAYLOAD_ROOT is a
+    git submodule).
     """
     toplevel = _repository_toplevel(root)
+    if expected_toplevel is not None:
+        expected = Path(str(expected_toplevel)).expanduser().resolve()
+        if toplevel != expected:
+            raise ToolError(
+                f"repository root mismatch: --root {root} resolves to git "
+                f"toplevel {toplevel}, but the declared project root is "
+                f"{expected}"
+            )
     unique: dict[str, None] = {}
     for arg in paths:
         unique.setdefault(_repo_relative(toplevel, arg), None)
@@ -188,10 +210,24 @@ def main(argv: list[str] | None = None) -> int:
             "staged index (git write-tree)"
         ),
     )
+    parser.add_argument(
+        "--expected-root",
+        default=None,
+        help=(
+            "declared repository root the scope belongs to; the git toplevel "
+            "resolved from --root must equal it (fail-closed guard for a "
+            "payload that is a submodule)"
+        ),
+    )
     parser.add_argument("paths", nargs="+", help="repository-relative scope paths")
     args = parser.parse_args(argv)
     try:
-        report = compute(Path(args.root), args.paths, ref=args.ref)
+        report = compute(
+            Path(args.root),
+            args.paths,
+            ref=args.ref,
+            expected_toplevel=args.expected_root,
+        )
     except ToolError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1

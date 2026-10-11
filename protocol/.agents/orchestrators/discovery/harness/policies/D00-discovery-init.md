@@ -46,7 +46,7 @@ Validate that the discovery session was initialized correctly and that the disco
 4. The discovery scope and inputs used for the run are recorded in the artifact. `[agent]`
 
 ## Decision Criteria
-**Structural validator:** the Orchestrator MUST run `python .agents/harness/gate_validator.py --trigger D00 --artifact <path>` before judging PASS; a structural FAIL blocks PASS unless recorded as a documented deviation.
+**Structural validator:** the Orchestrator MUST run `python .argentos/.agents/harness/gate_validator.py --project-root <PROJECT_ROOT> --trigger D00 --artifact <path>` before judging PASS; a structural FAIL blocks PASS unless recorded as a documented deviation.
 
 - `PASS`: All checklist items are satisfied.
 - `FAIL`: The artifact is missing, invalid, or does not record the discovery scope.

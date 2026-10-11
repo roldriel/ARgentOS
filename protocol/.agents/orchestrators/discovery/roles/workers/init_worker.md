@@ -64,7 +64,7 @@ following the intermediate-working-directory mechanism (Option A).
    manifest field. Legacy entries are never deleted without a trace.
 5. Prepare `discovery_input.json` for the workers selected by the scope,
    reading `discovery_context_budget`, `discovery_sample_size` and
-   `discovery_sample_size_per_language` from `.agents/features.toml` and
+   `discovery_sample_size_per_language` from `.argentos/features.toml` and
    writing them as `context_budget`, `sample_size` and
    `sample_size_per_language`, plus the list of previous KB entries
    each worker must consider.

@@ -135,3 +135,25 @@ def test_unmarked_attestation_flagged(tmp_path, monkeypatch):
     monkeypatch.setattr(audit_gates, "_run_validator", lambda *a, **k: fake_result(0))
     violations, summary = audit_gates.audit(tmp_path)
     assert any("unmarked attestation" in x for x in violations)
+
+
+def test_validator_receives_the_project_root_explicitly(tmp_path, monkeypatch):
+    """F3 — the validator subprocess must receive --project-root.
+
+    Without it the validator reports citations as SKIP for lack of context, so
+    the audit silently loses the citation check.
+    """
+    captured: dict = {}
+
+    def fake_run(argv, **kwargs):
+        captured["argv"] = argv
+        return fake_result(0)
+
+    monkeypatch.setattr(audit_gates.subprocess, "run", fake_run)
+    artifact = tmp_path / "artifact.md"
+
+    audit_gates._run_validator("H01", artifact, tmp_path)
+
+    argv = captured["argv"]
+    assert "--project-root" in argv
+    assert argv[argv.index("--project-root") + 1] == str(tmp_path)

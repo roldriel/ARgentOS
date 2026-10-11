@@ -69,11 +69,18 @@ VALIDATOR = (
 
 
 def _run_validator(trigger: str, artifact: Path, root: Path) -> subprocess.CompletedProcess:
-    """Run the product structural validator on one artifact."""
+    """Run the product structural validator on one artifact.
+
+    ``root`` is the project root the audit operates on; it is passed
+    explicitly so the validator resolves citations against the declared roots
+    instead of reporting them as SKIP for lack of context.
+    """
     return subprocess.run(
         [
             sys.executable,
             str(VALIDATOR),
+            "--project-root",
+            str(root),
             "--trigger",
             trigger,
             "--artifact",

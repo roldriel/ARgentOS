@@ -352,6 +352,7 @@ def test_content_identity_applies_for_completed_execution(tmp_path):
         session_filter=session.name,
         iteration_filter="00",
         content_identity=True,
+        project_root=root,
     )
     entry = report["executions"][0]
     assert entry["determined"] is True
@@ -583,6 +584,7 @@ def test_content_identity_applies_for_abort_execution(tmp_path):
         session_filter=session.name,
         iteration_filter="00",
         content_identity=True,
+        project_root=root,
     )["executions"][0]
     assert entry["determined"] is True
     assert entry["terminal_task_state"] == "ABORT"
@@ -601,12 +603,14 @@ def test_content_identity_is_deterministic(tmp_path):
         session_filter=session.name,
         iteration_filter="00",
         content_identity=True,
+        project_root=root,
     )
     second = des.determine(
         root,
         session_filter=session.name,
         iteration_filter="00",
         content_identity=True,
+        project_root=root,
     )
     assert first == second
     assert first["executions"][0]["content_identity"]["applicable"] is True
@@ -622,6 +626,7 @@ def test_content_change_in_record_scope_changes_delta(tmp_path):
             session_filter=session.name,
             iteration_filter="00",
             content_identity=True,
+            project_root=root,
         )["executions"][0]["content_identity"]["delta_scoped_identity"]
 
     before = delta()
@@ -644,6 +649,7 @@ def test_out_of_record_scope_change_keeps_delta(tmp_path):
             session_filter=session.name,
             iteration_filter="00",
             content_identity=True,
+            project_root=root,
         )["executions"][0]["content_identity"]
 
     before = report()
@@ -682,6 +688,7 @@ def test_gitignored_record_files_identity_matches_generator(tmp_path):
         session_filter=session.name,
         iteration_filter="00",
         content_identity=True,
+        project_root=root,
     )["executions"][0]["content_identity"]
     assert ci["applicable"] is True
     direct = sci.compute(root, [str((session / "00" / "state.json").resolve())])
@@ -697,6 +704,7 @@ def test_empty_iteration_folder_content_not_applicable(tmp_path):
         session_filter=session.name,
         iteration_filter="00",
         content_identity=True,
+        project_root=root,
     )["executions"][0]
     assert entry["state_json"] == "missing"
     assert entry["content_identity"] == {
@@ -721,6 +729,7 @@ def test_non_git_root_content_not_applicable():
             session_filter=session.name,
             iteration_filter="00",
             content_identity=True,
+            project_root=root,
         )["executions"][0]
         assert entry["determined"] is True
         assert entry["content_identity"] == {
@@ -740,6 +749,7 @@ def test_content_identity_unknown_session_is_empty(tmp_path):
         session_filter="unknown-session",
         iteration_filter="00",
         content_identity=True,
+        project_root=root,
     )
     assert report["executions"] == []
     assert report["summary"] == {"total": 0, "determined": 0, "undetermined": 0}
@@ -754,6 +764,7 @@ def test_content_identity_unknown_iteration_is_empty(tmp_path):
         session_filter=session.name,
         iteration_filter="99",
         content_identity=True,
+        project_root=root,
     )
     assert report["executions"] == []
     assert report["summary"] == {"total": 0, "determined": 0, "undetermined": 0}
@@ -827,11 +838,14 @@ def test_content_identity_api_matches_cli(tmp_path, capsys):
         session_filter=session.name,
         iteration_filter="00",
         content_identity=True,
+        project_root=root,
     )
     assert (
         des.main(
             [
                 "--root",
+                str(root),
+                "--project-root",
                 str(root),
                 "--session",
                 session.name,
@@ -855,6 +869,7 @@ def test_content_identity_over_missing_state_json_uses_other_files(tmp_path):
         session_filter=session.name,
         iteration_filter="00",
         content_identity=True,
+        project_root=root,
     )["executions"][0]
     assert entry["state_json"] == "missing"
     assert entry["determined"] is False
@@ -876,6 +891,7 @@ def test_content_identity_over_corrupt_state_json(tmp_path):
         session_filter=session.name,
         iteration_filter="00",
         content_identity=True,
+        project_root=root,
     )["executions"][0]
     assert entry["state_json"] == "corrupt"
     assert entry["determined"] is False
@@ -1035,3 +1051,112 @@ def test_undetermined_api_guard_rejects_iteration(tmp_path):
             iteration_filter="00",
             undetermined_only=True,
         )
+
+
+# ── GATE_2 remediation F7: content identity requires an explicit project root
+
+
+def _git_adopter_session(
+    tmp_path: Path, name: str = "uuid-adopter"
+) -> tuple[Path, Path, Path]:
+    """PROJECT_ROOT (git) + ARGENTOS_ROOT/.project/<name> session fixture."""
+    project = _init_git_root(tmp_path)
+    session = project / ".argentos" / ".project" / name
+    _write_session_log(session)
+    return project, project / ".argentos", session
+
+
+def test_content_identity_requires_project_root_api(tmp_path):
+    """F7.1 — the API refuses content identity without a declared root."""
+    root, session = _git_session(tmp_path)
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+
+    with pytest.raises(ValueError):
+        des.determine(
+            root,
+            session_filter=session.name,
+            iteration_filter="00",
+            content_identity=True,
+        )
+
+
+def test_content_identity_requires_project_root_cli(tmp_path):
+    """F7.1 — the CLI exits 2 without a declared root."""
+    root, session = _git_session(tmp_path)
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+
+    with pytest.raises(SystemExit) as excinfo:
+        des.main(
+            [
+                "--root",
+                str(root),
+                "--session",
+                session.name,
+                "--iteration",
+                "00",
+                "--content-identity",
+            ]
+        )
+
+    assert excinfo.value.code == 2
+
+
+def test_content_identity_adopter_layout_uses_project_root(tmp_path):
+    """F7.2 — a correct PROJECT_ROOT identifies the project content."""
+    project, argentos, session = _git_adopter_session(tmp_path)
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+
+    entry = des.determine(
+        argentos,
+        session_filter=session.name,
+        iteration_filter="00",
+        content_identity=True,
+        project_root=project,
+    )["executions"][0]
+
+    ci = entry["content_identity"]
+    assert ci["applicable"] is True
+    assert ci["scope"] == [f".argentos/.project/{session.name}/00/state.json"]
+
+
+def test_content_identity_rejects_payload_as_project_root(tmp_path):
+    """F7.3 — the payload can never be the declared project root."""
+    project, argentos, session = _git_adopter_session(tmp_path)
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+    payload = argentos / ".agents"
+    payload.mkdir()
+
+    entry = des.determine(
+        argentos,
+        session_filter=session.name,
+        iteration_filter="00",
+        content_identity=True,
+        project_root=payload,
+    )["executions"][0]
+
+    assert entry["content_identity"]["applicable"] is False
+
+
+def test_content_identity_wrong_project_root_fails_closed(tmp_path):
+    """F7.4/F7.5 — a root that resolves to another repository fails closed."""
+    root, session = _git_session(tmp_path)
+    _write_state(session, "00", "COMPLETED", {"H00": {}})
+    other = tmp_path / "other-repo"
+    other.mkdir()
+    _git(other, "init", "-q", "-b", "main")
+    (other / "baseline.txt").write_text("baseline\n", encoding="utf-8")
+    _git(other, "add", "baseline.txt")
+    _git(other, "commit", "-q", "-m", "initial")
+
+    entry = des.determine(
+        root,
+        session_filter=session.name,
+        iteration_filter="00",
+        content_identity=True,
+        project_root=other,
+    )["executions"][0]
+
+    assert entry["content_identity"] == {
+        "applicable": False,
+        "reason": "content_identity_unavailable",
+    }

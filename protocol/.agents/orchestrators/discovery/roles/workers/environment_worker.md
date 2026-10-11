@@ -113,7 +113,7 @@ Example output message:
 - Read-only: never execute commands that mutate the project or the system.
 - Never record secrets, credentials, tokens or sensitive paths.
 - The environment entry has a TTL of `discovery_environment_ttl_hours`
-  (default 6h, `.agents/features.toml`).
+  (default 6h, `.argentos/features.toml`).
 
 ## Retries
 

@@ -20,7 +20,9 @@ Checks per trigger:
   cycle); the profile is read from the session's TASK_ANALYSIS.md;
 - machine-readable TOML blocks (parseable, required keys, enum values);
 - citation resolution (``path:section``, ``path`` §section, TOML citation
-  fields) against the project and session roots;
+  fields) against the declared roots (`PROJECT_ROOT`, `ARGENTOS_ROOT`):
+  ``.agents/...`` anchors to ``ARGENTOS_ROOT/.agents``, ``.project/...`` to
+  ``ARGENTOS_ROOT/.project`` and project files to ``PROJECT_ROOT``;
 - EARS pattern of acceptance-criteria bullets (H01);
 - structural presence of ``## Rubric Evaluation`` (H06, when the ``rubrics``
   flag is enabled);
@@ -41,8 +43,14 @@ Checks per trigger:
   embedded ``recommended_entries`` JSON when present).
 
 Usage:
-  python .agents/harness/gate_validator.py --trigger <HXX> --artifact <path>
-  python .agents/harness/gate_validator.py --list
+  python .argentos/.agents/harness/gate_validator.py \
+      --project-root <project> --trigger <HXX> --artifact <path>
+  python .argentos/.agents/harness/gate_validator.py --list
+
+The project root is provided by the entry point (``--project-root`` or
+``ARGENTOS_PROJECT_ROOT``); it is never discovered from the artifact path.
+When it is not provided, the checks that need a root (citations, features)
+degrade explicitly (SKIP / empty flags) instead of inventing a location.
 
 Exit code: 0 when every check PASSes (or is SKIPPED), 1 when any check FAILs,
 2 on usage errors. Standard library only.
@@ -55,6 +63,15 @@ import json
 import re
 import sys
 from pathlib import Path
+
+# The harness scripts are self-contained entry points; the harness directory
+# hosts the shared root contract. Registering it here keeps the import local
+# (no packaging) and works under pytest, direct execution and importlib loads.
+_HARNESS_DIR = Path(__file__).resolve().parent
+if str(_HARNESS_DIR) not in sys.path:
+    sys.path.insert(0, str(_HARNESS_DIR))
+
+import roots as _roots  # noqa: E402  (import after the sys.path registration)
 
 
 KNOWN_TECH_PRACTICES = {
@@ -320,10 +337,15 @@ def json_blocks(text: str) -> list[dict]:
     return blocks
 
 
-def features(root: Path) -> dict:
-    """Read .agents/features.toml boolean flags (best-effort)."""
+def features(argentos_root: Path) -> dict:
+    """Read ``ARGENTOS_ROOT/features.toml`` boolean flags (best-effort).
+
+    That file is the only active adopter configuration. There is no fallback
+    to a payload-side configuration file: a missing configuration yields no
+    flags, never a second location.
+    """
     data: dict = {}
-    path = root / ".agents" / "features.toml"
+    path = Path(argentos_root) / _roots.FEATURES_FILENAME
     if path.is_file():
         for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
             m = re.match(r"^\s*([A-Za-z0-9_]+)\s*=\s*(true|false)\s*$", line)
@@ -357,23 +379,31 @@ def read_task_profile(iterations: list[Path]) -> str | None:
     return None
 
 
-def _roots_from_artifact(artifact: Path) -> tuple[Path, Path | None, list[Path]]:
-    """Return (project root, session dir, iteration dirs) for citation checks."""
-    resolved = artifact.resolve()
-    parts = resolved.parts
+def _session_context(
+    artifact: Path, roots: _roots.Roots | None
+) -> tuple[Path | None, list[Path]]:
+    """Return (session dir, iteration dirs) of an artifact, given the roots.
+
+    The session lives under ``roots.project_dir`` (``ARGENTOS_ROOT/.project``).
+    The root comes from the caller; it is never discovered from the artifact
+    path itself. Without roots the context is empty (and the rooted checks
+    report an explicit SKIP).
+    """
+    if roots is None:
+        return None, []
     try:
-        idx = parts.index(".project")
+        relative = artifact.resolve().relative_to(roots.project_dir)
     except ValueError:
-        return resolved.anchor or resolved.parent, None, []
-    project = Path(*parts[:idx])
-    session = None
+        return None, []
+    if not relative.parts:
+        return None, []
+    session = roots.project_dir / relative.parts[0]
     iterations: list[Path] = []
-    if len(parts) > idx + 1:
-        session = project / ".project" / parts[idx + 1]
-        for candidate in sorted(session.iterdir()) if session.is_dir() else []:
+    if session.is_dir():
+        for candidate in sorted(session.iterdir()):
             if candidate.is_dir() and re.fullmatch(r"\d+", candidate.name):
                 iterations.append(candidate)
-    return project, session, iterations
+    return session, iterations
 
 
 def citation_targets(text: str) -> list[tuple[str, str | None]]:
@@ -396,22 +426,37 @@ def citation_targets(text: str) -> list[tuple[str, str | None]]:
     return targets
 
 
-def citation_resolves(path: str, section: str | None, roots: tuple) -> bool:
+#: Citation context: (Roots, session dir | None, iteration dirs) or None.
+CitationContext = tuple[_roots.Roots, "Path | None", list[Path]] | None
+
+
+def _citation_candidates(path: str, context: CitationContext) -> list[Path]:
+    """Candidate files a declared citation path may name, in anchor order."""
+    fp = path.replace("\\", "/")
+    if fp.startswith("/") or re.match(r"^[A-Za-z]:", fp):
+        return [Path(fp)]
+    if context is None:
+        return []
+    if ".." in fp.split("/"):
+        # A relative citation that traverses is not resolvable against any
+        # anchor; the check reports it as broken instead of following it.
+        return []
+    roots, session, iterations = context
+    candidates: list[Path] = []
+    try:
+        candidates.append(roots.resolve_reference(fp))
+    except _roots.RootResolutionError:
+        return []
+    if session is not None:
+        candidates.append(session / fp)
+    candidates.extend(iteration / fp for iteration in iterations)
+    return candidates
+
+
+def citation_resolves(path: str, section: str | None, context: CitationContext) -> bool:
     if "<" in path or ">" in path:
         return True  # placeholder
-    fp = path.replace("\\", "/")
-    project, session, iterations = roots
-    candidates = []
-    if fp.startswith("/"):
-        candidates.append(Path(fp))
-    else:
-        base_dirs = [project] if project else []
-        if session:
-            base_dirs.append(session)
-        base_dirs.extend(iterations)
-        for base in base_dirs:
-            candidates.append(base / fp)
-    for candidate in candidates:
+    for candidate in _citation_candidates(path, context):
         if candidate.is_file():
             if section is None:
                 return True
@@ -423,15 +468,27 @@ def citation_resolves(path: str, section: str | None, roots: tuple) -> bool:
     return False
 
 
-def check_citations(text: str, roots: tuple) -> list[dict]:
+def check_citations(text: str, context: CitationContext) -> list[dict]:
     checks: list[dict] = []
     targets = citation_targets(text)
     if not targets:
         checks.append({"id": "citations", "result": "SKIP", "evidence": "no citations found"})
         return checks
+    if context is None:
+        checks.append(
+            {
+                "id": "citations",
+                "result": "SKIP",
+                "evidence": (
+                    "PROJECT_ROOT not provided; citations are not resolved "
+                    "(pass --project-root or ARGENTOS_PROJECT_ROOT)"
+                ),
+            }
+        )
+        return checks
     failed = 0
     for path, section in targets:
-        if not citation_resolves(path, section, roots):
+        if not citation_resolves(path, section, context):
             failed += 1
             checks.append(
                 {"id": "citation", "result": "FAIL",
@@ -444,14 +501,31 @@ def check_citations(text: str, roots: tuple) -> list[dict]:
     return checks
 
 
-def validate(trigger: str, artifact: Path, root: Path | None = None) -> tuple[list[dict], str]:
+def validate(
+    trigger: str,
+    artifact: Path,
+    root: Path | None = None,
+    *,
+    project_root: Path | None = None,
+) -> tuple[list[dict], str]:
     """Run the structural checks for a trigger on an artifact.
+
+    ``project_root`` (or its alias ``root``) is the real PROJECT_ROOT of the
+    adopted layout, provided by the entry point; it is never discovered from
+    the artifact path. When it is absent, the checks that need a root report an
+    explicit SKIP/empty result instead of inventing a location.
 
     Returns (checks, decision) where decision is PASS or FAIL.
     """
     spec = TRIGGERS.get(trigger)
     if spec is None:
         raise ValueError(f"unsupported trigger: {trigger}")
+    hint = project_root if project_root is not None else root
+    roots = _roots.resolve(hint) if hint is not None else _roots.from_env()
+    session, iterations = _session_context(artifact, roots)
+    context: CitationContext = (
+        (roots, session, iterations) if roots is not None else None
+    )
     checks: list[dict] = []
     if not artifact.is_file():
         checks.append({"id": "existence", "result": "FAIL", "evidence": "artifact does not exist"})
@@ -461,7 +535,7 @@ def validate(trigger: str, artifact: Path, root: Path | None = None) -> tuple[li
     text = artifact.read_text(encoding="utf-8", errors="replace")
     headings = headings_of(text)
     sections = list(spec.get("sections", []))
-    if trigger == "H04" and read_task_profile(_roots_from_artifact(artifact)[2]) == "trivial":
+    if trigger == "H04" and read_task_profile(iterations) == "trivial":
         sections = [s for s in sections if s != "Context Reference"]
         checks.append(
             {
@@ -542,19 +616,18 @@ def validate(trigger: str, artifact: Path, root: Path | None = None) -> tuple[li
         checks.extend(_check_toml(toml_key, text))
 
     if spec.get("rubrics"):
-        flags = features(root or Path(__file__).resolve().parents[2])
+        flags = features(roots.argentos_root) if roots is not None else {}
         if flags.get("rubrics", True):
             checks.extend(_check_rubrics(text))
         else:
             checks.append({"id": "rubrics", "result": "SKIP", "evidence": "rubrics flag disabled"})
 
-    roots = _roots_from_artifact(artifact) if root is None else (root, None, [])
     if trigger == "H06":
-        checks.extend(_check_test_results(text, roots))
+        checks.extend(_check_test_results(text, context))
         checks.extend(_check_deferred_items(text))
-        checks.append(_check_review_report(artifact))
+        checks.append(_check_review_report(artifact, iterations))
         checks.extend(_check_evidence(text))
-    checks.extend(check_citations(text, roots))
+    checks.extend(check_citations(text, context))
 
     failed = any(c["result"] == "FAIL" for c in checks)
     return checks, ("FAIL" if failed else "PASS")
@@ -675,23 +748,11 @@ def _check_toml(toml_key: str, text: str) -> list[dict]:
     return checks
 
 
-def _evidence_resolves(evidence: str, roots: tuple) -> bool:
+def _evidence_resolves(evidence: str, context: CitationContext) -> bool:
     """True when an evidence path resolves to an existing file."""
     if not evidence.strip() or "<" in evidence or ">" in evidence:
         return False
-    fp = evidence.replace("\\", "/")
-    project, session, iterations = roots
-    candidates = []
-    if Path(fp).is_absolute():
-        candidates.append(Path(fp))
-    else:
-        base_dirs = [project] if project else []
-        if session:
-            base_dirs.append(session)
-        base_dirs.extend(iterations)
-        for base in base_dirs:
-            candidates.append(base / fp)
-    return any(c.is_file() for c in candidates)
+    return any(c.is_file() for c in _citation_candidates(evidence, context))
 
 
 def _evidence_entries(text: str) -> list[dict]:
@@ -768,7 +829,7 @@ def _check_evidence(text: str) -> list[dict]:
     ]
 
 
-def _check_test_results(text: str, roots: tuple) -> list[dict]:
+def _check_test_results(text: str, context: CitationContext) -> list[dict]:
     """Validate the test_results TOML block of H06 (VERIFICATION_REPORT.md).
 
     Per the contract (3.21.0) and H06 §Gate Checklist item 7: a result other
@@ -791,7 +852,7 @@ def _check_test_results(text: str, roots: tuple) -> list[dict]:
                 "evidence": "no test_results TOML block",
             }
         ]
-    project, session, _ = roots
+    session = context[1] if context is not None else None
     log_text = ""
     if session is not None:
         log = session / "SESSION_LOG.md"
@@ -811,7 +872,7 @@ def _check_test_results(text: str, roots: tuple) -> list[dict]:
         evidence = entry.get("evidence")
         test = entry.get("test", "")
         if evidence:
-            if not _evidence_resolves(str(evidence), roots):
+            if not _evidence_resolves(str(evidence), context):
                 bad.append(f"entry {i}: evidence does not resolve to an existing file")
         elif not (isinstance(test, str) and test and test in log_text):
             bad.append(f"entry {i}: no evidence and test command not found in SESSION_LOG.md")
@@ -1231,9 +1292,9 @@ def _check_deferred_items(text: str) -> list[dict]:
     ]
 
 
-def _check_review_report(artifact: Path) -> dict:
+def _check_review_report(artifact: Path, iterations: list[Path]) -> dict:
     """H06 profile-aware: a `complex` task requires a REVIEW_REPORT.md."""
-    profile = read_task_profile(_roots_from_artifact(artifact)[2])
+    profile = read_task_profile(iterations)
     if profile != "complex":
         return {
             "id": "review_report",
@@ -1260,7 +1321,18 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--trigger", help="harness trigger id (e.g. H01)")
     parser.add_argument("--artifact", type=Path, help="path to the artifact to validate")
-    parser.add_argument("--root", type=Path, default=None, help="project root override")
+    parser.add_argument(
+        "--project-root",
+        "--root",
+        dest="project_root",
+        type=Path,
+        default=None,
+        help=(
+            "real project root of the adopted layout (default: the "
+            f"{_roots.ENV_PROJECT_ROOT} environment variable); it is never "
+            "discovered from the artifact path"
+        ),
+    )
     parser.add_argument("--list", action="store_true", help="list supported triggers")
     args = parser.parse_args(argv)
     if hasattr(sys.stdout, "reconfigure"):
@@ -1275,10 +1347,16 @@ def main(argv: list[str] | None = None) -> int:
         print("\n".join(rows))
         return 0
     if not args.trigger or not args.artifact:
-        print("usage: gate_validator.py --trigger <HXX> --artifact <path>", file=sys.stderr)
+        print(
+            "usage: gate_validator.py [--project-root <project>] "
+            "--trigger <HXX> --artifact <path>",
+            file=sys.stderr,
+        )
         return 2
     try:
-        checks, decision = validate(args.trigger, args.artifact, args.root)
+        checks, decision = validate(
+            args.trigger, args.artifact, project_root=args.project_root
+        )
     except ValueError as exc:
         print(f"gate_validator: error: {exc}", file=sys.stderr)
         return 2

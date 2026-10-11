@@ -4,18 +4,18 @@ This document maps the cross-cutting standards in `.agents/standards/` by catego
 
 ## Feature flags
 
-The protocol supports *feature flags* to enable improvements independently. Configuration lives in `.agents/features.toml` and can be overridden via environment variables with prefix `AGENTS_FEATURE_`.
+The protocol supports *feature flags* to enable improvements independently. Configuration lives in `.argentos/features.toml` and can be overridden via environment variables with prefix `AGENTS_FEATURE_`.
 
-Priority: environment variables > `.agents/features.toml` > defaults.
+Priority: environment variables > `.argentos/features.toml` > defaults.
 
-Boolean flags default to `true` unless explicitly set otherwise in `.agents/features.toml` (currently only `architecture_contract` defaults to `false`). The discovery flags include two non-boolean tunables (`discovery_sample_size`, `discovery_environment_ttl_hours`, `discovery_project_ttl_hours`). The orchestrator must consult them before enabling any improvement and record active flags in `SESSION_LOG.md`.
+Boolean flags default to `true` unless explicitly set otherwise in `.argentos/features.toml` (currently only `architecture_contract` defaults to `false`). The discovery flags include two non-boolean tunables (`discovery_sample_size`, `discovery_environment_ttl_hours`, `discovery_project_ttl_hours`). The orchestrator must consult them before enabling any improvement and record active flags in `SESSION_LOG.md`.
 
 ### Flag categories and declarative compliance
 
 Flags are classified by who consumes them:
 
-- **`[code]` flags** are resolved by the Orchestrator when evaluating the «Gate Checklist» of the H01 policy (resolution order: `AGENTS_FEATURE_*` environment variable > `.agents/features.toml` > default enabled). Compliance is mechanical: the gated behavior happens or a check fails. No declarative evidence is needed.
-- **`[declarative]` flags** are consumed by agents reading `.agents/features.toml` directly. Compliance is behavioral: an enabled declarative flag creates an obligation — the consuming agent MUST read its value before the flow point where it conditions behavior, and MUST act on it at that point.
+- **`[code]` flags** are resolved by the Orchestrator when evaluating the «Gate Checklist» of the H01 policy (resolution order: `AGENTS_FEATURE_*` environment variable > `.argentos/features.toml` > default enabled). Compliance is mechanical: the gated behavior happens or a check fails. No declarative evidence is needed.
+- **`[declarative]` flags** are consumed by agents reading `.argentos/features.toml` directly. Compliance is behavioral: an enabled declarative flag creates an obligation — the consuming agent MUST read its value before the flow point where it conditions behavior, and MUST act on it at that point.
 - **Dual flags** (the technical-practice flags) are both: checked by the Orchestrator at gate evaluation (standards presence in the health checklist, H01/H05 gate items) and consumed declaratively by workers during execution.
 
 Ignoring an enabled declarative flag — not reading it, or reading it without acting — is a **deviation** (class F2: difference between specified and executed behavior): it must be logged as such, and if the omission is material to acceptance criteria or scope it escalates to recovery or clarification per the deviation reclassification rule. Disabling a flag (via `AGENTS_FEATURE_`) is never a deviation; the obligation ends with the flag.

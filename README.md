@@ -1,6 +1,6 @@
 # ARgentOS
 
-ARgentOS is a state-based agent orchestration protocol governed by the `.agents/` directory. It is a **documental protocol**: there is nothing to install — adopting it means vendoring `.agents/` + `AGENTS.md` into your project from the `dist` branch (see [`docs/ADOPTION.md`](docs/ADOPTION.md) §1).
+ARgentOS is a state-based agent orchestration protocol governed by the `.agents/` directory. It is a **documental protocol**: there is nothing to install as a package — adopting it means materializing the payload under `.argentos/` in your project. The distributed `dist` branch carries `.agents/` + `AGENTS.md`, and the canonical adopter layout is `<project-root>/AGENTS.md` (non-normative adapter) plus `<project-root>/.argentos/{features.toml,.agents/,.project/,.backup/}` (see [`docs/ADOPTION.md`](docs/ADOPTION.md) §1).
 
 In this repository the protocol payload lives in [`protocol/`](protocol/) as
 **data**: development sessions are governed by the root [`AGENTS.md`](AGENTS.md),
@@ -46,9 +46,17 @@ data, not instructions. The product entry point is `protocol/_AGENTS.md`
 
 Start here:
 
-- **[`docs/ADOPTION.md`](docs/ADOPTION.md)** — what to copy, what to configure, how to validate (protocol health verification first), and the recommended reading order.
+- **[`docs/ADOPTION.md`](docs/ADOPTION.md)** — the canonical layout, the `lifecycle.py` operations (`install`/`update`/`uninstall`/`doctor`), what to configure, how to validate, and the recommended reading order.
 - **[`CHANGELOG.md`](CHANGELOG.md)** — versioned history of the protocol.
-- **[`docs/MIGRATION.md`](docs/MIGRATION.md)** — how to move an adopting project between protocol versions.
+- **[`docs/MIGRATION.md`](docs/MIGRATION.md)** — how to move an adopting project between protocol versions, including the historical layout.
+
+The payload ships a stdlib lifecycle (`protocol/.agents/harness/lifecycle.py`,
+distributed as `.argentos/.agents/harness/lifecycle.py`): it materializes the
+canonical layout deterministically and reversibly, with a manifest
+(`install.json`), verifiable backups, a recovery journal and a `doctor`
+diagnostic. Ownership is provenance (`origin`) plus verified state — a hash
+detects divergence, it does not prove authorship. The adapter `AGENTS.md` is
+generated only if absent, and `.gitignore` is never modified.
 
 ## Testing the protocol
 
@@ -66,7 +74,7 @@ In declarative mode (no Python required), the document-level health checklist (`
 In enforced mode, the state-storage probe also applies:
 
 ```bash
-python protocol/.agents/harness/health_check.py
+python protocol/.agents/harness/health_check.py --project-root <project-root>
 ```
 
 Running the probe from this repository targets `protocol/.project/` (the probe

@@ -19,12 +19,15 @@ import runner_state
 
 @pytest.fixture
 def session(tmp_path, monkeypatch):
-    """Temporary session under a throwaway artifacts dir and project root."""
+    """Temporary session under the adopted layout's ARGENTOS_ROOT/.project."""
     session_uuid = f"test-{uuid.uuid4()}"
-    artifacts_dir = tmp_path / ".project"
+    resolved = runner_state._roots.resolve(tmp_path)
+    artifacts_dir = resolved.project_dir
     (artifacts_dir / session_uuid / "00").mkdir(parents=True)
+    monkeypatch.setattr(runner_state, "PROJECT_ROOT", resolved.project_root)
+    monkeypatch.setattr(runner_state, "ARGENTOS_ROOT", resolved.argentos_root)
+    monkeypatch.setattr(runner_state, "PAYLOAD_ROOT", resolved.payload_root)
     monkeypatch.setattr(runner_state, "ARTIFACTS_DIR", artifacts_dir)
-    monkeypatch.setattr(runner_state, "PROJECT_ROOT", tmp_path)
     return session_uuid, artifacts_dir, tmp_path
 
 
@@ -272,6 +275,62 @@ def test_cli_h04_bypass_alert_does_not_block(session, capsys):
     captured = capsys.readouterr()
     assert "BYPASS ALERT" in captured.err
     assert "deliverable.py" in captured.err
+
+
+def test_session_state_lives_under_argentos_root(session):
+    """Test C — the session state lives in ARGENTOS_ROOT/.project."""
+    session_uuid, _, project_root = session
+
+    path = runner_state.record_gate_pass(session_uuid, "00", "H04")
+
+    assert path == (
+        project_root / ".argentos" / ".project" / session_uuid / "00" / "state.json"
+    )
+    assert path.is_file()
+
+
+def test_bypass_scan_covers_project_deliverables_not_argentos_space(session):
+    """Test B — E-1: a deliverable under src/ is flagged; ARgentOS state is not.
+
+    The scan walks the real PROJECT_ROOT and prunes ARGENTOS_ROOT by location,
+    so `.argentos/features.toml` is never reported as a project deliverable.
+    """
+    session_uuid, artifacts_dir, project_root = session
+    now = time.time()
+    session_dir = artifacts_dir / session_uuid
+    old = now - 120
+    for path in (session_dir, session_dir / "00"):
+        os.utime(path, (old, old))
+
+    (project_root / "src").mkdir(exist_ok=True)
+    deliverable = project_root / "src" / "app.py"
+    deliverable.write_text("x = 1\n", encoding="utf-8")
+    os.utime(deliverable, (now - 10, now - 10))
+    argentos_config = project_root / ".argentos" / "features.toml"
+    argentos_config.write_text("tdd = true\n", encoding="utf-8")
+    os.utime(argentos_config, (now - 10, now - 10))
+
+    gate_ts = time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime(now))
+    suspects, reliable = runner_state.detect_bypass(session_uuid, "00", gate_ts)
+
+    assert reliable is True
+    assert any("app.py" in suspect for suspect in suspects)
+    assert not any(".argentos" in suspect for suspect in suspects)
+
+
+def test_cli_requires_project_root(tmp_path, monkeypatch):
+    """The CLI never invents PROJECT_ROOT: it must be provided."""
+    monkeypatch.setattr(runner_state, "PROJECT_ROOT", None)
+    monkeypatch.setattr(runner_state, "ARGENTOS_ROOT", None)
+    monkeypatch.setattr(runner_state, "PAYLOAD_ROOT", None)
+    monkeypatch.setattr(runner_state, "ARTIFACTS_DIR", None)
+    monkeypatch.delenv(runner_state._roots.ENV_PROJECT_ROOT, raising=False)
+
+    exit_code = runner_state.main(
+        ["--session", "whatever", "--trigger", "H04", "pass"]
+    )
+
+    assert exit_code == 2
 
 
 def test_cli_missing_session_exits_2(session, capsys):

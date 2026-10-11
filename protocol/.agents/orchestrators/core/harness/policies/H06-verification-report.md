@@ -59,7 +59,7 @@ statement.
 The presence of the required sections listed in §"Gate Checklist" item 2, and the rubric evaluation of item 3 (when the `rubrics` feature flag is enabled), are `[gate]` even though they are not restated as numbered items in the checklist above.
 
 ## Decision Criteria
-**Structural validator:** the Orchestrator MUST run `python .agents/harness/gate_validator.py --trigger H06 --artifact <path>` before judging PASS; a structural FAIL blocks PASS unless recorded as a documented deviation.
+**Structural validator:** the Orchestrator MUST run `python .argentos/.agents/harness/gate_validator.py --project-root <PROJECT_ROOT> --trigger H06 --artifact <path>` before judging PASS; a structural FAIL blocks PASS unless recorded as a documented deviation.
 
 - `PASS`: The report exists, recommends `COMPLETED`, and all acceptance criteria are met.
 - `FAIL`: The report recommends `RECOVERY`, criteria are unmet, or the report is incomplete.

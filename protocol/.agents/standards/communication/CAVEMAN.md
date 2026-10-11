@@ -26,7 +26,7 @@ When active, CAVEMAN applies to **all** protocol communication:
 
 ## Activation
 
-CAVEMAN is activated via the `caveman` feature flag in `.agents/features.toml` or the `AGENTS_FEATURE_CAVEMAN` environment variable.
+CAVEMAN is activated via the `caveman` feature flag in `.argentos/features.toml` or the `AGENTS_FEATURE_CAVEMAN` environment variable.
 
 When the flag is disabled, the protocol uses its base communication style.
 

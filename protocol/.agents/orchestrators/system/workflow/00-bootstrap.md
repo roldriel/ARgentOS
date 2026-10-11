@@ -67,7 +67,7 @@ Report the failing checks to the user and stop. The blocking rule for the handof
 2. Apply the protocol health checklist of `.agents/standards/runtime/PROTOCOL_HEALTH.md` and run the state-storage probe:
 
 ```bash
-python .agents/harness/health_check.py
+python .argentos/.agents/harness/health_check.py --project-root <PROJECT_ROOT>
 ```
 
 3. Evaluate the result through harness trigger `S00` (`.agents/orchestrators/system/harness/policies/S00-system-ready.md`).

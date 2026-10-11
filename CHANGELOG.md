@@ -1254,6 +1254,38 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [12.0.0] — 2026-10-11
+
+### Added
+
+- **Lifecycle de adopción ARgentOS — `install`/`update`/`uninstall`/`doctor`** (plan 154, RFC-81; Clase A —
+RFC-81 `Accepted` + Plan 154 como autorización): se implementa el ciclo de vida de una instalación en un
+proyecto adoptante dentro de la familia distribuida existente `protocol/.agents/harness/` (D1), con
+`lifecycle.py` (CLI), `lifecycle_contract.py` (schema de `install.json`, seguridad de rutas, seis estados de
+ownership, escritura atómica + snapshot) y `lifecycle_staging.py` (staging por ref de git fijada + fallback
+copia local). Ownership por **procedencia** (`origin`) **+ estado verificado**: la huella detecta divergencia
+y **no** acredita autoría. El adapter `AGENTS.md` se genera solo si no existe (opt-in `--replace-agents-md` con
+backup verificable y comprobación de no-cambio); `.gitignore` **no** se modifica. `uninstall` preserva por
+defecto `.project/`, `.backup/` y la configuración activa; `--purge` se limita a artefactos
+`origin==installed ∧ state==present`. Journal durable + backups + rollback que **nunca** sobrescribe cambios
+posteriores del adoptante (`recovery pending`); lock de exclusión mutua, revalidación de `PROJECT_ROOT` antes
+de cada escritura, rechazo de escapes por symlink y estados de salida deterministas
+(success/no-op/conflict/recovery-pending).
+
+### Changed
+
+- **Layout canónico del adoptante (MAJOR)** — `docs/VERSIONING.md` §3: el payload se materializa en
+`<project-root>/.argentos/` (`features.toml`, `.agents/`, `.project/install.json`, `.backup/`) y la raíz solo
+conserva el adapter no normativo `AGENTS.md` que apunta a `.argentos/.agents/INDEX.md`; **no** existe
+`.argentos/AGENTS.md`. Es incompatible con el layout histórico (`.agents/` + `AGENTS.md` en la raíz) y
+requiere migración; ver `docs/MIGRATION.md` §19 (detección ≠ autorización; preservación por defecto).
+`protocol/.agents/VERSION` pasa de `11.7.1` a `12.0.0`. Documentación alineada en `docs/ADOPTION.md`,
+`docs/MIGRATION.md` y `README.md`. Verificación: batería canónica en verde; `pytest
+protocol/.agents/harness/tests/` 185 passed; `pytest tests/` 1266 passed + 1 skipped; GATE 3 36/36 y GATE 4
+17/17 documentados en el Plan 154.
+
+> Nota: el tag git `12.0.0` se crea como entregable del release al promover `dev` → `master`.
+
 ## [11.7.1] — 2026-10-08
 
 ### Changed

@@ -42,7 +42,7 @@ only:
 1. Detects the need for KB:
    - `.project/knowledge/discovery/` does not exist.
    - The KB is stale according to its TTL (`discovery_environment_ttl_hours`,
-     `discovery_project_ttl_hours` in `.agents/features.toml`).
+     `discovery_project_ttl_hours` in `.argentos/features.toml`).
    - A configuration hash changed.
    - An execution worker reports an inconsistency.
    - The user requests a refresh.
@@ -160,7 +160,7 @@ General rules:
 3. Select up to `sample_size` files per group, prioritizing representative names.
 4. Cap the total by `context_budget`.
 
-Limits (`.agents/features.toml`, read by `init_worker` into
+Limits (`.argentos/features.toml`, read by `init_worker` into
 `discovery_input.json`): `discovery_sample_size` per directory,
 `discovery_sample_size_per_language` per language, and
 `discovery_context_budget` as the total cap. Workers never declare their own

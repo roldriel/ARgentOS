@@ -64,7 +64,7 @@ The Orchestrator evaluates each item below by judgment when the gate fires and M
 3. Verify the authorization boundary of the plan: the plan must not contain its own `Effects` section or otherwise declare new authorizations; every out-of-frontier effect the plan requires must be covered by the task specification's `Effects` section (or, for `trivial`-profile tasks, by `SESSION_BRIEF.md`). Cite the covered effects and any undeclared effect.
 
 ## Decision Criteria
-**Structural validator:** the Orchestrator MUST run `python .agents/harness/gate_validator.py --trigger H04 --artifact <path>` before judging PASS; a structural FAIL blocks PASS unless recorded as a documented deviation.
+**Structural validator:** the Orchestrator MUST run `python .argentos/.agents/harness/gate_validator.py --project-root <PROJECT_ROOT> --trigger H04 --artifact <path>` before judging PASS; a structural FAIL blocks PASS unless recorded as a documented deviation.
 For `trivial`-profile tasks the validator applies the profile-aware section
 set: `## Context Reference` is not required (the contract omits it in the
 reduced cycle; the profile is read from the session's `TASK_ANALYSIS.md`).

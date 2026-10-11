@@ -105,7 +105,7 @@ Duties:
 
 ### 4. Feature Flag Awareness
 
-Before activating any protocol enhancement, the Orchestrator reads the feature flags directly from `.agents/features.toml` (overridable via `AGENTS_FEATURE_*` environment variables; environment variables take priority).
+Before activating any protocol enhancement, the Orchestrator reads the feature flags directly from `.argentos/features.toml` (overridable via `AGENTS_FEATURE_*` environment variables; environment variables take priority).
 
 The Orchestrator must only invoke optional capabilities when their corresponding flag is enabled. The complete flag catalog and override rules are in `.agents/standards/INDEX.md`.
 
@@ -172,7 +172,7 @@ When the `discovery_orchestrator` feature flag is enabled, the Orchestrator main
 8. An execution declared `invalidated_facts` in `EXECUTION_SUMMARY.md`: the
    affected entries are revalidated with the scope that owns each entry.
 
-Both TTLs are configured in `.agents/features.toml`.
+Both TTLs are configured in `.argentos/features.toml`.
 
 **Consent gate.** When the `discovery_require_consent` flag is enabled (default `true`), a detected need is never invoked directly: the Orchestrator presents a No-Assumption consultation to the user (see `.agents/standards/requirements/NO_ASSUMPTIONS.md`) with:
 
@@ -218,7 +218,7 @@ discovery (conditions above) and requests the scope.
 }
 ```
 
-This payload is an inter-orchestrator invocation (core → discovery), not an inter-worker message; it does not carry `message_version` / `from_worker` / `to_worker`. The `context_budget` and `sample_size` values mirror `discovery_context_budget` and `discovery_sample_size` in `.agents/features.toml`; `init_worker` reads the configured values from that file when it builds `discovery_input.json` (`.agents/orchestrators/discovery/roles/workers/init_worker.md`).
+This payload is an inter-orchestrator invocation (core → discovery), not an inter-worker message; it does not carry `message_version` / `from_worker` / `to_worker`. The `context_budget` and `sample_size` values mirror `discovery_context_budget` and `discovery_sample_size` in `.argentos/features.toml`; `init_worker` reads the configured values from that file when it builds `discovery_input.json` (`.agents/orchestrators/discovery/roles/workers/init_worker.md`).
 
 **Response handling.** The Discovery Orchestrator returns a structured result and never responds to the user:
 

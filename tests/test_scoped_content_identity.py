@@ -283,3 +283,83 @@ def test_library_api_matches_cli(tmp_path: Path) -> None:
     api = sci.compute(repo, ["a.txt"])
 
     assert api == cli
+
+
+def make_submodule_layout(tmp_path: Path) -> tuple[Path, Path]:
+    """A superproject whose ``.argentos/.agents`` is a git submodule.
+
+    Built with the gitlink primitive (``--cacheinfo 160000``) so it needs no
+    network and no ``submodule add`` file-protocol permission; the nested
+    working tree is a real repository, exactly like an initialized submodule.
+    """
+    project = init_repo(tmp_path, "project")
+    (project / "src").mkdir()
+    (project / "src" / "app.py").write_text("print(1)\n", encoding="utf-8")
+    git(project, "add", "src/app.py")
+    git(project, "commit", "-q", "-m", "project file")
+
+    payload_source = init_repo(tmp_path, "payload")
+    (payload_source / "INDEX.md").write_text("# payload index\n", encoding="utf-8")
+    git(payload_source, "add", "INDEX.md")
+    git(payload_source, "commit", "-q", "-m", "payload")
+
+    payload_root = project / ".argentos" / ".agents"
+    payload_root.parent.mkdir(parents=True)
+    shutil.copytree(payload_source, payload_root)
+    sha = git(payload_root, "rev-parse", "HEAD")
+
+    (project / ".gitmodules").write_text(
+        '[submodule ".argentos/.agents"]\n'
+        "\tpath = .argentos/.agents\n"
+        "\turl = ../payload\n",
+        encoding="utf-8",
+    )
+    git(project, "add", ".gitmodules")
+    git(
+        project,
+        "update-index",
+        "--add",
+        "--cacheinfo",
+        f"160000,{sha},.argentos/.agents",
+    )
+    git(project, "commit", "-q", "-m", "register payload submodule")
+    return project, payload_root
+
+
+def test_content_identity_uses_project_root_not_the_payload_submodule(
+    tmp_path: Path,
+) -> None:
+    """Test F — the payload submodule never becomes the project's repo root."""
+    project, payload_root = make_submodule_layout(tmp_path)
+
+    # The correct behavior is preserved: with the real project root the scope
+    # is identified against PROJECT_ROOT.
+    report = sci.compute(
+        project,
+        [str(project / "src" / "app.py")],
+        expected_toplevel=project,
+    )
+    assert report["scope"] == ["src/app.py"]
+
+    # Rooted at the payload, an expected project root makes the computation
+    # fail closed instead of silently identifying the payload's repository.
+    for paths in ([str(project / "src" / "app.py")], ["INDEX.md"]):
+        with pytest.raises(sci.ToolError):
+            sci.compute(payload_root, paths, expected_toplevel=project)
+
+
+def test_content_identity_cli_expected_root_guard(tmp_path: Path) -> None:
+    """Test F (CLI) — ``--expected-root`` guards the declared project root."""
+    project, payload_root = make_submodule_layout(tmp_path)
+
+    ok = run_tool(
+        project,
+        [str(project / "src" / "app.py")],
+        "--expected-root",
+        str(project),
+    )
+    assert report_of(ok)["scope"] == ["src/app.py"]
+
+    bad = run_tool(payload_root, ["INDEX.md"], "--expected-root", str(project))
+    assert bad.returncode == 1
+    assert "repository root mismatch" in bad.stderr

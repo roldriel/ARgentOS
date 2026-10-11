@@ -188,7 +188,7 @@ The harness runs as a gate **before** each critical transition:
 3. The Orchestrator reads the relevant artifact(s) and session state.
 4. The Orchestrator checks each item in the policy checklist. For the
    supported triggers (H00–H07, H09–H11, D00) the Orchestrator MUST run
-   `.agents/harness/gate_validator.py --trigger <HXX> --artifact <path>`; a
+   `.argentos/.agents/harness/gate_validator.py --project-root <PROJECT_ROOT> --trigger <HXX> --artifact <path>`; a
    structural FAIL blocks PASS unless recorded as a documented deviation. The
    decision in step 5 remains its own.
 5. The Orchestrator decides `PASS` or `FAIL` for the trigger.
@@ -284,7 +284,7 @@ H15 (`delegation-validity`) is not a state-transition gate over a session artifa
 H15 is evaluated by the Orchestrator's judgment against the «Gate Checklist» in prose of its policy; its recovery routing is the §"Recovery Decision Table" of `.agents/orchestrators/core/harness/policies/H15-delegation-validity.md`.
 
 The runner provides mechanical schema support for H15:
-`python .agents/harness/runner_state.py --input <json> validate-delegation` and
+`python .argentos/.agents/harness/runner_state.py --input <json> validate-delegation` and
 `... validate-return` validate the delegation payload and the worker return
 report against the delegation contract fields; the gate remains the
 Orchestrator's judgment.
@@ -320,11 +320,11 @@ review gate) and the derived Artifact Lifecycle live in `HARNESS_REPORT.md`
 
 1. Only `.agents/harness/runner_state.py` writes it, transactionally (temp
    file + rename), via its CLI:
-   `python .agents/harness/runner_state.py --session <uuid> --trigger <HXX> --iteration <N> pass`.
+   `python .argentos/.agents/harness/runner_state.py --project-root <PROJECT_ROOT> --session <uuid> --trigger <HXX> --iteration <N> pass`.
    The Orchestrator invokes it **only after judging `PASS`** against the
    policy's «Gate Checklist». `FAIL` and `SKIP` never touch it. Terminal
    states are recorded the same way:
-   `python .agents/harness/runner_state.py --session <uuid> --state ABORT|COMPLETED terminal`,
+   `python .argentos/.agents/harness/runner_state.py --project-root <PROJECT_ROOT> --session <uuid> --state ABORT|COMPLETED terminal`,
    preserving the recorded gates.
 2. Hooks and the Orchestrator read it; nobody else writes it. A missing or
    corrupt `state.json` means *no gate has passed* (fail-closed for
@@ -519,8 +519,15 @@ whose `tool_input` names no target is denied, so the bypass cannot be crafted
 by omitting the target field.
 
 Enforced mode requires registering `hook_gate.py` as a CLI hook for two
-events: `PreToolUse` (matcher `Write|Edit`) and `Stop`. The paths below
-assume the adopted layout (`.agents/` at the project root).
+events: `PreToolUse` (matcher `Write|Edit`) and `Stop`. The commands below use
+the adopted layout path `.argentos/.agents/harness/hook_gate.py`, relative to
+the project root (the CLI runs hook commands with the project as its working
+directory). The hook resolves `PROJECT_ROOT` from the event `cwd` — the
+entry-point context the CLI provides — and only falls back to
+`ARGENTOS_PROJECT_ROOT` when the event carries no `cwd`; it never derives the
+project root from its own location. Do not set `ARGENTOS_PROJECT_ROOT`
+globally to a different project: an inherited value is never preferred over
+the event context.
 
 **Kimi Code** — in `~/.kimi-code/config.toml` (or the project config):
 
@@ -528,12 +535,12 @@ assume the adopted layout (`.agents/` at the project root).
 [[hooks]]
 event = "PreToolUse"
 matcher = "Write|Edit"
-command = "python .agents/harness/hook_gate.py"
+command = "python .argentos/.agents/harness/hook_gate.py"
 timeout = 5
 
 [[hooks]]
 event = "Stop"
-command = "python .agents/harness/hook_gate.py"
+command = "python .argentos/.agents/harness/hook_gate.py"
 timeout = 5
 ```
 
@@ -546,14 +553,14 @@ timeout = 5
       {
         "matcher": "Write|Edit",
         "hooks": [
-          { "type": "command", "command": "python .agents/harness/hook_gate.py", "timeout": 5 }
+          { "type": "command", "command": "python .argentos/.agents/harness/hook_gate.py", "timeout": 5 }
         ]
       }
     ],
     "Stop": [
       {
         "hooks": [
-          { "type": "command", "command": "python .agents/harness/hook_gate.py", "timeout": 5 }
+          { "type": "command", "command": "python .argentos/.agents/harness/hook_gate.py", "timeout": 5 }
         ]
       }
     ]
@@ -562,7 +569,7 @@ timeout = 5
 ```
 
 The strong option in Claude Code is *managed settings*
-(`allowManagedHooksOnly` plus deny rules on `.agents/` and the hook
+(`allowManagedHooksOnly` plus deny rules on `.argentos/` and the hook
 configs), managed outside the repo: they prevent the agent itself from
 disabling the hook.
 

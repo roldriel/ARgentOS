@@ -57,7 +57,7 @@ Validate that `INTENT_REFLECTION.md` exists, complies with its contract, and rec
 16. The reformulated request preserves the original user's intent without introducing assumptions. `[agent]`
 
 ## Decision Criteria
-**Structural validator:** the Orchestrator MUST run `python .agents/harness/gate_validator.py --trigger H11 --artifact <path>` before judging PASS; a structural FAIL blocks PASS unless recorded as a documented deviation.
+**Structural validator:** the Orchestrator MUST run `python .argentos/.agents/harness/gate_validator.py --project-root <PROJECT_ROOT> --trigger H11 --artifact <path>` before judging PASS; a structural FAIL blocks PASS unless recorded as a documented deviation.
 
 - `PASS`: All checklist items are satisfied.
 - `FAIL`: Any required section is missing, the user intent is not confirmed, the correction cycle limit is exceeded, or the artifact contains unsupported assumptions.

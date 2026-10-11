@@ -1,13 +1,15 @@
 # Política de migración — Protocolo ARgentOS
 
-Cómo migrar un proyecto que adoptó el protocolo ARgentOS (`.agents/` + `AGENTS.md`)
-de una versión a otra. Este archivo vive **fuera de `.agents/`** a propósito
-(origen: `docs/plans/20-release-adoption.md` §A): una migración no debe modificar su
-propia política.
+Cómo migrar un proyecto adoptante de una versión a otra, incluido el pasaje
+desde el layout histórico (`.agents/` + `AGENTS.md` en la raíz) al layout
+canónico (`.argentos/.agents/` + adapter `AGENTS.md`; ver §19 y
+[`ADOPTION.md`](ADOPTION.md) §1). Este archivo vive **fuera del payload** a
+propósito (origen: `docs/plans/20-release-adoption.md` §A): una migración no
+debe modificar su propia política.
 
-La versión vigente está declarada en `.agents/VERSION` (una línea semver). El
-historial de cambios está en [`CHANGELOG.md`](../CHANGELOG.md). La guía de
-adopción inicial está en [`ADOPTION.md`](ADOPTION.md).
+La versión vigente está declarada en `ARGENTOS_ROOT/.agents/VERSION` (una línea
+semver). El historial de cambios está en [`CHANGELOG.md`](../CHANGELOG.md). La
+guía de adopción inicial está en [`ADOPTION.md`](ADOPTION.md).
 
 ---
 
@@ -43,21 +45,23 @@ Para pasar un proyecto adoptante de la versión `X` a la versión `Y`:
    `.agents/orchestrators/*/harness/policies/`. Las policies nuevas (MINOR)
    empiezan a validar en cuanto se copian; verificar que los artefactos del
    proyecto las cumplen antes de habilitar el trigger correspondiente.
-5. **Revisar flags**: comparar `.agents/features.toml` contra la versión nueva;
+5. **Revisar flags**: comparar `.argentos/features.toml` contra la versión nueva;
    los flags nuevos llegan con default seguro (deshabilitado salvo indicación del
    changelog).
-6. **Sincronizar el directorio**: reemplazar `.agents/` y `AGENTS.md` por los de
-   la versión `Y`. `.agents/` es autocontenido: no referencia `docs/plans/` ni RFCs, así
-   que no hace falta copiar nada más del repo de origen.
+6. **Sincronizar el directorio**: reemplazar `ARGENTOS_ROOT/.agents/` por el de
+   la versión `Y` (con el lifecycle, `update`; manualmente, copiando el payload).
+   El payload es autocontenido: no referencia `docs/plans/` ni RFCs, así que no
+   hace falta copiar nada más del repo de origen.
 7. **Validar**: la checklist documental de
-   `.agents/standards/runtime/PROTOCOL_HEALTH.md` (la aplica el system agent en
-   el bootstrap) debe terminar en `PASS`. Si el proyecto opera en modo
+   `.argentos/.agents/standards/runtime/PROTOCOL_HEALTH.md` (la aplica el system
+   agent en el bootstrap) debe terminar en `PASS`. Si el proyecto opera en modo
    enforced, ejecutar además la sonda de almacenamiento de estado
-   (`python .agents/harness/health_check.py` → PASS). La suite de tests
-   (`python -m pytest .agents/harness/tests/`) es solo para desarrollo del
-   protocolo, no un requisito del adoptante.
+   (`python .argentos/.agents/harness/health_check.py --project-root <proyecto>`
+   → PASS). La suite de tests
+   (`python -m pytest .argentos/.agents/harness/tests/`) es solo para desarrollo
+   del protocolo, no un requisito del adoptante.
 8. **Actualizar la versión adoptada**: registrar en el proyecto qué versión de
-   `.agents/VERSION` quedó adoptada.
+   `ARGENTOS_ROOT/.agents/VERSION` quedó adoptada.
 
 ## 3. Cambios de modelo y contratos — planes 28-30 (2026-08-11)
 
@@ -544,3 +548,66 @@ No rompe contratos ni requiere migración.
 - **Adopción.** Leer `docs/rfc/78-provider-bound-stable-prefix-materialization.md`
   y `.agents/standards/context/CONTEXT.md` (sección «Stable prefix
   (provider-bound materialization)»). Sin migración de datos.
+
+## 19. Lifecycle de adopción y layout canónico (RFC-81, plan 154)
+
+Cambio **MAJOR** (modelo/contratos incompatibles para un adoptante del layout
+histórico; `docs/VERSIONING.md` §3). Cambian las rutas del payload, la
+configuración activa, el estado local, el bootstrap y el adapter. **La
+clasificación MAJOR no es una autorización de release**: la versión, el tag y
+la publicación siguen un acto separado.
+
+### 19.1. Qué cambia
+
+| Pieza | Layout histórico | Layout canónico |
+|---|---|---|
+| Payload | `<proyecto>/.agents/` | `<proyecto>/.argentos/.agents/` |
+| Config activa | `<proyecto>/.agents/` (con `features.toml`) | `<proyecto>/.argentos/features.toml` |
+| Estado local | `<proyecto>/.project/` | `<proyecto>/.argentos/.project/` (con `install.json`) |
+| Backups | — | `<proyecto>/.argentos/.backup/` |
+| Bootstrap | `.agents/INDEX.md` | `.argentos/.agents/INDEX.md` |
+| Adapter | `AGENTS.md` (entry publicado) | `AGENTS.md` (adapter no normativo → `.argentos/.agents/INDEX.md`) |
+| Segundo bootstrap | — | **no existe** `.argentos/AGENTS.md` |
+
+### 19.2. Detección ≠ autorización; preservación por defecto
+
+Detectar el layout histórico **solo lo reporta**. No autoriza a modificar,
+desplazar ni eliminar `.agents/` (raíz), un `AGENTS.md` preexistente, la
+configuración ni el estado históricos. Esos artefactos **permanecen intactos**.
+Desplazar o sustituir un artefacto histórico exige **autorización explícita**,
+**backup verificable** y **comprobación de que no cambió desde la inspección**.
+Si no puede demostrarse que la operación está autorizada y es segura, la
+migración **se detiene** y ofrece transición manual.
+
+### 19.3. Estrategia de migración (explícita, no destructiva)
+
+1. **Detectar** el layout histórico (presencia de `.agents/` en la raíz o de un
+   `AGENTS.md` que sea el entry publicado) y **reportarlo**.
+2. **No tocar** los artefactos históricos por defecto.
+3. **Materializar** el payload en `.argentos/.agents/` — ruta nueva, que no
+   colisiona con `.agents/` — con el lifecycle (`install`, §1.2 de
+   [`ADOPTION.md`](ADOPTION.md)).
+4. **Sembrar** la configuración activa solo si no existe (nunca sobrescribir).
+5. **Crear** el manifest `.argentos/.project/install.json`.
+6. **Preservar** el estado local histórico sin borrarlo; reportar su ubicación y
+   ofrecer la transición manual.
+7. Solo si el adoptante lo autoriza **explícitamente**: respaldar de forma
+   verificable el artefacto histórico que se desplace, comprobar que no cambió y
+   registrarlo en el manifest.
+8. **Rollback** únicamente desde esos backups autorizados, y **nunca**
+   sobrescribiendo cambios posteriores del adoptante.
+
+### 19.4. Reversibilidad y recuperación
+
+La reversibilidad aplica a los desplazamientos **autorizados**: ningún borrado
+sin backup, y ningún backup restaurado sobre un archivo que el adoptante
+modificó después (`recovery pending`). Límite honesto: no hay transacción
+multi-archivo real; el journal y la idempotencia de los pasos son el mecanismo
+de recuperación (ver [`ADOPTION.md`](ADOPTION.md) §8.3).
+
+### 19.5. Adopción
+
+Leer [`ADOPTION.md`](ADOPTION.md) §1 (layout canónico y lifecycle) y §8
+(ownership, manifest, backups, recovery, `--purge`, límites) y
+`docs/rfc/81-argentos-lifecycle-ownership-distribution.md`. El lifecycle no
+modifica `.gitignore` ni reemplaza `AGENTS.md` sin opt-in explícito.

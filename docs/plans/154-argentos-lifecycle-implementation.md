@@ -31,11 +31,11 @@ Implementar el contrato que RFC-81 `Accepted` define para el ciclo de vida de un
 RFC-81            = Accepted (2026-10-11)
 PLAN-154          = Executed (2026-10-11; PLANNED / OPEN cerrado por ejecución)
 IMPLEMENTATION    = DONE (U1–U14 ejecutadas y verificadas)
-GATE_2_COMMIT     = NOT AUTHORIZED (acto operativo separado y explícito)
+GATE_2_COMMIT     = AUTHORIZED + PERFORMED (regularizado en el commit C1 en `dev`)
 GATE 3            = EXECUTED (36/36 con evidencia real)
-GATE 4            = EXECUTED (verificado localmente + publicación pendiente de autorización)
-RELEASE           = NOT AUTHORIZED
-PUBLICATION       = NOT AUTHORIZED
+GATE 4            = EXECUTED (verificado localmente; publicación por CI)
+RELEASE           = AUTHORIZED + PERFORMED (12.0.0: promoción `dev`→`master` + tag anotado)
+PUBLICATION       = AUTHORIZED (regeneración de `dist` por `publish-dist`)
 ```
 
 Separaciones que el Plan preserva y no cruza:
@@ -478,7 +478,8 @@ esta sesión.
 **Conclusión U10:** el inventario preexistente es **coherente** con el diseño de
 RFC-81 `Accepted`; no se identificó ningún cambio incompatible ni innecesario.
 La clasificación **no** es autorización: el commit de estas 51 entradas exige un
-acto operativo separado y explícito (`GATE_2_COMMIT_AUTHORIZED = NO`).
+acto operativo separado y explícito, **ejercido** en la sesión de promoción
+(`GATE_2_COMMIT_AUTHORIZED = YES`, commit C1).
 
 ## Versionado y release
 
@@ -578,64 +579,53 @@ ejecutado con `--basetemp` fuera del sandbox (el sandbox de esta sesión
 restringe `tempfile`/`%TEMP%`); `.git` de solo lectura en la sesión (no se
 pudo computar `git write-tree`).
 - Scoped Content Identity:
-  - Delta scoped identity (scope S = 12 archivos, orden lexicográfico;
-    serialización `scoped-v1` + pares `path NUL blob NUL`), valor de la
-    herramienta del régimen (`tools/scoped_content_identity.py`, blobs del
-    índice para archivos versionados):
-    `e46ac2dc45da5a6115e655f298d6cbae6deee19565abcba796ac6a9544c82fd7`.
-    **Precondición no satisfecha:** el régimen pide ejecutar tras `git add`; el
-    `.git` de esta sesión es de solo lectura (`index.lock` denegado), así que los
-    archivos versionados contribuyen con su blob **commiteado**, no con el del
-    working tree. Por eso se registra además el valor auxiliar sobre el contenido
-    real validado.
-  - Delta scoped identity sobre el **working tree** (auxiliar; todos los blobs
-    vía `git hash-object --path`): `ebfb338517dab9fb600b5028d7b78ff2361b8d3e64f92742a81f1571db1ee01c`.
-    Este es el valor que refleja el contenido efectivamente validado.
-  - State identity (validated state): `GAP` — el estado validado es el árbol de
-    trabajo (V1/V2 sobre el working tree, no sobre un commit, porque el commit
-    está **no autorizado**). La base commiteada es
-    `HEAD^{tree}` = `e47e2eb02149369aab9574a40ddf2f418d0109ab` (estado **previo**
-    al cambio). La identidad de árbol del estado validado
-    (`git write-tree`) quedará disponible en el acto de commit (GATE 2
-    COMMIT AUTHORIZATION), no en esta sesión.
+  - Delta scoped identity (A1; scope S = 12 archivos, orden lexicográfico;
+    serialización `scoped-v1` + pares `path NUL blob NUL`; valor de la
+    herramienta del régimen `tools/scoped_content_identity.py` sobre el índice
+    —equivalente al contenido de C1—):
+    `ebfb338517dab9fb600b5028d7b78ff2361b8d3e64f92742a81f1571db1ee01c`.
+  - State identity (A1; estado validado = commit de contenido C1): T1 =
+    `git rev-parse C1^{tree}` = `890b5330928ae1d63b474d9ae796b5c83feaf512`
+    (coincide con `git write-tree` del índice staged al validar el cierre).
 - Validity / stale: `vigente` (V1 = batería canónica + suites sobre el contenido
-  del cambio). La corrida final (ver `## Checkpoint / cierre`) cubre también el
-  estado con los registros de cierre antes del commit autorizado.
+  del cambio); corrida final V2 sobre el estado con los registros de cierre
+  (ver `## Checkpoint / cierre`).
 
 ## Checkpoint / cierre
 
 Registro de la relación closure↔estado Git (RFC-75 Mecanismo 7;
 `docs/CONVENTIONS.md:Change Lifecycle — Checkpoint y cierre Git`).
 
-- Commits de cierre: **ninguno** — el commit de esta implementación **no** está
-  autorizado en esta sesión, y el commit de los 51 cambios preexistentes de
-  GATE 2 tampoco (`GATE_2_COMMIT_AUTHORIZED = NO`). No se ejecutó `git add`,
-  `git commit`, `git reset`, `git clean`, rebase ni squash.
-- Estado validado: `## Validation anchor` de este plan (V1); delta scoped
+- Estado de cierre (identidad): T1 =
+  `890b5330928ae1d63b474d9ae796b5c83feaf512` (árbol del commit de contenido
+  C1; == State identity del `## Validation anchor`).
+- Commits de cierre (en `dev`):
+  - C1 `2267155` — `feat(protocol): add adoption lifecycle harness and
+    regularize GATE 2 layout (plan 154, RFC-81)` (contenido validado por V1).
+  - C2 — este commit de registro (`docs(plans): close plan 154 with validation
+    anchor and checkpoint (plan 154, RFC-81)`); su SHA se identifica por el
+    mensaje (auto-referencia: el árbol no embebe su propia identidad).
+- Estado validado: `## Validation anchor` de este plan (A1/V1); delta scoped
   identity =
-  `e46ac2dc45da5a6115e655f298d6cbae6deee19565abcba796ac6a9544c82fd7`.
-- Estado de cierre (identidad): **no disponible** — requiere el árbol del
-  estado staged (`git write-tree`) del commit de cierre, que no existe. `GAP`
-  declarado (no se inventa un tree id).
-- Árbol material del commit de cierre: **no aplica** (sin commit).
-- Consistencia checkpoint↔anchor: `no evaluable` — no existe commit de cierre,
-  así que la consistencia GC-1 se establecerá en el acto de commit autorizado;
-  no es una inconsistencia de contenido (la batería y las suites sobre el estado
-  final están en `PASS`). Es la **condición buscada**: la sesión termina en
-  `Executed` (implementación + validación) sin condición de cierre derivada.
+  `ebfb338517dab9fb600b5028d7b78ff2361b8d3e64f92742a81f1571db1ee01c`.
+- Árbol material del commit de contenido: `git rev-parse C1^{tree}` = T1.
+- Consistencia checkpoint↔anchor: **PASS** — `git rev-parse C1^{tree}` == T1 y el
+  estado validado (V1/A1) corresponde al árbol de C1 (GC-1).
 - Governance aplicada: Plan `Executed` (header + espejo en `docs/plans/INDEX.md`);
-  ítem en `CHANGELOG.md:[Unreleased]` con `(plan 154, RFC-81)`. Clase A
-  (RFC-56): RFC-81 `Accepted` + este Plan como autorización de la modificación
-  de `protocol/.agents/`.
-- Documentation impact: `REQUIRED` — `docs/ADOPTION.md`, `docs/MIGRATION.md`,
-  `README.md` actualizados (layout canónico, lifecycle, ownership, manifest,
-  backups, recovery, `--purge`, migración MAJOR).
+  ítem `(plan 154, RFC-81)` en `CHANGELOG.md:[12.0.0] — 2026-10-11`; bump de
+  `protocol/.agents/VERSION` (`11.7.1` → `12.0.0`) y sync del anchor semántico
+  del runtime (`runtime/toolcalls/canonical.py`). Clase A (RFC-56): RFC-81
+  `Accepted` + este Plan como autorización de la modificación de
+  `protocol/.agents/`.
+- Documentation impact: `REQUIRED` — `docs/ADOPTION.md`, `docs/MIGRATION.md`
+  (§19), `README.md` y `CHANGELOG.md` actualizados (layout canónico, lifecycle,
+  ownership, manifest, backups, recovery, `--purge`, migración MAJOR).
 - Roadmap impact: `NOT_REQUIRED` — el Plan no crea, completa, cancela ni
-  re-prioriza trabajo de `ROADMAP.md`; el release/publicación quedan como actos
-  separados fuera del mapa operativo (owner: mantenedor).
-- Condición derivada: **no cerrado** — `Executed` sin condición de cierre: falta
-  el checkpoint Git, que exige el commit de GATE 2 y/o el commit de esta
-  implementación (autorización operativa separada, no concedida).
+  re-prioriza trabajo de `ROADMAP.md`.
+- Condición derivada: `Closed` — `Executed` + governance aplicable + checkpoint +
+  consistencia checkpoint↔anchor `PASS`. El release `12.0.0` (promoción
+  `dev`→`master`, tag anotado y regeneración de `dist` por CI) es un acto del
+  release y no es precondición de `Closed`.
 
 ## Nota de ejecución
 
@@ -685,3 +675,17 @@ Registro de la relación closure↔estado Git (RFC-75 Mecanismo 7;
 **Creación (2026-10-11):** artifact creado y registrado con `Status` `Aprobado para ejecución` y condición `PLANNED / OPEN` (la forma usada por los planes 97/100/101 del corpus), por autorización explícita del mantenedor; deriva de RFC-81 `Accepted`. Sin ejecución de unidades; sin commit; sin cambios en `protocol/`, `dist`, `VERSION` ni en los 51 cambios preexistentes de GATE 2.
 
 **Revisión post-creación (2026-10-11):** auditoría semántica contra RFC-81 `Accepted`. Correcciones aplicadas al Plan, sin cambios de diseño ni de RFC-81: (1) U10 — su dependencia es RFC-81 + Plan (coincidente con la fila derivada de RFC-81), no U1–U9; el DAG la secuencia tras U1–U9 sólo como orden de consolidación; (2) U6 — la idempotencia no convierte una divergencia en no-op (conflicto ⇒ STOP); (3) GATE 4 #2 — se distingue la reproducibilidad local del mapeo de la regeneración efectiva de `dist` (`PENDING_AUTHORIZED_PUBLICATION`); (4) terminología — `PLANNED / OPEN` (corpus) en lugar de `PLAN / OPEN`; (5) cierre — las autorizaciones externas (commit de GATE 2, release/publicación) no bloquean el cierre del Plan. Sin unidades ejecutadas; sin commit.
+
+**Promoción y release (2026-10-11).** En una sesión posterior, con autorización
+explícita del mantenedor (`GATE_2_COMMIT_AUTHORIZED = YES`,
+`RELEASE_AUTHORIZED = YES`, `PUBLICATION_AUTHORIZED = YES`,
+`PROMOTION_TO_MASTER_AUTHORIZED = YES`), se regularizó el trabajo en el commit
+de contenido **C1** `2267155` en `dev` —que incorpora los 51 cambios
+preexistentes de GATE 2 (antes sin commit), la RFC-81, este Plan, la
+implementación del lifecycle, sus tests, la documentación y la metadata de
+versión— y se completó el cierre con el commit de registro **C2** de esta
+sección. `protocol/.agents/VERSION` pasó de `11.7.1` a **`12.0.0`** (MAJOR por
+`docs/VERSIONING.md` §3) y se sincronizó el anchor semántico del runtime. La
+promoción `dev`→`master`, el tag anotado `12.0.0` y la regeneración de `dist`
+por `publish-dist` se registran en `CHANGELOG.md:[12.0.0] — 2026-10-11` y en el
+estado Git.

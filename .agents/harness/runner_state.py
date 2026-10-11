@@ -31,8 +31,9 @@ normalized with a `Z` suffix).
 
 CLI (state recording only):
 
-    python .agents/harness/runner_state.py \
-        --session <uuid> --trigger <HXX> [--iteration <N>] pass
+    python .argentos/.agents/harness/runner_state.py \
+        --project-root <project> --session <uuid> --trigger <HXX> \
+        [--iteration <N>] pass
 
 Records the PASS for a transition trigger (H00–H07, H11) in state.json.
 `--iteration` defaults to the session's latest iteration folder. Any other
@@ -41,22 +42,25 @@ trigger is rejected with exit 2 (non-transition gates live in
 bypass scan and prints any alert to stderr without blocking. Exit 0 on
 success; exit 2 with a clear message on stderr on error.
 
-    python .agents/harness/runner_state.py \
-        --session <uuid> --state ABORT terminal
+    python .argentos/.agents/harness/runner_state.py \
+        --project-root <project> --session <uuid> --state ABORT terminal
 
 Records a terminal state (`ABORT` or `COMPLETED`) in state.json, preserving
 the recorded gate passes. Same transactional write and exit conventions.
 
 H15 schema support (no session required):
 
-    python .agents/harness/runner_state.py --input <json> validate-delegation
-    python .agents/harness/runner_state.py --input <json> validate-return
+    python .argentos/.agents/harness/runner_state.py --input <json> validate-delegation
+    python .argentos/.agents/harness/runner_state.py --input <json> validate-return
 
 Validates the delegation payload or the worker return report against the
 delegation contract fields. The H15 gate remains the Orchestrator's judgment;
 these subcommands are mechanical schema support.
 
-Self-contained: stdlib only, no other harness module imports.
+Roots follow the adopted layout contract (``harness/roots.py``): the session
+state lives under ``ARGENTOS_ROOT/.project`` and the post-hoc bypass scan walks
+the real ``PROJECT_ROOT`` provided by the entry point. ``PROJECT_ROOT`` is
+never discovered by fixed parent depth. Standard library only.
 """
 
 from __future__ import annotations
@@ -71,15 +75,50 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-ARTIFACTS_DIR = PROJECT_ROOT / ".project"
+# The harness scripts are self-contained entry points; the harness directory
+# hosts the shared root contract. Registering it here keeps the import local
+# (no packaging) and works under pytest, direct execution and importlib loads.
+_HARNESS_DIR = Path(__file__).resolve().parent
+if str(_HARNESS_DIR) not in sys.path:
+    sys.path.insert(0, str(_HARNESS_DIR))
+
+import roots as _roots  # noqa: E402  (import after the sys.path registration)
+
+# Roots of the adopted layout. PROJECT_ROOT is provided by the entry point
+# (--project-root or ARGENTOS_PROJECT_ROOT); it is never derived from this
+# file's location. ARTIFACTS_DIR is ARGENTOS_ROOT/.project. They are module
+# globals so a caller (or a test) can inject the roots explicitly.
+PROJECT_ROOT: Path | None = None
+ARGENTOS_ROOT: Path | None = None
+PAYLOAD_ROOT: Path | None = None
+ARTIFACTS_DIR: Path | None = None
+
+
+def configure_roots(project_root: str | Path) -> _roots.Roots:
+    """Adopt the root contract from a project root provided by the caller."""
+    global PROJECT_ROOT, ARGENTOS_ROOT, PAYLOAD_ROOT, ARTIFACTS_DIR
+    resolved = _roots.resolve(project_root)
+    PROJECT_ROOT = resolved.project_root
+    ARGENTOS_ROOT = resolved.argentos_root
+    PAYLOAD_ROOT = resolved.payload_root
+    ARTIFACTS_DIR = resolved.project_dir
+    return resolved
+
+
+def _require_artifacts_dir() -> Path:
+    if ARTIFACTS_DIR is None:
+        raise RuntimeError(
+            "PROJECT_ROOT is not configured: provide it with --project-root "
+            f"or {_roots.ENV_PROJECT_ROOT}"
+        )
+    return ARTIFACTS_DIR
 
 # Directories that never count as project deliverables for the post-hoc
-# bypass scan (protocol internals, VCS, caches, dependency folders).
+# bypass scan (VCS, caches, dependency folders). `.agents` and `.project` are
+# excluded by their location under ARGENTOS_ROOT, not by basename: the
+# exclusion is relative to ARGENTOS_ROOT, as the root contract requires.
 _BYPASS_SCAN_EXCLUDED_DIRS = {
-    ".agents",
     ".git",
-    ".project",
     ".pytest_cache",
     "__pycache__",
     "node_modules",
@@ -106,7 +145,7 @@ _PROFILE_VALUE_RE = re.compile(r'^\s*value\s*=\s*"([^"]+)"', re.MULTILINE)
 
 def iteration_dirs(session_uuid: str) -> list[Path]:
     """Return sorted list of numeric iteration directories for a session."""
-    session_dir = ARTIFACTS_DIR / session_uuid
+    session_dir = _require_artifacts_dir() / session_uuid
     if not session_dir.is_dir():
         return []
     dirs = [
@@ -143,7 +182,7 @@ def read_task_profile(session_uuid: str) -> str:
 
 def state_path(session_uuid: str, iteration: str) -> Path:
     """Return the state.json path for a session iteration."""
-    return ARTIFACTS_DIR / session_uuid / iteration / "state.json"
+    return _require_artifacts_dir() / session_uuid / iteration / "state.json"
 
 
 def _persist(session_uuid: str, iteration: str, data: dict[str, Any]) -> Path:
@@ -174,7 +213,7 @@ def _write_json(path: Path, data: dict[str, Any]) -> Path:
 
 def sessions_mapping_file() -> Path:
     """Path of the CLI-session -> protocol-uuid mapping (.project/.sessions.json)."""
-    return ARTIFACTS_DIR / ".sessions.json"
+    return _require_artifacts_dir() / ".sessions.json"
 
 
 def link_session(cli_session: str, session_uuid: str) -> Path:
@@ -346,6 +385,36 @@ def record_terminal_state(
     return _persist(session_uuid, iteration, data)
 
 
+def _excluded_scan_roots() -> tuple[Path, ...]:
+    """Roots that are never project deliverables for the bypass scan.
+
+    The ARgentOS space is excluded by **location**, not by basename: the root
+    contract places `.agents` and `.project` under `ARGENTOS_ROOT`, so
+    excluding those names anywhere in the tree would both hide real project
+    deliverables and leak ARgentOS state into the scan.
+    """
+    excluded: list[Path] = []
+    for value in (ARGENTOS_ROOT, PAYLOAD_ROOT, ARTIFACTS_DIR):
+        if value is None:
+            continue
+        try:
+            resolved = Path(value).resolve()
+        except OSError:
+            continue
+        if resolved not in excluded:
+            excluded.append(resolved)
+    return tuple(excluded)
+
+
+def _is_excluded_dir(candidate: Path, excluded: tuple[Path, ...]) -> bool:
+    """True when ``candidate`` is, or lives inside, an excluded root."""
+    try:
+        resolved = candidate.resolve()
+    except OSError:
+        return False
+    return any(resolved == ex or ex in resolved.parents for ex in excluded)
+
+
 def detect_bypass(
     session_uuid: str, iteration: str, gate_timestamp: str
 ) -> tuple[list[str], bool]:
@@ -359,22 +428,33 @@ def detect_bypass(
     is an audit alert, never a gate failure. ``reliable`` is ``False`` when the
     gate timestamp is not UTC-normalized (the scan consumes the canonical
     `gate_ts`; a non-canonical timestamp makes the scan unreliable).
+
+    The walk root is the real ``PROJECT_ROOT``; the ARgentOS space under
+    ``ARGENTOS_ROOT`` (payload + session state) is pruned by location.
     """
     try:
         gate_dt = datetime.fromisoformat(gate_timestamp.replace("Z", "+00:00"))
     except ValueError:
         return [], False
     reliable = gate_timestamp.endswith("Z") or gate_timestamp.endswith("+00:00")
-    session_dir = ARTIFACTS_DIR / session_uuid
+    session_dir = _require_artifacts_dir() / session_uuid
     try:
         window_start = session_dir.stat().st_mtime
     except OSError:
         return [], reliable
     suspects: list[str] = []
     root = PROJECT_ROOT
+    if root is None:
+        # Without the real project root there is no trustworthy tree to scan.
+        return [], reliable
+    root = Path(root).resolve()
+    excluded = _excluded_scan_roots()
     for dirpath, dirnames, filenames in os.walk(root):
         dirnames[:] = [
-            d for d in dirnames if d not in _BYPASS_SCAN_EXCLUDED_DIRS
+            d
+            for d in dirnames
+            if d not in _BYPASS_SCAN_EXCLUDED_DIRS
+            and not _is_excluded_dir(Path(dirpath) / d, excluded)
         ]
         for name in filenames:
             path = Path(dirpath) / name
@@ -440,6 +520,15 @@ def main(argv: list[str] | None = None) -> int:
         help="JSON file for validate-delegation/validate-return ('-' for stdin)",
     )
     parser.add_argument(
+        "--project-root",
+        default=None,
+        help=(
+            "real project root of the adopted layout (default: the "
+            f"{_roots.ENV_PROJECT_ROOT} environment variable). It is never "
+            "discovered from this script's location."
+        ),
+    )
+    parser.add_argument(
         "action",
         choices=["pass", "terminal", "link", "validate-delegation", "validate-return"],
         help="outcome to record ('pass' for a gate PASS, 'terminal' for ABORT/COMPLETED, "
@@ -447,6 +536,13 @@ def main(argv: list[str] | None = None) -> int:
         "'validate-delegation'/'validate-return' for H15 schema support)",
     )
     args = parser.parse_args(argv)
+
+    project_root = args.project_root or os.environ.get(_roots.ENV_PROJECT_ROOT)
+    if project_root:
+        try:
+            configure_roots(project_root)
+        except _roots.RootResolutionError as exc:
+            return _cli_error(str(exc))
 
     if args.action in ("validate-delegation", "validate-return"):
         if not args.input:
@@ -474,6 +570,13 @@ def main(argv: list[str] | None = None) -> int:
             return 2
         print(f"{args.action}: PASS")
         return 0
+
+    if ARTIFACTS_DIR is None:
+        return _cli_error(
+            "PROJECT_ROOT is not configured: pass --project-root or set "
+            f"{_roots.ENV_PROJECT_ROOT} (the session state lives under "
+            "ARGENTOS_ROOT/.project)"
+        )
 
     if not args.session:
         return _cli_error("--session is required for the pass/terminal/link actions")

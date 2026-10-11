@@ -15,7 +15,7 @@ This document is an **operational contract** that turns the architectural princi
 
 The contract is activated when **at least one** of the following conditions is met:
 
-1. The feature flag `architecture_contract` is enabled in `.agents/features.toml`:
+1. The feature flag `architecture_contract` is enabled in `.argentos/features.toml`:
    ```toml
    [features]
    architecture_contract = true

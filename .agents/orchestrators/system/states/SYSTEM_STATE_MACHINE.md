@@ -62,7 +62,7 @@ The System Agent verifies protocol health and prepares the runtime environment.
 ### Required Action
 
 - Initialize `.project/` and `.project/knowledge/` if missing.
-- Apply the protocol health checklist (`.agents/standards/runtime/PROTOCOL_HEALTH.md`) and run the state-storage probe (`python .agents/harness/health_check.py`); evaluate the combined result.
+- Apply the protocol health checklist (`.agents/standards/runtime/PROTOCOL_HEALTH.md`) and run the state-storage probe (`python .argentos/.agents/harness/health_check.py --project-root <PROJECT_ROOT>`); evaluate the combined result.
 
 ### Allowed Transitions
 

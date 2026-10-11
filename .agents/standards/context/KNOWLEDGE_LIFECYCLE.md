@@ -93,7 +93,7 @@ retroactively.
 TTL values are a tradeoff: a short TTL increases rediscovery cost, a long TTL
 increases staleness risk. Before changing any TTL, measure the rediscovery cost
 (time, tokens, entries rewritten) and keep the measurement with the change.
-Without measurement, the configured values in `.agents/features.toml` remain.
+Without measurement, the configured values in `.argentos/features.toml` remain.
 
 ## Invariants
 

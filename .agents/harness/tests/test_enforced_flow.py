@@ -1,8 +1,8 @@
 """End-to-end integration test of the enforced mode (RFC-47, plan 46).
 
-Copies the two enforced-mode scripts into a scratch adoption layout
-(`.agents/harness/` at a project root) and exercises the real flow through
-subprocesses, exactly as an adopting CLI would:
+Copies the enforced-mode scripts plus the shared root contract into a scratch
+**adopted** layout (``.argentos/.agents/harness/`` under a project root) and
+exercises the real flow through subprocesses, exactly as an adopting CLI would:
 
 1. No state.json -> the hook denies PreToolUse on a project deliverable.
 2. runner_state records the H04 (plan) PASS -> the hook allows the write.
@@ -28,32 +28,42 @@ import pytest
 HARNESS = Path(__file__).resolve().parents[1]
 RUNNER = HARNESS / "runner_state.py"
 HOOK = HARNESS / "hook_gate.py"
+ROOTS = HARNESS / "roots.py"
 
 
 @pytest.fixture()
 def adopted_project(tmp_path: Path) -> Path:
-    """A scratch project with the adopted layout and the two scripts in it."""
-    harness_dir = tmp_path / ".agents" / "harness"
+    """A scratch project with the adopted layout and the harness scripts."""
+    harness_dir = tmp_path / ".argentos" / ".agents" / "harness"
     harness_dir.mkdir(parents=True)
-    shutil.copy(RUNNER, harness_dir / "runner_state.py")
-    shutil.copy(HOOK, harness_dir / "hook_gate.py")
-    (tmp_path / ".project").mkdir()
+    for name in (RUNNER, HOOK, ROOTS):
+        shutil.copy(name, harness_dir / name.name)
+    (tmp_path / ".argentos" / ".project").mkdir(parents=True)
     return tmp_path
 
 
 def run_runner(project: Path, *args: str) -> subprocess.CompletedProcess:
     return subprocess.run(
-        [sys.executable, str(project / ".agents/harness/runner_state.py"),
-         *args],
-        capture_output=True, text=True, cwd=project,
+        [
+            sys.executable,
+            str(project / ".argentos/.agents/harness/runner_state.py"),
+            "--project-root",
+            str(project),
+            *args,
+        ],
+        capture_output=True,
+        text=True,
+        cwd=project,
     )
 
 
 def run_hook(project: Path, event: dict) -> subprocess.CompletedProcess:
     return subprocess.run(
-        [sys.executable, str(project / ".agents/harness/hook_gate.py")],
+        [sys.executable, str(project / ".argentos/.agents/harness/hook_gate.py")],
         input=json.dumps(event),
-        capture_output=True, text=True, cwd=project,
+        capture_output=True,
+        text=True,
+        cwd=project,
     )
 
 
@@ -81,7 +91,7 @@ def test_full_enforced_flow(adopted_project):
     project = adopted_project
     session = str(uuid.uuid4())
     iteration = "00"
-    iter_dir = project / ".project" / session / iteration
+    iter_dir = project / ".argentos" / ".project" / session / iteration
     iter_dir.mkdir(parents=True)
 
     # 1. No state.json yet: the write to a deliverable is denied.
@@ -89,9 +99,9 @@ def test_full_enforced_flow(adopted_project):
     res = run_hook(project, event)
     assert res.returncode == 2, res.stderr
 
-    # 2. A write inside .project/ is not a deliverable: allowed even now.
+    # 2. A write inside the ARgentOS space is not a deliverable: allowed now.
     res = run_hook(
-        project, write_event(project, session, ".project/notes.md")
+        project, write_event(project, session, ".argentos/.project/notes.md")
     )
     assert res.returncode == 0, res.stderr
 
@@ -126,7 +136,7 @@ def test_full_enforced_flow(adopted_project):
 def test_bypass_scan_alerts_on_pre_pass_modification(adopted_project):
     project = adopted_project
     session = str(uuid.uuid4())
-    iter_dir = project / ".project" / session / "00"
+    iter_dir = project / ".argentos" / ".project" / session / "00"
     iter_dir.mkdir(parents=True)
     (project / "src").mkdir()
     (project / "src" / "sneaky.py").write_text("# modified before H04\n")
@@ -141,7 +151,7 @@ def test_bypass_scan_alerts_on_pre_pass_modification(adopted_project):
 def test_terminal_state_allows_stop(adopted_project):
     project = adopted_project
     session = str(uuid.uuid4())
-    (project / ".project" / session / "00").mkdir(parents=True)
+    (project / ".argentos" / ".project" / session / "00").mkdir(parents=True)
 
     res = run_runner(
         project, "--session", session, "--state", "COMPLETED", "terminal",

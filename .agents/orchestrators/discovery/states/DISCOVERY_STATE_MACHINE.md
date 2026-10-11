@@ -640,7 +640,7 @@ in `invalidation_report.json`.
 | Patterns | 24h | Re-invoke `patterns_worker` if the code sample changed. |
 | Business | 24h | Re-invoke `business_worker` if the README or main services changed. |
 
-The TTL values are configured in `.agents/features.toml`
+The TTL values are configured in `.argentos/features.toml`
 (`discovery_project_ttl_hours`, `discovery_environment_ttl_hours`). Changing a
 TTL requires measuring the rediscovery cost first (time, tokens, entries
 rewritten); without that measurement the configured values remain.

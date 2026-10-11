@@ -33,14 +33,14 @@ Validate that the protocol runtime environment is healthy before the System Agen
 
 - Current state: `VERIFYING_PROTOCOL_HEALTH`
 - Target state: `ENVIRONMENT_READY`
-- Evidence: the completed protocol health checklist (`.agents/standards/runtime/PROTOCOL_HEALTH.md`) and the output of `python .agents/harness/health_check.py` (state-storage probe)
+- Evidence: the completed protocol health checklist (`.agents/standards/runtime/PROTOCOL_HEALTH.md`) and the output of `python .argentos/.agents/harness/health_check.py --project-root <PROJECT_ROOT>` (state-storage probe)
 - Timestamp file: `.project/.last_health_check`
 
 ## Checklist
 
 **Evaluation audience:** the harness runner no longer exists; an item is `[machine]` only when validated deterministically by the state-storage probe (its exit code and JSON output); every other item is `[agent]` — evaluated by agent judgment when applying this policy or the health checklist. A `[machine]` failure is checkable without interpretation; an `[agent]` failure is declared judgment.
 
-1. `python .agents/harness/health_check.py` (state-storage probe) exits with code `0` and reports `"result": "PASS"`. `[machine]`
+1. `python .argentos/.agents/harness/health_check.py --project-root <PROJECT_ROOT>` (state-storage probe) exits with code `0` and reports `"result": "PASS"`. `[machine]`
 2. The protocol health checklist (`.agents/standards/runtime/PROTOCOL_HEALTH.md`) passes with the PASS scope declared in its `## Decision`: every `[agent]` item required there holds — items 1–6, 8–9 and 11–13; item 10 holds only when the `knowledge_base` feature flag is enabled (otherwise it does not apply); item 7 emits warnings only and never fails the checklist. `[agent]`
 3. `.project/.last_health_check` exists and its timestamp is within the configured TTL. `[agent]`
 4. `.project/knowledge/INDEX.md` and `.project/knowledge/entries/` exist. `[agent]`

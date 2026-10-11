@@ -58,7 +58,7 @@ The Orchestrator evaluates each item below by judgment when the gate fires and M
 2. Verify that the report contains the normative sections of its contract: read the contract cited in §"Input" (`.agents/orchestrators/core/contracts/CONTEXT_VALIDATION_REPORT.md`), and verify that each normative `##` heading of the contract is present in the report (case-insensitive comparison), excluding non-normative sections such as examples. Cite any missing section as failure evidence.
 
 ## Decision Criteria
-**Structural validator:** the Orchestrator MUST run `python .agents/harness/gate_validator.py --trigger H03 --artifact <path>` before judging PASS; a structural FAIL blocks PASS unless recorded as a documented deviation.
+**Structural validator:** the Orchestrator MUST run `python .argentos/.agents/harness/gate_validator.py --project-root <PROJECT_ROOT> --trigger H03 --artifact <path>` before judging PASS; a structural FAIL blocks PASS unless recorded as a documented deviation.
 
 - `PASS`: The report exists, the context is declared sufficient (`VALIDATED`), and no critical gaps remain.
 - `FAIL`: The report declares context insufficient (`NEEDS_MORE_CONTEXT` or `REJECTED`) or the validation is incomplete.

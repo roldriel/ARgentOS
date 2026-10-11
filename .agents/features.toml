@@ -1,23 +1,20 @@
-# Feature flags for the .agents protocol.
-# Boolean flags default to true unless explicitly set otherwise below
-# (`architecture_contract` is the current exception). Users can disable
-# individual capabilities via environment variables with the
-# AGENTS_FEATURE_<FLAG> prefix (environment overrides this file).
+# Inert payload template for the ARgentOS feature flags.
 #
-# Consumption: flags are classified by who consumes them. There is no
-# executable runner: flags are resolved by the Orchestrator at gate
-# evaluation (H01 checklist) in the order AGENTS_FEATURE_<FLAG> environment
-# variable > this file > default enabled.
-# Flags and settings marked [declarative] are consumed by agents reading
-# this file. An enabled [declarative] flag is a behavioral obligation: the
-# consuming agent must read its value before the flow point where it
-# conditions behavior and act on it there; ignoring it is a deviation that
-# must be logged. Compliance is auditable by joining the active-flags entry
-# in SESSION_LOG.md with the consumption declared in the produced artifacts.
-# The canonical evidence procedure (expected / evidenced / unevidenced) is
-# defined in standards/INDEX.md (§Compliance evidence); the metrics
-# aggregation computes it mechanically in the development repository.
-# Dual flags (technical-practice flags) carry both obligations independently.
+# THIS FILE IS NOT ACTIVE CONFIGURATION.
+# The only active adopter configuration is:
+#     ARGENTOS_ROOT/features.toml      (= <project-root>/.argentos/features.toml)
+# Nothing reads this payload copy as configuration: the runtime resolves flags
+# from ARGENTOS_ROOT/features.toml, and the Orchestrator reads that same file.
+# This file is retained as payload data — the flag catalog template that the
+# adoption lifecycle materializes into ARGENTOS_ROOT/features.toml, and the
+# target of historical plan citations. It must never be treated as the
+# adopter's active configuration.
+#
+# Boolean flags default to true unless explicitly set otherwise below
+# (`architecture_contract` is the current exception). Flags marked
+# [declarative] create a behavioral obligation when the active configuration
+# enables them. The canonical catalog and the override rules live in
+# standards/INDEX.md (§Feature flags).
 
 [features]
 # [declarative] rubrics, knowledge_base — gate agent behavior (reviewer role,

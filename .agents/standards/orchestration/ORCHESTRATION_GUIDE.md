@@ -140,7 +140,7 @@ If the generic worker is used, apply the minimum payload template from the deleg
 
 ## 8. Relevant feature flags
 
-Only feature flags that exist in `.agents/features.toml` may be mentioned:
+Only feature flags that exist in `.argentos/features.toml` may be mentioned:
 
 - `rubrics`: if active, invoke `reviewer` before critical transitions.
 - `knowledge_base`: if active, attach relevant KB entries (via `context_discoverer`).

@@ -25,7 +25,7 @@ It is not a task worker. It does not produce phase artifacts, change task state,
 ### 1. Protocol health verification
 
 - Apply the protocol health checklist of `.agents/standards/runtime/PROTOCOL_HEALTH.md` (documents verified against documents by agent judgment).
-- Run the state-storage probe: `python .agents/harness/health_check.py` (the only mechanical item; it verifies that `.project/` is writable for `state.json`).
+- Run the state-storage probe: `python .argentos/.agents/harness/health_check.py --project-root <PROJECT_ROOT>` (the only mechanical item; it verifies that `.project/` is writable for `state.json`).
 - Report failures and abort if the protocol is not healthy.
 
 ### 2. Project directory initialization

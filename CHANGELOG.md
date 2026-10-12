@@ -43,6 +43,42 @@ La política de versionado, changelog, tags y estados de planes vive en
   por lo que RFC-56 no aplica): se agrega el documento que explica el **comportamiento observable** del sistema —
   patrón de estado (nada se almacena, todo se deriva; estados afirmados vs condiciones derivadas
   `Verified`/`Executed`/`Committed`/`Closed`/`Released`), *gate pattern* (la autoridad precede al efecto; los cuatro
+
+- **ROADMAP canónico visual y estratégico — contrato documental y reestructuración** (plan 157, vía plan; DEV-only,
+  docs-only sobre `ROADMAP.md` (reestructurado), `docs/CONVENTIONS.md`, `docs/glossary/terms.md`,
+  `docs/glossary/INDEX.md`, `docs/AGENTS.md`, `README.md`, `AGENTS.md`, `docs/plans/INDEX.md` y este changelog, sin
+  efecto en `protocol/`, `runtime/`, `tools/`, `tests/`, `.agents/`, RFCs, ADRs ni `docs/VERSIONING.md`, por lo que
+  RFC-56 no aplica): se establece el **contrato canónico del `ROADMAP.md`** y se reemplaza su estructura por una
+  representación estratégica, visual y orientada al futuro. El documento pasa a declarar su **responsabilidad
+  única** —comunicar visualmente la dirección de evolución de ARgentOS y el camino de alto nivel para alcanzarla—,
+  con **Visión / Destino**, **Posición actual** (protocolo publicado `12.0.0` sobre `78ca512`, payload publicado en
+  `origin/dist` @ `1181db6`, PATCH `12.0.1` en `dev` sin promocionar y sin tag, trabajo activo: ninguno),
+  **Roadmap at a Glance** con lanes `NOW → NEXT → LATER` y una card por iniciativa (`Objective`, `Domain`,
+  `Priority`, `Status`, `Depends on`), **dependencias estratégicas** en Mermaid, una **tabla corta de
+  blockers/decisiones** con el artefacto dueño de cada una, y el **caso Autonomy** en cuatro planos diferenciados
+  —host autonomy, SAE y authority model implementados y testeados; envelope de autonomía decidido (`AE-1`…`AE-10`)
+  pero **no implementado**; Etapas A y B futuras— con la precisión explícita de que lo existente es **DEV-only**,
+  no viaja en `dist` y **no** es «Complete ARgentOS Autonomy». El contrato normativo vive en
+  `docs/CONVENTIONS.md:Contrato del ROADMAP (canónico; Plan 157)`: qué es, qué **no** es (backlog, changelog,
+  capability registry, decision register, especificación, evidencia), dimensiones obligatorias (`Domain`
+  `PROTOCOL`/`DEV`/`BOTH`, horizonte `NOW`/`NEXT`/`LATER`, prioridad, status sin fusionar implementación con
+  publicación, dependencias), **regla de admisión**, **regla de frescura** y frontera con la determinación de
+  cierre `Roadmap impact`, cuya semántica **no** se modifica. El término se registra en
+  `docs/glossary/terms.md:ROADMAP` y `docs/glossary/INDEX.md` **enrutando** a esa fuente sin duplicar la
+  definición (single-source del glosario). No se crea ningún capability registry ni decision register: el ROADMAP
+  **enruta** a `docs/plans/INDEX.md`, `runtime/README.md`, `docs/adr/INDEX.md` y `.agents/policies/` en lugar de
+  absorber su estado. Se reconciliaron las referencias cruzadas que describían el ROADMAP como «project
+  priorities» (`AGENTS.md`, `README.md`, `docs/AGENTS.md`). El contenido del ROADMAP anterior se clasificó bloque
+  por bloque con destino declarado, sin pérdida de información: el detalle histórico pasó a los artefactos que lo
+  poseen y el mapa conserva dirección, posición, iniciativas, orden, dependencias y bloqueos. Docs-only, sin
+  `VERSION` bump ni tag (RFC-69).
+
+### Changed
+  `docs/behavior-patterns.md` (nuevo), `README.md`, `ROADMAP.md`, `docs/VERSIONING.md` §9, `docs/AGENTS.md`,
+  `docs/plans/INDEX.md` y este changelog, sin efecto en `protocol/`, `runtime/`, `tools/`, `tests/` ni `.agents/`,
+  por lo que RFC-56 no aplica): se agrega el documento que explica el **comportamiento observable** del sistema —
+  patrón de estado (nada se almacena, todo se deriva; estados afirmados vs condiciones derivadas
+  `Verified`/`Executed`/`Committed`/`Closed`/`Released`), *gate pattern* (la autoridad precede al efecto; los cuatro
   gates; prevención ≠ detección), orquestación (una responsabilidad por componente; delegación y contrato M4; el
   patrón de escritura de gobernanza con un único escritor), *autonomy loop* (el ciclo real con sus dos versiones —
   frontera SAE `opt-in`—, qué **no** existe, cómo termina y la métrica de autonomía con sus dos conteos humanos no

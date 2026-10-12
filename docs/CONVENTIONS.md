@@ -686,6 +686,44 @@ Git sobre ese commit. Declarar `Estado de cierre: <tree id del commit de cierre>
 como identidad de estado es un error semántico: describe la materialización, no
 el estado certificado.
 
+### Contrato del ROADMAP (canónico; Plan 157)
+
+`ROADMAP.md` es un **EntryPoint** de la raíz (`docs/AGENTS.md:Folder → class map`) con una **responsabilidad única**:
+
+> **Comunicar visualmente la dirección de evolución de ARgentOS y el camino de alto nivel para alcanzarla.**
+
+**Qué es.** Una hoja de ruta; representación de dirección, evolución y prioridades; una vista estratégica y visual; un mapa de iniciativas relevantes; representación de secuencia; vista de dependencias relevantes; vista de grandes milestones; una ayuda para entender qué falta para alcanzar el destino.
+
+**Qué NO es.** Un backlog; un task tracker; un plan de implementación; un changelog; un release history; un registro exhaustivo de capacidades ni de decisiones; un ADR; un RFC; una especificación técnica; una fuente primaria de evidencia; un inventario de archivos; un registro de planes históricos; una lista de commits; una lista de trabajo cerrado.
+
+**Dimensiones obligatorias.** La representación de cada iniciativa declarada en el ROADMAP expresa, como mínimo:
+
+- **`Domain`** — `PROTOCOL` (vive en `protocol/.agents/` y viaja en `dist`), `DEV` (nunca se distribuye) o `BOTH` (spec normativa Protocol **y** realización DEV). Si el dominio no puede determinarse con evidencia suficiente se declara `UNKNOWN`: no se infiere del path.
+- **`Horizonte`** — `NOW` / `NEXT` / `LATER` (o equivalente declarado). El horizonte es **conceptual**; las versiones aparecen sólo como referencia secundaria cuando son relevantes, nunca como columna del roadmap.
+- **`Priority`** — importancia relativa **para la dirección del proyecto**, no urgencia de una tarea individual.
+- **`Status`** — el estado relevante para entender la evolución. No se mezclan dimensiones: **planificación, implementación, cierre, publicación y disponibilidad son hechos distintos**, y `DONE ≠ PUBLISHED ≠ AVAILABLE`. La equivalencia prohibida es tratar `Executed = Committed = Closed = Released`.
+- **`Depends on`** — las dependencias que condicionan el camino, no todas las dependencias técnicas.
+
+**Relación con los demás artefactos.** El ROADMAP **define dirección**; no define decisiones ni ejecución, y no registra evidencia. La cadena de responsabilidades del repo es:
+
+```text
+ROADMAP.md            → dirección, horizonte y orden de las iniciativas de alto nivel
+docs/plans/           → decisión materializada: cómo, dónde y en qué orden exacto se ejecuta (el Plan)
+docs/rfc/, docs/adr/  → la decisión y su racional
+implementación        → protocol/.agents/, runtime/, tools/
+tests + gates         → evidencia factual (nunca autoridad)
+CHANGELOG.md          → qué se publicó, por versión
+git tag + VERSION     → estado publicado e inmutable
+```
+
+El **orden de ejecución detallado** pertenece al Plan; el ROADMAP expresa sólo el orden de alto nivel de sus iniciativas.
+
+**Regla de admisión.** Un contenido pertenece al ROADMAP **sólo si** eliminarlo impide entender hacia dónde evoluciona ARgentOS o cómo se relacionan y secuencian sus principales iniciativas. Si eliminarlo sólo quita detalle de implementación, evidencia, historia, tareas, decisiones técnicas o estado exhaustivo de capacidades, **pertenece a otro artefacto**: el ROADMAP lo referencia o lo enruta, nunca lo absorbe.
+
+**Regla de frescura.** El ROADMAP se actualiza cuando cambia la dirección, la secuencia o las prioridades, **no** cuando se cierra una tarea. No cataloga trabajo cerrado.
+
+**Frontera.** Este contrato define la **representación** del ROADMAP; no crea entidad, registry, tracker, estado de lifecycle, autoridad ni checker. La semántica de la determinación de cierre **`Roadmap impact`** sigue rigiéndose por `docs/VERSIONING.md:10. Definition of Done` y `.agents/policies/validation-closure.md:5.2 Roadmap impact (closure determination)`, que no se modifican ni se duplican aquí: `Roadmap impact: REQUIRED` sigue significando que el estado operativo debe quedar reconciliado antes del cierre **en el artefacto que lo posee**, y nunca «editar `ROADMAP.md`».
+
 ### Change Lifecycle — Determinaciones de cierre: impacto documental e impacto de Roadmap (regla operacional)
 
 Toda Change DEV determina, **en el cierre**, dos impactos **independientes**

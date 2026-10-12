@@ -1,379 +1,367 @@
-# Roadmap
+# 🗺️ Roadmap de ARgentOS
 
-Mapa **operativo actual** del trabajo de ARgentOS: qué se ejecuta ahora, qué
-sigue, qué requiere autorización y qué es sólo candidato. No duplica el estado
-detallado de los planes —eso vive en `docs/plans/INDEX.md`, en los planes y en
-las RFCs, que son la fuente de trazabilidad— y no cataloga la historia ya
-cerrada.
+> **Qué es este documento.** El mapa **estratégico y visual** de la evolución de
+> ARgentOS: dónde estamos, hacia dónde vamos, qué iniciativas constituyen el
+> camino, en qué secuencia aproximada se abordan y qué dependencias o bloqueos
+> lo condicionan.
+>
+> **Qué NO es.** No es un changelog, ni un backlog, ni un tracker, ni un
+> registro de capacidades, ni un decision register, ni una especificación
+> técnica. El detalle vive en los artefactos que lo poseen (ver
+> [`## Dónde consultar qué`](#dónde-consultar-qué)).
+>
+> **Última actualización:** 2026-10-11 · **Protocolo publicado:** `12.0.0`
 
-Los ítems marcados como **payload** tocan `protocol/.agents/` y requieren su
-propia autorización (RFC-56) antes de ejecutarse.
+---
 
-El documento declara además, desde el 2026-09-22, el **roadmap estratégico
-vigente** (Etapas A → B → C, sección siguiente), del que el mapa operativo es
-consecuencia: las etapas se ejecutan **en ese orden** y ninguna entrada de
-trabajo se incorpora fuera de él. El mapa operativo —trabajo activo, pendientes
-que requieren autorización y candidatos futuros— sigue más abajo.
+## 🎯 Visión / Destino
 
-## Roadmap estratégico — Etapas A → B → C
+ARgentOS quiere ser un **protocolo documental y basado en estado para orquestar
+agentes**: no una herramienta que se instala, sino un conjunto de contratos que
+un proyecto adopta materializando un payload bajo `.argentos/`.
 
-ARgentOS ya posee una cantidad significativa de mecanismos: governance, Change
-Lifecycle, autoridad, checkpoints, validación, SAE, Agent Worker, context
-engineering, materialización, delegación, deliberación, Discovery, harness,
-métricas, CI y distribución del Protocol. El objetivo siguiente **no** es seguir
-agregando features de forma incremental sin validar primero las garantías que
-esas features pretenden proporcionar.
-
-El cambio de enfoque que este roadmap registra es:
-
-> Primero determinar qué capacidades y garantías de ARgentOS están realmente
-> demostradas; luego completar las fronteras necesarias para alcanzar una
-> autonomía operacional mayor; recién después incorporar nuevas features basadas
-> en las necesidades descubiertas.
-
-Las tres etapas y su dependencia son:
-
-```text
-Etapa A — Capability & Guarantee Retrospective
-                    |
-                    v
-Etapa B — Complete ARgentOS Autonomy
-                    |
-                    v
-Etapa C — New Features
-```
-
-No son tres iniciativas independientes: **B depende de A** y **C depende de los
-resultados de A y B**. Ninguna etapa se ejecuta desde este documento; cada una
-es un Change propio que requiere su propia autorización.
-
-### Etapa A — Capability & Guarantee Retrospective
-
-**Objetivo.** Revisión integral de las capacidades y garantías que ARgentOS
-afirma proporcionar. La unidad de análisis **no** es el archivo ni la feature
-individual, sino:
-
-> capacidad + garantía + evidencia
-
-La pregunta central es:
-
-> ¿Qué puede afirmar ARgentOS que hace, qué mecanismo lo implementa y qué
-> evidencia tenemos de que realmente funciona bajo las condiciones en las que
-> pretendemos utilizarlo?
-
-**Alcance conceptual mínimo.** La retrospectiva examina, como mínimo: Change
-Lifecycle; Authority; Scope enforcement; Validation / Closure; C1/C2/C3; SAE;
-Autonomous Orchestrator; Agent Worker; WorkerResult; Delegation; Context
-engineering; Context identity; Materialization; Prompt Cache; Placement;
-Discovery; Discovery KB; Protocol gates; enforced mode / hooks; EARS; Skills;
-Deliberation; Change Governance; Metrics / health; Feature flags; recovery;
-CI / validation; y distribución y sincronización de `dist`.
-
-No se asume que todas estas capacidades tengan el mismo nivel de madurez. La
-revisión debe distinguir explícitamente entre:
-
-| Nivel | Qué significa |
-| --- | --- |
-| implementado | el mecanismo existe en el repositorio |
-| testeado | existe cobertura automatizada que lo ejercita |
-| dogfoodeado | fue ejercitado en el propio repositorio |
-| demostrado bajo condiciones reales | funcionó en las condiciones de uso pretendidas |
-| parcialmente demostrado | sólo un subconjunto de esas condiciones fue ejercitado |
-| dependiente de una condición externa | su garantía depende de algo fuera del control de ARgentOS |
-| no demostrado | existe sin evidencia de que funcione |
-| limitado por un boundary conocido | funciona dentro de un límite declarado |
-
-**Resultado esperado.** Un **Capability & Guarantee Matrix** que permita
-distinguir, para cada capacidad relevante:
-
-- qué afirma hacer;
-- qué mecanismo lo implementa;
-- qué tests existen;
-- qué dogfooding existe;
-- qué condiciones se probaron;
-- qué condiciones no se probaron;
-- qué garantía puede considerarse demostrada;
-- qué garantía permanece sin demostrar;
-- qué limitaciones existen.
-
-No se asume que una feature está "completa" simplemente porque exista código o
-tests.
-
-**Regla fundamental.** La Etapa A **no** es una limpieza documental ni una
-auditoría de archivos: evalúa la validez de las garantías operacionales.
-
-### Etapa B — Complete ARgentOS Autonomy
-
-La Etapa B comienza a partir de los resultados de la Etapa A. No se define aquí
-una lista rígida de features a implementar: la Etapa A determina cuáles
-fronteras son realmente necesarias.
-
-La Etapa B **no** declara inexistente la autonomía ya implementada: nombra el
-cierre de las fronteras que esa capacidad todavía no cubre (ver
-`### Estado del que parte este roadmap`). No declara terminada ninguna capacidad
-futura ni convierte las fronteras candidatas en compromisos de implementación.
-
-**Objetivo.**
-
-> Cerrar las fronteras reales que impiden que ARgentOS pueda recibir un objetivo
-> suficientemente amplio y ejecutarlo de manera autónoma bajo supervisión
-> humana, manteniendo sus garantías de autoridad, contexto, evidencia,
-> recuperación y terminación.
-
-**Dirección.**
-
-```text
-Human
-  |
-  | authorized objective / scope
-  v
-ARgentOS Orchestrator
-  |
-  +-- observe
-  +-- derive
-  +-- plan
-  +-- delegate
-  +-- execute
-  +-- ingest
-  +-- verify
-  +-- correct
-  +-- revalidate
-  +-- continue
-  +-- stop
-```
-
-**Fronteras a investigar y completar**, según lo que la Etapa A demuestre
-necesario: las que separan Orchestrator, Agent Worker real, provider/model,
-contexto, delegación, resultado de ejecución, evidencia, verificación,
-recuperación, continuación y terminación.
-
-**Fronteras candidatas conocidas** — explícitamente **candidatas, no
-compromisos de implementación**; no se convierten automáticamente en features
-del roadmap, y la Etapa A determina cuáles son realmente necesarias:
-
-- ejecución real mediante provider/model;
-- persistencia y consumo de Worker Results;
-- derivación de la siguiente acción;
-- ejecución multi-step;
-- recuperación ante fallos reales;
-- fallos del provider (provider failures);
-- salidas inválidas del Worker (invalid Worker outputs);
-- presupuestos de ejecución (execution budgets);
-- garantías de terminación (termination guarantees);
-- ejecución multi-worker;
-- deliberación cuando realmente aporte valor;
-- integración real de Prompt Cache;
-- persistencia de Project/Knowledge.
-
-**Resultado esperado.** Una ARgentOS capaz de avanzar autónomamente dentro de
+El destino es una ARgentOS capaz de **recibir un objetivo suficientemente amplio
+y ejecutarlo de forma autónoma bajo supervisión humana**, sin perder sus
+garantías de **autoridad, alcance, contexto, evidencia, recuperación y
+terminación**:
 
 ```text
 Autonomy ⊆ Scope ∩ Authority
 ```
 
-manteniendo la frontera humana para: decisiones normativas; ampliación de
-Scope; ampliación de Authority; cambios de objetivos; decisiones de release; y
-decisiones explícitamente reservadas al mantenedor.
+**Éxito, a alto nivel:** que la autonomía sea **operacional, no decisional** —
+que elimine traspasos operativos dentro de trabajo ya autorizado, y que nunca
+elimine el control humano sobre alcance, autoridad, decisiones normativas,
+arquitectura, protocolo, release o promoción.
 
-### Etapa C — New Features
+**Lo que el destino NO significa:** acumular mecanismos, estados, checkers,
+registries o ceremonia de gobernanza. La dirección es **claridad y calidad de
+decisión**, y «ningún cambio» es un resultado válido.
 
-Las nuevas features vuelven a incorporarse **después** de completar A y B. La
-regla es:
+---
 
-> No agregar features por disponibilidad tecnológica o porque exista un
-> mecanismo equivalente en otro sistema.
+## 📍 Posición actual
 
-Una nueva feature entra al roadmap cuando:
+**Desde dónde partimos.** ARgentOS tiene ya un conjunto significativo de
+mecanismos operativos en DEV y un Protocol publicado y adoptable.
 
-1. existe una necesidad identificada;
-2. esa necesidad está sustentada por la retrospectiva o por experiencia
-   operacional;
-3. existe una justificación clara;
-4. la feature contribuye a una capacidad o garantía real de ARgentOS.
+| | |
+|---|---|
+| **Protocolo publicado** | `12.0.0` — tag anotado sobre `78ca512` (`master`) |
+| **Payload publicado** | `origin/dist` @ `1181db6`, `VERSION` = `12.0.0` |
+| **En curso en `dev`** | PATCH `12.0.1` — reconciliación documental del payload con el layout canónico `.argentos/` |
+| **Promoción pendiente** | `12.0.1` está implementado y **sin tag**: su promoción es un acto de release **no autorizado** |
+| **Trabajo activo** | **Ninguno.** La próxima iniciativa declarada es la **Etapa A**, y no está autorizada |
 
-La expansión funcional queda **subordinada** al conocimiento obtenido en A y a
-las necesidades descubiertas durante B.
+> ⚠️ **Leer el payload publicado desde `origin/dist`, no desde la ref local
+> `dist`**: la ref local está rezagada (`11.7.1`) y no contiene el lifecycle de
+> adopción. La fuente inmutable de la verdad es `git tag` + `protocol/.agents/VERSION`.
 
-### Qué no es una entrada de este roadmap
+### Capacidades ya disponibles
 
-Este documento es **estratégico**, no un backlog de implementación. No se
-convierten en ítems del roadmap, por el hecho de existir o de ser técnicamente
-posibles:
+**DEV** — nunca se distribuyen al adoptante:
 
-- nuevas auditorías documentales;
-- nuevos checkers por el simple hecho de existir;
-- nuevos RFCs sin necesidad identificada;
-- nuevas capas de governance;
-- nuevas state machines;
-- nuevos registries;
-- nuevas entidades globales;
-- más artefactos administrativos;
-- más métricas sin hipótesis operacional;
-- features copiadas de otros proyectos;
-- integraciones de providers únicamente por disponibilidad tecnológica.
+| Capacidad | Dónde |
+|---|---|
+| Change Lifecycle (anchors, checkpoints, findings, pending) | `docs/rfc/75-change-lifecycle.md`, `docs/VERSIONING.md` |
+| Validation & Closure + gates C-1/C-2/C-3 | `.agents/policies/validation-closure.md`, `tools/` |
+| DEV Autonomous Orchestrator + SAE | `runtime/orchestrator/` |
+| Agent Worker (sin provider/modelo/red/credenciales) | `runtime/orchestrator/agent_worker.py` |
+| Memory System (implementación de referencia) | `runtime/memory/` |
+| Placement resolver + Materialización de contexto | `runtime/placement/`, `runtime/toolcalls/` |
+| Verificación determinista (checkers + suites) | `tools/`, `tests/` |
+
+**PROTOCOL** — viajan en `dist`:
+
+| Capacidad | Dónde |
+|---|---|
+| Agent State Machine + perfiles de tarea | `protocol/.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md` |
+| Ciclo de sesión, gates y harness | `protocol/.agents/harness/INDEX.md` |
+| Delegación, roles y skills | `protocol/.agents/delegation/WORKER_DELEGATION_CONTRACT.md`, `protocol/.agents/roles/`, `protocol/.agents/skills/` |
+| Discovery + Discovery KB | `protocol/.agents/orchestrators/discovery/` |
+| Lifecycle de adopción (`install`/`update`/`uninstall`/`doctor`/`recover`) | `protocol/.agents/harness/lifecycle.py` |
+| Modelos de contexto, evidencia, autorización y conocimiento | `protocol/.agents/standards/` |
+
+> Esta lista es **orientativa, no un registro**. El estado detallado de cada
+> capacidad vive en su artefacto dueño — ver [`## Dónde consultar qué`](#dónde-consultar-qué).
 
 ### Estado del que parte este roadmap
 
-- ARgentOS DEV ya posee un conjunto significativo de mecanismos de ejecución y
-  governance.
-- El Protocol está publicado en **`12.0.0`** (release del plan 154, RFC-81:
-  lifecycle de adopción y layout canónico `.argentos/`; MAJOR por
-  `docs/VERSIONING.md` §3). DEV y Protocol son dominios separados.
-- `dist` publica el payload del Protocol desde `master` (`78ca512`), con
-  `VERSION` = `12.0.0`.
-- `dev` lleva **una corrección de payload no publicada**: el PATCH **`12.0.1`**
-  (plan 156, RFC-82), que reconcilia prosa del payload con el layout canónico
-  `.argentos/` sin cambiar comportamiento. `dev` y `master` dejan de apuntar al
-  mismo commit por esa única razón; su promoción es un acto de release separado y
-  no autorizado.
-- No existe **ninguna otra** feature de Protocol pendiente de publicación
-  simplemente por estar en `dev`: el `[Unreleased]` del changelog acumula ítems
-  de gobernanza de planes docs-only (RFC-69), no payload sin publicar.
-- **ARgentOS Autonomy: qué existe hoy y qué pertenece a la Etapa B.** Existe una
-  capacidad de autonomía **implementada y testeada** en DEV —el host DEV
-  Autonomous Orchestrator (`runtime/orchestrator/`) con Supervised Autonomous
-  Execution (`--sae`) y su frontera de scope/autoridad, con sus suites—, y existe
-  además un **modelo de autoridad ya decidido** para su envelope
-  (`docs/adr/19-autonomy-envelope-authority.md`, `AE-1`…`AE-10`, planes 151–153).
-  Ambas cosas están **en el estado publicado del repositorio** (`master` y tag
-  `12.0.0`) y son **DEV-only**: no forman parte del payload que distribuye `dist`.
-  Lo que **no** está hecho, y es lo que la Etapa B agrupa, es la **implementación
-  del envelope** —gate de efectos, clases de efecto, presupuesto de recurso, actor
-  con provider/modelo, aislamiento, integración de Memory y superficie de
-  derivación— junto con el resto de fronteras candidatas, que siguen declaradas
-  como candidatas y no como compromisos:
-  `docs/adr/19-autonomy-envelope-authority.md:Estado de implementación`.
-- El siguiente objetivo estratégico **no** es resolver una supuesta divergencia
-  de publicación.
-- El estado histórico sobre el que se construye este roadmap —Planes 146–154,
-  Change Lifecycle MVP, SAE MVP, Prompt Cache MVP, Jury Trial MVP, Placement
-  Contract, Memory System, cierre de autoridad del modelo de autonomía y
-  lifecycle de adopción, RFC-75, ADR-15, ADR-16, ADR-17, ADR-18 y ADR-19— no se
-  reabre: es el punto de partida, no trabajo pendiente.
+Las capacidades anteriores **no se reabren**: son el punto de partida, no trabajo
+pendiente. Los cambios de payload ya publicados y sus releases quedan registrados en
+`CHANGELOG.md`, y el estado detallado de cada plan en `docs/plans/INDEX.md`.
 
-## Trabajo activo / dogfood
+---
 
-| Prioridad | Trabajo | Origen | Estado |
-| --- | --- | --- | --- |
-| — | — | — | **Sin trabajo activo.** |
+## 🚦 Roadmap at a Glance
 
-La tabla está **sin trabajo activo**: ninguna etapa del roadmap estratégico está
-en ejecución. El **próximo trabajo declarado es la Etapa A — Capability &
-Guarantee Retrospective**; su ejecución es un Change propio que requiere su
-propia autorización, y este documento no la concede ni la sustituye.
+```text
+        NOW                    NEXT                     LATER
+         │                      │                        │
+         ▼                      ▼                        ▼
+  ┌──────────────┐      ┌──────────────┐        ┌────────────────────┐
+  │ 12.0.1       │      │ Etapa A      │        │ Etapa B            │
+  │ promoción    │ ───▶ │ Retrospectiva │ ─────▶ │ Complete Autonomy  │
+  │ pendiente    │      │ de garantías │        │ + Etapa C          │
+  └──────────────┘      └──────────────┘        └────────────────────┘
+```
 
-Trabajo **posterior a esta tabla** ya ejecutado y **cerrado**, que no pertenece al
-roadmap estratégico y por eso no se reabre aquí: el **lifecycle de adopción
-ARgentOS** (plan 154, RFC-81; ejecutado el 2026-10-11) —layout canónico
-`.argentos/`, `install`/`update`/`uninstall`/`doctor` y release MAJOR `12.0.0`—,
-que entró por necesidad identificada de adopción y no como Etapa C, y el
-**Memory System reference runtime** (plan 150, RFC-80; versión `11.7.0`). Su
-estado detallado vive en `docs/plans/INDEX.md` y en sus planes, que es donde este
-documento delega la trazabilidad.
+### ▶️ NOW — lo inmediato
 
-`EARS structural validator` (`B-2` derivado) **se ejecutó** (plan 137, 2026-09-21): el
-validador estructural del payload existía desde el plan 66/RFC-57 y lo que restaba era la
-guarda DEV de paridad `tools/check_ears_coverage.py` con sus tres suites, que audita la
-coherencia entre el estándar (`EARS.md`), el contrato (`TASK_SPECIFICATION.md`) y el
-validador del payload **sin** reimplementarlo. El Plan 137 está `Executed` con condición
-derivada `Closed`. La entrada se retira de trabajo activo porque ya no representa trabajo
-futuro: su estado detallado vive en `docs/plans/INDEX.md` y en el Plan 137, que es donde
-este documento delega la trazabilidad.
+```text
+┌─────────────────────────────────────────────────────────────────────┐
+│ 🚚 Promoción de la PATCH 12.0.1                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ Objetivo:   publicar la reconciliación documental del payload       │
+│             con el layout canónico `.argentos/`                     │
+│ Domain:     PROTOCOL                                                │
+│ Priority:   HIGH      Status: Implemented, awaiting authorization   │
+│ Depends on: autorización de release del mantenedor                  │
+│ Ref:        docs/plans/156-payload-layout-documentation-reconciliation.md │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
-`Mechanical D01 subset — DEV checker for discovery output structure and provenance`
-(`B-1` derivado) **se ejecutó** (plan 136): el checker DEV del subconjunto mecánico de
-D01 existe en `tools/check_discovery_output.py`, con su suite y su dogfood, y el Plan 136
-está `Executed` con condición derivada `Closed`. Los residuos de payload que D01 no podía
-resolver (`F-17`, `F-16`) quedaron **resueltos** por la RFC-79 y el Plan 142 (2026-09-21,
-versión 11.6.0): el contrato expresa la procedencia de ausencias y hechos de árbol y el
-shape documental, y el checker del subconjunto mecánico dejó de tolerar un `source_files`
-no resoluble.
+**No hay otra iniciativa activa.** El resto del camino empieza después de la Etapa A.
 
-**Criterio de prioridad.** La prioridad de una entrada del mapa vigente es la que fija
-`ROADMAP.md` al registrarla, no el ítem histórico del que deriva: el ítem histórico `B-2`
-fue `Alta` **por su propio motivo y en su propio contexto** («un fallo de formato cuesta
-una fase RECOVERY completa», `docs/plans/INDEX.md` §Backlog evidenciado - plan 19), y la
-entrada derivada `EARS structural validator` fue registrada `Media` por el Plan 132
-(`docs/plans/132-roadmap-current-state.md`). No se recalifica una entrada del mapa sin
-evidencia documental nueva; con la entrada ya retirada, `B-2` y su trabajo derivado no
-conservan estado en este mapa.
+### ⏭️ NEXT — lo siguiente
 
-## Pendientes que requieren autorización
+```text
+┌─────────────────────────────────────────────────────────────────────┐
+│ 🔍 Etapa A — Capability & Guarantee Retrospective                   │
+├─────────────────────────────────────────────────────────────────────┤
+│ Objetivo:   determinar qué capacidades y garantías están realmente  │
+│             demostradas, y con qué evidencia                        │
+│ Unidad:     capacidad + garantía + evidencia (no archivo ni feature)│
+│ Producto:   Capability & Guarantee Matrix                           │
+│ Domain:     BOTH      Priority: HIGH                                │
+│ Status:     Planned — requiere su propio Change autorizado          │
+│ Ref:        docs/plans/149-argentos-capability-and-autonomy-roadmap.md │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
-**Ninguno.** Los tres residuos de payload que esta sección registraba (`F-14`/`F-17`,
-`F-16`, `B-8` residual) están **implementados** desde el Plan 142 (2026-09-21, RFC-79
-`Accepted`, versión 11.6.0): el marcado legacy tiene representación, `source_files` admite
-`project_scan` para ausencias y hechos de árbol, `project_shape` admite `documentation` y
-el catálogo de métricas tiene el evento de sesión `session_risk`. La sección queda como
-constancia de que no hay trabajo de payload pendiente de autorización; el estado detallado
-vive en `docs/plans/INDEX.md`, en los planes 141/142 y en la RFC-79.
+> **La Etapa A es la compuerta.** No se asume que una capacidad está completa
+> porque exista código o tests. Lo que la retrospectiva demuestre innecesario
+> **no** se implementa.
 
-- **`B-4` residual — resuelto.** `F-14` (el manifest no podía expresar marcado legacy) y
-  `F-17` (procedencia de `source_files` para ausencias y hechos de árbol) quedaron
-  decididos por el Plan 141 y materializados por el Plan 142. `F-18` (delimitador del
-  front matter de KB entry) viajó en la misma RFC y está materializado.
-- **`B-7` residual — resuelto.** `project_shape` contempla desde el Plan 142 el shape
-  `documentation`, de modo que un repositorio documental deja de clasificar `unknown`. La
-  corrección de trazabilidad de `docs/plans/INDEX.md` registrada en el Plan 132 sigue
-  siendo un problema **documental** distinto, fuera del alcance del Plan 141.
-- **`B-8` residual — resuelto.** El catálogo de
-  `protocol/.agents/contracts/METRICS.md` tiene el evento de sesión `session_risk` con el
-  que el modo single-instance registra su riesgo, y `PROTOCOL_METRICS.md` declara su clase
-  de verifiabilidad.
-- **Dogfood del perfil `trivial` — actividad externa de adopción, no backlog.** La
-  medición del dogfood del perfil `trivial` (`docs/plans/25-task-profile-model.md`, plan
-  25) **no es trabajo del repositorio** y deja de figurar como pendiente: exige una
-  versión promovida a `master` con `dist` regenerado y una sesión de protocolo real con un
-  usuario en un proyecto adoptante, y ninguna de las dos cosas es autoridad del agente
-  (`Promoted`/`Released` se reportan `FORBIDDEN`). El trabajo estructural que el plan 25
-  pedía está declarado e implementado —el perfil `trivial` con sus tres artefactos y sus
-  gates `H00, H04, H06` en
-  `protocol/.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md:Task Profiles`, con
-  comportamiento profile-aware verificado—, de modo que lo que resta es una actividad de
-  **adopción/operación** con su criterio de éxito y su procedimiento, registrada como no
-  ejecutada. El Plan 143 resolvió el residual de backlog y `<PLAN-141>:PC-2` quedó
-  `resuelta`. El dogfood del modo enforced (plan 26) está **satisfecho**: su RFC de origen
-  (RFC-47) admitía una simulación de harness con fixtures y el plan 46 la ejecutó y la
-  verificó.
+### ⏳ LATER — el horizonte
 
-## Candidatos futuros
+```text
+┌─────────────────────────────────────────────────────────────────────┐
+│ 🛡️ Envelope de autonomía                                            │
+├─────────────────────────────────────────────────────────────────────┤
+│ Objetivo:   materializar el modelo de autoridad ya decidido: gate de│
+│             efectos, clases de efecto, actor, aislamiento, Memory   │
+│ Domain:     DEV       Priority: MEDIUM                              │
+│ Status:     Decided, not implemented (AE-1…AE-10 vigentes)          │
+│ Depends on: Etapa A                                                 │
+│ Ref:        docs/adr/19-autonomy-envelope-authority.md              │
+└─────────────────────────────────────────────────────────────────────┘
 
-| Trabajo | Origen | Estado |
-| --- | --- | --- |
-| Mechanical checker de `.last_discovery` | B-3 (extensión) · `docs/plans/50-discovery-kb-freshness.md` | **Candidato futuro** — no autorizado, no planificado |
+┌─────────────────────────────────────────────────────────────────────┐
+│ 🤖 Etapa B — Complete ARgentOS Autonomy                             │
+├─────────────────────────────────────────────────────────────────────┤
+│ Objetivo:   cerrar las fronteras reales que impiden ejecutar un     │
+│             objetivo amplio de forma autónoma bajo supervisión      │
+│ Domain:     BOTH      Priority: HIGH (estratégica)                  │
+│ Status:     Planned — fronteras candidatas, NO compromisos          │
+│ Depends on: Etapa A (determina cuáles son realmente necesarias)     │
+│ Ref:        docs/plans/149-argentos-capability-and-autonomy-roadmap.md │
+└─────────────────────────────────────────────────────────────────────┘
 
-El ítem histórico `B-3` —marcador `.last_discovery` canónico y su validación en
-health-check— está resuelto por el plan 50. La extensión mecánica del checker es
-una posibilidad declarada, no trabajo comprometido: no se implementa ni se
-planifica desde este documento.
+┌─────────────────────────────────────────────────────────────────────┐
+│ ✨ Etapa C — Nuevas features                                        │
+├─────────────────────────────────────────────────────────────────────┤
+│ Objetivo:   incorporar capacidad nueva **sólo** tras A y B          │
+│ Regla:      no se agrega una feature por disponibilidad tecnológica │
+│             ni por simetría con otro sistema                        │
+│ Domain:     BOTH      Priority: LOW (subordinada)                   │
+│ Status:     Planned — sin entradas admitidas                        │
+│ Depends on: resultados de A y de B                                  │
+│ Ref:        docs/plans/149-argentos-capability-and-autonomy-roadmap.md │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
-## Trazabilidad histórica
+**Fronteras candidatas de la Etapa B** — explícitamente **candidatas, no compromisos de
+implementación**; la Etapa A determina cuáles son realmente necesarias:
+ejecución real mediante provider/model · persistencia y consumo de Worker Results ·
+derivación de la siguiente acción · ejecución multi-step · recuperación ante fallos
+reales · fallos del provider · salidas inválidas del Worker · presupuestos de ejecución ·
+garantías de terminación · ejecución multi-worker · deliberación cuando aporte valor ·
+integración real de Prompt Cache · persistencia de Project/Knowledge.
 
-> Los ítems históricos B-1…B-8 fueron resueltos como problemas originales. Sus
-> planes y RFCs constituyen la trazabilidad histórica en `docs/plans/INDEX.md`.
-> Los trabajos derivados posteriores se registran independientemente y no
-> reabren esos ítems.
+---
 
-`B-5` (política de clarificación desatendida) y `B-6` (subcomandos del runner
-para H15) están completamente resueltos y no requieren ninguna entrada en este
-documento. La política de clarificación desatendida queda **disponible como
-capacidad** para los dogfoods siguientes, sin trabajo adicional.
+## 🔗 Dependencias estratégicas
 
-## Proceso
+Sólo las que condicionan el camino. El detalle de dependencias por Change vive en
+`Depende de:` del plan correspondiente.
 
-1. Cada ítem se toma como par RFC + plan según la gobernanza vigente
-   (`docs/CONVENTIONS.md`); los ítems de payload requieren además RFC `Accepted`
-   por RFC-56.
-2. Los entregables DEV (`tools/`, `runtime/`, `docs/`) no requieren RFC por no
-   tocar `protocol/.agents/`; los cambios de código del runtime se verifican con
-   la batería canónica y la suite correspondiente.
-3. Este documento se actualiza cuando un ítem pasa a plan, se ejecuta o cambia de
-   categoría. El estado detallado de cada plan se consulta en
-   `docs/plans/INDEX.md`, que es la fuente descriptiva; este Roadmap no lo
-   duplica.
-4. Las etapas del roadmap estratégico **no** son entradas de trabajo ejecutables
-   desde este documento: cada una requiere su propio Change autorizado, y este
-   mapa registra la dirección y el estado, no autoriza trabajo. Ninguna entrada
-   nueva se incorpora por disponibilidad tecnológica ni por simetría con otro
-   sistema, y las fronteras candidatas de la Etapa B no se convierten en
-   features sin que la Etapa A determine que son necesarias.
+```mermaid
+flowchart TD
+    P["📍 Posición actual<br/>12.0.0 publicado · 12.0.1 en dev"]
+    A["🔍 Etapa A<br/>Capability &amp; Guarantee Retrospective"]
+    E["🛡️ Envelope de autonomía"]
+    B["🤖 Etapa B<br/>Complete ARgentOS Autonomy"]
+    C["✨ Etapa C<br/>Nuevas features"]
+
+    P --> A
+    A --> E
+    A --> B
+    E --> B
+    B --> C
+```
+
+**Reglas de secuencia**
+
+- **B depende de A** y **C depende de los resultados de A y B**. No son tres iniciativas independientes.
+- Ninguna etapa se ejecuta desde este documento: **cada una es un Change propio con su propia autorización**.
+- La Etapa A puede **reducir** el alcance de B: una frontera candidata que la retrospectiva demuestre innecesaria no se implementa.
+
+---
+
+## 🚧 Blockers y decisiones que condicionan el camino
+
+Sólo lo que puede cambiar **prioridad, secuencia, alcance, viabilidad o siguiente paso**.
+El detalle de cada decisión vive en el artefacto que la posee.
+
+| Decisión / Blocker | Impacto | Afecta a | Estado |
+|---|---|---|---|
+| Autorización de release de `12.0.1` | secuencia | NOW | Pendiente — acto del mantenedor |
+| `work_type` sin criterio de admisión (`P-5 = GAP`) | alcance del modelo de autonomía | Envelope, Etapa B | Pendiente — `docs/plans/151-autonomy-authority-decision-closure.md` |
+| ADR-worthiness de las decisiones de autoridad de autonomía | registro de la decisión | Envelope | Pendiente — `docs/plans/152-authority-decisions-gov-1-10.md` |
+| Semántica de lifetime/persistence en el contrato Protocol | viabilidad (exige RFC `Accepted`) | persistencia, Change Governance | Pendiente — `docs/plans/125-repository-architecture-decisions.md` |
+| Implementación derivada de ADR-17 | viabilidad (efecto payload, RFC-56) | estructura del repositorio fuente | Pendiente — `docs/adr/17-repository-lifetime-and-composite-structure.md:Estado de implementación` |
+| Medición operacional de métricas del lifecycle | alcance | observabilidad | Diferido — `docs/VERSIONING.md:11. Métricas del Change Lifecycle (observability schema baseline)` |
+
+### ⏸️ Pendientes que requieren autorización y trabajo diferido
+
+Trabajo **deliberadamente diferido o a la espera de autorización**, que condiciona el camino
+pero **no** se ejecuta desde este documento. El detalle y el estado de cada decisión viven en
+el artefacto que la posee.
+
+| Trabajo diferido | Dominio | Qué falta | Ref |
+|---|---|---|---|
+| Enforcement mecánico de placement | DEV | dirección autorizada, **no implementada**; su consumo por el Orchestrator exige un Change propio | `docs/placement-contract.md:Enforcement deferred` |
+| Persistencia de Project/Knowledge e integración de Memory | DEV | semántica de lifetime/persistence en el contrato Protocol | `docs/plans/125-repository-architecture-decisions.md` |
+| Ampliación del conjunto mecánico de EARS | PROTOCOL | cambio de contrato del payload ⇒ RFC-56 Clase A | `docs/plans/137-ears-structural-validator.md` |
+| Promoción de `12.0.1` y regeneración de `dist` | PROTOCOL | acto de release | `docs/plans/156-payload-layout-documentation-reconciliation.md` |
+
+---
+
+## 🧭 Autonomy — mapa del caso
+
+La autonomía se representa en cuatro planos distintos, con estados distintos.
+**No son el mismo hecho y no se fusionan.**
+
+```mermaid
+flowchart LR
+    subgraph HOY["✅ EXISTE HOY — DEV"]
+        H["Host<br/>Autonomous Orchestrator"]
+        S["SAE<br/>frontera de autonomía"]
+        AM["Authority model<br/>AE-1…AE-10"]
+    end
+    subgraph DEC["📐 DECIDIDO, NO IMPLEMENTADO"]
+        EN["Envelope de autonomía<br/>gate · efectos · actor · aislamiento"]
+    end
+    subgraph FUT["🎯 FUTURO"]
+        SA["Etapa A"]
+        SB["Etapa B<br/>Complete Autonomy"]
+    end
+    HOY --> SA
+    SA --> EN
+    EN --> SB
+```
+
+### ❓ Qué autonomía existe ya
+
+| Plano | Qué es | Domain | Estado |
+|---|---|---|---|
+| **DEV Host Autonomy** | un host que conduce **un** Change ya autorizado: observa, deriva, autoriza, delega, ejecuta, ingiere, verifica y decide continuar o parar. **No guarda estado propio** | DEV | ✅ Implementado y testeado |
+| **SAE** (Supervised Autonomous Execution) | la frontera de lo que el host puede ejecutar sin volver a preguntar: `autonomy ⊆ scope ∩ authority`, con verificación **antes** del efecto y `--sae` opt-in | DEV | ✅ Implementado y testeado |
+| **Authority model** | los diez invariantes que gobiernan el envelope: el Change es la unidad; `Effect ⊥ Scope`; la derivación precede a la delegación; sin eje de recurso; sin autorización parcial; sin continuación válida sobre derivación incompleta | DEV | ✅ Decidido (`AE-1`…`AE-10`) |
+
+### ❓ Qué autonomía todavía falta
+
+| Plano | Qué falta | Domain | Estado |
+|---|---|---|---|
+| **Envelope de autonomía** | gate de efectos, clases de efecto, actor con provider/modelo, aislamiento, integración de Memory, superficie de derivación | DEV | 📐 Decidido, **no implementado** |
+| **Complete ARgentOS Autonomy** | cerrar las fronteras reales para ejecutar un objetivo amplio bajo supervisión | BOTH | 🎯 Futuro — Etapa B, gateada por A |
+
+> **Precisión obligatoria.** Lo que existe **no** es «Complete ARgentOS Autonomy»:
+> es un host DEV funcional con una frontera de autoridad, **sin provider, sin
+> modelo, sin red y sin credenciales**. El envelope que falta está descrito en
+> `docs/adr/19-autonomy-envelope-authority.md:Estado de implementación`.
+>
+> **Y la autonomía ya implementada es DEV-only:** no forma parte del payload que
+> distribuye `dist`. El Protocol tiene su propio concepto de autonomía del
+> agente —el permiso de actuar sin preguntar **dentro de sus reglas**—, descrito
+> en `protocol/.agents/standards/runtime/PROTOCOL_BOUNDARIES.md`; no es la misma
+> cosa y no se confunde con ella.
+
+### ❓ Qué depende de qué, y cuál es el siguiente paso
+
+```text
+Host + SAE + Authority model   ✅ ya disponible
+        │
+        ▼
+Etapa A — retrospectiva        ⏭️ SIGUIENTE PASO (requiere autorización)
+        │
+        ▼
+Envelope de autonomía          ⏳ decidido, sin implementar
+        │
+        ▼
+Etapa B — Complete Autonomy    🎯 futuro
+```
+
+---
+
+## 🗂️ Dónde consultar qué
+
+| Necesito saber… | Consulto… |
+|---|---|
+| Hacia dónde va ARgentOS y en qué orden | **este documento** |
+| El contrato de este documento (qué es y qué no es un ROADMAP) | `docs/CONVENTIONS.md` |
+| Qué estado tiene cada plan | `docs/plans/INDEX.md` |
+| Qué capacidades tiene el runtime DEV | `runtime/README.md` |
+| Qué decisiones arquitectónicas se tomaron | `docs/adr/INDEX.md` y cada ADR |
+| Cómo se implementa algo | el **Plan** correspondiente en `docs/plans/` |
+| Qué se publicó y cuándo | `CHANGELOG.md` |
+| Qué versión está publicada y qué es la verdad inmutable | `git tag` + `protocol/.agents/VERSION` |
+| Qué exige la governance | `.agents/policies/` y `.agents/workflows/` |
+| Qué reglas normativas rigen el repo | `docs/CONVENTIONS.md`, `docs/VERSIONING.md` |
+| Qué contiene el Protocol que adopta un proyecto | `protocol/.agents/INDEX.md`, `docs/ADOPTION.md` |
+
+---
+
+## 📐 Qué es y qué NO es este documento
+
+**SÍ ES** — una hoja de ruta; representación de dirección, evolución y
+prioridades; una vista estratégica y visual; un mapa de iniciativas
+relevantes; representación de secuencia; vista de dependencias relevantes;
+vista de grandes milestones; una ayuda para entender qué falta para alcanzar
+el destino.
+
+**NO ES** — un backlog; un task tracker; un plan de implementación; un
+changelog; un release history; un registro exhaustivo de capacidades ni de
+decisiones; un ADR; un RFC; una especificación técnica; una fuente primaria de
+evidencia; un inventario de archivos; un registro de planes históricos; una
+lista de commits; una lista de trabajo cerrado.
+
+**Responsabilidad única:** *comunicar visualmente la dirección de evolución de
+ARgentOS y el camino de alto nivel para alcanzarla.* El **orden de ejecución
+detallado** pertenece al Plan; este documento expresa sólo el orden de alto
+nivel de sus iniciativas.
+
+### Regla de admisión
+
+Un contenido pertenece a este documento **sólo si** eliminarlo impide entender
+hacia dónde evoluciona ARgentOS o cómo se relacionan y secuencian sus
+principales iniciativas. Si eliminarlo sólo quita detalle de implementación,
+evidencia, historia, tareas, decisiones técnicas o estado exhaustivo de
+capacidades, **pertenece a otro artefacto**.
+
+### Regla de frescura
+
+Este documento se actualiza cuando cambia la **dirección**, la **secuencia** o
+las **prioridades** — no cuando se cierra una tarea. El trabajo cerrado no se
+cataloga aquí: se registra en `CHANGELOG.md` y en `docs/plans/INDEX.md`.

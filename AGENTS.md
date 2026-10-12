@@ -180,7 +180,10 @@ committed payload against the local `dist` branch; it is a local-only check
 (CI does not fetch `dist`) and is expected green only on `master` — on `dev`,
 unpublished plans make it red by design.
 
-Project priorities live in `ROADMAP.md`; design history in `docs/plans/INDEX.md`.
+The strategic direction of the project lives in `ROADMAP.md` (a visual,
+high-level map: destination, current position, initiatives and their order,
+dependencies and blockers; its contract is in `docs/CONVENTIONS.md`); design
+history in `docs/plans/INDEX.md`.
 
 ## Testing the protocol as an adopter
 

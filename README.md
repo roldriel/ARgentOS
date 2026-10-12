@@ -161,7 +161,8 @@ verification battery (checkers + tests) is defined once in
 set from there when working on this repository.
 
 The `tools/` and `runtime/` directories hold development tooling and the
-reference implementation; project priorities live in `ROADMAP.md`. They are
+reference implementation; the strategic direction of the project lives in
+`ROADMAP.md` (its contract: `docs/CONVENTIONS.md`). They are
 not part of the distributed
 protocol (adopters get only `.agents/` + `AGENTS.md` from the `dist` branch, and
 the `lifecycle.py` in that payload materializes the canonical `.argentos/`

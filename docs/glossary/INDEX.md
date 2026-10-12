@@ -92,6 +92,7 @@ registro. El vocabulario de `Status` es `current | historical | deprecated | sup
 | Plan | Cross-cutting | current | `docs/VERSIONING.md:7. Estados de planes y RFCs` |
 | Profile | Protocol | current | `protocol/.agents/delegation/WORKER_DELEGATION_CONTRACT.md:profile` |
 | Protocol | Cross-cutting | current | `protocol/_AGENTS.md:Active roles` |
+| ROADMAP | DEV | current | `docs/CONVENTIONS.md:Contrato del ROADMAP (canónico; Plan 157)` |
 | SCI | Cross-cutting | current | `docs/CONVENTIONS.md:Convenciones de terminología y nomenclatura (decisiones D1–D5, 2026-09-05)` |
 | Scoped Content Identity | DEV | current | `docs/CONVENTIONS.md:Change Lifecycle — Validation anchors y Scoped Content Identity (regla operacional; VC-1, Incremento 1)` |
 | SemanticContextIdentity | Protocol | current | `protocol/.agents/standards/context/CONTEXT.md:Identity` |

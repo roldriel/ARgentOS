@@ -195,6 +195,25 @@
 - **Related Terms:** Role; Worker
 - **Gloss (no normativo):** token overloaded documentado; no se renombra.
 
+## ROADMAP
+
+- **Scope:** DEV
+- **Status:** current
+- **Authority Reference:** `docs/CONVENTIONS.md:Contrato del ROADMAP (canónico; Plan 157)`
+- **Aliases:** `roadmap estratégico`; `hoja de ruta`
+- **Related Terms:** Plan; EntryPoint; Change Lifecycle
+- **Forbidden Terms:** no usar "roadmap" para designar un backlog, un changelog,
+  un registro de capacidades o un decision register; no usar el mismo término
+  para el roadmap del Execution Context Pipeline (`RFC-00XZ`) ni para el roadmap
+  A–D del Change Lifecycle DEV (`docs/plans/94-change-lifecycle-master-action-plan.md`),
+  que son planes de trabajo, no el mapa estratégico del proyecto.
+- **Qualification Rule:** `ROADMAP.md` (el artefacto) vs «roadmap» como plan de
+  trabajo histórico; en docs DEV, calificar cuando el referente no sea el
+  EntryPoint de la raíz.
+- **Gloss (no normativo):** mapa estratégico y visual de la evolución de
+  ARgentOS —destino, posición, iniciativas, secuencia, dependencias y bloqueos—;
+  **no** es un registro de estado.
+
 ## Protocol
 
 - **Scope:** Cross-cutting

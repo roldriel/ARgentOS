@@ -37,6 +37,32 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Added
 
+- **Cierre de las decisiones inmediatas (`OD-2`, `OD-6`) y preparación de la autorización de Etapa A**
+  (plan 160, vía plan; DEV-only, docs-only sobre `docs/CONVENTIONS.md`,
+  `docs/adr/19-autonomy-envelope-authority.md`, `ROADMAP.md`, `docs/plans/INDEX.md` y este changelog,
+  sin efecto en `protocol/`, `runtime/`, `tools/`, `tests/` ni `.agents/`, por lo que RFC-56 no aplica):
+  cierra las dos decisiones que el relevamiento de cierre de `F-C` identificó como cerrables ahora.
+  **`OD-2` — derivación parcial: `D-6b = NO` es la decisión efectiva.** Se corrige la viñeta «Fuera de
+  este acto» de `docs/CONVENTIONS.md` —que enumeraba la «superficie de derivación parcial» entre los
+  elementos diferidos del acto del 2026-10-11— y se agrega una entrada de Amendment Log en ADR-19
+  (2026-10-12) que registra la reconciliación **hacia adelante**, preservando íntegro el texto de las
+  entradas anteriores (RFC-46): la superficie de derivación parcial está **descartada**, no diferida, y
+  no pertenece al alcance de `F-C`. No se crea capacidad, superficie, mecanismo ni autorización.
+  **`OD-6` — `work_type`: criterio y política ya canonizados.** El criterio de admisión y la política de
+  declaración adoptados por el Plan 152 (`GOV-8`/`GOV-9`, en `docs/CONVENTIONS.md`) seguían vigentes
+  mientras `ROADMAP.md` conservaba un blocker **obsoleto** («`work_type` sin criterio de admisión»); la
+  fila se retira del mapa operativo porque su contenido tiene artefacto dueño (`docs/CONVENTIONS.md` y el
+  Plan 152) y `P-5` permanece `GAP` como estado por caso, no como bloqueo.
+  **Etapa A — preparación, no ejecución.** Se determina su contrato vigente (retrospectiva de
+  capacidades y garantías; unidad *capacidad + garantía + evidencia*; producto: Capability & Guarantee
+  Matrix), su alcance, sus dependencias y el Change aplicable (número libre 161), y se registra el
+  **acto de autorización que falta** como pending decision bloqueante con owner (mantenedor),
+  precisando la fila correspondiente de `ROADMAP.md`. No se simula autorización, no se crea un
+  artefacto con un estado que afirme una aprobación inexistente y no se ejecuta trabajo de Etapa A.
+  **No implementado, por directiva:** `F-C`/Etapa B, provider/modelo, aislamiento/sandbox, Memory,
+  concurrencia, telemetría y retry. Sin `VERSION` bump ni tag; sin citas rotas nuevas (el conteo de
+  `check_plan_citations` se mantiene en **26**, el baseline preexistente).
+
 - **Materialización del envelope de autonomía (`F-B`) — admisión de efectos y techo de recurso** (plan 159, vía plan;
   DEV-only sobre `runtime/orchestrator/`, `tests/`, `.agents/policies/`, `docs/plans/_TEMPLATE.md`, `docs/adr/19`,
   `docs/CONVENTIONS.md`, `docs/plans/INDEX.md` y este changelog, sin `VERSION` bump ni tag, RFC-69): el acto de

@@ -91,12 +91,11 @@ documento: cada una es un Change con su propia autorización.
 | Bloqueo | Qué cambia | Detalle |
 |---|---|---|
 | Autorización de release de `12.0.1` | cuándo se publica NOW | acto del mantenedor |
-| **La Etapa A no está autorizada** | si arranca NEXT y todo lo posterior | requiere su propio Change |
+| **La Etapa A no está autorizada** | si arranca NEXT y todo lo posterior | acto de autorización requerido (owner: mantenedor), especificado en `docs/plans/160-cierre-decisiones-od-y-preparacion-etapa-a.md` (`### Pending decisions`) |
 | ADR-worthiness del acto de autoridad de autonomía | cómo se registra la decisión | `docs/plans/152-authority-decisions-gov-1-10.md` |
-| `work_type` sin criterio de admisión (`P-5 = GAP`) | alcance del modelo de autonomía | `docs/plans/151-autonomy-authority-decision-closure.md` |
 | Semántica de lifetime/persistence en el contrato Protocol | viabilidad (exige RFC `Accepted`) | `docs/plans/125-repository-architecture-decisions.md` |
 | Enforcement de placement y persistencia de Project/Knowledge | alcance de LATER | [placement-contract](docs/placement-contract.md) — §Enforcement deferred |
 
 ---
 
-_Última actualización: 2026-10-11 · Protocolo publicado: `12.0.0`_
+_Última actualización: 2026-10-12 · Protocolo publicado: `12.0.0`_

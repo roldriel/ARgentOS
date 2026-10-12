@@ -312,9 +312,13 @@ en `docs/adr/19-autonomy-envelope-authority.md:Amendment Log`.
   `AutonomyEnvelope.declared`, no produce veredicto `AUTHORIZED_EXISTING` y no amplía autoridad. Es la
   lectura operativa de `AE-6` y `D-3`, y resuelve `PR-2` del audit de capacidades como frontera de
   **terminación**, no como eje de **autorización**.
-- **Fuera de este acto.** Actor con provider/modelo, aislamiento/sandbox, integración de Memory,
-  superficie de derivación parcial y objetivos multi-Change: siguen diferidos con su propia
-  autorización.
+- **Fuera de este acto.** Actor con provider/modelo, aislamiento/sandbox, integración de Memory y
+  objetivos multi-Change: siguen diferidos con su propia autorización. La **superficie de derivación
+  parcial** **no** integra esa lista: `D-6b = NO` (acto del 2026-10-07, subsección anterior) la
+  **descarta** como capacidad —no se crea superficie ni mecanismo, y el pending del Plan 151 la
+  registra `NOT_APPLICABLE`—, de modo que no es trabajo diferido ni pertenece al alcance de `F-C`.
+  Reconciliación `OD-2` (2026-10-12), registrada en
+  `docs/adr/19-autonomy-envelope-authority.md:Amendment Log`.
 
 ### Change Lifecycle — Vía de autorización por `Note` (`Plan`/`Note`) (adoptado por el Plan 152, 2026-10-07)
 

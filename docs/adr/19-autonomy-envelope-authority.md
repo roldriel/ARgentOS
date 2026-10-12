@@ -137,6 +137,16 @@ siendo RFC `Accepted` + plan (`docs/CONVENTIONS.md:Convenciones`).
   - **Lo que este acto sigue dejando fuera:** actor con provider/modelo, aislamiento/sandbox,
     integración de Memory, superficie de derivación parcial y objetivos multi-Change (`F-C`/Etapa B).
     Nada de eso habilita este Amendment Log.
+- **2026-10-12 — reconciliación `OD-2`: la entrada del 2026-10-11 no abre trabajo diferido.** El
+  relevamiento de cierre de `F-C` detectó que la entrada anterior enumera la «superficie de derivación
+  parcial» entre lo que el acto del 2026-10-11 dejaba fuera, mientras que `D-6b = NO` (acto del
+  2026-10-07) **descarta** esa capacidad: no se crea superficie ni mecanismo, y el pending del Plan 151
+  la registra `NOT_APPLICABLE`. La decisión efectiva es `D-6b = NO`. La enumeración se corrige **hacia
+  adelante** —el texto de la entrada anterior se preserva íntegro (RFC-46)— y su efecto operativo queda
+  en `docs/CONVENTIONS.md` (subsección «Modelo de autonomía — vocabulario de efectos y techo de recurso
+  (adoptado 2026-10-11)»). Esta reconciliación **no** crea capacidad, superficie ni autorización, **no**
+  constituye trabajo futuro y **no** modifica los invariantes de este ADR. Change que la registra:
+  `docs/plans/160-cierre-decisiones-od-y-preparacion-etapa-a.md:Objetivo`.
 - **2026-10-08 — cierre residual del Plan 151** (`docs/plans/153-plan-151-residual-closure.md`):
   disposición de las diez filas `HD-*` por evidencia y decisión posterior, sin retroactividad. No
   modifica los invariantes de este ADR.

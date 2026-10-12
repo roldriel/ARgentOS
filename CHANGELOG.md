@@ -37,6 +37,32 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Added
 
+- **Simplificación radical del ROADMAP** (plan 158, vía plan; DEV-only, docs-only sobre `ROADMAP.md` (reducido),
+  `docs/plans/158-radical-simplification-roadmap.md`, `docs/plans/INDEX.md` y este changelog, sin efecto en
+  `protocol/`, `runtime/`, `tools/`, `tests/`, `.agents/` ni `docs/CONVENTIONS.md`, por lo que RFC-56 no aplica):
+  corrige la implementación del plan 157 —que resolvió el problema estructural pero dejó el ROADMAP acumulando, bajo
+  `NOW / NEXT / LATER`, un capability inventory, un informe de autonomía, un índice documental, un manual de
+  gobernanza, un catálogo de dependencias y un registro de blockers— aplicando la estrategia **REDUCE, NOT
+  REORGANIZE**. `ROADMAP.md` pasa de **367 a 99 líneas** (presupuesto visual: IDEAL <100, ACCEPTABLE <150, WARNING
+  ≥150, FAIL ≥200). Cada bloque se sometió a la regla de admisibilidad —permanece sólo si responde a *cuál es el
+  destino / dónde estamos / qué viene ahora / qué viene después / qué puede cambiar ese camino*— y lo que no
+  responde se **eliminó del ROADMAP** en lugar de re-tabularse. Estructura resultante: header de dos líneas con
+  puntero al contrato; `## 🎯 Destino`; `## 🧭 Posición actual` (baseline publicado `12.0.0` sobre `78ca512`, payload
+  publicado en `origin/dist` @ `1181db6`, PATCH `12.0.1` en `dev` sin tag, trabajo activo ninguno, y la constancia
+  de que las capacidades existentes no se reabren); `## 🚦 Roadmap` con `NOW` (promover `12.0.1`), `NEXT` (Etapa A,
+  retrospectiva de capacidades y garantías) y `LATER` (envelope de autonomía, Complete ARgentOS Autonomy/Etapa B,
+  Etapa C), cada iniciativa expresada como `[DOMINIO] PRIORIDAD — qué y por qué`; `## 🔗 Dependencias críticas` en
+  **un único** grafo Mermaid; `## 🚧 Bloqueos que pueden cambiar el camino` (6 filas). **Eliminados del ROADMAP:**
+  los dos inventarios de capacidades DEV/PROTOCOL, el mapa de autonomía completo (3 tablas, 2 grafos y 2 avisos), la
+  tabla `Dónde consultar qué` (11 filas), la sección `Qué es y qué NO es este documento` con sus reglas de admisión
+  y frescura, la lista de trece fronteras candidatas, la tabla de baseline y las tres cards ASCII de seis campos.
+  **No se creó ningún documento nuevo** (`CAPABILITIES.md`, `AUTONOMY.md`, `DECISIONS.md`, `ROUTING.md`): todo lo
+  eliminado ya tiene artefacto dueño en `docs/CONVENTIONS.md`, `docs/plans/INDEX.md`, `runtime/README.md`,
+  `docs/adr/19-autonomy-envelope-authority.md`, `CHANGELOG.md` y el artefacto que posee cada decisión. El contrato
+  canónico del ROADMAP **no se modifica**: este Change hace que el documento lo cumpla. Sin `VERSION` bump ni tag
+  (RFC-69); **cero citas rotas nuevas** —el conteo de `check_plan_citations` se mantiene en 27, el baseline
+  preexistente—.
+
 - **Patrones de comportamiento — cómo trabaja ARgentOS** (plan 155, vía plan; DEV-only, docs-only sobre
   `docs/behavior-patterns.md` (nuevo), `README.md`, `ROADMAP.md`, `docs/VERSIONING.md` §9, `docs/AGENTS.md`,
   `docs/plans/INDEX.md` y este changelog, sin efecto en `protocol/`, `runtime/`, `tools/`, `tests/` ni `.agents/`,

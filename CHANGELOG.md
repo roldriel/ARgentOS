@@ -37,6 +37,25 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Added
 
+- **Autorización de Etapa A y creación del Plan 161** (plan 161, vía plan; DEV-only, docs-only sobre
+  `docs/plans/`, `docs/working/audits/INDEX.md` (registro) y este changelog, sin efecto en `protocol/`,
+  `runtime/`, `tools/`, `tests/` ni `.agents/`, por lo que RFC-56 no aplica): formaliza el acto de
+  gobierno que bloqueaba la Etapa A —la pending decision bloqueante `PC-1` del Plan 160— y crea su
+  artefacto de ejecución. **Acto de autorización:** el mantenedor (2026-10-12) autoriza el alcance de
+  la retrospectiva de capacidades y garantías y designa el **Plan 161**, con trazabilidad completa
+  `decisión → autoridad → alcance autorizado → Plan 161` y estado canónico **`Aprobado para ejecución`**
+  (`docs/VERSIONING.md` §7); no se introduce ningún estado nuevo y la resolución de `PC-1` se anota de
+  forma **aditiva** en el artefacto que la posee (Plan 160). **Plan 161:** materializa el contrato de
+  Etapa A declarado por el Plan 149 —unidad *capacidad + garantía + evidencia*, alcance conceptual
+  mínimo de veintiocho capacidades, ocho niveles de madurez, **Capability & Guarantee Matrix** con
+  nueve dimensiones por capacidad— en criterios de cierre verificables `DC-1`…`DC-10`, sin ampliar el
+  alcance; su producto se ubica en `docs/working/audits/` por el contrato de placement (familia
+  *Working analysis*), sin clase ni namespace nuevos. **Etapa A no se ejecuta en este Change**: queda
+  autorizada y lista para el Change siguiente. `F-C`/Etapa B permanecen no iniciadas y `OD-1` sin
+  resolver; sólo se registra la dependencia `Etapa A → resultado → revisión del alcance de F-C/Etapa B`.
+  Sin `VERSION` bump ni tag; sin citas rotas nuevas (el conteo de `check_plan_citations` se mantiene en
+  **26**, el baseline).
+
 - **Cierre de las decisiones inmediatas (`OD-2`, `OD-6`) y preparación de la autorización de Etapa A**
   (plan 160, vía plan; DEV-only, docs-only sobre `docs/CONVENTIONS.md`,
   `docs/adr/19-autonomy-envelope-authority.md`, `ROADMAP.md`, `docs/plans/INDEX.md` y este changelog,

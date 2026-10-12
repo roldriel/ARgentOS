@@ -30,7 +30,8 @@ humano sobre alcance, autoridad, decisiones normativas, protocolo y release.
   ref local `dist`, que está rezagada.
 - **En `dev`:** PATCH `12.0.1` implementado y **sin tag**; su promoción es un
   acto de release no autorizado.
-- **Trabajo activo:** ninguno. El próximo paso declarado es la retrospectiva.
+- **Trabajo activo:** [Etapa A](docs/plans/161-etapa-a-capability-and-guarantee-retrospective.md) —
+  retrospectiva de capacidades y garantías, **aprobada para ejecución** y pendiente de ejecución.
 
 ### Estado del que parte este roadmap
 
@@ -52,8 +53,10 @@ no trabajo pendiente. El trabajo cerrado no se cataloga aquí — su traza vive 
 
 - **[BOTH] HIGH — Etapa A, retrospectiva de capacidades y garantías.** Determinar
   qué garantías están realmente demostradas y con qué evidencia; es la compuerta
-  de todo lo que sigue, y su resultado puede **reducir** el alcance de la Etapa B
-  ([plan 149](docs/plans/149-argentos-capability-and-autonomy-roadmap.md)).
+  de todo lo que sigue, y su resultado puede **reducir** el alcance de la Etapa B.
+  **Aprobada para ejecución**: la ejecuta el [plan 161](docs/plans/161-etapa-a-capability-and-guarantee-retrospective.md),
+  sobre el contrato del [plan 149](docs/plans/149-argentos-capability-and-autonomy-roadmap.md) y la
+  autorización del [plan 160](docs/plans/160-cierre-decisiones-od-y-preparacion-etapa-a.md).
 
 ### ⏳ LATER
 
@@ -91,7 +94,6 @@ documento: cada una es un Change con su propia autorización.
 | Bloqueo | Qué cambia | Detalle |
 |---|---|---|
 | Autorización de release de `12.0.1` | cuándo se publica NOW | acto del mantenedor |
-| **La Etapa A no está autorizada** | si arranca NEXT y todo lo posterior | acto de autorización requerido (owner: mantenedor), especificado en `docs/plans/160-cierre-decisiones-od-y-preparacion-etapa-a.md` (`### Pending decisions`) |
 | ADR-worthiness del acto de autoridad de autonomía | cómo se registra la decisión | `docs/plans/152-authority-decisions-gov-1-10.md` |
 | Semántica de lifetime/persistence en el contrato Protocol | viabilidad (exige RFC `Accepted`) | `docs/plans/125-repository-architecture-decisions.md` |
 | Enforcement de placement y persistencia de Project/Knowledge | alcance de LATER | [placement-contract](docs/placement-contract.md) — §Enforcement deferred |

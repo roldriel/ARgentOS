@@ -1,6 +1,6 @@
 # Plan 161 — Etapa A: retrospectiva de capacidades y garantías (Capability & Guarantee Retrospective)
 
-**Status:** Aprobado para ejecución
+**Status:** Executed
 **Fecha:** 2026-10-12
 **Tipo:** Plan
 **Lifecycle:** active
@@ -53,7 +53,7 @@ El Change es **exclusivamente de análisis y documentación**: no implementa cap
 - [ ] Contrato de Etapa A leído en sus dos registros (Plan 160 y declaración del Plan 149) y traducido a `## Criterios de salida` verificables.
 - [ ] Placement del producto determinado: **Working analysis** → `docs/working/{audits,research,proposals}/` (`docs/placement-contract.md` §6, familias DEV). Sin clase, namespace ni RFC nuevos.
 - [ ] Baseline verificada (rama `dev`, `HEAD`, `git status --porcelain` vacío) y batería canónica de baseline registrada.
-- [ ] Autorización registrada en `## Autorización (acto registrado)` y en `**Status:** Aprobado para ejecución`.
+- [ ] Autorización registrada en `## Autorización (acto registrado)` y en `**Status:** Executed`.
 
 ## Alcance
 
@@ -69,7 +69,9 @@ El Change es **exclusivamente de análisis y documentación**: no implementa cap
 ### OUT OF SCOPE
 
 1. **Implementar cualquier capacidad.** Ninguna capacidad se crea, se modifica ni se repara en este Change.
-2. **`F-C`, Etapa B y `OD-1`**: no se define el contrato de `F-C`, no se resuelve `OD-1`, no se autoriza ni se inicia la Etapa B. El Plan **sólo registra la dependencia** `Etapa A → resultado → revisión del alcance de F-C/Etapa B` (véase `### Pending decisions`).
+2. **`F-C`, Etapa B y `OD-1`**: no se define el contrato de `F-C`, no se resuelve `OD-1`, no se autoriza ni se inicia la Etapa B. El Plan **sólo registra la dependencia** `Etapa A → resultado → revisión del alcance de F-C/Etapa B` (véase `- `<PLAN-161>:C-3` — refs origen: `<PLAN-161>:F-3`; alcance de revalidación: `docs/plans/161-etapa-a-capability-and-guarantee-retrospective.md` (dos ocurrencias con el separador corregido a `;`), sin efecto sobre el scope **medido** por el Validation anchor; evidencia: C-3 vuelve a clasificar este Plan como `VALID` con `GAP=0` y `ANOMALY=0` sobre el corpus real (161 planes, 35 VALID), y el conteo de citas rotas se mantiene en el baseline.
+
+### Pending decisions`).
 3. **Decidir por sí mismo la reducción del alcance de Etapa B**: el resultado de la retrospectiva **informa** esa revisión; la decisión es de un Change posterior con su propia autorización.
 4. **Operacionalizar la matriz** (registro ejecutable, checker, gate, métrica, dashboard): sería capacidad nueva y exige su propia vía.
 5. **Tocar** `protocol/.agents/`, `runtime/`, `tools/`, `tests/`, `.agents/`, `dist/` o cualquier ADR/RFC/plan cerrado.
@@ -123,16 +125,16 @@ No se declara delegación: el trabajo de Etapa A es análisis y redacción sobre
 
 *Convertidos del contrato de Etapa A a criterios observables y verificables. Complementan el DoD de `docs/VERSIONING.md` §10; no lo reemplazan.*
 
-- [ ] **`DC-1` Cobertura exacta del alcance.** El producto cubre las **28** capacidades del alcance conceptual mínimo declarado por el Plan 149, enumeradas en `## Alcance` → `IN SCOPE`; no agrega ni omite capacidades. *Verificación:* conteo por inspección (28 filas/secciones de capacidad) y comparación literal con la lista declarada.
-- [ ] **`DC-2` Nueve dimensiones por capacidad.** Cada capacidad responde las nueve dimensiones declaradas; una dimensión sin información se declara `GAP`/`N/A` **con su motivo**, nunca se omite ni se deja en blanco. *Verificación:* conteo 28 × 9; búsqueda de celdas vacías.
-- [ ] **`DC-3` Nivel de madurez único y válido.** Cada capacidad queda en **exactamente uno** de los ocho niveles del vocabulario cerrado. *Verificación:* conteo de clasificaciones; ningún valor fuera del vocabulario.
-- [ ] **`DC-4` Evidencia ejecutable para las afirmaciones positivas.** Toda garantía clasificada como demostrada (o parcialmente demostrada) cita evidencia **ejecutable** —test, checker, dogfood anclado, validación registrada con anchor— o una condición ambiental declarada; ninguna afirmación positiva se sostiene sólo en prosa. *Verificación:* muestreo dirigido y búsqueda de afirmaciones positivas sin cita ejecutable.
-- [ ] **`DC-5` Condiciones no probadas declaradas.** Cada capacidad declara al menos una condición no probada, o declara explícitamente que no conoce ninguna, con su motivo. *Verificación:* conteo por capacidad.
-- [ ] **`DC-6` Límites declarados.** Los límites conocidos que acotan garantías (entre otros: `--sae` opt-in; ausencia de provider/modelo/red/credenciales; enforcement de placement diferido; `check_dist_sync` local-only) se registran donde corresponden y con su fuente. *Verificación:* presencia de cada límite conocido en la capacidad afectada.
-- [ ] **`DC-7` Regla fundamental respetada.** El producto **no** es una limpieza documental ni una auditoría de archivos: cada fila responde qué puede afirmar ARgentOS que hace, con qué mecanismo y con qué evidencia bajo las condiciones de uso pretendidas. *Verificación:* lectura dirigida de la estructura del producto (ninguna fila se limita a describir archivos).
-- [ ] **`DC-8` Citas resolubles.** Todas las citas `ruta:sección` del producto resuelven, y `check_plan_citations` **no** aumenta respecto del baseline registrado en el Paso 0. *Verificación:* el propio checker y el conteo comparado.
-- [ ] **`DC-9` Alcance respetado.** `git diff --name-only` ⊆ `Scope` de `P-8`; **0 diff** en `runtime/`, `tests/`, `tools/`, `.agents/`, `protocol/`; ninguna capacidad implementada; `F-C`/Etapa B y `OD-1` intactos. *Verificación:* verificación factual de scope.
-- [ ] **`DC-10` Cierre anclado.** `## Validation anchor` registrado, `## Checkpoint / cierre` con las dos determinaciones de impacto (documental y de Roadmap) y la nota de ejecución; batería canónica en verde (con el rojo preexistente declarado); condición derivada evaluada. *Verificación:* los propios registros y los gates C-1/C-2/C-3.
+- [x] **`DC-1` Cobertura exacta del alcance.** El producto cubre las **28** capacidades del alcance conceptual mínimo declarado por el Plan 149, enumeradas en `## Alcance` → `IN SCOPE`; no agrega ni omite capacidades. *Verificación:* conteo por inspección (28 filas/secciones de capacidad) y comparación literal con la lista declarada.
+- [x] **`DC-2` Nueve dimensiones por capacidad.** Cada capacidad responde las nueve dimensiones declaradas; una dimensión sin información se declara `GAP`/`N/A` **con su motivo**, nunca se omite ni se deja en blanco. *Verificación:* conteo 28 × 9; búsqueda de celdas vacías.
+- [x] **`DC-3` Nivel de madurez único y válido.** Cada capacidad queda en **exactamente uno** de los ocho niveles del vocabulario cerrado. *Verificación:* conteo de clasificaciones; ningún valor fuera del vocabulario.
+- [x] **`DC-4` Evidencia ejecutable para las afirmaciones positivas.** Toda garantía clasificada como demostrada (o parcialmente demostrada) cita evidencia **ejecutable** —test, checker, dogfood anclado, validación registrada con anchor— o una condición ambiental declarada; ninguna afirmación positiva se sostiene sólo en prosa. *Verificación:* muestreo dirigido y búsqueda de afirmaciones positivas sin cita ejecutable.
+- [x] **`DC-5` Condiciones no probadas declaradas.** Cada capacidad declara al menos una condición no probada, o declara explícitamente que no conoce ninguna, con su motivo. *Verificación:* conteo por capacidad.
+- [x] **`DC-6` Límites declarados.** Los límites conocidos que acotan garantías (entre otros: `--sae` opt-in; ausencia de provider/modelo/red/credenciales; enforcement de placement diferido; `check_dist_sync` local-only) se registran donde corresponden y con su fuente. *Verificación:* presencia de cada límite conocido en la capacidad afectada.
+- [x] **`DC-7` Regla fundamental respetada.** El producto **no** es una limpieza documental ni una auditoría de archivos: cada fila responde qué puede afirmar ARgentOS que hace, con qué mecanismo y con qué evidencia bajo las condiciones de uso pretendidas. *Verificación:* lectura dirigida de la estructura del producto (ninguna fila se limita a describir archivos).
+- [x] **`DC-8` Citas resolubles.** Todas las citas `ruta:sección` del producto resuelven, y `check_plan_citations` **no** aumenta respecto del baseline registrado en el Paso 0. *Verificación:* el propio checker y el conteo comparado.
+- [x] **`DC-9` Alcance respetado.** `git diff --name-only` ⊆ `Scope` de `P-8`; **0 diff** en `runtime/`, `tests/`, `tools/`, `.agents/`, `protocol/`; ninguna capacidad implementada; `F-C`/Etapa B y `OD-1` intactos. *Verificación:* verificación factual de scope.
+- [x] **`DC-10` Cierre anclado.** `## Validation anchor` registrado, `## Checkpoint / cierre` con las dos determinaciones de impacto (documental y de Roadmap) y la nota de ejecución; batería canónica en verde (con el rojo preexistente declarado); condición derivada evaluada. *Verificación:* los propios registros y los gates C-1/C-2/C-3.
 
 > **Nota de suficiencia.** `DC-1`…`DC-10` son, conjuntamente, suficientes para determinar `Closed`: cubren cobertura, forma, clasificación, calidad de evidencia, declaración de lo no probado, límites, regla fundamental, verificabilidad de citas, disciplina de alcance y cierre anclado. No exceden el alcance autorizado: no exigen implementar, corregir ni operacionalizar ninguna capacidad.
 
@@ -162,35 +164,54 @@ Verificación factual adicional (no mecánica, evidencia en el `## Checkpoint / 
 
 ## Validation anchor
 
-<!-- Se completa al ejecutar (VC-1, Incremento 1; docs/CONVENTIONS.md:Change Lifecycle — Validation
-anchors y Scoped Content Identity (regla operacional; VC-1, Incremento 1)). Campos v1: Declared scope ·
-Validation command-set · Effective inputs (repo content) · Observed dependencies · Environmental factors ·
-Scoped Content Identity (state identity + delta scoped identity) · Validity / stale. La sección queda
-vacía —sin campos registrados— mientras el Plan está `Aprobado para ejecución`: la validación se registra
-al ejecutar Etapa A, no al autorizarla. -->
+*Validación A1 — registrada al ejecutar (VC-1, Incremento 1).*
+
+- **Declared scope:** las dos rutas que la identidad de contenido mide — `docs/working/audits/ETAPA_A_RETROSPECTIVA_CAPACIDADES_Y_GARANTIAS.md` (producto, nuevo) y `docs/working/audits/INDEX.md` (registro del producto). Quedan fuera del scope **medido** la governance del Change (este artefacto) y la reconciliación de `ROADMAP.md`, de modo que la escritura de los registros de cierre no altera la identidad certificada (convención anti-auto-referencia; precedente Planes 149/155–160). El scope autorizado por `P-8` tiene cuatro rutas más: este artefacto, `docs/plans/INDEX.md`, `CHANGELOG.md` y `ROADMAP.md`.
+- **Validation command-set:** los siete comandos de `docs/VERSIONING.md` §4.1 + los gates `tools/check_lifecycle_anchor.py` (C-1), `tools/check_lifecycle_checkpoint.py` (C-2) y `tools/check_lifecycle_lineage.py` (C-3) + la suite de regresión del producto (`python -m pytest protocol/.agents/harness/tests/ -q`, la que CI ejecuta) + la verificación factual de `DC-1`…`DC-10` (conteos, vocabulario, celdas vacías, resolución de citas y verificación de scope).
+- **Effective inputs (repo content):** el scope declarado; el corpus completo de `docs/plans/`, `docs/rfc/` y `docs/adr/` como población de `check_plan_citations` y de C-1/C-2/C-3; el payload de `protocol/.agents/` (216 archivos, 10457 referencias) como entrada de `check_protocol_invariants` y de la suite del harness; `runtime/`, `tools/` y `tests/` como entradas de las suites (**sólo lectura**: inspeccionados como evidencia, no modificados); y el estado Git de `dev`.
+- **Observed dependencies:** stdlib únicamente; el CLI `git` para las identidades de contenido y la resolución de objetos; `pytest` con basetemp externo al repositorio (`tests/pytest_isolation.py`). Sin red.
+- **Environmental factors:** Windows 11 + PowerShell; Python 3.14.3; `pytest` 9.0.3; repositorio bajo OneDrive. **Clase ambiental declarada:** `check_dist_sync.py` **no** aplica (local-only, verde sólo en `master`); `check_plan_citations.py` sigue rojo por las **26** citas rotas históricas del corpus, **sin aumento**. No se consumió red, provider ni credenciales.
+- **Scoped Content Identity:**
+  - **State identity (A1, estado validado):** `f92cb1424c42b78b743c8520ba8fa60b815d9247` — tree id del índice staged del scope medido (`tools/scoped_content_identity.py`, source `staged`), computado antes de escribir los registros de cierre.
+  - **Delta scoped identity (scope S = las dos rutas del `## Declared scope`, ordenadas; serialización `scoped-v1`):** `efe62f1d37a719715c4cfd0bd0748fe67c14172d043213bec3787accfe14278e`.
+  - **Scope set (repo-relative paths, ordenados):** `docs/working/audits/ETAPA_A_RETROSPECTIVA_CAPACIDADES_Y_GARANTIAS.md`, `docs/working/audits/INDEX.md`
+- **Validity / stale:** vigente para el estado validado que el checkpoint certifica.
+
+*Resultado real de la ejecución:* verification-01 (`check_protocol_invariants --payload protocol .`): **PASS** (216 archivos, 10457 referencias); verification-02 (`check_plan_citations`): **FAIL preexistente** — 26 citas rotas, sin aumento; verification-03 (`check_plan_structure`): **PASS**; verification-04 (`check_taxonomy_coherence`): **PASS**; verification-05 (`check_session_artifacts`): **PASS**; verification-06 (`check_version_state`): **PASS**; verification-07 (`python -m pytest tests/`): **PASS** — `1316 passed` en 310,81 s; verification-08 (C-1): **ANOMALY=0**; verification-09 (C-2): **ANOMALY=0**; verification-10 (C-3): **GAP=0**, `ANOMALY=0`; verification-11 (`python -m pytest protocol/.agents/harness/tests/`): **PASS** — `185 passed` en 8,17 s. Verificación factual: 28 capacidades, 252 celdas, 0 vacías, 28 niveles válidos, todas las citas `ruta:sección` del producto resueltas; `git diff --name-only` ⊆ el scope de `P-8`; **0 diff** en `runtime/`, `tests/`, `tools/`, `.agents/`, `protocol/` y `dist/`.
 
 ## Checkpoint / cierre
 
-<!-- Se completa al ejecutar (GC-1, Incremento 3; docs/CONVENTIONS.md:Change Lifecycle — Checkpoint y
-cierre Git (regla operacional; GC-1, Incremento 3)). Campos: commits de cierre · estado validado (ref al
-anchor) · estado de cierre (identidad) · árbol material del commit de cierre · consistencia
-checkpoint↔anchor · governance aplicada · Documentation impact (§5.1) · Roadmap impact (§5.2) ·
-condición derivada. La sección queda vacía mientras el Plan está `Aprobado para ejecución`: crear el Plan
-**no** es ejecutarlo y **no** se declara `Closed` por su sola creación. -->
+*Registrado al ejecutar (GC-1, Incremento 3).*
+
+- **Commits de cierre:** dos (2) commits atómicos en `dev`, acción de repositorio del mantenedor: (1) `feat(working): produce the Stage A capability and guarantee matrix (plan 161)` — el producto y su registro; y (2) `docs(plans): close plan 161 with the Stage A validation anchor and checkpoint (plan 161)` — los registros de cierre y la reconciliación de `ROADMAP.md`, `docs/plans/INDEX.md` y `CHANGELOG.md`. Se identifican por su mensaje (convención anti-circularidad). Sin amend, sin merge, sin rebase, sin push, sin tag.
+- **Estado validado (ref al Validation anchor):** A1 (arriba), state identity `f92cb1424c42b78b743c8520ba8fa60b815d9247`, delta scoped identity `efe62f1d37a719715c4cfd0bd0748fe67c14172d043213bec3787accfe14278e`.
+- **Estado de cierre (identidad):** delta scoped identity + state identity del anchor aplicable (A1): `efe62f1d37a719715c4cfd0bd0748fe67c14172d043213bec3787accfe14278e` / `f92cb1424c42b78b743c8520ba8fa60b815d9247`. Es el estado que el checkpoint **certifica** por correspondencia GC-1.
+- **Árbol material del commit de cierre (tree id):** no declarado en este registro. El commit de cierre incluye governance (este artefacto, `docs/plans/INDEX.md`, `CHANGELOG.md` y `ROADMAP.md`) que el scope medido excluye; `validated tree == commit tree` no es un requisito (RFC-75 Mecanismo 7).
+- **Consistencia checkpoint↔anchor:** PASS — el estado de cierre declarado es el estado que la validación A1 consumió (misma identidad de contenido scoped del scope declarado); C-2 clasificó el corpus sin `ANOMALY`.
+- **Governance aplicada:** producto Working creado y registrado en `docs/working/audits/INDEX.md`; `docs/plans/INDEX.md` (encabezado de estado y fila del Plan 161 → `Executed`); `CHANGELOG.md` (ítem del Plan 161 con el resultado de la ejecución); `ROADMAP.md` (reconciliación del mapa: Etapa A completada y próximo paso `OD-1`); `## Findings`/`## Correcciones` con `<PLAN-161>:F-1`/`C-1` (forma de cuatro citas), `<PLAN-161>:F-2`/`C-2` (conteo de pruebas del harness) y `<PLAN-161>:F-3`/`C-3` (separador de campo en los registros de lineage); `**Status:** Executed`. Sin RFC-56 (0 diff en `protocol/`), sin ADR nuevo, sin `VERSION` bump ni tag.
+- **Documentation impact:** `REQUIRED` — reconciliado. Documentos afectados y su aspecto: `docs/working/audits/ETAPA_A_RETROSPECTIVA_CAPACIDADES_Y_GARANTIAS.md` (aspecto: el estado real de las capacidades y garantías no estaba registrado en ningún artefacto; actualización: el producto completo —28 capacidades × 9 dimensiones— con niveles de madurez, evidencia ejecutable, condiciones no probadas y límites; evidencia: el artefacto y su identidad de contenido en el anchor). `docs/working/audits/INDEX.md` (aspecto: el producto no figuraba en el registro de la familia; actualización: fila con fecha, naturaleza y autoridad —ninguna—; evidencia: el diff). `docs/plans/INDEX.md` (aspecto: el Plan 161 figuraba `Aprobado para ejecución`; actualización: `Executed` con la descripción del resultado; evidencia: el diff). `CHANGELOG.md` (aspecto: el ítem describía sólo la autorización; actualización: el resultado de la ejecución y la condición derivada; evidencia: el diff). No se actualiza ningún documento histórico (RFC-46) y **no** se modificó ningún artefacto de `runtime/`, `tools/`, `tests/`, `.agents/` ni `protocol/`: fueron inspeccionados como evidencia, nunca escritos.
+- **Roadmap impact:** `REQUIRED` — reconciliado en el artefacto que posee el estado. Ítems afectados: **Etapa A se completa** (deja de ser trabajo pendiente), por lo que su card sale de `NEXT` conforme a la regla de frescura del ROADMAP (el trabajo cerrado no se cataloga); se registra el **próximo paso real** —la revisión del alcance de `F-C`/Etapa B a partir del resultado (`OD-1`), con su propio Change— y una fila de blocker para `OD-1`. `NOW` no cambia; `LATER` conserva Etapa B y Etapa C sin cambio de estado, prioridad ni dependencia. **No** se define `F-C`, **no** se resuelve `OD-1` y **no** se autoriza Etapa B desde este Change.
+- **Condición derivada:** **`Closed`** (docs-only, sin release) — `Executed` ∧ governance aplicada ∧ checkpoint registrado ∧ consistencia PASS. Sin tag, sin push, sin merge, sin promoción a `master`, sin `dist`.
 
 ## Findings / Correcciones / Pending
 
 ### Findings
 
-No findings detected / N/A — declaración de ausencia al crear el Plan.
+- `<PLAN-161>:F-1` — estado: `resolved`; severidad: `medium`; observación: cuatro citas `ruta:sección` del producto quedaban sin resolver porque el ancla numérica arrastraba prosa contigua (`§9 se reconcilia…`, `§24 declara que…`, `§4 y §7`, `§5.2 registra que…`), de modo que el checker habría resuelto una sección inexistente; una cita rota de esta forma habría ingresado al corpus como **cita nueva** y roto `DC-8`; evidencia original: la verificación de citas previa a la validación (las cuatro aparecían como `FAIL`); estado git observado: worktree de `dev` sobre `4597443`, sin commit; provenance original: verificación de `DC-8` durante la ejecución (Paso 8); resolución: `resolved` por `<PLAN-161>:C-1`.
+- `<PLAN-161>:F-2` — estado: `resolved`; severidad: `low`; observación: la matriz declaraba `179 passed` para la suite del harness del producto, pero 179 es el conteo de **funciones de test** (`def test_`) y no el de pruebas **ejecutadas**: la corrida real reporta `185 passed` por parametrización, de modo que la evidencia ejecutable citada no coincidía con el resultado de la suite; evidencia original: `python -m pytest protocol/.agents/harness/tests/ -q` = `185 passed in 8.17s` contra el `179` declarado; estado git observado: worktree de `dev` sobre `4597443`, sin commit; provenance original: verificación de `DC-4` durante la ejecución; resolución: `resolved` por `<PLAN-161>:C-2`.
+
+- `<PLAN-161>:F-3` — estado: `resolved`; severidad: `low`; observación: los registros de lineage de este Plan separaban el campo `evidencia original` con un punto (`. `) en lugar de `;`, y la regla `R-L1-3` de C-3 no lo reconoce como inicio de campo: el corpus clasificaba este Plan como `GAP` (con `GAP=1` en el resumen) en lugar de `VALID`; evidencia original: la salida de C-3 (`finding missing required field(s): evidencia original (R-L1-3)`) inmediatamente después de escribir los registros de cierre; estado git observado: worktree de `dev` sobre `4597443`, sin commit; provenance original: verificación de cierre durante la ejecución (Paso 8); resolución: `resolved` por `<PLAN-161>:C-3`.
 
 ### Correcciones
 
-No findings detected / N/A — declaración de ausencia al crear el Plan.
+- `<PLAN-161>:C-1` — refs origen: `<PLAN-161>:F-1`; alcance de revalidación: `docs/working/audits/ETAPA_A_RETROSPECTIVA_CAPACIDADES_Y_GARANTIAS.md` (cuatro citas reescritas para que el ancla quede separada de la prosa), sin efecto sobre las celdas de la matriz (28 × 9 se mantienen); evidencia: las 17 citas `ruta:sección` del producto resuelven y `check_plan_citations` se mantiene en el baseline (**26**), sin citas nuevas.
+- `<PLAN-161>:C-2` — refs origen: `<PLAN-161>:F-2`; alcance de revalidación: `docs/working/audits/ETAPA_A_RETROSPECTIVA_CAPACIDADES_Y_GARANTIAS.md` (dos ocurrencias y la declaración del registro ejecutable del levantamiento); evidencia: `185 passed` verificado por corrida y citado en `C-27` y en el `## Validation anchor`; sin efecto sobre el scope medido de contenido (las dos rutas medidas cambian, por lo que la identidad A1 se computó **después** de esta corrección).
+
+- `<PLAN-161>:C-3` — refs origen: `<PLAN-161>:F-3`; alcance de revalidación: `docs/plans/161-etapa-a-capability-and-guarantee-retrospective.md` (dos ocurrencias con el separador corregido a `;`), sin efecto sobre el scope **medido** por el Validation anchor; evidencia: C-3 vuelve a clasificar este Plan como `VALID` con `GAP=0` y `ANOMALY=0` sobre el corpus real (161 planes, 35 VALID), y el conteo de citas rotas se mantiene en el baseline.
 
 ### Pending decisions
 
-- `<PLAN-161>` — decisión: **revisión del alcance de `F-C`/Etapa B a partir del resultado de Etapa A**; blocking: **no** para la ejecución de este Plan; **sí** para el tramo posterior; owner: **mantenedor**; escalación: Change propio del tramo posterior, con su autorización; resolución: **`PENDING`** — la secuencia declarada es `Etapa A → resultado de Etapa A → revisión del alcance de F-C/Etapa B`; `F-C`/Etapa B **no** se definen, autorizan ni inician desde este Plan, y `OD-1` permanece sin resolver; evidencia: `ROADMAP.md` (Etapa A como compuerta; el resultado puede reducir el alcance de la Etapa B) y `docs/plans/160-cierre-decisiones-od-y-preparacion-etapa-a.md` (contrato y alcance); efecto downstream: habilita el cierre de `OD-1` (qué es `F-C`) una vez aplicado el resultado; ADR-worthiness: no evaluada.
+- `<PLAN-161>` — decisión: **revisión del alcance de `F-C`/Etapa B a partir del resultado de Etapa A**; blocking: **no** para la ejecución de este Plan; **sí** para el tramo posterior; owner: **mantenedor**; escalación: Change propio del tramo posterior, con su autorización; resolución: **`PENDING`** — la secuencia declarada es `Etapa A → resultado de Etapa A → revisión del alcance de F-C/Etapa B`; `F-C`/Etapa B **no** se definen, autorizan ni inician desde este Plan, y `OD-1` permanece sin resolver; evidencia: `ROADMAP.md` (Etapa A como compuerta; el resultado puede reducir el alcance de la Etapa B) y `docs/plans/160-cierre-decisiones-od-y-preparacion-etapa-a.md` (contrato y alcance); efecto downstream: habilita el cierre de `OD-1` (qué es `F-C`) una vez aplicado el resultado; ADR-worthiness: no evaluada. → **Actualización al ejecutar (2026-10-12):** el insumo existe —el Capability & Guarantee Matrix quedó producido y registrado (`docs/working/audits/ETAPA_A_RETROSPECTIVA_CAPACIDADES_Y_GARANTIAS.md`)— y la revisión pasa a ser el **próximo paso real**; la decisión **sigue `PENDING`** y `OD-1` **sigue sin resolver**: este Plan no la adopta.
 
 ## Riesgos
 
@@ -221,4 +242,32 @@ revisión del alcance de F-C / Etapa B  (Change propio; OD-1 permanece abierto)
 
 ## Nota de ejecución
 
-*Se agrega al ejecutar, con fecha, verificación realizada y resultado.*
+*2026-10-12. Ejecutado en `dev` @ `4597443` (baseline del preflight: worktree limpio; `dev` ahead 11 de `origin/dev`; `VERSION` del payload `12.0.1` sin tag; batería canónica y ambas suites de test en verde).*
+
+Una sola pasada, en el orden del `## Pasos`:
+
+1. **Paso 0 — preflight.** Baseline verificado; dependencias confirmadas (`F-A`/`F-B`/`OD-2`/`OD-6` `CLOSED`; `OD-4`/`OD-7` `ALREADY_CLOSED`); baseline de citas rotas registrado (**26**).
+2. **Paso 1 — conjunto exacto.** Fijadas las **28** capacidades del alcance conceptual mínimo, en el orden declarado por el Plan 149, sin agregar ni omitir.
+3. **Pasos 2–3 — mecanismo y evidencia.** Para cada capacidad se identificó el mecanismo real y la evidencia ejecutable (suites, checkers, dogfoods anclados, gates, anchors), distinguiendo estrictamente *documentado* de *implementado*.
+4. **Paso 4 — condiciones y límites.** Se declararon las condiciones probadas y no probadas y los límites conocidos: ausencia de provider/modelo/red/credenciales, enforcement diferido, gates advisory sin CI, persistencia efímera en `.project/`, evidencia de adopción no disponible en el repositorio.
+5. **Paso 5 — clasificación.** Un nivel de los ocho por capacidad: `dogfoodeado` 11 · `testeado` 6 · `parcialmente demostrado` 4 · `dependiente de una condición externa` 3 · `no demostrado` 2 · `limitado por un boundary conocido` 1 · `implementado` 1 · `demostrado bajo condiciones reales` **0**.
+6. **Paso 6 — producto.** Escrito en `docs/working/audits/ETAPA_A_RETROSPECTIVA_CAPACIDADES_Y_GARANTIAS.md`, con las nueve dimensiones por capacidad (**28 × 9 = 252** celdas, **0** vacías).
+7. **Paso 7 — registro.** Fila del producto en `docs/working/audits/INDEX.md`.
+8. **Paso 8 — verificación y cierre.** Batería canónica, suite del harness del producto, gates C-1/C-2/C-3, verificación factual de `DC-1`…`DC-10`, verificación de scope y de citas, anchor A1, checkpoint y commits.
+
+**Tres findings reales, todos resueltos antes de la validación y declarados en `## Findings`:** `<PLAN-161>:F-1` (cuatro citas `ruta:sección` del producto arrastraban prosa contigua al ancla y no resolvían), `<PLAN-161>:F-2` (la matriz declaraba el conteo de funciones de test del harness en lugar de las pruebas ejecutadas: **185**, no 179) y `<PLAN-161>:F-3` (los registros de lineage usaban un punto como separador de campo y C-3 los clasificaba `GAP`). La identidad de contenido A1 se computó **después** de las tres correcciones.
+
+**Resultado.** 28 capacidades cubiertas; 252 celdas sin vacíos; 28 niveles válidos; **cero** capacidades en `demostrado bajo condiciones reales`. Hallazgo central: las condiciones de uso pretendidas de buena parte del sistema —un proyecto adoptante, un proveedor real, la infraestructura de CI— **no son observables desde este repositorio**, lo que acota la garantía máxima acreditable y explica la distribución de niveles.
+
+**No realizado (por diseño).** No se implementó ni corrigió ninguna capacidad; `runtime/`, `tools/`, `tests/`, `.agents/`, `protocol/` y `dist/` fueron **inspeccionados como evidencia, nunca escritos** (0 diff); **no** se definió `F-C`, **no** se resolvió `OD-1`, **no** se autorizó ni inició Etapa B; no se creó registro ejecutable, checker, gate ni métrica a partir de la matriz.
+
+**Estados finales.**
+
+```text
+Executed  = TRUE  — implementación + validación anclada (VC-1).
+Committed = TRUE  — commits atómicos en `dev`, identificados por su mensaje.
+Closed    = TRUE  — governance aplicada + checkpoint + consistencia checkpoint↔anchor (GC-1).
+Released  = FALSE — docs-only: sin `VERSION` bump, sin tag, sin promoción a `master`, sin `dist`.
+```
+
+**Próximo paso exacto.** La revisión del alcance de `F-C`/Etapa B (`OD-1`) en su **propio Change**, con el resultado de Etapa A como insumo: `F-C scope = TO BE REVIEWED`. `F-C` no se implementa y Etapa B no se inicia en este Plan.

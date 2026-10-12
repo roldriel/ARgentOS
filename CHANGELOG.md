@@ -54,7 +54,23 @@ La política de versionado, changelog, tags y estados de planes vive en
   autorizada y lista para el Change siguiente. `F-C`/Etapa B permanecen no iniciadas y `OD-1` sin
   resolver; sólo se registra la dependencia `Etapa A → resultado → revisión del alcance de F-C/Etapa B`.
   Sin `VERSION` bump ni tag; sin citas rotas nuevas (el conteo de `check_plan_citations` se mantiene en
-  **26**, el baseline).
+  **26**, el baseline). **Ejecución (2026-10-12):** la retrospectiva se ejecutó y produjo el
+  **Capability & Guarantee Matrix** —`docs/working/audits/ETAPA_A_RETROSPECTIVA_CAPACIDADES_Y_GARANTIAS.md`,
+  registrado en `docs/working/audits/INDEX.md`— con **28** capacidades × **9** dimensiones = **252** celdas
+  sin vacíos y **28** niveles de madurez del vocabulario cerrado (`dogfoodeado` 11 · `testeado` 6 ·
+  `parcialmente demostrado` 4 · `dependiente de una condición externa` 3 · `no demostrado` 2 ·
+  `limitado por un boundary conocido` 1 · `implementado` 1 · `demostrado bajo condiciones reales` **0**),
+  `DC-1`…`DC-10` **PASS** y Validation Anchor **A1** con condición derivada **`Closed`**. Las únicas
+  escrituras fueron el producto, su registro y los artefactos de gobernanza del cierre: `runtime/`,
+  `tools/`, `tests/`, `.agents/` y `protocol/` fueron inspeccionados como evidencia con **0 diff**. Las
+  citas rotas se mantienen en el baseline (**26**) y los findings `<PLAN-161>:F-1` (forma de cuatro citas
+  `ruta:sección`) y `<PLAN-161>:F-2` (conteo de pruebas del harness: 185, no 179) quedaron resueltos por
+  `<PLAN-161>:C-1`/`C-2`. **Hallazgo central:** ninguna capacidad alcanza `demostrado bajo condiciones
+  reales` para la totalidad de su afirmación, porque las condiciones de uso pretendidas de buena parte del
+  sistema —un proyecto adoptante, un proveedor real, la infraestructura de CI— no son observables desde el
+  repositorio; `C-16` Discovery, `C-17` Discovery KB y `C-21` Skills quedan `no demostrado`. **No resuelto
+  por diseño:** `OD-1` permanece abierto, `F-C`/Etapa B no se definen ni se inician y `F-C scope =
+  TO BE REVIEWED`; el resultado de Etapa A es insumo de la revisión posterior, no una decisión.
 
 - **Cierre de las decisiones inmediatas (`OD-2`, `OD-6`) y preparación de la autorización de Etapa A**
   (plan 160, vía plan; DEV-only, docs-only sobre `docs/CONVENTIONS.md`,

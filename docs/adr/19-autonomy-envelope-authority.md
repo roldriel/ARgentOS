@@ -150,7 +150,7 @@ siendo RFC `Accepted` + plan (`docs/CONVENTIONS.md:Convenciones`).
 | `AE-3` `Effect` ⊥ `Scope` | **implementado** | la admisión no consulta paths; un efecto autorizado sin `write-target` es admisible (`tests/test_autonomy_effects.py`) |
 | `AE-4` declaración en el Plan | **implementado** | `## Efectos declarados` es leído por el runtime y por `docs/plans/_TEMPLATE.md` (`tests/test_autonomy_effects_dogfood.py`) |
 | `AE-5` derivación antes de delegar | implementado (plan 138) | `_apply_autonomy_gate` en `iterate()` |
-| `AE-6` límite operativo ≠ autorización | **implementado** | techo de recurso sin veredicto de autoridad (`tests/test_autonomy_effects.py::test_resource_exhaustion_is_never_an_authorization`) |
+| `AE-6` límite operativo ≠ autorización | **implementado** | techo de recurso sin veredicto de autoridad (`tests/test_autonomy_effects.py`, prueba `test_resource_exhaustion_is_never_an_authorization`) |
 | `AE-7` actor acotado; provider/modelo diferidos | vigente, sin materializar | `runtime/orchestrator/agent_worker.py` no usa provider ni red |
 | `AE-8` Memory es contexto | vigente | `runtime/memory/` no se consume desde el orquestador |
 | `AE-9` sin segunda autoridad | implementado | `runtime/orchestrator/authority.py` |

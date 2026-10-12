@@ -35,8 +35,47 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ## [Unreleased]
 
+### Added
+
+- **Patrones de comportamiento — cómo trabaja ARgentOS** (plan 155, vía plan; DEV-only, docs-only sobre
+  `docs/behavior-patterns.md` (nuevo), `README.md`, `ROADMAP.md`, `docs/VERSIONING.md` §9, `docs/AGENTS.md`,
+  `docs/plans/INDEX.md` y este changelog, sin efecto en `protocol/`, `runtime/`, `tools/`, `tests/` ni `.agents/`,
+  por lo que RFC-56 no aplica): se agrega el documento que explica el **comportamiento observable** del sistema —
+  patrón de estado (nada se almacena, todo se deriva; estados afirmados vs condiciones derivadas
+  `Verified`/`Executed`/`Committed`/`Closed`/`Released`), *gate pattern* (la autoridad precede al efecto; los cuatro
+  gates; prevención ≠ detección), orquestación (una responsabilidad por componente; delegación y contrato M4; el
+  patrón de escritura de gobernanza con un único escritor), *autonomy loop* (el ciclo real con sus dos versiones —
+  frontera SAE `opt-in`—, qué **no** existe, cómo termina y la métrica de autonomía con sus dos conteos humanos no
+  fusionables), human-in-the-loop (qué decide el sistema y qué retiene el humano; obligación ≠ permiso; no existe
+  expansión autónoma de scope), fallo y recuperación (taxonomía de **señales**, no de estados) y client interaction
+  (los dos flujos —adoptante y DEV— y el hallazgo de que **no existe un modelo de clientes**: sólo tres superficies
+  de integración). El documento cita sus fuentes de verdad sin duplicarlas y no documenta razonamiento privado. La
+  auditoría que lo precede reconcilió además el estado real: versión publicada `12.0.0` (tag sobre `78ca512`,
+  `origin/dist` con `VERSION` = `12.0.0`), `docs/VERSIONING.md` §9 y `ROADMAP.md` actualizados, y dos afirmaciones
+  inexactas del `README.md` corregidas (la sonda **no** deriva su project root de su propia ubicación — lo recibe por
+  `--project-root`/`ARGENTOS_PROJECT_ROOT` — y la superficie del lifecycle incluye `recover` y exit codes
+  deterministas 0/10/20/30). **Clasificación:** Clase B, Change Level L2; docs-only, sin `VERSION` bump ni tag
+  (RFC-69).
+
 ### Changed
 
+- **Reconciliación del snapshot de versión y del roadmap al release real** (plan 155, vía plan; DEV-only, docs-only):
+  `docs/VERSIONING.md` §9 pasa de declarar la release de gobernanza `11.6.2` (2026-09-22) a declarar el estado
+  verificado (`master` = `12.0.0`, tag sobre `78ca512`, `origin/dist` publicado con `VERSION` = `12.0.0`, `dev` =
+  `master` sin divergencia abierta), e incorpora la sucesión de puntos de reconciliación omitida (`11.7.1` y `12.0.0`)
+  más la advertencia operativa de que la **ref local** `dist` puede quedar por detrás de `origin/dist` y no debe
+  citarse sin resolver el remoto. `ROADMAP.md:### Estado del que parte este roadmap` deja de declarar `11.6.2` como
+  versión publicada, registra el trabajo posterior a su tabla que ya está cerrado (lifecycle de adopción, Memory
+  System) y actualiza el inventario de estado histórico del que parte (Planes 146–154, ADR-17/18/19).
+  **Lectura correcta de la autonomía (desambiguación; la historia se conserva literal).** Los planes 151–153
+  cerraron las **decisiones de autoridad del envelope** de autonomía y su remanente registral: **no** la capacidad
+  de autonomía del host —implementada antes en `runtime/orchestrator/` y las policies SAE, y presente en el estado
+  publicado del repositorio como capacidad **DEV-only**, fuera del payload que distribuye `dist`— y **no** la
+  Etapa B (`Complete ARgentOS Autonomy`), que sigue siendo trabajo futuro con su propia autorización. La
+  formulación «cierre de la feature de autonomía» del ítem del plan 153 es la transcripción de la instrucción del
+  acto de autoridad (`AUTHORITY_EVIDENCE` de `docs/plans/151-autonomy-authority-decision-closure.md`) y **no** se
+  reescribe (RFC-46); esta entrada fija su interpretación vigente, y la evidencia de lo que permanece pendiente
+  está en `docs/adr/19-autonomy-envelope-authority.md:Estado de implementación`.
 - **Cierre residual del Plan 151 — ejecución del Plan 153 (acto de autoridad del 2026-10-08)** (plan 153,
   vía plan; DEV-only, docs-only sobre `docs/plans/151-autonomy-authority-decision-closure.md`, el Plan 153,
   `docs/plans/INDEX.md` y este changelog, sin efecto en `protocol/`, `runtime/`, `tools/`, `tests/` ni
@@ -1253,6 +1292,38 @@ La política de versionado, changelog, tags y estados de planes vive en
 `docs/VERSIONING.md` §3)
 
 ---
+
+## [12.0.1] — 2026-10-11
+
+### Fixed
+
+- **Reconciliación documental del payload con el layout canónico `.argentos/`** (plan 156, RFC-82; Clase B —
+  RFC-82 `Accepted` + Plan 156 como autorización de la modificación de `protocol/.agents/`): se corrige la **prosa
+  descriptiva** del payload que la release `12.0.0` (plan 154, RFC-81) volvió inexacta. No cambia ningún contrato,
+  gate, estado, transición, skill ni capacidad: 0 diff en `orchestrators/`, `contracts/`, `delegation/`, `roles/`,
+  `skills/` y en los scripts del harness. Correcciones: (a) `protocol/.agents/INDEX.md` declara el bootstrap
+  normativo real (`.argentos/.agents/INDEX.md`) y al `AGENTS.md` de la raíz como **adapter no normativo**, en lugar
+  de nombrarlo entry point; (b) `protocol/.agents/standards/runtime/PROTOCOL_BOUNDARIES.md` describe la frontera de
+  artefactos bajo el layout canónico — el payload vive en `PAYLOAD_ROOT` (`.argentos/.agents/`), y fuera de él pero
+  dentro de `ARGENTOS_ROOT` viven la configuración activa (`features.toml`), el estado local (`.project/`) y los
+  backups (`.backup/`), con `AGENTS.md` como único artefacto en la raíz — en lugar de afirmar que el único artefacto
+  fuera de `.agents/` y `.project/` era `AGENTS.md`; la inmutabilidad del payload no se debilita; (c)
+  `protocol/.agents/harness/INDEX.md` y `protocol/.agents/standards/runtime/PYTHON_DEPENDENCIES.md` enumeran los
+  **ocho** módulos stdlib que el payload distribuye — los cuatro que aplican durante una sesión (`hook_gate.py`,
+  `runner_state.py`, `health_check.py`, `gate_validator.py`) más los cuatro que hacen materializable el layout
+  (`roots.py`, `lifecycle.py`, `lifecycle_contract.py`, `lifecycle_staging.py`) — en lugar de declarar «exactly
+  four»; la política de stdlib pura queda intacta; y (d) `protocol/.agents/harness/INDEX.md` distingue lo que
+  **transporta** `dist` (el payload `.agents/` + `AGENTS.md`) de lo que el adoptante **materializa**
+  (`.argentos/{features.toml,.agents/,.project/,.backup/}` + adapter en la raíz), en lugar de presentar el payload
+  como si fuera el layout. Del lado DEV se actualiza `docs/source-layout.md`: su lista de «prosa que describe el
+  layout adoptado (no tocar)» perdía su premisa (asumía que `dist` publicaba `AGENTS.md` como entry, cuando con
+  RFC-81 es un adapter no normativo); se registra la corrección autorizada por RFC-82 y se preservan la guarda de
+  links del entry file, los links rotos intencionales y las citas históricas de `docs/plans/`. `VERSION` pasa de
+  `12.0.0` a `12.0.1` (PATCH por `docs/VERSIONING.md` §3: fixes documentales) y se sincroniza el ancla semántica del
+  runtime (`runtime/toolcalls/canonical.py`). La promoción, el tag y la regeneración de `dist` son un acto de release
+  separado y **no** ejecutado por este plan.
+
+> Nota: el tag git `12.0.1` se crea como entregable del release al promover `dev` → `master`.
 
 ## [12.0.0] — 2026-10-11
 

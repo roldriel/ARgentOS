@@ -286,33 +286,44 @@ Condiciones derivadas del Change Lifecycle (semántica; RFC-75
   tocar `VERSION`/changelog, o los ítems se acumulan en `[Unreleased]` y la
   numeración se asigna en la promoción.
 
-## 9. Estado actual (2026-09-22, release de gobernanza `11.6.2`)
+## 9. Estado actual (2026-10-11, release `12.0.0`)
 
-Snapshot del estado al 2026-09-22, reconciliado en el punto de promoción que §5
+Snapshot del estado al 2026-10-11, reconciliado en el punto de promoción que §5
 declara. Sucesión de puntos de reconciliación: la promoción del rango
-`11.3.0`–`11.6.1` (plan 146), la corrección post-release del plan 147 y la
-**release de gobernanza `11.6.2`** (plan 148), que es el punto vigente. La
-fuente inmutable de la verdad son `git tag` + `protocol/.agents/VERSION`: este
-snapshot es un resumen de lectura, no una segunda fuente, y una divergencia se
-resuelve siempre a favor de git.
+`11.3.0`–`11.6.1` (plan 146), la corrección post-release del plan 147, la
+**release de gobernanza `11.6.2`** (plan 148), la **release de gobernanza
+`11.7.1`** (planes 151–153) y la **release `12.0.0`** (plan 154, RFC-81), que es
+el punto vigente. La fuente inmutable de la verdad son `git tag` +
+`protocol/.agents/VERSION`: este snapshot es un resumen de lectura, no una
+segunda fuente, y una divergencia se resuelve siempre a favor de git.
 
-- `master` = `11.6.2` (release de gobernanza del plan 148: nivelación de
-  `master` con el estado verificado de `dev` tras el plan 147, **sin cambio de
-  contenido de protocolo** — §3, viñeta «Releases de gobernanza»). Contenido
-  publicado: la corrección post-release del plan 147 y el registro de cierre del
-  plan 146. Tags anotados `11.0.0`, `11.0.1`, `11.1.0` y `11.2.0` de promociones
-  anteriores, más `11.3.0`, `11.4.0`, `11.5.0`, `11.6.0` y `11.6.1` —que
-  oficializaron el rango cuya implementación quedó en `dev`— y `11.6.2`,
-  todos sobre el commit de promoción correspondiente de `master`.
-- `dist` = publicado desde `master` (`publish-dist` a partir de la promoción
-  de `11.6.2`).
-- `dev` = `11.6.2` (sin secciones del changelog con fecha pendientes de tag: el
-  `[Unreleased]` acumula ítems de gobernanza no asignados a una versión; últimos
-  planes ejecutados 124–148).
-- El **contenido del protocolo** (todo bajo `protocol/` salvo
-  `protocol/.agents/VERSION`) es idéntico entre `dev` y `master`: la release
-  `11.6.2` publica la versión del repositorio, no una versión nueva del
-  protocolo. `VERSION` = `PROTOCOL_VERSION` = `11.6.2` en las dos ramas.
+- `master` = `12.0.0` (release del plan 154, RFC-81: lifecycle de adopción y
+  layout canónico `.argentos/`; cambio **MAJOR** por §3 y `docs/MIGRATION.md` §19).
+  Contenido publicado: el lifecycle `install`/`update`/`uninstall`/`doctor` en
+  `protocol/.agents/harness/`, la plantilla de configuración `features.toml`, la
+  documentación de adopción y migración, y los 51 cambios preexistentes de GATE 2
+  regularizados en el commit de contenido `2267155`.
+- `dist` = publicado desde `master` en `78ca512` (`publish-dist` a partir del tag
+  `12.0.0`): contiene `.agents/` + `AGENTS.md`, con `VERSION` = `12.0.0` y el
+  harness del lifecycle. **Contrato de distribución:** `dist` transporta el
+  *payload* (`.agents/` + `AGENTS.md`), no el layout materializado; el layout
+  canónico `<proyecto>/.argentos/…` lo produce el lifecycle al instalar (ver
+  `docs/ADOPTION.md` §1 y §1.3).
+- `dev` = `12.0.1` (`protocol/.agents/VERSION`), versión **en curso sin publicar**
+  asignada por el plan 156 (RFC-82, PATCH documental del payload) conforme al
+  «modelo por plan» de §3. `master` sigue en `12.0.0` hasta que una promoción
+  autorizada taggee `12.0.1`; por lo tanto `dev` contiene un cambio de payload
+  **no publicado**. `dev` y `master` compartían el commit `78ca512` hasta el
+  commit de contenido del plan 156. El `[Unreleased]` acumula los ítems de
+  gobernanza no asignados a una versión (planes docs-only 149–153 y 155, cerrados
+  sin release por RFC-69, más los ítems de gobernanza del plan 156 que no
+  pertenecen a su sección `12.0.1`); últimos planes ejecutados 124–156.
+- Tags anotados de la serie vigente: `11.6.0`, `11.6.1`, `11.6.2`, `11.7.0`,
+  `11.7.1` y `12.0.0`, cada uno sobre el commit de promoción correspondiente de
+  `master`. `11.7.0` (plan 150, RFC-80) publicó el Memory System reference
+  runtime; `11.7.1` (planes 151–153) fue una release de gobernanza.
+- `VERSION` = `PROTOCOL_VERSION` (`runtime/toolcalls/canonical.py`, el ancla
+  semántica del runtime) = `12.0.1` en `dev` y `12.0.0` en `master`.
 
 Notas:
 
@@ -332,7 +343,15 @@ Notas:
   anotados + regeneración de `dist`) se ejecutó en el Change del plan 146, que
   es el primer punto de reconciliación de este snapshot.
 - Mientras `dev` contenga planes sin publicar respecto de `master`/`dist`,
-  `check_dist_sync.py` se espera rojo en `dev` por diseño (ver §4.1).
+  `check_dist_sync.py` se espera rojo en `dev` por diseño (ver §4.1). **En este
+  snapshot `dev` contiene precisamente ese caso**: el PATCH `12.0.1` del plan 156
+  es un cambio de payload no publicado, de modo que `check_dist_sync.py` debe
+  esperarse rojo hasta que una promoción autorizada taggee `12.0.1` y CI
+  regenere `dist`. (El commit `78ca512` sí era idéntico en `dev` y `master`
+  —estado previo al plan 156—; ese estado ya no es el vigente.) Advertencia
+  operativa: la **ref local** `dist` puede quedar por detrás de `origin/dist`
+  (es una rama generada por CI, no un artefacto del working tree); para leer el
+  payload publicado hay que resolver `origin/dist`, no la ref local.
 - El job `check-protocol` de CI necesita **historia completa** del repositorio:
   los gates de lifecycle (C-2) resuelven tree ids declarados con `git rev-parse`
   y los dogfoods anclados leen commits históricos con `git log`. El workflow usa

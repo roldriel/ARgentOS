@@ -108,6 +108,11 @@ La Etapa B comienza a partir de los resultados de la Etapa A. No se define aquí
 una lista rígida de features a implementar: la Etapa A determina cuáles
 fronteras son realmente necesarias.
 
+La Etapa B **no** declara inexistente la autonomía ya implementada: nombra el
+cierre de las fronteras que esa capacidad todavía no cubre (ver
+`### Estado del que parte este roadmap`). No declara terminada ninguna capacidad
+futura ni convierte las fronteras candidatas en compromisos de implementación.
+
 **Objetivo.**
 
 > Cerrar las fronteras reales que impiden que ARgentOS pueda recibir un objetivo
@@ -211,17 +216,40 @@ posibles:
 
 - ARgentOS DEV ya posee un conjunto significativo de mecanismos de ejecución y
   governance.
-- El Protocol está publicado en `11.6.2`; DEV y Protocol son dominios
-  separados.
-- `dist` publica el payload del Protocol.
-- No existe actualmente una feature de Protocol pendiente de publicación
-  simplemente por estar en `dev`.
+- El Protocol está publicado en **`12.0.0`** (release del plan 154, RFC-81:
+  lifecycle de adopción y layout canónico `.argentos/`; MAJOR por
+  `docs/VERSIONING.md` §3). DEV y Protocol son dominios separados.
+- `dist` publica el payload del Protocol desde `master` (`78ca512`), con
+  `VERSION` = `12.0.0`.
+- `dev` lleva **una corrección de payload no publicada**: el PATCH **`12.0.1`**
+  (plan 156, RFC-82), que reconcilia prosa del payload con el layout canónico
+  `.argentos/` sin cambiar comportamiento. `dev` y `master` dejan de apuntar al
+  mismo commit por esa única razón; su promoción es un acto de release separado y
+  no autorizado.
+- No existe **ninguna otra** feature de Protocol pendiente de publicación
+  simplemente por estar en `dev`: el `[Unreleased]` del changelog acumula ítems
+  de gobernanza de planes docs-only (RFC-69), no payload sin publicar.
+- **ARgentOS Autonomy: qué existe hoy y qué pertenece a la Etapa B.** Existe una
+  capacidad de autonomía **implementada y testeada** en DEV —el host DEV
+  Autonomous Orchestrator (`runtime/orchestrator/`) con Supervised Autonomous
+  Execution (`--sae`) y su frontera de scope/autoridad, con sus suites—, y existe
+  además un **modelo de autoridad ya decidido** para su envelope
+  (`docs/adr/19-autonomy-envelope-authority.md`, `AE-1`…`AE-10`, planes 151–153).
+  Ambas cosas están **en el estado publicado del repositorio** (`master` y tag
+  `12.0.0`) y son **DEV-only**: no forman parte del payload que distribuye `dist`.
+  Lo que **no** está hecho, y es lo que la Etapa B agrupa, es la **implementación
+  del envelope** —gate de efectos, clases de efecto, presupuesto de recurso, actor
+  con provider/modelo, aislamiento, integración de Memory y superficie de
+  derivación— junto con el resto de fronteras candidatas, que siguen declaradas
+  como candidatas y no como compromisos:
+  `docs/adr/19-autonomy-envelope-authority.md:Estado de implementación`.
 - El siguiente objetivo estratégico **no** es resolver una supuesta divergencia
   de publicación.
-- El estado histórico sobre el que se construye este roadmap —Planes 146, 147 y
-  148, Change Lifecycle MVP, SAE MVP, Prompt Cache MVP, Jury Trial MVP,
-  Placement Contract, RFC-75, ADR-15 y ADR-16— no se reabre: es el punto de
-  partida, no trabajo pendiente.
+- El estado histórico sobre el que se construye este roadmap —Planes 146–154,
+  Change Lifecycle MVP, SAE MVP, Prompt Cache MVP, Jury Trial MVP, Placement
+  Contract, Memory System, cierre de autoridad del modelo de autonomía y
+  lifecycle de adopción, RFC-75, ADR-15, ADR-16, ADR-17, ADR-18 y ADR-19— no se
+  reabre: es el punto de partida, no trabajo pendiente.
 
 ## Trabajo activo / dogfood
 
@@ -233,6 +261,15 @@ La tabla está **sin trabajo activo**: ninguna etapa del roadmap estratégico es
 en ejecución. El **próximo trabajo declarado es la Etapa A — Capability &
 Guarantee Retrospective**; su ejecución es un Change propio que requiere su
 propia autorización, y este documento no la concede ni la sustituye.
+
+Trabajo **posterior a esta tabla** ya ejecutado y **cerrado**, que no pertenece al
+roadmap estratégico y por eso no se reabre aquí: el **lifecycle de adopción
+ARgentOS** (plan 154, RFC-81; ejecutado el 2026-10-11) —layout canónico
+`.argentos/`, `install`/`update`/`uninstall`/`doctor` y release MAJOR `12.0.0`—,
+que entró por necesidad identificada de adopción y no como Etapa C, y el
+**Memory System reference runtime** (plan 150, RFC-80; versión `11.7.0`). Su
+estado detallado vive en `docs/plans/INDEX.md` y en sus planes, que es donde este
+documento delega la trazabilidad.
 
 `EARS structural validator` (`B-2` derivado) **se ejecutó** (plan 137, 2026-09-21): el
 validador estructural del payload existía desde el plan 66/RFC-57 y lo que restaba era la

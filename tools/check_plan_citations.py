@@ -86,6 +86,8 @@ ROOT_DOCS = (
     "docs/AUDITORIA_DOCUMENTACION.md",
     "docs/AGENTS.md",
     "docs/CONVENTIONS.md",
+    "docs/behavior-patterns.md",
+    "docs/placement-contract.md",
     "runtime/README.md",
     "docs/source-layout.md",
 )

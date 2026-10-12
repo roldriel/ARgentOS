@@ -19,7 +19,7 @@ no su carpeta; la carpeta es una convención física (ver mapa folder → clase)
 | Naturaleza | Qué es | Ejemplos reales |
 |---|---|---|
 | **EntryPoint** | Visibilidad de un vistazo; vive en la raíz | `AGENTS.md`, `README.md`, `CHANGELOG.md`, `ROADMAP.md`, `LICENSE` |
-| **Policy** | Reglas vigentes del repo | `docs/AGENTS.md` (esta carta), `docs/CONVENTIONS.md`, `docs/VERSIONING.md`, `docs/ADOPTION.md`, `docs/MIGRATION.md`, `docs/source-layout.md` |
+| **Policy** | Reglas vigentes del repo | `docs/AGENTS.md` (esta carta), `docs/CONVENTIONS.md`, `docs/VERSIONING.md`, `docs/ADOPTION.md`, `docs/MIGRATION.md`, `docs/source-layout.md`, `docs/placement-contract.md`, `docs/behavior-patterns.md` (descriptivo: cómo trabaja el sistema) |
 | **Governance** | Artefactos con ciclo de status propio | RFC (modelo y propuesta de cambio), ADR (decisión), Plan (ejecución) |
 | **Inventory** | Registros vivos y verificables: canonical + mutable + verified | `docs/glossary/INDEX.md` (registro de terminología); `docs/plans/analisis-explicitud.md` (catálogo de gaps, Inventory-like) |
 | **Working** | Transitorios, pre-canónicos; nunca targets normativos; pueden ser provenance | Audit, Research, Proposal bajo `docs/working/` |
@@ -86,6 +86,7 @@ operacional; Incremento 1)`, no en esta carta.
 | `docs/architecture/` | **Historical** — snapshots de análisis preservados como provenance (declarados Inventory antes de que ambos archivos se congelaran; el banner de cada archivo prevalece) | `archived` |
 | `docs/working/` | Working (`audits/`, `research/`, `proposals/`) | active o `archived` por archivo |
 | `docs/glossary/` | Inventory / Terminology registry (DESCRIPTIVE; no normativo) | active |
+| `docs/*.md` (raíz de `docs/`) | **Policy** — namespace canónico de la familia Normative policy (`docs/placement-contract.md` §6): `AGENTS.md`, `CONVENTIONS.md`, `VERSIONING.md`, `ADOPTION.md`, `MIGRATION.md`, `source-layout.md`, `placement-contract.md`, `behavior-patterns.md` | active |
 | `docs/AUDITORIA_DOCUMENTACION.md` (raíz de `docs/`) | **Working / Audit** — excepción de raíz documentada; no es Policy pese a su ubicación | `archived` |
 
 La clase se deriva de esta carta; la carpeta es convención física, no fuente

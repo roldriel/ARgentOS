@@ -215,7 +215,7 @@ Canonicality status MUST NOT:
 
 **PC-24.** A STOP MUST be reported with: the artifact description; the dimensions resolved and the one that failed; the candidate rules or namespaces considered; the evidence for each; and the decision required.
 
-**PC-25.** This contract introduces **no new authority class, no lifecycle state and no state-machine state**. A STOP maps onto the existing vocabulary: a missing rule is a **GAP**, a contradictory rule is an **ANOMALY**, and a violated constraint escalates to **`REQUIRES_HUMAN`** (`.agents/policies/authority.md:Stop conditions (authority)`).
+**PC-25.** This contract introduces **no new authority class, no lifecycle state and no state-machine state**. A STOP maps onto the existing vocabulary: a missing rule is a **GAP**, a contradictory rule is an **ANOMALY**, and a violated constraint escalates to **`REQUIRES_HUMAN`** (`./.agents/policies/authority.md:Stop conditions (authority)`).
 
 ## 9. Exceptions
 

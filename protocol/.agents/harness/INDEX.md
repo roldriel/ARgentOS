@@ -13,7 +13,7 @@ for what is mechanical vs. judgment). It defines the criteria so that:
 4. The process remains auditable and reproducible through a self-reported
    review trail.
 
-The harness is implemented as a set of policies, each carrying a «Gate Checklist» in prose that the Orchestrator evaluates by judgment when the gate fires. There is no executable validation runner. Four pure-stdlib Python scripts survive: `hook_gate.py` (the CLI enforcement hook), `runner_state.py` (the only writer of `state.json`, via its CLI), `health_check.py` (the state-storage probe) and `gate_validator.py` (the structural validator for the `[gate]` subset). Recovery routing lives in each policy's §"Recovery Decision Table" and protocol health verification in `.agents/standards/runtime/PROTOCOL_HEALTH.md`.
+The harness is implemented as a set of policies, each carrying a «Gate Checklist» in prose that the Orchestrator evaluates by judgment when the gate fires. There is no executable validation runner. Eight pure-stdlib Python modules ship: the four that enforce and validate during a session — `hook_gate.py` (the CLI enforcement hook), `runner_state.py` (the only writer of `state.json`, via its CLI), `health_check.py` (the state-storage probe) and `gate_validator.py` (the structural validator for the `[gate]` subset) — plus the four that make the layout materializable: `roots.py` (the project-root contract shared by every entry point), `lifecycle.py` (the install/update/uninstall/doctor/recover CLI), `lifecycle_contract.py` (manifest schema, path safety, ownership classification and atomic writes) and `lifecycle_staging.py` (staging from a pinned git ref or a local copy). Recovery routing lives in each policy's §"Recovery Decision Table" and protocol health verification in `.agents/standards/runtime/PROTOCOL_HEALTH.md`.
 
 ## Enforcement model
 
@@ -42,15 +42,17 @@ review, and the third is development-side:
    (protocol invariants, plan citations/structure, taxonomy coherence, session
    artifacts, version state) mechanically verify the payload and the repository
    in the development workspace and CI. They are not part of the distributed
-   protocol (adopters get `.agents/` + `AGENTS.md` only) and never block an
-   adopting session.
+   protocol (the `dist` branch carries the payload under `.agents/` plus the
+   root `AGENTS.md` adapter, and nothing else from the development repository)
+   and never block an adopting session.
 
 **Distribution boundary — what ships and what does not.** The two sides are
 distinct and the distinction is intentional:
 
-- **Ships with the payload:** everything under `.agents/`, including the harness
-  scripts (`hook_gate.py`, `runner_state.py`, `health_check.py`,
-  `gate_validator.py`), the harness policies, this INDEX, and **the harness
+- **Ships with the payload:** everything under `.agents/`, including the eight
+  stdlib harness modules (`hook_gate.py`, `runner_state.py`, `health_check.py`,
+  `gate_validator.py`, `roots.py`, `lifecycle.py`, `lifecycle_contract.py`,
+  `lifecycle_staging.py`), the harness policies, this INDEX, and **the harness
   regression tests at `.agents/harness/tests/`**. The tests exercise the shipped
   harness scripts — not development tooling — and are part of the harness
   deliverable; anything inside `.agents/` is distributed as it stands.
@@ -58,6 +60,17 @@ distinct and the distinction is intentional:
   above live in `tools/` in the development repository, are run by the canonical
   battery in the development workspace and CI, and are never handed to an
   adopter. `runtime/` and `tests/` are likewise DEV-only.
+
+**What a distribution carries vs. what an adopter materializes.** The `dist`
+branch transports the *payload*: `.agents/` and `AGENTS.md` at its root. The
+canonical adopted layout is not that tree — it is what the shipped lifecycle
+materializes around it: `<project-root>/.argentos/.agents/` (the payload),
+`<project-root>/.argentos/features.toml` (the single active configuration),
+`<project-root>/.argentos/.project/` (local state, including `install.json`) and
+`<project-root>/.argentos/.backup/` (lifecycle backups), with the non-normative
+`AGENTS.md` adapter at the project root pointing to
+`.argentos/.agents/INDEX.md`. The layout is produced and diagnosed by the shipped
+lifecycle (`lifecycle.py`: `install`, `update`, `uninstall`, `doctor`, `recover`).
 
 "Dev-only checkers" (point 3) and "harness tests" (inside `.agents/`) are
 therefore different categories: the checkers are development tooling, while the

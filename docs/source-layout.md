@@ -19,16 +19,34 @@ file fuente (`protocol/_AGENTS.md`) y las considera válidas.
 | `protocol/.agents/standards/conduct/OPERATIONAL_RULES.md` | `[AGENTS.md](../../../AGENTS.md)` | Resuelve a `protocol/AGENTS.md`, que no existe (es `_AGENTS.md`) | Desde `.agents/standards/conduct/` resuelve a la raíz del adoptante, donde `AGENTS.md` existe |
 | `protocol/.agents/standards/quality/PREFLIGHT_CHECKLIST.md` | `[AGENTS.md](../../../AGENTS.md)` | Ídem | Ídem |
 
-## Prosa que describe el layout adoptado (no tocar)
+## Prosa que describe el layout adoptado
 
 Estos textos describen el producto tal como se adopta (`dist`), no el layout
-fuente; en fuente, "AGENTS.md" es ambiguo (el de la raíz es el dev):
+fuente; en fuente, "AGENTS.md" es ambiguo (el de la raíz es el dev).
 
-- `protocol/.agents/INDEX.md` — "entry point is `AGENTS.md` at the project root".
-- `protocol/.agents/standards/runtime/PROTOCOL_BOUNDARIES.md` — "the only
-  protocol artifact that lives outside `.agents/` and `.project/` is
-  `AGENTS.md` at the project root".
-- `protocol/.agents/roles/profiles/tech_writer.md` — mención de `AGENTS.md`.
+**Estado tras la release `12.0.0` (reconciliado por RFC-82, plan 156).** La
+premisa de esta lista era que el layout adoptado tenía su entrada normativa en
+`AGENTS.md` en la raíz, porque `dist` publicaba `AGENTS.md` como entry. Con el
+layout canónico de RFC-81 esa premisa dejó de valer: el bootstrap normativo es
+`.argentos/.agents/INDEX.md` y el `AGENTS.md` de la raíz es un **adapter no
+normativo**. Las dos entradas que afirmaban lo contrario se **corrigieron en el
+payload** (autorización: RFC-82 `Accepted`); esta lista registra el estado
+vigente y ya no las protege.
+
+Lo que sigue siendo correcto y **no se toca**:
+
+- `protocol/.agents/roles/profiles/tech_writer.md` — mención de `AGENTS.md` sin
+  patología: no afirma cuál es la entrada normativa.
+- Los links rotos intencionales del inventario de arriba: siguen rotos a
+  propósito en fuente y correctos en `dist`.
+- Las citas históricas de `docs/plans/` (sección siguiente): son traza
+  (RFC-46) y no se reescriben.
+
+La **guarda** de la sección final sigue vigente sin cambios: los links de path al
+entry file permanecen restringidos a la allowlist de los dos archivos del
+inventario, las menciones en prosa (sin separador de path) están permitidas, y
+cualquier excepción futura debe documentarse acá, sumarse a la allowlist y
+cubrirse con test antes de mergear.
 
 ## Citas históricas de `docs/plans/`
 

@@ -11,7 +11,15 @@ Estado al 2026-09-21. El Plan 146 está `Executed` (Change de release: promoció
 `11.5.0`, `11.6.0` y `11.6.1` sobre el commit de promoción y `dist` regenerado por
 `publish-dist`; DEV-only sobre `CHANGELOG.md`, `docs/VERSIONING.md`, este INDEX y su propio
 artefacto, sin efecto en `protocol/.agents/`, por lo que RFC-56 no aplica; Change Level L2
-con impacto de release 2; Septuagésima séptima serie). El Plan 145 está `Executed` con condición derivada `Closed` (cierre
+con impacto de release 2; Septuagésima séptima serie). El Plan 156 está `Executed` con condición derivada `Closed` (reconciliación
+documental del payload con el layout canónico `.argentos/`, implementación de RFC-82 `Accepted`: bootstrap real
+`.argentos/.agents/INDEX.md` y adapter no normativo, frontera de artefactos bajo el layout canónico, enumeración de los
+ocho módulos stdlib distribuidos y distinción `dist` vs layout materializado; **PATCH** de payload, con promoción
+pendiente de autorización separada; **Octogésima quinta serie**, ejecutada). El Plan 155 está `Executed` con condición derivada `Closed` (refresh documental
+post-autonomía e integración de clientes: reconstrucción del estado real, auditoría de la documentación contra ese
+estado, reconciliación del drift de versión al release publicado `12.0.0`, y materialización de `docs/behavior-patterns.md`;
+DEV-only `docs/` + `README.md` + `CHANGELOG.md` + `ROADMAP.md`, sin release; **Octogésima cuarta serie**, ejecutada). El
+Plan 145 está `Executed` con condición derivada `Closed` (cierre
 integral del backlog accionable DEV `I-1`…`I-8`: aislamiento del pytest harness por sesión,
 frontera de observación que no confunde un recurso vital ilegible con uno ausente, semántica
 corregida de `recoveries` y derivación real de `findings_autonomously_corrected`, y la
@@ -1080,6 +1088,47 @@ sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
 | Plan | RFC | Status | Descripción | active |
 |---|---|---|---|---|
 | `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. | active |
+
+## Octogésima quinta serie: reconciliación documental del payload con el layout canónico (Plan 156, RFC-82) (11 oct 2026)
+
+Serie del Change que corrige la **prosa descriptiva** del payload que la release `12.0.0` (Plan 154, RFC-81) volvió
+inexacta. La auditoría del Plan 155 estableció, contra código y no contra documentación, cuatro inexactitudes: el
+bootstrap del payload declaraba `AGENTS.md` en la raíz cuando el bootstrap real es `.argentos/.agents/INDEX.md` y el
+`AGENTS.md` de la raíz es un adapter **no normativo**; la frontera de artefactos afirmaba que el único artefacto fuera de
+`.agents/` y `.project/` era `AGENTS.md`, cuando la configuración activa (`features.toml`), el estado local
+(`.project/`) y los backups (`.backup/`) viven fuera de `PAYLOAD_ROOT`; la superficie de dependencias declaraba «exactly
+four scripts» cuando el payload distribuye **ocho** módulos stdlib; y la frontera de distribución no distinguía lo que
+transporta `dist` (el payload `.agents/` + `AGENTS.md`) de lo que el adoptante **materializa**
+(`.argentos/{features.toml,.agents/,.project/,.backup/}` + adapter). El cambio es **Clase B** y **PATCH** por
+`docs/VERSIONING.md` §3: no cambia ningún contrato, gate, estado, transición ni skill, con 0 diff en
+`orchestrators/`, `contracts/`, `delegation/`, `roles/`, `skills/` y en los scripts del harness. Requiere RFC-56
+(efecto de payload): la autorización es RFC-82 `Accepted` más este Plan. `docs/source-layout.md` se actualiza porque su
+lista de «prosa que describe el layout adoptado (no tocar)» perdía su premisa; la guarda de links del entry file y las
+citas históricas se preservan. La promoción, el tag y la regeneración de `dist` quedan pendientes de autorización
+separada.
+
+| Plan | RFC | Status | Descripción | Vigencia |
+|---|---|---|---|---|
+| `156-payload-layout-documentation-reconciliation.md` | RFC-82 | Executed | **Reconciliación documental del payload con el layout canónico `.argentos/`.** Corrige, sin cambiar comportamiento, `protocol/.agents/INDEX.md` (bootstrap real `.argentos/.agents/INDEX.md`; el `AGENTS.md` de la raíz es adapter no normativo), `protocol/.agents/standards/runtime/PROTOCOL_BOUNDARIES.md` (qué vive dentro de `PAYLOAD_ROOT` y qué fuera: `features.toml`, `.project/`, `.backup/`, y en la raíz solo el adapter; inmutabilidad del payload intacta), `protocol/.agents/harness/INDEX.md` (enumeración de los **ocho** módulos stdlib — los cuatro históricos más `roots.py` y los tres del lifecycle — y distinción entre lo que transporta `dist` y lo que el adoptante materializa), `protocol/.agents/standards/runtime/PYTHON_DEPENDENCIES.md` («exactly four» → ocho, política de stdlib pura intacta) y `docs/source-layout.md` (retiro de la premisa falsa con autorización registrada; protección de links rotos intencionales y citas históricas preservada). Produce una versión **PATCH** del payload (`protocol/.agents/VERSION` `12.0.0` → `12.0.1`, con el ancla semántica del runtime sincronizada) e ítem `(plan 156, RFC-82)` en `CHANGELOG.md`; Clase B (RFC-56) con RFC-82 `Accepted` como autorización, Change Level L2. Batería canónica verde, pytest 1267 passed, gates sin `ANOMALY`; 0 diff de comportamiento. Validation Anchor (A1 delta `8e281f4a…`, state identity T1 `2497ae8c…`; revalidado por **A2** sobre el estado de cierre: delta `fe0315d3…` / tree `40ee9cc4…`, por el cambio de `CHANGELOG.md` en la ronda de cierre del Plan 155) y Checkpoint (consistencia PASS contra A2); condición derivada **`Closed`** con release pendiente de autorización separada. | active |
+
+## Octogésima cuarta serie: refresh documental post-autonomía e integración de clientes (Plan 155) (11 oct 2026)
+
+Serie del Change documental que audita la documentación de ARgentOS contra el estado real del sistema **después** de
+las features de autonomía (Planes 151–153, ADR-19) y de la integración/adopción de clientes (Plan 154, RFC-81, layout
+canónico `.argentos/` y lifecycle `install`/`update`/`uninstall`/`doctor`). El Plan reconstruye primero el estado real
+desde código, tests, configuración e historia Git; después audita la documentación existente contra ese estado
+(*gaps*, *drift*, obsolescencia y documentación conceptual faltante); y recién entonces materializa los cambios
+necesarios. Reconciliación principal: la versión publicada real es **`12.0.0`** (tag anotado sobre `78ca512`,
+`origin/dist` publicado con `VERSION` = `12.0.0`), mientras `docs/VERSIONING.md` §9 y `ROADMAP.md` declaraban
+`11.6.2` como estado vigente. Documento nuevo: `docs/behavior-patterns.md` (patrones de comportamiento observables —
+estados y condiciones derivadas, gate pattern, autonomy loop, orchestration, human-in-the-loop, failure/recovery,
+client interaction y lifecycle), resuelto por el Placement Contract §6 en la familia Normative policy (`docs/*.md`),
+sin crear familia ni namespace. Sin efecto en `protocol/`, `runtime/`, `tools/`, `tests/` ni `.agents/`; docs-only, sin
+`VERSION` bump ni tag (RFC-69). Change Level L2.
+
+| Plan | RFC | Status | Descripción | Vigencia |
+|---|---|---|---|---|
+| `155-documentation-refresh-behavior-patterns.md` | — (vía plan; RFC-56 no aplica) | Executed | **Refresh documental post-autonomía e integración de clientes.** Reconstruye el estado real y audita la documentación contra él antes de modificarla; clasifica los problemas en `CRITICAL`/`HIGH`/`MEDIUM`/`LOW` y produce el diagnóstico como primer entregable. Reconciliaciones materializadas: `README.md` (capacidades actuales, autonomía DEV real y adopción/lifecycle; dos afirmaciones inexactas corregidas), `CHANGELOG.md` (historia real; sin entradas inventadas), `ROADMAP.md` (el estado del que parte deja de declarar una versión publicada obsoleta), `docs/VERSIONING.md` §9 (snapshot current-state contra `git tag` + `protocol/.agents/VERSION` + `origin/dist`), `docs/AGENTS.md` (carta documental: clasificación del artefacto nuevo), `docs/placement-contract.md` (cita legacy corregida) y `tools/check_plan_citations.py` (el documento nuevo y `placement-contract.md` incorporados al conjunto verificado). Artefacto nuevo: `docs/behavior-patterns.md`, que documenta los patrones de comportamiento **observables** del sistema (estados y condiciones derivadas `Verified`/`Executed`/`Committed`/`Closed`/`Released`; *gate pattern* con su autoridad y qué ocurre al fallar; *autonomy loop* del host DEV con los veredictos `AUTHORIZED_EXISTING`/`REQUIRES_HUMAN`/`FORBIDDEN`; orquestación y responsabilidad por componente; human-in-the-loop y las decisiones reservadas al mantenedor; taxonomía de fallo `GAP`/`ANOMALY`/`BOUNDARY`/`FAIL`/`N/A`; interacción cliente ↔ protocolo ↔ runtime —con el hallazgo de que no existe un modelo de clientes—; y lifecycle del sistema), con diagramas Mermaid y ASCII, citando sus fuentes de verdad sin duplicarlas y sin documentar razonamiento privado. DEV-only: `docs/` + `README.md` + `CHANGELOG.md` + `ROADMAP.md`, sin `VERSION` bump ni tag. Finding propio `<PLAN-155>:F-1`/`F-2`/`F-3`/`F-4` con sus correcciones `<PLAN-155>:C-1`/`C-2`/`C-3`/`C-4`, y `<PLAN-155>:F-5` (`open`, deferred, owner mantenedor: la obligación de roadmap diferida por el Plan 151 —`ROADMAP_IMPACT = DEFERRED`— sigue abierta y no se resuelve en este Change). **Ronda de cierre posterior:** desambiguación de la autonomía en `ROADMAP.md` (qué existe hoy —capacidad implementada, publicada en el repositorio y DEV-only— y qué pertenece a la Etapa B), desambiguación en la entrada viva de `CHANGELOG.md` (conservando literal el ítem histórico del plan 153) y en `docs/behavior-patterns.md` §5.2 (tres clases de acción del vocabulario no alcanzables desde la derivación). Validation Anchor (A1 delta `4f80d772…` / tree `b865b8a4…`; revalidado por **A2** delta `bbbec57c…` / tree `46f6e76a…`; **A3** sobre el estado de cierre: delta `c02eb49c…` / tree `40ee9cc4…`, medido sobre las nueve rutas de contenido y reproducible desde el estado commiteado) y Checkpoint (consistencia PASS contra A3); condición derivada **`Closed`** (docs-only, sin release). | active |
 
 ## Octogésima tercera serie: lifecycle de adopción ARgentOS — implementación de RFC-81 (Plan 154) (11 oct 2026)
 

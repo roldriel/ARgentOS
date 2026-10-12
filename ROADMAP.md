@@ -56,6 +56,8 @@ no trabajo pendiente. El trabajo cerrado no se cataloga aquí — su traza vive 
   ([retrospectiva](docs/working/audits/ETAPA_A_RETROSPECTIVA_CAPACIDADES_Y_GARANTIAS.md), [plan 161](docs/plans/161-etapa-a-capability-and-guarantee-retrospective.md)):
   determina qué garantías están realmente demostradas y con qué evidencia, y puede **reducir** el alcance
   de la Etapa B. Es la compuerta de todo lo que sigue y **requiere su propio Change autorizado**.
+  **Instrumento decision-ready:** [plan 162](docs/plans/162-instrumento-decision-od1-alcance-f-c.md)
+  (opciones `R1`/`R2`/`R3`, consecuencias y registro exigido); la decisión pertenece al mantenedor.
 
 ### ⏳ LATER
 
@@ -93,7 +95,7 @@ documento: cada una es un Change con su propia autorización.
 | Bloqueo | Qué cambia | Detalle |
 |---|---|---|
 | Autorización de release de `12.0.1` | cuándo se publica NOW | acto del mantenedor |
-| `OD-1` sin resolver (qué es `F-C`) | alcance de `F-C` y de Etapa B | `docs/plans/161-etapa-a-capability-and-guarantee-retrospective.md` (`### Pending decisions`) |
+| `OD-1` sin resolver (qué es `F-C`) | alcance de `F-C` y de Etapa B | decisión pendiente (owner: mantenedor) en `docs/plans/161-etapa-a-capability-and-guarantee-retrospective.md` (`### Pending decisions`); instrumento decision-ready: `docs/plans/162-instrumento-decision-od1-alcance-f-c.md` |
 | ADR-worthiness del acto de autoridad de autonomía | cómo se registra la decisión | `docs/plans/152-authority-decisions-gov-1-10.md` |
 | Semántica de lifetime/persistence en el contrato Protocol | viabilidad (exige RFC `Accepted`) | `docs/plans/125-repository-architecture-decisions.md` |
 | Enforcement de placement y persistencia de Project/Knowledge | alcance de LATER | [placement-contract](docs/placement-contract.md) — §Enforcement deferred |

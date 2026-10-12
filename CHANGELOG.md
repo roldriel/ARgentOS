@@ -37,6 +37,26 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Added
 
+- **`OD-1` — instrumento de decisión del alcance canónico de `F-C`** (plan 162, vía plan; DEV-only,
+  docs-only sobre `docs/plans/`, `ROADMAP.md` y este changelog, sin efecto en `protocol/`, `runtime/`,
+  `tools/`, `tests/` ni `.agents/`, por lo que RFC-56 no aplica): aborda `OD-1` y **no lo resuelve**.
+  **Verificación de autoridad → `OD1_BLOCKED`.** La resolución de `OD-1` es una decisión de **alcance**
+  reservada al mantenedor (`.agents/policies/authority.md`: `DECISION` = «the human maintainer» y «a human
+  decision is required → STOP at the gate, ask»; `.agents/AGENTS.md` regla 3; frontera humana de SAE §8;
+  ADR-16 `AU-3`/`AU-5`/`AU-6`) y **no está presente en el repositorio**: todas las menciones vivas a `F-C`
+  son exclusiones de alcance o remisiones a una decisión futura, y `OD-1` persiste como pending decision
+  **bloqueante** con owner mantenedor en el Plan 161. El agente **no elige** entre `R1` (`F-C` = Etapa B
+  completa), `R2` (`F-C` = residuo del envelope) y `R3` (subconjunto de frontera de autonomía). **Material
+  decision-ready preparado:** lo que la evidencia de Etapa A **sí** determina (D-1…D-7), las tres
+  interpretaciones con su soporte documental y su tensión, lo que **no** determina, la pregunta desagregada
+  en `Q-a`…`Q-d` con sus consecuencias, las siete inferencias prohibidas (la madurez baja de una capacidad
+  **no** la vuelve parte de `F-C`), el registro exigido del acto (Plan vehículo con `## Acto de autoridad
+  registrado`, subsección **aditiva** en `docs/CONVENTIONS.md`, con ADR-worthiness resuelta) y los
+  criterios de cierre `AC-1`…`AC-12`. **No realizado:** definir `F-C`, crear un Plan de `F-C`/Etapa B,
+  modificar `docs/CONVENTIONS.md` o ADRs, o implementar cualquier capacidad. `F-C` = `NOT_IMPLEMENTED`,
+  Etapa B = `NOT_STARTED`, `OD-1` = `PENDING_AUTHORITY`. Sin `VERSION` bump ni tag; sin citas rotas nuevas
+  (el conteo de `check_plan_citations` se mantiene en **26**, el baseline).
+
 - **Autorización de Etapa A y creación del Plan 161** (plan 161, vía plan; DEV-only, docs-only sobre
   `docs/plans/`, `docs/working/audits/INDEX.md` (registro) y este changelog, sin efecto en `protocol/`,
   `runtime/`, `tools/`, `tests/` ni `.agents/`, por lo que RFC-56 no aplica): formaliza el acto de

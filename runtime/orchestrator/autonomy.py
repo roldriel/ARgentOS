@@ -81,6 +81,7 @@ from .contracts import (
     RECORD_FINDING_CORRECTION,
     RUN_REVALIDATION,
     STOP_ACTIONS,
+    STOP_MAX_ITERATIONS,
 )
 
 # --------------------------------------------------------------------------- #
@@ -180,6 +181,258 @@ STOP_CONDITIONS: tuple[str, ...] = (
     STOP_UNCLASSIFIABLE_ACTION,
     STOP_NO_AUTHORIZED_WORK,
 )
+
+# --------------------------------------------------------------------------- #
+# Effects — the axis orthogonal to Scope (plan 159; ADR-19 AE-2/AE-3/AE-4)
+# --------------------------------------------------------------------------- #
+
+#: The closed DEV vocabulary of effect classes, **adopted** by the authority act
+#: of 2026-10-11 (`OPD-1`) from the vocabulary the repository already materialized
+#: and verified for its Protocol session artifacts
+#: (``tools/check_session_artifacts.py``: ``EFFECT_KINDS``). There is deliberately
+#: **one** vocabulary: a second one would be a parallel taxonomy, and a plan
+#: declaring a class the runtime does not recognize stops instead of being
+#: interpreted.
+EFFECT_KINDS: tuple[str, ...] = (
+    "network",
+    "remote_git",
+    "install",
+    "destructive",
+    "write_outside_project",
+)
+
+#: Who may have authorized an effect. ``user`` is a human authorization;
+#: ``unattended_default`` is the default an executing environment declares for
+#: unattended operation. Neither is created by the host.
+EFFECT_AUTHORIZED_BY: tuple[str, ...] = ("user", "unattended_default")
+
+#: The status an effect declaration may carry, and the only one that admits it.
+EFFECT_STATUS_AUTHORIZED = "authorized"
+EFFECT_STATUS_NOT_AUTHORIZED = "not_authorized"
+EFFECT_STATUS_PENDING = "pending_user_confirmation"
+
+EFFECT_STATUSES: tuple[str, ...] = (
+    EFFECT_STATUS_AUTHORIZED,
+    EFFECT_STATUS_NOT_AUTHORIZED,
+    EFFECT_STATUS_PENDING,
+)
+
+#: Authorization-reference tokens that are recognized. Anything else is not an
+#: authorization reference, so an effect carrying it is **not** admitted and a
+#: human decides. The host never fills a missing reference in.
+EFFECT_REFERENCE_TOKENS: tuple[str, ...] = ("user", "plan", "adr", "rfc")
+
+#: Action classes that may produce an effect outside the immediate frontier.
+#: Only the delegated **semantic task** is one: it hands control to a worker that
+#: performs work of its own choosing, which is exactly where an out-of-frontier
+#: effect can appear. A validation, a gate run and a governance record execute the
+#: command-set the plan itself declares and write inside the authorized scope.
+EFFECT_BEARING_ACTION_CLASSES: frozenset[str] = frozenset({EXECUTE_AUTHORIZED_TASK})
+
+#: Statuses/cells that declare the **absence** of effects rather than an effect.
+_EFFECT_ABSENT_TOKENS: frozenset[str] = frozenset(
+    {"", "—", "-", "–", "n/a", "na", "none", "ninguno", "ninguna"}
+)
+
+
+class EffectAdmission:
+    """The verdict on the plan's declared effects (a namespace, not a state)."""
+
+    ADMITTED = "ADMITTED"
+    UNDECLARED = "UNDECLARED"
+    NOT_AUTHORIZED = "NOT_AUTHORIZED"
+    UNKNOWN_CLASS = "UNKNOWN_CLASS"
+    UNREADABLE = "UNREADABLE"
+
+    ALL: tuple[str, ...] = (
+        ADMITTED,
+        UNDECLARED,
+        NOT_AUTHORIZED,
+        UNKNOWN_CLASS,
+        UNREADABLE,
+    )
+
+
+@dataclass(frozen=True)
+class DeclaredEffectView:
+    """One declared effect, as the frontier reads it.
+
+    Structurally identical to the observation's own record; declared here so this
+    module stays independent of the observation module's evolution (the same rule
+    the envelope already follows).
+    """
+
+    effect_class: str
+    produced: str = ""
+    authorization_reference: str = ""
+    status: str = ""
+    unreadable: bool = False
+
+    @property
+    def negative(self) -> bool:
+        return self.effect_class.strip().casefold() in _EFFECT_ABSENT_TOKENS
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "effect_class": self.effect_class,
+            "produced": self.produced,
+            "authorization_reference": self.authorization_reference,
+            "status": self.status,
+            "unreadable": self.unreadable,
+            "negative": self.negative,
+        }
+
+
+@dataclass(frozen=True)
+class EffectVerdict:
+    """The result of admitting the declared effects of one action."""
+
+    admitted: bool
+    admission: str
+    reason: str
+    effect_class: str | None = None
+    authority: str = ""
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "admitted": self.admitted,
+            "admission": self.admission,
+            "reason": self.reason,
+            "effect_class": self.effect_class,
+            "authority": self.authority,
+        }
+
+
+def _effect_classes(
+    effects: Sequence[DeclaredEffectView],
+) -> frozenset[str]:
+    """The recognized classes among the declared effects (negative rows excluded)."""
+    return frozenset(
+        effect.effect_class.strip().casefold()
+        for effect in effects
+        if not effect.negative and not effect.unreadable
+    )
+
+
+def declared_effect_classes(envelope: AutonomyEnvelope) -> frozenset[str]:
+    """The classes the plan declares, normalized. Empty when it declares none."""
+    return _effect_classes(envelope.declared_effects)
+
+
+def _effect_reference_resolves(reference: str) -> bool:
+    """Whether the declaration names an authorization that can be located.
+
+    Deliberately a *shape* check, not a lookup: the frontier is a pure function
+    and resolves no artifacts. It refuses a reference that names nothing, which is
+    the case the rule exists for — an effect whose authorization cannot be pointed
+    at is not authorized. The reference itself stays in the record so a human can
+    resolve it.
+    """
+    normalized = reference.strip().strip("`*_ ").casefold()
+    if normalized in _EFFECT_ABSENT_TOKENS:
+        return False
+    return any(token in normalized for token in EFFECT_REFERENCE_TOKENS)
+
+
+def admit_declared_effects(
+    envelope: AutonomyEnvelope,
+    effects: Sequence[DeclaredEffectView],
+) -> EffectVerdict:
+    """Admit the declared effects — all or nothing, and never by inference.
+
+    The four outcomes, each of which is a stop except the first:
+
+    - **admitted**: every declared effect carries a recognized class, an
+      authorizing status and a reference that resolves;
+    - **undeclared**: the plan declares no effects at all, so no effect may be
+      produced — absence of a declaration is never an authorization;
+    - **not authorized**: a declared effect is `not_authorized` or awaiting user
+      confirmation, or its reference cannot be resolved;
+    - **unknown class**: a class outside the adopted vocabulary, or an entry whose
+      declaration could not be read. Neither is interpreted, and a human decides.
+
+    Effects are admitted **independently of paths**: a declared effect need not
+    name a write target, and this function never consults the scope. That is the
+    operative reading of "``Effect`` is orthogonal to ``Scope``" (ADR-19 `AE-3`).
+    """
+    declared = tuple(effects)
+    if not declared:
+        return EffectVerdict(
+            admitted=False,
+            admission=EffectAdmission.UNDECLARED,
+            reason=(
+                "the plan declares no effect (`## Efectos declarados` is absent or "
+                "declares none), so no effect is authorized: an absent declaration "
+                "is never an authorization"
+            ),
+            authority="a human decision: authorizing an effect is the maintainer's",
+        )
+    for effect in declared:
+        name = effect.effect_class.strip()
+        if effect.unreadable:
+            return EffectVerdict(
+                admitted=False,
+                admission=EffectAdmission.UNREADABLE,
+                reason=(
+                    "an entry of `## Efectos declarados` carries no readable "
+                    "declaration: whether an effect is authorized cannot be "
+                    "established, so the host stops instead of assuming it"
+                ),
+                effect_class=name,
+                authority="a human decision: the declaration must be completed",
+            )
+        normalized = name.casefold()
+        if normalized not in EFFECT_KINDS:
+            return EffectVerdict(
+                admitted=False,
+                admission=EffectAdmission.UNKNOWN_CLASS,
+                reason=(
+                    f"effect class `{name}` is not in the adopted DEV vocabulary "
+                    f"({', '.join(EFFECT_KINDS)}): an unknown class is never read "
+                    "as authorized, and inventing one is not available to the host"
+                ),
+                effect_class=name,
+                authority="a human decision: only the maintainer may adopt a class",
+            )
+        status = effect.status.strip().casefold()
+        if status != EFFECT_STATUS_AUTHORIZED:
+            return EffectVerdict(
+                admitted=False,
+                admission=EffectAdmission.NOT_AUTHORIZED,
+                reason=(
+                    f"declared effect `{name}` carries status `{effect.status}`: "
+                    "only `authorized` admits an effect, and neither "
+                    "`not_authorized` nor `pending_user_confirmation` is a "
+                    "continuation"
+                ),
+                effect_class=name,
+                authority="the human whose authorization the effect awaits",
+            )
+        if not _effect_reference_resolves(effect.authorization_reference):
+            return EffectVerdict(
+                admitted=False,
+                admission=EffectAdmission.NOT_AUTHORIZED,
+                reason=(
+                    f"declared effect `{name}` names no resolvable authorization "
+                    f"reference (read: "
+                    f"`{effect.authorization_reference or 'empty'}`): an effect "
+                    "whose authorization cannot be pointed at is not authorized"
+                ),
+                effect_class=name,
+                authority="a human decision: the plan must cite who authorized it",
+            )
+    return EffectVerdict(
+        admitted=True,
+        admission=EffectAdmission.ADMITTED,
+        reason=(
+            f"all {len(declared)} declared effect(s) are inside the adopted "
+            "vocabulary, authorized and cited"
+        ),
+        authority=(
+            envelope.authority_basis
+            or "the approved plan's own declaration of the authorized work"
+        ),
+    )
 
 #: Action class -> the stop condition it produces, and the authority it names.
 _ESCALATION_STOP: Mapping[str, str] = {
@@ -307,6 +560,14 @@ class AutonomyEnvelope:
     #: status) and they are **not** part of the authorization projection, because
     #: recording the execution is not the execution being authorized.
     governance_paths: tuple[str, ...] = ()
+    #: The effects the plan declares it may produce outside the immediate
+    #: frontier (plan 159). They are read from the plan's own declaration surface
+    #: (``## Efectos declarados``) and are deliberately **not** part of
+    #: :attr:`declared`: whether autonomy exists at all is decided by task and
+    #: scope, while a declared effect is an additional admission each effect
+    #: proceeds under. An effect can exist without a path, and a path without an
+    #: effect (ADR-19 `AE-3`).
+    declared_effects: tuple[DeclaredEffectView, ...] = ()
 
     @property
     def declared(self) -> bool:
@@ -331,6 +592,7 @@ class AutonomyEnvelope:
             "authorizing_status": self.authorizing_status,
             "plan_path": self.plan_path,
             "declared": self.declared,
+            "declared_effects": [effect.to_dict() for effect in self.declared_effects],
         }
 
 
@@ -481,6 +743,7 @@ def verify_write_targets(
 PROJECTION_HEADER = "authorization-v1"
 CONTRACT_HEADER = "authorization-contract-v1"
 SCOPE_HEADER = "authorization-scope-v1"
+EFFECTS_HEADER = "authorization-effects-v1"
 
 
 def _canonical_text(text: str) -> str:
@@ -549,6 +812,7 @@ def authorization_projection(envelope: AutonomyEnvelope) -> str:
         if path == plan_rel:
             continue
         lines.append(f"scope: {path}")
+    lines.extend(_effect_projection_lines(envelope))
     return "\n".join(lines) + "\n"
 
 
@@ -586,6 +850,50 @@ def authorization_scope_projection(envelope: AutonomyEnvelope) -> str:
             continue
         lines.append(f"scope: {path}")
     return "\n".join(lines) + "\n"
+
+
+def _effect_projection_lines(envelope: AutonomyEnvelope) -> list[str]:
+    """The declared effects as projection lines, order-independent and verbatim.
+
+    The declaration is part of what authorizes the execution, so rewriting it
+    after an action was authorized is a divergence like any other — it is
+    deliberately **not** filtered by the scope bound (an effect needs no path).
+    Negative rows are excluded: a declaration of absence authorizes nothing and
+    its wording is not part of the contract.
+    """
+    lines: list[str] = []
+    for effect in sorted(
+        (item for item in envelope.declared_effects if not item.negative),
+        key=lambda item: (
+            item.effect_class.casefold(),
+            _canonical_text(item.produced),
+            _canonical_text(item.authorization_reference),
+        ),
+    ):
+        lines.append(
+            "effect: "
+            + " | ".join(
+                (
+                    _canonical_text(effect.effect_class),
+                    _canonical_text(effect.produced),
+                    _canonical_text(effect.authorization_reference),
+                    _canonical_text(effect.status),
+                )
+            )
+        )
+    if not lines:
+        return []
+    return [EFFECTS_HEADER] + lines
+
+
+def authorization_effects_projection(envelope: AutonomyEnvelope) -> str:
+    """The declared effects, as their own projection (order-independent, exact)."""
+    lines = [
+        line
+        for line in _effect_projection_lines(envelope)
+        if line != EFFECTS_HEADER
+    ]
+    return "\n".join([EFFECTS_HEADER, f"plan: {envelope.plan}"] + lines) + "\n"
 
 
 def authorization_projection_digest(envelope: AutonomyEnvelope) -> str:
@@ -693,6 +1001,17 @@ class AutonomyCandidate:
     #: with the plan's observed scope; naming them is what turns a refusal into
     #: an escalation a human can act on.
     declared_outside_scope: tuple[str, ...] = ()
+    #: The effects this action may produce, when it is an effect-bearing class
+    #: (plan 159). They are read from the plan's ``## Efectos declarados`` — the
+    #: surface where the authorization lives (ADR-19 `AE-4`) — and they are the
+    #: complete set: one unadmitted effect stops the whole action. Empty for a
+    #: class that produces none.
+    effects: tuple[DeclaredEffectView, ...] = ()
+    #: Whether the action's effect set could be established at all. A declared
+    #: effect whose row could not be read is already carried as ``unreadable``;
+    #: this flag covers the case where the set itself could not be resolved, and
+    #: it stops for the same reason an unresolved write set does.
+    effects_unresolved: bool = False
 
     def effective_targets(self) -> tuple[str, ...]:
         """The complete declared write set: ``write_targets`` or the singular path."""
@@ -713,6 +1032,8 @@ class AutonomyCandidate:
             "write_targets": list(self.write_targets),
             "targets_unresolved": self.targets_unresolved,
             "declared_outside_scope": list(self.declared_outside_scope),
+            "effects": [effect.to_dict() for effect in self.effects],
+            "effects_unresolved": self.effects_unresolved,
         }
 
 
@@ -727,6 +1048,11 @@ class AutonomyOutcome:
     authority: str
     reason: str
     scope_reason: str
+    #: Why the declared effects were admitted or refused (plan 159). Reported
+    #: alongside ``scope_reason`` — and never merged with it — so the escalation
+    #: names the exact axis that refused the action.
+    effect_reason: str = ""
+    effect_admission: str = ""
 
     @property
     def is_autonomous(self) -> bool:
@@ -741,6 +1067,8 @@ class AutonomyOutcome:
             "authority": self.authority,
             "reason": self.reason,
             "scope_reason": self.scope_reason,
+            "effect_reason": self.effect_reason,
+            "effect_admission": self.effect_admission,
         }
 
 
@@ -782,6 +1110,14 @@ class AutonomyResult:
     #: never a second source of authority.
     pinned_projection: str | None = None
     authorization_drift: bool = False
+    #: The operational limit reached, when the loop stopped because the declared
+    #: resource ceiling was exhausted (plan 159). ``None`` means "the resource
+    #: axis did not decide this verdict". Reported separately from ``authority``
+    #: on purpose: reaching an operational limit is **not** an authority decision
+    #: and never produces one (ADR-19 `AE-6`, decision `D-3`).
+    resource_stop: str | None = None
+    resource_ceiling: int | None = None
+    resource_consumed: int = 0
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -794,10 +1130,18 @@ class AutonomyResult:
             "outcomes": [outcome.to_dict() for outcome in self.outcomes],
             "pinned_projection": self.pinned_projection,
             "authorization_drift": self.authorization_drift,
+            "resource_stop": self.resource_stop,
+            "resource_ceiling": self.resource_ceiling,
+            "resource_consumed": self.resource_consumed,
             "write_targets": [
                 target
                 for outcome in self.outcomes
                 for target in outcome.candidate.effective_targets()
+            ],
+            "effects": [
+                effect.to_dict()
+                for outcome in self.outcomes
+                for effect in outcome.candidate.effects
             ],
         }
 
@@ -872,6 +1216,13 @@ def evaluate_candidate(
     # name every path it writes. A read-only class declares no write target —
     # demanding one would make the frontier unsatisfiable — but a write class
     # whose target set could not be resolved stops (plan 138 E1).
+    #
+    # The effect axis is evaluated on its own footing and independently of the
+    # scope axis (plan 159; ADR-19 `AE-3`): an effect needs no write target, so a
+    # class that produces effects is admitted on its **declared** effects. Both
+    # axes are computed before either verdict is returned, so the recorded outcome
+    # says what each axis decided — the refusal names the axis that refused, and
+    # the escalation is auditable without re-deriving anything.
     if candidate.action_class in WRITE_ACTION_CLASSES:
         if candidate.targets_unresolved:
             scope = unresolved_targets_verdict()
@@ -881,6 +1232,31 @@ def evaluate_candidate(
         scope = verify_action_scope(
             envelope, candidate.target_path, path_required=False
         )
+
+    if candidate.effects_unresolved:
+        effects = EffectVerdict(
+            admitted=False,
+            admission=EffectAdmission.UNREADABLE,
+            reason=(
+                "the action's effect set could not be established: whether it "
+                "stays inside the declared effects cannot be shown, so the host "
+                "stops instead of assuming the set is empty"
+            ),
+            authority="a human decision: the declaration must be completed",
+        )
+    elif not candidate.effects:
+        effects = EffectVerdict(
+            admitted=True,
+            admission=EffectAdmission.ADMITTED,
+            reason=(
+                "the action declares no effect outside the immediate frontier"
+                if candidate.action_class in EFFECT_BEARING_ACTION_CLASSES
+                else f"{candidate.action_class} is not an effect-bearing class"
+            ),
+        )
+    else:
+        effects = admit_declared_effects(envelope, candidate.effects)
+
     if not scope.in_scope:
         outside = candidate.declared_outside_scope
         detail = (
@@ -905,6 +1281,26 @@ def evaluate_candidate(
                 "evidence and does not widen the scope." + detail
             ),
             scope_reason=scope.reason,
+            effect_reason=effects.reason,
+            effect_admission=effects.admission,
+        )
+
+    if not effects.admitted:
+        return AutonomyOutcome(
+            candidate=candidate,
+            disposition=DISPOSITION_REQUIRES_AUTHORITY,
+            verdict="REQUIRES_HUMAN",
+            stop_condition=STOP_AUTHORITY_REQUIRED,
+            authority=effects.authority,
+            reason=(
+                f"{candidate.action_class} is an autonomous class and stays "
+                f"inside the authorized scope, but its effects are not admitted "
+                f"({effects.admission}): {effects.reason}. The host does not "
+                "widen the declared effects by inference"
+            ),
+            scope_reason=scope.reason,
+            effect_reason=effects.reason,
+            effect_admission=effects.admission,
         )
 
     return AutonomyOutcome(
@@ -917,11 +1313,13 @@ def evaluate_candidate(
             or "the approved plan's own declaration of the authorized work"
         ),
         reason=(
-            f"{candidate.action_class} stays inside the authorized scope and "
-            "the granted authority of the approved plan: no new authorization "
-            "is required"
+            f"{candidate.action_class} stays inside the authorized scope, the "
+            "declared effects and the granted authority of the approved plan: "
+            "no new authorization is required"
         ),
         scope_reason=scope.reason,
+        effect_reason=effects.reason,
+        effect_admission=effects.admission,
     )
 
 
@@ -930,6 +1328,9 @@ def evaluate_autonomy(
     candidates: Sequence[AutonomyCandidate],
     *,
     pinned_projection: str | None = None,
+    resource_ceiling: int | None = None,
+    resource_consumed: int = 0,
+    resource_required: bool = False,
 ) -> AutonomyResult:
     """Evaluate the candidates and decide continue / stop.
 
@@ -947,6 +1348,14 @@ def evaluate_autonomy(
     conducted. The check happens **before** any candidate is accepted, so a
     rewritten contract cannot buy itself a continuation. ``None`` means "not
     pinned yet" and is not a drift.
+
+    ``resource_ceiling``/``resource_consumed`` are the **operational** axis (plan
+    159). When they are provided and the declared ceiling has already been
+    consumed, the evaluation stops and reports it as
+    :attr:`AutonomyResult.resource_stop` — never as authority: a limit reached is
+    not a decision anybody made (ADR-19 `AE-6`). The axis is checked on the same
+    footing as the others, so an exhausted ceiling stops the run even when every
+    candidate would otherwise be authorized.
     """
     outcomes = tuple(evaluate_candidate(envelope, candidate) for candidate in candidates)
     pinned = pinned_projection if pinned_projection is not None else None
@@ -964,6 +1373,8 @@ def evaluate_autonomy(
             ),
             outcomes=outcomes,
             pinned_projection=pinned,
+            resource_ceiling=resource_ceiling,
+            resource_consumed=resource_consumed,
         )
 
     drifted, drift_reason = authorization_drift(pinned, envelope)
@@ -981,6 +1392,39 @@ def evaluate_autonomy(
             outcomes=outcomes,
             pinned_projection=pinned,
             authorization_drift=True,
+            resource_ceiling=resource_ceiling,
+            resource_consumed=resource_consumed,
+        )
+
+    # The operational axis, before any continuation is granted: an exhausted
+    # declared ceiling is not a reason to ask a human, and it is emphatically not
+    # an authorization. The loop ends because a declared limit was reached.
+    if (
+        resource_required
+        and resource_ceiling is not None
+        and resource_consumed >= resource_ceiling
+    ):
+        return AutonomyResult(
+            declared=True,
+            continues=False,
+            stop_condition=STOP_MAX_ITERATIONS,
+            authority=(
+                "none: the resource ceiling is an operational termination guard "
+                "declared by the plan, not a source of authority (ADR-19 AE-6, "
+                "decision D-3)"
+            ),
+            reason=(
+                f"the declared resource ceiling of {resource_ceiling} delegated "
+                f"execution(s) is exhausted ({resource_consumed} consumed, "
+                "accumulated from the delegations actually registered in the "
+                "journal): the loop stops because a declared operational limit "
+                "was reached, and no authority is produced by reaching it"
+            ),
+            outcomes=outcomes,
+            pinned_projection=pinned,
+            resource_stop=STOP_MAX_ITERATIONS,
+            resource_ceiling=resource_ceiling,
+            resource_consumed=resource_consumed,
         )
 
     # Precedence: an authorized candidate continues. This is what makes the
@@ -1000,12 +1444,15 @@ def evaluate_autonomy(
                 ),
                 reason=(
                     f"{sum(1 for item in outcomes if item.is_autonomous)} "
-                    "candidate(s) stay inside the authorized scope and the granted "
-                    "authority; deferred branches are preserved and do not block them"
+                    "candidate(s) stay inside the authorized scope, the declared "
+                    "effects and the granted authority; deferred branches are "
+                    "preserved and do not block them"
                 ),
                 selected=outcome.candidate,
                 outcomes=outcomes,
                 pinned_projection=pinned,
+                resource_ceiling=resource_ceiling,
+                resource_consumed=resource_consumed,
             )
 
     # No authorized candidate. If a frontier was reached, the escalation names
@@ -1021,6 +1468,8 @@ def evaluate_autonomy(
                 reason=outcome.reason,
                 outcomes=outcomes,
                 pinned_projection=pinned,
+                resource_ceiling=resource_ceiling,
+                resource_consumed=resource_consumed,
             )
 
     return AutonomyResult(
@@ -1035,6 +1484,8 @@ def evaluate_autonomy(
         ),
         outcomes=outcomes,
         pinned_projection=pinned,
+        resource_ceiling=resource_ceiling,
+        resource_consumed=resource_consumed,
     )
 
 
@@ -1506,6 +1957,18 @@ def envelope_from_observation(observation: Any, plan: int) -> AutonomyEnvelope:
     agent_task = getattr(observation, "agent_task", None)
     declaration_present = bool(getattr(agent_task, "section_present", False))
     scope = tuple(getattr(agent_task, "scope", ()) or ())
+    effects = tuple(
+        DeclaredEffectView(
+            effect_class=str(getattr(item, "effect_class", "") or ""),
+            produced=str(getattr(item, "produced", "") or ""),
+            authorization_reference=str(
+                getattr(item, "authorization_reference", "") or ""
+            ),
+            status=str(getattr(item, "status", "") or ""),
+            unreadable=bool(getattr(item, "unreadable", False)),
+        )
+        for item in (getattr(observation, "declared_effects", ()) or ())
+    )
     return AutonomyEnvelope(
         task=str(getattr(agent_task, "task", "") or ""),
         scope_paths=scope,
@@ -1520,4 +1983,5 @@ def envelope_from_observation(observation: Any, plan: int) -> AutonomyEnvelope:
         declaration_present=declaration_present,
         authorizing_status=str(getattr(observation, "status", "") or ""),
         plan_path=str(getattr(observation, "plan_path", "") or ""),
+        declared_effects=effects,
     )

@@ -37,6 +37,48 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Added
 
+- **Materialización del envelope de autonomía (`F-B`) — admisión de efectos y techo de recurso** (plan 159, vía plan;
+  DEV-only sobre `runtime/orchestrator/`, `tests/`, `.agents/policies/`, `docs/plans/_TEMPLATE.md`, `docs/adr/19`,
+  `docs/CONVENTIONS.md`, `docs/plans/INDEX.md` y este changelog, sin `VERSION` bump ni tag, RFC-69): el acto de
+  autoridad del 2026-10-11 cierra las dos cuestiones que el acto del Plan 151 (2026-10-07) había dejado expresamente
+  fuera y materializa los dos bloqueantes del relevamiento de cierre (`BLK-1` admisión de efectos fuera de frontera;
+  `BLK-2` terminación por recurso). **`OPD-1` — vocabulario DEV de clases de efecto: adoptado.** Las clases son
+  `network`, `remote_git`, `install`, `destructive`, `write_outside_project`, con `AUTHORIZED_BY` ∈ {`user`,
+  `unattended_default`} y `EFFECT_STATUS` ∈ {`authorized`, `not_authorized`, `pending_user_confirmation`}: es
+  **un solo vocabulario**, el que el repositorio ya había materializado y verificado para sus artefactos de sesión del
+  Protocol (`tools/check_session_artifacts.py`), verificado por dogfood anclado contra el runtime. No se crea taxonomía
+  paralela. **`OPD-2` — techo de recurso: guarda operativa de terminación.** El Plan declara `**Resource ceiling:**`
+  en `## Delegación agentiva`; el runtime lo lee, acumula el consumo desde las **delegaciones efectivamente
+  registradas** en el journal (nunca desde la numeración de iteraciones), sobrevive un reinicio de proceso porque el
+  host no tiene estado, y al agotarse detiene la autonomía con `STOP_MAX_ITERATIONS`. **`resource ceiling ≠
+  authorization`**: el techo no entra en `AutonomyEnvelope.declared`, no produce veredicto `AUTHORIZED_EXISTING` y no
+  amplía autoridad — `AE-6` y `D-3` se preservan sin excepción, y `PR-2` del audit de capacidades queda resuelto como
+  frontera de **terminación**, no como eje de **autorización**. **Implementación:** `observation.py` (parser de
+  `## Efectos declarados` con `DeclaredEffect`, lectura de `**Resource ceiling:**`, `declared_effects_unresolved` y
+  `GAP` declarado para un techo ilegible), `autonomy.py` (`EFFECT_KINDS`/`EFFECT_AUTHORIZED_BY`/`EFFECT_STATUSES`,
+  `DeclaredEffectView`, `EffectAdmission`, `admit_declared_effects`, `declared_effects` en el envelope, `effects` y
+  `effects_unresolved` en el candidato, ejes de scope y de efecto evaluados y **reportados por separado** —un efecto
+  sin `write-target` es admisible, que es la lectura operativa de `AE-3`—, proyección `authorization-effects-v1`
+  dentro del checkpoint de autorización, y `resource_stop`/`resource_ceiling`/`resource_consumed` en el resultado sin
+  veredicto de autoridad), `host.py` (`_apply_autonomy_gate` extendido a los efectos **antes** de delegar,
+  all-or-nothing; `_autonomy_effects`; `_resource_consumed` derivado de las delegaciones del journal;
+  `_effects_executed_violations` para el efecto ejecutado que el Plan no declaró, registrado como finding y con
+  `STOP_FORBIDDEN_ACTION`; `STOP_MAX_ITERATIONS` mapeado como stop **operativo** y no de autoridad) y
+  `worker.py`/`agent_worker.py` (`effect:<clase>` calificado en `effects_executed` y `classify_executed_effects`, de
+  modo que una narrativa nunca se lea como una clase de efecto). **Pruebas:** `tests/test_autonomy_effects.py` (36
+  falsaciones: casos A–E del gate —declarado+autorizado, no declarado, declarado sin autorización, clase desconocida,
+  efecto sin path—, la contra-prueba de que sin el gate el invoker **sí** escribe y con el gate el artefacto queda
+  byte-idéntico, el techo de recurso con consumo acumulado y supervivencia a reinicio, la falsación explícita
+  `resource exhausted → STOP → NEVER AUTHORIZED`, y la consistencia `declared_effects` ↔ `effects_executed`) y
+  `tests/test_autonomy_effects_dogfood.py` (13 pruebas ancladas: policy ↔ enforcement, un solo vocabulario, la frontera
+  fuera del envelope de autonomía y el Plan 159 leyéndose con su propio parser). **Reconciliación normativa:**
+  `docs/adr/19-autonomy-envelope-authority.md` (Amendment Log 2026-10-11 y estado de implementación por invariante,
+  **sin reescribir** el acto del 2026-10-07), `docs/CONVENTIONS.md` (subsección aditiva «vocabulario de efectos y techo
+  de recurso»), `docs/plans/_TEMPLATE.md`, `.agents/policies/supervised-autonomous-execution.md` (§1.5 admisión de
+  efectos, §3.1 techo de recurso, §2/§5/§10/§12), `tests/AGENTS.md` (registro del módulo anclado) y la
+  `Octogésima octava serie` del INDEX. **Fuera de alcance por decisión:** `--sae` sigue `opt-in` (`OPD-3`), y no se
+  implementan provider/modelo, aislamiento/sandbox, Memory, concurrencia, telemetría, retry ni `F-C`/Etapa B.
+
 - **Simplificación radical del ROADMAP** (plan 158, vía plan; DEV-only, docs-only sobre `ROADMAP.md` (reducido),
   `docs/plans/158-radical-simplification-roadmap.md`, `docs/plans/INDEX.md` y este changelog, sin efecto en
   `protocol/`, `runtime/`, `tools/`, `tests/`, `.agents/` ni `docs/CONVENTIONS.md`, por lo que RFC-56 no aplica):

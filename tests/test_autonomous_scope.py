@@ -805,6 +805,12 @@ Synthetic change driven by the SAE suite.
 - **Task:** implement the synthetic authorized work.
 - **Scope:** `src/a.txt`
 
+## Efectos declarados
+
+| Efecto | Qué produce | Autorización (referencia) | Estado |
+|---|---|---|---|
+| — | ninguno: la tarea autorizada escribe solo dentro del scope declarado. | — | `authorized` |
+
 ## Criterios de salida
 
 - [ ] synthetic

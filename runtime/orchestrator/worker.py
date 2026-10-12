@@ -58,6 +58,82 @@ _LIFECYCLE_GATE_LABELS = {
 _SIGNAL_TEXT = "|".join(re.escape(signal) for signal in SIGNALS)
 
 
+#: Vocabulary-qualified effect entries (plan 159). A worker publishes the effects
+#: it really executed with the ``effect:<class>`` prefix, naming a class of the
+#: adopted DEV vocabulary. Free-form descriptions stay free-form: the host reads
+#: only the qualified entries as effect classes, so a narrative cannot be mistaken
+#: for an authorization and a real effect cannot hide behind a description.
+EFFECT_ENTRY_PREFIX = "effect:"
+
+#: Argument patterns that establish an out-of-frontier effect from what a command
+#: really invoked. Deliberately narrow and auditable: the worker reports an effect
+#: only when the argv itself shows it, never by inferring intent. Anchored on the
+#: executable or on an unambiguous subcommand, so an ordinary Python command-set
+#: (the shape this repository really runs) produces no effect entry at all.
+_EXECUTABLE_ALTERNATION = "curl|wget|pip|pip3|npm|pnpm|yarn|uv|apt|apt-get|brew"
+
+_EFFECT_ARG_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
+    (
+        "network",
+        re.compile(rf"(?i)(^|[/\\]|\s)({_EXECUTABLE_ALTERNATION})(\.exe)?(\s|$)"),
+    ),
+    (
+        "remote_git",
+        re.compile(r"(?i)(^|\s)git(\s+-{1,2}[\w-]+)*\s+(remote|push|fetch|pull|clone)(\s|$)"),
+    ),
+    (
+        "install",
+        re.compile(r"(?i)(^|[/\\]|\s)(install|pip\s+install|npm\s+i|apt(-get)?)\b"),
+    ),
+    (
+        "destructive",
+        re.compile(r"(?i)(^|[/\\]|\s)(rm|rmdir|truncate)(\.exe)?(\s|$)"),
+    ),
+)
+
+
+def effect_entries(*effect_classes: str) -> tuple[str, ...]:
+    """Qualified ``effect:<class>`` entries, deduplicated and sorted."""
+    return tuple(
+        sorted(
+            {
+                f"{EFFECT_ENTRY_PREFIX}{name}"
+                for name in effect_classes
+                if name
+            }
+        )
+    )
+
+
+def classify_executed_effects(
+    *,
+    commands: Sequence[Sequence[str]] = (),
+    items: Sequence[str] = (),
+) -> tuple[str, ...]:
+    """The effect classes a delegated execution can establish from its evidence.
+
+    Derived from the argv the worker really ran and from entries the worker really
+    reports — never from an interpretation of intent. A command that shows no
+    effect pattern produces no entry, which is the honest reading: the repository
+    ships no provider and no model, so most executions produce effects confined to
+    the project and the vocabulary does not describe those.
+    """
+    found: set[str] = set()
+    for argv in commands:
+        joined = " ".join(str(token) for token in argv)
+        for name, pattern in _EFFECT_ARG_PATTERNS:
+            if pattern.search(joined):
+                found.add(name)
+    for item in items:
+        text = str(item)
+        if not text.casefold().startswith(EFFECT_ENTRY_PREFIX):
+            continue
+        name = text.split(":", 1)[1].strip().split(" ", 1)[0].strip()
+        if name:
+            found.add(name)
+    return effect_entries(*sorted(found))
+
+
 class WorkerError(RuntimeError):
     """The worker could not produce a result at all (fail-closed)."""
 
@@ -489,6 +565,16 @@ class CommandWorker:
 
         after = repository_paths(root)
         modified = sorted(after - before)
+        # The effects this execution can establish from its own evidence (plan
+        # 159): the argv it really ran. Nothing is inferred from a narrative —
+        # `effects_executed` is only read as effect classes when an entry is
+        # qualified with `effect:<class>`, and the class must come from the adopted
+        # vocabulary. A `write_outside_project` effect is deliberately **not**
+        # claimed here: the snapshot this worker takes is of the project itself, so
+        # a write outside it is not something this evidence can establish.
+        executed_effects = classify_executed_effects(
+            commands=[command["argv"] for command in commands],
+        )
 
         result = WorkerResult(
             result_id=f"{delegation.delegation_id}-result",
@@ -526,6 +612,7 @@ class CommandWorker:
                     f"wrote {len(commands) * 2} capture file(s) under {run_id}/",
                     f"persisted worker result for delegation {delegation.delegation_id}",
                 ]
+                + list(executed_effects)
                 + [f"artifact modified: {path}" for path in modified]
             ),
             claims={

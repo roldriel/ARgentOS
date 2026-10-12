@@ -176,6 +176,53 @@ continuation requires an action outside the authorized Scope
   and authorized, the boundary above is the whole of the mechanism — and it is
   sufficient for the host to stop correctly.
 
+### 1.5 Effect admission (plan 159; ADR-19 `AE-2`, `AE-3`, `AE-4`)
+
+An **effect** is a class of action whose consequence reaches outside the immediate
+frontier — a network call, a remote git operation, an installation, a destructive
+operation, a write outside the project. It is not a path: `Effect` is orthogonal to
+`Scope` (ADR-19 `AE-3`), an effect may have no write target at all, and **one axis
+never substitutes for the other**.
+
+The plan declares its effects in `## Efectos declarados` — the surface where the
+authorization lives (ADR-19 `AE-4`). Before delegating, the host admits **every**
+declared effect, all-or-nothing:
+
+```text
+admitted(effect)  =  class ∈ adopted vocabulary
+                     AND status = authorized
+                     AND the authorization reference resolves
+```
+
+The adopted DEV vocabulary is **one** vocabulary — the one this repository already
+materialized for its Protocol session artifacts
+(`tools/check_session_artifacts.py`): `network`, `remote_git`, `install`,
+`destructive`, `write_outside_project`, with `AUTHORIZED_BY` ∈ {`user`,
+`unattended_default`} and status ∈ {`authorized`, `not_authorized`,
+`pending_user_confirmation`}.
+
+Rules that bind:
+
+- **An unrecognized or undeterminable class is never read as authorized.** It
+  produces `STOP` + `REQUIRES_HUMAN`, reported as `STOP_AUTHORITY_REQUIRED`: only
+  the maintainer may adopt a class, and the host does not invent one.
+- **`not_authorized` and `pending_user_confirmation` are not continuations.** The
+  effect awaits the human whose authorization it is.
+- **An effect with no resolvable authorization reference is not authorized.** The
+  host does not fill the reference in.
+- **A declared effect without a path is admissible**, and the admission never
+  consults the scope: requiring a path would make the effect axis unsatisfiable,
+  which is the defect the orthogonality rule exists to prevent.
+- **A plan with no `## Efectos declarados` container has declared nothing about
+  effects.** An action that may produce one stops: silence is a declaration gap, not
+  an authorization. A plan that carries the container with a single negative row has
+  declared the **absence** of effects, which authorizes none either.
+- **An effect the worker executes without it being declared and authorized is a
+  violation**: it is detected from the persisted Worker Result (never from a claim),
+  recorded as a finding, and stops the loop. Detection, not prevention — inside the
+  invocation the host cannot interpose, and it never reports the second as the
+  first.
+
 ## 2. The two gates, in order
 
 1. **The plan authorizes the work.** Existing mechanism: a plan
@@ -187,7 +234,9 @@ continuation requires an action outside the authorized Scope
    ```text
    action ∈ authorized scope          (over the complete write-target set, §1.3)
    AND action ∈ granted authority
+   AND every declared effect is admitted (§1.5)
    AND the authorization checkpoint is unchanged (§1.2)
+   AND the declared resource ceiling is not exhausted (§3.1)
    AND action ∉ stop conditions (§5)
    ```
 
@@ -205,8 +254,15 @@ is not a new declaration surface, not a registry and not a second source of trut
 |---|---|
 | authorized task | the plan's `## Delegación agentiva` → `Task` |
 | authorized scope | the same section → `Scope` (paths), or the declared deliverables when the scope is not explicit |
+| declared effects | the plan's `## Efectos declarados` (an axis **orthogonal** to the scope: an effect may have no path) |
 | authority basis | the plan's execution status + the plan's own declaration |
 | stop conditions | §5 of this policy (fixed vocabulary) |
+
+**The resource ceiling is not an envelope field.** The plan may declare one in the
+same section (`**Resource ceiling:** <n>`), and the host reads and enforces it, but
+it is a **termination guard**: it never enters the envelope, never produces an
+authority verdict, and never widens what the plan authorized (ADR-19 `AE-6`,
+decision `D-3`). Section 5.1 states how it binds.
 
 Absence is honest: **no declaration ⇒ no autonomy**. A plan without the
 declaration delegates no semantic work, and the host reports the absence instead
@@ -220,6 +276,32 @@ needs no path: demanding one would be a check no honest input could satisfy.
 Scope comparison is **exact membership** after pure representational
 normalization (`./`, separators, a trailing slash). It never produces a new path
 and never widens or narrows the scope.
+
+### 3.1 The resource ceiling (plan 159; ADR-19 `AE-6`, decision `D-3`)
+
+The plan may declare how much **delegated execution** it authorizes
+(`**Resource ceiling:** <n>` in `## Delegación agentiva`). The host:
+
+1. reads the declared ceiling — a positive integer, or a declared `GAP` that is
+   reported and **not** assumed;
+2. accumulates the consumption from the delegated executions **actually registered
+   in the journal** — never from the iteration number: an iteration that recorded an
+   anchor, read a gate or derived a stop conducted no delegated execution and
+   consumed no resource;
+3. survives a restart, because the consumption lives in the journal and the host
+   holds no state;
+4. stops at the ceiling with `STOP_MAX_ITERATIONS`, before the next delegated
+   execution exists.
+
+```text
+consumed >= ceiling   ⇒   STOP
+resource ceiling      ≠   authorization
+```
+
+Reaching the operational limit **produces no authority**: the stop names no human
+decision, grants nothing, and cannot be read as a permission. It is the termination
+guarantee that `autonomy ⊆ scope ∩ authority` does not express — the axis the
+envelope deliberately does not carry.
 
 ## 4. Autonomous continuation
 
@@ -260,6 +342,10 @@ The host stops and escalates, and **never resolves these by inference**:
 | conflict between normative sources | no source wins automatically (ADR-16 `AU-3`) |
 | normative decision | the maintainer decides; the host records and escalates |
 | ambiguity not resolvable by evidence | evidence absent or contradictory ⇒ do not guess |
+| an effect whose class is not in the adopted vocabulary | only the maintainer may adopt a class; the host never interprets an unknown one ⇒ `STOP_AUTHORITY_REQUIRED` + `REQUIRES_HUMAN` (`§1.5`) |
+| an effect declared without authorization, or without a resolvable reference | the effect awaits the human whose authorization it is; the host does not fill it in ⇒ `STOP_AUTHORITY_REQUIRED` (`§1.5`) |
+| an effect executed without being declared and authorized | a frontier violation: recorded as a finding and stopped; detection, never prevention (`§1.5`, §10) |
+| the declared resource ceiling is exhausted | an operational limit reached, **not** an authority decision: the stop produces no authorization (`§3.1`, ADR-19 `AE-6`) |
 | release, promotion or tag | `FORBIDDEN` for the host regardless of any authorization |
 | action explicitly reserved to the human | the reservation is the boundary |
 | any modification exceeding the initial authorization | autonomy ⊆ authority, always |
@@ -399,9 +485,11 @@ journal, delegations and Worker Results (`.project/orchestrator/`), and the
 durable governance record stays in the plan artifact, written only through the
 existing plan-authorized record writer. Each iteration record carries the frontier
 verdict (`autonomy`): the action considered, its class, the complete set of write
-targets, the scope verdict, the authority, the disposition, the stop condition,
-the authorization checkpoint the run executes under, and whether this iteration
-diverged from it.
+targets, the scope verdict, the **complete set of declared effects and their
+admission verdict** (plan 159), the authority, the disposition, the stop condition,
+the authorization checkpoint the run executes under, whether this iteration
+diverged from it, and the declared resource ceiling with the consumption derived
+from the journal.
 
 **Prevention and detection are both reported, and they are not the same thing.**
 The frontier refuses an unauthorized write *before* the delegation exists; the
@@ -507,7 +595,15 @@ observes real autonomy, it does not incentivize it.**
   undeclared write after it; it cannot interpose inside the invocation. The
   enforcement is therefore prevention where the host controls the effect and
   detection where it does not, and the policy never claims the second as the
-  first.
+  first. Since plan 159 the same distinction holds for the **effect axis**: a
+  declared effect that is not admitted is refused before the delegation exists,
+  while an effect the worker executes without declaring it is detected from the
+  persisted Worker Result and recorded as a finding.
+- **The resource ceiling terminates, it does not authorize** (`§3.1`). It is
+  deliberately **not** a field of the autonomy envelope: making it one would turn an
+  operational limit into a dimension of authority, which is exactly what ADR-19
+  `AE-6` and decision `D-3` forbid. The host's own iteration limit
+  (`--max-iterations`) is a separate, per-run guard and is unchanged by this policy.
 - The **authorization checkpoint is evidence, not authority**: it records the
   declaration the run executed under, and it is compared to detect divergence. It
   grants nothing, and a divergence stops the loop instead of being resolved by

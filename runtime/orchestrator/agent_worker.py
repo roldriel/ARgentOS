@@ -67,6 +67,7 @@ from .store import OrchestratorStore
 from .worker import (
     DEFAULT_TIMEOUT_SECONDS,
     changed_paths,
+    classify_executed_effects,
     repository_snapshot,
     run_command_set,
 )
@@ -477,6 +478,16 @@ class AgentWorker:
                     f"wrote agent transcript under {transcript_rel}",
                     f"ran {len(commands)} declared verification command(s)",
                 ]
+                # Plan 159: only what the evidence establishes is reported as an
+                # effect class. The invocation's own behaviour is deliberately not
+                # claimed here — it is not something this worker can establish, and
+                # the host detects an undeclared effect from the persisted result
+                # (the invocation is outside the host's interposition anyway).
+                + list(
+                    classify_executed_effects(
+                        commands=[command["argv"] for command in commands],
+                    )
+                )
                 + [f"artifact modified: {path}" for path in modified]
                 + [f"changed outside the authorized scope: {path}" for path in out_of_scope]
             ),

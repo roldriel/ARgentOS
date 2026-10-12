@@ -106,3 +106,53 @@ vigentes como norma; **su implementación** (gate de efectos, enum de clases de 
 recurso, actor con provider/modelo, aislamiento, integración de Memory, superficie de derivación) es
 trabajo futuro con su propia autorización. Este ADR **no** habilita cambios de payload: la vía sigue
 siendo RFC `Accepted` + plan (`docs/CONVENTIONS.md:Convenciones`).
+
+### Amendment Log
+
+- **2026-10-11 — acto de autoridad del Plan 159 (materialización de `F-B`).** El mantenedor cerró las
+  dos cuestiones que el acto del 2026-10-07 dejó fuera, mediante directiva de ejecución
+  (`docs/plans/159-autonomy-envelope-implementation.md`). El acto anterior **no se modifica**: este
+  Amendment Log **agrega** y preserva su texto íntegro.
+  - **`OPD-1` — vocabulario de clases de efecto: ADOPTADO.** El vocabulario DEV de clases de efecto
+    pasa a ser el que el repositorio ya había materializado y verificado para sus artefactos de sesión
+    del Protocol (`tools/check_session_artifacts.py`): `network`, `remote_git`, `install`,
+    `destructive`, `write_outside_project`, con `AUTHORIZED_BY` ∈ {`user`, `unattended_default`} y
+    `EFFECT_STATUS` ∈ {`authorized`, `not_authorized`, `pending_user_confirmation`}. Es una
+    **adopción**, no una taxonomía nueva: hay un solo vocabulario, y el runtime y el checker lo
+    comparten (verificado por dogfood anclado). Una clase no reconocida **no** se interpreta como
+    autorizada: produce `STOP` con autoridad humana (`REQUIRES_HUMAN`).
+  - **`OPD-2` — techo de recurso: guarda operativa de terminación.** El Plan declara un techo de
+    ejecuciones delegadas en la misma superficie que declara `Task` y `Scope`; el runtime lo lee,
+    acumula el consumo desde las delegaciones efectivamente registradas en el journal (nunca desde la
+    numeración de iteraciones) y detiene la autonomía al agotarse, con `STOP_MAX_ITERATIONS`.
+    `resource ceiling ≠ authorization`: el techo **no** entra en `AutonomyEnvelope.declared`, **no**
+    produce veredicto `AUTHORIZED_EXISTING` y **no** amplía autoridad. Esto preserva `AE-6` y `D-3`
+    sin excepción: `PR-2` del audit de capacidades
+    (`docs/working/audits/architecture-capability-review.md`) queda resuelto como **frontera de
+    terminación**, no como eje de autorización.
+  - **Invariantes materializados por este acto:** `AE-2`, `AE-3`, `AE-4` (admisión de efectos antes de
+    delegar, ortogonalidad `Effect` ⊥ `Scope`, consumidor de la declaración del Plan) y `AE-6` (el
+    techo de recurso como límite operativo, nunca autorización). La frontera `BLK-1` y `BLK-2` del
+    relevamiento de cierre quedan cerradas.
+  - **Lo que este acto sigue dejando fuera:** actor con provider/modelo, aislamiento/sandbox,
+    integración de Memory, superficie de derivación parcial y objetivos multi-Change (`F-C`/Etapa B).
+    Nada de eso habilita este Amendment Log.
+- **2026-10-08 — cierre residual del Plan 151** (`docs/plans/153-plan-151-residual-closure.md`):
+  disposición de las diez filas `HD-*` por evidencia y decisión posterior, sin retroactividad. No
+  modifica los invariantes de este ADR.
+
+### Estado de implementación tras el acto del 2026-10-11
+
+| Invariante | Estado | Evidencia |
+|---|---|---|
+| `AE-1` unidad = el Change | vigente | el host conduce un Change por corrida (`runtime/orchestrator/host.py`) |
+| `AE-2` admisión de efectos en DEV | **implementado** | `admit_declared_effects` (`runtime/orchestrator/autonomy.py`), parseo de `## Efectos declarados` (`runtime/orchestrator/observation.py`), gate previo a la delegación (`ExecutionHost._apply_autonomy_gate`) |
+| `AE-3` `Effect` ⊥ `Scope` | **implementado** | la admisión no consulta paths; un efecto autorizado sin `write-target` es admisible (`tests/test_autonomy_effects.py`) |
+| `AE-4` declaración en el Plan | **implementado** | `## Efectos declarados` es leído por el runtime y por `docs/plans/_TEMPLATE.md` (`tests/test_autonomy_effects_dogfood.py`) |
+| `AE-5` derivación antes de delegar | implementado (plan 138) | `_apply_autonomy_gate` en `iterate()` |
+| `AE-6` límite operativo ≠ autorización | **implementado** | techo de recurso sin veredicto de autoridad (`tests/test_autonomy_effects.py::test_resource_exhaustion_is_never_an_authorization`) |
+| `AE-7` actor acotado; provider/modelo diferidos | vigente, sin materializar | `runtime/orchestrator/agent_worker.py` no usa provider ni red |
+| `AE-8` Memory es contexto | vigente | `runtime/memory/` no se consume desde el orquestador |
+| `AE-9` sin segunda autoridad | implementado | `runtime/orchestrator/authority.py` |
+| `AE-10` sin continuación sobre derivación incompleta | implementado | `evaluate_autonomy` / `evaluate_candidate` |
+

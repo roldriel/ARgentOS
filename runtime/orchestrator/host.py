@@ -69,6 +69,8 @@ from .contracts import (
     RUN_LIFECYCLE_GATES,
     RUN_REVALIDATION,
     RUN_VALIDATION,
+    STOP_FORBIDDEN_ACTION,
+    STOP_MAX_ITERATIONS,
     Delegation,
     WorkerResult,
     validate_worker_result,
@@ -141,12 +143,17 @@ _AUTONOMY_CLASS_BY_ACTION: Mapping[str, str] = {
 }
 
 #: Frontier stop condition -> the host-level stop action it is reported as.
+#: ``STOP_MAX_ITERATIONS`` is included because the **declared resource ceiling**
+#: reports its exhaustion as an operational limit reached (plan 159): mapping it
+#: to an authority stop would claim a human decision that nobody made, which is
+#: exactly what ADR-19 `AE-6` forbids.
 _AUTONOMY_STOP_TO_ACTION: Mapping[str, str] = {
     STOP_SCOPE_VIOLATION: STOP_SCOPE_VIOLATION,
     STOP_AUTHORITY_REQUIRED: STOP_AUTHORITY_REQUIRED,
     STOP_FORBIDDEN_AUTONOMY: STOP_FORBIDDEN_AUTONOMY,
     STOP_UNCLASSIFIABLE_ACTION: STOP_UNCLASSIFIABLE_ACTION,
     STOP_NO_AUTHORIZED_WORK: STOP_NO_AUTHORIZED_WORK,
+    STOP_MAX_ITERATIONS: STOP_MAX_ITERATIONS,
 }
 
 #: Derived actions whose write target is the **plan artifact** itself: they are
@@ -288,6 +295,88 @@ def _declared_outside_plan_scope(observation: ChangeObservation) -> tuple[str, .
     )
 
 
+def _autonomy_effects(
+    action_kind: str, observation: ChangeObservation
+) -> tuple[tuple[Any, ...], bool]:
+    """The **complete** effect set of a derived action, and its resolvability.
+
+    The effects of the delegated semantic task are the effects the plan itself
+    declares: the plan is where the authorization lives (ADR-19 `AE-4`), so the
+    task proceeds under exactly the effects the plan authorized — no more, and
+    the frontier admits each of them independently of any path.
+
+    ``unresolved`` is a declared fact, not an empty success: when the plan's
+    effects could not be read as a complete declaration, the set cannot be shown
+    to cover what the action may produce, and the action stops (the same rule the
+    write-target set already follows).
+
+    A class that produces no effect outside the frontier — a validation, a gate
+    run, a governance record — declares the empty set, which is the truth about
+    it rather than an unresolved one.
+    """
+    if action_kind not in _AUTONOMY_EFFECT_BEARING_ACTIONS:
+        return (), False
+    declared = tuple(observation.declared_effects or ())
+    if not declared and getattr(observation, "declared_effects_unresolved", False):
+        return (), True
+    return declared, False
+
+
+#: The derived actions that may produce an effect outside the immediate frontier:
+#: the delegated semantic task, which hands control to a worker that performs work
+#: of its own choosing. Kept aligned with the frontier's own
+#: ``EFFECT_BEARING_ACTION_CLASSES`` — a drift between the two would leave an
+#: effect-bearing action without an effect admission.
+_AUTONOMY_EFFECT_BEARING_ACTIONS: frozenset[str] = frozenset({RUN_IMPLEMENTATION_TASK})
+
+
+def _autonomy_consumes_delegation(action_kind: str) -> bool:
+    """Whether conducting this action registers one delegated execution."""
+    return action_kind in EXECUTABLE_ACTIONS
+
+
+def _resource_consumed(records: Sequence[Mapping[str, Any]]) -> int:
+    """Delegated executions actually registered, derived from the journal.
+
+    This is deliberately **not** the iteration number. An iteration that recorded
+    an anchor, derived a stop or read a gate conducted no delegated execution and
+    consumed no resource; counting iterations would report consumption that never
+    happened and stop the loop earlier than the plan authorized. The delegations
+    are the durable evidence, and they survive a process restart because they live
+    in the journal, not in the host (the host holds no state by design).
+    """
+    return sum(1 for record in records if record.get("delegation_id"))
+
+
+def _effects_executed_violations(
+    result: Mapping[str, Any], admitted: Sequence[Any]
+) -> tuple[str, ...]:
+    """Executed effects that are **not** among the declared and admitted ones.
+
+    Post-delegation detection, and reported as detection: between delegating and
+    the worker returning, the host hands control to code it does not own. The
+    entries a worker publishes in ``effects_executed`` name their class with the
+    ``effect:<class>`` prefix; anything else is a description of work, not a
+    class, and is not read as one. An entry naming a class the plan never declared
+    is a violation of the frontier the plan authorized.
+    """
+    admitted_classes = {
+        str(getattr(effect, "effect_class", "") or "").strip().casefold()
+        for effect in admitted
+    }
+    violations: list[str] = []
+    for entry in result.get("effects_executed") or ():
+        text = str(entry).strip()
+        if not text.casefold().startswith("effect:"):
+            continue
+        name = text.split(":", 1)[1].strip().split(" ", 1)[0].strip().strip("—-")
+        if not name:
+            continue
+        if name.casefold() not in admitted_classes:
+            violations.append(name)
+    return tuple(violations)
+
+
 @dataclass
 class HostRun:
     """The outcome of one host run (a sequence of iterations)."""
@@ -413,6 +502,9 @@ class ExecutionHost:
                 "git_dirty_paths": list(observation.git.dirty_paths),
                 "current_delta_identity": observation.current_delta_identity,
                 "current_state_identity": observation.current_state_identity,
+                # The declared resource ceiling of this Change (plan 159): read
+                # from the plan, reported as evidence, never as authorization.
+                "resource_ceiling": observation.agent_task.resource_ceiling,
             },
             "gate_signals": dict(gate_signals or observation.gate_signals),
             "validation_signals": list(observation.validation_signals),
@@ -559,6 +651,7 @@ class ExecutionHost:
             return action, None
         declaration, envelope = _autonomy_envelope(observation, self.plan)
         targets, unresolved = _autonomy_targets(action.kind, observation)
+        effects, effects_unresolved = _autonomy_effects(action.kind, observation)
         # The checkpoint and the verdict must read the same thing: pinning the raw
         # declaration while evaluating the bounded one would make every execution
         # diverge from its own checkpoint. `declaration` stays available so a
@@ -568,6 +661,11 @@ class ExecutionHost:
         pinned = self._pinned_autonomy_projection()
         if pinned is None and not drift:
             pinned = authorization_projection(envelope)
+        # The operational axis is read from the plan's own declaration and from the
+        # delegations actually registered in the journal — never from the host's
+        # memory, which is exactly what makes it survive a restart. It is passed
+        # for the verdict to report: it never becomes authority (ADR-19 AE-6).
+        resource_records = self.store.read_journal(self.plan)
         result = evaluate_autonomy(
             envelope,
             [
@@ -580,9 +678,14 @@ class ExecutionHost:
                     write_targets=targets,
                     targets_unresolved=unresolved,
                     declared_outside_scope=_declared_outside_plan_scope(observation),
+                    effects=tuple(effects),
+                    effects_unresolved=effects_unresolved,
                 )
             ],
             pinned_projection=pinned,
+            resource_ceiling=observation.agent_task.resource_ceiling,
+            resource_consumed=_resource_consumed(resource_records),
+            resource_required=_autonomy_consumes_delegation(action.kind),
         )
         self._last_autonomy = result
         self._last_autonomy_drift = drift
@@ -592,6 +695,11 @@ class ExecutionHost:
             result.stop_condition, STOP_AUTHORITY_REQUIRED
         )
         reasons = f"{result.reason} (authority: {result.authority})"
+        if result.resource_stop is not None:
+            reasons += (
+                " This is an operational limit reached, not an authority "
+                "decision: reaching it produces no authorization."
+            )
         if drift:
             reasons += f" The authorization checkpoint diverged: {drift_reason}."
         stop = stop_action(
@@ -716,6 +824,40 @@ class ExecutionHost:
                 iteration,
                 delegation_id=delegation.delegation_id,
                 notes=notes,
+            )
+        # Effects the worker executed outside what the plan admitted (plan 159).
+        # Detection, not prevention, and reported as such: inside the invocation
+        # the host controls nothing, so an undeclared effect is caught from the
+        # result the worker published. It is a finding, and it stops.
+        detected = _effects_executed_violations(
+            stored.to_dict(), tuple(observation.declared_effects or ())
+        )
+        if detected:
+            stop = stop_action(
+                STOP_FORBIDDEN_ACTION,
+                (
+                    "the delegated worker executed effect(s) the plan does not "
+                    "declare and authorize: " + ", ".join(sorted(set(detected)))
+                    + ". Detection, not prevention: the effect happened inside the "
+                    "invocation, where the host cannot interpose. The effect of "
+                    "record is the worker's own submission, never an authorization"
+                ),
+                AuthorityBoundary(plan_authorized=True),
+            )
+            notes.append(
+                "effect violation detected by the host from the persisted worker "
+                "result (not from a claim of compliance)"
+            )
+            return self._record(
+                self.observe(),
+                stop,
+                iteration,
+                delegation_id=delegation.delegation_id,
+                result_id=stored.result_id,
+                result_status=stored.status,
+                result_artifacts_modified=stored.artifacts_modified,
+                notes=notes,
+                stop_reason=stop.kind,
             )
         gate_signals = {
             str(entry.get("label")): str(entry.get("signal"))

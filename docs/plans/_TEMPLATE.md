@@ -114,20 +114,37 @@ condición derivada, y su recomendación es advisory. Ver
 
 - **Task:** ...
 - **Scope:** `<ruta/uno.py>`
+- **Resource ceiling:** `<n>` ejecuciones delegadas <!-- OPCIONAL. Techo operativo de ejecuciones
+  **delegadas** de este Change: el runtime lo lee, acumula el consumo desde las delegaciones
+  efectivamente registradas en el journal y detiene la autonomía al agotarse
+  (`STOP_MAX_ITERATIONS`). Es una **guarda operativa de terminación, nunca una dimensión de
+  autorización** (ADR-19 `AE-6`, decisión `D-3`): no entra en el envelope de autonomía, no produce
+  veredicto de autoridad y no sustituye a `Scope` ni a `Authority`. Debe ser un entero positivo; un
+  valor ilegible se registra como `GAP` y **no** se asume. Ver
+  `docs/CONVENTIONS.md:Modelo de autonomía — vocabulario de efectos y techo de recurso (adoptado 2026-10-11)`. -->
 
 ## Efectos declarados
 
 <!-- OPCIONAL: obligatoria únicamente si el Change prevé efectos fuera de la frontera inmediata.
 Decidido por el acto de autoridad del Plan 151 (2026-10-07): `D-2a` la frontera se decide y se
 declara en DEV; `D-2b` los efectos se declaran donde vive la autorización —el Plan—; `D-2d`
-`Effect` es ortogonal a `Scope` y un efecto puede no tener path. Ver
-`docs/CONVENTIONS.md:Modelo de autonomía — decisiones de autoridad del Plan 151` y
-`docs/plans/151-autonomy-authority-decision-closure.md`.
+`Effect` es ortogonal a `Scope` y un efecto puede no tener path. El **vocabulario de clases de
+efecto** fue adoptado por el acto de autoridad del Plan 159 (2026-10-11). Ver
+`docs/CONVENTIONS.md:Modelo de autonomía — vocabulario de efectos y techo de recurso (adoptado 2026-10-11)`
+y `docs/adr/19-autonomy-envelope-authority.md`.
 
-Cada entrada declara: el nombre del efecto, qué produce, la referencia a su autorización
-(quién lo autorizó y dónde consta) y su estado. El **vocabulario cerrado de clases de efecto DEV
-no está adoptado** por ese acto: no se inventan clases aquí; una clase no reconocida se declara y
-se escala como `GAP`/`REQUIRES_HUMAN` en vez de asumirse. -->
+Cada entrada declara: el nombre del efecto, qué produce, la referencia a su autorización (quién lo
+autorizó y dónde consta) y su estado. **Clases admitidas (vocabulario cerrado):** `network`,
+`remote_git`, `install`, `destructive`, `write_outside_project`. **Estado:** `authorized`,
+`not_authorized`, `pending_user_confirmation`. Una clase **no reconocida o no determinable NO se
+interpreta como autorizada**: se detiene con autoridad humana (`STOP`/`REQUIRES_HUMAN`). Un efecto
+autorizado puede no tener path. Un efecto que el worker ejecute sin estar declarado y autorizado es
+una violación de la frontera: se registra como finding y detiene el ciclo.
+
+Para declarar explícitamente la **ausencia** de efectos se deja una sola fila negativa
+(`| — | ninguno: ... | — | authorized |`): declara que el Change no produce efectos y no autoriza
+ninguno. Un Plan que no lleva esta sección no ha declarado nada sobre efectos, y una acción que
+puede producirlos se detiene. -->
 
 | Efecto | Qué produce | Autorización (referencia) | Estado |
 |---|---|---|---|

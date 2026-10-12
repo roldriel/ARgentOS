@@ -284,6 +284,38 @@ ese acto.
   en `docs/adr/19-autonomy-envelope-authority.md`. El ADR **documenta** la decisión; **no**
   sustituye al Plan como mecanismo de autorización de ejecución.
 
+### Modelo de autonomía — vocabulario de efectos y techo de recurso (adoptado 2026-10-11)
+
+Acto de autoridad del Plan 159 (`docs/plans/159-autonomy-envelope-implementation.md`, mantenedor,
+2026-10-11) que **cierra** las dos cuestiones que el acto del 2026-10-07 dejó expresamente fuera. La
+subsección anterior **no se modifica**: es aditiva y preserva su texto. Las decisiones se registran
+en `docs/adr/19-autonomy-envelope-authority.md:Amendment Log`.
+
+- **`OPD-1` — vocabulario de clases de efecto DEV: ADOPTADO.** Las clases admitidas son
+  `network`, `remote_git`, `install`, `destructive`, `write_outside_project`; `AUTHORIZED_BY` ∈
+  {`user`, `unattended_default`}; `EFFECT_STATUS` ∈ {`authorized`, `not_authorized`,
+  `pending_user_confirmation`}. Es **un solo vocabulario**: el que el repositorio ya materializó y
+  verificó para sus artefactos de sesión del Protocol (`tools/check_session_artifacts.py`). No se crea
+  una taxonomía paralela ni se traduce mecánicamente la del Protocol: DEV adopta las mismas clases
+  porque ya eran las suyas.
+- **Admisión de efectos.** El Plan declara sus efectos fuera de frontera en `## Efectos declarados`
+  (superficie adoptada por `D-2b`). El host lee la declaración y **admite cada efecto antes de
+  delegar**, all-or-nothing: clase reconocida, estado `authorized` y referencia de autorización
+  resoluble. Una clase **no reconocida o no determinable NO se interpreta como autorizada**: produce
+  `STOP` con autoridad humana (`REQUIRES_HUMAN`). Un efecto declarado sin `write-target` es admisible:
+  `Effect` es ortogonal a `Scope` (`AE-3`), y la admisión de efectos no consulta paths.
+- **`OPD-2` — techo de recurso: guarda operativa de terminación.** El Plan declara un techo de
+  ejecuciones delegadas; el runtime lo lee, acumula el consumo desde las **delegaciones efectivamente
+  registradas** en el journal (nunca desde la numeración de iteraciones), sobrevive un reinicio de
+  proceso porque el host no tiene estado, y al agotarse detiene la autonomía con
+  `STOP_MAX_ITERATIONS`. **`resource ceiling ≠ authorization`**: no entra en
+  `AutonomyEnvelope.declared`, no produce veredicto `AUTHORIZED_EXISTING` y no amplía autoridad. Es la
+  lectura operativa de `AE-6` y `D-3`, y resuelve `PR-2` del audit de capacidades como frontera de
+  **terminación**, no como eje de **autorización**.
+- **Fuera de este acto.** Actor con provider/modelo, aislamiento/sandbox, integración de Memory,
+  superficie de derivación parcial y objetivos multi-Change: siguen diferidos con su propia
+  autorización.
+
 ### Change Lifecycle — Vía de autorización por `Note` (`Plan`/`Note`) (adoptado por el Plan 152, 2026-10-07)
 
 `Note` es un artefacto de la **familia `Plan`** — misma familia y mismo namespace que el Plan

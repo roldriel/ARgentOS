@@ -285,6 +285,15 @@ _AGENT_TASK_FIELD_RE = re.compile(
 _AGENT_SCOPE_FIELD_RE = re.compile(
     r"^\s*[-*]\s*\**Scope\**\s*:\s*(?P<scope>.*?)\s*$", re.MULTILINE | re.IGNORECASE
 )
+#: The declared **resource ceiling** of the authorized work (plan 159). It is a
+#: termination guard of the executor, declared on the same surface as ``Task``
+#: and ``Scope`` — it is deliberately **not** a dimension of authorization
+#: (ADR-19 `AE-6`/`D-3`).
+_AGENT_CEILING_FIELD_RE = re.compile(
+    r"^\s*[-*]\s*\**Resource ceiling\**\s*:\s*(?P<ceiling>.*?)\s*$",
+    re.MULTILINE | re.IGNORECASE,
+)
+_INT_RE = re.compile(r"\d+")
 
 
 @dataclass(frozen=True)
@@ -297,6 +306,13 @@ class AgentTask:
     ``scope`` is the set of repository-relative paths the worker is authorized
     to modify; when the declaration names none, the plan's declared deliverables
     are used and ``scope_declared`` records that the scope was not explicit.
+
+    ``resource_ceiling`` is the declared ceiling of **delegated executions** of
+    this Change. It bounds how much the autonomy may consume, never what it is
+    authorized to do: the two axes are independent by decision (plan 159,
+    ADR-19 `AE-6`). Absence is a declared absence; a value that cannot be read as
+    a positive integer is recorded as a ``GAP`` and treated as no ceiling,
+    because an unreadable ceiling can be neither enforced nor assumed away.
     """
 
     declared: bool
@@ -304,6 +320,9 @@ class AgentTask:
     scope: tuple[str, ...]
     section_present: bool
     scope_declared: bool
+    resource_ceiling: int | None = None
+    ceiling_declared: bool = False
+    ceiling_gap: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -312,6 +331,9 @@ class AgentTask:
             "scope": list(self.scope),
             "section_present": self.section_present,
             "scope_declared": self.scope_declared,
+            "resource_ceiling": self.resource_ceiling,
+            "ceiling_declared": self.ceiling_declared,
+            "ceiling_gap": self.ceiling_gap,
         }
 
 
@@ -340,13 +362,166 @@ def parse_agent_task(text: str) -> AgentTask:
             candidate = token.strip()
             if _PATH_TOKEN_RE.match(candidate) and candidate not in scope:
                 scope.append(candidate)
+    ceiling, ceiling_declared, ceiling_gap = _parse_resource_ceiling(content)
     return AgentTask(
         declared=bool(task),
         task=task,
         scope=tuple(sorted(scope)),
         section_present=True,
         scope_declared=bool(scope),
+        resource_ceiling=ceiling,
+        ceiling_declared=ceiling_declared,
+        ceiling_gap=ceiling_gap,
     )
+
+
+def _parse_resource_ceiling(content: str) -> tuple[int | None, bool, str]:
+    """The declared resource ceiling, read verbatim from the declaration.
+
+    Three outcomes, and none of them is an assumption:
+
+    - the field is absent: ``(None, False, "")`` — a declared absence;
+    - the field carries a positive integer: ``(n, True, "")`` — enforceable;
+    - the field is present but unreadable (empty, zero, negative, non-numeric):
+      ``(None, True, <reason>)`` — a ``GAP`` that is reported and **not** filled
+      in, because assuming a ceiling would invent the very bound this guard
+      exists to enforce.
+    """
+    match = _AGENT_CEILING_FIELD_RE.search(content)
+    if match is None:
+        return None, False, ""
+    raw = _unbold(match.group("ceiling"))
+    numbers = [int(token) for token in _INT_RE.findall(raw)]
+    if not numbers:
+        return (
+            None,
+            True,
+            "the declared resource ceiling carries no integer: the ceiling "
+            "cannot be enforced and is not assumed",
+        )
+    value = numbers[0]
+    if value <= 0:
+        return (
+            None,
+            True,
+            "the declared resource ceiling is not positive: the ceiling cannot "
+            "be enforced and is not assumed",
+        )
+    return value, True, ""
+
+
+#: The plan's declared **effects outside the immediate frontier** (plan 159).
+#: The surface itself was adopted by the act of authority of plan 151 (`D-2a`,
+#: `D-2b`, `D-2d`); its consumer is this module and the frontier that reads it.
+_DECLARED_EFFECTS_SECTION_PREFIX = "Efectos declarados"
+
+
+@dataclass(frozen=True)
+class DeclaredEffect:
+    """One effect the plan declares it may produce outside the immediate frontier.
+
+    The fields are read verbatim from the plan's own table — the declaration
+    surface that lives **where the authorization lives** (ADR-19 `AE-4`). Nothing
+    is inferred: an unrecognized class is preserved as an unknown class so the
+    frontier can stop on it rather than treat it as authorized, and an entry
+    whose fields cannot be read is reported as ``unreadable`` instead of being
+    completed by the reader.
+    """
+
+    effect_class: str
+    produced: str
+    authorization_reference: str
+    status: str
+    #: True when the row exists but its cells could not be read as a declaration.
+    unreadable: bool = False
+
+    @property
+    def negative(self) -> bool:
+        """A *negative declaration*: the row states that no effect exists.
+
+        ``## Efectos declarados`` is declared as the table of effects the change
+        produces, so the honest way to declare "this change produces none" is a
+        row that says so. It is read as a declared absence, never as an
+        authorized effect.
+        """
+        return self.effect_class in {"", "—", "-", "–", "n/a", "N/A", "none", "ninguno"}
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "effect_class": self.effect_class,
+            "produced": self.produced,
+            "authorization_reference": self.authorization_reference,
+            "status": self.status,
+            "unreadable": self.unreadable,
+            "negative": self.negative,
+        }
+
+
+def _table_rows(body: str) -> list[list[str]]:
+    """The cells of a Markdown table body, header and separator excluded.
+
+    A minimal reader over the shape the template fixes; it introduces no parser
+    of its own kind (the section body already comes from ``split_sections``).
+    """
+    rows: list[list[str]] = []
+    seen_separator = False
+    for line in body.splitlines():
+        stripped = line.strip()
+        if not stripped.startswith("|"):
+            continue
+        cells = [cell.strip() for cell in stripped.strip("|").split("|")]
+        if all(set(cell) <= set("-: ") and cell for cell in cells):
+            seen_separator = True
+            continue
+        if not seen_separator:
+            # The header row of the table; the declaration starts after the
+            # separator. A table without a separator declares nothing readable.
+            continue
+        rows.append(cells)
+    return rows
+
+
+def declared_effects_section_present(text: str) -> bool:
+    """Whether the plan carries the ``## Efectos declarados`` container at all.
+
+    The distinction matters and is not cosmetic: a plan that carries the container
+    and declares no effect has declared the **absence** of effects, while a plan
+    with no container has declared nothing about them. The first is a negative
+    declaration; the second is not a declaration, and an effect-bearing action
+    proceeding under it stops (plan 159).
+    """
+    return _section(text, _DECLARED_EFFECTS_SECTION_PREFIX, _H2_RE) is not None
+
+
+def parse_declared_effects(text: str) -> tuple[DeclaredEffect, ...]:
+    """Read the plan's ``## Efectos declarados`` declaration, if it carries one.
+
+    Read-only and inference-free. An absent section and a section whose only row
+    is a negative declaration both yield no effects; the difference between them
+    is not needed by the frontier, because in neither case is an effect
+    authorized. What is needed — and what this reader guarantees — is that an
+    effect that *is* declared comes back verbatim, including one whose class the
+    runtime does not recognize.
+    """
+    body = _section(text, _DECLARED_EFFECTS_SECTION_PREFIX, _H2_RE)
+    if body is None:
+        return ()
+    found: list[DeclaredEffect] = []
+    for cells in _table_rows(visible(body)):
+        padded = cells + [""] * (4 - len(cells))
+        effect = DeclaredEffect(
+            effect_class=_unbold(padded[0]).strip("`").strip(),
+            produced=padded[1],
+            authorization_reference=padded[2],
+            status=_unbold(padded[3]).strip("`").strip(),
+            unreadable=not any(cell for cell in padded[:4]),
+        )
+        if effect.negative:
+            # A negative declaration states the absence of effects: it is not an
+            # effect, and it authorizes nothing.
+            continue
+        found.append(effect)
+    return tuple(found)
 
 
 def parse_environmental_classes(
@@ -610,6 +785,15 @@ class ChangeObservation:
     verification_section_present: bool
     declared_artifacts: tuple[str, ...]
     agent_task: AgentTask
+    #: The effects the plan declares it may produce outside the immediate
+    #: frontier (plan 159). Empty means "the plan declares no effect", which is
+    #: a declared absence and never an authorization.
+    declared_effects: tuple[DeclaredEffect, ...]
+    #: True when an effect-bearing action proceeds without a declaration to read:
+    #: the plan carries no ``## Efectos declarados`` container. It is reported so
+    #: the frontier stops (the set cannot be shown to cover the action) instead of
+    #: reading silence as authorization (plan 159).
+    declared_effects_unresolved: bool
     anchor: AnchorObservation
     checkpoint: CheckpointObservation
     findings: tuple[FindingRecord, ...]
@@ -794,6 +978,8 @@ def observe(
     environmental = parse_environmental_classes(text)
     artifacts = declared_artifacts(text)
     agent_task = parse_agent_task(text)
+    declared_effects = parse_declared_effects(text)
+    declared_effects_unresolved = not declared_effects_section_present(text)
     anchor = parse_anchor(text)
     checkpoint = parse_checkpoint(text)
     findings = parse_findings(text)
@@ -958,6 +1144,14 @@ def observe(
             "declared deliverable(s) absent: " + ", ".join(sorted(missing_artifacts))
         )
     gaps.extend(journal_read.gap_notes())
+    if agent_task.ceiling_gap:
+        gaps.append(agent_task.ceiling_gap)
+    for effect in declared_effects:
+        if effect.unreadable:
+            gaps.append(
+                "an entry of `## Efectos declarados` carries no readable "
+                "declaration: the effect is reported, never assumed authorized"
+            )
 
     return ChangeObservation(
         root=str(root_path),
@@ -973,6 +1167,8 @@ def observe(
         verification_section_present=_section(text, "Verificaci", _H2_RE) is not None,
         declared_artifacts=artifacts,
         agent_task=agent_task,
+        declared_effects=declared_effects,
+        declared_effects_unresolved=declared_effects_unresolved,
         anchor=anchor,
         checkpoint=checkpoint,
         findings=findings,

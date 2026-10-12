@@ -117,6 +117,12 @@ the thing to reconcile.
 - **Task:** {task}
 - **Scope:** {declared_scope}
 
+## Efectos declarados
+
+| Efecto | Qué produce | Autorización (referencia) | Estado |
+|---|---|---|---|
+| — | ninguno: la tarea autorizada escribe solo dentro del scope declarado. | — | `authorized` |
+
 ## Criterios de salida
 
 - [ ] synthetic

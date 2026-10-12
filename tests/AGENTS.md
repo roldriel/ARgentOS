@@ -84,6 +84,7 @@ The anchored set, and what each protects:
 | `test_placement_contract_drift.py` (whole module) | `docs/placement-contract.md` and `runtime/placement/rules.py` stay in lockstep: every realized namespace and family is declared by the real contract, the STOP triggers are the contract's, and the `kind` vocabulary is not read as a closed enum (`plan 131`; added to this table by `plan 145`) |
 | `test_autonomous_scope_dogfood.py` (whole module) | the SAE frontier over the repository's own Change and the reconstructibility of its autonomy evidence (`plan 135`) |
 | `test_sae_scope_enforcement_dogfood.py` (whole module) | the Scope/Authority enforcement point, the untouched history of the incident's closed plan and `ROADMAP.md`, and the end-to-end refusal before the effect (`plan 138`) |
+| `test_autonomy_effects_dogfood.py` (whole module) | the effect-admission and resource-ceiling frontier against the real policy, the real plan template and the real effect vocabulary: policy ↔ enforcement in lockstep, one shared vocabulary and no second taxonomy, and the ceiling declared as a termination guard rather than an authorization axis (`plan 159`) |
 | `test_discovery_output_dogfood.py` (whole module) | the D01 mechanical subset against the **real** discovery contracts and the real payload (`plan 136`) |
 | `test_check_ears_coverage_dogfood.py` (whole module) | the three sources of truth of the real payload in parity: the standard's patterns, the contract's canonical form, and the validator's activation of `ears` for H01 (`plan 137`) |
 

@@ -57,14 +57,17 @@ no trabajo pendiente. El trabajo cerrado no se cataloga aquí — su traza vive 
 
 ### ⏳ LATER
 
-- **[DEV] MEDIUM — Envelope de autonomía.** Materializar el modelo de autoridad ya
-  decidido: admisión de efectos, clase de actor, aislamiento
-  ([ADR-19](docs/adr/19-autonomy-envelope-authority.md)).
 - **[BOTH] HIGH — Complete ARgentOS Autonomy (Etapa B).** Cerrar las fronteras que
   impiden ejecutar un objetivo amplio bajo supervisión. Sus fronteras son
   **candidatas, no compromisos**.
 - **[BOTH] LOW — Etapa C, capacidad nueva.** Sólo después de A y B: ninguna feature
   entra por disponibilidad tecnológica ni por simetría con otro sistema.
+
+> El **envelope de autonomía** ya no figura aquí: su admisión de efectos y su
+> terminación por recurso quedaron implementadas y verificadas
+> ([plan 159](docs/plans/159-autonomy-envelope-implementation.md)); la clase de actor
+> y el aislamiento siguen diferidos dentro de la Etapa B
+> ([ADR-19](docs/adr/19-autonomy-envelope-authority.md)).
 
 ---
 

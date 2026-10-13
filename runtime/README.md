@@ -446,3 +446,5 @@ on is established by the declared scope and the content snapshots, not by a caus
 link to project content. And the Agent Worker **does not prove autonomous model
 reasoning**: it proves that a worker performing authorized semantic work fits the
 existing boundary without changing it.
+
+**Isolation (declared absence — decision `ID-3`, plan 165).** ARgentOS **does not provide isolation for the actor**: the agent runs in the adopter's environment, with that environment's permissions, and ARgentOS neither sandboxes it nor manages its credentials or its harness. The ARgentOS frontier is **prevention where the host controls the effect** and **detection where it does not** (the host cannot interpose inside the invocation); it is **not an isolation guarantee**. Encapsulation, credential custody and resource isolation belong to the adopter's environment.

@@ -250,6 +250,64 @@ CONDICIONES DE DISEÑO A FIJAR EN LA IMPLEMENTACIÓN (no son decisiones de autor
    · publicación verificable de la declaración de FC-2 (ID-3) en la superficie operativa
    · diseño de ID-2, ID-4, ID-6, ID-7 e ID-8 dentro del alcance 1B
 ```
+## Diseño de implementación (Fase 1) — registrado antes de tocar código
+
+*Cada decisión declara **decisión · fundamento · superficie afectada · evidencia esperada · falsificación**. Ninguna requiere autoridad que este Plan no conceda: `ID-6` se resuelve **DEV-side** y `ID-8` se resuelve alineando la política con el código (ambas opciones expresamente autorizadas por el Plan).*
+
+### Plan de demostración por criterio
+
+| Criterio | Cómo se demostrará | Evidencia esperada | Falsificación / counterproof |
+|---|---|---|---|
+| `FC-1` | El actor lo aporta el entorno del adoptante: se registra su **procedencia declarada** (harness, modelo, mecanismo) y se distingue de un stub; la ejecución efectiva exige un actor externo inyectado | procedencia persistida en el `WorkerResult` + corrida con actor externo | un stub (`NullAgentInvoker`, `kind = null`) **no** cuenta como actor real: sin procedencia no hay evidencia de `FC-1` |
+| `FC-2` | Publicación de la declaración de ausencia de aislamiento en las dos superficies previstas, más un verificador ejecutable | declaración publicada + verificador verde | un texto que omita la cláusula **o** que afirme una garantía de aislamiento ⇒ el verificador lo **rechaza** |
+| `FC-3` | Memory entra como **contexto** del actor y nunca como premisa ni autoridad | test que muestra el contexto aportado y el veredicto de frontera **sin cambio** | contenido de Memory que intente introducir acción o `Scope` ⇒ veredicto sin cambio |
+| `FC-4` | Mecanismo explícito `Objetivo → Change → evaluación → siguiente Change` | corrida con ≥2 Changes y evaluación explícita entre ellos | objetivo ya satisfecho ⇒ **no** se produce otro Change |
+| `FC-5` | La frontera no depende de un actor benigno: detección desde el `WorkerResult` persistido, con clasificación de efectos y prohibición de adquirir autoridad fuera del host | test con actor que excede su mandato ⇒ detección + `finding`/`STOP` | un actor que declara éxito sin autoridad **no** se convierte en autoridad |
+| `FC-6` | Fallo real → detección → estado intermedio → recuperación → resultado, con `ID-8` resuelto | corrida reproducible con fallo inyectado y su registro | recuperación que amplíe alcance o autoridad ⇒ `STOP` |
+| `FC-7` | Una falsación por garantía de las anteriores | suites de falsificación verdes | — |
+| `FC-8` | 0 diff fuera de `IN SCOPE` | verificación de scope + inventario de archivos del Change | cualquier ruta fuera del alcance ⇒ falla |
+| `FC-9` | `## Validation anchor` + `## Checkpoint / cierre` + lineage del Plan 165 | A1 con identidades y consistencia `PASS` | — |
+| `FC-10` | 0 provider/modelo/SDK propio · 0 sandbox · envelope y techos intactos · 0 `C-16`/`C-17`/`C-21` · 0 política de modelo/cómputo | verificación de diff + checkers + test que fija las prohibiciones | cualquier incorporación ⇒ falla |
+
+### Decisiones de diseño (`ID-2`, `ID-4`, `ID-6`, `ID-7`, `ID-8`)
+
+| ID | Decisión | Fundamento | Superficie afectada | Evidencia esperada | Falsificación |
+|---|---|---|---|---|---|
+| `ID-2` | **El actor se representa por su procedencia declarada y su resultado; ARgentOS no lo invoca.** `AgentInvoker` sigue siendo el punto de inyección y se le agrega —**aditivo-optional**— la procedencia del actor (`harness`, `model`, `mechanism`), que el host registra como evidencia | `ID-1` (agnosticismo) y los contratos existentes (`AgentInvoker`, `Delegation`, `WorkerResult`); no se construye invocador propio | `runtime/orchestrator/agent_worker.py`, `runtime/orchestrator/contracts.py`, `runtime/orchestrator/worker.py`, `tests/` | procedencia persistida y visible en el `WorkerResult`, con compatibilidad de los resultados previos | un resultado sin procedencia **no** cuenta como actor real; un stub no puede declararla (`kind = null`) |
+| `ID-4` | **Memory entra como contexto del actor, jamás como premisa ni autoridad.** Se materializa en el contexto entregado; el veredicto de la frontera se calcula **sin consultarla** | `AE-8` | `runtime/orchestrator/agent_worker.py` (`build_context`), `runtime/orchestrator/observation.py`, `tests/` | contexto que incluye Memory y veredicto de frontera sin cambio | Memory que intente introducir una acción o un `Scope` nuevo ⇒ el veredicto no cambia |
+| `ID-6` | **La contención se resuelve DEV-side, sin tocar el payload.** La frontera declara que **no controla** el interior de la invocación y **detecta** desde el `WorkerResult` persistido (clasificación de efectos + `finding`/`STOP`); la contención fuerte —impedir— exigiría aislamiento, que `ID-3` declara ausente | `ID-1`/`ID-3` y el límite ya declarado en la política §12; tocar `protocol/.agents/` exigiría RFC-56 Clase A | `runtime/orchestrator/{worker,host,autonomy}.py`, `.agents/policies/supervised-autonomous-execution.md`, `tests/` | detección reproducible con un actor que excede su mandato | **si** el diseño exigiera modificar `protocol/.agents/` ⇒ **`STOP`** y acto de autoridad; **no ocurre** en esta ruta |
+| `ID-7` | **Recuperación = nueva derivación sobre el estado observado, con la recuperación registrada**, dentro del mismo envelope; **sin** mecanismo de reintento con ciclo de vida propio | `FC-6` y la discrepancia ya declarada en `docs/behavior-patterns.md` §5.2 | `runtime/orchestrator/{host,derivation}.py`, `tests/` | corrida con fallo → recuperación → resultado | recuperación que amplíe alcance o autoridad ⇒ `STOP` |
+| `ID-8` | **Se alinea la política con el código en lugar de implementar un retry.** La política deja de enumerar el retry como capacidad del host y declara que un fallo que exige rehacer trabajo se conduce como **nueva derivación registrada** | la discrepancia está declarada; un retry con ciclo de vida propio excede `FC-6` y añadiría mecanismo no pedido | `.agents/policies/supervised-autonomous-execution.md`, `docs/behavior-patterns.md` | política y código coherentes; discrepancia eliminada | si se exigiera un retry real ⇒ sería una decisión de alcance, **no** se infiere |
+
+**Requisitos de autoridad detectados en el diseño: ninguno.** `ID-6` no escala a `protocol/.agents/` y `ID-8` no requiere acto del mantenedor (el Plan autoriza explícitamente la forma «alinear la política»).
+### Fase 3 — Implementación incremental (2026-10-13)
+
+**Capacidad implementada y demostrada: `FC-2` — aislamiento (declaración de ausencia, `ID-3`).**
+
+| Aspecto | Registro |
+|---|---|
+| Implementación | declaración publicada en las **dos superficies designadas**: `runtime/README.md` (límites declarados, «Isolation (declared absence)») y `.agents/policies/supervised-autonomous-execution.md` §12 |
+| Evidencia | texto publicado con las cuatro cláusulas: «does not provide isolation for the actor» · «prevention where the host controls the effect» · «detection where it does not» · «not an isolation guarantee» |
+| Verificación | `tests/test_fc_isolation_declaration.py` (**4 pruebas**): exige las cuatro cláusulas en ambas superficies y conserva la distinción prevención/detección |
+| Counterproof | el verificador **rechaza** (i) un texto que omita la declaración y (ii) un texto que afirme aislamiento («provides isolation for the actor») |
+| Coherencia | no contradice `FC-10` ni el envelope: **no** se introduce sandbox ni garantía nueva; la frontera de prevención/detección ya declarada se mantiene |
+
+**Estado por criterio en esta intervención** (un criterio sin evidencia suficiente permanece **no demostrado**):
+
+| Criterio | `STATUS` | Motivo |
+|---|---|---|
+| `FC-1` | **NO DEMOSTRADO** | mecanismo diseñado (`ID-2`); falta la procedencia del actor registrada y una corrida con actor externo |
+| `FC-2` | **DEMOSTRADO** | publicación + verificador + counterproof |
+| `FC-3` | **NO DEMOSTRADO** | diseñado (`ID-4`), sin implementar |
+| `FC-4` | **NO DEMOSTRADO** | `ID-5` cerrado; mecanismo y evaluación explícita por implementar |
+| `FC-5` | **NO DEMOSTRADO** | diseñado (`ID-6`, DEV-side), sin implementar |
+| `FC-6` | **NO DEMOSTRADO** | diseñado (`ID-7`/`ID-8`), sin implementar |
+| `FC-7` | **PARCIAL** | counterproofs ejecutables de `FC-2` en verde; falta una falsación por garantía de las capacidades no implementadas |
+| `FC-8` | **VERIFICADO (esta intervención)** | 0 diff fuera de `IN SCOPE` |
+| `FC-9` | **NO DEMOSTRADO** | el Plan **no** se cierra: `FC-1`, `FC-3`, `FC-4`, `FC-5` y `FC-6` pendientes |
+| `FC-10` | **VIGENTE (verificado en diff)** | 0 provider/modelo/SDK propio · 0 sandbox · envelope de `F-B` y techos intactos · 0 `C-16`/`C-17`/`C-21` · 0 política de modelo/cómputo |
+
+**Resultado de la intervención:** `FC_IMPLEMENTED_NOT_FULLY_DEMONSTRATED` — una capacidad completa implementada y demostrada (`FC-2`); el resto queda **diseñado y no demostrado**. El Plan **no** se marca `Executed` ni `Closed` y **no** registra anchor ni checkpoint.
 ## Validation anchor
 
 <!-- Se completa al ejecutar (VC-1, Incremento 1). El Plan está `Aprobado para ejecución` y NO ejecutado:

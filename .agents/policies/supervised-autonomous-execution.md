@@ -574,6 +574,7 @@ observes real autonomy, it does not incentivize it.**
 
 ## 12. Declared limits
 
+- **ARgentOS does not provide isolation for the actor** (decision `ID-3`, plan 165). The agent runs in the adopter's environment, with that environment's permissions; ARgentOS neither sandboxes it nor manages its credentials or its harness. The frontier is **prevention where the host controls the effect** and **detection where it does not**; it is **not an isolation guarantee**, and no sandbox is introduced by this policy. Encapsulation and resource isolation belong to the adopter's environment.
 - SAE grants no authority. Every verdict cites the existing authority the action
   executes under.
 - The frontier is a **derivation**, not a state: no `next_state`, no lifecycle

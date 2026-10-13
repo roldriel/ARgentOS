@@ -87,6 +87,7 @@ The anchored set, and what each protects:
 | `test_autonomy_effects_dogfood.py` (whole module) | the effect-admission and resource-ceiling frontier against the real policy, the real plan template and the real effect vocabulary: policy ↔ enforcement in lockstep, one shared vocabulary and no second taxonomy, and the ceiling declared as a termination guard rather than an authorization axis (`plan 159`) |
 | `test_discovery_output_dogfood.py` (whole module) | the D01 mechanical subset against the **real** discovery contracts and the real payload (`plan 136`) |
 | `test_check_ears_coverage_dogfood.py` (whole module) | the three sources of truth of the real payload in parity: the standard's patterns, the contract's canonical form, and the validator's activation of `ears` for H01 (`plan 137`) |
+| `test_fc_isolation_declaration.py` (whole module) | the published absence of isolation for the actor, and that the verifier **rejects** an omitted declaration or an isolation claim (`plan 165`, `FC-2` / `ID-3`) |
 
 `tests/fixtures/skills/` is **not** in this list: those are synthetic fixtures
 that stand in for payload skills so the isolated tests above do not read

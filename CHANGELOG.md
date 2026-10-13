@@ -37,6 +37,37 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Added
 
+- **Acto de autorización de ejecución de `F-C` y formalización de su Plan** (plan 164, vía plan; DEV-only,
+  docs-only sobre `docs/plans/`, `ROADMAP.md` y este changelog, sin efecto en `protocol/`, `runtime/`,
+  `tools/`, `tests/` ni `.agents/`, por lo que RFC-56 no aplica): el mantenedor autorizó el **2026-10-13**
+  la ejecución de `F-C` bajo el alcance canónico **1B** establecido por `OD-1` y la creación/formalización
+  de su Plan con `Status: Aprobado para ejecución`, `Change Level ≥ L3` y criterios `FC-1`…`FC-10`, **sin
+  extender el scope** más allá del `IN SCOPE` de `OD-1` y **sin incorporar** `C-16`/`C-17`/`C-21`. El Plan
+  164 registra el acto con su transcripción literal, autoridad, fecha efectiva, alcance heredado, artefacto
+  designado, efecto sobre el estado y límite explícito —la autorización **no** habilita al agente a
+  implementar `F-C` en ese Change—, resuelve la pending decision de `<PLAN-163>` y la anota de forma
+  **aditiva** en el artefacto que la posee (regla `PC-1`), y reconcilia `ROADMAP.md` retirando el blocker
+  de autorización ya otorgada. **Plan 165 creado (`Status: Aprobado para ejecución`, `Change Level` L3):**
+  contrato operativo del Change de implementación, con `IN SCOPE`/`OUT OF SCOPE` heredados **literalmente**
+  de `OD-1` —dentro: actor real con provider/modelo, aislamiento/sandbox (incluida la posibilidad prevista
+  de declarar la garantía que no se ofrece), Memory como contexto, objetivo multi-Change, `C-02` y `C-26`;
+  fuera: `C-16`/`C-17`/`C-21`, derivación parcial, recurso como eje de autorización, default de `--sae`,
+  concurrencia, telemetría con backend y evaluación comparativa—, `FC-1`…`FC-10` sin reducción de
+  garantías, efectos declarados (`network` autorizado; `install`, `remote_git`, `destructive` y
+  `write_outside_project` **no** declarados ni autorizados) y las **ocho decisiones de implementación**
+  (`ID-1`…`ID-8`) identificadas y clasificadas sin resolverlas por inferencia: `ID-1` provider/modelo
+  concreto, `ID-3` implementar aislamiento o declarar la garantía que no se ofrece e `ID-5` mecanismo del
+  objetivo multi-Change **requieren acto explícito del mantenedor**; `ID-6` lo requiere si la solución
+  escala a `protocol/.agents/` (RFC-56 Clase A); `ID-2`, `ID-4`, `ID-7` e `ID-8` se resuelven por diseño
+  durante la ejecución con registro obligatorio, incluida la resolución de la discrepancia declarada entre
+  la política de retry y su implementación. **No implementado:** `F-C` **no** se ejecuta; el Plan 165 se
+  crea sin ejecutar (anchor y checkpoint vacíos, sin condición derivada), y 0 diff en `runtime/`, `tests/`,
+  `tools/`, `.agents/`, `protocol/` y `dist/`; el default de `--sae`, los techos de recurso, el vocabulario
+  de efectos y el envelope de `F-B` quedan sin cambio. `OD1 = CLOSED` · `F-C_SCOPE = 1B / CLOSED` ·
+  `F-C_PLAN = CREATED` · `F-C_PLAN_STATUS = Aprobado para ejecución` · `F-C_CHANGE_LEVEL = L3` ·
+  `F-C_IMPLEMENTATION = NOT_STARTED` · `ETAPA_B = NOT_STARTED`. Sin `VERSION` bump ni tag; sin citas rotas
+  nuevas (el conteo de `check_plan_citations` se mantiene en **26**, el baseline).
+
 - **Acto de autoridad de `OD-1` — alcance canónico de `F-C`** (plan 163, vía plan; DEV-only, docs-only
   sobre `docs/CONVENTIONS.md`, `ROADMAP.md`, `docs/plans/` y este changelog, sin efecto en `protocol/`,
   `runtime/`, `tools/`, `tests/` ni `.agents/`, por lo que RFC-56 no aplica): **resuelve `OD-1`**. El

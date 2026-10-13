@@ -30,8 +30,8 @@ humano sobre alcance, autoridad, decisiones normativas, protocolo y release.
   ref local `dist`, que está rezagada.
 - **En `dev`:** PATCH `12.0.1` implementado y **sin tag**; su promoción es un
   acto de release no autorizado.
-- **Trabajo activo:** ninguno. La Etapa A quedó **ejecutada** (2026-10-12) y `OD-1` **resuelto** el mismo
-  día: `F-C` tiene **alcance canónico** y **no** tiene autorización de ejecución.
+- **Trabajo activo:** ninguno. `F-C` quedó **aprobado para ejecución** (2026-10-13); su implementación corre
+  en el Change siguiente ([plan 165](docs/plans/165-f-c-autonomy-frontier-implementation.md)).
 
 ### Estado del que parte este roadmap
 
@@ -56,8 +56,9 @@ no trabajo pendiente. El trabajo cerrado no se cataloga aquí — su traza vive 
   provider/modelo, aislamiento/sandbox, Memory como contexto y objetivo multi-Change, con `C-02`
   (contención de autoridad fuera del host) y `C-26` (recuperación ante fallos reales) como condiciones
   ([acto](docs/plans/163-acto-autoridad-od1-alcance-f-c.md); norma en `docs/CONVENTIONS.md`, subsección
-  «Modelo de autonomía — alcance canónico de `F-C`»). **Requiere su propio acto de autorización de
-  ejecución.**
+  «Modelo de autonomía — alcance canónico de `F-C`»). **Aprobado para ejecución**
+  ([plan 165](docs/plans/165-f-c-autonomy-frontier-implementation.md); [acto](docs/plans/164-acto-autorizacion-ejecucion-f-c.md));
+  su implementación corre en el Change siguiente.
 
 ### ⏳ LATER
 
@@ -95,11 +96,10 @@ documento: cada una es un Change con su propia autorización.
 | Bloqueo | Qué cambia | Detalle |
 |---|---|---|
 | Autorización de release de `12.0.1` | cuándo se publica NOW | acto del mantenedor |
-| Ejecución de `F-C` **no autorizada** | cuándo arranca `F-C` | pending decision (owner: mantenedor) en `docs/plans/163-acto-autoridad-od1-alcance-f-c.md` (`### Pending decisions`) |
 | ADR-worthiness del acto de autoridad de autonomía | cómo se registra la decisión | `docs/plans/152-authority-decisions-gov-1-10.md` |
 | Semántica de lifetime/persistence en el contrato Protocol | viabilidad (exige RFC `Accepted`) | `docs/plans/125-repository-architecture-decisions.md` |
 | Enforcement de placement y persistencia de Project/Knowledge | alcance de LATER | [placement-contract](docs/placement-contract.md) — §Enforcement deferred |
 
 ---
 
-_Última actualización: 2026-10-12 · Protocolo publicado: `12.0.0`_
+_Última actualización: 2026-10-13 · Protocolo publicado: `12.0.0`_

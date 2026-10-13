@@ -30,8 +30,8 @@ humano sobre alcance, autoridad, decisiones normativas, protocolo y release.
   ref local `dist`, que está rezagada.
 - **En `dev`:** PATCH `12.0.1` implementado y **sin tag**; su promoción es un
   acto de release no autorizado.
-- **Trabajo activo:** ninguno. La Etapa A quedó **ejecutada** (2026-10-12); el próximo paso es la
-  revisión del alcance de `F-C`/Etapa B (`OD-1`).
+- **Trabajo activo:** ninguno. La Etapa A quedó **ejecutada** (2026-10-12) y `OD-1` **resuelto** el mismo
+  día: `F-C` tiene **alcance canónico** y **no** tiene autorización de ejecución.
 
 ### Estado del que parte este roadmap
 
@@ -51,20 +51,20 @@ no trabajo pendiente. El trabajo cerrado no se cataloga aquí — su traza vive 
 
 ### ⏭️ NEXT
 
-- **[BOTH] HIGH — Revisión del alcance de `F-C`/Etapa B a partir del resultado de Etapa A (`OD-1`).**
-  El **Capability & Guarantee Matrix** quedó producido
-  ([retrospectiva](docs/working/audits/ETAPA_A_RETROSPECTIVA_CAPACIDADES_Y_GARANTIAS.md), [plan 161](docs/plans/161-etapa-a-capability-and-guarantee-retrospective.md)):
-  determina qué garantías están realmente demostradas y con qué evidencia, y puede **reducir** el alcance
-  de la Etapa B. Es la compuerta de todo lo que sigue y **requiere su propio Change autorizado**.
-  **Instrumento decision-ready:** [plan 162](docs/plans/162-instrumento-decision-od1-alcance-f-c.md)
-  (opciones `R1`/`R2`/`R3`, consecuencias y registro exigido); la decisión pertenece al mantenedor.
+- **[BOTH] HIGH — `F-C`: frontera de autonomía (alcance canónico resuelto; ejecución sin autorizar).**
+  `F-C` **es** Etapa B delimitada por el resultado de Etapa A a la frontera de autonomía: actor con
+  provider/modelo, aislamiento/sandbox, Memory como contexto y objetivo multi-Change, con `C-02`
+  (contención de autoridad fuera del host) y `C-26` (recuperación ante fallos reales) como condiciones
+  ([acto](docs/plans/163-acto-autoridad-od1-alcance-f-c.md); norma en `docs/CONVENTIONS.md`, subsección
+  «Modelo de autonomía — alcance canónico de `F-C`»). **Requiere su propio acto de autorización de
+  ejecución.**
 
 ### ⏳ LATER
 
-- **[BOTH] HIGH — Complete ARgentOS Autonomy (Etapa B).** Cerrar las fronteras que
-  impiden ejecutar un objetivo amplio bajo supervisión. Sus fronteras son
-  **candidatas, no compromisos**.
-- **[BOTH] LOW — Etapa C, capacidad nueva.** Sólo después de A y B: ninguna feature
+- **[PROTOCOL] — Brechas de capacidad del payload relevadas por la Etapa A (`C-16`, `C-17`, `C-21`).**
+  **Explícitamente fuera de `F-C`**: su garantía depende de una adopción real. Sin iniciativa asignada
+  ni autorización; requieren su propia decisión de alcance.
+- **[BOTH] LOW — Etapa C, capacidad nueva.** Sólo después de `F-C`: ninguna feature
   entra por disponibilidad tecnológica ni por simetría con otro sistema.
 
 > El **envelope de autonomía** ya no figura aquí: su admisión de efectos y su
@@ -79,13 +79,13 @@ no trabajo pendiente. El trabajo cerrado no se cataloga aquí — su traza vive 
 
 ```mermaid
 flowchart TD
-    A["Etapa A<br/>retrospectiva"] --> E["Envelope de autonomía"]
-    A --> B["Etapa B<br/>Complete Autonomy"]
-    E --> B
-    B --> C["Etapa C<br/>capacidad nueva"]
+    A["Etapa A<br/>retrospectiva ✅"] --> E["Envelope de autonomía ✅"]
+    A --> F["F-C<br/>frontera de autonomía<br/>(alcance resuelto, sin autorizar)"]
+    E --> F
+    F --> C["Etapa C<br/>capacidad nueva"]
 ```
 
-**B depende de A** y **C depende de A y B**. Ninguna etapa se ejecuta desde este
+**`F-C` depende de A y del envelope** (ambos cerrados) y **C depende de `F-C`**. Ninguna etapa se ejecuta desde este
 documento: cada una es un Change con su propia autorización.
 
 ---
@@ -95,7 +95,7 @@ documento: cada una es un Change con su propia autorización.
 | Bloqueo | Qué cambia | Detalle |
 |---|---|---|
 | Autorización de release de `12.0.1` | cuándo se publica NOW | acto del mantenedor |
-| `OD-1` sin resolver (qué es `F-C`) | alcance de `F-C` y de Etapa B | decisión pendiente (owner: mantenedor) en `docs/plans/161-etapa-a-capability-and-guarantee-retrospective.md` (`### Pending decisions`); instrumento decision-ready: `docs/plans/162-instrumento-decision-od1-alcance-f-c.md` |
+| Ejecución de `F-C` **no autorizada** | cuándo arranca `F-C` | pending decision (owner: mantenedor) en `docs/plans/163-acto-autoridad-od1-alcance-f-c.md` (`### Pending decisions`) |
 | ADR-worthiness del acto de autoridad de autonomía | cómo se registra la decisión | `docs/plans/152-authority-decisions-gov-1-10.md` |
 | Semántica de lifetime/persistence en el contrato Protocol | viabilidad (exige RFC `Accepted`) | `docs/plans/125-repository-architecture-decisions.md` |
 | Enforcement de placement y persistencia de Project/Knowledge | alcance de LATER | [placement-contract](docs/placement-contract.md) — §Enforcement deferred |

@@ -37,6 +37,39 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ### Added
 
+- **Acto de autoridad de `OD-1` — alcance canónico de `F-C`** (plan 163, vía plan; DEV-only, docs-only
+  sobre `docs/CONVENTIONS.md`, `ROADMAP.md`, `docs/plans/` y este changelog, sin efecto en `protocol/`,
+  `runtime/`, `tools/`, `tests/` ni `.agents/`, por lo que RFC-56 no aplica): **resuelve `OD-1`**. El
+  mantenedor ejerció el acto sobre el instrumento decision-ready del Plan 162 y adoptó la interpretación
+  **`B`** —**`F-C` es la iniciativa «Complete ARgentOS Autonomy» (Etapa B) delimitada por el resultado de
+  la Etapa A a la frontera de autonomía**; `F-C` y Etapa B no son dos iniciativas paralelas— con registro
+  normativo **sin ADR** (`Q-d = No`). **`Q-b`:** el resto de Etapa B —las brechas de capacidad del payload
+  del Protocol— **no** se conserva como iniciativa paralela y queda **fuera** de `F-C`. **`Q-c` — dentro
+  de `F-C`:** actor con provider/modelo; aislamiento/sandbox (o declaración explícita, verificable y
+  publicada de la garantía que **no** se ofrece); Memory como contexto (`AE-8`); objetivo multi-Change con
+  mecanismo/trigger explícito (`D-1`); y las condiciones relevadas por la Etapa A: contención de autoridad
+  fuera del host (`C-02`) y recuperación ante fallos reales, incluida la discrepancia declarada sobre el
+  retry (`C-26`). **Fuera de `F-C`, explícito:** `C-16` Discovery, `C-17` Discovery KB y `C-21` Skills
+  (payload, con su propia vía); la superficie de derivación parcial (`D-6b = NO`); un eje de recurso como
+  autorización (`AE-6`/`D-3`); el default de `--sae` (decidido); y concurrencia, telemetría con backend y
+  evaluación comparativa (posteriores). **Boundaries:** `F-A` y `F-B` —incluido el envelope `AE-1`…`AE-10`—
+  son **precondiciones cerradas** que `F-C` no reimplementa ni modifica. **Registro normativo:** subsección
+  **aditiva** «Modelo de autonomía — alcance canónico de `F-C` (acto del 2026-10-12)» en
+  `docs/CONVENTIONS.md`, preservando íntegras las subsecciones del 2026-10-07 y del 2026-10-11.
+  **Preparación sin ejecución:** `FC-1`…`FC-10` como criterios de cierre requeridos del futuro Change de
+  `F-C`, `Change Level` mínimo esperado **L3** y estado **`SCOPED`** con pending decision **bloqueante**
+  (owner mantenedor) para autorizar su ejecución. **No realizado:** implementar cualquier capacidad de
+  `F-C` (provider/modelo, aislamiento/sandbox, Memory, multi-Change, contención de autoridad,
+  recuperación/retry), autorizar su ejecución, crear un Plan de `F-C` con estado `Aprobado para ejecución`,
+  iniciar Etapa B, o cambiar defaults de autonomía, el envelope de `F-B`, los techos de recurso o el
+  vocabulario de efectos. Reconciliación derivada: `ROADMAP.md` (`F-C` en `NEXT` con alcance resuelto y sin
+  autorización; brechas del payload en `LATER`, explícitamente fuera; grafo de dependencias alineado;
+  blocker de ejecución no autorizada), anotación **aditiva** de la resolución de la pending `OD-1` en
+  `docs/plans/161-etapa-a-capability-and-guarantee-retrospective.md` (regla `PC-1`) y registro en
+  `docs/plans/INDEX.md`. **`OD-1` = `RESOLVED`**; **`F-C` = `NOT_IMPLEMENTED`**; 0 diff en `runtime/`,
+  `tests/`, `tools/`, `.agents/`, `protocol/` y `dist/`. Sin `VERSION` bump ni tag; sin citas rotas nuevas
+  (el conteo de `check_plan_citations` se mantiene en **26**, el baseline).
+
 - **`OD-1` — instrumento de decisión del alcance canónico de `F-C`** (plan 162, vía plan; DEV-only,
   docs-only sobre `docs/plans/`, `ROADMAP.md` y este changelog, sin efecto en `protocol/`, `runtime/`,
   `tools/`, `tests/` ni `.agents/`, por lo que RFC-56 no aplica): aborda `OD-1` y **no lo resuelve**.

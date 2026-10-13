@@ -320,6 +320,51 @@ en `docs/adr/19-autonomy-envelope-authority.md:Amendment Log`.
   Reconciliación `OD-2` (2026-10-12), registrada en
   `docs/adr/19-autonomy-envelope-authority.md:Amendment Log`.
 
+### Modelo de autonomía — alcance canónico de `F-C` (acto del 2026-10-12)
+
+Acto de autoridad del mantenedor (2026-10-12) que resuelve `OD-1` —«¿cuál es el alcance canónico de
+`F-C`?»— sobre el instrumento decision-ready del Plan 162. Registra **alcance**, no esquemas de
+implementación: **no autoriza ejecución**, no crea capacidad, no habilita ninguna etapa y no modifica el
+envelope. Su registro canónico es
+`docs/plans/163-acto-autoridad-od1-alcance-f-c.md:Acto de autoridad registrado (2026-10-12)`. Se registra
+por **adición**: las subsecciones del 2026-10-07 y del 2026-10-11 **no se modifican**.
+
+- **Interpretación adoptada.** `F-C` **es** la iniciativa «Complete ARgentOS Autonomy» (Etapa B)
+  **delimitada por el resultado de la Etapa A a la frontera de autonomía**. `F-C` y Etapa B **no** son dos
+  iniciativas paralelas: `F-C` es el nombre de trabajo de esa iniciativa con su alcance ya **reducido**
+  por el mandato del `ROADMAP.md` («su resultado puede **reducir** el alcance de la Etapa B»).
+- **Boundary con `F-A`.** La capacidad de autonomía DEV (host, bucle, vocabulario cerrado de acciones,
+  frontera SAE, modelo de autoridad) es **precondición cerrada**: `F-C` no la reimplementa ni la redefine.
+- **Boundary con `F-B`.** El **envelope** —admisión de efectos, `Effect ⊥ Scope`, declaración de efectos
+  en el Plan, techo de recurso como guarda de terminación (`AE-1`…`AE-10`)— es **precondición cerrada**:
+  `F-C` no lo modifica, no convierte el techo en autorización y no altera el gate previo a la delegación.
+- **Dentro de `F-C` (`IN SCOPE`).** (i) actor real con **provider/modelo**, ejecutando el bucle bajo la
+  frontera existente (`AE-7`); (ii) **aislamiento/sandbox**, o la declaración explícita, verificable y
+  publicada de la garantía de aislamiento que **no** se ofrece —el invoker inyectado no es garantía—;
+  (iii) **Memory como contexto**, integrada sin convertirse en premisa de derivación ni en autoridad
+  (`AE-8`); (iv) **objetivo multi-Change** con mecanismo/trigger explícito (`D-1`), preservando que la
+  unidad primaria de aceptación sigue siendo el Change; (v) las **condiciones** relevadas por la Etapa A
+  que acotan esas garantías: contención de autoridad fuera del host (`C-02`) y recuperación ante fallos
+  reales, incluida la resolución de la discrepancia declarada sobre el retry (`C-26`).
+- **Fuera de `F-C` (`OUT OF SCOPE`), explícito.** (a) el cierre de las brechas de capacidad del **payload
+  del Protocol** relevadas por la Etapa A —`C-16` Discovery, `C-17` Discovery KB y `C-21` Skills—: su
+  garantía depende de una adopción real, **no** pertenecen a `F-C` y siguen su propia vía con su propia
+  decisión de alcance; (b) la **superficie de derivación parcial** (descartada por `D-6b = NO`); (c) un
+  **eje de recurso como autorización** (prohibido por `AE-6`/`D-3`); (d) el **default de `--sae`**
+  (decidido: sigue opt-in); (e) **concurrencia, telemetría con backend y evaluación comparativa**
+  (clasificadas posteriores por el audit de capacidades); (f) cualquier capacidad no listada en el punto
+  anterior.
+- **Lo que NO debe inferirse.** Que `F-C` esté **autorizada** o iniciada: su alcance está resuelto y su
+  **ejecución no**. Que una capacidad de madurez baja pertenezca a `F-C` por ese solo hecho. Que este acto
+  habilite una etapa, cambie defaults de autonomía o modifique el envelope. Que alguna frontera candidata
+  fuera de `IN SCOPE` se incorpore por simetría, disponibilidad tecnológica o continuidad.
+- **Dependencias y precondiciones.** `F-A`, `F-B` y Etapa A `Closed` (cumplidas); **autorización de
+  ejecución** del Change de `F-C` (pendiente, owner mantenedor); RFC-56 Clase A **sólo** si el trabajo
+  toca `protocol/.agents/`; y la prohibición de resolver en el registro de alcance cualquier decisión de
+  implementación.
+- **Estado.** `F-C`: alcance **canónico resuelto** y **ejecución no autorizada**. Etapa B **no** existe
+  como iniciativa paralela: quedó delimitada dentro de `F-C`.
+
 ### Change Lifecycle — Vía de autorización por `Note` (`Plan`/`Note`) (adoptado por el Plan 152, 2026-10-07)
 
 `Note` es un artefacto de la **familia `Plan`** — misma familia y mismo namespace que el Plan

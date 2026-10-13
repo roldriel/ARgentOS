@@ -367,6 +367,11 @@ class AgentWorker:
     timeout_seconds: int = DEFAULT_TIMEOUT_SECONDS
     context_budget: int = DEFAULT_CONTEXT_BUDGET
 
+    #: Optional Memory store (``runtime.memory.MemoryStore``). Memory is **context only** (``ID-4``):
+    #: when present it is rendered into the actor prompt by ``fc_flow.with_memory_context``, and it
+    #: never reaches the containment decision.
+    memory_store: object | None = None
+
     # -- context ------------------------------------------------------------ #
 
     def build_context(
@@ -417,6 +422,12 @@ class AgentWorker:
         snapshot_before = repository_snapshot(root)
 
         context, prompt = self.build_context(delegation, run_id=run_id)
+        # FC-3 on the real execution path: remembered context is appended to the prompt the actor
+        # receives. It is text — it grants no authority, expands no scope and authorizes no effect.
+        if self.memory_store is not None:
+            from runtime.orchestrator.fc_flow import build_memory_context, with_memory_context
+
+            prompt = with_memory_context(prompt, build_memory_context(self.memory_store))
         request = AgentInvocationRequest(
             task=delegation.task or "",
             prompt=prompt,
@@ -504,6 +515,26 @@ class AgentWorker:
         ]
         evidence.extend(self._command_evidence(store, delegation, commands))
 
+        # FC-5 on the real execution path: the containment frontier of the F-C flow decides about
+        # the result this worker is about to persist. Its verdict is recorded with the result, which
+        # is what the host reads; the resource ceiling terminates and never authorizes.
+        from runtime.orchestrator.fc_flow import contain_actor_result
+
+        containment = contain_actor_result(
+            observed_commands=[command["argv"] for command in commands],
+            scope=tuple(delegation.declared_scope),
+            requested_scope=tuple(out_of_scope),
+        )
+        evidence.append(
+            {
+                "kind": "fc-containment",
+                "outcome": containment.outcome,
+                "reason": containment.reason,
+                "observed": list(containment.observed),
+                "declared": list(containment.declared),
+            }
+        )
+
         result = WorkerResult(
             result_id=f"{delegation.delegation_id}-result",
             delegation_id=delegation.delegation_id,
@@ -534,6 +565,7 @@ class AgentWorker:
                 "basis": delegation.authority_basis,
                 "scope": list(delegation.declared_scope),
                 "invoker": getattr(self.invoker, "kind", "unknown"),
+                "fc_containment": containment.to_dict(),
                 "claim": (
                     "the worker claims it acted only within the delegated scope; "
                     "this claim is evidence, not authority, and the host verifies "

@@ -413,7 +413,15 @@ El checker imprime literalmente `f"Broken citations: {len(broken)}"`: **`26` es 
 
 ### Estado de integración (factual)
 
-`runtime/orchestrator/fc_flow.py` **no tiene consumidores fuera de los tests** (`git grep`/`Select-String` sobre `runtime/**.py` y `tools/*.py` = **0**). Es decir: `FC-3`, `FC-4` y `FC-5` están **materializadas y verificadas** como flujo coherente con verificación ejecutable, y **todavía no cableadas** a la ruta de ejecución del host. La contención que el host ya aplicaba (`STOP_FORBIDDEN_ACTION` sobre el `WorkerResult` en `runtime/orchestrator/host.py`) permanece **intacta y sin cambios**. El cableado del flujo a la ruta del host es el paso de integración que acompañará a la demostración externa; **no** es una capacidad nueva y **no** se ejecuta en esta intervención.
+**ANTES (hasta `3a3f820`).** `runtime/orchestrator/fc_flow.py` **no tenía consumidores fuera de los tests** (0 en `runtime/**` y `tools/*`): `FC-3`, `FC-4` y `FC-5` estaban materializadas y verificadas, pero **no cableadas** a la ruta de ejecución.
+
+**DESPUÉS (cableado, 2026-10-13).** El flujo está **integrado a la ruta real**: `runtime/orchestrator/host.py` conduce un `WorkerAdapter` inyectado (`self.worker`) y el adaptador que lleva el flujo —`AgentWorker.execute`, en `runtime/orchestrator/agent_worker.py`— consume las primitivas de `fc_flow`:
+
+- **`FC-3` integrado.** El worker tiene un campo nuevo `memory_store` (default `None` ⇒ ausencia de Memory = no-op y comportamiento normal). Cuando está presente, el prompt que recibe el actor se construye con `build_memory_context()` + `with_memory_context()`. Memory es **texto**: no entra en ninguna decisión de autoridad.
+- **`FC-5` integrado.** El worker calcula la frontera con `contain_actor_result()` sobre la evidencia real del resultado (comandos ejecutados y `out_of_scope` frente al `declared_scope`) y **persiste el veredicto** en el `WorkerResult` —`evidence` (`{"kind": "fc-containment", …}`) y `authority_used["fc_containment"]`—, que es exactamente lo que el host lee. La contención autoritativa previa del host (`STOP_FORBIDDEN_ACTION` sobre el `WorkerResult`) permanece **intacta y sin cambios**: el flujo no la reemplaza, no la duplica y no crea un segundo sistema de autorización.
+- **`FC-4` NO integrado todavía.** La máquina `Objective → Change → evaluación → siguiente Change` permanece como primitiva de `fc_flow`, sin consumidor en la ruta del host. Su conducción por el host requiere Changes reales que evaluar y pertenece a la demostración externa; **no** se declara integrada.
+
+`fc_flow consumers outside tests = 1` (`runtime/orchestrator/agent_worker.py`), y la desconexión accidental queda detectada por `tests/test_fc_host_integration.py` (**5 pruebas**): verifica que la ruta siga consumiendo `contain_actor_result`, `build_memory_context` y `with_memory_context`, que el host siga conduciendo un `WorkerAdapter`, que el veredicto siga registrándose con el resultado y que la frontera siga **sin** aceptar memoria (`MEMORY ≠ AUTHORITY` sobre la ruta integrada). El propio detector tiene su counterproof: una ruta desconectada es reportada.
 
 ### Contrato de la demostración externa
 

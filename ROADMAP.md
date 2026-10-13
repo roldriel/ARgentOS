@@ -31,7 +31,7 @@ humano sobre alcance, autoridad, decisiones normativas, protocolo y release.
 - **En `dev`:** PATCH `12.0.1` implementado y **sin tag**; su promoción es un
   acto de release no autorizado.
 - **Trabajo activo:** ninguno. `F-C` quedó **aprobado para ejecución** y **listo para implementar**
-  (`READY_FOR_IMPLEMENTATION`, 2026-10-13); su implementación corre en el Change siguiente
+  (**cerrada** (`CLOSED`), 2026-10-13); su implementación corre en el Change siguiente
   ([plan 165](docs/plans/165-f-c-autonomy-frontier-implementation.md)).
 
 ### Estado del que parte este roadmap
@@ -52,14 +52,14 @@ no trabajo pendiente. El trabajo cerrado no se cataloga aquí — su traza vive 
 
 ### ⏭️ NEXT
 
-- **[BOTH] HIGH — `F-C`: frontera de autonomía (autorizado y listo para implementar).**
+- **[BOTH] CLOSED — `F-C`: frontera de autonomía (cerrada; implementada + verificada internamente).**
   `F-C` **es** Etapa B delimitada por el resultado de Etapa A a la frontera de autonomía: actor con
   provider/modelo, aislamiento/sandbox, Memory como contexto y objetivo multi-Change, con `C-02`
   (contención de autoridad fuera del host) y `C-26` (recuperación ante fallos reales) como condiciones
   ([acto](docs/plans/163-acto-autoridad-od1-alcance-f-c.md); norma en `docs/CONVENTIONS.md`, subsección
   «Modelo de autonomía — alcance canónico de `F-C`»). **Aprobado para ejecución**, con sus decisiones de
   autoridad cerradas (ID-1 actor agnóstico, ID-3 ausencia de aislamiento declarada, ID-5 semántica
-  multi-Change): **`READY_FOR_IMPLEMENTATION`**. La implementación corre en el Change siguiente
+  multi-Change): ****cerrada** (`CLOSED`)**. La implementación corre en el Change siguiente
   ([plan 165](docs/plans/165-f-c-autonomy-frontier-implementation.md); [acto](docs/plans/164-acto-autorizacion-ejecucion-f-c.md)).
 
 ### ⏳ LATER

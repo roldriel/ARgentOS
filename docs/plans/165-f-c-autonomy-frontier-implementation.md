@@ -1,6 +1,6 @@
 # Plan 165 — `F-C`: implementación de la frontera de autonomía
 
-**Status:** Aprobado para ejecución
+**Status:** Executed
 **Fecha:** 2026-10-13
 **Tipo:** Plan
 **Lifecycle:** active
@@ -446,14 +446,32 @@ El único gate que queda es la **corrida operacional con el actor/harness del ad
 **Ningún paso de este gate crea arquitectura nueva, provider, modelo, harness, SDK, CLI, sandbox, generador de Changes ni lifecycle de invocación.**
 ## Validation anchor
 
-<!-- Se completa al ejecutar (VC-1, Incremento 1). El Plan está `Aprobado para ejecución` y NO ejecutado:
-la sección queda vacía —sin campos registrados— y su clasificación esperada es N/A hasta que exista una
-validación registrada. -->
+**Decisión de cierre (mantenedor, 2026-10-13).** La demostración con un harness externo **autenticado** **no** es requisito de cierre de `F-C`: ARgentOS es un protocolo documental y agnóstico respecto de harness, provider, modelo, SDK, CLI y mecanismo; **no invoca ni autentica ningún harness**, y su superficie de adopción es `AGENTS.md` + `.agents/`. `AgentInvoker` es infraestructura DEV interna, no interfaz de adopción. Una corrida con un harness concreto probaría una integración externa, no una propiedad necesaria del protocolo. Por eso `FC-1`, `FC-4`, `FC-6` y `FC-7` se cierran como **implementados + verificación interna** (`FC-4` = `IMPLEMENTED + INTERNALLY VERIFIED`), sin demo externa, y `F-C` queda **`CLOSED`**.
+**Validation anchor (VC-1).**
+
+- **Declared scope:** `protocol/.agents/contracts/CHANGE_GOVERNANCE.md`, `protocol/.agents/contracts/HARNESS_REPORT.md` y `CHANGELOG.md` (el artefacto del Plan queda fuera del scope medido: convención anti-auto-referencia).
+- **Validation command-set:** los siete comandos de `docs/VERSIONING.md` §4.1 y los gates C-1/C-2/C-3.
+- **Effective inputs (repo content):** el scope declarado; RFC-83 (`Accepted`); Plan 166; el corpus de `docs/` y el payload de `protocol/.agents/`; el estado Git de `dev`.
+- **Observed dependencies:** stdlib; CLI `git`; `pytest` con basetemp externo. Sin red.
+- **Environmental factors:** Windows 11 + PowerShell; `check_dist_sync.py` no aplica (local-only, verde sólo en `master`); `check_plan_citations.py` conserva **26** citas rotas históricas, sin aumento.
+- **Scoped Content Identity:**
+  - **State identity (estado validado):** `2f611b022dc530612e6758fdaebb280c8af32a97`
+  - **Delta scoped identity (scope = las tres rutas declaradas; serialización `scoped-v1`):** `dd4f18a3b3b45574013ce90e7c92e4c1fca669dd3b4b16391bb289ced15544bf`
+- **Validity / stale:** vigente para el estado que el checkpoint certifica (implementación de RFC-83 en el payload, commiteada en `f75d70a`).
 
 ## Checkpoint / cierre
 
-<!-- Se completa al ejecutar (GC-1, Incremento 3). La sección queda vacía mientras el Plan está
-`Aprobado para ejecución`: **no** se declara ninguna condición derivada por su sola creación. -->
+**Checkpoint / cierre (GC-1).**
+
+- **Commits de cierre:** `docs(f-c): close autonomy frontier after internal verification` (este commit documental), precedido por `f75d70a` (payload) y `a61bd97` (aceptación de RFC-83 y aprobación del Plan 166). Sin amend, rebase, squash ni force-push.
+- **Estado validado (ref al Validation anchor):** el de la sección anterior (State identity `2f611b022dc530612e6758fdaebb280c8af32a97`; Delta scoped identity `dd4f18a3b3b45574013ce90e7c92e4c1fca669dd3b4b16391bb289ced15544bf`).
+- **Estado de cierre (identidad):** `dd4f18a3b3b45574013ce90e7c92e4c1fca669dd3b4b16391bb289ced15544bf` / `2f611b022dc530612e6758fdaebb280c8af32a97`.
+- **Árbol material del commit de cierre:** no declarado; incluye los registros de cierre, que el scope medido excluye por la convención anti-auto-referencia (`validated tree == commit tree` no es un requisito; RFC-75 Mecanismo 7).
+- **Consistencia checkpoint↔anchor:** PASS — el estado de cierre declarado es el que la validación consumió.
+- **Governance aplicada:** RFC-83 `Accepted`; materialización del payload en `f75d70a`; reconciliación en Plan 165, Plan 166, `ROADMAP.md`, `docs/plans/INDEX.md` y `CHANGELOG.md`.
+- **Documentation impact:** `REQUIRED` — reconciliado: la documentación ya no afirma que falte una demostración externa para cerrar F-C, y declara que el protocolo no requiere un harness concreto ni autenticación externa.
+- **Roadmap impact:** `REQUIRED` — `F-C` pasa a **cerrado**, sin blockers pendientes.
+- **Condición derivada:** **`Closed`** (planes `Executed` + governance + checkpoint + consistencia), sin release ni tag.
 
 ## Findings / Correcciones / Pending
 

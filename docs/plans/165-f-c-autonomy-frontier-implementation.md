@@ -370,6 +370,58 @@ CONDICIONES DE DISEÑO A FIJAR EN LA IMPLEMENTACIÓN (no son decisiones de autor
 **Counterproofs (`FC-7`):** `COUNTERPROOFS_TOTAL = 12` (11 de la matriz + intento de reintroducir provider/modelo) · `COUNTERPROOFS_PASS = 11` (aislamiento falso · declaración omitida · actor inexistente · actor stub · provenance inválida · Memory alterando autoridad · Memory ampliando scope · Change sin evaluación · transición inválida/continuación tras satisfacción · escape del envelope/bypass de containment · resource ceiling como autorización) · `COUNTERPROOFS_PENDING = 1` (recovery creando o ampliando autorización: requiere la corrida con fallo real de `FC-6`) · `COUNTERPROOFS_PARTIAL = 1` (reintroducción de provider/modelo: verificada por diff y por el contrato agnóstico de `FC-1`, sin test dedicado). **`FC-7` no se declara completo** mientras quede ese pendiente.
 
 **Estado de la materialización:** `FC-1`, `FC-3`, `FC-4`, `FC-5` y `FC-6` **materializados y verificados** (con demostración externa pendiente en `FC-1` y en la corrida con fallo real de `FC-6`); `FC-2` **demostrado**; `FC-8` y `FC-10` **verificados**; `FC-7` **11 de 12 counterproofs** en verde; `FC-9` documentado. **Ninguna capacidad del `IN SCOPE` queda sin materializar.** El Plan **no** se cierra todavía: la condición restante es la demostración con el actor externo del adoptante (`FC-1`, `FC-6`) y el counterproof pendiente que depende de ella; el anchor y el checkpoint **no** se registran hasta entonces.
+## Readiness for external demonstration (preparación de cierre, 2026-10-13)
+
+*Esta sección **no** cierra el Plan: registra el estado factual verificado, la contabilidad exacta y el contrato de la evidencia externa que falta.*
+
+### Contabilidad exacta de counterproofs (`FC-7`)
+
+La matriz canónica tiene **11 ítems**; se añade **1** verificación extra (reintroducción de provider/modelo). Cada ítem se cuenta **una vez** y su estado es `PASS` (falsación ejecutable y verde), `PENDING` (requiere la corrida externa de `FC-6`) o `PARTIAL` (parte demostrada, parte pendiente de un test dedicado). La categoría `PARTIAL` **no** es un subestado de `PASS`: es una categoría propia, y por eso `PASS + PARTIAL + PENDING = TOTAL`.
+
+| # | Counterproof | Estado | Falsación ejecutable (test) |
+|---|---|---|---|
+| 1 | aislamiento falso | `PASS` | `test_fc_isolation_declaration.py::test_verifier_rejects_an_isolation_guarantee` |
+| 2 | declaración de aislamiento omitida | `PASS` | `…::test_verifier_rejects_a_text_that_omits_the_declaration` |
+| 3 | actor inexistente | `PASS` | `test_fc_actor_provenance.py::test_missing_actor_is_a_distinct_state` · `…::test_completion_alone_is_not_actor_evidence` |
+| 4 | actor stub | `PASS` | `…::test_a_stub_cannot_claim_to_be_a_real_actor` |
+| 5 | provenance inválida | `PASS` | `…::test_invalid_provenance_is_rejected` |
+| 6 | Memory alterando autoridad | `PASS` | `test_fc_flow.py::test_memory_cannot_authorize_an_effect` · `…::test_memory_cannot_expand_scope_or_envelope` |
+| 7 | Change sin evaluación | `PASS` | `…::test_evaluation_is_explicit_and_required` · `…::test_invalid_transitions_are_rejected` |
+| 8 | transición inválida | `PASS` | `…::test_invalid_transitions_are_rejected` |
+| 9 | efecto no autorizado / desconocido / no declarado y bypass de containment | `PASS` | `…::test_case_b_not_authorized_stops` · `…::test_case_c_unknown_effect_stops` · `…::test_case_d_undeclared_effect_stops` · `…::test_case_d_absence_of_declaration_is_never_an_authorization` · `…::test_case_g_the_actor_cannot_escape_the_envelope` |
+| 10 | recovery creando o ampliando autorización | `PENDING` | — (requiere la corrida con fallo real del actor, `FC-6`) |
+| 11 | resource ceiling como autorización | `PASS` | `…::test_case_h_resource_exhaustion_is_not_authorization` |
+| 12 | reintroducción de provider/modelo específico | `PARTIAL` | `test_fc_actor_provenance.py::test_no_provider_or_model_is_required` (contrato agnóstico) · verificación de diff |
+
+```text
+COUNTERPROOFS_TOTAL   = 12   (11 de la matriz + 1 verificación extra)
+COUNTERPROOFS_PASS    = 10
+COUNTERPROOFS_PENDING = 1    (recovery cannot create or expand authorization)
+COUNTERPROOFS_PARTIAL = 1    (provider/modelo)
+PASS + PARTIAL + PENDING = 12 = TOTAL   ✓
+```
+
+**`PARTIAL` (ítem 12) — qué está demostrado y qué falta.** *Demostrado:* el contrato de actor es agnóstico —`ActorProvenance` exige `harness` + `mechanism` y **nunca** un `model`—, la batería canónica está verde y el diff de F-C no contiene integración de provider/modelo/SDK/CLI/harness, ni invocación de modelo, ni sandbox, ni una segunda dimensión de autorización. *Falta:* una falsación **dedicada** que intente introducir un provider/modelo específico y sea rechazada por un verificador (hoy la garantía se sostiene en el contrato y en el diff, no en un detector). **No se convierte en `PASS`**: no hay evidencia ejecutable que lo permita todavía, y no se cambia la semántica para cuadrar números.
+
+### `check_plan_citations` — interpretación exacta
+
+El checker imprime literalmente `f"Broken citations: {len(broken)}"`: **`26` es el número de citas rotas**, no de citas válidas ni un denominador. Es el **baseline histórico** (precedente a F-C) y no aumentó en ningún commit de F-C. El checker emite además una **clase distinta**, no incluida en ese `26`: `Legacy references from live sources: 1`, señalada en `docs/CONVENTIONS.md:808` hacia `.agents/policies/validation-closure.md` como *new legacy reference*. **Verificado que no es una regresión de F-C:** la referencia existe **2 veces antes y 2 veces después** de los cambios de este Change (`git show 4c5bfcb:docs/CONVENTIONS.md` contra el árbol actual) y su destino existe. El checker **no** se modificó.
+
+### `FC-9` — qué es y en qué estado está
+
+`FC-9` (*cierre anclado*) = `## Validation anchor` + `## Checkpoint / cierre`, condición derivada `Closed` y reconciliación de `ROADMAP.md`/`INDEX`/`CHANGELOG`. **Estado: `DOCUMENTED` / `NOT DEMONSTRATED`.** Lo documentado es esta preparación y la matriz de la Fase 5; lo **no** demostrado es el cierre mismo, porque su condición previa —`FC-1`…`FC-10` demostrados— todavía no se cumple. **No** se registran anchor ni checkpoint: hacerlo ahora sería un cierre artificial.
+
+### Estado de integración (factual)
+
+`runtime/orchestrator/fc_flow.py` **no tiene consumidores fuera de los tests** (`git grep`/`Select-String` sobre `runtime/**.py` y `tools/*.py` = **0**). Es decir: `FC-3`, `FC-4` y `FC-5` están **materializadas y verificadas** como flujo coherente con verificación ejecutable, y **todavía no cableadas** a la ruta de ejecución del host. La contención que el host ya aplicaba (`STOP_FORBIDDEN_ACTION` sobre el `WorkerResult` en `runtime/orchestrator/host.py`) permanece **intacta y sin cambios**. El cableado del flujo a la ruta del host es el paso de integración que acompañará a la demostración externa; **no** es una capacidad nueva y **no** se ejecuta en esta intervención.
+
+### Contrato de la demostración externa
+
+**`FC-1` — actor real externo.** Evidencia exigida (sin provider/modelo prescrito): una corrida efectiva en la que el actor lo aporte el entorno del adoptante y su resultado declare la procedencia con `ActorProvenance(harness=<harness real>, mechanism=<cómo se invocó>)`; el host debe clasificarla como `external-declared` (`classify_actor_evidence` con `invoker_kind` no sintético). Debe además distinguirse de: `stub`/`synthetic invoker` (kind `null`/`stub`/`test-double`), `fabricated result` (status `completed` sin procedencia), `missing provenance` y `invalid provenance` (harness o mechanism vacíos). **No** se admite evidencia producida por un invocador implementado dentro de ARgentOS.
+
+**`FC-6` — fallo real y recuperación.** Evidencia exigida: `actor execution → failure → failure detected → intermediate/recovery state → new derivation → same envelope → result`, con el fallo **real** del actor externo, el registro de la recuperación como evidencia y la constancia de que la recuperación **no** creó ni amplió `authority`, `scope`, `effects` ni `envelope` (conforme a `ID-7`: nueva derivación registrada dentro del mismo envelope; sin retry con ciclo de vida propio).
+
+**`FC-7` (ítem 10).** El counterproof pendiente —*recovery cannot create or expand authorization*— se demuestra **con la misma corrida** de `FC-6`: basta registrar que la recuperación no introdujo autorización nueva. No requiere evidencia adicional.
 ## Validation anchor
 
 <!-- Se completa al ejecutar (VC-1, Incremento 1). El Plan está `Aprobado para ejecución` y NO ejecutado:

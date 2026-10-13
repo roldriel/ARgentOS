@@ -364,6 +364,8 @@ por **adición**: las subsecciones del 2026-10-07 y del 2026-10-11 **no se modif
   implementación.
 - **Estado.** `F-C`: alcance **canónico resuelto** y **ejecución no autorizada**. Etapa B **no** existe
   como iniciativa paralela: quedó delimitada dentro de `F-C`.
+- **Límite futuro explícito (acto del 2026-10-13).** Queda **fuera de `F-C`** la futura capacidad de **selección de modelo/provider/nivel de esfuerzo por tarea** —por ejemplo, elegir una capacidad de modelo menor para tareas simples y mayor para tareas complejas, para optimizar costo, tokens, latencia o calidad—. **No** forma parte de `F-C`, **no** debe introducirse en su implementación y su eventual materialización exigiría su propio acto y su propia vía.
+- **Estado tras el acto del 2026-10-13.** La **ejecución** de `F-C` quedó **autorizada** (Plan 164) y sus decisiones de autoridad `ID-1` (actor **agnóstico**: el agente lo aporta el entorno del adoptante), `ID-3` (se **declara ausencia** de aislamiento proporcionado por ARgentOS) e `ID-5` (semántica `Objetivo → Change → evaluación → siguiente Change`) quedaron **cerradas** en el Plan 165; `F-C` = **`READY_FOR_IMPLEMENTATION`**, con implementación **no iniciada**.
 
 ### Change Lifecycle — Vía de autorización por `Note` (`Plan`/`Note`) (adoptado por el Plan 152, 2026-10-07)
 

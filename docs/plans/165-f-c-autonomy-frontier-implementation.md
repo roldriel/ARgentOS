@@ -36,7 +36,7 @@ El Change **no** extiende el alcance más allá del `IN SCOPE`, **no** incorpora
 
 ### IN SCOPE
 
-1. **Actor real con provider/modelo** (`FC-1`).
+1. **Actor real** (`FC-1`): el agente/LLM **proporcionado por el entorno del adoptante** —ARgentOS es **agnóstico** respecto de harness, provider, modelo, SDK, CLI o mecanismo de invocación (`ID-1`, `CLOSED`); **no** se incorpora ni prescribe ninguno—, operando bajo la **capa de gobernanza** que descubre en el proyecto.
 2. **Aislamiento/sandbox**, incluida la posibilidad explícitamente prevista de **declarar** una garantía que no se ofrece (`FC-2`).
 3. **Memory como contexto** (`FC-3`).
 4. **Objetivo multi-Change** con trigger explícito (`FC-4`).
@@ -48,7 +48,7 @@ El Change **no** extiende el alcance más allá del `IN SCOPE`, **no** incorpora
 
 `C-16` Discovery · `C-17` Discovery KB · `C-21` Skills · derivación parcial (`D-6b = NO`) · recurso como eje de autorización (`AE-6`/`D-3`) · cambio del default de `--sae` (`OD-4`) · concurrencia · telemetría con backend · evaluación comparativa · cualquier otra capacidad no listada en `IN SCOPE`.
 
-**Ninguna capacidad se incorpora por simetría, disponibilidad tecnológica, conveniencia de implementación o madurez baja.** `C-16`/`C-17`/`C-21` están **fuera** por decisión del acto de `OD-1`; su madurez baja no las habilita.
+**Ninguna capacidad se incorpora por simetría, disponibilidad tecnológica, conveniencia de implementación o madurez baja.** `C-16`/`C-17`/`C-21` están **fuera** por decisión del acto de `OD-1`; su madurez baja no las habilita. También queda **fuera** —por el acto del 2026-10-13 y sin crear trabajo— la futura **selección de modelo/provider/nivel de esfuerzo por tarea**.
 
 ### DEPENDENCIES
 
@@ -80,21 +80,30 @@ RFC-56     = Clase A (RFC `Accepted`) **sólo** si la ejecución toca `protocol/
 
 ## Decisiones de implementación
 
-*`OD-1` resolvió el **qué**; estas decisiones son el **cómo**. **Ninguna se resuelve en este Change**: se registran con su clasificación y se resuelven en el Change de implementación.*
+*`OD-1` resolvió el **qué**; estas decisiones son el **cómo**. `ID-1`, `ID-3` e `ID-5` quedaron **cerradas por acto del mantenedor (2026-10-13)**; `ID-2`, `ID-4`, `ID-6`, `ID-7` e `ID-8` se resuelven durante la ejecución con registro obligatorio.*
 
 | # | Decisión | Clasificación | Dónde se resuelve |
 |---|---|---|---|
-| `ID-1` | **Provider/modelo concreto** | **Requiere decisión explícita del mantenedor** — no es derivable de contratos existentes y condiciona garantías y coste | Acto del mantenedor registrado en el Change de implementación (o en el Plan que lo ejecute) |
+| `ID-1` | **Actor / provider / model** | **`CLOSED`** (acto del mantenedor, 2026-10-13) — ARgentOS es **agnóstico**; el actor es el agente del entorno del adoptante; **no** se incorpora ni prescribe provider/modelo/SDK/CLI/harness. Ver `### Decisiones de autoridad cerradas (acto del mantenedor, 2026-10-13)` | — |
 | `ID-2` | **Arquitectura del actor** | **Puede derivarse legítimamente de contratos existentes** en su forma (`AgentInvoker`, `Delegation`, `WorkerResult`, `AE-7`) **+ diseño durante la ejecución** en su detalle | Diseño del Change de implementación, citando los contratos |
-| `ID-3` | **Diseño concreto del aislamiento/sandbox** | **Requiere decisión explícita del mantenedor** — la elección entre **implementar** aislamiento o **declarar la garantía que no se ofrece** fija el cierre de `FC-2` | Acto del mantenedor + diseño del Change de implementación |
+| `ID-3` | **Aislamiento** | **`CLOSED`** (acto del mantenedor, 2026-10-13) — se **declara ausencia** de aislamiento proporcionado por ARgentOS; **no** se implementa sandbox y **no** se introduce garantía de aislamiento en `F-C` | Publicación y verificación de la declaración (entregable de `FC-2`) |
 | `ID-4` | **Esquema de integración de Memory** | **Diseño durante la ejecución** — la semántica ya está fijada por `AE-8` (contexto, nunca premisa ni autoridad) | Diseño del Change de implementación |
-| `ID-5` | **Mecanismo del objetivo multi-Change** | **Requiere decisión explícita del mantenedor** — `D-1` exige un mecanismo/trigger posterior explícito y el objetivo global **no se infiere** | Acto del mantenedor + diseño del Change de implementación |
+| `ID-5` | **Objetivo multi-Change** | **`CLOSED`** (acto del mantenedor, 2026-10-13) — semántica `Objetivo → Change → evaluación → siguiente Change` hasta satisfacción, con evaluación explícita tras **cada** Change | Diseño del mecanismo dentro de esa semántica (`ID-2`-adyacente) |
 | `ID-6` | **Contención de autoridad fuera del host (`C-02`)** | **Diseño durante la ejecución**; **requiere decisión explícita del mantenedor** si la solución toca `protocol/.agents/` (RFC-56 Clase A) o cambia el modelo de autoridad | Diseño del Change de implementación; acto del mantenedor si escala a payload |
 | `ID-7` | **Estrategia de recuperación/retry** | **Diseño durante la ejecución** | Diseño del Change de implementación |
 | `ID-8` | **Resolución de la discrepancia declarada entre la política de retry y su implementación** | **Diseño durante la ejecución**, con **decisión de forma obligatoria y registrada**: implementar el retry **o** alinear la política; si se modifica `.agents/policies/`, declararlo en el `Scope` del Change | Registro explícito en el Change de implementación (y en su `## Checkpoint / cierre`) |
 
-**Prohibición de inferencia:** ninguna de estas decisiones se resuelve aquí ni por conveniencia; `ID-1`, `ID-3` y `ID-5` (y `ID-6` en su escalada a payload) **no** pueden resolverse por inferencia del agente.
+**Prohibición de inferencia:** las decisiones cerradas **no** se reinterpretan ni se amplían, y `ID-6` (en su escalada a payload) **no** puede resolverse por inferencia del agente. Ninguna decisión se resuelve por conveniencia técnica.
 
+### Decisiones de autoridad cerradas (acto del mantenedor, 2026-10-13)
+
+Tres decisiones que este Plan tenía clasificadas como `PENDING_AUTHORITY` quedaron **cerradas** por el acto del mantenedor. Su contenido es normativo para el resto de la ejecución: no se reinterpreta ni se amplía.
+
+- **`ID-1` — Actor / provider / model: `CLOSED`.** **ARgentOS es agnóstico** respecto del harness, provider, modelo, SDK, CLI o mecanismo concreto de invocación del agente. El **actor real** de `F-C` es el agente/LLM **proporcionado por el entorno de ejecución del adoptante** (Codex, Claude, DeepSeek u otro harness/agente, mediante CLI, IDE/plugin, harness u otro mecanismo equivalente). ARgentOS **no debe incorporar ni prescribir** un provider, modelo, SDK, CLI o harness específico como parte de `F-C`: su responsabilidad es proporcionar la **capa de gobernanza** que el agente descubre en el proyecto y bajo la cual debe operar. **Corrección de interpretación:** `ID-1` **ya no exige** un provider/modelo concreto y **no** autoriza —antes bien, prohíbe interpretarlo como autorización para— implementar un cliente HTTP, un SDK, una integración de provider o un mecanismo propio de invocación de modelos. En este repositorio, el punto de integración es la **superficie de gobernanza** más el **punto de inyección ya existente** (`AgentInvoker`), **nunca** un invocador propio.
+- **`ID-3` — Aislamiento: `CLOSED`.** **ARgentOS declara ausencia de aislamiento proporcionado por ARgentOS** para el actor. **No** se implementa sandbox y **no** se introduce una garantía de aislamiento en `F-C`. La declaración debe quedar formulada de manera **explícita, verificable y coherente con `FC-2`**; su publicación en la superficie operativa (`runtime/README.md` → límites declarados y `.agents/policies/supervised-autonomous-execution.md` §12) es entregable de la implementación. *Formulación a publicar:* «ARgentOS no proporciona aislamiento del actor: el agente se ejecuta en el entorno del adoptante, con los permisos de ese entorno. La frontera de ARgentOS es de **prevención donde el host controla el efecto** y de **detección donde no lo controla**; no es una garantía de aislamiento.»
+- **`ID-5` — Objetivo multi-Change: `CLOSED`.** La semántica es **`Objetivo → Change → evaluación → siguiente Change` hasta satisfacción**: después de **cada** Change existe una **evaluación explícita** de si el objetivo está satisfecho; si lo está, el objetivo **finaliza**; si no, **puede producirse/ejecutarse el siguiente Change dentro del mismo objetivo**. **No** se reduce a una lista estática de Changes independientes.
+
+**Límite futuro explícito (registrado; no implementado; no crea trabajo).** Queda **fuera de `F-C`** la futura capacidad de **selección de modelo/provider/nivel de esfuerzo por tarea** —por ejemplo, elegir una capacidad de modelo menor para tareas simples y mayor para tareas complejas, para optimizar costo, tokens, latencia o calidad—. **No** forma parte de `F-C` y **no** debe introducirse en esta implementación; su eventual materialización exigiría su propio acto y su propia vía.
 ## Derivación y premisas (`premises(D)`)
 
 | Clase | Contenido | Dueño | Fuente / evidencia |
@@ -110,18 +119,18 @@ RFC-56     = Clase A (RFC `Accepted`) **sólo** si la ejecución toca `protocol/
 
 ## Criterio de entrada
 
-- [ ] Acto de autorización registrado (2026-10-13) y Plan 165 designado como artefacto de ejecución.
-- [ ] Alcance canónico 1B vigente en `docs/CONVENTIONS.md` y criterios `FC-1`…`FC-10` vigentes en el Plan 163.
-- [ ] `F-A`, `F-B` y Etapa A `Closed`; `OD-1` `RESOLVED`.
-- [ ] `ID-1`, `ID-3` y `ID-5` (y `ID-6` si escala a payload) resueltos por acto del mantenedor **antes** de tocar el diseño que dependa de ellos.
-- [ ] Baseline verificada y batería canónica en verde al inicio del Change de implementación.
+- [x] Acto de autorización registrado (2026-10-13) y Plan 165 designado como artefacto de ejecución (`docs/plans/164-acto-autorizacion-ejecucion-f-c.md`).
+- [x] Alcance canónico 1B vigente en `docs/CONVENTIONS.md` y criterios `FC-1`…`FC-10` vigentes en el Plan 163.
+- [x] `F-A` (`docs/plans/159-autonomy-envelope-implementation.md`), `F-B` y Etapa A (`docs/plans/161-etapa-a-capability-and-guarantee-retrospective.md`) `Closed`; `OD-1` `RESOLVED`.
+- [x] `ID-1`, `ID-3` e `ID-5` **cerrados** por acto del mantenedor (2026-10-13) antes de tocar el diseño que depende de ellos; `ID-6` sólo se activa si la solución de `C-02` escala a `protocol/.agents/` y **no** bloquea el inicio.
+- [x] Baseline verificada y batería canónica en verde al inicio del Change de implementación (`1316 passed`; checkers y gates sin `ANOMALY`).
 
 ## Entregables
 
 *Los entregables concretos —rutas y módulos— los fija el Change de implementación al declarar su `Scope`, siempre dentro de `IN SCOPE`. Clases previstas:*
 
-1. **Actor real**: adaptación de la invocación (provider/modelo) bajo los contratos existentes (`AgentInvoker`, `Delegation`, `WorkerResult`), sin alterar la frontera de `F-A`/`F-B`.
-2. **Aislamiento**: mecanismo de aislamiento **o** la declaración explícita y publicada de la garantía que no se ofrece.
+1. **Actor real**: la **superficie de gobernanza** que el agente del adoptante descubre y bajo la cual opera, más el **punto de inyección ya existente** (`AgentInvoker`, `Delegation`, `WorkerResult`), sin alterar la frontera de `F-A`/`F-B`. **No** se implementa cliente HTTP, SDK, integración de provider ni mecanismo propio de invocación de modelos (`ID-1`, `CLOSED`).
+2. **Aislamiento**: la **declaración explícita y publicada** de que ARgentOS **no** proporciona aislamiento del actor (`ID-3`, `CLOSED`); **no** se implementa sandbox ni se introduce garantía de aislamiento.
 3. **Memory**: integración como contexto, sin autoridad ni premisa de derivación.
 4. **Objetivo multi-Change**: mecanismo/trigger explícito.
 5. **`C-02`**: contención de autoridad fuera del host.
@@ -132,7 +141,7 @@ RFC-56     = Clase A (RFC `Accepted`) **sólo** si la ejecución toca `protocol/
 ## Pasos
 
 1. **Paso 0 — preflight.** Baseline, dependencias y batería canónica.
-2. **Paso 1 — decisiones bloqueantes.** Resolver `ID-1`, `ID-3` y `ID-5` (y `ID-6` si escala a payload) por acto del mantenedor, registrado en el Change.
+2. **Paso 1 — decisiones bloqueantes (completado, 2026-10-13).** `ID-1`, `ID-3` e `ID-5` cerradas por acto del mantenedor y registradas en `### Decisiones de autoridad cerradas (acto del mantenedor, 2026-10-13)`; `ID-6` sólo se activa si la solución de `C-02` escala a payload.
 3. **Paso 2 — diseño.** Fijar el diseño derivable (`ID-2`, `ID-4`, `ID-6`, `ID-7`, `ID-8`) con su evidencia y sus límites declarados.
 4. **Paso 3 — implementación por capacidad**, en el orden que las dependencias de diseño impongan, sin salir de `IN SCOPE`.
 5. **Paso 4 — falsaciones.** Una por garantía afirmada; verificar que las suites de `F-A`/`F-B` siguen verdes.
@@ -218,6 +227,29 @@ CÓDIGO MODIFICADO  = ninguno
 **Impacto de no decidir:** el Change queda abierto y bloqueado en la capacidad 1; el resto no puede diseñarse en su forma final; `F-C` permanece `Aprobado para ejecución` con implementación **`NOT_STARTED`**. No hay trabajo alternativo legítimo que desbloquee `FC-1`…`FC-10`, porque todas dependen del actor.
 
 **Actos siguientes requeridos, en orden:** `ID-1` (provider/modelo) · `ID-3` (implementar aislamiento **o** declarar la garantía que no se ofrece) · `ID-5` (mecanismo/trigger del objetivo multi-Change) · e `ID-6` **sólo si** la solución de `C-02` escala a `protocol/.agents/` (RFC-56 Clase A).
+### Fase 2 bis — Decisiones de autoridad cerradas (2026-10-13): bloqueo resuelto
+
+El acto del mantenedor del **2026-10-13** cerró `ID-1`, `ID-3` e `ID-5` (texto normativo en `### Decisiones de autoridad cerradas (acto del mantenedor, 2026-10-13)`). Las **alternativas de `ID-1`** listadas arriba quedan como **traza histórica del bloqueo** y **no** se adoptan: el acto cerró `ID-1` por **agnosticismo**, sin elegir ninguna alternativa técnica.
+
+| Aspecto del bloqueo registrado | Estado tras el acto |
+|---|---|
+| `ID-1` exigía un provider/modelo concreto | **Corregido**: `ID-1` **`CLOSED`** por agnosticismo; el actor es el agente del entorno del adoptante; **no** se implementa cliente HTTP, SDK, integración de provider ni mecanismo propio de invocación |
+| «Sin `ID-1` no hay `AgentInvoker` concreto» | El punto de integración pasa a ser la **superficie de gobernanza** más el **punto de inyección ya existente**; **no** requiere elegir provider/modelo |
+| `ID-3` fijaba el cierre de `FC-2` | **`CLOSED`**: se **declara ausencia** de aislamiento de ARgentOS; `FC-2` cierra con esa declaración publicada y verificada |
+| `ID-5` bloqueaba `FC-4` | **`CLOSED`**: semántica `Objetivo → Change → evaluación → siguiente Change`, con evaluación explícita tras **cada** Change |
+
+**Entry criteria (revisadas):** las cinco condiciones de `## Criterio de entrada` quedan **satisfechas** con evidencia — acto de autorización vigente; alcance 1B y `FC-1`…`FC-10` vigentes; `F-A`/`F-B`/Etapa A `Closed` y `OD-1` `Resolved`; `ID-1`/`ID-3`/`ID-5` cerrados (`ID-6` sólo se activa si la solución de `C-02` escala a payload: condición **no** bloqueante para iniciar); baseline y batería canónica en verde.
+
+```text
+F-C              = READY_FOR_IMPLEMENTATION   (decisiones de autoridad cerradas; entry criteria satisfechas)
+IMPLEMENTACIÓN   = NO INICIADA                (esta intervención no implementa: sin cambios de código)
+FC-1…FC-10       = NO DEMOSTRADOS             (se demuestran durante la implementación)
+BLOQUEO RESTANTE = ninguno para iniciar
+CONDICIONES DE DISEÑO A FIJAR EN LA IMPLEMENTACIÓN (no son decisiones de autoridad):
+   · camino de demostración de FC-1 con el actor real del adoptante (evidencia dentro o fuera del repositorio)
+   · publicación verificable de la declaración de FC-2 (ID-3) en la superficie operativa
+   · diseño de ID-2, ID-4, ID-6, ID-7 e ID-8 dentro del alcance 1B
+```
 ## Validation anchor
 
 <!-- Se completa al ejecutar (VC-1, Incremento 1). El Plan está `Aprobado para ejecución` y NO ejecutado:
@@ -241,9 +273,9 @@ No findings detected / N/A — declaración de ausencia al crear el Plan.
 
 ### Pending decisions
 
-- `<PLAN-165>` — decisión: **`ID-1` provider/modelo concreto**; blocking: **sí** para el diseño del actor; owner: **mantenedor**; escalación: acto registrado en el Change de implementación; resolución: **`PENDING_AUTHORITY`**; evidencia: `## Decisiones de implementación`; efecto downstream: condiciona garantías, coste y forma del actor; ADR-worthiness: a evaluar.
-- `<PLAN-165>` — decisión: **`ID-3` aislamiento/sandbox: implementar o declarar la garantía que no se ofrece**; blocking: **sí** para el cierre de `FC-2`; owner: **mantenedor**; escalación: acto registrado en el Change de implementación; resolución: **`PENDING_AUTHORITY`**; evidencia: `AE-7` y `## Decisiones de implementación`; efecto downstream: fija qué garantía puede afirmarse; ADR-worthiness: a evaluar.
-- `<PLAN-165>` — decisión: **`ID-5` mecanismo/trigger del objetivo multi-Change**; blocking: **sí** para `FC-4`; owner: **mantenedor**; escalación: acto registrado en el Change de implementación; resolución: **`PENDING_AUTHORITY`**; evidencia: `D-1` (el objetivo global no se infiere); efecto downstream: habilita el objetivo que abarca más de un Change sin eliminar la unidad `Change`; ADR-worthiness: a evaluar.
+- `<PLAN-165>` — decisión: **`ID-1` provider/modelo concreto**; blocking: **sí** para el diseño del actor; owner: **mantenedor**; escalación: acto registrado en el Change de implementación; resolución: **`PENDING_AUTHORITY`**; evidencia: `## Decisiones de implementación`; efecto downstream: condiciona garantías, coste y forma del actor; ADR-worthiness: a evaluar. → **Cerrada por el acto del mantenedor del 2026-10-13:** `resolución` = **`RESUELTA`** — ARgentOS es **agnóstico** respecto de harness/provider/modelo/SDK/CLI; el actor real es el agente del entorno del adoptante; **no** se incorpora ni prescribe ninguno, y **no** se autoriza implementar cliente HTTP, SDK, integración de provider ni mecanismo propio de invocación; `blocking` = **no** (deja de bloquear).
+- `<PLAN-165>` — decisión: **`ID-3` aislamiento/sandbox: implementar o declarar la garantía que no se ofrece**; blocking: **sí** para el cierre de `FC-2`; owner: **mantenedor**; escalación: acto registrado en el Change de implementación; resolución: **`PENDING_AUTHORITY`**; evidencia: `AE-7` y `## Decisiones de implementación`; efecto downstream: fija qué garantía puede afirmarse; ADR-worthiness: a evaluar. → **Cerrada por el acto del mantenedor del 2026-10-13:** `resolución` = **`RESUELTA`** — se **declara ausencia** de aislamiento proporcionado por ARgentOS; **no** se implementa sandbox y **no** se introduce garantía de aislamiento en `F-C`; la declaración debe publicarse de forma explícita y verificable (entregable de `FC-2`); `blocking` = **no** (deja de bloquear).
+- `<PLAN-165>` — decisión: **`ID-5` mecanismo/trigger del objetivo multi-Change**; blocking: **sí** para `FC-4`; owner: **mantenedor**; escalación: acto registrado en el Change de implementación; resolución: **`PENDING_AUTHORITY`**; evidencia: `D-1` (el objetivo global no se infiere); efecto downstream: habilita el objetivo que abarca más de un Change sin eliminar la unidad `Change`; ADR-worthiness: a evaluar. → **Cerrada por el acto del mantenedor del 2026-10-13:** `resolución` = **`RESUELTA`** — semántica `Objetivo → Change → evaluación → siguiente Change` hasta satisfacción, con evaluación explícita después de **cada** Change (si está satisfecho, el objetivo finaliza; si no, puede producirse/ejecutarse el siguiente Change dentro del mismo objetivo); **no** es una lista estática de Changes independientes; `blocking` = **no** (deja de bloquear).
 - `<PLAN-165>` — decisión: **`ID-6` contención de autoridad fuera del host: alcance de la solución**; blocking: **sí** para `FC-5` si la solución requiere tocar `protocol/.agents/`; owner: **mantenedor** (para la parte que escala a payload); escalación: RFC-56 Clase A (RFC `Accepted` + plan); resolución: **`PENDING`** — el diseño puede comenzar dentro del alcance DEV; la parte de payload requiere acto propio; evidencia: `C-02` y `## Decisiones de implementación`; efecto downstream: define si la frontera resiste un actor no benigno; ADR-worthiness: a evaluar.
 - `<PLAN-165>` — decisión: **`ID-8` forma de resolver la discrepancia del retry** (implementar el retry **o** alinear `.agents/policies/`); blocking: **no** para empezar; **sí** para cerrar `FC-6`; owner: **agente con registro obligatorio**; escalación: —; resolución: **`PENDING`** — se decide y se registra en el Change de implementación; evidencia: `docs/behavior-patterns.md` §5.2; efecto downstream: elimina una discrepancia declarada entre política y código; ADR-worthiness: no.
 

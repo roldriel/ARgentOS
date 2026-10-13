@@ -166,6 +166,58 @@ python tools/check_lifecycle_lineage.py
 
 Verificación factual adicional del cierre: `FC-1`…`FC-10` demostrados uno por uno; falsaciones verdes por garantía; 0 incorporación de capacidades fuera de `IN SCOPE`; 0 diff en `protocol/.agents/` salvo RFC-56 Clase A autorizada; `git diff --name-only HEAD` ⊆ `Scope` del Change.
 
+## Registro de ejecución — Change de implementación (iniciado 2026-10-13)
+
+*El Change de implementación **se inició** y se detuvo en el **primer bloqueo de autoridad**. El Plan **no** se ejecuta hasta que ese acto exista: `Status` sin cambio (`Aprobado para ejecución`), **sin** `Executed`, **sin** anchor y **sin** checkpoint; `FC-1`…`FC-10` permanecen **NO DEMOSTRADOS**.*
+
+### Fase 1 — Preflight (completado)
+
+| Verificación | Resultado | Evidencia |
+|---|---|---|
+| Baseline | rama `dev`, `HEAD` `2df4ffd`, worktree limpio, `dev` ahead 16 | `git status --porcelain` vacío |
+| `F-A` | **`Closed`** | `docs/plans/159-autonomy-envelope-implementation.md` (`Executed` con condición derivada `Closed`) |
+| `F-B` | **`Closed`**; envelope `AE-1`…`AE-10` vigente e intocado | `docs/adr/19-autonomy-envelope-authority.md:Estado de implementación tras el acto del 2026-10-11` |
+| Etapa A | **`Closed`** | `docs/plans/161-etapa-a-capability-and-guarantee-retrospective.md` |
+| `OD-1` | **`Resolved`**; alcance canónico **1B** sin cambio | `docs/CONVENTIONS.md` (subsección «Modelo de autonomía — alcance canónico de `F-C` (acto del 2026-10-12)») |
+| Autorización de ejecución | **vigente** | `docs/plans/164-acto-autorizacion-ejecucion-f-c.md:Acto de autorización registrado (2026-10-13)` |
+| Contradicción Plan 165 ↔ evidencia viva | **ninguna** | el Plan cita el alcance 1B, `FC-1`…`FC-10` e `ID-1`…`ID-8`; la evidencia confirma el estado declarado por el Plan |
+
+### Puntos exactos de integración por capacidad
+
+| Capacidad | Superficie existente (punto de integración) | Estado real |
+|---|---|---|
+| 1 · **Actor real** (provider/modelo) | `runtime/orchestrator/agent_worker.py`: `AgentInvoker` (Protocol, L200), `AgentInvocationRequest`/`AgentInvocationResult` (L127/L161), `NullAgentInvoker` (L216), `AgentWorker` (L286), `build_context` (L303), `execute` (L332); wiring del host en `runtime/orchestrator/__main__.py` (`--worker agent`); consumo en `host.py` `_execute_delegation` (L742) | **Falta la implementación concreta** de `AgentInvoker`: hoy sólo existe el default honesto |
+| 2 · **Aislamiento/sandbox** | `AE-7` (`docs/adr/19-autonomy-envelope-authority.md`, L87); límites declarados en `runtime/README.md`; el host **no** puede interponerse dentro de la invocación (`host.py`, verificación posterior L900-906) | **No existe mecanismo**: la garantía actual es una **ausencia declarada** |
+| 3 · **Memory como contexto** | `runtime/memory/` (paquete completo; `MemoryStore` en `memory/__init__.py`); **no** consumido por el orquestador (`AE-8`, ADR-19 L165); la construcción de contexto vive en `agent_worker.py` `build_context` (L303) | **Existe el paquete, falta el consumo** |
+| 4 · **Objetivo multi-Change** | Derivación y autoridad **por Change**: `host.py` `iterate` (L589), `runtime/orchestrator/derivation.py`, `runtime/orchestrator/authority.py`, `runtime/orchestrator/observation.py`; `D-1` fija que el objetivo global **no se infiere** | **No existe mecanismo ni trigger** |
+| 5 · **`C-02` contención de autoridad** | Prevención: `host.py` `_apply_autonomy_gate` (L623) antes de delegar; detección: snapshot de contenido posterior a la delegación (L900-906, `STOP_FORBIDDEN_ACTION`); clasificación de efectos: `worker.py` `classify_executed_effects`; admisión: `autonomy.py` `admit_declared_effects` (L337) | **Parcial**: el host no controla lo que ocurre dentro del actor |
+| 6 · **`C-26` recuperación** | `autonomy.py` `evaluate_finding_resolution` (L1604), `_RECOVERY_ACTIONS = {RUN_REVALIDATION}` (L1826), `summarize_autonomy` (L1829); bucle en `host.py` `iterate`; discrepancia declarada en `docs/behavior-patterns.md` §5.2 | **Parcial**: no hay retry y no hay fallos reales de actor que recuperar |
+
+### Fase 2 — Bloqueo de autoridad (punto de detención)
+
+```text
+PUNTO DE DETENCIÓN = capacidad 1 («actor real con provider/modelo»)
+ID BLOQUEANTE      = ID-1 — «provider/modelo concreto» (PENDING_AUTHORITY, owner mantenedor)
+MOTIVO             = implementar el actor exige fijar la familia de protocolo y el modelo del proveedor;
+                     elegirlo por preferencia técnica sería convertir una inferencia del agente en una
+                     decisión de autoridad (prohibido por este Plan y por .agents/policies/authority.md)
+CÓDIGO MODIFICADO  = ninguno
+```
+
+**Las seis capacidades dependen del actor.** Sin `ID-1` resuelto no existe `AgentInvoker` concreto y, por lo tanto, **no** hay contexto que consumir (Memory), **ni** actor no benigno que contener (`C-02`), **ni** fallos reales que recuperar (`C-26`), **ni** objetivo multi-Change que ejecutar, **ni** aislamiento que garantizar o declarar en su forma final. Por eso `FC-1`…`FC-10` permanecen **`NO DEMOSTRADOS`** y el Plan no puede pasar a `Executed`.
+
+### Alternativas para `ID-1` (decisión del mantenedor)
+
+| Alternativa | Qué implica | Consecuencias |
+|---|---|---|
+| **A — API compatible con *chat completions* sobre HTTP, configuración por entorno** | `AgentInvoker` que resuelve `base_url`, `model` y credencial de entorno y usa sólo la stdlib (`urllib`); sin SDK | No requiere `install`; el único efecto es `network` (**ya autorizado**); el modelo concreto queda como configuración y no como código; obliga a fijar formato de prompt, parseo de respuesta y límites |
+| **B — SDK oficial del proveedor** | Añadir dependencia e importarla | Requiere el efecto **`install`**, **no** declarado ni autorizado: la implementación se **detendría** hasta un acto que lo autorice, además de `ID-1` |
+| **C — Actor local sin red** (modelo embebido o stub determinista) | Mantener `network` sin uso | **No** demuestra `FC-1` («actor real»): exige invocación efectiva de provider/modelo; el criterio quedaría `NO DEMOSTRADO` |
+| **D — API propietaria no compatible** | Adaptador específico del proveedor | Coste de A más un adaptador por familia; necesaria si el proveedor elegido no expone API compatible |
+
+**Impacto de no decidir:** el Change queda abierto y bloqueado en la capacidad 1; el resto no puede diseñarse en su forma final; `F-C` permanece `Aprobado para ejecución` con implementación **`NOT_STARTED`**. No hay trabajo alternativo legítimo que desbloquee `FC-1`…`FC-10`, porque todas dependen del actor.
+
+**Actos siguientes requeridos, en orden:** `ID-1` (provider/modelo) · `ID-3` (implementar aislamiento **o** declarar la garantía que no se ofrece) · `ID-5` (mecanismo/trigger del objetivo multi-Change) · e `ID-6` **sólo si** la solución de `C-02` escala a `protocol/.agents/` (RFC-56 Clase A).
 ## Validation anchor
 
 <!-- Se completa al ejecutar (VC-1, Incremento 1). El Plan está `Aprobado para ejecución` y NO ejecutado:

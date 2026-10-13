@@ -123,6 +123,72 @@ def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
 
 
+#: Actor-evidence vocabulary (plan 165, ``FC-1`` / ``ID-2``). ARgentOS never invokes a model: the actor
+#: is supplied by the adopter's environment, and what this repository can verify is its **declared
+#: provenance**, not its execution.
+ACTOR_EXTERNAL_DECLARED = "external-declared"
+ACTOR_MISSING = "missing"
+ACTOR_INVALID = "invalid"
+ACTOR_STUB = "stub"
+
+#: Invoker kinds that are synthetic by construction: they are never evidence of a real actor.
+STUB_ACTOR_KINDS = frozenset({"null", "stub", "test-double"})
+
+
+@dataclass(frozen=True)
+class ActorProvenance:
+    """Declared provenance of the actor that ran the delegated work (provider-agnostic).
+
+    ``harness`` names the external environment that ran the agent (any harness: a CLI agent, an
+    IDE/plugin, another orchestrator); ``mechanism`` names how it was invoked. ``model`` is
+    informational and never required: prescribing, selecting or invoking a provider/model is out of
+    scope (``ID-1``). ARgentOS records this declaration; it does not verify it by invoking anything.
+    """
+
+    harness: str
+    mechanism: str
+    model: str = ""
+    declared_by: str = ""
+
+    def is_complete(self) -> bool:
+        return bool(self.harness.strip()) and bool(self.mechanism.strip())
+
+    def to_dict(self) -> dict[str, str]:
+        return {
+            "harness": self.harness,
+            "mechanism": self.mechanism,
+            "model": self.model,
+            "declared_by": self.declared_by,
+        }
+
+
+def classify_actor_evidence(
+    *,
+    provenance: ActorProvenance | None,
+    invoker_kind: str = "",
+) -> str:
+    """Classify the actor evidence of one invocation (``FC-1``).
+
+    Contract: the evidence suffices to consider the actor **real** only when the classification is
+    ``ACTOR_EXTERNAL_DECLARED``. A synthetic invoker is a **stub** even if it fabricates provenance,
+    and a missing or incomplete provenance is never upgraded by the invocation's own claims.
+    """
+    if invoker_kind in STUB_ACTOR_KINDS:
+        return ACTOR_STUB
+    if provenance is None:
+        return ACTOR_MISSING
+    if not provenance.is_complete():
+        return ACTOR_INVALID
+    return ACTOR_EXTERNAL_DECLARED
+
+
+def actor_evidence_is_real(*, provenance: ActorProvenance | None, invoker_kind: str = "") -> bool:
+    """``True`` only for a declared external actor: the ``FC-1`` contract predicate."""
+    return classify_actor_evidence(provenance=provenance, invoker_kind=invoker_kind) == (
+        ACTOR_EXTERNAL_DECLARED
+    )
+
+
 @dataclass(frozen=True)
 class AgentInvocationRequest:
     """Everything an invoker is given. Nothing else is passed to it.
@@ -175,6 +241,8 @@ class AgentInvocationResult:
     reported_pending: tuple[str, ...] = ()
     reported_commands: tuple[tuple[str, ...], ...] = ()
     notes: tuple[str, ...] = ()
+    #: Declared provenance of the actor that ran the work (provider-agnostic, additive-optional).
+    actor: ActorProvenance | None = None
 
     def __post_init__(self) -> None:
         if self.status not in _INVOCATION_STATUSES:
@@ -194,6 +262,7 @@ class AgentInvocationResult:
             "reported_pending": list(self.reported_pending),
             "reported_commands": [list(argv) for argv in self.reported_commands],
             "notes": list(self.notes),
+            "actor": self.actor.to_dict() if self.actor is not None else None,
         }
 
 

@@ -339,6 +339,35 @@ CONDICIONES DE DISEÑO A FIJAR EN LA IMPLEMENTACIÓN (no son decisiones de autor
 **Estado por criterio tras esta intervención:** `FC-2` **DEMOSTRADO**; `FC-6` **PARCIAL** (`ID-7`/`ID-8` alineados y verificados; demostración con fallo real pendiente); `FC-7` **PARCIAL** (5 de 11 counterproofs ejecutables y verdes); `FC-8`/`FC-10` **verificados en diff**; `FC-1`, `FC-3`, `FC-4`, `FC-5` **NO IMPLEMENTADOS** — y `FC-9` **NO DEMOSTRADO**: el Plan **no** se cierra ni registra anchor/checkpoint.
 
 **Ningún bloqueo de autoridad:** las cuatro capacidades pendientes están autorizadas por este Plan y por las decisiones cerradas; su materialización no se completó en esta sesión y **no** se declara demostrada.
+### Fase 5 — `FC-1` materializado (provenance del actor) y matriz final (`FC-9`)
+
+**Implementación (`ID-2`, provider-agnostic):** en `runtime/orchestrator/agent_worker.py` — `ActorProvenance` (declaración de procedencia: `harness`, `mechanism`, `model` informativo, `declared_by`), vocabulario `ACTOR_EXTERNAL_DECLARED` / `ACTOR_MISSING` / `ACTOR_INVALID` / `ACTOR_STUB`, `STUB_ACTOR_KINDS` y el contrato ejecutable `classify_actor_evidence()` + `actor_evidence_is_real()` (evidencia suficiente **sólo** si la clasificación es `external-declared`). El campo `actor` del `AgentInvocationResult` es **aditivo-optional** y se persiste en su `to_dict()`. **No** se invoca ningún modelo, **no** se prescribe provider/modelo y **no** se implementa integración alguna (`ID-1`).
+
+| Aspecto | Registro |
+|---|---|
+| Evidencia | `ActorProvenance` + clasificador + campo `actor` persistido en el resultado |
+| Verificación | `tests/test_fc_actor_provenance.py` (**7 pruebas**: los cuatro estados + persistencia aditiva + agnosticismo de provider/modelo) |
+| Counterproofs | (i) un invoker sintético (`null`/`stub`/`test-double`) es `stub` **aunque fabrique provenance**; (ii) un resultado `completed` **sin** provenance es `missing`, no actor real; (iii) provenance incompleta es `invalid` |
+| Demostración | **NO**: requiere una corrida con el actor real del **entorno del adoptante**. Evidencia externa que falta: un resultado cuya procedencia declare el harness del adoptante (cualquiera: CLI, IDE/plugin, otro orquestador) en una corrida efectiva. El mecanismo queda **`IMPLEMENTED_NOT_DEMONSTRATED`** |
+
+#### Matriz final (`FC-9`) — `IMPLEMENTED` ≠ `VERIFIED` ≠ `DEMONSTRATED`
+
+| Criterio | Implementado | Verificado | Demostrado | Evidencia |
+|---|---|---|---|---|
+| `FC-1` | **SÍ** | **SÍ** (7 pruebas) | **NO** — requiere actor externo | `runtime/orchestrator/agent_worker.py` (`ActorProvenance`, `classify_actor_evidence`, campo `actor`) · `tests/test_fc_actor_provenance.py` |
+| `FC-2` | **SÍ** | **SÍ** (4 pruebas) | **SÍ** | `runtime/README.md` · `.agents/policies/supervised-autonomous-execution.md` §12 · `tests/test_fc_isolation_declaration.py` |
+| `FC-3` | **NO** | **NO** | **NO** | diseñado (`ID-4`); sin materializar |
+| `FC-4` | **NO** | **NO** | **NO** | `ID-5` cerrado; máquina `Objective → Change → evaluación → siguiente Change` sin materializar |
+| `FC-5` | **NO** (mecanismos previos existen) | **NO** | **NO** | `admit_declared_effects` · `classify_executed_effects` · `STOP_FORBIDDEN_ACTION`, sin suite de containment de F-C |
+| `FC-6` | **SÍ** (`ID-7`/`ID-8`) | **SÍ** (4 pruebas) | **PARCIAL** — falta la corrida con fallo real | `.agents/policies/supervised-autonomous-execution.md` §4/§7 · `docs/behavior-patterns.md` §5.2 · `tests/test_fc_recovery_alignment.py` |
+| `FC-7` | **PARCIAL** | **SÍ** (lo materializado) | **NO** | 5 de 12 counterproofs ejecutables y verdes (ver matriz de la Fase 4) |
+| `FC-8` | — | **SÍ** | **SÍ** | diff del Change: 0 cambios en `protocol/`, `tools/`, `dist/`; 0 capacidades excluidas |
+| `FC-9` | **SÍ** (esta matriz) | **SÍ** | **NO** | este Plan; sin anchor ni checkpoint (condiciones no satisfechas) |
+| `FC-10` | — | **SÍ** | **SÍ** | diff + checkers: sin provider/model/SDK · sin sandbox · envelope y techos intactos · sin `C-16`/`C-17`/`C-21` · sin Model/Compute Policy · `--sae` opt-in intacto |
+
+**Counterproofs (`FC-7`):** `COUNTERPROOFS_TOTAL = 12` (11 de la matriz + intento de reintroducir provider/modelo) · `COUNTERPROOFS_PASS = 5` (aislamiento falso · declaración omitida · actor inexistente · actor stub · provenance inválida) · `COUNTERPROOFS_PENDING = 6` (Memory alterando autoridad · Change sin evaluación · transición inválida · containment/bypass · recovery creando autorización · resource ceiling como autorización) · `COUNTERPROOFS_PARTIAL = 1` (provider/modelo: verificado por diff, sin test dedicado). **`FC-7` NO se declara completo.**
+
+**Estado de la materialización:** `FC-1` materializado y verificado (demostración externa pendiente) · `FC-2` demostrado · `FC-6` verificado (demostración con fallo real pendiente) · `FC-8`/`FC-10` verificados · **`FC-3`, `FC-4` y `FC-5` no materializados**. **Ningún bloqueo de autoridad:** las tres capacidades restantes están autorizadas por este Plan; su materialización no se completó en esta sesión y **no** se declara. El Plan **no** se cierra.
 ## Validation anchor
 
 <!-- Se completa al ejecutar (VC-1, Incremento 1). El Plan está `Aprobado para ejecución` y NO ejecutado:

@@ -78,6 +78,27 @@ not a Task, an Execution Record, a Verification Report, an Evidence container, a
 Knowledge entry, an Architecture Evolution artifact, a Release record, an
 authority role, or a Change State Machine.
 
+## Objective relation (multi-Change)
+
+A **Change** is governed here: one artifact per Change. An **Objective** is the Protocol-native,
+**explicitly declared** relation that associates **one or more Changes** under a single intent. It is
+declared by the adopter/environment and is **never inferred** from a prompt, from a task, or from the
+content of this artifact.
+
+- An Objective **associates** Changes; each Change keeps its own identity and its own governance in this
+  artifact. This section neither replaces nor duplicates nor weakens that governance.
+- Each associated Change carries an **Evaluation** with result **satisfied** / **not satisfied** and an
+  `evidence_ref`.
+- **Not satisfied** leaves the Objective **`open`** and permits associating the **next Change**.
+  **Satisfied** moves the Objective to **`COMPLETED`**, which admits no further Changes.
+- The Objective has **no state machine of its own**: `open` and `COMPLETED` are its only states, and no
+  intermediate state, transition table or parallel lifecycle is introduced. This contract remains *not*
+  a Change State Machine.
+- Inferring an Objective — or treating RFC-66 effect authorization as Objective or Change authorization —
+  is invalid (`## Invalid states`).
+- The Objective's declaration format and persistence location are **not** defined here: this section
+  defines the relation and the rule that governs continuation and termination. A Change that belongs to
+  no Objective remains valid: the relation is optional.
 ## Structure
 
 ### Identity (IMMUTABLE)

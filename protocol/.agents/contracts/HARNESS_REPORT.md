@@ -24,6 +24,28 @@ consumed_by: [core:RECOVERY, core:COMPLETED, discovery:DISCOVERY_READY]
 
 `HARNESS_REPORT.md` is the **review trail** of the protocol harness. It lives at the root of every session (`.project/<session-uuid>/HARNESS_REPORT.md`) and records every harness trigger invocation with its result, evidence, and aggregated metrics. It is written by the Orchestrator after every gate evaluation; no other agent edits it. It is self-reported: it records the Orchestrator's judgment (see `.agents/harness/INDEX.md`, §Enforcement model); it is not independently verified evidence.
 
+## Declared actor provenance
+
+Each entry MAY carry a **declared provenance** block identifying the actor that declares having executed
+the work. Minimum fields:
+
+| Field | Meaning |
+|---|---|
+| `actor` | Identifier of the actor, as declared by the reporting side. |
+| `harness` | Name of the harness/agent environment that ran the work. |
+| `mechanism` | How the work was executed, as declared (the invocation mechanism). |
+| `declared_by` | Who made the declaration. |
+
+The provenance is **declared, not verified**: `enforcement = "informational"` is unchanged, this report
+remains **self-reported** and **not independently verified evidence**, and the provenance MUST NOT be
+presented as authentication, as an authenticity guarantee, or as an independent verification of the
+actor. It records *who declares* having executed the work, and *through which harness and mechanism* —
+nothing more.
+
+No `provider`, `model`, `SDK`, `CLI` or concrete invocation implementation is required, recorded or
+prescribed by this contract, and naming them is outside its scope. Declared provenance grants no
+authority: authority remains where the Protocol already places it — Change authorization in the Change
+Governance Artifact, effect authorization in RFC-66.
 ## Location and ownership
 
 - Path: `.project/<session-uuid>/HARNESS_REPORT.md` (session root, not inside an iteration folder).

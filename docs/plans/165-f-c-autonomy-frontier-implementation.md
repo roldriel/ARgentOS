@@ -20,8 +20,8 @@
 | **Fecha efectiva** | **2026-10-13** |
 | **Alcance autorizado** | El `IN SCOPE` de `OD-1` (idéntico al de `## Alcance` de este Plan); **no** se extiende más allá ni incorpora `C-16`/`C-17`/`C-21` |
 | **Artefacto designado** | **este Plan** (`docs/plans/165-f-c-autonomy-frontier-implementation.md`) |
-| **Estado** | **`Aprobado para ejecución`** — terminología exacta de `docs/VERSIONING.md` §7 |
-| **Evidencia** | El acto del 2026-10-13 (transcrito y registrado en el Plan 164); `docs/CONVENTIONS.md` (alcance canónico de `F-C`); Plan 163 (criterios `FC-1`…`FC-10`) |
+| **Estado** | **Aprobado para ejecución** — terminología exacta de docs/VERSIONING.md §7 |
+| **Evidencia** | El acto del 2026-10-13 (transcrito y registrado en el Plan 164); docs/CONVENTIONS.md (alcance canónico de F-C); Plan 163 (criterios FC-1…FC-10) |
 | **Límite explícito** | La autorización habilita la **ejecución de `F-C`** en su propio Change; **no** autoriza modificar nada fuera de `## Alcance` ni resolver por inferencia las decisiones de implementación |
 
 Este Plan es el **contrato operativo del Change de implementación de `F-C`**. Se crea **sin ejecutar**: su `## Validation anchor` y su `## Checkpoint / cierre` quedan vacíos y **no** se declara ninguna condición derivada por su sola creación.
@@ -42,7 +42,7 @@ El Change **no** extiende el alcance más allá del `IN SCOPE`, **no** incorpora
 4. **Objetivo multi-Change** con trigger explícito (`FC-4`).
 5. **`C-02`** — contención de autoridad fuera del host (`FC-5`).
 6. **`C-26`** — recuperación ante fallos reales, incluida la resolución de la discrepancia declarada sobre el retry (`FC-6`).
-7. Los criterios `FC-7`…`FC-10` (falsaciones, alcance, cierre anclado y prohibiciones preservadas).
+7. Los criterios FC-7…FC-10 (falsaciones, alcance, cierre anclado y prohibiciones preservadas).
 
 ### OUT OF SCOPE
 
@@ -63,7 +63,7 @@ provee desde aquí (declarado en `runtime/README.md`)
 RFC-56     = Clase A (RFC `Accepted`) **sólo** si la ejecución toca `protocol/.agents/`
 ```
 
-## Criterios de salida (`FC-1`…`FC-10`)
+## Criterios de salida (FC-1…FC-10)
 
 *Heredados del Plan 163 sin reducción de garantías. Su debilitamiento exigiría un acto propio.*
 
@@ -100,7 +100,7 @@ RFC-56     = Clase A (RFC `Accepted`) **sólo** si la ejecución toca `protocol/
 Tres decisiones que este Plan tenía clasificadas como `PENDING_AUTHORITY` quedaron **cerradas** por el acto del mantenedor. Su contenido es normativo para el resto de la ejecución: no se reinterpreta ni se amplía.
 
 - **`ID-1` — Actor / provider / model: `CLOSED`.** **ARgentOS es agnóstico** respecto del harness, provider, modelo, SDK, CLI o mecanismo concreto de invocación del agente. El **actor real** de `F-C` es el agente/LLM **proporcionado por el entorno de ejecución del adoptante** (Codex, Claude, DeepSeek u otro harness/agente, mediante CLI, IDE/plugin, harness u otro mecanismo equivalente). ARgentOS **no debe incorporar ni prescribir** un provider, modelo, SDK, CLI o harness específico como parte de `F-C`: su responsabilidad es proporcionar la **capa de gobernanza** que el agente descubre en el proyecto y bajo la cual debe operar. **Corrección de interpretación:** `ID-1` **ya no exige** un provider/modelo concreto y **no** autoriza —antes bien, prohíbe interpretarlo como autorización para— implementar un cliente HTTP, un SDK, una integración de provider o un mecanismo propio de invocación de modelos. En este repositorio, el punto de integración es la **superficie de gobernanza** más el **punto de inyección ya existente** (`AgentInvoker`), **nunca** un invocador propio.
-- **`ID-3` — Aislamiento: `CLOSED`.** **ARgentOS declara ausencia de aislamiento proporcionado por ARgentOS** para el actor. **No** se implementa sandbox y **no** se introduce una garantía de aislamiento en `F-C`. La declaración debe quedar formulada de manera **explícita, verificable y coherente con `FC-2`**; su publicación en la superficie operativa (`runtime/README.md` → límites declarados y `.agents/policies/supervised-autonomous-execution.md` §12) es entregable de la implementación. *Formulación a publicar:* «ARgentOS no proporciona aislamiento del actor: el agente se ejecuta en el entorno del adoptante, con los permisos de ese entorno. La frontera de ARgentOS es de **prevención donde el host controla el efecto** y de **detección donde no lo controla**; no es una garantía de aislamiento.»
+- **ID-3 — Aislamiento: CLOSED.** **ARgentOS declara ausencia de aislamiento proporcionado por ARgentOS** para el actor. **No** se implementa sandbox y **no** se introduce una garantía de aislamiento en F-C. La declaración debe quedar formulada de manera **explícita, verificable y coherente con FC-2**; su publicación en la superficie operativa (runtime/README.md → límites declarados y .agents/policies/supervised-autonomous-execution.md §12) es entregable de la implementación. *Formulación a publicar:* «ARgentOS no proporciona aislamiento del actor: el agente se ejecuta en el entorno del adoptante, con los permisos de ese entorno. La frontera de ARgentOS es de **prevención donde el host controla el efecto** y de **detección donde no lo controla**; no es una garantía de aislamiento.»
 - **`ID-5` — Objetivo multi-Change: `CLOSED`.** La semántica es **`Objetivo → Change → evaluación → siguiente Change` hasta satisfacción**: después de **cada** Change existe una **evaluación explícita** de si el objetivo está satisfecho; si lo está, el objetivo **finaliza**; si no, **puede producirse/ejecutarse el siguiente Change dentro del mismo objetivo**. **No** se reduce a una lista estática de Changes independientes.
 
 **Límite futuro explícito (registrado; no implementado; no crea trabajo).** Queda **fuera de `F-C`** la futura capacidad de **selección de modelo/provider/nivel de esfuerzo por tarea** —por ejemplo, elegir una capacidad de modelo menor para tareas simples y mayor para tareas complejas, para optimizar costo, tokens, latencia o calidad—. **No** forma parte de `F-C` y **no** debe introducirse en esta implementación; su eventual materialización exigiría su propio acto y su propia vía.
@@ -108,19 +108,19 @@ Tres decisiones que este Plan tenía clasificadas como `PENDING_AUTHORITY` queda
 
 | Clase | Contenido | Dueño | Fuente / evidencia |
 |---|---|---|---|
-| `P-1` Intención | Ejecutar `F-C` bajo el alcance canónico 1B, con `Change Level ≥ L3` y `FC-1`…`FC-10`; sin extender el scope ni incorporar `C-16`/`C-17`/`C-21` | humano | acto del 2026-10-13 (Plan 164) |
+| P-1 Intención | Ejecutar F-C bajo el alcance canónico 1B, con Change Level ≥ L3 y FC-1…FC-10; sin extender el scope ni incorporar C-16/C-17/C-21 | humano | acto del 2026-10-13 (Plan 164) |
 | `P-2` Confianza de intención | `HIGH` — el acto fija artefacto, estado, nivel mínimo, criterios, alcance y límites | agente | `INTENT_CONFIDENCE` aplicado sobre el acto |
-| `P-3` Conjunto de contexto | `docs/CONVENTIONS.md` (alcance canónico); Planes 163/164/162/161/160/159; `docs/working/audits/ETAPA_A_RETROSPECTIVA_CAPACIDADES_Y_GARANTIAS.md`; `docs/adr/19-autonomy-envelope-authority.md`; `.agents/policies/supervised-autonomous-execution.md` (incluida la discrepancia del retry en `docs/behavior-patterns.md`); `runtime/README.md`; `docs/placement-contract.md`; `docs/VERSIONING.md` §7/§10 | agente | las citas de cada fila |
+| P-3 Conjunto de contexto | docs/CONVENTIONS.md (alcance canónico); Planes 163/164/162/161/160/159; docs/working/audits/ETAPA_A_RETROSPECTIVA_CAPACIDADES_Y_GARANTIAS.md; docs/adr/19-autonomy-envelope-authority.md; .agents/policies/supervised-autonomous-execution.md (incluida la discrepancia del retry en docs/behavior-patterns.md); runtime/README.md; docs/placement-contract.md; docs/VERSIONING.md §7/§10 | agente | las citas de cada fila |
 | `P-4` Derivabilidad | `derivable` para el **arranque** de la ejecución; `REQUIRES_HUMAN` **para `ID-1`/`ID-3`/`ID-5`** (y `ID-6` si escala a payload), que se resuelven **antes** de tocar el diseño correspondiente | humano | `### Pending decisions` de este Plan; `.agents/policies/authority.md` |
 | `P-5` `work_type` | `GAP` — el valor no cambia ninguna decisión de gobernanza de este Change | agente | `docs/CONVENTIONS.md` (criterio de admisión de `work_type`) |
 | `P-6` Conocimiento vigente | Planes 159–164 `Executed`; `ADR-19` y `ADR-16` `Accepted`; `docs/CONVENTIONS.md`, `ROADMAP.md`, `docs/plans/INDEX.md` y `CHANGELOG.md` activos; `runtime/`, `tools/` y `tests/` son código vigente | documento | `docs/AGENTS.md:Lifecycle`; `docs/plans/INDEX.md` |
-| `P-7` Reglas aplicables | `APPLIES`: RFC-75 (Change Lifecycle DEV), ADR-16 (autoridad), ADR-19 (envelope), `docs/VERSIONING.md` §4/§4.1/§7/§10, VC-1/GC-1/LC-1/PC-1, `.agents/policies/supervised-autonomous-execution.md` (§1–§12). `CONDICIONAL`: RFC-56 Clase A si la ejecución toca `protocol/.agents/`. `NOT_APPLICABLE`: RFC-46 (no se reescriben artefactos históricos) | agente | `.agents/policies/authority.md:Document discovery` |
+| P-7 Reglas aplicables | APPLIES: RFC-75 (Change Lifecycle DEV), ADR-16 (autoridad), ADR-19 (envelope), docs/VERSIONING.md §4/§4.1/§7/§10, VC-1/GC-1/LC-1/PC-1, .agents/policies/supervised-autonomous-execution.md (§1–§12). CONDICIONAL: RFC-56 Clase A si la ejecución toca protocol/.agents/. NOT_APPLICABLE: RFC-46 (no se reescriben artefactos históricos) | agente | .agents/policies/authority.md:Document discovery |
 | `P-8` Autoridad y scope | Autoridad: **acto del mantenedor (2026-10-13)**. Scope autorizado: el `IN SCOPE` de `## Alcance` — `runtime/orchestrator/`, `runtime/` (actor, aislamiento, Memory), `tests/`, `.agents/policies/` (sólo lo que `ID-8` exija y declare el Change), `docs/` del Change. Rutas exactas: las fija el Change de implementación al declarar su `Scope`, **dentro** de este alcance | **humano** | el acto (Plan 164) |
 
 ## Criterio de entrada
 
 - [x] Acto de autorización registrado (2026-10-13) y Plan 165 designado como artefacto de ejecución (`docs/plans/164-acto-autorizacion-ejecucion-f-c.md`).
-- [x] Alcance canónico 1B vigente en `docs/CONVENTIONS.md` y criterios `FC-1`…`FC-10` vigentes en el Plan 163.
+- [x] Alcance canónico 1B vigente en docs/CONVENTIONS.md y criterios FC-1…FC-10 vigentes en el Plan 163.
 - [x] `F-A` (`docs/plans/159-autonomy-envelope-implementation.md`), `F-B` y Etapa A (`docs/plans/161-etapa-a-capability-and-guarantee-retrospective.md`) `Closed`; `OD-1` `RESOLVED`.
 - [x] `ID-1`, `ID-3` e `ID-5` **cerrados** por acto del mantenedor (2026-10-13) antes de tocar el diseño que depende de ellos; `ID-6` sólo se activa si la solución de `C-02` escala a `protocol/.agents/` y **no** bloquea el inicio.
 - [x] Baseline verificada y batería canónica en verde al inicio del Change de implementación (`1316 passed`; checkers y gates sin `ANOMALY`).
@@ -145,7 +145,7 @@ Tres decisiones que este Plan tenía clasificadas como `PENDING_AUTHORITY` queda
 3. **Paso 2 — diseño.** Fijar el diseño derivable (`ID-2`, `ID-4`, `ID-6`, `ID-7`, `ID-8`) con su evidencia y sus límites declarados.
 4. **Paso 3 — implementación por capacidad**, en el orden que las dependencias de diseño impongan, sin salir de `IN SCOPE`.
 5. **Paso 4 — falsaciones.** Una por garantía afirmada; verificar que las suites de `F-A`/`F-B` siguen verdes.
-6. **Paso 5 — verificación y cierre.** Batería canónica, gates C-1/C-2/C-3, `FC-1`…`FC-10`, `## Validation anchor`, `## Checkpoint / cierre`, impactos de documentación y roadmap, commit atómico.
+6. **Paso 5 — verificación y cierre.** Batería canónica, gates C-1/C-2/C-3, FC-1…FC-10, ## Validation anchor, ## Checkpoint / cierre, impactos de documentación y roadmap, commit atómico.
 
 ## Delegación agentiva
 
@@ -173,11 +173,11 @@ python tools/check_lifecycle_checkpoint.py
 python tools/check_lifecycle_lineage.py
 ```
 
-Verificación factual adicional del cierre: `FC-1`…`FC-10` demostrados uno por uno; falsaciones verdes por garantía; 0 incorporación de capacidades fuera de `IN SCOPE`; 0 diff en `protocol/.agents/` salvo RFC-56 Clase A autorizada; `git diff --name-only HEAD` ⊆ `Scope` del Change.
+Verificación factual adicional del cierre: FC-1…FC-10 demostrados uno por uno; falsaciones verdes por garantía; 0 incorporación de capacidades fuera de IN SCOPE; 0 diff en protocol/.agents/ salvo RFC-56 Clase A autorizada; git diff --name-only HEAD ⊆ Scope del Change.
 
 ## Registro de ejecución — Change de implementación (iniciado 2026-10-13)
 
-*El Change de implementación **se inició** y se detuvo en el **primer bloqueo de autoridad**. El Plan **no** se ejecuta hasta que ese acto exista: `Status` sin cambio (`Aprobado para ejecución`), **sin** `Executed`, **sin** anchor y **sin** checkpoint; `FC-1`…`FC-10` permanecen **NO DEMOSTRADOS**.*
+*El Change de implementación **se inició** y se detuvo en el **primer bloqueo de autoridad**. El Plan **no** se ejecuta hasta que ese acto exista: Status sin cambio (Aprobado para ejecución), **sin** Executed, **sin** anchor y **sin** checkpoint; FC-1…FC-10 permanecen **NO DEMOSTRADOS**.*
 
 ### Fase 1 — Preflight (completado)
 
@@ -185,11 +185,11 @@ Verificación factual adicional del cierre: `FC-1`…`FC-10` demostrados uno por
 |---|---|---|
 | Baseline | rama `dev`, `HEAD` `2df4ffd`, worktree limpio, `dev` ahead 16 | `git status --porcelain` vacío |
 | `F-A` | **`Closed`** | `docs/plans/159-autonomy-envelope-implementation.md` (`Executed` con condición derivada `Closed`) |
-| `F-B` | **`Closed`**; envelope `AE-1`…`AE-10` vigente e intocado | `docs/adr/19-autonomy-envelope-authority.md:Estado de implementación tras el acto del 2026-10-11` |
+| F-B | **Closed**; envelope AE-1…AE-10 vigente e intocado | docs/adr/19-autonomy-envelope-authority.md:Estado de implementación tras el acto del 2026-10-11 |
 | Etapa A | **`Closed`** | `docs/plans/161-etapa-a-capability-and-guarantee-retrospective.md` |
 | `OD-1` | **`Resolved`**; alcance canónico **1B** sin cambio | `docs/CONVENTIONS.md` (subsección «Modelo de autonomía — alcance canónico de `F-C` (acto del 2026-10-12)») |
 | Autorización de ejecución | **vigente** | `docs/plans/164-acto-autorizacion-ejecucion-f-c.md:Acto de autorización registrado (2026-10-13)` |
-| Contradicción Plan 165 ↔ evidencia viva | **ninguna** | el Plan cita el alcance 1B, `FC-1`…`FC-10` e `ID-1`…`ID-8`; la evidencia confirma el estado declarado por el Plan |
+| Contradicción Plan 165 ↔ evidencia viva | **ninguna** | el Plan cita el alcance 1B, FC-1…FC-10 e ID-1…ID-8; la evidencia confirma el estado declarado por el Plan |
 
 ### Puntos exactos de integración por capacidad
 
@@ -200,7 +200,7 @@ Verificación factual adicional del cierre: `FC-1`…`FC-10` demostrados uno por
 | 3 · **Memory como contexto** | `runtime/memory/` (paquete completo; `MemoryStore` en `memory/__init__.py`); **no** consumido por el orquestador (`AE-8`, ADR-19 L165); la construcción de contexto vive en `agent_worker.py` `build_context` (L303) | **Existe el paquete, falta el consumo** |
 | 4 · **Objetivo multi-Change** | Derivación y autoridad **por Change**: `host.py` `iterate` (L589), `runtime/orchestrator/derivation.py`, `runtime/orchestrator/authority.py`, `runtime/orchestrator/observation.py`; `D-1` fija que el objetivo global **no se infiere** | **No existe mecanismo ni trigger** |
 | 5 · **`C-02` contención de autoridad** | Prevención: `host.py` `_apply_autonomy_gate` (L623) antes de delegar; detección: snapshot de contenido posterior a la delegación (L900-906, `STOP_FORBIDDEN_ACTION`); clasificación de efectos: `worker.py` `classify_executed_effects`; admisión: `autonomy.py` `admit_declared_effects` (L337) | **Parcial**: el host no controla lo que ocurre dentro del actor |
-| 6 · **`C-26` recuperación** | `autonomy.py` `evaluate_finding_resolution` (L1604), `_RECOVERY_ACTIONS = {RUN_REVALIDATION}` (L1826), `summarize_autonomy` (L1829); bucle en `host.py` `iterate`; discrepancia declarada en `docs/behavior-patterns.md` §5.2 | **Parcial**: no hay retry y no hay fallos reales de actor que recuperar |
+| 6 · **C-26 recuperación** | autonomy.py evaluate_finding_resolution (L1604), _RECOVERY_ACTIONS = {RUN_REVALIDATION} (L1826), summarize_autonomy (L1829); bucle en host.py iterate; discrepancia declarada en docs/behavior-patterns.md §5.2 | **Parcial**: no hay retry y no hay fallos reales de actor que recuperar |
 
 ### Fase 2 — Bloqueo de autoridad (punto de detención)
 
@@ -213,7 +213,7 @@ MOTIVO             = implementar el actor exige fijar la familia de protocolo y 
 CÓDIGO MODIFICADO  = ninguno
 ```
 
-**Las seis capacidades dependen del actor.** Sin `ID-1` resuelto no existe `AgentInvoker` concreto y, por lo tanto, **no** hay contexto que consumir (Memory), **ni** actor no benigno que contener (`C-02`), **ni** fallos reales que recuperar (`C-26`), **ni** objetivo multi-Change que ejecutar, **ni** aislamiento que garantizar o declarar en su forma final. Por eso `FC-1`…`FC-10` permanecen **`NO DEMOSTRADOS`** y el Plan no puede pasar a `Executed`.
+**Las seis capacidades dependen del actor.** Sin ID-1 resuelto no existe AgentInvoker concreto y, por lo tanto, **no** hay contexto que consumir (Memory), **ni** actor no benigno que contener (C-02), **ni** fallos reales que recuperar (C-26), **ni** objetivo multi-Change que ejecutar, **ni** aislamiento que garantizar o declarar en su forma final. Por eso FC-1…FC-10 permanecen **NO DEMOSTRADOS** y el Plan no puede pasar a Executed.
 
 ### Alternativas para `ID-1` (decisión del mantenedor)
 
@@ -224,7 +224,7 @@ CÓDIGO MODIFICADO  = ninguno
 | **C — Actor local sin red** (modelo embebido o stub determinista) | Mantener `network` sin uso | **No** demuestra `FC-1` («actor real»): exige invocación efectiva de provider/modelo; el criterio quedaría `NO DEMOSTRADO` |
 | **D — API propietaria no compatible** | Adaptador específico del proveedor | Coste de A más un adaptador por familia; necesaria si el proveedor elegido no expone API compatible |
 
-**Impacto de no decidir:** el Change queda abierto y bloqueado en la capacidad 1; el resto no puede diseñarse en su forma final; `F-C` permanece `Aprobado para ejecución` con implementación **`NOT_STARTED`**. No hay trabajo alternativo legítimo que desbloquee `FC-1`…`FC-10`, porque todas dependen del actor.
+**Impacto de no decidir:** el Change queda abierto y bloqueado en la capacidad 1; el resto no puede diseñarse en su forma final; F-C permanece Aprobado para ejecución con implementación **NOT_STARTED**. No hay trabajo alternativo legítimo que desbloquee FC-1…FC-10, porque todas dependen del actor.
 
 **Actos siguientes requeridos, en orden:** `ID-1` (provider/modelo) · `ID-3` (implementar aislamiento **o** declarar la garantía que no se ofrece) · `ID-5` (mecanismo/trigger del objetivo multi-Change) · e `ID-6` **sólo si** la solución de `C-02` escala a `protocol/.agents/` (RFC-56 Clase A).
 ### Fase 2 bis — Decisiones de autoridad cerradas (2026-10-13): bloqueo resuelto
@@ -238,7 +238,7 @@ El acto del mantenedor del **2026-10-13** cerró `ID-1`, `ID-3` e `ID-5` (texto 
 | `ID-3` fijaba el cierre de `FC-2` | **`CLOSED`**: se **declara ausencia** de aislamiento de ARgentOS; `FC-2` cierra con esa declaración publicada y verificada |
 | `ID-5` bloqueaba `FC-4` | **`CLOSED`**: semántica `Objetivo → Change → evaluación → siguiente Change`, con evaluación explícita tras **cada** Change |
 
-**Entry criteria (revisadas):** las cinco condiciones de `## Criterio de entrada` quedan **satisfechas** con evidencia — acto de autorización vigente; alcance 1B y `FC-1`…`FC-10` vigentes; `F-A`/`F-B`/Etapa A `Closed` y `OD-1` `Resolved`; `ID-1`/`ID-3`/`ID-5` cerrados (`ID-6` sólo se activa si la solución de `C-02` escala a payload: condición **no** bloqueante para iniciar); baseline y batería canónica en verde.
+**Entry criteria (revisadas):** las cinco condiciones de ## Criterio de entrada quedan **satisfechas** con evidencia — acto de autorización vigente; alcance 1B y FC-1…FC-10 vigentes; F-A/F-B/Etapa A Closed y OD-1 Resolved; ID-1/ID-3/ID-5 cerrados (ID-6 sólo se activa si la solución de C-02 escala a payload: condición **no** bloqueante para iniciar); baseline y batería canónica en verde.
 
 ```text
 F-C              = READY_FOR_IMPLEMENTATION   (decisiones de autoridad cerradas; entry criteria satisfechas)
@@ -275,8 +275,8 @@ CONDICIONES DE DISEÑO A FIJAR EN LA IMPLEMENTACIÓN (no son decisiones de autor
 |---|---|---|---|---|---|
 | `ID-2` | **El actor se representa por su procedencia declarada y su resultado; ARgentOS no lo invoca.** `AgentInvoker` sigue siendo el punto de inyección y se le agrega —**aditivo-optional**— la procedencia del actor (`harness`, `model`, `mechanism`), que el host registra como evidencia | `ID-1` (agnosticismo) y los contratos existentes (`AgentInvoker`, `Delegation`, `WorkerResult`); no se construye invocador propio | `runtime/orchestrator/agent_worker.py`, `runtime/orchestrator/contracts.py`, `runtime/orchestrator/worker.py`, `tests/` | procedencia persistida y visible en el `WorkerResult`, con compatibilidad de los resultados previos | un resultado sin procedencia **no** cuenta como actor real; un stub no puede declararla (`kind = null`) |
 | `ID-4` | **Memory entra como contexto del actor, jamás como premisa ni autoridad.** Se materializa en el contexto entregado; el veredicto de la frontera se calcula **sin consultarla** | `AE-8` | `runtime/orchestrator/agent_worker.py` (`build_context`), `runtime/orchestrator/observation.py`, `tests/` | contexto que incluye Memory y veredicto de frontera sin cambio | Memory que intente introducir una acción o un `Scope` nuevo ⇒ el veredicto no cambia |
-| `ID-6` | **La contención se resuelve DEV-side, sin tocar el payload.** La frontera declara que **no controla** el interior de la invocación y **detecta** desde el `WorkerResult` persistido (clasificación de efectos + `finding`/`STOP`); la contención fuerte —impedir— exigiría aislamiento, que `ID-3` declara ausente | `ID-1`/`ID-3` y el límite ya declarado en la política §12; tocar `protocol/.agents/` exigiría RFC-56 Clase A | `runtime/orchestrator/{worker,host,autonomy}.py`, `.agents/policies/supervised-autonomous-execution.md`, `tests/` | detección reproducible con un actor que excede su mandato | **si** el diseño exigiera modificar `protocol/.agents/` ⇒ **`STOP`** y acto de autoridad; **no ocurre** en esta ruta |
-| `ID-7` | **Recuperación = nueva derivación sobre el estado observado, con la recuperación registrada**, dentro del mismo envelope; **sin** mecanismo de reintento con ciclo de vida propio | `FC-6` y la discrepancia ya declarada en `docs/behavior-patterns.md` §5.2 | `runtime/orchestrator/{host,derivation}.py`, `tests/` | corrida con fallo → recuperación → resultado | recuperación que amplíe alcance o autoridad ⇒ `STOP` |
+| ID-6 | **La contención se resuelve DEV-side, sin tocar el payload.** La frontera declara que **no controla** el interior de la invocación y **detecta** desde el WorkerResult persistido (clasificación de efectos + finding/STOP); la contención fuerte —impedir— exigiría aislamiento, que ID-3 declara ausente | ID-1/ID-3 y el límite ya declarado en la política §12; tocar protocol/.agents/ exigiría RFC-56 Clase A | runtime/orchestrator/{worker,host,autonomy}.py, .agents/policies/supervised-autonomous-execution.md, tests/ | detección reproducible con un actor que excede su mandato | **si** el diseño exigiera modificar protocol/.agents/ ⇒ **STOP** y acto de autoridad; **no ocurre** en esta ruta |
+| ID-7 | **Recuperación = nueva derivación sobre el estado observado, con la recuperación registrada**, dentro del mismo envelope; **sin** mecanismo de reintento con ciclo de vida propio | FC-6 y la discrepancia ya declarada en docs/behavior-patterns.md §5.2 | runtime/orchestrator/{host,derivation}.py, tests/ | corrida con fallo → recuperación → resultado | recuperación que amplíe alcance o autoridad ⇒ STOP |
 | `ID-8` | **Se alinea la política con el código en lugar de implementar un retry.** La política deja de enumerar el retry como capacidad del host y declara que un fallo que exige rehacer trabajo se conduce como **nueva derivación registrada** | la discrepancia está declarada; un retry con ciclo de vida propio excede `FC-6` y añadiría mecanismo no pedido | `.agents/policies/supervised-autonomous-execution.md`, `docs/behavior-patterns.md` | política y código coherentes; discrepancia eliminada | si se exigiera un retry real ⇒ sería una decisión de alcance, **no** se infiere |
 
 **Requisitos de autoridad detectados en el diseño: ninguno.** `ID-6` no escala a `protocol/.agents/` y `ID-8` no requiere acto del mantenedor (el Plan autoriza explícitamente la forma «alinear la política»).
@@ -286,7 +286,7 @@ CONDICIONES DE DISEÑO A FIJAR EN LA IMPLEMENTACIÓN (no son decisiones de autor
 
 | Aspecto | Registro |
 |---|---|
-| Implementación | declaración publicada en las **dos superficies designadas**: `runtime/README.md` (límites declarados, «Isolation (declared absence)») y `.agents/policies/supervised-autonomous-execution.md` §12 |
+| Implementación | declaración publicada en las **dos superficies designadas**: runtime/README.md (límites declarados, «Isolation (declared absence)») y .agents/policies/supervised-autonomous-execution.md §12 |
 | Evidencia | texto publicado con las cuatro cláusulas: «does not provide isolation for the actor» · «prevention where the host controls the effect» · «detection where it does not» · «not an isolation guarantee» |
 | Verificación | `tests/test_fc_isolation_declaration.py` (**4 pruebas**): exige las cuatro cláusulas en ambas superficies y conserva la distinción prevención/detección |
 | Counterproof | el verificador **rechaza** (i) un texto que omita la declaración y (ii) un texto que afirme aislamiento («provides isolation for the actor») |
@@ -314,7 +314,7 @@ CONDICIONES DE DISEÑO A FIJAR EN LA IMPLEMENTACIÓN (no son decisiones de autor
 
 | Aspecto | Registro |
 |---|---|
-| Implementación | `.agents/policies/supervised-autonomous-execution.md`: §4 deja de enumerar `retry` y declara la **nueva derivación**; §7 cambia el flujo a `failure → diagnose → correct as a new derivation → verify → continue` y declara **«No internal retry with its own lifecycle is implemented»**, conservando el `STOP` por nuevo scope/autoridad. `docs/behavior-patterns.md` §5.2 deja de declarar la discrepancia: declara la **alineación** política↔código |
+| Implementación | .agents/policies/supervised-autonomous-execution.md: §4 deja de enumerar retry y declara la **nueva derivación**; §7 cambia el flujo a failure → diagnose → correct as a new derivation → verify → continue y declara **«No internal retry with its own lifecycle is implemented»**, conservando el STOP por nuevo scope/autoridad. docs/behavior-patterns.md §5.2 deja de declarar la discrepancia: declara la **alineación** política↔código |
 | Evidencia | los dos textos publicados, con la semántica `ID-7` (recuperación = nueva derivación sobre el estado observado, dentro del mismo envelope) |
 | Verificación | `tests/test_fc_recovery_alignment.py` (**4 pruebas**): lockstep de las dos superficies y conservación del `STOP` que impide ampliar el envelope |
 | Counterproof | el verificador **rechaza** (i) una política que enumere un retry interno y (ii) notas que declaren la discrepancia viva |
@@ -355,11 +355,11 @@ CONDICIONES DE DISEÑO A FIJAR EN LA IMPLEMENTACIÓN (no son decisiones de autor
 | Criterio | Implementado | Verificado | Demostrado | Evidencia |
 |---|---|---|---|---|
 | `FC-1` | **SÍ** | **SÍ** (7 pruebas) | **NO** — requiere actor externo | `runtime/orchestrator/agent_worker.py` (`ActorProvenance`, `classify_actor_evidence`, campo `actor`) · `tests/test_fc_actor_provenance.py` |
-| `FC-2` | **SÍ** | **SÍ** (4 pruebas) | **SÍ** | `runtime/README.md` · `.agents/policies/supervised-autonomous-execution.md` §12 · `tests/test_fc_isolation_declaration.py` |
+| FC-2 | **SÍ** | **SÍ** (4 pruebas) | **SÍ** | runtime/README.md · .agents/policies/supervised-autonomous-execution.md §12 · tests/test_fc_isolation_declaration.py |
 | `FC-3` | **SÍ** | **SÍ** (5 pruebas) | **SÍ** (Memory entra como contexto y no puede autorizar) | `runtime/orchestrator/fc_flow.py` (`MemoryContext`, `build_memory_context`, `with_memory_context`) · `tests/test_fc_flow.py` |
 | `FC-4` | **SÍ** | **SÍ** (7 pruebas) | **SÍ (in-repo)** — dos Changes hasta satisfacción, terminación por satisfacción y transiciones inválidas rechazadas; **demostración operacional externa PENDIENTE** (requiere el Objective declarado por el adoptante y ≥2 Changes reales) | `runtime/orchestrator/fc_flow.py` (`Objective`, `Evaluation`, `ObjectiveState`, `start_objective`, `record_change`, `evaluate_change`, `objective_verdict`) · `tests/test_fc_flow.py` · ruta real que ya observa/evalúa/termina: `runtime/orchestrator/observation.py` (`ChangeObservation`) y `runtime/orchestrator/derivation.py` (`derive_next_action` → `NextAction.terminal`) |
 | `FC-5` | **SÍ** | **SÍ** (9 pruebas, casos A–H) | **SÍ** (aceptado sólo si declarado, reconocido y autorizado; el resto `STOP_FORBIDDEN_ACTION`) | `runtime/orchestrator/fc_flow.py` (`EffectDeclaration`, `ContainmentVerdict`, `contain_actor_result`) reutilizando `worker.classify_executed_effects` y el vocabulario de `autonomy` · `tests/test_fc_flow.py` |
-| `FC-6` | **SÍ** (`ID-7`/`ID-8`) | **SÍ** (4 pruebas) | **PARCIAL** — falta la corrida con fallo real | `.agents/policies/supervised-autonomous-execution.md` §4/§7 · `docs/behavior-patterns.md` §5.2 · `tests/test_fc_recovery_alignment.py` |
+| FC-6 | **SÍ** (ID-7/ID-8) | **SÍ** (4 pruebas) | **PARCIAL** — falta la corrida con fallo real | .agents/policies/supervised-autonomous-execution.md §4/§7 · docs/behavior-patterns.md §5.2 · tests/test_fc_recovery_alignment.py |
 | `FC-7` | **SÍ** (11 de 12) | **SÍ** | **PARCIAL** — 1 pendiente y 1 parcial (ver recuento) | `tests/test_fc_flow.py` (Memory ≠ authority, Change sin evaluación, transición inválida, escape del envelope, resource ceiling) + las suites de `FC-1`/`FC-2`/`FC-6` |
 | `FC-8` | — | **SÍ** | **SÍ** | diff del Change: 0 cambios en `protocol/`, `tools/`, `dist/`; 0 capacidades excluidas |
 | `FC-9` | **SÍ** (esta matriz) | **SÍ** | **NO** | este Plan; sin anchor ni checkpoint (condiciones no satisfechas) |
@@ -380,18 +380,18 @@ La matriz canónica tiene **11 ítems**; se añade **1** verificación extra (re
 
 | # | Counterproof | Estado | Falsación ejecutable (test) |
 |---|---|---|---|
-| 1 | aislamiento falso | `PASS` | `test_fc_isolation_declaration.py::test_verifier_rejects_an_isolation_guarantee` |
-| 2 | declaración de aislamiento omitida | `PASS` | `…::test_verifier_rejects_a_text_that_omits_the_declaration` |
-| 3 | actor inexistente | `PASS` | `test_fc_actor_provenance.py::test_missing_actor_is_a_distinct_state` · `…::test_completion_alone_is_not_actor_evidence` |
-| 4 | actor stub | `PASS` | `…::test_a_stub_cannot_claim_to_be_a_real_actor` |
-| 5 | provenance inválida | `PASS` | `…::test_invalid_provenance_is_rejected` |
-| 6 | Memory alterando autoridad | `PASS` | `test_fc_flow.py::test_memory_cannot_authorize_an_effect` · `…::test_memory_cannot_expand_scope_or_envelope` |
-| 7 | Change sin evaluación | `PASS` | `…::test_evaluation_is_explicit_and_required` · `…::test_invalid_transitions_are_rejected` |
-| 8 | transición inválida | `PASS` | `…::test_invalid_transitions_are_rejected` |
-| 9 | efecto no autorizado / desconocido / no declarado y bypass de containment | `PASS` | `…::test_case_b_not_authorized_stops` · `…::test_case_c_unknown_effect_stops` · `…::test_case_d_undeclared_effect_stops` · `…::test_case_d_absence_of_declaration_is_never_an_authorization` · `…::test_case_g_the_actor_cannot_escape_the_envelope` |
+| 1 | aislamiento falso | PASS | test_fc_isolation_declaration.py → test_verifier_rejects_an_isolation_guarantee |
+| 2 | declaración de aislamiento omitida | PASS | … → test_verifier_rejects_a_text_that_omits_the_declaration |
+| 3 | actor inexistente | PASS | test_fc_actor_provenance.py → test_missing_actor_is_a_distinct_state · … → test_completion_alone_is_not_actor_evidence |
+| 4 | actor stub | PASS | … → test_a_stub_cannot_claim_to_be_a_real_actor |
+| 5 | provenance inválida | PASS | … → test_invalid_provenance_is_rejected |
+| 6 | Memory alterando autoridad | PASS | test_fc_flow.py → test_memory_cannot_authorize_an_effect · … → test_memory_cannot_expand_scope_or_envelope |
+| 7 | Change sin evaluación | PASS | … → test_evaluation_is_explicit_and_required · … → test_invalid_transitions_are_rejected |
+| 8 | transición inválida | PASS | … → test_invalid_transitions_are_rejected |
+| 9 | efecto no autorizado / desconocido / no declarado y bypass de containment | PASS | … → test_case_b_not_authorized_stops · … → test_case_c_unknown_effect_stops · … → test_case_d_undeclared_effect_stops · … → test_case_d_absence_of_declaration_is_never_an_authorization · … → test_case_g_the_actor_cannot_escape_the_envelope |
 | 10 | recovery creando o ampliando autorización | `PENDING` | — (requiere la corrida con fallo real del actor, `FC-6`) |
-| 11 | resource ceiling como autorización | `PASS` | `…::test_case_h_resource_exhaustion_is_not_authorization` |
-| 12 | reintroducción de provider/modelo específico | `PARTIAL` | `test_fc_actor_provenance.py::test_no_provider_or_model_is_required` (contrato agnóstico) · verificación de diff |
+| 11 | resource ceiling como autorización | PASS | … → test_case_h_resource_exhaustion_is_not_authorization |
+| 12 | reintroducción de provider/modelo específico | PARTIAL | test_fc_actor_provenance.py → test_no_provider_or_model_is_required (contrato agnóstico) · verificación de diff |
 
 ```text
 COUNTERPROOFS_TOTAL   = 12   (11 de la matriz + 1 verificación extra)
@@ -405,11 +405,11 @@ PASS + PARTIAL + PENDING = 12 = TOTAL   ✓
 
 ### `check_plan_citations` — interpretación exacta
 
-El checker imprime literalmente `f"Broken citations: {len(broken)}"`: **`26` es el número de citas rotas**, no de citas válidas ni un denominador. Es el **baseline histórico** (precedente a F-C). *Corrección registrada (2026-10-13):* la sección de readiness de este Plan introdujo **5 citas rotas nuevas** (formas `§:test_…` sobre archivos de `tests/`, que el checker no resuelve como documentos) y una ancla no-encabezado (`§808`); quedaron **corregidas** en la corrección documental de esa misma fecha —las pruebas se citan ahora como texto `tests/<archivo>::<test>`, sin forma de cita— y el conteo **vuelve a 26**. La afirmación previa de que el conteo no había aumentado era **incorrecta** para esas 5. El checker emite además una **clase distinta**, no incluida en ese `26`: `Legacy references from live sources: 1`, señalada en `docs/CONVENTIONS.md:808` hacia `.agents/policies/validation-closure.md` como *new legacy reference*. **Verificado que no es una regresión de F-C:** la referencia existe **2 veces antes y 2 veces después** de los cambios de este Change (`git show 4c5bfcb:docs/CONVENTIONS.md` contra el árbol actual) y su destino existe. El checker **no** se modificó.
+El checker imprime literalmente f"Broken citations: {len(broken)}": **26 es el número de citas rotas**, no de citas válidas ni un denominador. Es el **baseline histórico** (precedente a F-C). *Corrección registrada (2026-10-13):* la sección de readiness de este Plan introdujo **5 citas rotas nuevas** (formas  → test_… sobre archivos de tests/, que el checker no resuelve como documentos) y una ancla no-encabezado ((línea 808)); quedaron **corregidas** en la corrección documental de esa misma fecha —las pruebas se citan ahora como texto tests/<archivo> → <test>, sin forma de cita— y el conteo **vuelve a 26**. La afirmación previa de que el conteo no había aumentado era **incorrecta** para esas 5. El checker emite además una **clase distinta**, no incluida en ese 26: Legacy references from live sources: 1, señalada en docs/CONVENTIONS.md:808 hacia .agents/policies/validation-closure.md como *new legacy reference*. **Verificado que no es una regresión de F-C:** la referencia existe **2 veces antes y 2 veces después** de los cambios de este Change (git show 4c5bfcb:docs/CONVENTIONS.md contra el árbol actual) y su destino existe. El checker **no** se modificó.
 
 ### `FC-9` — qué es y en qué estado está
 
-`FC-9` (*cierre anclado*) = `## Validation anchor` + `## Checkpoint / cierre`, condición derivada `Closed` y reconciliación de `ROADMAP.md`/`INDEX`/`CHANGELOG`. **Estado: `DOCUMENTED` / `NOT DEMONSTRATED`.** Lo documentado es esta preparación y la matriz de la Fase 5; lo **no** demostrado es el cierre mismo, porque su condición previa —`FC-1`…`FC-10` demostrados— todavía no se cumple. **No** se registran anchor ni checkpoint: hacerlo ahora sería un cierre artificial.
+FC-9 (*cierre anclado*) = ## Validation anchor + ## Checkpoint / cierre, condición derivada Closed y reconciliación de ROADMAP.md/INDEX/CHANGELOG. **Estado: DOCUMENTED / NOT DEMONSTRATED.** Lo documentado es esta preparación y la matriz de la Fase 5; lo **no** demostrado es el cierre mismo, porque su condición previa —FC-1…FC-10 demostrados— todavía no se cumple. **No** se registran anchor ni checkpoint: hacerlo ahora sería un cierre artificial.
 
 ### Estado de integración (factual)
 
@@ -432,7 +432,7 @@ El checker imprime literalmente `f"Broken citations: {len(broken)}"`: **`26` es 
 **`FC-7` (ítem 10).** El counterproof pendiente —*recovery cannot create or expand authorization*— se demuestra **con la misma corrida** de `FC-6`: basta registrar que la recuperación no introdujo autorización nueva. No requiere evidencia adicional.
 ### `NEXT_GATE` — demostración externa de `F-C`
 
-El único gate que queda es la **corrida operacional con el actor/harness del adoptante**. **No hay ningún gate de implementación previo**: `FC-1`…`FC-7` están materializados y verificados internamente y `FC-4` **no** requiere integración del host.
+El único gate que queda es la **corrida operacional con el actor/harness del adoptante**. **No hay ningún gate de implementación previo**: FC-1…FC-7 están materializados y verificados internamente y FC-4 **no** requiere integración del host.
 
 1. **`FC-1`** — actor/harness externo real que declare su `ActorProvenance(harness, mechanism)` y se clasifique `external-declared`.
 2. **Objective declarado explícitamente** por el entorno/adoptante — nunca inferido por ARgentOS (`D-1`).
@@ -459,7 +459,7 @@ validación registrada. -->
 
 ### Findings
 
-- `<PLAN-165>:F-1` — estado: `resolved`; severidad: `medium`; observación: el commit de la implementación de `FC-2` usó `git add -A` y **barrió dos archivos preexistentes ajenos a este Change** —`.tmp-ghresearch/rest.json` (artefacto temporal de ~356.771 líneas) y `docs/planificacion-argentos-diseno-2026-10-13.md` (documento de planificación de diseño de 1.310 líneas, ubicado en la raíz de `docs/`, que **no** es namespace canónico de la familia *Policy*)—, de modo que quedaron versionados **sin autorización ni registro** en un Change; evidencia original: `git show --stat e620367` lista ambas rutas y el worktree estaba limpio antes de esta intervención; estado git observado: `dev` @ `e620367`, con los dos archivos presentes como *untracked* inmediatamente antes del `add`; provenance original: verificación de scope (§16 del acto de ejecución) durante la implementación; resolución: `resolved` por `<PLAN-165>:C-1`.
+- `<PLAN-165>:F-1` — estado: resolved; severidad: medium; observación: el commit de la implementación de FC-2 usó git add -A y **barrió dos archivos preexistentes ajenos a este Change** —.tmp-ghresearch/rest.json (artefacto temporal de ~356.771 líneas) y docs/planificacion-argentos-diseno-2026-10-13.md (documento de planificación de diseño de 1.310 líneas, ubicado en la raíz de docs/, que **no** es namespace canónico de la familia *Policy*)—, de modo que quedaron versionados **sin autorización ni registro** en un Change; evidencia original: git show --stat e620367 lista ambas rutas y el worktree estaba limpio antes de esta intervención; estado git observado: dev @ e620367, con los dos archivos presentes como *untracked* inmediatamente antes del add; provenance original: verificación de scope (§16 del acto de ejecución) durante la implementación; resolución: resolved por <PLAN-165>:C-1.
 
 ### Correcciones
 
@@ -471,7 +471,7 @@ validación registrada. -->
 - `<PLAN-165>` — decisión: **`ID-3` aislamiento/sandbox: implementar o declarar la garantía que no se ofrece**; blocking: **sí** para el cierre de `FC-2`; owner: **mantenedor**; escalación: acto registrado en el Change de implementación; resolución: **`PENDING_AUTHORITY`**; evidencia: `AE-7` y `## Decisiones de implementación`; efecto downstream: fija qué garantía puede afirmarse; ADR-worthiness: a evaluar. → **Cerrada por el acto del mantenedor del 2026-10-13:** `resolución` = **`RESUELTA`** — se **declara ausencia** de aislamiento proporcionado por ARgentOS; **no** se implementa sandbox y **no** se introduce garantía de aislamiento en `F-C`; la declaración debe publicarse de forma explícita y verificable (entregable de `FC-2`); `blocking` = **no** (deja de bloquear).
 - `<PLAN-165>` — decisión: **`ID-5` mecanismo/trigger del objetivo multi-Change**; blocking: **sí** para `FC-4`; owner: **mantenedor**; escalación: acto registrado en el Change de implementación; resolución: **`PENDING_AUTHORITY`**; evidencia: `D-1` (el objetivo global no se infiere); efecto downstream: habilita el objetivo que abarca más de un Change sin eliminar la unidad `Change`; ADR-worthiness: a evaluar. → **Cerrada por el acto del mantenedor del 2026-10-13:** `resolución` = **`RESUELTA`** — semántica `Objetivo → Change → evaluación → siguiente Change` hasta satisfacción, con evaluación explícita después de **cada** Change (si está satisfecho, el objetivo finaliza; si no, puede producirse/ejecutarse el siguiente Change dentro del mismo objetivo); **no** es una lista estática de Changes independientes; `blocking` = **no** (deja de bloquear).
 - `<PLAN-165>` — decisión: **`ID-6` contención de autoridad fuera del host: alcance de la solución**; blocking: **sí** para `FC-5` si la solución requiere tocar `protocol/.agents/`; owner: **mantenedor** (para la parte que escala a payload); escalación: RFC-56 Clase A (RFC `Accepted` + plan); resolución: **`PENDING`** — el diseño puede comenzar dentro del alcance DEV; la parte de payload requiere acto propio; evidencia: `C-02` y `## Decisiones de implementación`; efecto downstream: define si la frontera resiste un actor no benigno; ADR-worthiness: a evaluar.
-- `<PLAN-165>` — decisión: **`ID-8` forma de resolver la discrepancia del retry** (implementar el retry **o** alinear `.agents/policies/`); blocking: **no** para empezar; **sí** para cerrar `FC-6`; owner: **agente con registro obligatorio**; escalación: —; resolución: **`PENDING`** — se decide y se registra en el Change de implementación; evidencia: `docs/behavior-patterns.md` §5.2; efecto downstream: elimina una discrepancia declarada entre política y código; ADR-worthiness: no.
+- `<PLAN-165>` — decisión: **ID-8 forma de resolver la discrepancia del retry** (implementar el retry **o** alinear .agents/policies/); blocking: **no** para empezar; **sí** para cerrar FC-6; owner: **agente con registro obligatorio**; escalación: —; resolución: **PENDING** — se decide y se registra en el Change de implementación; evidencia: docs/behavior-patterns.md §5.2; efecto downstream: elimina una discrepancia declarada entre política y código; ADR-worthiness: no.
 
 ## Riesgos
 

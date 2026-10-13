@@ -323,11 +323,11 @@ validación registrada. -->
 
 ### Findings
 
-No findings detected / N/A — declaración de ausencia al crear el Plan.
+- `<PLAN-165>:F-1` — estado: `resolved`; severidad: `medium`; observación: el commit de la implementación de `FC-2` usó `git add -A` y **barrió dos archivos preexistentes ajenos a este Change** —`.tmp-ghresearch/rest.json` (artefacto temporal de ~356.771 líneas) y `docs/planificacion-argentos-diseno-2026-10-13.md` (documento de planificación de diseño de 1.310 líneas, ubicado en la raíz de `docs/`, que **no** es namespace canónico de la familia *Policy*)—, de modo que quedaron versionados **sin autorización ni registro** en un Change; evidencia original: `git show --stat e620367` lista ambas rutas y el worktree estaba limpio antes de esta intervención; estado git observado: `dev` @ `e620367`, con los dos archivos presentes como *untracked* inmediatamente antes del `add`; provenance original: verificación de scope (§16 del acto de ejecución) durante la implementación; resolución: `resolved` por `<PLAN-165>:C-1`.
 
 ### Correcciones
 
-No findings detected / N/A — declaración de ausencia al crear el Plan.
+- `<PLAN-165>:C-1` — refs origen: `<PLAN-165>:F-1`; alcance de revalidación: `.tmp-ghresearch/rest.json` y `docs/planificacion-argentos-diseno-2026-10-13.md` **retirados del índice** con `git rm --cached` (los archivos **permanecen en disco**: no se borró nada), sin reescritura de historia y sin efecto sobre los cinco archivos del Change; evidencia: el árbol de la corrección ya no contiene ninguna de las dos rutas y el diff del Change queda limitado a `docs/plans/`, `runtime/README.md`, `.agents/policies/` y `tests/`; **queda al mantenedor** decidir si esos artefactos deben versionarse (y en qué namespace canónico) o ignorarse: `.tmp-ghresearch/` no está en `.gitignore`.
 
 ### Pending decisions
 

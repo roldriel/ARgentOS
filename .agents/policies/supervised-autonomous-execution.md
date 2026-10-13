@@ -309,7 +309,7 @@ Inside the envelope the host continues **without an operational handoff**. It ma
 
 - observe; reconstruct state; derive the next step;
 - plan the next step; delegate; execute; verify;
-- correct, retry and recover inside the scope;
+- correct and recover inside the scope: a failure that requires redoing authorized work is conducted as a **new derivation** over the observed state, never as an internal retry;
 - revalidate and rebuild evidence;
 - update the artifacts of its own Change and the documentation it is authorized
   to update;
@@ -419,13 +419,15 @@ authorizes the deferred action itself.
 A recoverable error inside the scope continues:
 
 ```text
-failure → diagnose → correct / retry → verify → continue
+failure → diagnose → correct as a new derivation → verify → continue
 ```
 
 The same envelope binds the recovery. A recovery that needs a new scope, new
 authority, an RFC, an ADR, a Protocol change or a payload change **stops**.
-Recovery and retries are never hidden: they are recorded as evidence like any
-other step, and a recovery is not a redefinition of the original plan.
+**No internal retry with its own lifecycle is implemented**: a failure that requires
+redoing authorized work is conducted as a **new derivation** over the observed state, and
+that derivation is recorded as evidence like any other step. A recovery is never hidden,
+and it is not a redefinition of the original plan.
 
 ## 8. Human boundary
 

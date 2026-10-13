@@ -330,17 +330,16 @@ débil de las dos.
 Enumerarlo evita el error de atribuirle al sistema mecanismos que no tiene:
 
 - **No hay `next_state`**, transición ni cursor.
-- **No hay un mecanismo de retry, y esto es una discrepancia declarada con la
-  política —no un silencio—.** La política **sí** enumera el retry entre lo que el
-  host puede hacer dentro del scope
-  (`./.agents/policies/supervised-autonomous-execution.md:4. Autonomous
-  continuation` y `:7. Recovery`). El código **no implementa ningún mecanismo de
-  reintento**: un fallo que exige rehacer trabajo autorizado se conduce como una
-  **nueva derivación** sobre el estado observado, no como un reintento declarado
-  con su propio ciclo de vida. La lectura correcta es la de esta sección: la
-  política nombra una capacidad de la frontera, y la conducción efectiva usa el
-  mecanismo de derivación que ya existe. Se declara la discrepancia en lugar de
-  resolverla por omisión, conforme a la `## Regla de lectura` del encabezado.
+- **No hay un mecanismo de retry, y la política está alineada con el código —no
+  hay discrepancia—.** La política **no** enumera un reintento interno con ciclo
+  de vida propio: declara que un fallo que exige rehacer trabajo autorizado se
+  conduce como una **nueva derivación** sobre el estado observado
+  (`./.agents/policies/supervised-autonomous-execution.md:7. Recovery`). El código
+  **no implementa ningún mecanismo de reintento**, de modo que la política y la
+  conducción efectiva dicen lo mismo: la capacidad de la frontera es la
+  **derivación**, no un reintento declarado. La alineación la fijó el Plan 165
+  (`ID-8`), que eligió **alinear la política con el código** en lugar de
+  implementar un retry, y `tests/test_fc_recovery_alignment.py` la verifica.
 - **No hay recuperación multi-nivel.** La noción de "recovery" que el sistema
   cuenta es estrecha: una iteración que **re-conduce** trabajo que el Change ya
   había producido con evidencia —una revalidación sobre contenido cambiado— no

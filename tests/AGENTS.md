@@ -88,6 +88,7 @@ The anchored set, and what each protects:
 | `test_discovery_output_dogfood.py` (whole module) | the D01 mechanical subset against the **real** discovery contracts and the real payload (`plan 136`) |
 | `test_check_ears_coverage_dogfood.py` (whole module) | the three sources of truth of the real payload in parity: the standard's patterns, the contract's canonical form, and the validator's activation of `ears` for H01 (`plan 137`) |
 | `test_fc_isolation_declaration.py` (whole module) | the published absence of isolation for the actor, and that the verifier **rejects** an omitted declaration or an isolation claim (`plan 165`, `FC-2` / `ID-3`) |
+| `test_fc_recovery_alignment.py` (whole module) | the aligned retry semantics: policy ↔ code in lockstep, no internal retry, and the recovery `STOP` that keeps the envelope (`plan 165`, `FC-6` / `ID-8`) |
 
 `tests/fixtures/skills/` is **not** in this list: those are synthetic fixtures
 that stand in for payload skills so the isolated tests above do not read

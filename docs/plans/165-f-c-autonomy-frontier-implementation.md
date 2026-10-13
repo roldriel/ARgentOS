@@ -308,6 +308,37 @@ CONDICIONES DE DISEÑO A FIJAR EN LA IMPLEMENTACIÓN (no son decisiones de autor
 | `FC-10` | **VIGENTE (verificado en diff)** | 0 provider/modelo/SDK propio · 0 sandbox · envelope de `F-B` y techos intactos · 0 `C-16`/`C-17`/`C-21` · 0 política de modelo/cómputo |
 
 **Resultado de la intervención:** `FC_IMPLEMENTED_NOT_FULLY_DEMONSTRATED` — una capacidad completa implementada y demostrada (`FC-2`); el resto queda **diseñado y no demostrado**. El Plan **no** se marca `Executed` ni `Closed` y **no** registra anchor ni checkpoint.
+### Fase 4 — Alineación `ID-8` (base de `FC-6`) — 2026-10-13
+
+**Decisión aplicada (`ID-8`):** alinear la **política** con el **código** en lugar de implementar un retry.
+
+| Aspecto | Registro |
+|---|---|
+| Implementación | `.agents/policies/supervised-autonomous-execution.md`: §4 deja de enumerar `retry` y declara la **nueva derivación**; §7 cambia el flujo a `failure → diagnose → correct as a new derivation → verify → continue` y declara **«No internal retry with its own lifecycle is implemented»**, conservando el `STOP` por nuevo scope/autoridad. `docs/behavior-patterns.md` §5.2 deja de declarar la discrepancia: declara la **alineación** política↔código |
+| Evidencia | los dos textos publicados, con la semántica `ID-7` (recuperación = nueva derivación sobre el estado observado, dentro del mismo envelope) |
+| Verificación | `tests/test_fc_recovery_alignment.py` (**4 pruebas**): lockstep de las dos superficies y conservación del `STOP` que impide ampliar el envelope |
+| Counterproof | el verificador **rechaza** (i) una política que enumere un retry interno y (ii) notas que declaren la discrepancia viva |
+| Límite | la **demostración con fallo real** (fallo → detección → estado intermedio → recuperación → resultado) queda pendiente: el código no implementa un reintento y la corrida con fallo real del actor pertenece a la demostración con actor externo |
+
+#### Matriz de counterproofs (`FC-7`) — estado real
+
+| # | Counterproof | Estado |
+|---|---|---|
+| 1 | aislamiento falso (declarar una garantía que no existe) | **ejecutable y verde** (`test_fc_isolation_declaration.py`) |
+| 2 | declaración de aislamiento omitida | **ejecutable y verde** (ídem) |
+| 3 | política que reintroduce un retry interno | **ejecutable y verde** (`test_fc_recovery_alignment.py`) |
+| 4 | discrepancia política↔código declarada como viva | **ejecutable y verde** (ídem) |
+| 5 | recuperación que amplíe el envelope | **ejecutable y verde** (guarda textual del `STOP`; la guarda de runtime queda para `FC-6`) |
+| 6 | actor inexistente / stub / provenance inválida | **pendiente** (`FC-1` sin implementar) |
+| 7 | Memory intentando alterar autoridad | **pendiente** (`FC-3`) |
+| 8 | Change sin evaluación · transición inválida | **pendiente** (`FC-4`) |
+| 9 | efecto no autorizado / desconocido / no declarado · bypass de containment · resource ceiling como autorización | **pendiente de suite dedicada** (`FC-5`; los mecanismos existen: `admit_declared_effects`, `classify_executed_effects`, `STOP_FORBIDDEN_ACTION`) |
+| 10 | recovery creando una autorización nueva | **pendiente** (`FC-6` runtime) |
+| 11 | intento de introducir provider/model específico | **pendiente** (`FC-1`/`FC-10` suite) |
+
+**Estado por criterio tras esta intervención:** `FC-2` **DEMOSTRADO**; `FC-6` **PARCIAL** (`ID-7`/`ID-8` alineados y verificados; demostración con fallo real pendiente); `FC-7` **PARCIAL** (5 de 11 counterproofs ejecutables y verdes); `FC-8`/`FC-10` **verificados en diff**; `FC-1`, `FC-3`, `FC-4`, `FC-5` **NO IMPLEMENTADOS** — y `FC-9` **NO DEMOSTRADO**: el Plan **no** se cierra ni registra anchor/checkpoint.
+
+**Ningún bloqueo de autoridad:** las cuatro capacidades pendientes están autorizadas por este Plan y por las decisiones cerradas; su materialización no se completó en esta sesión y **no** se declara demostrada.
 ## Validation anchor
 
 <!-- Se completa al ejecutar (VC-1, Incremento 1). El Plan está `Aprobado para ejecución` y NO ejecutado:

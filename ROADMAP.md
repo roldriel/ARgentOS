@@ -30,8 +30,9 @@ humano sobre alcance, autoridad, decisiones normativas, protocolo y release.
   ref local `dist`, que está rezagada.
 - **En `dev`:** PATCH `12.0.1` implementado y **sin tag**; su promoción es un
   acto de release no autorizado.
-- **Trabajo activo:** ninguno. `F-C` quedó **aprobado para ejecución** y **listo para implementar**
-  (**cerrada** (`CLOSED`), 2026-10-13); su implementación corre en el Change siguiente
+- **Trabajo activo:** la reconciliación documental del cierre de `F-C`
+  ([plan 167](docs/plans/167-reconciliacion-del-cierre-de-f-c.md)). `F-C` quedó **cerrada**
+  (`CLOSED`, 2026-10-13): implementada y verificada internamente, sin demo externa y sin release
   ([plan 165](docs/plans/165-f-c-autonomy-frontier-implementation.md)).
 
 ### Estado del que parte este roadmap
@@ -57,9 +58,11 @@ no trabajo pendiente. El trabajo cerrado no se cataloga aquí — su traza vive 
   provider/modelo, aislamiento/sandbox, Memory como contexto y objetivo multi-Change, con `C-02`
   (contención de autoridad fuera del host) y `C-26` (recuperación ante fallos reales) como condiciones
   ([acto](docs/plans/163-acto-autoridad-od1-alcance-f-c.md); norma en `docs/CONVENTIONS.md`, subsección
-  «Modelo de autonomía — alcance canónico de `F-C`»). **Aprobado para ejecución**, con sus decisiones de
+  «Modelo de autonomía — alcance canónico de `F-C`»). **Cerrada** (`CLOSED`) con sus decisiones de
   autoridad cerradas (ID-1 actor agnóstico, ID-3 ausencia de aislamiento declarada, ID-5 semántica
-  multi-Change): ****cerrada** (`CLOSED`)**. La implementación corre en el Change siguiente
+  multi-Change) y sus decisiones de implementación resueltas; el payload de sus dos decisiones
+  Protocol-native se materializó por [RFC-83](docs/rfc/83-objective-multi-change-and-actor-provenance.md)
+  ([plan 166](docs/plans/166-materialize-objective-and-actor-provenance.md)). Traza y cierre en
   ([plan 165](docs/plans/165-f-c-autonomy-frontier-implementation.md); [acto](docs/plans/164-acto-autorizacion-ejecucion-f-c.md)).
 
 ### ⏳ LATER
@@ -83,7 +86,7 @@ no trabajo pendiente. El trabajo cerrado no se cataloga aquí — su traza vive 
 ```mermaid
 flowchart TD
     A["Etapa A<br/>retrospectiva ✅"] --> E["Envelope de autonomía ✅"]
-    A --> F["F-C<br/>frontera de autonomía<br/>(alcance resuelto, sin autorizar)"]
+    A --> F["F-C<br/>frontera de autonomía<br/>✅ cerrada"]
     E --> F
     F --> C["Etapa C<br/>capacidad nueva"]
 ```
@@ -104,4 +107,4 @@ documento: cada una es un Change con su propia autorización.
 
 ---
 
-_Última actualización: 2026-10-13 · Protocolo publicado: `12.0.0`_
+_Última actualización: 2026-10-14 · Protocolo publicado: `12.0.0`_

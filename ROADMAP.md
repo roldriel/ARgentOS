@@ -30,9 +30,11 @@ humano sobre alcance, autoridad, decisiones normativas, protocolo y release.
   ref local `dist`, que está rezagada.
 - **En `dev`:** PATCH `12.0.1` implementado y **sin tag**; su promoción es un
   acto de release no autorizado.
-- **Trabajo activo:** la reconciliación documental del cierre de `F-C`
-  ([plan 167](docs/plans/167-reconciliacion-del-cierre-de-f-c.md)). `F-C` quedó **cerrada**
-  (`CLOSED`, 2026-10-13): implementada y verificada internamente, sin demo externa y sin release
+- **Trabajo activo:** ninguno.
+- **Último trabajo cerrado:** la reconciliación documental del cierre de `F-C`
+  ([plan 167](docs/plans/167-reconciliacion-del-cierre-de-f-c.md), cerrado el 2026-10-14) y el
+  cierre de `F-C` (`CLOSED`, 2026-10-13): implementada y verificada internamente, sin demo
+  externa y sin release
   ([plan 165](docs/plans/165-f-c-autonomy-frontier-implementation.md)).
 
 ### Estado del que parte este roadmap

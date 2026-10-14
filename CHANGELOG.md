@@ -38,7 +38,6 @@ La política de versionado, changelog, tags y estados de planes vive en
 ### Added
 
 - **F-C (Autonomy Frontier) cerrado** (Plan 165 `Executed`/`Closed`; decisión del mantenedor del 2026-10-13): `FC-1`…`FC-10` quedan **implementados y verificados internamente** (`FC-4` = `IMPLEMENTED + INTERNALLY VERIFIED`; `FC-6`/`FC-7` con su recuperación y sus counterproofs internos; `FC-8`/`FC-10` verificados por diff y checkers). **La demostración con un harness externo autenticado no es requisito de cierre:** ARgentOS es un protocolo documental, agnóstico respecto de harness/provider/modelo/SDK/CLI (ID-1), no invoca ni autentica harnesses, y su superficie de adopción es `AGENTS.md` + `.agents/`; `AgentInvoker` permanece como infraestructura DEV interna. Verificación: `pytest tests/` **1358 passed** · `check_protocol_invariants` PASS (216/10476) · `check_plan_structure` PASS · `check_plan_citations` 26 (baseline) · `check_taxonomy_coherence` OK · C-1 `GAP=0/ANOMALY=0` · C-3 `GAP=0`. Plan 166 cerrado con su Validation Anchor y Checkpoint. Sin `VERSION` bump ni tag en esta etapa.
-- **Objective multi-Change y procedencia declarada del actor en el payload** (RFC-83 `Accepted` 2026-10-13, Clase A de RFC-56; Plan 166, `Aprobado para ejecución` con materialización ejecutada y validada): dos extensiones **aditivas** de la superficie publicada del Protocol. `protocol/.agents/contracts/CHANGE_GOVERNANCE.md` incorpora `## Objective relation (multi-Change)`: un **Objective explícito** —declarado por el adoptante, **nunca inferido**— asocia **uno o más Changes**; cada Change conserva su identidad y su gobernanza en ese artefacto (RFC-76 intacta); cada Change recibe una `Evaluation` (`satisfied` / `not satisfied`) con `evidence_ref`; `not satisfied` deja el Objective **`open`** y habilita el siguiente Change, `satisfied` lo lleva a **`COMPLETED`**; **sin** segunda Change State Machine, sin lifecycle paralelo y sin replicar el runtime DEV. `protocol/.agents/contracts/HARNESS_REPORT.md` incorpora `## Declared actor provenance` (`actor`, `harness`, `mechanism`, `declared_by`), **declarada y no verificada**, conservando `self-reported` y `enforcement = "informational"`, sin afirmar autenticidad ni verificación independiente y sin provider/model/SDK/CLI (compatible con ID-1). Verificación: `check_protocol_invariants` PASS (216 archivos / 10476 referencias) · `check_taxonomy_coherence` OK · `check_plan_structure` PASS · `check_plan_citations` 26 (baseline). Cierre de F-C pendiente de la demostración externa (harness sin autenticar). Sin `VERSION` bump ni tag en este commit.
 - **Acto de autorización de ejecución de `F-C` y formalización de su Plan** (plan 164, vía plan; DEV-only,
   docs-only sobre `docs/plans/`, `ROADMAP.md` y este changelog, sin efecto en `protocol/`, `runtime/`,
   `tools/`, `tests/` ni `.agents/`, por lo que RFC-56 no aplica): el mantenedor autorizó el **2026-10-13**
@@ -1544,12 +1543,21 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
-## [12.0.1] — 2026-10-11
+## [12.1.0] — 2026-10-14
+
+> **Absorción de `12.0.1`** (plan 168): el Plan 156 asignó `12.0.1` como PATCH documental del payload y
+> quedó `Closed` con `Released = FALSE`; ese número **nunca se publicó** (`master` permaneció en `12.0.0`).
+> Esta release **absorbe** ese número: su ítem de payload se transporta aquí, y el número pasa a `12.1.0`
+> porque el contenido publicado incluye **adiciones compatibles** del Protocol (`docs/VERSIONING.md` §3:
+> MINOR). La trazabilidad del Plan 156 se preserva en este mismo ítem; su artefacto cerrado no se edita.
+
+### Added
+
+- **Objective multi-Change y procedencia declarada del actor en el payload** (plan 166, RFC-83; Clase A de RFC-56 — RFC-83 `Accepted` + Plan 166 `Executed`/`Closed` como autorización de la modificación de `protocol/.agents/`): dos extensiones **aditivas** de la superficie publicada del Protocol. `protocol/.agents/contracts/CHANGE_GOVERNANCE.md` incorpora `## Objective relation (multi-Change)`: un **Objective explícito** —declarado por el adoptante, **nunca inferido**— asocia **uno o más Changes**; cada Change conserva su identidad y su gobernanza en ese artefacto (RFC-76 intacta); cada Change recibe una `Evaluation` (`satisfied` / `not satisfied`) con `evidence_ref`; `not satisfied` deja el Objective **`open`** y habilita el siguiente Change, `satisfied` lo lleva a **`COMPLETED`**; **sin** segunda Change State Machine, sin lifecycle paralelo y sin replicar el runtime DEV. `protocol/.agents/contracts/HARNESS_REPORT.md` incorpora `## Declared actor provenance` (`actor`, `harness`, `mechanism`, `declared_by`), **declarada y no verificada**, conservando `self-reported` y `enforcement = "informational"`, sin afirmar autenticidad ni verificación independiente y sin provider/model/SDK/CLI (compatible con `ID-1`). El cierre de `F-C` (plan 165) no exige demostración con un harness externo autenticado; esa decisión es independiente de esta release. Verificación: `check_protocol_invariants` PASS (216 archivos / 10476 referencias) · `check_taxonomy_coherence` OK · `check_plan_structure` PASS · `check_plan_citations` 26 (baseline histórico, sin regresión). `VERSION` pasa a `12.1.0` y se sincroniza el ancla semántica del runtime (`runtime/toolcalls/canonical.py`), conforme al «modelo por plan» de `docs/VERSIONING.md` §3.
 
 ### Fixed
 
-- **Reconciliación documental del payload con el layout canónico `.argentos/`** (plan 156, RFC-82; Clase B —
-  RFC-82 `Accepted` + Plan 156 como autorización de la modificación de `protocol/.agents/`): se corrige la **prosa
+- **Reconciliación documental del payload con el layout canónico `.argentos/`** (plan 156, RFC-82; Clase B —  RFC-82 `Accepted` + Plan 156 como autorización de la modificación de `protocol/.agents/`): se corrige la **prosa
   descriptiva** del payload que la release `12.0.0` (plan 154, RFC-81) volvió inexacta. No cambia ningún contrato,
   gate, estado, transición, skill ni capacidad: 0 diff en `orchestrators/`, `contracts/`, `delegation/`, `roles/`,
   `skills/` y en los scripts del harness. Correcciones: (a) `protocol/.agents/INDEX.md` declara el bootstrap
@@ -1571,10 +1579,11 @@ La política de versionado, changelog, tags y estados de planes vive en
   RFC-81 es un adapter no normativo); se registra la corrección autorizada por RFC-82 y se preservan la guarda de
   links del entry file, los links rotos intencionales y las citas históricas de `docs/plans/`. `VERSION` pasa de
   `12.0.0` a `12.0.1` (PATCH por `docs/VERSIONING.md` §3: fixes documentales) y se sincroniza el ancla semántica del
-  runtime (`runtime/toolcalls/canonical.py`). La promoción, el tag y la regeneración de `dist` son un acto de release
-  separado y **no** ejecutado por este plan.
+  runtime (`runtime/toolcalls/canonical.py`). La promoción, el tag y la regeneración de `dist` no fueron
+  ejecutados por ese plan: su número `12.0.1` quedó sin publicar y fue **absorbido** por la release
+  `12.1.0` (plan 168).
 
-> Nota: el tag git `12.0.1` se crea como entregable del release al promover `dev` → `master`.
+> Nota: el tag git `12.1.0` se crea como entregable de esta release al promover `dev` → `master` (plan 168).
 
 ## [12.0.0] — 2026-10-11
 

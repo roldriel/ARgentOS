@@ -25,16 +25,19 @@ humano sobre alcance, autoridad, decisiones normativas, protocolo y release.
 
 ## 🧭 Posición actual
 
-- **Protocolo publicado:** `12.0.0`, tag anotado sobre `78ca512` (`master`).
+- **Protocolo publicado:** `12.1.0`, tag anotado sobre el commit de promoción de `dev` (`master`).
 - **Payload publicado:** `origin/dist` @ `1181db6` — leer desde ahí, no desde la
-  ref local `dist`, que está rezagada.
-- **En `dev`:** PATCH `12.0.1` implementado y **sin tag**; su promoción es un
-  acto de release no autorizado.
+  ref local `dist`, que está rezagada. **Todavía corresponde a `12.0.0`**: la
+  publicación remota de `12.1.0` (push de `master` y del tag, que dispara
+  `publish-dist`) es un acto no autorizado ([plan 168](docs/plans/168-release-12-1-0.md)).
+- **En `dev`:** sin cambios de payload pendientes de promoción; `dev` y `master`
+  comparten el mismo contenido de payload en `12.1.0`.
 - **Trabajo activo:** ninguno.
-- **Último trabajo cerrado:** la reconciliación documental del cierre de `F-C`
-  ([plan 167](docs/plans/167-reconciliacion-del-cierre-de-f-c.md), cerrado el 2026-10-14) y el
-  cierre de `F-C` (`CLOSED`, 2026-10-13): implementada y verificada internamente, sin demo
-  externa y sin release
+- **Último trabajo cerrado:** la release `12.1.0`
+  ([plan 168](docs/plans/168-release-12-1-0.md), 2026-10-14) y la reconciliación documental del
+  cierre de `F-C` ([plan 167](docs/plans/167-reconciliacion-del-cierre-de-f-c.md), 2026-10-14),
+  junto con el cierre de `F-C` (`CLOSED`, 2026-10-13): implementada y verificada internamente, sin
+  demo externa ni release propia
   ([plan 165](docs/plans/165-f-c-autonomy-frontier-implementation.md)).
 
 ### Estado del que parte este roadmap
@@ -102,7 +105,7 @@ documento: cada una es un Change con su propia autorización.
 
 | Bloqueo | Qué cambia | Detalle |
 |---|---|---|
-| Autorización de release de `12.0.1` | cuándo se publica NOW | acto del mantenedor |
+| Autorización de la publicación remota de `12.1.0` | cuándo llega a `dist` | acto del mantenedor ([plan 168](docs/plans/168-release-12-1-0.md)) |
 | ADR-worthiness del acto de autoridad de autonomía | cómo se registra la decisión | `docs/plans/152-authority-decisions-gov-1-10.md` |
 | Semántica de lifetime/persistence en el contrato Protocol | viabilidad (exige RFC `Accepted`) | `docs/plans/125-repository-architecture-decisions.md` |
 | Enforcement de placement y persistencia de Project/Knowledge | alcance de LATER | [placement-contract](docs/placement-contract.md) — §Enforcement deferred |

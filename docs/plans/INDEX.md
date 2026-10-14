@@ -1089,6 +1089,35 @@ sin tag, sin promoción; commit atómico consolidado de los Planes 122 + 123
 |---|---|---|---|---|
 | `123-dev-agent-worker-mvp.md` | — (vía plan; RFC-56 no aplica) | Executed | MVP del DEV Agent Worker: `runtime/orchestrator/agent_worker.py` (**nuevo**: `AgentWorker` como implementación de `WorkerAdapter`, `AgentInvoker` protocolo inyectable, `NullAgentInvoker` default honesto con los tres resultados distinguibles —no disponible / incompleta / completada—, `AgentInvocationRequest`/`AgentInvocationResult` y `agent_invoker_from_environment()`), `contracts.py` (`Delegation.task`/`Delegation.input_artifacts` aditivos-optional + `RUN_IMPLEMENTATION_TASK` en el vocabulario cerrado de acciones ejecutables), `observation.py` (`parse_agent_task` para la sección `## Delegación agentiva`, `implementation_done_for_current_state`, `implementation_already_satisfied` y declaración de `GAP` para líneas de journal ilegibles), `derivation.py` (regla de implementación antes de la validación + `forbidden_scope_action`), `authority.py` (basis del Plan aprobado, sin autoridad nueva), `host.py` (Delegation agentiva, verificación de scope por snapshots de contenido, `_committed` que reconoce untracked, observabilidad del Worker Result), `worker.py` (`repository_snapshot`/`changed_paths`/`content_digests` compartidos), `store.py` (`read_journal_with_gaps` + `JournalRead`), `__main__.py` (`--worker agent`), suite determinista `tests/test_agent_worker.py`, sección del Agent Worker en `runtime/README.md`, policy `.agents/policies/autonomous-orchestration.md` y sección `## Delegación agentiva` documentada en `docs/plans/_TEMPLATE.md`. Sin payload, sin `VERSION`, sin tag, sin promoción; `**Status:** Executed` con condición derivada **`Closed`** (release pendiente), Validation Anchor A1 + revalidación A2 sobre el estado consolidado (delta `a33816da…`, tree `8576dea2…`), y hallazgos `<PLAN-123>:F-1`..`F-4` aceptados formalmente como `resolved` por el mantenedor (2026-09-15) sobre la base de `<PLAN-123>:C-1`..`C-4`. | active |
 
+## Nonagésima quinta serie: release `12.1.0` — absorción de `12.0.1` y publicación del payload de RFC-83 (Plan 168) (14 oct 2026)
+
+Serie del Change que **publica** el estado verificado de `dev` como release **`12.1.0`**. Nace de
+la decisión del mantenedor (2026-10-14) que resuelve el ítem de reconciliación de versión y adopta
+la vía **A1**: **una sola release que absorbe el `12.0.1` no publicado**. El problema que corrige es
+de clasificación y de trazabilidad: el Plan 156 asignó `12.0.1` (PATCH documental del payload) y
+quedó `Closed` con `Released = FALSE` —su número nunca se publicó—, mientras que el Plan 166
+modificó `protocol/.agents/contracts/` con la relación `Objective` multi-Change y la procedencia
+declarada del actor **sin producir la versión propia** que `docs/VERSIONING.md` §3 exige («un plan
+= una versión = un tag»), dejando ese payload apoyado sobre el `12.0.1` ajeno. Publicarlo como
+`12.0.1` sería un PATCH transportando contenido **MINOR**; por eso la release se numera **`12.1.0`**
+(§3: adiciones compatibles ⇒ MINOR, calculada desde la última versión publicada en `master`,
+`12.0.0`), con la absorción de `12.0.1` declarada en el changelog. **No hay RFC**: el payload que
+se publica no se modifica —sus dos cambios ya fueron autorizados por RFC-82 `Accepted` (Plan 156) y
+RFC-83 `Accepted` (Plan 166)— y lo que se decide es metadata de release; la única escritura bajo
+`protocol/` es `protocol/.agents/VERSION`. **DEV-only + payload de release**, `Change Level` **L2**
+con `release impact` **3**. Alcance: sección `[12.1.0]` del changelog con los ítems de payload de
+ambos planes, bump de `VERSION` y de `PROTOCOL_VERSION`, snapshot de `docs/VERSIONING.md` §9,
+posición actual de `ROADMAP.md`, y **promoción fast-forward `dev` → `master` con tag anotado
+`12.1.0`**, autorizada dentro del Plan y **condicionada a que la verificación salga íntegramente en
+verde**. Fuera de alcance: modificar contenido de `protocol/.agents/` distinto de `VERSION`, editar
+`dist/`, reabrir los planes 156/166/167, reescribir secciones publicadas del changelog y la
+**publicación remota** (`push` + `publish-dist` en CI), registrada como pending decision con owner
+mantenedor por efecto `remote_git` no declarado.
+
+| Plan | RFC | Status | Descripción | Vigencia |
+|---|---|---|---|---|
+| `168-release-12-1-0.md` | — (vía plan; el payload publicado ya está autorizado por RFC-82 y RFC-83; sólo se escribe `protocol/.agents/VERSION`) | Aprobado para ejecución | **Release `12.1.0`: absorción de `12.0.1` y publicación del payload de RFC-83.** Publica el estado verificado de `dev` en `master` con tag anotado. `Change Level` **L2** (`max(coordination=2, scope=2, architectural impact=0, release impact=3, duration/complexity=1)`). **`IN SCOPE`**: sección `[12.1.0]` del changelog con los ítems de payload de los planes 156 y 166 y la absorción de `12.0.1` declarada; bump de `protocol/.agents/VERSION` y de `PROTOCOL_VERSION` a `12.1.0`; snapshot de `docs/VERSIONING.md` §9; `ROADMAP.md`; y **promoción fast-forward + tag anotado**, condicionados a la verificación. **`OUT OF SCOPE`**: contenido de `protocol/` distinto de `VERSION`, `dist/`, reapertura de los planes 156/166/167, secciones publicadas del changelog y publicación remota. Findings `F-1` (Plan 166 sin versión propia) y `F-2` (`12.0.1` nunca publicado). Pending: publicación remota (owner mantenedor, `remote_git` no declarado). `## Delegación agentiva` sin `**Task:**` y `## Efectos declarados` con la fila negativa. `## Validation anchor` y `## Checkpoint / cierre` **vacíos**: el Plan se crea sin ejecutar y **no** declara condición derivada. | active |
+
 ## Nonagésima cuarta serie: reconciliación documental del cierre de `F-C` (Plan 167) (14 oct 2026)
 
 Serie del Change que restaura la coherencia documental del cierre de la feature de autonomía

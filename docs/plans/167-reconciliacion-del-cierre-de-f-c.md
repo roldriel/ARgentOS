@@ -158,10 +158,10 @@ Verificación factual adicional: coherencia de estado de `F-C` en las tres ubica
 - **Validation command-set:** los seis checkers deterministas de `docs/VERSIONING.md` §4.1 y los gates de lifecycle C-1/C-2/C-3. La pata `pytest` de §4.1 **no** fue ejecutable en la sesión de ejecución (ver `## Nota de ejecución`).
 - **Effective inputs (repo content):** el scope declarado; evidencia del cierre de `F-C` (`docs/plans/165-…`: `## Validation anchor` y `## Checkpoint / cierre`; commit `fb0786a`); RFC-83 `Accepted` y plan 166; el corpus de `docs/`; el estado Git de `dev`.
 - **Observed dependencies:** herramientas de `tools/` (stdlib) e intérprete del entorno del adoptante; CLI `git`. **`pytest` no disponible en el entorno del runtime**; la sesión de ejecución corrió con `pytest 9.0.2` del *user site-packages* y, además, el sandbox de la sesión deniega la mecánica de `tmp_path` (factor no atribuible a este Change). Sin red.
-- **Environmental factors:** Windows 11 + PowerShell; `core.autocrlf = true` (los blobs se almacenan en LF; el working tree puede materializarse en CRLF); `check_dist_sync.py` no aplica (local-only, verde sólo en `master`); `check_plan_citations.py` conserva **26** citas rotas históricas y **1** referencia legacy preexistente (la referencia legacy preexistente de `docs/CONVENTIONS.md` (línea 808),), sin aumento respecto de su baseline.
+- **Environmental factors:** Windows 11 + PowerShell; `core.autocrlf = true` (los blobs se almacenan en LF; el working tree puede materializarse en CRLF); `check_dist_sync.py` no aplica (local-only, verde sólo en `master`); `check_plan_citations.py` conserva **26** citas rotas históricas y **1** referencia legacy preexistente (la referencia legacy preexistente de `docs/CONVENTIONS.md` (línea 808)), sin aumento respecto de su baseline.
 - **Scoped Content Identity:**
   - Generada con `tools/scoped_content_identity.py` (serialización `scoped-v1`, índice *staged*).
-- **State identity (estado validado):** `607b0b1bbb397a2d4748e220fb7136734c9ffa4d` (`git write-tree` del índice staged)
+- **State identity (estado validado):** `eec2c97c0434f4647e4d7800b95952d4b01f5cb5` (árbol del commit de cierre `851dd0f`)
   - **Delta scoped identity (scope = las cinco rutas declaradas, orden canónico):** `1871e9a57f418086bcb3ea8589b8481c3fb6cd69492971ffeebd2c1032da0497`
   - **Scope medido:** `CHANGELOG.md`, `ROADMAP.md`, `docs/CONVENTIONS.md`, `docs/plans/INDEX.md`, `docs/working/audits/INDEX.md`
   - **Fuera del scope medido (anti-auto-referencia):** `docs/plans/167-reconciliacion-del-cierre-de-f-c.md` — el artefacto del Plan, que contiene estos propios registros de cierre
@@ -173,8 +173,8 @@ Verificación factual adicional: coherencia de estado de `F-C` en las tres ubica
 **Checkpoint / cierre (GC-1).**
 
 - **Commits de cierre:** `docs(plans): reconcile the F-C closure (plan 167)` y los commits atómicos del Change (`docs(plans): approve and register the F-C closure reconciliation plan`; `docs(governance): state the closure of F-C in the autonomy model and the roadmap`; `docs(working): version the test and execution-host audits`) en `dev`. Sin amend, rebase, squash ni force-push.
-- **Estado validado (ref al Validation anchor):** el de la sección anterior (State identity `607b0b1bbb397a2d4748e220fb7136734c9ffa4d`; Delta scoped identity `1871e9a57f418086bcb3ea8589b8481c3fb6cd69492971ffeebd2c1032da0497`).
-- **Estado de cierre (identidad):** el mismo estado validado; el estado de cierre es el que la validación consumió (arbol de índice `607b0b1bbb397a2d4748e220fb7136734c9ffa4d`).
+- **Estado validado (ref al Validation anchor):** el de la sección anterior (State identity `eec2c97c0434f4647e4d7800b95952d4b01f5cb5`; Delta scoped identity `1871e9a57f418086bcb3ea8589b8481c3fb6cd69492971ffeebd2c1032da0497`).
+- **Estado de cierre (identidad):** el mismo estado validado; el estado de cierre es el que la validación consumió (árbol `eec2c97c0434f4647e4d7800b95952d4b01f5cb5`).
 - **Árbol material del commit de cierre:** no declarado; incluye los registros de cierre, que el scope medido excluye por la convención anti-auto-referencia (`validated tree == commit tree` no es un requisito; RFC-75 Mecanismo 7).
 - **Consistencia checkpoint↔anchor:** **PASS** — el estado de cierre declarado es el que la validación consumió, y el gate C-2 lo reporta `VALID` (`A1`) para este Plan.
 - **Governance aplicada:** RFC-56 Clase B (plan `Aprobado para ejecución`, acto del mantenedor del 2026-10-14 registrado en este artefacto); RFC-69 (plantilla y registro en el INDEX); RFC-75 (Change Lifecycle DEV); ADR-16 (autoridad); anotación de correcciones `C-1`…`C-4`; findings `F-1`…`F-4` con estado y provenance.

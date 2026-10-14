@@ -586,9 +586,19 @@ class ExecutionHost:
             input_artifacts=tuple(input_artifacts),
         )
 
-    def iterate(self, iteration: int) -> dict[str, Any]:
-        """Run exactly one iteration and return its journal record."""
-        observation = self.observe()
+    def iterate(
+        self, iteration: int, observation: ChangeObservation
+    ) -> dict[str, Any]:
+        """Run exactly one iteration and return its journal record.
+
+        ``observation`` is the reading of the change taken **at the start of this
+        iteration, before any write**: ``run`` computes it once and hands it over,
+        so the loop reads the repository and the persisted evidence once per
+        iteration instead of twice (the two readings are the same state — nothing
+        between them mutates it). It is a value passed within the iteration, never
+        persisted: the host still holds no state between iterations
+        (``.agents/policies/autonomous-orchestration.md`` §1/§9).
+        """
         boundary = AuthorityBoundary(plan_authorized=observation.authorized_for_execution)
         action = derive_next_action(
             observation,
@@ -1080,7 +1090,7 @@ class ExecutionHost:
                 previous_kind = action.kind
                 previous_fingerprint = fingerprint
 
-            record = self.iterate(iteration)
+            record = self.iterate(iteration, observation)
             self.store.append_iteration(self.plan, record)
             records.append(record)
             if record.get("terminal"):

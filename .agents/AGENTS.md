@@ -47,6 +47,15 @@ Everything else is **on demand**:
    authorization path: RFC `Accepted` + plan for payload (Class A), plan
    `Aprobado para ejecución` for Class B, direct commit only for mechanical
    Class C. No approved plan → STOP and escalate (or propose the plan).
+   **A direct maintainer instruction authorizes the change it names** — the
+   maintainer is the DECISION authority (`policies/authority.md`) and
+   `direct maintainer action` is already an intake origin
+   (`workflows/change-lifecycle.md` §1). Its declaration belongs to the first
+   artifact of the change, which for a change with no plan is the **commit
+   message** (RFC-75 Mecanismo 1): it names the path and the scope it covers.
+   A direct instruction never authorizes more than what it names, never
+   substitutes for a required `Accepted` RFC when the change has a payload
+   effect, and never licenses silence about which path authorized the change.
 3. **Never convert your inference into a human decision.** You detect,
    classify, register and escalate; the maintainer decides. A checker result
    is factual evidence, never normative authority.

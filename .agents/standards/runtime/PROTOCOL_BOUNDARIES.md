@@ -150,7 +150,7 @@ No blacklists, no detection: that would fake a control the protocol does not hav
 - Any change to `.agents/` requires explicit agreement and documentation.
 - Contracts are immutable by default.
 
-The only protocol artifact that lives outside `.agents/` and `.project/` is `AGENTS.md` at the project root, which serves as the human- and agent-facing entry point.
+The payload itself is `PAYLOAD_ROOT` (`.argentos/.agents/`). Outside `PAYLOAD_ROOT` but inside `ARGENTOS_ROOT` (`.argentos/`) live the artifacts the protocol owns as an installation: the active configuration (`.argentos/features.toml`), the local project state (`.argentos/.project/`, including `install.json`), and the lifecycle backups (`.argentos/.backup/`). At the project root there is exactly one protocol-related artifact: `AGENTS.md`, the **non-normative adapter** that points to the bootstrap at `.argentos/.agents/INDEX.md`. This boundary describes where the artifacts live; it does not relax the immutability rules above — a session still writes no file inside `PAYLOAD_ROOT`.
 
 ## Agent Scope and Autonomy
 

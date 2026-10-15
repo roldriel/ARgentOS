@@ -2,7 +2,7 @@
 
 This repository uses a state-based work protocol governed by an **orchestrator** role.
 
-The human- and agent-facing entry point is `AGENTS.md` at the project root. This document is the protocol bootstrap; it states the loading sequence and points to the canonical rule files.
+The protocol's normative entry point is `.argentos/.agents/INDEX.md` — this document. The `AGENTS.md` at the project root is a **non-normative adapter** whose only job is to point here; it carries no protocol rules of its own. This document is the protocol bootstrap; it states the loading sequence and points to the canonical rule files.
 
 ## Before executing any task
 

@@ -21,9 +21,11 @@ install.
 - `runtime/` — reference implementation of Execution Context materialization
   (prompt and tool calls) and the DEV Autonomous Orchestrator host
   (`runtime/orchestrator/`, plan 122). See `runtime/README.md`.
-- `tests/` — centralized test suites for `tools/` and `runtime/`. They never
-  depend on the `protocol/` payload and never include the harness tests; see
-  `tests/AGENTS.md`.
+- `tests/` — centralized test suites for `tools/` and `runtime/`. They do not
+  depend on the `protocol/` payload, with one deliberate exception: the
+  repository-anchored dogfood tests, which read the live working tree on purpose
+  and must be updated when that canonical state legitimately changes. They never
+  include the harness tests; see `tests/AGENTS.md`.
 - `docs/` — governance, design history and project/release documentation:
   the documentary taxonomy (`docs/AGENTS.md`), conventions
   (`docs/CONVENTIONS.md`), versioning policy (`docs/VERSIONING.md`), adoption
@@ -181,9 +183,9 @@ committed payload against the local `dist` branch; it is a local-only check
 unpublished plans make it red by design.
 
 The strategic direction of the project lives in `ROADMAP.md` (a visual,
-high-level map: destination, current position, initiatives and their order,
-dependencies and blockers; its contract is in `docs/CONVENTIONS.md`); design
-history in `docs/plans/INDEX.md`.
+high-level map: destination, initiatives and their order, dependencies and
+blockers; its contract is in `docs/CONVENTIONS.md`); design history in
+`docs/plans/INDEX.md`.
 
 ## Testing the protocol as an adopter
 

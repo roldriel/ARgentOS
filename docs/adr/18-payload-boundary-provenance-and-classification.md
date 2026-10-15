@@ -14,7 +14,7 @@ ADR-17 fijó el modelo de *lifetime* y la arquitectura estructural compuesta, y 
 
 Los hechos que la motivan:
 
-- `protocol/.agents/harness/tests/` ejercita exclusivamente los cuatro scripts que **sí** se distribuyen (`hook_gate.py`, `runner_state.py`, `health_check.py`, `gate_validator.py`) y no referencia ningún path DEV; `publish-dist.yml` copia `protocol/.agents` sin exclusiones, de modo que los tests ya viajan en `dist`. La declaración de `harness/INDEX.md` enumeraba los cinco checkers DEV de `tools/` como «dev-only» y era legible como si los harness tests también lo fueran, aunque ningún artefacto del payload lo afirmara.
+- `protocol/.agents/harness/tests/` ejercita exclusivamente módulos que **sí** se distribuyen —la suite de regresión del harness, incluidos los módulos del lifecycle— y no referencia ningún path DEV; `publish-dist.yml` copia `protocol/.agents` sin exclusiones, de modo que los tests ya viajan en `dist`. La declaración de `harness/INDEX.md` enumeraba los cinco checkers DEV de `tools/` como «dev-only» y era legible como si los harness tests también lo fueran, aunque ningún artefacto del payload lo afirmara.
 - Dos contratos del payload citan su **fuente normativa** en `docs/rfc/` — gobernanza del repositorio fuente que no se publica al adoptante —, mientras el checker de frontera declaraba `docs/` como violación pero **no** incluía `docs` en su conjunto de segmentos prohibidos: la regla existía y no era aplicable.
 - `tags.kind` enumeraba ocho valores, mientras cinco archivos del payload declaraban `state_machine` (4 máquinas de estado) o `taxonomy` (el propio diccionario). Ningún consumidor validaba los valores: H13 exige la **presencia** del bloque y cruza `kind` sólo para `workflow` y `contract`.
 - `ADR-17` dejó `docs/` sin reorganizar por lifetime, de modo que las inconsistencias de clasificación documental sólo podían resolverse **en el lugar**.
@@ -123,3 +123,5 @@ Se materializan las decisiones aceptadas por el mantenedor:
 - La lectura contractual de `tags.kind` (PC-1), la supervivencia a largo plazo de la allowlist (PC-2) y cualquier política de pureza del árbol fuente (PC-3) quedan como pendientes del plan 126.
 
 El status `Accepted` refleja la **decisión registrada**, no el estado de formalización de implementaciones futuras; no habilita cambios de payload por sí solo.
+
+**Corrección factual registrada (2026-10-14).** La enumeración de `## Contexto` («exclusivamente los cuatro scripts») dejó de ser exacta: el payload distribuye **ocho** módulos Python desde el lifecycle (`docs/plans/154-argentos-lifecycle-implementation.md`, RFC-81), y `protocol/.agents/harness/tests/` ejercita también esos módulos. Se corrigió **únicamente** la afirmación factual; la decisión y sus invariantes **no cambian** — `RS-8` sigue diciendo que todo lo que vive bajo `.agents/` se distribuye tal cual, y la enumeración vigente es `protocol/.agents/standards/runtime/PYTHON_DEPENDENCIES.md:Python-specific notes`.

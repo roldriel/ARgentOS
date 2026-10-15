@@ -307,12 +307,12 @@ de git.
   número `12.0.1` que el plan 156 asignó y **nunca publicó** (`Released = FALSE`):
   el ítem de payload de ese plan se transporta en la sección `[12.1.0]` del
   changelog, con la absorción declarada; su artefacto cerrado no se editó.
-- `dist` = publicado desde `master` en `78ca512` (`publish-dist` a partir del tag
-  `12.0.0`): contiene `.agents/` + `AGENTS.md`, con `VERSION` = `12.0.0` y el
-  harness del lifecycle. **La publicación remota de `12.1.0` no está ejecutada**:
-  el tag se creó localmente y empujar `master`/el tag (lo que dispara
-  `publish-dist` en CI y regenera `origin/dist`) es un acto de publicación con su
-  propia autorización, registrado como pending decision del Plan 168.
+- `dist` = publicado desde `master` en la release `12.1.0` (`publish-dist`):
+  contiene `.agents/` + `AGENTS.md`, con `VERSION` = `12.1.0` y el harness del
+  lifecycle. La **publicación remota ya se ejecutó** (`origin/dist` regenerado
+  desde el tag `12.1.0`); ese acto tiene su propia autorización —el Plan 168 lo
+  declaró fuera de su alcance y lo registró como pending decision— y este
+  snapshot **no la verifica**.
   **Contrato de distribución:** `dist` transporta el *payload* (`.agents/` +
   `AGENTS.md`), no el layout materializado; el layout canónico
   `<proyecto>/.argentos/…` lo produce el lifecycle al instalar (ver
@@ -354,14 +354,13 @@ Notas:
   `check_dist_sync.py` se espera rojo en `dev` por diseño (ver §4.1). **Tras la
   promoción del plan 168 ya no hay cambio de payload sin publicar en `dev`**: el
   contenido de payload de `dev` y `master` es el mismo, de modo que el checker
-  deja de estar rojo por esa causa. Su comparación sigue siendo contra
-  `origin/dist`, que **todavía publica `12.0.0`** hasta que se ejecute la
-  publicación remota (`push` de `master` y del tag, que dispara `publish-dist`);
-  por eso el checker sólo puede quedar verde cuando CI haya regenerado `dist` a
-  partir del tag `12.1.0`. Advertencia operativa: la **ref local** `dist` puede
-  quedar por detrás de `origin/dist` (es una rama generada por CI, no un
-  artefacto del working tree); para leer el payload publicado hay que resolver
-  `origin/dist`, no la ref local.
+  deja de estar rojo por esa causa. Su comparación es contra la **ref local**
+  `dist` y contra el payload comprometido en `HEAD` (`--branch` permite apuntarla
+  a otra ref, por ejemplo `origin/dist`); la publicación remota ya se ejecutó y
+  CI regeneró `origin/dist` a partir del tag `12.1.0`, que es el payload que
+  reciben los adoptantes. Advertencia operativa: la **ref local** `dist` puede quedar por detrás de `origin/dist` (es una rama generada
+  por CI, no un artefacto del working tree); para leer el payload publicado hay
+  que resolver `origin/dist`, no la ref local.
 - El job `check-protocol` de CI necesita **historia completa** del repositorio:
   los gates de lifecycle (C-2) resuelven tree ids declarados con `git rev-parse`
   y los dogfoods anclados leen commits históricos con `git log`. El workflow usa

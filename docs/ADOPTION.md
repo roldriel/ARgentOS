@@ -153,11 +153,16 @@ Requisitos de entorno, por modo de adopción (§6):
   gates del harness los evalúa el orquestador por juicio contra las checklists
   de cada policy. No se necesita Python ni ninguna herramienta externa.
 - **Modo enforced: Python 3.x disponible como `python`, stdlib pura** (sin
-  `pip` ni dependencias externas). Solo cuatro scripts lo usan: `hook_gate.py`
-  (hook del CLI), `runner_state.py` (registro transaccional de `state.json`),
-  `health_check.py` (sonda de almacenamiento de estado) y `gate_validator.py`
-  (validador estructural de los ítems `[gate]`, obligatorio para los triggers
-  soportados; nunca bloquea a nivel de entorno).
+  `pip` ni dependencias externas). Durante una sesión lo usan cuatro módulos:
+  `hook_gate.py` (hook del CLI), `runner_state.py` (registro transaccional de
+  `state.json`), `health_check.py` (sonda de almacenamiento de estado) y
+  `gate_validator.py` (validador estructural de los ítems `[gate]`, obligatorio
+  para los triggers soportados; nunca bloquea a nivel de entorno). El payload
+  distribuye **ocho** módulos stdlib en total: a esos cuatro se suman los cuatro
+  que hacen materializable el layout adoptado — `roots.py`, `lifecycle.py`,
+  `lifecycle_contract.py` y `lifecycle_staging.py` —, usados por la adquisición
+  con el lifecycle (§1.2) y por sus operaciones de ownership, backups y recovery
+  (§8); ver `.argentos/.agents/standards/runtime/PYTHON_DEPENDENCIES.md`.
 - `pytest` solo se necesita para **desarrollar el protocolo** (suite reducida
   de tests del harness en `.argentos/.agents/harness/tests/`); no es un requisito de
   adopción.

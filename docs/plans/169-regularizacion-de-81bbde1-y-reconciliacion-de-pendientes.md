@@ -151,8 +151,8 @@ Verificación factual adicional: `git diff --name-only` ⊆ scope de `P-8`; `git
 - **Observed dependencies:** herramientas de `tools/` (stdlib) e intérprete del entorno del adoptante; CLI `git`. `pytest` no disponible en el entorno del runtime. Sin red.
 - **Environmental factors:** Windows 11 + PowerShell; `core.autocrlf = true` (los blobs se almacenan en LF; el working tree puede materializarse en CRLF); `check_dist_sync.py` no aplica (local-only, verde sólo en `master`); `check_plan_citations.py` conserva **26** citas rotas históricas y **1** referencia legacy preexistente, sin aumento.
 - **Scoped Content Identity:**
-  - **State identity (estado validado):** `STATE_PLACEHOLDER` (árbol del índice staged)
-  - **Delta scoped identity (scope = las dos rutas declaradas, orden canónico):** `DELTA_PLACEHOLDER`
+  - **State identity (estado validado):** `5889503fcf8eed8e4caccd5bcce709e4db61c81e` (árbol del commit del Change `74c9ebb`)
+  - **Delta scoped identity (scope = las dos rutas declaradas, orden canónico):** `521bf137462657844fb27b0120f40b00cfe399f8f271c6e99732bb2559568cae`
 - **Battery result:** 6/6 checkers deterministas en verde; `check_version_state` OK; C-1/C-2/C-3 sin `ANOMALY` (los `GAP` son los de los registros propios antes de completarse y el preexistente del Plan 116).
 - **Validity / stale:** vigente.
 
@@ -161,8 +161,8 @@ Verificación factual adicional: `git diff --name-only` ⊆ scope de `P-8`; `git
 **Checkpoint / cierre (GC-1).**
 
 - **Commits de cierre:** el commit del Change en `dev` (`docs(plans): regularize 81bbde1 and reconcile stale pending decisions`), que incluye el Plan, el registro en el INDEX y la aclaración de `.agents/AGENTS.md`. Sin amend, rebase, squash ni force-push.
-- **Estado validado (ref al Validation anchor):** el de la sección anterior (State identity `STATE_PLACEHOLDER`; Delta scoped identity `DELTA_PLACEHOLDER`).
-- **Estado de cierre (identidad):** el mismo estado validado (`STATE_PLACEHOLDER`), por correspondencia con el anchor aplicable.
+- **Estado validado (ref al Validation anchor):** el de la sección anterior (State identity `5889503fcf8eed8e4caccd5bcce709e4db61c81e`; Delta scoped identity `521bf137462657844fb27b0120f40b00cfe399f8f271c6e99732bb2559568cae`).
+- **Estado de cierre (identidad):** el mismo estado validado (`5889503fcf8eed8e4caccd5bcce709e4db61c81e`), por correspondencia con el anchor aplicable.
 - **Árbol material del commit de cierre:** no declarado; incluye los registros de cierre, que el scope medido excluye por la convención anti-auto-referencia (`validated tree == commit tree` no es un requisito; RFC-75 Mecanismo 7).
 - **Consistencia checkpoint↔anchor:** **PASS** — el estado de cierre declarado es el que la validación consumió.
 - **Governance aplicada:** RFC-56 Clase B (plan `Aprobado para ejecución`, acto del mantenedor del 2026-10-14); RFC-75 (Mecanismo 1 registro del intake; Mecanismo 7 checkpoints); RFC-69 (registro en el INDEX); ADR-16; findings `F-1`/`F-2` con correcciones `C-1`…`C-3`; decisión de fondo registrada y resuelta.

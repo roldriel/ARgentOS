@@ -156,4 +156,6 @@ def test_the_repository_itself_passes():
 def test_tool_imports_only_stdlib():
     import testsupport
 
-    testsupport.assert_tool_imports_only_stdlib("check_invariants_equivalence.py")
+    testsupport.assert_tool_imports_only_stdlib(
+        REPO_ROOT / "tools" / "check_invariants_equivalence.py"
+    )

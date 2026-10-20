@@ -73,5 +73,19 @@ Rechazada como cierre: la prosa declara transiciones que el sistema no puede com
 ## Estado de implementación
 
 - **G-03 — `REJECTED`** (concepto descartado; nada que implementar).
-- **G-05 — `DESIGN-CLOSED`**: semántica completa en `## Decisión`; implementación pendiente por límite de verificación de esta sesión, no por decisión abierta.
-- **G-06 — `BLOCKED`** en un único punto: **¿se reintroduce un validation runner** (con `state` persistido y la tabla de transiciones como dato normativo derivado de las máquinas), o se mantiene el registro-de-gates como diseño vigente? Mientras esa decisión no exista, no se implementa; implementarlo por inferencia revertiría `runner_state.py` sin acto que lo autorice.
+- **G-05 — `DESIGN-CLOSED`**: semántica completa en `## Decisión`; implementación pendiente por límite de verificación de la sesión, no por decisión abierta.
+- **G-06 — `REJECTED / BY DESIGN`**: se mantiene el diseño vigente. Ver `## Amendment Log`.
+
+## Amendment Log
+
+- 2026-10-20 — **Cierre de G-06: `REJECTED / BY DESIGN`.** Se resuelve la pregunta que este ADR había dejado al mantenedor —«¿se reintroduce un validation runner?»— y la respuesta es **no**.
+
+  *Evidencia.* El runner fue retirado de forma deliberada y está registrado en el propio código: `runner_state.py` declara «There is no validation runner anymore: the Orchestrator judges each gate in prose and this script only RECORDS the outcome», y es el único escritor de `state.json`. Las cuatro máquinas de estado declaran, por estado, sus `Allowed Transition(s)` en prosa. `state.json` persiste `gates`, `last_gate` y un `status` terminal, y **nunca** el estado del iteración.
+
+  *Contrato existente.* No hay campo para el estado actual ni tabla de transiciones como dato: las condiciones de cada transición son juicios en prosa que el Orchestrator evalúa. Persistir el estado y materializar la tabla serían **dos** cambios de contrato del payload, no uno.
+
+  *Inferencia mínima.* Un validador ejecutable comprobaría la transición entre dos estados **declarados**, y la declaración la produce el mismo agente que emite el juicio. Verificaría el registro, no el juicio: no añadiría la garantía que su nombre sugiere. Presentarlo como enforcement sería exactamente lo que `INV-12` prohíbe —una clase de enforcement superior a la real— y añadiría maquinaria sin mejorar ninguna decisión, contra la dirección del repositorio (preferir claridad del modelo existente antes que mecanismos nuevos).
+
+  *Decisión.* Las máquinas de estado **siguen siendo normativas**; las transiciones permitidas **siguen declaradas**; el runtime **registra** gates y resultados; **no existe** validación ejecutable de transición, y eso es el diseño, no una capacidad pendiente. `INV-02` permanece en `NONE` con su límite ya escrito: «No se persiste estado actual: un salto es invisible». Ningún documento puede presentar la validación de transiciones como trabajo comprometido.
+
+  *Qué haría falta para cambiarlo.* No un gap: un RFC Clase A que materialice la tabla de transiciones como dato derivado de las máquinas y añada el estado del iteración al contrato de `state.json`, con su plan. Mientras ese acto no exista, reintroducirlo sería revertir una decisión registrada sin autoridad que lo sostenga.

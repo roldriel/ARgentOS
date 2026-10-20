@@ -175,6 +175,8 @@ Implementar **exactamente** el contrato acotado de Priority 0.3: corregir las in
 
 ## Criterios de salida
 
+**Resultado esperado de cada AC: PASS.** Un resultado distinto es un fallo del Change. Cada AC declara su condición y su mecanismo de verificación.
+
 - **AC-1** `docs/INVARIANTS.md` no usa etiquetas `ENFORCED:*` sin definir; `INV-07` coincide con el bloque y con el hook del adoptante; la lista de gaps distingue implementados, rechazados y pendientes. **Verificación:** test/checker + lectura contra `hook_gate.py`, RFC-84 y ADR-21.
 - **AC-2** `check_invariants_equivalence.py` corre en CI y falla si una copia del bloque diverge. **Verificación:** workflow + test negativo.
 - **AC-3** `check_plan_structure.py` detecta status/INDEX divergentes; la fila 169 es `Executed`; 157/158 quedan como legacy declarado. **Verificación:** fixture + `git diff`.
@@ -198,6 +200,24 @@ Implementar **exactamente** el contrato acotado de Priority 0.3: corregir las in
 - **N-7** Ningún estado `AUTHORIZED FOR IMPLEMENTATION` ni ejecución sin un Plan `Aprobado para ejecución`.
 - **N-8** Ningún `git add -A` ni staging masivo; no se commitean `.project/` ni los dos untracked preexistentes del usuario.
 - **N-9** Ninguna modificación de `CHANGELOG.md` fuera de la entrada intencional de `[Unreleased]`; ningún release histórico puede ser modificado, reordenado, duplicado, insertado, borrado o reformateado.
+
+**Resultado esperado de los criterios negativos: ninguno de N-1…N-9 ocurre.** Cualquier ocurrencia es un fallo del Change.
+
+## Evidence contract
+
+La ejecución debe producir evidencia reproducible de:
+
+1. **Qué se modificó:** `git diff --name-only 55a11a7..HEAD`, `git diff --stat 55a11a7..HEAD`, y el diff por archivo de los entregables.
+2. **Qué no se modificó:** `git diff --name-only 55a11a7..HEAD` sin rutas de `protocol/`, `runtime/`, `dist/`, sin `CHANGELOG.md` fuera de `[Unreleased]`, sin los dos untracked preexistentes.
+3. **Qué tests pasaron:** `python -m pytest tests/ -q` y `python -m pytest protocol/.agents/harness/tests/ -q` con sus conteos.
+4. **Qué checks pasaron:** salidas de los 7 repository checkers y de C-1/C-2/C-3, con la distinción de la sección `## Verificación`.
+5. **Qué baseline preexistente permanece:** `check_plan_citations` 26 citas históricas rotas + 1 referencia legacy; `check_version_state` warning de `[3.9.0]` sin tag en `dev`; C-2 GAP del Plan 116.
+6. **Que los negativos fueron evaluados:** N-1…N-9 con su evidencia (diff vacío en rutas protegidas; N-9 guard).
+7. **Que `CHANGELOG.md` no sufrió corrupción histórica:** salida `N-9 PASS` del guard de la sección `## Verificación` y `git diff -U0 -- CHANGELOG.md` con un único hunk en `[Unreleased]`.
+8. **Que no se tocaron Protocol/runtime/dist:** `git diff --name-only -- protocol/ runtime/ dist/` vacío.
+9. **Que no se tocaron los untracked preexistentes:** `git status --porcelain=v2 --branch` los muestra aún como `??`, sin contenido modificado por el Change.
+
+La evidencia se registra en `## Nota de ejecución`, `## Validation anchor` y `## Checkpoint / cierre` del Plan, no en un registro nuevo.
 
 ## Verificación
 

@@ -51,6 +51,31 @@ actor = "executor"
 statement = "sources/ were not opened while writing the kit"
 ```
 
+### How `ref` resolves
+
+`ref` carries the artifact or rule an entry stands on. Its meaning is decided by
+the **evidence class**, never by the caller (ADR-21):
+
+- `reference` and `observation` name a durable object. `ref` is a **project-relative**
+  path: `path` or `path:section`. It is resolved against the project root — the
+  directory the session belongs to, passed explicitly by the caller and never
+  discovered from the artifact path. For a Markdown target, `:section` must name
+  a heading that exists in it.
+- The following are rejected: absolute paths (POSIX root-relative or Windows
+  drive/UNC), any traversal that leaves the project root, targets that do not
+  exist, and sections that do not exist. Containment is decided on the resolved
+  path, so `..` and junctions cannot name something outside the project.
+- `measurement` is backed by `command` and `exit_code`; its `ref` identifies the
+  captured output and is not resolved as a filesystem path.
+- `attestation` and `assertion` are not resolved against the filesystem at all:
+  their content is a statement, and a path-like string in them does not acquire
+  evidentiary force by looking like a path.
+
+There is no `hash` field. This standard defines no algorithm, no bytes to hash,
+no normalization and no moment of verification, so a hash is neither required
+nor read: adding one without that definition would claim an integrity the
+protocol cannot check.
+
 ## Sufficiency rules
 
 1. A `[gate]` item of a PASS gate is satisfied only by `observation`,

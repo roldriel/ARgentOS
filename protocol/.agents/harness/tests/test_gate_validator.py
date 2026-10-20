@@ -717,6 +717,11 @@ def make_h06_report(
 
 
 def test_h06_test_results_evidence_passes(tmp_path):
+    # ADR-21: a `reference` names an artifact relative to the project root, so
+    # the log the entry points at must exist there and not only next to the
+    # report. The session-local copy below still feeds `test_results.evidence`,
+    # which is not resolved as a path.
+    (tmp_path / "results.log").write_text("log\n", encoding="utf-8")
     artifact = make_h06_report(
         tmp_path,
         "```toml\n[[test_results]]\nclaim_id = \"TR-01\"\ntest = \"pytest -q\"\n"

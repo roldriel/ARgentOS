@@ -164,12 +164,15 @@ def test_traversal_never_classifies_as_argentos_space(project):
 
 
 def test_real_argentos_paths_stay_allowed(project):
-    """F5 — only resolved containment decides; the whole ARgentOS space passes."""
+    """F5 — only resolved containment decides; the ARgentOS space outside the
+    payload passes. The payload itself is denied by payload immutability
+    (E1-G1): session state, the active config and the backups are writable, and
+    `.agents/` is not.
+    """
     session_uuid, _, project_root = project
     for rel in (
         (".argentos", "features.toml"),
         (".argentos", ".project", "x", "00", "a.md"),
-        (".argentos", ".agents", "harness", "roots.py"),
         (".argentos", ".backup", "_AGENTS.md"),
     ):
         target = str(project_root.joinpath(*rel))
@@ -177,6 +180,10 @@ def test_real_argentos_paths_stay_allowed(project):
             hook_gate.decide(pre_tool_use(session_uuid=session_uuid, file_path=target))
             == 0
         ), target
+    payload = str(project_root.joinpath(".argentos", ".agents", "harness", "roots.py"))
+    assert (
+        hook_gate.decide(pre_tool_use(session_uuid=session_uuid, file_path=payload)) == 2
+    ), payload
 
 
 def test_root_swap_to_argentos_root_is_detected(project, monkeypatch):

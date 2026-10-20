@@ -73,7 +73,7 @@ Rechazada como cierre: la prosa declara transiciones que el sistema no puede com
 ## Estado de implementación
 
 - **G-03 — `REJECTED`** (concepto descartado; nada que implementar).
-- **G-05 — `IMPLEMENTED`**: contrato implementado en `gate_validator.py` (commit `77c49bb`), semántica documentada en `EVIDENCE.md` y cubierta por `protocol/.agents/harness/tests/test_evidence_refs.py` (commit `05f60a2`). La batería DEV (`python -m pytest -q`) quedó verde con **1371 passed**; los tests del contrato viven en el árbol del payload, que pytest no recolecta desde la raíz porque `.agents` es un directorio oculto, de modo que su corrida es la pata separada del payload.
+- **G-05 — `CLOSED`**: contrato implementado en `gate_validator.py` (`77c49bb`), semántica documentada en `EVIDENCE.md` y cubierta por `protocol/.agents/harness/tests/test_evidence_refs.py` (`05f60a2`), con los dos fixtures que contradecían el contrato reparados. Evidencia: batería DEV **1371 passed**; pata del payload **204 passed, 1 skipped** (el skip es el caso de symlink, que en Windows requiere privilegios para crear el enlace; la contención se demuestra igual con los casos de traversal); seis gates de governance en verde.
 - **G-06 — `REJECTED / BY DESIGN`**: se mantiene el diseño vigente. Ver `## Amendment Log`.
 
 ## Amendment Log

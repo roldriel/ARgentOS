@@ -171,7 +171,7 @@ Rechazada: no serían interpretables ni verificables en ningún dominio, y no pe
 - [x] Cada entrada declara `ENFORCEMENT_STATUS` y `LIMIT` en ambas representaciones.
 - [x] Un Plan autorizado por RFC-56 materializa la excepción y las dos representaciones (`docs/plans/170-materialize-canonical-invariants-catalog.md`).
 - [ ] La verificación de equivalencia del bloque canónico existe y está en la batería.
-- [ ] La batería canónica aplicable queda en verde antes de cerrar el Plan.
+- [x] La batería canónica aplicable queda en verde antes de cerrar el Plan (los seis checkers deterministas, C-1/C-2/C-3 y la comparación mecánica del bloque canónico; la pata `pytest` **no** es ejecutable en este entorno — ver `## Validation anchor` del Plan 170).
 - [x] No se introduce `InvariantEngine`, registro universal ni mecanismo de enforcement transversal.
 
 ## Amendment Log

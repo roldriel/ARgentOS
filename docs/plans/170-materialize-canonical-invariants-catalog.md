@@ -1,6 +1,6 @@
 # Plan 170 — Materialización del catálogo canónico de invariantes y properties transversales
 
-**Status:** Executed (parcial: cierre pendiente — Validation Anchor y Checkpoint)
+**Status:** Executed
 **Fecha:** 2026-10-20
 **Tipo:** Plan
 **Lifecycle:** active
@@ -74,11 +74,32 @@ Ver `## Nota de ejecución` para los resultados. La equivalencia canónica se ve
 
 ## Validation anchor
 
-<!-- Pendiente: se registra al cerrar el Plan (RFC-75, CL-2), con scope declarado, command-set, entradas efectivas, factores ambientales y Scoped Content Identity. -->
+**Validation anchor (VC-1).**
+
+- **Declared scope:** las once rutas de la materialización de Priority 0.2: `CHANGELOG.md`, `docs/INVARIANTS.md`, `docs/adr/20-closed-artifact-governance-and-execution-records.md`, `docs/adr/INDEX.md`, `docs/rfc/84-cross-domain-fundamental-invariants-exception.md`, `docs/rfc/INDEX.md`, `docs/working/proposals/PRIORITY_0_2_FINAL_DESIGN_CLOSURE_2026-10-20.md`, `protocol/.agents/VERSION`, `protocol/.agents/standards/INVARIANTS.md`, `protocol/.agents/standards/runtime/PROTOCOL_BOUNDARIES.md` y `runtime/toolcalls/canonical.py`. Este Plan queda **fuera** del scope medido: convención anti-auto-referencia (los registros de cierre no se auto-identifican).
+- **Validation command-set:** los seis checkers deterministas de `docs/VERSIONING.md` §4.1 (`check_plan_structure`, `check_plan_citations`, `check_taxonomy_coherence`, `check_version_state`, `check_protocol_invariants`, `check_session_artifacts`), los gates de lifecycle C-1/C-2/C-3 y la comparación mecánica del bloque canónico DEV/Protocol. La pata `pytest` de §4.1 **no** fue ejecutable en la sesión (ver `## Nota de ejecución`).
+- **Effective inputs (repo content):** los once paths del scope; el bloque canónico extraído de la tabla de RFC-84; el árbol del estado validado `9fdb2bdddf5d3718a24fab6a7a0c6b24869e40f5` del commit `bfe8cbf`; el estado Git de `dev`.
+- **Observed dependencies:** intérprete Python con biblioteca estándar (`tools/` y `runtime/`), CLI `git`. Sin red, sin servicios externos, sin instalación de componentes.
+- **Environmental factors:** Windows 11 + PowerShell; `core.autocrlf = true` (los blobs se almacenan en LF; el working tree puede materializarse en CRLF); `check_dist_sync.py` no aplica (local-only; verde sólo en `master`, rojo por diseño en `dev`); `check_plan_citations.py` conserva **26** citas rotas históricas y **1** referencia legacy preexistente, sin aumento.
+- **Scoped Content Identity:**
+  - **State identity (estado validado):** `9fdb2bdddf5d3718a24fab6a7a0c6b24869e40f5` (árbol del commit `bfe8cbf`)
+  - **Delta scoped identity (scope = las once rutas declaradas; serialización `scoped-v1`, orden canónico):** `b56ab04875cb8d7165bc2ef7672b16dfbb80af04da324d3b82045298f1108d94`
+- **Battery result:** 6/6 checkers deterministas en verde; `check_version_state` OK (`VERSION` = `PROTOCOL_VERSION` = `12.2.0`); C-1 `VALID=41 · GAP=0 · ANOMALY=0`; C-2 y C-3 sin `ANOMALY`; bloque canónico **byte-idéntico** (`sha256 cd79644c7e5e22cf8561a6200350907c1dc2735a4037a3d8ebebb693cd86f7b2`, 15 filas, 15 IDs únicos, 4655 bytes) y copia Protocol sin referencias a `docs/`.
+- **Validity / stale:** vigente.
 
 ## Checkpoint / cierre
 
-<!-- Pendiente: se registra al cerrar el Plan (RFC-75, GC-1), con los commits de cierre y la consistencia anchor↔checkpoint (C-2). -->
+**Checkpoint / cierre (GC-1).**
+
+- **Commits de cierre:** el commit de cierre de este Plan en `dev`, que incorpora la Validation anchor, este checkpoint y la actualización del registro en `docs/plans/INDEX.md`. Sin amend, rebase, squash ni force-push.
+- **Estado validado (ref al Validation anchor):** el de la sección anterior — State identity `9fdb2bdddf5d3718a24fab6a7a0c6b24869e40f5`; Delta scoped identity `b56ab04875cb8d7165bc2ef7672b16dfbb80af04da324d3b82045298f1108d94`.
+- **Estado de cierre (identidad):** el mismo estado validado (`9fdb2bdddf5d3718a24fab6a7a0c6b24869e40f5`), por correspondencia con el anchor aplicable.
+- **Árbol material del commit de cierre:** no declarado; el commit de cierre añade registros de governance sobre el estado validado (este Plan y el criterio de batería aplicable de RFC-84), que el scope medido excluye por la convención anti-auto-referencia. `validated tree == commit tree` no es un requisito (RFC-75 Mecanismo 7).
+- **Consistencia checkpoint↔anchor:** **PASS** — el estado de cierre declarado es el que la validación consumió.
+- **Governance aplicada:** RFC-56 Clase A (RFC-84 `Accepted` + Plan `Aprobado para ejecución` antes de tocar `protocol/.agents/`); RFC-75 (Mecanismo 7, checkpoints); RFC-69 (registro en el INDEX); ADR-16 (autoridad del Change Lifecycle); ADR-20 como fuente de decisión (`E1-D1`…`E1-D4`); findings `F-1`/`F-2` resueltos con `resolución` registrada.
+- **Documentation impact:** `REQUIRED` — documentos afectados y actualizados: `docs/INVARIANTS.md` (representación DEV), `protocol/.agents/standards/INVARIANTS.md` (representación Protocol), `protocol/.agents/standards/runtime/PROTOCOL_BOUNDARIES.md` (segunda excepción aprobada), `protocol/.agents/VERSION` + `runtime/toolcalls/canonical.py` (`12.2.0`), `CHANGELOG.md` (sección `[12.2.0]`), `docs/rfc/84-…` y `docs/rfc/INDEX.md` (aceptación y registro), `docs/adr/20-…` y `docs/adr/INDEX.md` (decisión registrada).
+- **Roadmap impact:** `NOT_REQUIRED` — materializar una excepción ya aceptada no crea, completa, cancela, reclasifica ni re-prioriza trabajo del mapa operativo. Los doce gaps de enforcement quedan registrados como trabajo futuro en este Plan y en el cierre de diseño de Priority 0.2.
+- **Condición derivada:** **`Closed`** (plan `Executed` + governance aplicada + checkpoint registrado + consistencia con el anchor). `Committed` es estado del repositorio; `Released` requiere autoridad humana y no ocurre en este Change (`12.2.0` queda sin tag hasta la promoción).
 
 ## Findings / Correcciones / Pending
 
@@ -89,8 +110,9 @@ Ver `## Nota de ejecución` para los resultados. La equivalencia canónica se ve
 
 ### Pending decisions
 
-- `PC-1` — **Cierre del Plan**: registrar `## Validation anchor` y `## Checkpoint / cierre` y derivar `Closed`. Owner: mantenedor/agente en el paso de cierre. Bloqueante para `Closed`, no para `Executed`.
-- `PC-2` — **Implementación de los 12 gaps de enforcement** (`E1-G1`…`E1-G5`, `G-03`…`G-09`): requiere Changes propios con su autorización (5 Clase A, 6 Clase B, 1 Clase C). Fuera del alcance de este Plan. Bloqueante para `IMPLEMENTATION_COMPLETE`, no para este Plan.
+- `PC-1` — estado: `resolved`; observación: el cierre del Plan quedaba pendiente de Validation Anchor y Checkpoint; resolución: ambos registrados y la condición derivada `Closed` declarada en `## Checkpoint / cierre`, con `State identity` `9fdb2bdddf5d3718a24fab6a7a0c6b24869e40f5` y `Delta scoped identity` `b56ab04875cb8d7165bc2ef7672b16dfbb80af04da324d3b82045298f1108d94`.
+- `PC-2` — estado: `deferred` (owner: mantenedor; destino: Changes propios); observación: la implementación de los doce gaps de enforcement (`E1-G1`…`E1-G5`, `G-03`…`G-09`) queda fuera del alcance de este Plan; resolución: no se implementa aquí; requerirá 5 Changes Clase A, 6 Clase B y 1 Clase C con su propia autorización.
+- `PC-3` — estado: `deferred` (owner: mantenedor; destino: Change de tooling); observación: la equivalencia del bloque canónico se verificó de forma mecánica en este Plan, pero **no** existe todavía un verificador de equivalencia en la batería canónica; resolución: añadirlo en un Change propio de tooling, no en este Plan.
 
 ## Riesgos
 
@@ -114,4 +136,4 @@ Ver `## Nota de ejecución` para los resultados. La equivalencia canónica se ve
 
 **Límite ambiental declarado.** La pierna de pytest no puede ejecutarse completa en este entorno: `PermissionError [WinError 5]` al crear `tmp_path` (`tests/` con fixture temporal). Los tests que no requieren `tmp_path` pasan; los que sí, fallan en el *setup* con ese error de sandbox, no por el cambio. No se declara PASS de la batería completa.
 
-Pendiente para `Closed`: Validation Anchor y Checkpoint (ver `PC-1`).
+**Cerrado el 2026-10-20.** Validation Anchor y Checkpoint registrados; condición derivada **`Closed`** (plan `Executed` + governance aplicada + checkpoint + consistencia con el anchor). Sin release: `12.2.0` queda asignada y sin tag hasta la promoción (`docs/VERSIONING.md` §3).

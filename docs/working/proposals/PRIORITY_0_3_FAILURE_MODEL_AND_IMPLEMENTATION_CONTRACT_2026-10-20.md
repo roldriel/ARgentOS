@@ -326,6 +326,7 @@ not guaranteed             → verdad semántica/epistémica, historia protegida
 | Hook deniega escritura del payload (adoptante) | Sí (INV-07, PROTOCOL_BOUNDARIES) | Sí | **Sí, opt-in** (hooks instalados; fail-open sin ellos) | Sí | Parcial (tests del payload; sin anchor específico localizado) | Parcial | No |
 | Frontera de referencias DEV/Protocol | Sí (INV-06) | Sí | **Sí, dev-ci** | Sí | Sí | Sí | No |
 | Equivalencia del bloque canónico | Sí (RFC-84) | Sí | **No en CI** (manual en la batería; 0.3 la añade a CI) | Sí | Sí | Parcial | No |
+| Duplicación semántica DEV→Protocol (general, fuera del bloque) | No | No | No | No | No | No | No |
 | Anchors/checkpoints de validación | Sí (RFC-75/VC-1/GC-1) | Sí (C-1/C-2) | **Advisory**; gate local, no CI | Sí | Sí | Sí | No |
 | Findings: no borrado y resolución | Sí (LC-1) | Parcial (C-3 valida forma) | **No**; no detecta borrado ni `open` al cerrar | Parcial | Parcial | **No** (4 planes con `open` y `Closed`) | No |
 | Transiciones de estado | Sí (máquinas de estado) | **No** (no persiste estado actual) | **No** (G-06 rechazado por diseño) | Parcial | No | No | No |

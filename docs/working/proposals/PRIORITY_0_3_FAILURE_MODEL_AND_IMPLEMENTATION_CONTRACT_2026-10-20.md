@@ -69,7 +69,7 @@ La pregunta de cada frontera es: **¿qué puede salir mal aquí de modo que la s
 | FM-10 | Documentación obsoleta en superficies vivas | T / Sem | Conocimiento → Siguiente decisión | **FIX NOW** | D-0.3-18 | R-06 |
 | FM-11 | Corrupción del conocimiento | Sem / E | Conocimiento / Compactación | **OUT OF SCOPE** | D-0.3-05/06 | R-01 |
 | FM-12 | Sobredeclaración de enforcement | T / E | Cualquier declaración | **FIX NOW** | D-0.3-19 | R-07 |
-| FM-13 | Contaminación DEV → Protocol (duplicación semántica) | S / T | Ejecución → Conocimiento | **DETECT** | D-0.3-20 | R-08 |
+| FM-13 | Contaminación DEV → Protocol: duplicación/confusión semántica, con detección estructural acotada | S / T | Ejecución → Conocimiento | **DETECT** (sólo manifestaciones estructurales) | D-0.3-20 | R-08 |
 | FM-14 | Autoridad/scope correctos aplicados al objetivo equivocado | E / T | Decisión → Ejecución | **OUT OF SCOPE** | D-0.3-21 | R-02 |
 | FM-15 | Transición invisible: no se persiste el estado actual ni se valida la transición | S / T | Ejecución → Cierre | **ACCEPT RESIDUAL RISK** | D-0.3-14 | R-11 |
 
@@ -234,18 +234,20 @@ La pregunta de cada frontera es: **¿qué puede salir mal aquí de modo que la s
 - **Instancia viva:** `docs/INVARIANTS.md:79` dice «Mecanismo: **ninguno**» para INV-07 mientras el bloque canónico dice `ENFORCED:session-hook`; el vocabulario (`:39-47`) no define `session-hook`; el hook sí deniega en el adoptante; la interpretación local es la desactualizada.
 - **Decisión / disposición:** D-0.3-19; **FIX NOW** (corregir + check de vocabulario/recuento). R-07.
 
-#### FM-13 — Contaminación DEV → Protocol (duplicación semántica)
+#### FM-13 — Contaminación DEV → Protocol: duplicación/confusión semántica
 
-- **Trigger / causa:** copiar una regla DEV al payload; citar `docs/`; duplicar contenido más allá de la excepción de RFC-84.
+- **Failure mode conceptual:** una regla, concepto o supuesto DEV se copia o se confunde con el contrato del Protocol; el payload pasa a depender semánticamente de DEV o incorpora una duplicación que no está en la excepción aprobada.
+- **Trigger / causa:** copiar una regla DEV al payload; citar `docs/`; duplicar contenido más allá de la excepción de RFC-84; aplicar una convención de este repositorio como si fuera del producto.
 - **Etapa:** Ejecución → Conocimiento.
-- **Propagación:** payload depende de DEV o incorpora supuestos DEV → el adoptante recibe un contrato distinto.
-- **Síntoma:** `check_protocol_invariants` falla; bloque canónico divergente; regla duplicada.
-- **Detección actual:** `check_protocol_invariants` (referencias Markdown, allowlist); `check_invariants_equivalence` (bloque byte a byte); no detecta duplicación semántica fuera del bloque.
-- **Prevención actual:** hard boundary, RFC-56, single-source, excepción acotada.
+- **Propagación:** payload depende de DEV o incorpora supuestos DEV → el adoptante recibe un contrato distinto → la frontera se erosiona.
+- **Síntoma estructural:** `check_protocol_invariants` falla por una referencia a `docs/`; el bloque canónico delimitado por `canonical-invariants-v1` diverge entre las dos copias; aparece una duplicación dentro del bloque autorizado.
+- **Detección actual (acotada):** `check_protocol_invariants.py` verifica referencias Markdown y la allowlist por par exacto; `check_invariants_equivalence.py` compara **byte a byte** el bloque canónico y su forma. **No** detecta duplicación semántica general, paráfrasis, equivalencia conceptual ni reglas DEV replicadas con otras palabras.
+- **Prevención actual:** hard boundary, RFC-56, single-source, excepción acotada de RFC-84.
 - **Recuperación actual:** revertir; corregir; RFC.
 - **Potencial silencioso:** medio.
-- **Riesgo residual:** medio.
-- **Decisión / disposición:** D-0.3-20; **DETECT** (equivalencia en CI); no se crea detector semántico general. R-08.
+- **Riesgo residual:** medio; R-08.
+- **Alcance de la disposición `DETECT`:** se limita a (a) referencias DEV→Protocol y (b) divergencia del bloque canónico autorizado. `DETECT ≠ garantía de detección semántica completa`.
+- **Decisión / disposición:** D-0.3-20; **DETECT** (equivalencia del bloque en CI); no se crea un detector semántico general. R-08.
 
 #### FM-14 — Autoridad/scope correctos aplicados al objetivo equivocado
 
@@ -281,7 +283,7 @@ Cada modo de fallo tiene **exactamente una** disposición:
 | Disposición | Significado | Modos |
 |---|---|---|
 | **FIX NOW** | 0.3 corrige las instancias identificadas y añade la detección determinista correspondiente | FM-09, FM-10, FM-12 |
-| **DETECT** | 0.3 añade una detección determinista; no corrige el modo general | FM-13 |
+| **DETECT** | 0.3 añade una detección determinista de una manifestación estructural acotada; no detecta equivalencia o duplicación semántica general | FM-13 |
 | **ACCEPT RESIDUAL RISK** | un acto de autoridad real aceptó el límite; se cita el acto | FM-06 (RFC-84), FM-15 (ADR-21) |
 | **DEFER** | una autoridad existente difirió el trabajo a otro Change con owner | FM-07 (Plan 170 `PC-2`) |
 | **ESCALATE** | requiere autoridad superior; no hay decisión; se registra pregunta y autoridad | FM-05 (D-0.3-12) |
@@ -333,7 +335,7 @@ not guaranteed             → verdad semántica/epistémica, historia protegida
 | Historia cerrada no se corrompe | Sí (RFC-46) | Parcial (prohibición) | **No** (sin pinning) | No | Parcial | **No** (incidente CHANGELOG) | No |
 | `Closed` no implica verdad | **No estaba declarado** | — | — | — | — | — | **Sí, implícitamente** |
 
-La lectura correcta es la más débil que la evidencia sostiene: un test que afirma una propiedad no la impide; un gate advisory no bloquea; un hook opt-in no protege sin hooks; una validación de forma no valida semántica.
+La lectura correcta es la más débil que la evidencia sostiene: un test que afirma una propiedad no la impide; un gate advisory no bloquea; un hook opt-in no protege sin hooks; una validación de forma no valida semántica. En particular, **FM-13**: sólo se detectan referencias DEV/Protocol y divergencia byte a byte del bloque canónico; la duplicación semántica general no está detectada ni garantizada.
 
 ---
 
@@ -364,7 +366,7 @@ Esta es la **única** tabla canónica de decisiones de Priority 0.3. Cualquier o
 | D-0.3-17 | ¿Se mecanizan interpretación, completitud y decisión correcta? | Límites epistémicos; no hay oráculo | **OUT OF SCOPE** | B | **N/A** — no acceptance claimed | `PRIORITY.md:5,11`; `INV-03` | None | R-01 |
 | D-0.3-18 | ¿Se crea un mecanismo de sincronización documental? | Reglas existentes; no hay checker semántico | **RESOLVED** | B | **N/A** for the decision; implementation authorization not exercised | `docs/AGENTS.md`; `CONVENTIONS.md`; `AUDITORIA_FASE_0_0_1…` | Yes — correct instances; no synchronizer | R-06 |
 | D-0.3-19 | ¿Cómo se corrige la sobredeclaración de enforcement? | INV-07 local contradice el bloque | **RESOLVED** | B | **N/A** for the decision; implementation authorization not exercised | `INV-12`; `docs/INVARIANTS.md:24,79` | Yes — correction + vocabulary/count check | R-07 |
-| D-0.3-20 | ¿Cómo se controla la contaminación DEV→Protocol? | `INV-06` + excepción RFC-84 | **RESOLVED** | B | **N/A** for the decision; implementation authorization not exercised | `INV-06`; RFC-84; `check_invariants_equivalence.py` | Yes — CI equivalence | R-08 |
+| D-0.3-20 | ¿Cómo se controla la contaminación DEV→Protocol? | `INV-06` + excepción RFC-84; no hay detector semántico general | **RESOLVED** | B | **N/A** for the decision; implementation authorization not exercised | `INV-06`; RFC-84; `check_invariants_equivalence.py` | Yes — CI equivalence for the canonical block only; no general semantic detector | R-08 |
 | D-0.3-21 | ¿Se detecta el objetivo equivocado con autoridad correcta? | Autoridad humana; SAE no corrige objetivo | **OUT OF SCOPE** | B | **N/A** — no acceptance claimed | `<PLAN-169>:F-1`; `<PLAN-136>:F-3` | None | R-02 |
 | D-0.3-22 | ¿Cuál es el criterio de éxito de 0.3? | Sin criterio único | **RESOLVED** | A | **Yes** — this session | §G–§J | Defines completion | None |
 | D-0.3-23 | ¿Es el `Status` de un plan cerrado contenido gobernante o metadata evolucionable? | 157/158 declaran `Closed` con `Status: Aprobado para ejecución`; 0.3 no edita cerrados | **ESCALATED** | C | **No** — maintainer governance decision pending | ADR-20 §9; RFC-46; `.agents/AGENTS.md` rule 5 | None for bounded scope; if “evolvable”, separate correction Change | R-09 |
@@ -575,7 +577,7 @@ Only risks with an actual authority act are marked **ACCEPTED**. The others rema
 | `tests/test_check_plan_structure.py` | Status/INDEX fixture | Class B plan (tests) |
 | `tests/test_check_lifecycle_lineage.py` | `Closed` + `open` fixture | Class B plan (tests) |
 | `tests/test_check_invariants_equivalence.py` | Vocabulary/count + negative fixture | Class B plan (tests) |
-| `CHANGELOG.md` | `[Unreleased]` entry `(plan N)` | Docs-only closure (RFC-69) |
+| `CHANGELOG.md` | **Only** the `[Unreleased]` entry `(plan N)`; N-9 guard | Docs-only closure (RFC-69) |
 
 ### F.4 FORBIDDEN CHANGES
 
@@ -585,6 +587,7 @@ Only risks with an actual authority act are marked **ACCEPTED**. The others rema
 - Any change to the canonical invariants block or the Protocol copy.
 - Any positive semantic/epistemic guarantee.
 - Any edit of `PRIORITY.md` or the pre-existing untracked planning document.
+- Any change to a historical `CHANGELOG.md` release: modification, reordering, duplication, insertion, deletion or mass reformatting; any hunk outside `[Unreleased]` (N-9).
 - Any `git add -A` or bulk staging that includes unrelated files.
 - Any commit of `.project/` artifacts.
 
@@ -603,11 +606,11 @@ Only risks with an actual authority act are marked **ACCEPTED**. The others rema
 
 ### F.7 Acceptance criteria
 
-See §G. The contract is satisfied only if all AC-1…AC-10 pass.
+See §G. The contract is satisfied only if all AC-1…AC-11 pass.
 
 ### F.8 Negative acceptance criteria
 
-See §H. The contract fails if any N-1…N-8 occurs.
+See §H. The contract fails if any N-1…N-9 occurs.
 
 ### F.9 Verification commands
 
@@ -615,7 +618,7 @@ See §I.
 
 ### F.10 Expected evidence
 
-Anchor + checkpoint with closure-state identity; outputs of the seven checkers; both `pytest` legs; C-1/C-2/C-3; `git diff --name-only` within scope; no diff under `protocol/`, `runtime/`, `dist/`.
+Anchor + checkpoint with closure-state identity; outputs of the seven repository checkers; both `pytest` legs; C-1/C-2/C-3; `git diff --name-only` within scope; no diff under `protocol/`, `runtime/`, `dist/`; the N-9 CHANGELOG guard.
 
 ### F.11 Completion condition
 
@@ -635,8 +638,9 @@ See §J.
 | AC-6 | 0 changes under `protocol/.agents/`, `protocol/_AGENTS.md`, `dist/`, `runtime/` | `git diff --name-only` |
 | AC-7 | 0 new invariants/properties; canonical block byte-identical | `check_invariants_equivalence.py` + diff |
 | AC-8 | The artifact states the non-guarantees and `Closed` procedural | Reading of §A/§K |
-| AC-9 | Full battery executed: seven checkers, both `pytest` legs, C-1/C-2/C-3 `ANOMALY=0`, anchor/checkpoint | Recorded outputs |
+| AC-9 | Validation battery executed with the taxonomy of §I: seven repository checkers (six pass + `check_plan_citations` baseline), both `pytest` legs, and C-1/C-2/C-3 with `ANOMALY=0`; anchor/checkpoint | Recorded outputs |
 | AC-10 | A reader can implement §F without re-deriving the failure model or decision states | Checklist §C.1 + review |
+| AC-11 | `CHANGELOG.md` is modified only inside `[Unreleased]`; no historical release is modified, reordered, duplicated, inserted or reformatted; the historical heading sequence is unchanged | `git diff -U0 -- CHANGELOG.md` + the N-9 guard in §I |
 
 ---
 
@@ -652,12 +656,26 @@ See §J.
 | N-6 | Any `EXPLICITLY ACCEPTED AS RESIDUAL RISK` without a cited authority act |
 | N-7 | Any `AUTHORIZED FOR IMPLEMENTATION` without an approved Class B plan |
 | N-8 | Any `git add -A` / bulk staging; any commit of `.project/` or the untracked user files |
+| N-9 | Any modification of `CHANGELOG.md` outside the intentional `[Unreleased]` entry; no historical release may be modified, reordered, duplicated, inserted, deleted or reformatted |
 
 ---
 
 ## I. Verification
 
-Exact commands:
+### I.1 Validation taxonomy (no ambiguous "checkers")
+
+The prior wording "six of seven checkers pass" counted only the **repository checkers** of the canonical battery. To remove the ambiguity, the categories are:
+
+| Category | Exact members | What it proves | What it does not prove |
+|---|---|---|---|
+| **Repository checkers (7)** | `check_protocol_invariants`, `check_plan_citations`, `check_plan_structure`, `check_taxonomy_coherence`, `check_session_artifacts`, `check_version_state`, `check_invariants_equivalence` | Structural/documentary invariants of the repository | Semantic truth, completeness or correctness of a decision |
+| **Lifecycle checks (3)** | C-1 `check_lifecycle_anchor`, C-2 `check_lifecycle_checkpoint`, C-3 `check_lifecycle_lineage` | Presence/form/consistency of anchors, checkpoints and findings lineage | Truth of the validated content; C-2 does not require the declared closure state to equal the closing commit tree |
+| **Tests (2 legs)** | `pytest tests/`; `pytest protocol/.agents/harness/tests/` | Behaviour specified by the tests | Properties not covered by a test; semantic truth |
+| **Auxiliary** | `git diff --check`, `git diff --name-only`, `git status --porcelain=v2 --branch`, `git diff -U0 -- CHANGELOG.md` | Diff cleanliness, scope containment and CHANGELOG immutability | Correctness of the content |
+
+Therefore, **"six of seven repository checkers pass"** means: of the seven repository checkers, six exit 0 and `check_plan_citations` keeps its pre-existing baseline (26 broken historical citations + 1 legacy reference). It does **not** count C-1/C-2/C-3, the two `pytest` legs or the auxiliary commands. Those are reported separately.
+
+### I.2 Exact commands
 
 ```bash
 python tools/check_protocol_invariants.py --payload protocol .
@@ -679,11 +697,34 @@ git status --porcelain=v2 --branch
 
 Expected results for the implementation Change:
 
-- Six of the seven checkers pass; `check_plan_citations.py` keeps its pre-existing baseline (26 broken historical citations + 1 legacy reference) and must not increase it.
+- Six of the seven **repository checkers** pass; `check_plan_citations.py` keeps its pre-existing baseline (26 broken historical citations + 1 legacy reference) and must not increase it.
 - Both `pytest` legs pass (or a declared environmental GAP if the execution environment changes; never a false PASS).
 - C-1/C-2/C-3: `ANOMALY=0`; legacy `GAP`s declared.
 - `git diff --name-only` contains only the §F.3 artifacts.
 - No diff under `protocol/.agents/`, `runtime/`, `dist/`.
+- N-9 passes: `CHANGELOG.md` has no hunk outside `[Unreleased]` and its historical heading sequence is unchanged.
+
+### I.3 N-9 objective CHANGELOG check
+
+The check is a diff guard, not a visual review. Reference algorithm (run with the repository's Python, from the repository root):
+
+```text
+1. Read CHANGELOG.md at HEAD and in the working tree.
+2. In each version, locate the `## [Unreleased]` heading and the next `## [` heading.
+   Allowed region = lines strictly after `## [Unreleased]` and before the next `## [`.
+3. Parse `git diff -U0 -- CHANGELOG.md`.
+   For every hunk `@@ -a,b +c,d @@`, require:
+     - every old line in [a, a+b) is inside the old allowed region; and
+     - every new line in [c, c+d) is inside the new allowed region.
+4. Compare the ordered list of `## [` headings, excluding `## [Unreleased]`,
+   between HEAD and the working tree. It MUST be identical.
+5. If any hunk falls outside the allowed region, or the historical heading list
+   differs, the check is FAIL (N-9).
+```
+
+The implementing plan must include an executable reference script for this algorithm and record its output as evidence. The check is **not** a new repository checker or gate: it is a validation command of the Change.
+
+For this closure session, no `CHANGELOG.md` change was made, so N-9 is not exercised here; it is exercised by the implementation Change.
 
 For this closure session, the executed results are in §M.
 
@@ -695,11 +736,12 @@ Priority 0.3 implementation is **COMPLETE** when **all** of the following are ob
 
 ```text
 [ ] The implementing Plan is `Executed` and its `Closed` condition is derived with a Validation Anchor, a Checkpoint and PASS evidence.
-[ ] AC-1…AC-10 pass, including the checker outputs and both test legs.
+[ ] AC-1…AC-11 pass, including the checker outputs and both test legs.
 [ ] `docs/INVARIANTS.md` has no undefined `ENFORCED:*` label and its INV-07 interpretation matches the block and the adopted-project hook.
 [ ] `docs/plans/INDEX.md` Plan 169 row is `Executed`; the post-close record covers 157/158 and the four legacy finding cases.
 [ ] `check_plan_structure.py`, `check_lifecycle_lineage.py` and `check_invariants_equivalence.py` include the new rules and tests.
 [ ] `check_invariants_equivalence.py` runs in CI and the negative test fails on divergence.
+[ ] `CHANGELOG.md` satisfies N-9: only the `[Unreleased]` entry changed; historical headings and releases are unchanged.
 [ ] No change exists under `protocol/.agents/`, `protocol/_AGENTS.md`, `runtime/` or `dist/`.
 [ ] No new invariant, property, gate, state, registry or namespace exists.
 [ ] The implementation commit (or closure state) is on `dev`; `Closed` is derived only with the checkpoint and PASS evidence.
@@ -725,6 +767,7 @@ Priority 0.3 does **not** attempt to:
 - recover session context or build DEV Memory (D-0.3-16);
 - synchronize documentation automatically (D-0.3-18);
 - detect a wrong objective chosen under correct authority/scope (D-0.3-21);
+- detect general semantic duplication or conceptual equivalence DEV→Protocol beyond the structural boundary references and the byte-identical canonical block (FM-13);
 - edit closed plans in place (D-0.3-23);
 - create a global registry, claims ledger or failure registry;
 - replace human authority with inference.
@@ -759,6 +802,8 @@ Priority 0.3 does **not** attempt to:
 - `81bbde1` and the remote publication of `12.1.0` are recorded as facts, not as authorized acts (`<PLAN-169>:F-1`; `AUDITORIA_FASE_0_0_1…:§3.7`).
 
 ### M.3 Executed validation for this closure
+
+The counts use the taxonomy of §I.1: **repository checkers** are the seven commands of `docs/VERSIONING.md` §4.1; lifecycle checks (C-1/C-2/C-3) and the two `pytest` legs are reported separately and are not part of the "seven".
 
 | Command | Result |
 |---|---|

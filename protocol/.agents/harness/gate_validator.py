@@ -626,7 +626,7 @@ def validate(
         checks.extend(_check_test_results(text, context))
         checks.extend(_check_deferred_items(text))
         checks.append(_check_review_report(artifact, iterations))
-        checks.extend(_check_evidence(text))
+        checks.extend(_check_evidence(text, roots.project_root if roots is not None else None))
     checks.extend(check_citations(text, context))
 
     failed = any(c["result"] == "FAIL" for c in checks)
@@ -775,8 +775,77 @@ def _has_non_attestation_evidence(entries: list[dict], claim_id: object) -> bool
     )
 
 
-def _check_evidence(text: str) -> list[dict]:
-    """H06: validate the ``[[evidence]]`` entries of ``## Evidence``."""
+#: Evidence classes whose ``ref`` names a durable object inside the project.
+#: ``measurement`` is backed by ``command``/``exit_code`` and the remaining
+#: classes carry no filesystem reference (ADR-21).
+EVIDENCE_FILESYSTEM_CLASSES = ("reference", "observation")
+
+_DRIVE_PREFIX_RE = re.compile(r"^[A-Za-z]:")
+
+
+def _split_ref(ref: str) -> tuple[str, str | None]:
+    """Split ``path`` or ``path:section``; a Windows drive is not a section."""
+    if _DRIVE_PREFIX_RE.match(ref) or ref.startswith(("/", "\\")):
+        return ref, None
+    path, separator, section = ref.rpartition(":")
+    if not separator or not path.strip():
+        return ref, None
+    return path, section.strip() or None
+
+
+def _normalized_heading(line: str) -> str:
+    return " ".join(line.replace("#", " ").split()).casefold()
+
+
+def _section_present(target: Path, section: str) -> bool:
+    """True when ``target`` carries a heading that starts with ``section``."""
+    try:
+        content = target.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return False
+    wanted = _normalized_heading(section)
+    return any(
+        line.lstrip().startswith("#") and _normalized_heading(line).startswith(wanted)
+        for line in content.splitlines()
+    )
+
+
+def _evidence_ref_problem(ref: str, project_root: Path) -> str | None:
+    """Return the contract violation of ``ref``, or None when it resolves.
+
+    The reference is project-relative: absolute paths, traversal that escapes
+    the root and missing targets are rejected. Resolution is by resolved
+    containment, never by a textual prefix, so ``..`` and junctions cannot be
+    used to name something outside the project.
+    """
+    path_part, section = _split_ref(ref)
+    if _DRIVE_PREFIX_RE.match(path_part) or path_part.startswith(("/", "\\")):
+        return f"ref {ref!r} is an absolute path (evidence refs are project-relative)"
+    root = Path(project_root).resolve()
+    try:
+        target = (root / path_part).resolve()
+    except OSError:
+        return f"ref {ref!r} cannot be resolved"
+    if target != root and root not in target.parents:
+        return f"ref {ref!r} escapes the project root"
+    if not target.exists():
+        return f"ref {ref!r} does not resolve to an existing artifact"
+    if section and target.suffix.lower() == ".md" and not _section_present(target, section):
+        return f"ref {ref!r}: section {section!r} not found in the target"
+    return None
+
+
+def _check_evidence(text: str, project_root: Path | None = None) -> list[dict]:
+    """H06: validate the ``[[evidence]]`` entries of ``## Evidence``.
+
+    ``project_root`` enables the reference semantics of ADR-21: ``reference``
+    and ``observation`` name a durable object inside the project, so their
+    ``ref`` must resolve under that root. ``measurement`` is backed by
+    ``command``/``exit_code``, and ``attestation``/``assertion`` are not
+    resolved against the filesystem at all. There is no ``hash`` contract: the
+    evidence standard defines no algorithm, bytes or moment of verification, so
+    no hash field is read or required here.
+    """
     entries = _evidence_entries(text)
     if not entries:
         return [
@@ -797,6 +866,10 @@ def _check_evidence(text: str) -> list[dict]:
         ref = entry.get("ref")
         if not isinstance(ref, str) or not ref.strip():
             bad.append(f"entry {i}: missing ref")
+        elif cls in EVIDENCE_FILESYSTEM_CLASSES and project_root is not None:
+            problem = _evidence_ref_problem(ref.strip(), project_root)
+            if problem is not None:
+                bad.append(f"entry {i}: {problem}")
         if cls == "measurement":
             exit_code = entry.get("exit_code")
             if exit_code is not None and (

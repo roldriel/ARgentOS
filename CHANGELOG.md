@@ -1543,6 +1543,17 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [12.3.0] — 2026-10-20
+
+### Added
+
+- **Verificador de equivalencia del bloque canónico** (`PC-3`, RFC-84 / Plan 170): `tools/check_invariants_equivalence.py` compara la identidad sha256 del bloque `canonical-invariants-v1` en `docs/INVARIANTS.md` y `protocol/.agents/standards/INVARIANTS.md`, valida que el catálogo tenga 12 invariantes y 3 properties con identificadores únicos, y falla ante cualquier drift material. Se incorpora a la batería canónica de `docs/VERSIONING.md` §4.1.
+
+### Changed
+
+- **`INV-07` pasa de `NONE` a `ENFORCED:session-hook`** (`E1-G1`): el hook de sesión niega escribir dentro de `PAYLOAD_ROOT` (`PROTOCOL_BOUNDARIES: Protocol immutability`); el resto del espacio ARgentOS —estado de sesión, `features.toml` y backups— sigue escribible. Límite: exige hooks instalados; sin ellos rige el modo declarativo. El comportamiento anterior, que permitía escribir el payload y estaba fijado por un test, contradecía la norma: se corrigió el código y el test que lo fijaba.
+- **`INV-08` cierra la ventana de crash** (`G-09`): la intención se registra en el journal **antes** de que el archivo exista, de modo que ninguna escritura puede quedar fuera del rollback; y una operación con journal abierto ya no responde `NOOP` — devuelve `recovery-pending` y exige `recover`. Recuento de enforcement del catálogo: **7/15 `ENFORCED`**, 2/15 `VALIDATED`, 6/15 `NONE`.
+
 ## [12.2.0] — 2026-10-20
 
 ### Added

@@ -154,11 +154,13 @@ python tools/check_plan_structure.py
 python tools/check_taxonomy_coherence.py
 python tools/check_session_artifacts.py
 python tools/check_version_state.py
+python tools/check_invariants_equivalence.py
 python -m pytest tests/
 ```
 
 Reglas:
 
+- **`check_invariants_equivalence.py`:** verifica la equivalencia del bloque canónico de invariantes entre `docs/INVARIANTS.md` y `protocol/.agents/standards/INVARIANTS.md` (marcadores `canonical-invariants-v1`): compara la identidad sha256 de ambos bloques, valida que el catálogo tenga exactamente 12 invariantes y 3 properties con identificadores únicos, y falla ante cualquier drift material. Es el detector mecánico de la excepción cross-domain de RFC-84.
 - **H13 por juicio + checker de desarrollo:** la coherencia taxonómica
   (`protocol/.agents/harness/policies/H13-protocol-taxonomy.md`) se aplica por
   juicio en todo cambio de estructura del payload; `tools/check_taxonomy_coherence.py`

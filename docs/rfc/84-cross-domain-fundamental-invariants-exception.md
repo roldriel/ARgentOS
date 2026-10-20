@@ -66,7 +66,7 @@ Una misma entrada puede estar implementada, impedida, detectada o verificada en 
 | **Operationally exercised (opt-in)** | el mecanismo sólo actúa cuando un humano lo habilita (`--sae`, invocación de herramienta) |
 | **Mechanically enforced** | prevención que **no depende del juicio del agente en la capa donde corre**. Hoy es cierto **dentro del host DEV y de la CI de DEV**; **no** lo es para el protocolo distribuido, que corre en modo declarativo por defecto |
 
-`ENFORCEMENT_STATUS` en el bloque canónico codifica **sólo** la dimensión *Enforced*, con el alcance en la etiqueta: `ENFORCED:host(opt-in)`, `ENFORCED:dev-ci`, `ENFORCED:lifecycle`, `ENFORCED:dev-gate`, `VALIDATED`, `DETECTED`, `NONE`. La detección y la verificación se documentan en la matriz de garantías y en las secciones de dominio, no en este campo.
+`ENFORCEMENT_STATUS` en el bloque canónico codifica **sólo** la dimensión *Enforced*, con el alcance en la etiqueta: `ENFORCED:host(opt-in)`, `ENFORCED:dev-ci`, `ENFORCED:lifecycle`, `ENFORCED:dev-gate`, `ENFORCED:session-hook`, `VALIDATED`, `DETECTED`, `NONE`. La detección y la verificación se documentan en la matriz de garantías y en las secciones de dominio, no en este campo.
 
 **No existe un universal enforcement engine.** No hay mecanismo que aplique el catálogo de forma transversal a DEV y Protocol; cada entrada tiene, en el mejor caso, su mecanismo en una capa concreta.
 
@@ -82,8 +82,8 @@ Bloque canónico. `ENFORCEMENT_STATUS` describe el estado **actual** del reposit
 | INV-04 | Historical / Lifecycle Integrity | El contenido gobernante de un artefacto cerrado no se reescribe ni se reabre; sólo se admiten adiciones en la región append-only de metadatos de lifecycle o fuera del artefacto con referencia. | Artefactos cerrados (`Closed`) | El archivo físico byte a byte | NONE | Sin prevención; pinning de contenido en 1 de 178 artefactos |
 | INV-05 | Identity Integrity | El estado validado tiene una identidad de contenido determinista y resoluble, con frontera explícita de lo excluido. | Anclas, checkpoints, árboles materiales | Contenido de la evidencia | VALIDATED | El ancla no es recomputable; el artefacto de gobierno queda excluido |
 | INV-06 | Boundary Integrity | El payload no depende normativamente de DEV ni referencia su documentación; la frontera se verifica sobre las referencias. | Frontera de referencias DEV/Protocol | Dependencia lógica en código | ENFORCED:dev-ci | Escanea sólo Markdown; no detecta duplicación |
-| INV-07 | Payload Immutability | Una sesión normal no modifica el payload. | `.agents/` durante la sesión | Releases y cambios por RFC-56 | NONE | Sin prevención; detección sólo por `doctor` |
-| INV-08 | Materialization Atomicity / Idempotence | Las operaciones de materialización del layout son atómicas por archivo, con journal y recuperación, e idempotentes en install y update. | `install`, `update`, `uninstall`, `recover`, `doctor` | Transacciones multi-archivo | ENFORCED:lifecycle | Sin transacción multi-archivo; ventana de crash |
+| INV-07 | Payload Immutability | Una sesión normal no modifica el payload. | `.agents/` durante la sesión | Releases y cambios por RFC-56 | ENFORCED:session-hook | Sólo con hooks instalados; sin hooks el protocolo corre en modo declarativo (fail-open) |
+| INV-08 | Materialization Atomicity / Idempotence | Las operaciones de materialización del layout son atómicas por archivo, con journal y recuperación, e idempotentes en install y update. | `install`, `update`, `uninstall`, `recover`, `doctor` | Transacciones multi-archivo | ENFORCED:lifecycle | Sin transacción multi-archivo; ninguna escritura queda sin registro en el journal |
 | INV-09 | Non-Progress Detection / Termination | Un bucle de ejecución se detiene ante ausencia de progreso o al alcanzar un límite declarado, sin que el límite constituya autorización. | Bucles de ejecución autónoma | Tiempo de ejecución de un paso individual | ENFORCED:host(opt-in) | Sólo el host; no es garantía del protocolo distribuido |
 | INV-10 | Scope Containment | Ningún actor amplía el scope autorizado; la ampliación es decisión humana. | Delegaciones y cambios autorizados | Autoridad (dimensión distinta) | ENFORCED:host(opt-in) | No contiene actor fuera del host |
 | INV-11 | Governance Record Persistence | Los registros de gobernanza y las entradas de knowledge no desaparecen sin traza; la invalidación se registra por transición de estado. | Findings, pending decisions, entradas de knowledge | Borrado físico de almacenamiento | NONE | La ausencia es indistinguible de no haber existido |
@@ -101,14 +101,14 @@ Esta RFC **no afirma** que el repositorio garantice lo que declara. Por entrada,
 **Recuento normalizado (única cifra válida en todos los documentos):**
 
 ```text
-ENFORCED (algún mecanismo impide la violación en su alcance) = 6/15
-  INV-01 host (opt-in) · INV-06 CI de DEV · INV-08 lifecycle · INV-09 host (opt-in)
-  INV-10 host (opt-in) · PROP-01 gate de DEV
+ENFORCED (algún mecanismo impide la violación en su alcance) = 7/15
+  INV-01 host (opt-in) · INV-06 CI de DEV · INV-07 hook de sesión · INV-08 lifecycle
+  INV-09 host (opt-in) · INV-10 host (opt-in) · PROP-01 gate de DEV
 VALIDATED (se valida la forma, nada impide)                  = 2/15   INV-03 · INV-05
 DETECTED  (sólo se reporta)                                  = 0/15   (la detección se documenta
                                                                       por entrada; no es Enforced)
-NONE      (sin mecanismo de enforcement)                     = 7/15
-  INV-02 · INV-04 · INV-07 · INV-11 · INV-12 · PROP-02 · PROP-03
+NONE      (sin mecanismo de enforcement)                     = 6/15
+  INV-02 · INV-04 · INV-11 · INV-12 · PROP-02 · PROP-03
 ```
 
 Reglas de lectura, para evitar las confusiones que la versión anterior de esta RFC permitía:
@@ -179,4 +179,5 @@ Rechazada: no serían interpretables ni verificables en ningún dominio, y no pe
 - 2026-10-15 — Creación de RFC-84 a partir del diseño cerrado de 0.2 — Invariantes y propiedades fundamentales.
 - 2026-10-20 — Reformulación integral: se retira la mención a las auditorías A/B/C y a la matriz de cobertura por no existir en el repositorio ni ser recuperables; se incorpora el catálogo definitivo de 15 entradas con formulación, alcance, enforcement real y límites; se define operacionalmente la equivalencia semántica; se fijan las reglas de actualización coordinada y de autoridad de cada copia; se incorpora el modelo de materialización DEV/Protocol y el registro de la excepción. El status permanece `Proposal`.
 - 2026-10-20 — Normalización de enforcement y corrección de alcance: se sustituye «enforcement real» por el vocabulario de seis dimensiones (Implemented / Enforced / Detectable / Verified / Operationally exercised / Mechanically enforced); `ENFORCEMENT_STATUS` pasa a etiquetas cerradas (`ENFORCED:host(opt-in)`, `ENFORCED:dev-ci`, `ENFORCED:lifecycle`, `ENFORCED:dev-gate`, `VALIDATED`, `DETECTED`, `NONE`); el recuento único queda en **6/15 ENFORCED**, 2/15 VALIDATED y 7/15 NONE, y se declara que ninguna entrada es mecánicamente enforced para el protocolo distribuido ni existe motor universal. El alcance de la excepción se corrige de «invariantes fundamentales» a **catálogo canónico de invariantes y properties transversales DEV/Protocol**, porque el bloque contiene 3 properties además de los 12 invariantes. Sin cambios en las 15 entradas. El status permanece `Proposal`.
+- 2026-10-20 — **Cierre de enforcement Clase A (parcial).** Se implementan `E1-G1` (el hook de sesión niega la escritura del payload: `INV-07` pasa de `NONE` a `ENFORCED:session-hook`, con el límite de que exige hooks instalados) y `G-09` (la intención se registra en el journal antes de que el archivo exista y una operación abierta ya no puede devolver `NOOP`: el límite de `INV-08` deja de incluir la ventana de crash). Recuento único actualizado a **7/15 `ENFORCED`**, 2/15 `VALIDATED`, 6/15 `NONE`. `G-03` y `G-06` quedan abiertas por falta de decisión arquitectónica, no por capacidad técnica.
 - 2026-10-20 — **Aceptación.** El mantenedor acepta esta RFC (Clase A de RFC-56) y autoriza la creación del Plan `docs/plans/170-materialize-canonical-invariants-catalog.md`, que materializa la excepción en `docs/INVARIANTS.md`, `protocol/.agents/standards/INVARIANTS.md` y `protocol/.agents/standards/runtime/PROTOCOL_BOUNDARIES.md`. La aceptación fija el alcance: una única excepción transversal que afecta exactamente al catálogo canónico de 15 entradas; equivalencia **byte a byte** del bloque canónico; autoridad de dominio por copia sin segunda autoridad semántica; secciones locales no canónicas permitidas; sin motor universal de enforcement; sin implementar los gaps de enforcement. Los criterios de materialización quedan abiertos hasta el cierre del Plan.

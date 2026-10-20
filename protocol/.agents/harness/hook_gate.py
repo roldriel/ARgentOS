@@ -10,9 +10,10 @@ Decision (in order):
 
 1. The tool call does not touch a project deliverable (not a
    ``PreToolUse`` on ``Write``/``Edit``, or the target path lives in the
-   ARgentOS space: ``ARGENTOS_ROOT/.agents`` / ``ARGENTOS_ROOT/.project`` /
+   ARgentOS space outside the payload: ``ARGENTOS_ROOT/.project`` /
    ``ARGENTOS_ROOT/features.toml`` / ``ARGENTOS_ROOT/.backup``) -> allow
-   (exit 0).
+   (exit 0). A target inside ``ARGENTOS_ROOT/.agents`` is the protocol
+   payload and is denied: it is immutable during normal session execution.
 2. ``PreToolUse`` on ``Write``/``Edit`` whose ``tool_input`` is a dict that
    names no target (``file_path``/``path``/``filename``) -> deny (exit 2);
    a missing ``tool_input`` remains fail-open (missing-field property).
@@ -268,6 +269,37 @@ def _argentos_root() -> Path | None:
     return None
 
 
+def _is_payload(raw_path: str) -> bool:
+    """True when the resolved target lives inside PAYLOAD_ROOT.
+
+    Payload immutability (``PROTOCOL_BOUNDARIES: Protocol immutability``): a
+    normal session does not write the protocol payload, which is
+    ``ARGENTOS_ROOT/.agents``. The rest of the ARgentOS space — session state
+    under ``.project/``, ``features.toml`` and the lifecycle backups under
+    ``.backup/`` — stays writable; only the payload is denied.
+
+    Classification is by resolved containment, never by a textual prefix, so a
+    target that escapes the payload through ``..`` is not denied here.
+    """
+    payload = PAYLOAD_ROOT
+    if payload is None:
+        argentos = _argentos_root()
+        if argentos is None:
+            return False
+        payload = argentos / _roots.AGENTS_DIRNAME
+    candidate = Path(raw_path)
+    if not candidate.is_absolute():
+        if PROJECT_ROOT is None:
+            return False
+        candidate = Path(PROJECT_ROOT) / candidate
+    try:
+        resolved = candidate.resolve()
+        payload = Path(payload).resolve()
+    except OSError:
+        return False
+    return resolved == payload or payload in resolved.parents
+
+
 def _is_argentos_space(raw_path: str) -> bool:
     """True when the resolved target lives inside ARGENTOS_ROOT.
 
@@ -372,6 +404,16 @@ def decide(event: dict) -> int:
                 "(tool_input must include file_path, path or filename)."
             )
         if _is_argentos_space(target):
+            if _is_payload(target):
+                # Payload immutability: the protocol payload is not a session
+                # deliverable and must not be written during normal execution.
+                return _deny(
+                    "Enforcement hook: target is inside the protocol payload "
+                    "(.agents/), which is immutable during normal session "
+                    "execution (PROTOCOL_BOUNDARIES: Protocol immutability). "
+                    "Change the payload outside a normal session, through the "
+                    "authorized path (release or RFC-56)."
+                )
             return _allow()
         session_dir = _resolve_session(event)
         if session_dir is None:

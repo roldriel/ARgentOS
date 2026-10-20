@@ -187,6 +187,18 @@ Implementar **exactamente** el contrato acotado de Priority 0.3: corregir las in
 - **AC-10** Un lector puede implementar el alcance sin re-derivar el modelo de fallos ni el estado de las decisiones. **Verificación:** checklist de §C.1 del contrato + revisión.
 - **AC-11** `CHANGELOG.md` sólo cambió dentro de `[Unreleased]`; ningún release histórico fue modificado, reordenado, duplicado, insertado, borrado o reformateado; la secuencia de headings históricos es idéntica. **Verificación:** `git diff -U0 -- CHANGELOG.md` + guard N-9.
 
+## Criterios negativos
+
+- **N-1** Ningún cambio en `protocol/.agents/`, `protocol/_AGENTS.md`, `runtime/` o `dist/`.
+- **N-2** Ningún invariante, property, gate, estado de lifecycle, registry, namespace ni autoridad nuevos.
+- **N-3** Ninguna edición al bloque canónico `canonical-invariants-v1` ni a la copia Protocol.
+- **N-4** Ninguna reescritura del contenido gobernante de un plan, RFC o ADR cerrado; las correcciones históricas van por referencia en un artefacto nuevo.
+- **N-5** Ninguna garantía semántica o epistémica positiva.
+- **N-6** Ningún riesgo marcado como aceptado sin un acto de autoridad citado (sólo R-10/R-11 del contrato 0.3 están aceptados, por RFC-84/ADR-21).
+- **N-7** Ningún estado `AUTHORIZED FOR IMPLEMENTATION` ni ejecución sin un Plan `Aprobado para ejecución`.
+- **N-8** Ningún `git add -A` ni staging masivo; no se commitean `.project/` ni los dos untracked preexistentes del usuario.
+- **N-9** Ninguna modificación de `CHANGELOG.md` fuera de la entrada intencional de `[Unreleased]`; ningún release histórico puede ser modificado, reordenado, duplicado, insertado, borrado o reformateado.
+
 ## Verificación
 
 ### Taxonomía (sin ambigüedad)

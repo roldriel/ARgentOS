@@ -45,13 +45,22 @@ def document(body: str) -> str:
     )
 
 
+def write_text(path: Path, text: str) -> None:
+    """Write ``text`` verbatim: no newline translation on the way to disk.
+
+    ``Path.write_text`` opens in text mode, so on Windows every ``\\n`` becomes
+    ``\\r\\n`` and a body that already carries CRLF is stored as ``\\r\\r\\n``.
+    The test that exercises CRLF must control the bytes it writes, or it tests
+    the platform's translation instead of the checker's normalization.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", encoding="utf-8", newline="") as handle:
+        handle.write(text)
+
+
 def write_pair(root: Path, dev_body: str, protocol_body: str) -> None:
-    dev = root / ce.DEV_REL
-    protocol = root / ce.PROTOCOL_REL
-    dev.parent.mkdir(parents=True, exist_ok=True)
-    protocol.parent.mkdir(parents=True, exist_ok=True)
-    dev.write_text(document(dev_body), encoding="utf-8")
-    protocol.write_text(document(protocol_body), encoding="utf-8")
+    write_text(root / ce.DEV_REL, document(dev_body))
+    write_text(root / ce.PROTOCOL_REL, document(protocol_body))
 
 
 def test_identical_blocks_pass(tmp_path):
@@ -65,12 +74,14 @@ def test_identical_blocks_pass(tmp_path):
 def test_domain_prose_is_not_compared(tmp_path):
     write_pair(tmp_path, block(), block())
     protocol = tmp_path / ce.PROTOCOL_REL
-    protocol.write_text(
-        protocol.read_text(encoding="utf-8").replace(
+    with open(protocol, "r", encoding="utf-8", newline="") as handle:
+        text = handle.read()
+    write_text(
+        protocol,
+        text.replace(
             "Domain prose that is deliberately not compared.",
             "Different prose: interpretation, mechanisms and local limits differ.",
         ),
-        encoding="utf-8",
     )
     report, _ = ce.verify(tmp_path)
     assert report["identical"] is True
@@ -120,12 +131,8 @@ def test_identity_is_deterministic_and_line_ending_insensitive():
 
 
 def test_missing_markers_fail(tmp_path):
-    dev = tmp_path / ce.DEV_REL
-    protocol = tmp_path / ce.PROTOCOL_REL
-    dev.parent.mkdir(parents=True, exist_ok=True)
-    protocol.parent.mkdir(parents=True, exist_ok=True)
-    dev.write_text(document(block()), encoding="utf-8")
-    protocol.write_text("# no markers here\n", encoding="utf-8")
+    write_text(tmp_path / ce.DEV_REL, document(block()))
+    write_text(tmp_path / ce.PROTOCOL_REL, "# no markers here\n")
     report, _ = ce.verify(tmp_path)
     assert report["identical"] is False
     assert any("markers missing" in problem for problem in report["problems"])
@@ -139,8 +146,7 @@ def test_empty_block_fails(tmp_path):
 
 
 def test_missing_representation_fails(tmp_path):
-    (tmp_path / ce.DEV_REL).parent.mkdir(parents=True, exist_ok=True)
-    (tmp_path / ce.DEV_REL).write_text(document(block()), encoding="utf-8")
+    write_text(tmp_path / ce.DEV_REL, document(block()))
     report, _ = ce.verify(tmp_path)
     assert report["identical"] is False
     assert any("not found" in problem for problem in report["problems"])

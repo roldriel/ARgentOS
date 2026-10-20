@@ -184,6 +184,18 @@ def compare(dev_text: str, protocol_text: str) -> dict:
     return report
 
 
+def _read_text(path: Path) -> str:
+    """Read a representation without any implicit newline translation.
+
+    Normalization is the checker's own, explicit step: reading in text mode
+    with universal newlines would collapse CRLF before ``normalize`` runs, so
+    the only allowed normalization would happen invisibly and the equivalence
+    would depend on the platform rather than on the contract.
+    """
+    with open(path, "r", encoding="utf-8", errors="replace", newline="") as handle:
+        return handle.read()
+
+
 def verify(root: Path) -> tuple[dict, dict]:
     """Read both representations from ``root`` and compare them."""
     texts: dict[str, str] = {}
@@ -193,7 +205,7 @@ def verify(root: Path) -> tuple[dict, dict]:
         if not path.is_file():
             missing.append(f"{label}: {rel} not found")
             continue
-        texts[label] = path.read_text(encoding="utf-8", errors="replace")
+        texts[label] = _read_text(path)
     if missing:
         report = {
             "dev_identity": None,

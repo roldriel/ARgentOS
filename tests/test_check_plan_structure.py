@@ -267,6 +267,58 @@ def test_adr_missing_from_adr_index_reported(tmp_path):
     assert any(v.rule == "index-mirror" for v in violations)
 
 
+# --- Status / INDEX mirror -------------------------------------------------------
+
+def index_row(basename: str, status: str) -> str:
+    return f"| `{basename}` | — | {status} | sample description | active |\n"
+
+
+def test_status_index_match_is_fine(tmp_path):
+    make_repo(tmp_path, {
+        "docs/plans/01-sample-plan.md": PLAN_OK.replace(
+            "Aprobado para redacción", "Executed"
+        ),
+        "docs/plans/INDEX.md": index_row("01-sample-plan.md", "Executed"),
+    })
+    assert not [
+        v for v in cps.verify_all(tmp_path)
+        if v.rule in {"status-index", "status-index-gap"}
+    ]
+    assert run_tool(tmp_path).returncode == 0
+
+
+def test_status_index_mismatch_is_a_violation(tmp_path):
+    make_repo(tmp_path, {
+        "docs/plans/01-sample-plan.md": PLAN_OK.replace(
+            "Aprobado para redacción", "Executed"
+        ),
+        "docs/plans/INDEX.md": index_row(
+            "01-sample-plan.md", "Aprobado para ejecución"
+        ),
+    })
+    violations = cps.verify_all(tmp_path)
+    assert any(v.rule == "status-index" for v in violations)
+    assert run_tool(tmp_path).returncode == 1
+
+
+def test_legacy_status_index_is_gap_not_violation(tmp_path):
+    """157/158 are historical legacy cases: advisory GAP, exit 0."""
+    make_repo(tmp_path, {
+        "docs/plans/157-canonical-visual-roadmap.md": PLAN_OK.replace(
+            "Aprobado para redacción", "Aprobado para ejecución"
+        ),
+        "docs/plans/INDEX.md": index_row(
+            "157-canonical-visual-roadmap.md", "Executed"
+        ),
+    })
+    violations = cps.verify_all(tmp_path)
+    assert any(v.rule == "status-index-gap" for v in violations)
+    assert not any(v.rule == "status-index" for v in violations)
+    res = run_tool(tmp_path)
+    assert res.returncode == 0
+    assert "GAP:status-index-gap" in res.stdout
+
+
 # --- CLI ------------------------------------------------------------------------
 
 def run_tool(root: Path) -> subprocess.CompletedProcess:

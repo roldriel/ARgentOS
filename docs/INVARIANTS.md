@@ -42,6 +42,7 @@ Este documento **no** declara garantías implementadas. Cada entrada declara su 
 | `ENFORCED:dev-ci` | un checker DEV bloquea el cambio en la integración continua |
 | `ENFORCED:lifecycle` | el CLI de lifecycle rechaza o revierte la operación |
 | `ENFORCED:dev-gate` | un gate DEV rechaza el artefacto antes de publicarlo |
+| `ENFORCED:session-hook` | el hook de sesión del proyecto adoptante deniega la escritura del payload; exige hooks instalados y es fail-open sin ellos |
 | `VALIDATED` | se valida la forma; nada impide la violación |
 | `DETECTED` | algo la reporta; nada la impide |
 | `NONE` | sin mecanismo de enforcement |
@@ -76,7 +77,7 @@ El payload no depende normativamente de DEV ni referencia su documentación; la 
 
 ### INV-07 — Payload Immutability
 
-Una sesión normal no modifica el payload; estar dentro del espacio ARgentOS no es excepción. Mecanismo: **ninguno**; el hook permite escrituras en ese espacio y un test fija esa conducta. Verificación: ninguna. Límite: sólo el `doctor` del lifecycle detecta divergencia, y es advisory y bajo demanda.
+Una sesión normal no modifica el payload; estar dentro del espacio ARgentOS no es excepción. En un proyecto adoptante, el hook de sesión deniega la escritura del payload (`hook_gate.py`; `test_payload_write_is_denied` verifica rutas relativas, absolutas y traversal). Sin hooks instalados el protocolo corre en modo declarativo (fail-open). En **este repositorio DEV**, `protocol/.agents/` se modifica por la vía RFC-56/release, no por el hook. Verificación: tests del hook del payload; el `doctor` del lifecycle detecta divergencia de forma advisory. Límite: sólo con hooks instalados; fail-open sin ellos.
 
 ### INV-08 — Materialization Atomicity / Idempotence
 
@@ -112,7 +113,7 @@ La reconstrucción del estado es parcial y declarada; lo efímero no se promete 
 
 ## Frontera con el Protocol
 
-DEV no depende del payload para interpretarse: este documento define el catálogo y su interpretación de dominio. El payload no puede citar `docs/`, por lo que su representación es autocontenida. La frontera de **referencias** la verifica `tools/check_protocol_invariants.py`; la **inmutabilidad** del payload durante una sesión es INV-07 y hoy no tiene enforcement.
+DEV no depende del payload para interpretarse: este documento define el catálogo y su interpretación de dominio. El payload no puede citar `docs/`, por lo que su representación es autocontenida. La frontera de **referencias** la verifica `tools/check_protocol_invariants.py`; la **inmutabilidad** del payload durante una sesión es INV-07 y tiene enforcement opt-in en el proyecto adoptante (hook de sesión), mientras que en DEV la vía es RFC-56/release.
 
 ## Límites globales
 
@@ -124,4 +125,4 @@ Toda modificación de la definición común se registra primero en el Amendment 
 
 ## Trabajo pendiente
 
-Los doce gaps de enforcement —`E1-G1`…`E1-G5` y `G-03`…`G-09`— están documentados con su dominio, autoridad requerida y riesgo en `docs/plans/170-materialize-canonical-invariants-catalog.md` y en el cierre de diseño de Priority 0.2 (`docs/working/proposals/PRIORITY_0_2_FINAL_DESIGN_CLOSURE_2026-10-20.md`). Materializar el catálogo no los implementa.
+Los gaps de enforcement de Priority 0.2 se registran con su dominio, autoridad requerida y riesgo en `docs/plans/170-materialize-canonical-invariants-catalog.md` (`PC-2`) y en `docs/adr/21-attested-escape-evidence-refs-and-transitions.md`. A la fecha, **E1-G1, G-05 y G-09 están implementados**; **G-03 y G-06 fueron rechazados por diseño**; los restantes conservan su vía propia de autorización en Plan 170 `PC-2` y ADR-21. Materializar el catálogo no los implementa.

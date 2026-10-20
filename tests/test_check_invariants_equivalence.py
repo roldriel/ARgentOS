@@ -37,12 +37,39 @@ def block(ids=None, formulation=None) -> str:
     return HEADER + "\n" + "\n".join(rows)
 
 
-def document(body: str) -> str:
-    return (
+def block_with_statuses(statuses: dict[str, str]) -> str:
+    rows = []
+    for entry_id in ce.EXPECTED_IDS:
+        text = row(entry_id).replace("| NONE |", f"| {statuses.get(entry_id, 'NONE')} |")
+        rows.append(text)
+    return HEADER + "\n" + "\n".join(rows)
+
+
+def document(
+    body: str,
+    *,
+    vocab: list[str] | None = None,
+    counts: dict[str, int] | None = None,
+) -> str:
+    text = (
         "# Catalog\n\n"
         f"{ce.BEGIN_MARKER}\n{body}\n{ce.END_MARKER}\n\n"
         "Domain prose that is deliberately not compared.\n"
     )
+    if vocab:
+        text += (
+            "\n## Vocabulario de enforcement\n\n"
+            "| Etiqueta | Significado |\n|---|---|\n"
+            + "".join(f"| `{label}` | sample |\n" for label in vocab)
+        )
+    if counts:
+        text += (
+            "\nRecuento único: "
+            f"**{counts['ENFORCED']}/15 `ENFORCED`**, "
+            f"**{counts['VALIDATED']}/15 `VALIDATED`**, "
+            f"**{counts['NONE']}/15 `NONE`**.\n"
+        )
+    return text
 
 
 def write_text(path: Path, text: str) -> None:
@@ -58,8 +85,18 @@ def write_text(path: Path, text: str) -> None:
         handle.write(text)
 
 
-def write_pair(root: Path, dev_body: str, protocol_body: str) -> None:
-    write_text(root / ce.DEV_REL, document(dev_body))
+def write_pair(
+    root: Path,
+    dev_body: str,
+    protocol_body: str,
+    *,
+    dev_vocab: list[str] | None = None,
+    dev_counts: dict[str, int] | None = None,
+) -> None:
+    write_text(
+        root / ce.DEV_REL,
+        document(dev_body, vocab=dev_vocab, counts=dev_counts),
+    )
     write_text(root / ce.PROTOCOL_REL, document(protocol_body))
 
 
@@ -157,6 +194,60 @@ def test_the_repository_itself_passes():
     assert report["problems"] == []
     assert report["identical"] is True
     assert report["dev_entries"] == len(ce.EXPECTED_IDS)
+
+
+def test_undefined_enforced_label_fails(tmp_path):
+    statuses = {"INV-07": "ENFORCED:session-hook"}
+    write_pair(
+        tmp_path,
+        block_with_statuses(statuses),
+        block_with_statuses(statuses),
+        dev_vocab=["ENFORCED:host(opt-in)", "VALIDATED", "NONE"],
+    )
+    report, _ = ce.verify(tmp_path)
+    assert report["identical"] is True
+    assert any(
+        "undefined ENFORCED labels" in problem
+        for problem in report["problems"]
+    )
+
+
+def test_declared_count_mismatch_fails(tmp_path):
+    statuses = {
+        **{f"INV-{n:02d}": "ENFORCED:host(opt-in)" for n in range(1, 8)},
+        "INV-08": "VALIDATED",
+        "INV-09": "VALIDATED",
+    }
+    write_pair(
+        tmp_path,
+        block_with_statuses(statuses),
+        block_with_statuses(statuses),
+        dev_vocab=["ENFORCED:host(opt-in)", "VALIDATED", "NONE"],
+        dev_counts={"ENFORCED": 6, "VALIDATED": 2, "NONE": 7},
+    )
+    report, _ = ce.verify(tmp_path)
+    assert any(
+        "declared ENFORCED count 6/15 != block count 7/15" in problem
+        for problem in report["problems"]
+    )
+
+
+def test_vocabulary_and_counts_consistent_pass(tmp_path):
+    statuses = {
+        **{f"INV-{n:02d}": "ENFORCED:host(opt-in)" for n in range(1, 8)},
+        "INV-08": "VALIDATED",
+        "INV-09": "VALIDATED",
+    }
+    write_pair(
+        tmp_path,
+        block_with_statuses(statuses),
+        block_with_statuses(statuses),
+        dev_vocab=["ENFORCED:host(opt-in)", "VALIDATED", "NONE"],
+        dev_counts={"ENFORCED": 7, "VALIDATED": 2, "NONE": 6},
+    )
+    report, _ = ce.verify(tmp_path)
+    assert report["identical"] is True
+    assert report["problems"] == []
 
 
 def test_tool_imports_only_stdlib():

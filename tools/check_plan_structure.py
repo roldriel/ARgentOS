@@ -20,6 +20,15 @@ verifies:
 5. INDEX mirror: the document's basename appears in the corresponding
    governance INDEX (``docs/plans/INDEX.md`` for plans,
    ``docs/rfc/INDEX.md`` for RFCs, ``docs/adr/INDEX.md`` for ADRs).
+6. Plan status mirror: the plan's header ``**Status:**`` base value must agree
+   with the status cell of its ``docs/plans/INDEX.md`` row. Plans 157/158 are
+   declared historical legacy cases: their mismatch is reported as an advisory
+   ``GAP`` (``status-index-gap``), never as a structural violation. They are
+   recorded by reference in a post-close artifact and are not edited.
+
+The checker distinguishes FAIL (a structural violation, exit 1) from GAP
+(advisory, exit 0). Missing evidence is not a violation; a contradictory
+status/INDEX pair on a non-legacy plan is.
 
 Generic angle-bracket placeholders (``<session-uuid>`` and similar) are NOT
 flagged: the corpus uses them legitimately as schema placeholders.
@@ -58,6 +67,16 @@ _RFC_STATUSES = frozenset({"Proposal", "Accepted", "Superseded"})
 # Characters that start a free-form suffix after the base status value:
 # "Executed (parcial: ...)", "Executed. Criterio...", "A | B" (template).
 _STATUS_SUFFIX_CHARS = "(.|"
+
+# Plans whose header/INDEX status mismatch is a declared historical legacy
+# case (contract 0.3, D-0.3-23). Reported as GAP, never as a violation.
+_LEGACY_STATUS_INDEX = frozenset({
+    "157-canonical-visual-roadmap.md",
+    "158-radical-simplification-roadmap.md",
+})
+
+# Rules that are advisory GAPs and never make the checker exit non-zero.
+_GAP_RULES = frozenset({"status-index-gap"})
 
 
 @dataclass
@@ -104,17 +123,22 @@ def check_filename(rel: Path) -> Violation | None:
     return None
 
 
+def _base_status(raw: str) -> str:
+    """Base status value before a free-form suffix."""
+    base = raw.strip()
+    for char in _STATUS_SUFFIX_CHARS:
+        if char in base:
+            base = base.split(char, 1)[0]
+    return base.strip()
+
+
 def check_status(rel: Path, kind: str, text: str) -> Violation | None:
     """The **Status:** field must use a value from the closed status cycle."""
     m = _STATUS_RE.search(text)
     if not m:
         return Violation(rel, 1, "status", "missing **Status:** field")
     raw = m.group(1)
-    base = raw
-    for char in _STATUS_SUFFIX_CHARS:
-        if char in base:
-            base = base.split(char, 1)[0]
-    base = base.strip()
+    base = _base_status(raw)
     allowed = _ADR_STATUSES if kind == "adr" else (
         _RFC_STATUSES if kind == "rfc" else _PLAN_STATUSES
     )
@@ -159,6 +183,59 @@ def check_index_mirror(rel: Path, index_text: str) -> Violation | None:
     return None
 
 
+def index_status_for(index_text: str, basename: str) -> str | None:
+    """Return the plan status cell of ``basename`` in the plans INDEX.
+
+    Rows are pipe tables; the status is the first cell among the first five
+    that is a member of the closed plan-status cycle. The RFC column and the
+    free-form description are skipped. The first matching row wins.
+    """
+    for line in index_text.splitlines():
+        if not line.lstrip().startswith("|"):
+            continue
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if not cells or cells[0].strip("`") != basename:
+            continue
+        for cell in cells[1:5]:
+            base = _base_status(cell.strip("`"))
+            if base in _PLAN_STATUSES:
+                return base
+    return None
+
+
+def check_status_index(
+    rel: Path, kind: str, text: str, index_text: str
+) -> Violation | None:
+    """The plan header status must agree with its INDEX status cell.
+
+    The two historical legacy cases (157/158) are advisory GAPs, not
+    violations: their mismatch is recorded by reference and the closed plans
+    are not edited (D-0.3-23).
+    """
+    if kind != "plan":
+        return None
+    m = _STATUS_RE.search(text)
+    if not m:
+        return None
+    header_status = _base_status(m.group(1))
+    if header_status not in _PLAN_STATUSES:
+        return None
+    index_status = index_status_for(index_text, rel.name)
+    if index_status is None or index_status == header_status:
+        return None
+    rule = (
+        "status-index-gap"
+        if rel.name in _LEGACY_STATUS_INDEX
+        else "status-index"
+    )
+    return Violation(
+        rel,
+        1,
+        rule,
+        f"header status {header_status!r} != INDEX status {index_status!r}",
+    )
+
+
 def verify_all(root: Path) -> list[Violation]:
     """Run every structural check against every numbered document."""
     violations: list[Violation] = []
@@ -177,6 +254,7 @@ def verify_all(root: Path) -> list[Violation]:
             check_status(rel, kind, text),
             check_amendment_log(rel, kind, text),
             check_index_mirror(rel, index_texts[kind]),
+            check_status_index(rel, kind, text, index_texts[kind]),
         ):
             if result is not None:
                 violations.append(result)
@@ -185,14 +263,31 @@ def verify_all(root: Path) -> list[Violation]:
 
 
 def format_report(violations: list[Violation]) -> str:
-    """Human-readable report of structural violations."""
-    if not violations:
-        return (
+    """Human-readable report of structural violations and advisory GAPs."""
+    blocking = [v for v in violations if v.rule not in _GAP_RULES]
+    gaps = [v for v in violations if v.rule in _GAP_RULES]
+    if not blocking:
+        lines = [
             "All numbered documents conform: no structural violations found."
-        )
-    lines = [f"Structural violations: {len(violations)}"]
-    for v in violations:
+        ]
+        if gaps:
+            lines.append(f"Advisory GAPs: {len(gaps)}")
+            for v in gaps:
+                lines.append(
+                    f"- {v.source.as_posix()}:{v.line} "
+                    f"[GAP:{v.rule}] {v.detail}"
+                )
+        return "\n".join(lines)
+    lines = [f"Structural violations: {len(blocking)}"]
+    for v in blocking:
         lines.append(f"- {v.source.as_posix()}:{v.line} [{v.rule}] {v.detail}")
+    if gaps:
+        lines.append(f"Advisory GAPs: {len(gaps)}")
+        for v in gaps:
+            lines.append(
+                f"- {v.source.as_posix()}:{v.line} "
+                f"[GAP:{v.rule}] {v.detail}"
+            )
     return "\n".join(lines)
 
 
@@ -209,7 +304,7 @@ def main(argv: list[str] | None = None) -> int:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     violations = verify_all(args.root.resolve())
     print(format_report(violations))
-    return 1 if violations else 0
+    return 1 if any(v.rule not in _GAP_RULES for v in violations) else 0
 
 
 if __name__ == "__main__":

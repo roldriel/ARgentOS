@@ -38,6 +38,8 @@ jobs:
           python -m pytest tests/ -q
       - name: Protocol taxonomy coherence
         run: python tools/check_taxonomy_coherence.py
+      - name: Canonical invariants equivalence
+        run: python tools/check_invariants_equivalence.py
       - name: Session artifacts and version state
         run: |
           python tools/check_version_state.py

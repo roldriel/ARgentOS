@@ -43,6 +43,12 @@ EXPECTED_PROPERTY_IDS = tuple(f"PROP-{n:02d}" for n in range(1, 4))
 EXPECTED_IDS = EXPECTED_INVARIANT_IDS + EXPECTED_PROPERTY_IDS
 EXPECTED_COLUMNS = 7  # ID, NAME, FORMULATION, SCOPE, OUT_OF_SCOPE, ENFORCEMENT_STATUS, LIMIT
 
+_VOCAB_HEADING_RE = re.compile(
+    r"(?ms)^##\s+Vocabulario de enforcement\s*$(.*?)(?=^##\s+|\Z)"
+)
+_VOCAB_LABEL_RE = re.compile(r"^\|\s*`([^`]+)`\s*\|", re.MULTILINE)
+_DECLARED_COUNTS = ("ENFORCED", "VALIDATED", "NONE")
+
 _ID_RE = re.compile(r"^(?:INV-\d{2}|PROP-\d{2})$")
 
 
@@ -127,6 +133,89 @@ def shape_problems(entries: list[tuple[str, list[str]]]) -> list[str]:
     return problems
 
 
+def parse_statuses(entries: list[tuple[str, list[str]]]) -> list[str]:
+    """ENFORCEMENT_STATUS values of the canonical rows."""
+    return [
+        cells[5].strip()
+        for _, cells in entries
+        if len(cells) > 5
+    ]
+
+
+def parse_vocabulary(dev_text: str) -> set[str] | None:
+    """Labels declared by the local DEV vocabulary table.
+
+    Returns ``None`` when the document has no ``## Vocabulario de
+    enforcement`` section: a minimal synthetic document is not required to
+    carry domain prose, and the equivalence check must keep working there.
+    """
+    match = _VOCAB_HEADING_RE.search(dev_text)
+    if match is None:
+        return None
+    return set(_VOCAB_LABEL_RE.findall(match.group(1)))
+
+
+def parse_declared_counts(dev_text: str) -> dict[str, int] | None:
+    """Declared ``N/15`` counts, or ``None`` when no count line is present.
+
+    A partial count line is treated as absent here and reported by the caller
+    as an inconsistency only when it declares some counts; an entirely
+    synthetic document without counts is not forced to invent them.
+    """
+    declared: dict[str, int] = {}
+    for label in _DECLARED_COUNTS:
+        match = re.search(rf"(\d+)/15\s*`?{label}`?", dev_text)
+        if match is not None:
+            declared[label] = int(match.group(1))
+    if not declared:
+        return None
+    return declared
+
+
+def compute_counts(statuses: list[str]) -> dict[str, int]:
+    """Count the three closed enforcement buckets of the block."""
+    return {
+        "ENFORCED": sum(1 for status in statuses if status.startswith("ENFORCED:")),
+        "VALIDATED": sum(1 for status in statuses if status == "VALIDATED"),
+        "NONE": sum(1 for status in statuses if status == "NONE"),
+    }
+
+
+def status_problems(
+    statuses: list[str], dev_text: str
+) -> list[str]:
+    """Local vocabulary and declared-count consistency (not block equality)."""
+    problems: list[str] = []
+    vocabulary = parse_vocabulary(dev_text)
+    if vocabulary is not None:
+        undefined = sorted(
+            {
+                status
+                for status in statuses
+                if status.startswith("ENFORCED:") and status not in vocabulary
+            }
+        )
+        if undefined:
+            problems.append(
+                "undefined ENFORCED labels in the local vocabulary: "
+                + ", ".join(undefined)
+            )
+    declared = parse_declared_counts(dev_text)
+    if declared is not None:
+        counts = compute_counts(statuses)
+        for label in _DECLARED_COUNTS:
+            if label not in declared:
+                problems.append(
+                    f"declared count is incomplete: missing {label}/15"
+                )
+            elif declared[label] != counts[label]:
+                problems.append(
+                    f"declared {label} count {declared[label]}/15 != "
+                    f"block count {counts[label]}/15"
+                )
+    return problems
+
+
 def _first_difference(left: str, right: str) -> str:
     """Human-readable locator of the first differing line between two blocks."""
     left_lines = normalize(left).split("\n")
@@ -175,6 +264,15 @@ def compare(dev_text: str, protocol_text: str) -> dict:
     for label, entries in (("DEV", dev_entries), ("PROTOCOL", protocol_entries)):
         for problem in shape_problems(entries):
             report["problems"].append(f"{label}: {problem}")
+
+    # The canonical block is authoritative for the status labels; the DEV
+    # domain prose must define every ENFORCED:* label it uses and the declared
+    # N/15 counts must match the block. This is a consistency check, not a
+    # semantic assessment of the mechanism.
+    statuses = parse_statuses(dev_entries)
+    report["status_counts"] = compute_counts(statuses)
+    report["labels"] = sorted({status for status in statuses if status})
+    report["problems"].extend(status_problems(statuses, dev_text))
 
     report["identical"] = normalize(dev_block) == normalize(protocol_block)
     if not report["identical"]:
@@ -235,6 +333,17 @@ def format_report(report: dict) -> str:
         f"  entries {report['protocol_entries']}"
     )
     lines.append(f"- IDENTICAL: {'YES' if report['identical'] else 'NO'}")
+    counts = report.get("status_counts") or {}
+    if counts:
+        lines.append(
+            "- ENFORCEMENT_STATUS: "
+            f"ENFORCED={counts.get('ENFORCED', 0)}/15, "
+            f"VALIDATED={counts.get('VALIDATED', 0)}/15, "
+            f"NONE={counts.get('NONE', 0)}/15"
+        )
+    labels = report.get("labels") or []
+    if labels:
+        lines.append("- labels used: " + ", ".join(labels))
     for problem in report["problems"]:
         lines.append(f"- PROBLEM: {problem}")
     passed = report["identical"] and not report["problems"]

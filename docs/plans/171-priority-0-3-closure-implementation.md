@@ -1,6 +1,6 @@
 # Plan 171 — Implementación de las correcciones de cierre de Priority 0.3
 
-**Status:** Aprobado para redacción
+**Status:** Executed
 **Fecha:** 2026-10-20
 **Tipo:** Plan
 **Lifecycle:** active
@@ -37,10 +37,10 @@ Implementar **exactamente** el contrato acotado de Priority 0.3: corregir las in
 - [x] `docs/INVARIANTS.md`, `docs/plans/INDEX.md`, los tres checkers, sus tests y el workflow existen en el baseline.
 - [x] Worktree sin cambios preexistentes tracked; los dos untracked del usuario permanecen intactos.
 - [x] Plan registrado en `docs/plans/INDEX.md`.
-- [ ] **Autorización de ejecución:** el Plan debe pasar de `Aprobado para redacción` a `Aprobado para ejecución` por el mantenedor. **No satisfecha en esta sesión.**
+- [x] **Autorización de ejecución:** acto del mantenedor registrado en la sesión de ejecución (2026-10-20): `PLAN_ID = 171`, `AUTHORIZATION = MAINTAINER_AUTHORIZED_FOR_EXECUTION`, `AUTHORITY_CLASS = DEV_CLASS_B`, `EXECUTION_AUTHORIZED = YES`, `RFC_REQUIRED = NO`, `PROTOCOL_AUTHORITY = UNCHANGED`. Aplica sólo al scope de este Plan. **Satisfecha.**
 - [x] **Ningún pendiente bloqueante** del Plan sin resolución/escalación. **Satisfecha.**
 
-**Estado:** el Plan está completo y listo para autorización, pero **no puede ejecutarse** hasta que el mantenedor lo apruebe para ejecución. La sesión de planificación no ejecuta, no valida la implementación y no cierra el Plan.
+**Estado:** el Plan fue ejecutado bajo la autorización registrada; la evidencia, los resultados AC/N y el cierre están en `## Nota de ejecución` y `## Checkpoint / cierre`.
 
 ## Entregables
 
@@ -203,6 +203,26 @@ Implementar **exactamente** el contrato acotado de Priority 0.3: corregir las in
 
 **Resultado esperado de los criterios negativos: ninguno de N-1…N-9 ocurre.** Cualquier ocurrencia es un fallo del Change.
 
+## Post-close record
+
+**Registro post-close (D-0.3-09/D-0.3-10; ADR-20 `E1-D4`; RFC-46).** No se edita ni se reabre ningún plan cerrado: las inconsistencias se registran por referencia en este artefacto nuevo.
+
+| Artefacto | Estado observado | Estado derivado/declarado | Tratamiento |
+|---|---|---|---|
+| Plan 157 (`docs/plans/157-canonical-visual-roadmap.md`) | header `Aprobado para ejecución`; INDEX `Executed`; cuerpo declara `Closed` | el cuerpo declara `Closed`; el `Status` no lo refleja | **No se edita.** D-0.3-23 está `ESCALATED`; `check_plan_structure` lo reporta como `GAP` legacy `status-index-gap`. |
+| Plan 158 (`docs/plans/158-radical-simplification-roadmap.md`) | header `Aprobado para ejecución`; INDEX `Executed`; cuerpo declara `Closed` | el cuerpo declara `Closed`; el `Status` no lo refleja | **No se edita.** Mismo tratamiento que 157. |
+| Plan 169 (`docs/plans/169-regularizacion-de-81bbde1-y-reconciliacion-de-pendientes.md`) | header `Executed`; INDEX corregido a `Executed`; cuerpo declara `Closed` | `Executed` + `Closed` derivado | **Sólo se corrigió el INDEX derivado.** El plan cerrado no se editó. |
+
+**Findings en estado `open` en planes que declaran `Closed`** (registrados por referencia; no se cambia el estado dentro del plan cerrado):
+
+- Plan 155 — `<PLAN-155>:F-5`: `open (deferred, owner: mantenedor)`.
+- Plan 158 — `<PLAN-158>:F-2`: `open`; la resolución en prosa declara que no requiere corrección adicional, pero el estado no se actualizó.
+- Plan 168 — `<PLAN-168>:F-1` y `<PLAN-168>:F-2`: `open`; existen las correcciones `<PLAN-168>:C-1` y `<PLAN-168>:C-2`, pero el estado no se actualizó.
+- Plan 169 — `<PLAN-169>:F-1` y `<PLAN-169>:F-2`: `open`; existen las correcciones `<PLAN-169>:C-1`…`C-3`, pero el estado no se actualizó.
+- Plan 152 — tiene findings `open`, pero su condición derivada es `Executed`, no `Closed`; **no** se cuenta como caso `Closed` + `open`.
+
+`check_lifecycle_lineage` reporta los cuatro casos legacy (155, 158, 168, 169) como `GAP`, nunca `ANOMALY` (R-L1-13). Un plan nuevo que declare `Closed` con un finding `open` es `ANOMALY`.
+
 ## Evidence contract
 
 La ejecución debe producir evidencia reproducible de:
@@ -301,25 +321,46 @@ print("N-9 PASS: only [Unreleased] changed; historical headings unchanged")
 
 ## Validation anchor
 
-**No aplica todavía.** El Plan está `Aprobado para redacción` y no fue ejecutado; este anchor se completa en el Paso 10, sólo después de la validación. No hay una validación registrada que anclar en esta sesión.
+**Validation anchor (VC-1).**
+
+- **Declared scope:** las diez rutas de la implementación acotada: `.github/workflows/check-protocol.yml`, `CHANGELOG.md`, `docs/INVARIANTS.md`, `docs/plans/INDEX.md`, `tests/test_check_invariants_equivalence.py`, `tests/test_check_lifecycle_lineage.py`, `tests/test_check_plan_structure.py`, `tools/check_invariants_equivalence.py`, `tools/check_lifecycle_lineage.py` y `tools/check_plan_structure.py`. Este Plan queda **fuera** del scope medido: convención anti-auto-referencia (los registros de cierre no se auto-identifican).
+- **Validation command-set:** los siete repository checkers de `docs/VERSIONING.md` §4.1 (`check_protocol_invariants`, `check_plan_citations`, `check_plan_structure`, `check_taxonomy_coherence`, `check_session_artifacts`, `check_version_state`, `check_invariants_equivalence`); los tres lifecycle checks C-1/C-2/C-3; las dos legs de `pytest` (`tests/` y `protocol/.agents/harness/tests/`); `git diff --check`; el guard N-9 de `CHANGELOG.md`; y los tests específicos de los tres checkers.
+- **Effective inputs (repo content):** las diez rutas del scope; el baseline de ejecución `8ba4bae`; el índice staged sobre el que se calculó la identidad; el contrato 0.3 en `55a11a7`; el baseline de `CHANGELOG.md` en `55a11a7`.
+- **Observed dependencies:** intérprete Python con biblioteca estándar (`tools/`, `tests/`), `pytest`, CLI `git`. Sin red, sin servicios externos, sin instalación de componentes del payload.
+- **Environmental factors:** Windows 11 + PowerShell; Python 3.14.3; `pytest` 9.0.3; `git` 2.55; `core.autocrlf = true` (blobs LF, working tree puede materializarse CRLF); `check_dist_sync.py` no aplica (local-only; rojo por diseño en `dev`); `check_plan_citations.py` conserva **26** citas rotas históricas y **1** referencia legacy preexistente, sin aumento; `check_version_state.py` emite warnings de versiones sin tag en `dev` (esperados).
+- **Scoped Content Identity:**
+  - **State identity:** `c94abd38850726039d7c268022c4c562fd9927e5` (tree id del índice staged en el momento de la validación).
+  - **Delta scoped identity:** `6a1d7641848ab18d874bcb0728784b4b8ab3c2544b2ea6624c4500f47d8ca18b` (scope = las diez rutas declaradas; serialización `scoped-v1`).
+- **Validity / stale:** `vigente`.
+- **Battery result:** 7 repository checkers: 6 PASS + `check_plan_citations` en su baseline preexistente; ambos legs de `pytest` PASS (`1379 passed` / `204 passed, 1 skipped`); C-1/C-2/C-3 `ANOMALY=0`; N-9 PASS; `git diff --check` limpio. Detalle en `## Nota de ejecución`.
 
 ## Checkpoint / cierre
 
-**No aplica todavía.** El Plan no está `Executed`; no hay checkpoint ni condición derivada `Closed`. Se completa en el Paso 10, sólo si `Executed` + governance aplicada + checkpoint + consistencia + PASS.
+**Checkpoint / cierre (GC-1).**
+
+- **Commits de cierre:** el commit de cierre de este Plan en `dev`, que incorpora este Plan, su Validation Anchor, este Checkpoint y los diez artefactos del scope. Sin amend, rebase, squash ni force-push.
+- **Estado validado (ref al Validation anchor):** State identity `c94abd38850726039d7c268022c4c562fd9927e5`; Delta scoped identity `6a1d7641848ab18d874bcb0728784b4b8ab3c2544b2ea6624c4500f47d8ca18b`.
+- **Estado de cierre (identidad):** State identity `c94abd38850726039d7c268022c4c562fd9927e5`; Delta scoped identity `6a1d7641848ab18d874bcb0728784b4b8ab3c2544b2ea6624c4500f47d8ca18b` (el mismo estado validado, por correspondencia con el anchor aplicable).
+- **Árbol material del commit de cierre:** no declarado; el commit aún no existe al escribir este checkpoint y el commit de cierre añade governance sobre el estado validado. `validated tree == commit tree` no es un requisito (RFC-75 Mecanismo 7).
+- **Consistencia checkpoint↔anchor:** **PASS** — el estado de cierre declarado es el que la validación consumió.
+- **Governance aplicada:** RFC-56 Clase B (plan `Aprobado para ejecución`; sin payload); RFC-69 (registro en el INDEX); RFC-75 (Mecanismo 7, checkpoint); ADR-16 (autoridad del Change Lifecycle); contrato 0.3 en `55a11a7`; VC-1/GC-1/LC-1/PC-1.
+- **Documentation impact:** `REQUIRED` — documentos afectados y actualizados: `docs/INVARIANTS.md` (interpretación INV-07, vocabulario `session-hook`, estado de gaps), `docs/plans/INDEX.md` (fila 169 y registro del Plan 171), `docs/plans/171-priority-0-3-closure-implementation.md` (post-close record, anchor, checkpoint y nota) y `CHANGELOG.md` (entrada `[Unreleased]`). Evidencia: diff del Change y checkers verdes.
+- **Roadmap impact:** `NOT_REQUIRED` — implementación acotada de correcciones de consistencia, tooling y tests; no crea, completa, cancela, reclasifica ni re-prioriza una iniciativa de dirección en `ROADMAP.md`. El Plan queda registrado en `docs/plans/INDEX.md`.
+- **Condición derivada:** **`Closed`** (plan `Executed` + governance aplicada + checkpoint + consistencia + PASS). `Committed` es estado del repositorio; `Released` requiere autoridad humana y no ocurre en este Change (docs-only/tooling, RFC-69).
 
 ## Findings / Correcciones / Pending
 
 ### Findings
 
-No findings detected / N/A al momento de la planificación.
+No findings detected / N/A.
 
 ### Correcciones
 
-N/A — no hay correcciones en la planificación.
+N/A — no hay correcciones registradas.
 
 ### Pending decisions
 
-N/A — la ejecución está gobernada por el gate de autorización del Plan (`Aprobado para ejecución`), no por una pending decision de 0.3.
+N/A — no hay pending decisions; el Plan fue ejecutado y su condición derivada es `Closed`.
 
 ## Riesgos
 
@@ -335,11 +376,77 @@ N/A — la ejecución está gobernada por el gate de autorización del Plan (`Ap
 ```text
 Priority 0.3 canonical contract @ 55a11a7
         ↓
-Plan 171 (este Plan, Aprobado para redacción)
+Plan 171 (este Plan, Executed; Closed derivado)
         ↓
 docs/INVARIANTS.md · docs/plans/INDEX.md · post-close record · 3 checkers + tests · CI · CHANGELOG [Unreleased]
         ↓
 Validation anchor + Checkpoint → Executed → Closed (derivado) → commit en dev
 ```
 
-El Plan no se cierra en la sesión de planificación: `Aprobado para redacción` no es `Executed`; no hay `## Validation anchor`, `## Checkpoint / cierre` ni condición derivada `Closed` hasta la ejecución autorizada.
+El Plan se ejecutó y su condición derivada es `Closed` (docs-only/tooling, sin release). No se modificó `protocol/`, `runtime/`, `dist/`, ningún RFC/ADR ni ningún plan cerrado; los dos untracked preexistentes se preservaron.
+
+## Nota de ejecución
+
+**Ejecutado el 2026-10-20.** Change DEV Clase B, sin payload, conducido en `dev` bajo la autorización del mantenedor registrada al inicio de la ejecución.
+
+```text
+PLAN_ID                 = 171
+AUTHORIZATION           = MAINTAINER_AUTHORIZED_FOR_EXECUTION
+AUTHORITY_CLASS         = DEV_CLASS_B
+EXECUTION_AUTHORIZED    = YES
+RFC_REQUIRED            = NO
+PROTOCOL_AUTHORITY      = UNCHANGED
+EXECUTION_BASELINE_HEAD = 8ba4bae
+```
+
+### Resultados AC
+
+| AC | Resultado | Evidencia |
+|---|---|---|
+| AC-1 | **PASS** | `docs/INVARIANTS.md`: INV-07 interpretado contra el hook del adoptante; `ENFORCED:session-hook` definido; gaps reconciliados; `check_invariants_equivalence` PASS. |
+| AC-2 | **PASS** | `check_invariants_equivalence` añadido a `.github/workflows/check-protocol.yml`; `test_material_change_fails` y los tests de vocabulario/recuento demuestran el fallo. |
+| AC-3 | **PASS** | `check_plan_structure` detecta status/INDEX; fila 169 `Executed`; 157/158 reportados como `GAP` legacy; 39 tests. |
+| AC-4 | **PASS** | `check_lifecycle_lineage` detecta `Closed` + finding `open` (R-L1-13); 155/158/168/169 registrados como `GAP`; 42 tests; C-3 `ANOMALY=0`. |
+| AC-5 | **PASS** | Contrato 0.3 en `55a11a7` sin cambios; proposals INDEX lo apunta; `check_plan_citations` conserva 26 + 1 sin citas nuevas del Plan 171. |
+| AC-6 | **PASS** | `git diff --name-only 8ba4bae..HEAD` sin `protocol/`, `runtime/` ni `dist/`. |
+| AC-7 | **PASS** | Sin invariantes/properties nuevos; bloque canónico byte-idéntico (`IDENTICAL: YES`). |
+| AC-8 | **PASS** | Contrato 0.3 §A/§K declara las no-garantías y `Closed` procedural. |
+| AC-9 | **PASS** | 7 repository checkers (6 PASS + baseline de citations), 2 legs de tests, C-1/C-2/C-3 `ANOMALY=0`, anchor/checkpoint. |
+| AC-10 | **PASS** | El alcance y las decisiones se implementaron sin re-derivar el modelo de fallos; el Plan referencia el contrato en `55a11a7`. |
+| AC-11 | **PASS** | `CHANGELOG.md` con un único hunk en `[Unreleased]`; N-9 PASS; headings históricos idénticos. |
+
+### Resultados N
+
+| N | Resultado | Evidencia |
+|---|---|---|
+| N-1 | **PASS** | 0 cambios en `protocol/.agents/`, `protocol/_AGENTS.md`, `runtime/` y `dist/`. |
+| N-2 | **PASS** | 0 invariantes, properties, gates, estados, registries, namespaces o autoridades nuevas. |
+| N-3 | **PASS** | Bloque canónico y copia Protocol intactos (`IDENTICAL: YES`). |
+| N-4 | **PASS** | 0 ediciones de planes/RFC/ADR cerrados; 157/158/155/168/169 registrados por referencia. |
+| N-5 | **PASS** | Ninguna garantía semántica o epistémica positiva. |
+| N-6 | **PASS** | R-10/R-11 siguen siendo los únicos riesgos aceptados, por RFC-84/ADR-21. |
+| N-7 | **PASS** | El Plan pasó a `Aprobado para ejecución` por la autorización del mantenedor antes de implementar; luego a `Executed`. |
+| N-8 | **PASS** | Staging por archivo; `.project/`, `PRIORITY.md` y `docs/planificacion-...` fuera del commit. |
+| N-9 | **PASS** | Un solo hunk en `[Unreleased]`; secuencia de headings históricos idéntica. |
+
+### Comandos y resultados
+
+- `check_protocol_invariants`: PASS — 217 archivos, 10.537 referencias.
+- `check_plan_citations`: baseline preexistente — 26 citas históricas rotas + 1 referencia legacy; sin citas nuevas del Plan 171.
+- `check_plan_structure`: PASS — sin violaciones; 2 `GAP` advisory (`157`/`158`, `status-index-gap`).
+- `check_taxonomy_coherence`: PASS.
+- `check_session_artifacts`: PASS.
+- `check_version_state`: PASS; warnings de versiones sin tag en `dev` (esperados).
+- `check_invariants_equivalence`: PASS — bloque idéntico; `ENFORCED=7/15`, `VALIDATED=2/15`, `NONE=6/15`.
+- C-1: `VALID=77`, `GAP=0`, `ANOMALY=0`.
+- C-2: `VALID=76`, `GAP=1` (Plan 116 legacy), `ANOMALY=0`.
+- C-3: `VALID=37`, `GAP=4` (155/158/168/169 legacy), `N/A=31`, `BOUNDARY=1`, `ANOMALY=0`.
+- `pytest tests/`: **1379 passed** (286.79 s).
+- `pytest protocol/.agents/harness/tests/`: **204 passed, 1 skipped** (8.26 s).
+- Tests específicos de los tres checkers: **97 passed**.
+- N-9 guard: **PASS**; `git diff -U0 -- CHANGELOG.md` con un único hunk en `[Unreleased]`.
+- `git diff --check`: limpio.
+
+**Límite declarado:** los checkers verdes son evidencia estructural/documental; no prueban verdad semántica ni epistémica. `DETECT` de FM-13 sigue acotado a referencias DEV/Protocol y al bloque canónico, no a duplicación semántica general.
+
+**Archivos del Change:** `.github/workflows/check-protocol.yml`, `CHANGELOG.md`, `docs/INVARIANTS.md`, `docs/plans/INDEX.md`, `docs/plans/171-priority-0-3-closure-implementation.md`, `tests/test_check_invariants_equivalence.py`, `tests/test_check_lifecycle_lineage.py`, `tests/test_check_plan_structure.py`, `tools/check_invariants_equivalence.py`, `tools/check_lifecycle_lineage.py`, `tools/check_plan_structure.py`.

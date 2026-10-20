@@ -24,14 +24,17 @@ Each numbered plan is classified as:
 - ``ANOMALY`` — information present but incompatible (a verifiable
   contradiction).
 
-Rules R-L1-1..R-L1-12 (docs/plans/100-change-lifecycle-lineage-integrity.md
+Rules R-L1-1..R-L1-13 (docs/plans/100-change-lifecycle-lineage-integrity.md
 §16) are implemented verbatim: opener namespace, duplicate identities,
 required finding fields (CL-8), state vocabulary, resolution consistency
 (R-L1-5), deferred owners, cross-artifact C-/F- target existence, correction
 origin fields (CL-6), revalidation-claim support from the artifact's own
 ``## Validation anchor`` / checkpoint (CL-7, anti-circularity), absence
-markers, unparseable content and artifact-level classification precedence
-(ANOMALY > GAP > VALID > N/A > BOUNDARY > EXCLUDED). ``reopened`` is a
+markers, unparseable content, artifact-level classification precedence
+(ANOMALY > GAP > VALID > N/A > BOUNDARY > EXCLUDED), and R-L1-13: a plan that
+declares the derived condition ``Closed`` must not carry a finding whose state
+is still ``open``. The four real-corpus legacy cases (155/158/168/169) are
+reported as GAP, never ANOMALY. ``reopened`` is a
 documented v1 boundary (GAP, human review); F-3 duplicate validation records
 are never resolved or detected — only ambiguity of declared support becomes
 GAP, never an invented tie-break. ``superseded`` carries no new v1 content
@@ -139,6 +142,17 @@ _STATE_VOCAB = {
     "superseded",
 }
 _RESOLVED_STATES = {"resolved", "partially-resolved"}
+
+# R-L1-13: a plan that declares the derived condition Closed must not carry a
+# finding whose state is still `open`. The four cases in the real corpus are
+# declared historical legacy: they are reported as GAP, not ANOMALY, because
+# they are recorded by reference and the closed plans are not edited (0.3,
+# D-0.3-23).
+_LEGACY_CLOSED_OPEN = frozenset({155, 158, 168, 169})
+_CLOSED_DECL_RE = re.compile(
+    r"(?im)^\s*[-*]?\s*(?:\*\*)?Condición derivada:(?:\*\*)?\s*"
+    r"(?:\*\*)?`?Closed`?"
+)
 
 _TICK_RE = re.compile(r"`([^`]+)`")
 _ABSENCE_RE = re.compile(r"N/A|No findings detected", re.IGNORECASE)
@@ -730,6 +744,34 @@ def classify_artifact(
 
     reasons.extend(_rule_reasons(records, artifact_ns, corpus_ids))
     reasons.extend(_revalidation_reasons(text, records))
+
+    # R-L1-13: Closed + open finding. Legacy cases are advisory GAPs.
+    if _CLOSED_DECL_RE.search(text):
+        open_refs = [
+            record.ref
+            for record in records
+            if record.kind.upper() == "F"
+            and _state_of(record.fields.get("estado", "")) == "open"
+        ]
+        if open_refs:
+            refs = ", ".join(open_refs)
+            if artifact_number(rel) in _LEGACY_CLOSED_OPEN:
+                reasons.append(
+                    (
+                        False,
+                        f"legacy: plan declares Closed with open finding(s) "
+                        f"{refs}; recorded by reference as GAP, not ANOMALY "
+                        "(R-L1-13)",
+                    )
+                )
+            else:
+                reasons.append(
+                    (
+                        True,
+                        f"plan declares Closed with open finding(s) {refs} "
+                        "(R-L1-13)",
+                    )
+                )
 
     if reasons:
         classification = (

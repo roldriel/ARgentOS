@@ -421,6 +421,9 @@ def test_t17_revalidation_claim_without_support_is_gap(tmp_path):
         ),
         checkpoint=checkpoint_record(
             consistency="V1 == C1 tree (revisión manual)."
+        ).replace(
+            "- Condición derivada: **`Closed` (docs-only, sin release)**\n",
+            "",
         ),
     )
     write_plan(tmp_path, doc)
@@ -611,7 +614,8 @@ def test_t26_html_comments_are_not_content(tmp_path):
 def test_t27_real_repo_dogfooding():
     """T27: dogfooding over the real repository (plan 100 §19): plan 98 N/A
     (declared absence), plan 99 VALID (real F-1 -> C-1 chain), plans 96/97
-    and legacy EXCLUDED, GAP=0, ANOMALY=0. Plan 100 is lifecycle-stable: it
+    and legacy EXCLUDED, GAP=4 (the declared legacy Closed+open cases
+    155/158/168/169), ANOMALY=0. Plan 100 is lifecycle-stable: it
     is BOUNDARY while it carries qualified lifecycle refs without its own
     lineage container (its creation phase, §14.1) and N/A (or VALID) once its
     container is registered at closure (C2)."""
@@ -634,8 +638,38 @@ def test_t27_real_repo_dogfooding():
     )
     assert "94-change-lifecycle-master-action-plan.md: EXCLUDED" in result.stdout
     assert "95-change-lifecycle-unit-a-increment-0.md: EXCLUDED" in result.stdout
-    assert "GAP=0" in result.stdout
+    assert "GAP=4" in result.stdout
     assert "ANOMALY=0" in result.stdout
+
+
+def test_t29_closed_with_open_finding_is_anomaly(tmp_path):
+    """T29 (R-L1-13): a plan that declares Closed cannot keep an open
+    finding; this is a verifiable contradiction, not a GAP."""
+    doc = lineage_doc(
+        checkpoint=checkpoint_record(),
+        findings=finding_record("`open`"),
+    )
+    write_plan(tmp_path, doc)
+    finding = one_finding(tmp_path)
+    assert finding.classification == "ANOMALY"
+    assert "R-L1-13" in " ".join(finding.reasons)
+    assert run_tool(tmp_path).returncode == 1
+
+
+def test_t30_legacy_closed_open_finding_is_gap(tmp_path):
+    """T30 (R-L1-13 legacy): the four real-corpus cases are declared legacy;
+    they are recorded by reference and reported as GAP, never ANOMALY."""
+    doc = lineage_doc(
+        number=155,
+        checkpoint=checkpoint_record(),
+        findings=finding_record("`open`", ref="<PLAN-155>:F-1"),
+    )
+    write_plan(tmp_path, doc, "155-legacy.md")
+    finding = one_finding(tmp_path)
+    assert finding.classification == "GAP"
+    assert "legacy" in " ".join(finding.reasons)
+    assert "R-L1-13" in " ".join(finding.reasons)
+    assert run_tool(tmp_path).returncode == 0
 
 
 def test_t28_tool_uses_only_stdlib():
@@ -797,6 +831,9 @@ def test_adversarial_multiple_anchor_validation_records_are_gap(tmp_path):
         anchor=anchor,
         checkpoint=checkpoint_record(
             consistency="V1 == C1 tree (revisión manual)."
+        ).replace(
+            "- Condición derivada: **`Closed` (docs-only, sin release)**\n",
+            "",
         ),
     )
     write_plan(tmp_path, doc)

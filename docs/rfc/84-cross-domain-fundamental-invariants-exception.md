@@ -1,7 +1,7 @@
 # RFC-84 — Excepción de catálogo canónico de invariantes y properties transversales al single-source del Protocol
 
-**Status:** Proposal
-**Fecha:** 2026-10-15 (creación) · 2026-10-20 (reformulación con catálogo definitivo y normalización de enforcement)
+**Status:** Accepted (2026-10-20, autorización explícita del mantenedor; Clase A de RFC-56)
+**Fecha:** 2026-10-15 (creación) · 2026-10-20 (reformulación con catálogo definitivo y normalización de enforcement; aceptación)
 **Lifecycle:** active
 **Superseded por:** —
 **Serie:** —
@@ -163,19 +163,20 @@ Rechazada: no serían interpretables ni verificables en ningún dominio, y no pe
 
 ## Criterios de aceptación
 
-- [ ] Aceptada por el mantenedor (acto de autoridad explícito).
-- [ ] El catálogo definitivo son exactamente 15 entradas (12 invariantes + 3 properties), sin adiciones ni omisiones respecto de `## Catálogo final`.
+- [x] Aceptada por el mantenedor (acto de autoridad explícito).
+- [x] El catálogo definitivo son exactamente 15 entradas (12 invariantes + 3 properties), sin adiciones ni omisiones respecto de `## Catálogo final`.
 - [ ] `PROTOCOL_BOUNDARIES.md` registra la excepción con sus cuatro condiciones y reformula la frase de excepción única.
 - [ ] `docs/INVARIANTS.md` y `protocol/.agents/standards/INVARIANTS.md` contienen el bloque canónico **idéntico byte a byte**.
 - [ ] La copia del Protocol no cita `docs/` ni depende normativamente de DEV.
 - [ ] Cada entrada declara `ENFORCEMENT_STATUS` y `LIMIT` en ambas representaciones.
-- [ ] Un Plan autorizado por RFC-56 materializa la excepción y las dos representaciones.
+- [x] Un Plan autorizado por RFC-56 materializa la excepción y las dos representaciones (`docs/plans/170-materialize-canonical-invariants-catalog.md`).
 - [ ] La verificación de equivalencia del bloque canónico existe y está en la batería.
 - [ ] La batería canónica aplicable queda en verde antes de cerrar el Plan.
-- [ ] No se introduce `InvariantEngine`, registro universal ni mecanismo de enforcement transversal.
+- [x] No se introduce `InvariantEngine`, registro universal ni mecanismo de enforcement transversal.
 
 ## Amendment Log
 
 - 2026-10-15 — Creación de RFC-84 a partir del diseño cerrado de 0.2 — Invariantes y propiedades fundamentales.
 - 2026-10-20 — Reformulación integral: se retira la mención a las auditorías A/B/C y a la matriz de cobertura por no existir en el repositorio ni ser recuperables; se incorpora el catálogo definitivo de 15 entradas con formulación, alcance, enforcement real y límites; se define operacionalmente la equivalencia semántica; se fijan las reglas de actualización coordinada y de autoridad de cada copia; se incorpora el modelo de materialización DEV/Protocol y el registro de la excepción. El status permanece `Proposal`.
 - 2026-10-20 — Normalización de enforcement y corrección de alcance: se sustituye «enforcement real» por el vocabulario de seis dimensiones (Implemented / Enforced / Detectable / Verified / Operationally exercised / Mechanically enforced); `ENFORCEMENT_STATUS` pasa a etiquetas cerradas (`ENFORCED:host(opt-in)`, `ENFORCED:dev-ci`, `ENFORCED:lifecycle`, `ENFORCED:dev-gate`, `VALIDATED`, `DETECTED`, `NONE`); el recuento único queda en **6/15 ENFORCED**, 2/15 VALIDATED y 7/15 NONE, y se declara que ninguna entrada es mecánicamente enforced para el protocolo distribuido ni existe motor universal. El alcance de la excepción se corrige de «invariantes fundamentales» a **catálogo canónico de invariantes y properties transversales DEV/Protocol**, porque el bloque contiene 3 properties además de los 12 invariantes. Sin cambios en las 15 entradas. El status permanece `Proposal`.
+- 2026-10-20 — **Aceptación.** El mantenedor acepta esta RFC (Clase A de RFC-56) y autoriza la creación del Plan `docs/plans/170-materialize-canonical-invariants-catalog.md`, que materializa la excepción en `docs/INVARIANTS.md`, `protocol/.agents/standards/INVARIANTS.md` y `protocol/.agents/standards/runtime/PROTOCOL_BOUNDARIES.md`. La aceptación fija el alcance: una única excepción transversal que afecta exactamente al catálogo canónico de 15 entradas; equivalencia **byte a byte** del bloque canónico; autoridad de dominio por copia sin segunda autoridad semántica; secciones locales no canónicas permitidas; sin motor universal de enforcement; sin implementar los gaps de enforcement. Los criterios de materialización quedan abiertos hasta el cierre del Plan.

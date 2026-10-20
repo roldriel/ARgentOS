@@ -165,10 +165,10 @@ Rechazada: no serían interpretables ni verificables en ningún dominio, y no pe
 
 - [x] Aceptada por el mantenedor (acto de autoridad explícito).
 - [x] El catálogo definitivo son exactamente 15 entradas (12 invariantes + 3 properties), sin adiciones ni omisiones respecto de `## Catálogo final`.
-- [ ] `PROTOCOL_BOUNDARIES.md` registra la excepción con sus cuatro condiciones y reformula la frase de excepción única.
-- [ ] `docs/INVARIANTS.md` y `protocol/.agents/standards/INVARIANTS.md` contienen el bloque canónico **idéntico byte a byte**.
-- [ ] La copia del Protocol no cita `docs/` ni depende normativamente de DEV.
-- [ ] Cada entrada declara `ENFORCEMENT_STATUS` y `LIMIT` en ambas representaciones.
+- [x] `PROTOCOL_BOUNDARIES.md` registra la excepción con sus cuatro condiciones y reformula la frase de excepción única.
+- [x] `docs/INVARIANTS.md` y `protocol/.agents/standards/INVARIANTS.md` contienen el bloque canónico **idéntico byte a byte** (`sha256 cd79644c7e5e22cf8561a6200350907c1dc2735a4037a3d8ebebb693cd86f7b2`, 15 entradas, 4655 bytes).
+- [x] La copia del Protocol no cita `docs/` ni depende normativamente de DEV.
+- [x] Cada entrada declara `ENFORCEMENT_STATUS` y `LIMIT` en ambas representaciones.
 - [x] Un Plan autorizado por RFC-56 materializa la excepción y las dos representaciones (`docs/plans/170-materialize-canonical-invariants-catalog.md`).
 - [ ] La verificación de equivalencia del bloque canónico existe y está en la batería.
 - [ ] La batería canónica aplicable queda en verde antes de cerrar el Plan.

@@ -1543,6 +1543,20 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ---
 
+## [12.2.0] — 2026-10-20
+
+### Added
+
+- **Catálogo canónico de invariantes y properties transversales DEV/Protocol** (Plan 170, RFC-84 `Accepted`; Clase A de RFC-56): `protocol/.agents/standards/INVARIANTS.md` incorpora el **bloque canónico** de 15 entradas —12 invariantes (`INV-01`…`INV-12`) y 3 properties (`PROP-01`…`PROP-03`)— idéntico byte a byte a la representación de desarrollo, delimitado por los marcadores `canonical-invariants-v1`. Cada entrada declara `SCOPE`, `OUT_OF_SCOPE`, `ENFORCEMENT_STATUS` y `LIMIT`. El catálogo **no declara garantías implementadas** y no introduce ningún mecanismo de enforcement: recuento declarado 6/15 `ENFORCED`, 2/15 `VALIDATED`, 7/15 `NONE`, y ninguna entrada mecánicamente enforced para el protocolo distribuido.
+
+### Changed
+
+- **Dos excepciones aprobadas a la política de single-source** (Plan 170, RFC-84): `standards/runtime/PROTOCOL_BOUNDARIES.md` registra la segunda excepción —acotada al bloque canónico de las 15 entradas, con equivalencia byte a byte, actualización coordinada y sin autoridad semántica duplicada— y la frase que declaraba a `ANTI_CIRCUMVENTION` como única duplicación sancionada pasa a reconocer las dos.
+
+### Modelo conceptual
+
+- **RFC-84 `Accepted`** (2026-10-20, autorización explícita del mantenedor): autoriza la excepción cross-domain para el catálogo canónico de 12 invariantes y 3 properties. No modifica ningún contrato vigente ni introduce motor de enforcement; los doce gaps de enforcement (`E1-G1`…`E1-G5`, `G-03`…`G-09`) permanecen abiertos y requieren Changes propios.
+
 ## [12.1.0] — 2026-10-14
 
 > **Absorción de `12.0.1`** (plan 168): el Plan 156 asignó `12.0.1` como PATCH documental del payload y

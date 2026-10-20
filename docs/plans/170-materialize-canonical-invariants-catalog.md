@@ -1,6 +1,6 @@
 # Plan 170 — Materialización del catálogo canónico de invariantes y properties transversales
 
-**Status:** Aprobado para ejecución
+**Status:** Executed (parcial: cierre pendiente — Validation Anchor y Checkpoint)
 **Fecha:** 2026-10-20
 **Tipo:** Plan
 **Lifecycle:** active
@@ -84,8 +84,8 @@ Ver `## Nota de ejecución` para los resultados. La equivalencia canónica se ve
 
 ### Findings
 
-- `<PLAN-170>:F-1` — La clasificación de enforcement estaba triplicada e inconsistente entre RFC-84 y el documento de diseño (5/15, 2/15 y 5 entradas según el lugar). **Resuelto** en el Change de normalización previo a la aceptación: 6/15 `ENFORCED`, 2/15 `VALIDATED`, 7/15 `NONE`, con vocabulario cerrado de seis dimensiones.
-- `<PLAN-170>:F-2` — RFC-84 declaraba la excepción sobre "invariantes fundamentales" cuando el bloque contiene además 3 properties. **Resuelto** antes de la aceptación corrigiendo el alcance a «catálogo canónico de invariantes y properties transversales DEV/Protocol».
+- `<PLAN-170>:F-1` — estado: `resolved`; observación: la clasificación de enforcement estaba triplicada e inconsistente —la prosa de RFC-84 decía 5/15, la matriz de garantías marcaba `Enforced = YES` sólo en 2 y la clasificación individual listaba 5 entradas distintas de las otras dos cifras—; evidencia original: `docs/rfc/84-cross-domain-fundamental-invariants-exception.md` y `docs/working/proposals/PRIORITY_0_2_FINAL_DESIGN_CLOSURE_2026-10-20.md` en `eaec2dd` con sus cambios de trabajo; estado git observado: rama `dev`, worktree con ambos archivos modificados y sin commit al momento de la observación; provenance original: lectura directa de los tres lugares durante la verificación de consistencia previa a la aceptación; resolución: vocabulario cerrado de seis dimensiones y recuento único **6/15 `ENFORCED`**, 2/15 `VALIDATED`, 7/15 `NONE`, commit `f58b9ec`.
+- `<PLAN-170>:F-2` — estado: `resolved`; observación: RFC-84 declaraba la excepción sobre «invariantes fundamentales» aunque el bloque contiene además 3 properties, de modo que el alcance declarado no describía el objeto de la excepción; evidencia original: `docs/rfc/84-cross-domain-fundamental-invariants-exception.md` en `eaec2dd` (título, `## Problema` y `## Decisión propuesta`) y la composición del catálogo (12 + 3); estado git observado: rama `dev`, worktree modificado sin commit al momento de la observación; provenance original: contraste entre el encabezado de la RFC y el recuento de entradas; resolución: alcance corregido a «catálogo canónico de invariantes y properties transversales DEV/Protocol» antes de la aceptación, commit `f58b9ec`.
 
 ### Pending decisions
 
@@ -104,6 +104,14 @@ Ver `## Nota de ejecución` para los resultados. La equivalencia canónica se ve
 
 ## Nota de ejecución
 
-**Ejecutado el 2026-10-20.** Se materializaron las dos representaciones con bloque canónico idéntico, se registró la segunda excepción aprobada, y se avanzó la versión del payload a `12.2.0`. Sin implementación de gaps de enforcement (0 diff en código de runtime y hooks).
+**Ejecutado el 2026-10-20.**
+
+**Entregado.** `docs/INVARIANTS.md` (Policy DEV) y `protocol/.agents/standards/INVARIANTS.md` (estándar del payload, autocontenido, sin referencias a `docs/`) contienen el bloque canónico de 15 entradas delimitado por los marcadores `canonical-invariants-v1`. La equivalencia se verificó por comparación mecánica del bloque extraído, no visualmente: **sha256 `cd79644c7e5e22cf8561a6200350907c1dc2735a4037a3d8ebebb693cd86f7b2` idéntico en ambas representaciones** (15 filas, 4655 bytes), extraído a su vez de la tabla de RFC-84 para que el bloque materializado sea el texto aceptado. `protocol/.agents/standards/runtime/PROTOCOL_BOUNDARIES.md` registra la **segunda excepción aprobada** con sus cinco condiciones y ya no declara a `ANTI_CIRCUMVENTION` como única duplicación sancionada. Payload a **`12.2.0`** (MINOR) con `PROTOCOL_VERSION` alineado y sección `## [12.2.0]` en el changelog.
+
+**Verificación.** `check_plan_structure` sin violaciones estructurales · `check_plan_citations` 26 rotas + 1 legacy (baseline sin regresión) · `check_taxonomy_coherence` OK · `check_version_state` OK · `check_protocol_invariants` OK (217 archivos / 10.522 referencias) · `check_session_artifacts` OK · C-1 `ANOMALY=0`, `GAP=0` tras corregir el formato de los dos findings de este Plan.
+
+**No entregado, deliberadamente.** Los doce gaps de enforcement (`E1-G1`…`E1-G5`, `G-03`…`G-09`) siguen abiertos: materializar el catálogo no los implementa. La verificación de equivalencia **no** está todavía en la batería (`PC-1`); hasta entonces la detección de drift es por revisión en cada Change que toque cualquiera de las dos copias.
+
+**Límite ambiental declarado.** La pierna de pytest no puede ejecutarse completa en este entorno: `PermissionError [WinError 5]` al crear `tmp_path` (`tests/` con fixture temporal). Los tests que no requieren `tmp_path` pasan; los que sí, fallan en el *setup* con ese error de sandbox, no por el cambio. No se declara PASS de la batería completa.
 
 Pendiente para `Closed`: Validation Anchor y Checkpoint (ver `PC-1`).

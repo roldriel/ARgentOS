@@ -356,3 +356,85 @@ def test_real_repo_has_no_violations():
 
 def test_tool_uses_only_stdlib():
     assert_tool_imports_only_stdlib(TOOL, {"check_plan_structure"})
+
+
+# --- INDEX -> target (G-07, Plan 173) ---------------------------------------------
+
+
+def _index_targets(root: Path):
+    return [v for v in cps.verify_all(root) if v.rule == "index-target"]
+
+
+def test_plan_index_row_without_target_is_a_violation(tmp_path):
+    make_repo(tmp_path, {
+        "docs/plans/01-sample-plan.md": PLAN_OK,
+        "docs/plans/INDEX.md": (
+            "# INDEX\n\n| Plan | RFC | Status |\n|---|---|---|\n"
+            "| `01-sample-plan.md` | — | Aprobado para redacción |\n"
+            "| `02-missing.md` | — | Executed |\n"
+        ),
+    })
+    violations = _index_targets(tmp_path)
+    assert len(violations) == 1
+    assert "02-missing.md" in violations[0].detail
+    assert violations[0].rule == "index-target"
+
+
+def test_rfc_index_row_without_target_is_a_violation(tmp_path):
+    make_repo(tmp_path, {
+        "docs/rfc/01-sample-rfc.md": RFC_OK,
+        "docs/rfc/INDEX.md": (
+            "# INDEX\n\n| RFC | Documento | Status |\n|---|---|---|\n"
+            "| RFC-01 | `docs/rfc/01-sample-rfc.md` | Proposal |\n"
+            "| RFC-02 | `docs/rfc/02-missing.md` | Proposal |\n"
+        ),
+    })
+    violations = _index_targets(tmp_path)
+    assert len(violations) == 1
+    assert "02-missing.md" in violations[0].detail
+
+
+def test_adr_index_row_without_target_is_a_violation(tmp_path):
+    make_repo(tmp_path, {
+        "docs/adr/01-sample-adr.md": ADR_OK,
+        "docs/adr/INDEX.md": (
+            "# INDEX\n\n| ADR | D# | Decisión | Status |\n|---|---|---|---|\n"
+            "| [ADR-01](01-sample-adr.md) | D0 | Sample | Accepted |\n"
+            "| [ADR-02](02-missing.md) | D1 | Missing | Accepted |\n"
+        ),
+    })
+    violations = _index_targets(tmp_path)
+    assert len(violations) == 1
+    assert "02-missing.md" in violations[0].detail
+
+
+def test_index_rows_with_targets_are_valid(tmp_path):
+    make_repo(tmp_path, {
+        "docs/plans/01-sample-plan.md": PLAN_OK,
+        "docs/rfc/01-sample-rfc.md": RFC_OK,
+        "docs/adr/01-sample-adr.md": ADR_OK,
+        "docs/plans/INDEX.md": "# INDEX\n\n| Plan |\n|---|\n| `01-sample-plan.md` |\n",
+        "docs/rfc/INDEX.md": (
+            "# INDEX\n\n| RFC | Documento |\n|---|---|\n"
+            "| RFC-01 | `docs/rfc/01-sample-rfc.md` |\n"
+        ),
+        "docs/adr/INDEX.md": (
+            "# INDEX\n\n| ADR | Decisión |\n|---|---|\n"
+            "| [ADR-01](01-sample-adr.md) | D0 |\n"
+        ),
+    })
+    assert _index_targets(tmp_path) == []
+
+
+def test_index_target_scan_ignores_non_artifact_rows(tmp_path):
+    """Dates and cross-referenced RFC files are not artifact rows."""
+    make_repo(tmp_path, {
+        "docs/plans/01-sample-plan.md": PLAN_OK,
+        "docs/rfc/01-sample-rfc.md": RFC_OK,
+        "docs/plans/INDEX.md": (
+            "# INDEX\n\n| Plan | Fecha | Doc |\n|---|---|---|\n"
+            "| `01-sample-plan.md` | 2026-08-16.md | `docs/rfc/01-sample-rfc.md` |\n"
+        ),
+        "docs/rfc/INDEX.md": "# INDEX\n\n01-sample-rfc.md\n",
+    })
+    assert _index_targets(tmp_path) == []

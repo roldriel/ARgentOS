@@ -236,6 +236,76 @@ def check_status_index(
     )
 
 
+_PLAN_ROW_RE = re.compile(r"^\|\s*`(\d{2,}-[a-z0-9-]+\.md)`\s*\|")
+_RFC_PATH_RE = re.compile(r"`(docs/rfc/\d{2,}-[a-z0-9-]+\.md)`")
+_ADR_LINK_RE = re.compile(r"^\|\s*\[[^\]]*\]\((\d{2,}-[a-z0-9-]+\.md)\)\s*\|")
+
+
+def check_index_targets(root: Path) -> list[Violation]:
+    """Every artifact row of a governance INDEX must resolve to its file.
+
+    ``check_index_mirror`` verifies file -> INDEX; this verifies the reverse
+    direction, so an INDEX row whose target was removed cannot survive
+    unnoticed. Row forms are namespace-specific on purpose: the plans INDEX also
+    contains dates and cross-referenced RFC filenames that are not artifact rows.
+    """
+    violations: list[Violation] = []
+
+    def _targets(
+        index_rel: str, matcher, base: str
+    ) -> list[Violation]:
+        index_path = root / index_rel
+        if not index_path.is_file():
+            return []
+        found: list[Violation] = []
+        text = index_path.read_text(encoding="utf-8", errors="replace")
+        for line_number, line in enumerate(text.splitlines(), start=1):
+            if not line.lstrip().startswith("|"):
+                continue
+            for name in matcher(line):
+                target = root / base / name
+                if not target.is_file():
+                    found.append(
+                        Violation(
+                            Path(index_rel),
+                            line_number,
+                            "index-target",
+                            f"INDEX row without target: {name}",
+                        )
+                    )
+        return found
+
+    violations.extend(
+        _targets(
+            "docs/plans/INDEX.md",
+            lambda line: (
+                [m.group(1)] if (m := _PLAN_ROW_RE.match(line)) else []
+            ),
+            "docs/plans",
+        )
+    )
+    violations.extend(
+        _targets(
+            "docs/rfc/INDEX.md",
+            lambda line: [
+                match.removeprefix("docs/rfc/")
+                for match in _RFC_PATH_RE.findall(line)
+            ],
+            "docs/rfc",
+        )
+    )
+    violations.extend(
+        _targets(
+            "docs/adr/INDEX.md",
+            lambda line: (
+                [m.group(1)] if (m := _ADR_LINK_RE.match(line)) else []
+            ),
+            "docs/adr",
+        )
+    )
+    return violations
+
+
 def verify_all(root: Path) -> list[Violation]:
     """Run every structural check against every numbered document."""
     violations: list[Violation] = []
@@ -259,6 +329,7 @@ def verify_all(root: Path) -> list[Violation]:
             if result is not None:
                 violations.append(result)
         violations.extend(check_placeholders(rel, text))
+    violations.extend(check_index_targets(root))
     return violations
 
 

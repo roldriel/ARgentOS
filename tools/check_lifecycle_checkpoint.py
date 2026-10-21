@@ -62,6 +62,18 @@ as an advisory GAP demanding governance attribution — not as an ANOMALY. The
 ANOMALY-level relation for the closure state is R2: it must correspond to a
 registered validation.
 
+**R5 — post-close integrity (Plan 173).** When the plan committed in ``HEAD``
+declares ``Closed``, the working-tree artifact must not differ from ``HEAD``
+outside the append-only lifecycle-metadata subsections (``### Findings``,
+``### Correcciones``, ``### Pending decisions``) or the ``Commits de cierre``
+locator bullet, whose post-commit completion the policy allows. A change
+anywhere else is an ``ANOMALY``. The baseline is ``HEAD`` so the closure commit
+itself (which writes the record) is never flagged; a plan not present in
+``HEAD`` is outside the rule. **Limit:** the rule detects uncommitted changes of
+a closed plan's governing content. It does not claim to detect committed
+post-close modifications; those remain recoverable from Git but are not
+detected here.
+
 This checker has no normative authority (ADR-16): GAPs are advisory and never
 turn the exit code non-zero by themselves; only ANOMALYs do.
 
@@ -85,6 +97,7 @@ _CHANGE_LEVEL_RE = re.compile(
     r"^\*\*Change Level:\*\*\s*(L[0-3])\b", re.MULTILINE
 )
 _H2_RE = re.compile(r"^##\s+(.+?)\s*$", re.MULTILINE)
+_H3_RE = re.compile(r"^###\s+(.+?)\s*$", re.MULTILINE)
 _COMMENT_RE = re.compile(r"<!--.*?-->", re.DOTALL)
 
 _HEX40_RE = re.compile(r"\b[0-9a-f]{40}\b")
@@ -273,6 +286,8 @@ def _git(root: Path, *args: str):
         ["git", "-C", str(root), *args],
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
     )
 
 
@@ -366,8 +381,153 @@ def anchor_closure_revalidation_segments(
     return result
 
 
+# --------------------------------------------------------------------------- #
+# R5 — post-close integrity (Plan 173)
+# --------------------------------------------------------------------------- #
+
+#: Regions a closed plan may still receive additions in (ADR-20 `E1-D4`):
+#: the append-only lifecycle-metadata subsections.
+_ALLOWED_SECTIONS = ("findings", "correcciones", "pending decisions")
+
+#: The closure-commit locator bullet. `policies/validation-closure.md` §5 makes
+#: embedding the SHA/tree of the closing commit after it exists legal and
+#: recommended, so that bullet is not governing content for this rule.
+_COMMITS_FIELD_RE = re.compile(r"^[-*]\s+\*{0,2}Commits de cierre\b")
+
+_TOP_BULLET_RE = re.compile(r"^[-*]\s+")
+
+_HUNK_RE = re.compile(r"^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@")
+
+
+def declares_closed(text: str) -> bool:
+    """True when the artifact's own checkpoint declares `Closed` (with PASS)."""
+    headings = level2_headings(text)
+    if _ANCHOR_HEADING not in headings:
+        return False
+    checkpoint_headings = [
+        heading
+        for heading in headings
+        if heading.startswith(_CHECKPOINT_HEADING_PREFIX)
+    ]
+    if not checkpoint_headings:
+        return False
+    checkpoint_text = section_text(text, checkpoint_headings[0])
+    blocks = labeled_blocks(checkpoint_text, _CHECKPOINT_FIELDS)
+    condition = blocks.get("condition", "")
+    consistency = blocks.get("consistency", "")
+    return bool(re.search(r"\bClosed\b", condition)) and bool(
+        _PASS_RE.search(consistency)
+    )
+
+
+def allowed_line_ranges(text: str) -> list[tuple[int, int]]:
+    """1-based inclusive line ranges where a closed plan may still change.
+
+    The append-only lifecycle-metadata subsections and the closure-commit
+    locator bullet. Everything else is governing content.
+    """
+    lines = text.splitlines()
+    headings: list[tuple[int, str]] = []
+    for index, line in enumerate(lines):
+        match = _H2_RE.match(line) or _H3_RE.match(line)
+        if match is not None:
+            headings.append((index, match.group(1).strip().casefold()))
+
+    ranges: list[tuple[int, int]] = []
+    for position, (index, name) in enumerate(headings):
+        if name not in _ALLOWED_SECTIONS:
+            continue
+        end = headings[position + 1][0] if position + 1 < len(headings) else len(lines)
+        ranges.append((index + 2, end))
+
+    for index, line in enumerate(lines):
+        if not _COMMITS_FIELD_RE.match(line):
+            continue
+        end = len(lines)
+        for following in range(index + 1, len(lines)):
+            if _TOP_BULLET_RE.match(lines[following]):
+                end = following
+                break
+        ranges.append((index + 1, end))
+        break
+    return ranges
+
+
+def _in_ranges(line_number: int, ranges: list[tuple[int, int]]) -> bool:
+    return any(start <= line_number <= end for start, end in ranges)
+
+
+def _hunks(diff_text: str) -> list[tuple[int, int, int, int]]:
+    hunks: list[tuple[int, int, int, int]] = []
+    for line in diff_text.splitlines():
+        match = _HUNK_RE.match(line)
+        if match is None:
+            continue
+        hunks.append(
+            (
+                int(match.group(1)),
+                int(match.group(2) or 1),
+                int(match.group(3)),
+                int(match.group(4) or 1),
+            )
+        )
+    return hunks
+
+
+def post_close_violations(root: Path, rel: Path, text: str) -> list[str]:
+    """R5: detect a working-tree change of a plan closed at HEAD.
+
+    The baseline is the plan as committed in HEAD; the rule only applies when
+    HEAD's artifact declares `Closed`. Changes are allowed only in the
+    append-only lifecycle-metadata subsections or inside the closure-commit
+    locator bullet. This detects the uncommitted edit of governing content of a
+    closed plan (the corruption vector the rule covers); committed post-close
+    modifications remain Git-recoverable and are not claimed to be detected.
+    """
+    probe = _git(root, "diff", "--quiet", "HEAD", "--", rel.as_posix())
+    if probe.returncode != 1:
+        # 0 = no working-tree change; anything else = no HEAD / git unavailable.
+        return []
+    head = _git(root, "show", f"HEAD:{rel.as_posix()}")
+    if head.returncode != 0:
+        return []
+    head_text = head.stdout
+    if not declares_closed(head_text):
+        return []
+    diff = _git(root, "diff", "--no-color", "-U0", "HEAD", "--", rel.as_posix())
+    if diff.returncode not in (0, 1):
+        return []
+    old_ranges = allowed_line_ranges(head_text)
+    new_ranges = allowed_line_ranges(text)
+    violations: list[str] = []
+    for old_start, old_count, new_start, new_count in _hunks(diff.stdout):
+        for line_number in range(old_start, old_start + old_count):
+            if not _in_ranges(line_number, old_ranges):
+                violations.append(
+                    "closed plan modified after closure outside the append-only "
+                    f"lifecycle-metadata region (HEAD line {line_number})"
+                )
+                break
+        for line_number in range(new_start, new_start + new_count):
+            if not _in_ranges(line_number, new_ranges):
+                violations.append(
+                    "closed plan modified after closure outside the append-only "
+                    f"lifecycle-metadata region (line {line_number})"
+                )
+                break
+    return violations
+
+
 def classify_checkpoint(root: Path, rel: Path, text: str) -> CheckpointFinding:
-    """Run C-2 rules over one numbered plan artifact (R-C2-1..R-C2-7)."""
+    """Run C-2 rules over one numbered plan artifact (R-C2-1..R-C2-7 + R5)."""
+    # R5 (Plan 173): a plan that already declares `Closed` in HEAD must not be
+    # modified in the working tree outside the append-only lifecycle-metadata
+    # region. Evaluated before the membership classification so deleting the
+    # containers themselves is also detected.
+    post_close = post_close_violations(root, rel, text)
+    if post_close:
+        return CheckpointFinding(rel, "ANOMALY", post_close)
+
     headings = level2_headings(text)
     has_anchor_section = _ANCHOR_HEADING in headings
     has_checkpoint_section = any(

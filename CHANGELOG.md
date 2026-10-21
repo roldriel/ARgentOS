@@ -35,6 +35,10 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 ## [Unreleased]
 
+### Fixed
+
+- **Corrección del cierre de Phase 0.4** (Plan 173, DEV Clase B + sub-cambio Clase C tests-only; en `dev`, release pendiente): los **9 ítems `MISCLASSIFIED`** y los **2 `INSUFFICIENT_EVIDENCE`** de la auditoría adversarial pasan a estado terminal genuino —R5 de C-2 detecta la modificación no commiteada del contenido gobernante de un plan cerrado (`P03-D-0.3-12`/`FM-05`/`R-03`); `check_plan_structure` verifica INDEX→archivo en planes/RFC/ADR (`G-07`/`FM-07`/`D-0.3-13`/`R-04`); `tools/check_enforcement_declarations.py` verifica `ENF-001`…`ENF-003` y entra en la batería y CI (`G-04`); tres tests de idempotencia del lifecycle en la suite del payload (`G-08`, Clase C); `docs/VERSIONING.md` §9 reconciliado completo (`FM-10`/`DOC-04`)—, se preservan los **22 residual risks genuinos** y se corrige la identidad de cierre del Plan 172 **por referencia** (tree `58cee8…` y delta `c2492e83…` de `f77cd3f`), sin editar el Plan 172. `VERSION`/`dist`/tags sin cambios.
+
 ### Added
 
 - **Cobertura de idempotencia del lifecycle** (Clase C de RFC-56, tests-only; `G-08` de Priority 0.2): la suite del payload incorpora tres pruebas —segundo `uninstall` como `NOOP` sin reescritura, `doctor` determinista y sin efectos sobre el árbol, y segundo/tercer `recover` como `NOOP` tras una recuperación exitosa—. Sin cambio de comportamiento, de contrato ni del resultado de ningún checker; sin bump de `VERSION` (se consolida en la próxima versión que se corte).

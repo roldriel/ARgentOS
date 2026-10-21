@@ -69,6 +69,16 @@ only on unrecoverable read errors.
   closure time; commit SHAs are locators only. Anchor selection is by
   correspondence of validated state to closure state — never by recency
   ("latest A2 wins") and never by generic tree membership.
+- **R5 — post-close integrity (Plan 173).** When the plan committed in `HEAD`
+  declares `Closed`, the working-tree artifact must not differ from `HEAD`
+  outside the append-only lifecycle-metadata subsections (`### Findings`,
+  `### Correcciones`, `### Pending decisions`) or the `Commits de cierre` locator
+  bullet (whose post-commit completion the checkpoint policy allows). A change
+  anywhere else is an `ANOMALY`. The baseline is `HEAD`, so the closure commit
+  itself is never flagged and a plan not present in `HEAD` is outside the rule.
+  **Limit:** R5 detects **uncommitted** changes of a closed plan's governing
+  content. It does not claim to detect committed post-close modifications;
+  those remain recoverable from Git but are not detected by this rule.
 - When: before declaring `Closed` (GC-1 gate) and after any revalidation
   that changes the applicable anchor.
 - Meaning: `VALID` = checkpoint present and consistent (A1 or A2 per

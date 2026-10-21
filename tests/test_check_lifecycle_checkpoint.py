@@ -872,3 +872,129 @@ def test_real_repo_expected_classifications():
 
 def test_tool_uses_only_stdlib():
     assert_tool_imports_only_stdlib(TOOL, {"check_lifecycle_checkpoint"})
+
+
+# --- R5: post-close integrity (Plan 173) ---------------------------------------------
+
+
+def with_findings_container(doc: str) -> str:
+    return (
+        doc
+        + "\n## Findings / Correcciones / Pending\n\n"
+        + "### Findings\n\nN/A — sin registros reales.\n\n"
+        + "### Correcciones\n\nN/A\n\n"
+        + "### Pending decisions\n\nN/A\n"
+    )
+
+
+def r5_closed_doc(sha: str, tree: str) -> str:
+    return with_findings_container(
+        regime_doc("Executed", anchor_a1(tree), checkpoint_record([sha], tree))
+    )
+
+
+def test_working_tree_edit_of_a_closed_plans_governing_content_is_anomaly(tmp_path):
+    """R5 — editing the governing content of a plan closed at HEAD is a contradiction."""
+    root = init_repo(tmp_path)
+    sha_a, tree_a = commit(root, {"content.txt": "v1\n"}, "content A")
+    doc = r5_closed_doc(sha_a, tree_a)
+    path = write_plan(root, doc)
+    commit(root, {"docs/plans/99-sample.md": doc}, "close the plan")
+
+    path.write_text(doc.replace("Texto.", "Texto editado."), encoding="utf-8")
+    finding = one_finding(root)
+    assert finding.classification == "ANOMALY"
+    assert any("closed plan modified after closure" in r for r in finding.reasons)
+
+
+def test_working_tree_deletion_of_a_closed_plans_governing_content_is_anomaly(tmp_path):
+    """R5 — a deletion (not only an insertion) of governing content is detected."""
+    root = init_repo(tmp_path)
+    sha_a, tree_a = commit(root, {"content.txt": "v1\n"}, "content A")
+    doc = r5_closed_doc(sha_a, tree_a)
+    path = write_plan(root, doc)
+    commit(root, {"docs/plans/99-sample.md": doc}, "close the plan")
+
+    path.write_text(doc.replace("\nTexto.\n", "\n"), encoding="utf-8")
+    finding = one_finding(root)
+    assert finding.classification == "ANOMALY"
+    assert any("closed plan modified after closure" in r for r in finding.reasons)
+
+
+def test_findings_append_in_a_closed_plan_is_allowed(tmp_path):
+    """R5 — the append-only lifecycle-metadata region is not frozen."""
+    root = init_repo(tmp_path)
+    sha_a, tree_a = commit(root, {"content.txt": "v1\n"}, "content A")
+    doc = r5_closed_doc(sha_a, tree_a)
+    path = write_plan(root, doc)
+    commit(root, {"docs/plans/99-sample.md": doc}, "close the plan")
+
+    appended = doc.replace(
+        "N/A — sin registros reales.\n",
+        "N/A — sin registros reales.\n\n"
+        "- `PLAN-99:F-01` — estado: resolved; synthetic post-close append.\n",
+    )
+    path.write_text(appended, encoding="utf-8")
+    finding = one_finding(root)
+    assert finding.classification == "VALID"
+    assert not any("closed plan modified" in r for r in finding.reasons)
+
+
+def test_commits_locator_bullet_update_in_a_closed_plan_is_allowed(tmp_path):
+    """R5 — recording the closing commit locator after the commit exists is legal."""
+    root = init_repo(tmp_path)
+    sha_a, tree_a = commit(root, {"content.txt": "v1\n"}, "content A")
+    doc = r5_closed_doc(sha_a, tree_a)
+    path = write_plan(root, doc)
+    commit(root, {"docs/plans/99-sample.md": doc}, "close the plan")
+
+    updated = doc.replace(
+        "- Estado validado:",
+        f"  - C2 `{sha_a}` — locator registered after the commit.\n- Estado validado:",
+        1,
+    )
+    path.write_text(updated, encoding="utf-8")
+    finding = one_finding(root)
+    assert finding.classification == "VALID"
+    assert not any("closed plan modified" in r for r in finding.reasons)
+
+
+def test_plan_not_closed_in_head_is_outside_r5(tmp_path):
+    """R5 — the closure commit itself is never flagged (HEAD is the baseline)."""
+    root = init_repo(tmp_path)
+    sha_a, tree_a = commit(root, {"content.txt": "v1\n"}, "content A")
+    doc = regime_doc(
+        "Executed",
+        anchor_a1(tree_a),
+        checkpoint_record(
+            [sha_a], tree_a, condition="**pendiente de cierre**"
+        ),
+    )
+    path = write_plan(root, doc)
+    commit(root, {"docs/plans/99-sample.md": doc}, "unclosed regime plan")
+    path.write_text(doc.replace("Texto.", "Texto editado."), encoding="utf-8")
+    finding = one_finding(root)
+    assert finding.classification != "ANOMALY"
+
+
+def test_plan_absent_from_head_is_outside_r5(tmp_path):
+    """R5 — a new plan that is not committed yet has no post-close baseline."""
+    root = init_repo(tmp_path)
+    sha_a, tree_a = commit(root, {"content.txt": "v1\n"}, "content A")
+    doc = r5_closed_doc(sha_a, tree_a)
+    write_plan(root, doc)
+    finding = one_finding(root)
+    assert finding.classification == "VALID"
+
+
+def test_line_ending_only_change_is_not_a_post_close_violation(tmp_path):
+    """R5 — Git filters normalize line endings; a pure CRLF rewrite is not a change."""
+    root = init_repo(tmp_path)
+    sha_a, tree_a = commit(root, {"content.txt": "v1\n"}, "content A")
+    doc = r5_closed_doc(sha_a, tree_a)
+    path = write_plan(root, doc)
+    commit(root, {"docs/plans/99-sample.md": doc}, "close the plan")
+    git(root, "config", "core.autocrlf", "true")
+    path.write_bytes(doc.replace("\n", "\r\n").encode("utf-8"))
+    finding = one_finding(root)
+    assert not any("closed plan modified" in r for r in finding.reasons)

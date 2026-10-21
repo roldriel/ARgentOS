@@ -40,6 +40,8 @@ jobs:
         run: python tools/check_taxonomy_coherence.py
       - name: Canonical invariants equivalence
         run: python tools/check_invariants_equivalence.py
+      - name: Enforcement declarations
+        run: python tools/check_enforcement_declarations.py
       - name: Session artifacts and version state
         run: |
           python tools/check_version_state.py

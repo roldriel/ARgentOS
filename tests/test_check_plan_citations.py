@@ -323,10 +323,35 @@ def test_new_legacy_reference_from_live_doc_flagged(tmp_path):
     make_repo(tmp_path, {
         "AGENTS.md": "See `plans/INDEX.md:Convenciones`.\n",
     })
-    legacy = cpc.find_new_legacy_references(cpc.scan_documents(tmp_path))
+    legacy = cpc.find_new_legacy_references(cpc.scan_documents(tmp_path), tmp_path)
     assert len(legacy) == 1
     assert legacy[0].reason == "new reference to legacy path (migration-only mapping)"
     assert legacy[0].citation.source == Path("AGENTS.md")
+
+
+def test_canonical_dev_agents_layer_is_not_a_legacy_reference(tmp_path):
+    """The DEV layer's own ``.agents/`` is canonical, not the pre-migration path.
+
+    ``tools/legacy_paths.py`` maps ``.agents/`` to ``protocol/.agents/`` because
+    that was the payload's location before the migration. The repository's DEV
+    operational layer now lives at the root in ``.agents/``, so a citation that
+    resolves there must not be reported as a legacy reference.
+    """
+    make_repo(tmp_path, {
+        "docs/CONVENTIONS.md": "Ver `.agents/policies/validation-closure.md:5. X`.\n",
+        ".agents/policies/validation-closure.md": "# Closure\n\n## 5. X\n",
+        "protocol/.agents/policies/validation-closure.md": "# Payload closure\n\n## 5. X\n",
+    })
+    assert cpc.find_new_legacy_references(cpc.scan_documents(tmp_path), tmp_path) == []
+
+
+def test_legacy_reference_that_does_not_resolve_canonically_is_still_flagged(tmp_path):
+    make_repo(tmp_path, {
+        "docs/CONVENTIONS.md": "`plans/rfc/62-x.md:Invariants`\n",
+        "docs/rfc/62-x.md": "## Invariants\n",
+    })
+    legacy = cpc.find_new_legacy_references(cpc.scan_documents(tmp_path), tmp_path)
+    assert len(legacy) == 1
 
 
 def test_historical_source_legacy_reference_not_flagged(tmp_path):
@@ -334,7 +359,7 @@ def test_historical_source_legacy_reference_not_flagged(tmp_path):
         "docs/plans/a.md": "`plans/b.md:Sec`\n",
         "docs/plans/b.md": "# Sec\n",
     })
-    assert cpc.find_new_legacy_references(cpc.scan_documents(tmp_path)) == []
+    assert cpc.find_new_legacy_references(cpc.scan_documents(tmp_path), tmp_path) == []
     assert cpc.verify_all(tmp_path) == []
 
 
@@ -343,8 +368,24 @@ def test_changelog_legacy_reference_exempt(tmp_path):
         "CHANGELOG.md": "(`plans/20-release-adoption.md` §A)\n",
         "docs/plans/20-release-adoption.md": "# Plan 20\n\n## A. X\n",
     })
-    assert cpc.find_new_legacy_references(cpc.scan_documents(tmp_path)) == []
+    assert cpc.find_new_legacy_references(cpc.scan_documents(tmp_path), tmp_path) == []
     assert cpc.verify_all(tmp_path) == []
+
+
+# --- Numbered headings cited without their number -----------------------------
+
+
+@pytest.mark.parametrize("cited,heading", [
+    ("Enforcement deferred", "## 24. Enforcement deferred"),
+    ("Applicability", "## 2. Applicability"),
+    ("Placement resolution algorithm", "## 7. Placement resolution algorithm"),
+])
+def test_numbered_heading_cited_without_its_number(cited, heading):
+    assert cpc.section_exists(cited, heading + "\n\ntexto\n")
+
+
+def test_numbered_heading_cited_without_its_number_still_rejects_others():
+    assert not cpc.section_exists("Enforcement", "## 24. Non-goals\n")
 
 
 # --- Root documents as citation sources --------------------------------------

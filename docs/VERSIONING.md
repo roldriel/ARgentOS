@@ -288,52 +288,51 @@ Condiciones derivadas del Change Lifecycle (semántica; RFC-75
   tocar `VERSION`/changelog, o los ítems se acumulan en `[Unreleased]` y la
   numeración se asigna en la promoción.
 
-## 9. Estado actual (2026-10-14, release `12.1.0`)
+## 9. Estado actual (2026-10-20, release `12.3.0`)
 
-Snapshot del estado al 2026-10-14, reconciliado en el punto de promoción que §5
+Snapshot del estado al 2026-10-20, reconciliado en el punto de promoción que §5
 declara. Sucesión de puntos de reconciliación: la promoción del rango
 `11.3.0`–`11.6.1` (plan 146), la corrección post-release del plan 147, la
 **release de gobernanza `11.6.2`** (plan 148), la **release de gobernanza
-`11.7.1`** (planes 151–153), la **release `12.0.0`** (plan 154, RFC-81) y la
-**release `12.1.0`** (plan 168), que es el punto vigente. La fuente inmutable de
-la verdad son `git tag` + `protocol/.agents/VERSION`: este snapshot es un resumen
-de lectura, no una segunda fuente, y una divergencia se resuelve siempre a favor
-de git.
+`11.7.1`** (planes 151–153), la **release `12.0.0`** (plan 154, RFC-81), la
+**release `12.1.0`** (plan 168), la **release `12.2.0`** (plan 170, RFC-84) y la
+**release `12.3.0`** (Change Clase A bajo instrucción directa del mantenedor,
+commit `16224ce`), que es el punto vigente. La fuente inmutable de la verdad son
+`git tag` + `protocol/.agents/VERSION`: este snapshot es un resumen de lectura,
+no una segunda fuente, y una divergencia se resuelve siempre a favor de git.
 
-- `master` = `12.1.0` (release del plan 168). Publica los dos cambios de payload
-  que permanecían en `dev` sin publicar: la reconciliación de prosa del layout
-  canónico `.argentos/` del **plan 156** (RFC-82) y las **adiciones compatibles**
-  del Protocol del **plan 166** (RFC-83: relación `Objective` multi-Change en
-  `contracts/CHANGE_GOVERNANCE.md` y procedencia declarada del actor en
-  `contracts/HARNESS_REPORT.md`). La release es **MINOR** por §3 y absorbe el
-  número `12.0.1` que el plan 156 asignó y **nunca publicó** (`Released = FALSE`):
-  el ítem de payload de ese plan se transporta en la sección `[12.1.0]` del
-  changelog, con la absorción declarada; su artefacto cerrado no se editó.
-- `dist` = publicado desde `master` en la release `12.1.0` (`publish-dist`):
-  contiene `.agents/` + `AGENTS.md`, con `VERSION` = `12.1.0` y el harness del
-  lifecycle. La **publicación remota ya se ejecutó** (`origin/dist` regenerado
-  desde el tag `12.1.0`); ese acto tiene su propia autorización —el Plan 168 lo
-  declaró fuera de su alcance y lo registró como pending decision— y este
-  snapshot **no la verifica**.
+- `master` = `12.3.0` (tag `12.3.0` sobre `0bcce23`, la promoción del Change que
+  cerró `PC-3`, `E1-G1` y `G-09`). El rango `dev` → `master` quedó publicado: el
+  **plan 170** (RFC-84, Clase A) materializó el catálogo canónico en `12.2.0` y el
+  Change `16224ce` endureció el enforcement al contrato ya vigente en `12.3.0`
+  (equivalencia canónica en la batería, hook que deniega el payload y ventana de
+  crash cerrada). Ninguno redefine un contrato.
+- `dist` = publicado desde `master` en la release `12.3.0` (`publish-dist`):
+  contiene `.agents/` + `AGENTS.md`, con `VERSION` = `12.3.0` y el harness del
+  lifecycle. La **publicación remota ya se ejecutó** (`origin/dist` en `7f6b73f`,
+  `dist: publish from master @ 0bcce23`); ese acto tiene su propia autorización
+  —el Plan 168 lo declaró fuera de su alcance y lo registró como pending
+  decision— y este snapshot **no la verifica**.
   **Contrato de distribución:** `dist` transporta el *payload* (`.agents/` +
   `AGENTS.md`), no el layout materializado; el layout canónico
   `<proyecto>/.argentos/…` lo produce el lifecycle al instalar (ver
   `docs/ADOPTION.md` §1 y §1.3).
-- `dev` = `12.1.0` (`protocol/.agents/VERSION`). **No queda ningún cambio de
-  payload sin publicar**: la promoción `dev` → `master` del plan 168 llevó a
-  `master` todo el contenido de payload que `dev` tenía por delante. El
-  `[Unreleased]` acumula los ítems de gobernanza no asignados a una versión
-  (planes docs-only 149–153, 155, 167 y 168, cerrados sin release de protocolo
-  por RFC-69, más los ítems de gobernanza del plan 156 que no pertenecen a su
-  sección de payload).
+- `dev` = `12.3.0` (`protocol/.agents/VERSION`). **No queda ningún cambio de
+  payload sin publicar**: la promoción llevó a `master` todo el contenido de
+  payload de `dev`. Los planes docs-only y tooling posteriores (171 y 172,
+  cerrados sin release de protocolo por RFC-69) viven en `dev` y en `master` sin
+  versión de payload. El `[Unreleased]` acumula los ítems de gobernanza no
+  asignados a una versión.
 - Tags anotados de la serie vigente: `11.6.0`, `11.6.1`, `11.6.2`, `11.7.0`,
-  `11.7.1`, `12.0.0` y `12.1.0`, cada uno sobre el commit de promoción
-  correspondiente de `master`. `11.7.0` (plan 150, RFC-80) publicó el Memory
-  System reference runtime; `11.7.1` (planes 151–153) fue una release de
+  `11.7.1`, `12.0.0`, `12.1.0`, `12.2.0` y `12.3.0`, cada uno sobre el commit de
+  promoción correspondiente de `master`. `11.7.0` (plan 150, RFC-80) publicó el
+  Memory System reference runtime; `11.7.1` (planes 151–153) fue una release de
   gobernanza; `12.1.0` (plan 168) publica el payload acumulado de los planes 156
-  y 166.
+  y 166; `12.2.0` (plan 170) publica el catálogo canónico de invariantes y
+  properties; `12.3.0` publica el endurecimiento de enforcement de `PC-3`,
+  `E1-G1` y `G-09`.
 - `VERSION` = `PROTOCOL_VERSION` (`runtime/toolcalls/canonical.py`, el ancla
-  semántica del runtime) = `12.1.0` en `dev` y en `master`.
+  semántica del runtime) = `12.3.0` en `dev` y en `master`.
 
 Notas:
 

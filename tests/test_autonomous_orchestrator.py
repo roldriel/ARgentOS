@@ -52,11 +52,15 @@ from runtime.orchestrator.contracts import (  # noqa: E402
 from runtime.orchestrator.derivation import derive_next_action  # noqa: E402
 from runtime.orchestrator.governance import (  # noqa: E402
     GovernanceError,
+    record_checkpoint,
+    record_plan_status,
+    record_run_note,
     record_validation_anchor,
 )
 from runtime.orchestrator.host import ExecutionHost  # noqa: E402
 from runtime.orchestrator.observation import (  # noqa: E402
     ObservationError,
+    derive_plan_write_authority,
     git_state,
     observe,
 )
@@ -132,8 +136,14 @@ def plan_text(
     extra_command: str | None = None,
     validation_exits_zero: bool = True,
     gate_commands: bool = True,
+    closed: bool = False,
 ) -> str:
-    """A plan artifact exercising the containers the host reads."""
+    """A plan artifact exercising the containers the host reads.
+
+    ``closed=True`` materializes a plan whose checkpoint declares the derived
+    condition ``Closed`` (ADR-20 ``E1-D4``), used to prove that a closed plan
+    grants no authority to modify its governing content.
+    """
     entry = "x" if entry_checked else " "
     commands = ["python src/check_ok.py"]
     if not validation_exits_zero:
@@ -160,6 +170,24 @@ def plan_text(
         "provenance original: synthetic"
         if finding_open
         else "N/A — sin registros reales."
+    )
+    state_tree = "a" * 40
+    delta = "b" * 64
+    anchor_body = (
+        f"- **State identity (estado validado):** T1 = `{state_tree}`.\n"
+        f"- **Delta scoped identity:** `{delta}`.\n"
+        "- **Validity / stale:** vigente."
+        if closed
+        else "<!-- empty on purpose -->"
+    )
+    checkpoint_body = (
+        "- **Commits de cierre:** synthetic closure commit.\n"
+        "- **Estado validado (ref al Validation anchor):** A1.\n"
+        f"- **Estado de cierre (tree id):** `{state_tree}`.\n"
+        "- **Consistencia checkpoint↔anchor:** PASS.\n"
+        "- **Condición derivada:** **`Closed`** (synthetic closure record)."
+        if closed
+        else "<!-- empty on purpose -->"
     )
     return f"""# Plan 200 — synthetic change for the orchestrator suite
 
@@ -199,13 +227,13 @@ Synthetic change driven by the DEV Autonomous Orchestrator test suite.
 
 ## Validation anchor
 
-<!-- empty on purpose -->
+{anchor_body}
 
 ---
 
 ## Checkpoint / cierre
 
-<!-- empty on purpose -->
+{checkpoint_body}
 
 ---
 
@@ -446,6 +474,88 @@ def test_records_cannot_be_written_without_existing_authority():
         record_validation_anchor(
             decision=unauthorized, plan_path=plan_path, body="should not land"
         )
+    assert plan_path.read_text(encoding="utf-8") == before
+
+
+# --------------------------------------------------------------------------- #
+# Plan write authority is derived and verified at the writer (ADR-20 E1-D3/D4)
+# --------------------------------------------------------------------------- #
+
+
+def test_plan_write_authority_is_derived_from_the_artifact():
+    executed = derive_plan_write_authority(plan_text(status="Executed"))
+    assert executed.authorized_status
+    assert not executed.closure_declared
+    assert executed.write_permitted
+
+    # `Executed` and `Closed` are distinct for write authority: the status still
+    # authorizes execution, the closure record is what removes the write window.
+    closed = derive_plan_write_authority(plan_text(status="Executed", closed=True))
+    assert closed.authorized_status
+    assert closed.closure_declared
+    assert not closed.write_permitted
+
+    draft = derive_plan_write_authority(plan_text(status="Aprobado para redacción"))
+    assert not draft.authorized_status
+    assert not draft.write_permitted
+
+
+def test_a_caller_assertion_does_not_authorize_writing_a_closed_plan():
+    """`plan_authorized=True` is an assertion; the writer verifies the artifact.
+
+    ADR-20 `E1-D3`: authority to write a plan must be derived and verifiable, and
+    a value supplied by the caller is not evidence of authority. ADR-20 `E1-D4`:
+    a closed plan grants no authority to modify its governing content.
+    """
+    repo = build_repo(
+        _scratch("closed-write-guard"),
+        plan=plan_text(status="Executed", closed=True),
+    )
+    plan_path = repo / "docs" / "plans" / PLAN_NAME
+    before = plan_path.read_text(encoding="utf-8")
+    boundary = AuthorityBoundary(plan_authorized=True)
+    for action, write in (
+        (
+            "RECORD_RUN_NOTE",
+            lambda decision: record_run_note(
+                decision=decision, plan_path=plan_path, run_id="run-x", block="x"
+            ),
+        ),
+        (
+            "RECORD_CHECKPOINT",
+            lambda decision: record_checkpoint(
+                decision=decision, plan_path=plan_path, body="rewritten"
+            ),
+        ),
+        (
+            "RECORD_PLAN_STATUS_EXECUTED",
+            lambda decision: record_plan_status(
+                decision=decision, plan_path=plan_path, status="Executed"
+            ),
+        ),
+    ):
+        decision = boundary.evaluate(action)
+        # The boundary — a pure evaluator — accepts the assertion...
+        assert decision.verdict == AUTHORIZED_EXISTING
+        # ...and the writer refuses it, because the artifact does not authorize.
+        with pytest.raises(GovernanceError, match="Closed"):
+            write(decision)
+    assert plan_path.read_text(encoding="utf-8") == before
+
+
+def test_a_caller_assertion_does_not_authorize_an_unauthorized_status():
+    repo = build_repo(
+        _scratch("draft-write-guard"),
+        plan=plan_text(status="Aprobado para redacción"),
+    )
+    plan_path = repo / "docs" / "plans" / PLAN_NAME
+    before = plan_path.read_text(encoding="utf-8")
+    decision = AuthorityBoundary(plan_authorized=True).evaluate(
+        "RECORD_VALIDATION_ANCHOR"
+    )
+    assert decision.verdict == AUTHORIZED_EXISTING
+    with pytest.raises(GovernanceError, match="does not authorize"):
+        record_validation_anchor(decision=decision, plan_path=plan_path, body="x")
     assert plan_path.read_text(encoding="utf-8") == before
 
 
@@ -940,6 +1050,61 @@ def test_full_loop_derives_closed_from_real_evidence():
     assert observation.anchor.present and observation.checkpoint.present
     assert observation.checkpoint.closure_tree == observation.anchor.state_identity
     assert observation.checkpoint.consistency_pass
+
+
+def test_run_note_is_a_reference_to_the_external_execution_record():
+    """ADR-20 `E1-D2`: the run record is external; the plan carries a reference.
+
+    The operational evidence (delegations, worker results, journal and the
+    reconstruction report) lives in the orchestrator's ephemeral store. The plan
+    is not the run record, so what it receives is a reference — not the record
+    itself, and never in a plan that already declares `Closed`.
+    """
+    repo = build_repo(_scratch("external-record"))
+    host = make_host(repo, max_iterations=2)
+    run = host.run()
+    assert run.terminal_action == "STOP_MAX_ITERATIONS"
+    text = (repo / "docs" / "plans" / PLAN_NAME).read_text(encoding="utf-8")
+    assert "registro externo de ejecución" in text
+    assert "`.project/orchestrator/plan-200/runs/" in text
+    # The external record it references really exists.
+    report = host.store.read_run_report(PLAN_NUMBER, run.run_id)
+    assert report is not None
+    assert run.run_id in report
+
+
+def test_a_closed_plan_receives_no_run_note_and_keeps_its_external_record():
+    """E1-D4: a closed plan's governing content is not written; the record stays external."""
+    repo = build_repo(_scratch("closed-note"))
+    plan_path = repo / "docs" / "plans" / PLAN_NAME
+    first = make_host(repo, max_iterations=12)
+    run = first.run()
+    assert run.terminal_action == "CLOSED_DERIVED"
+    closed_text = plan_path.read_text(encoding="utf-8")
+    assert "orchestrator-run:" not in closed_text
+    assert first.store.read_run_report(PLAN_NUMBER, run.run_id) is not None
+
+    # A later run over the closed plan derives the same terminal condition and
+    # writes nothing into it; the external record of that run still exists.
+    second = make_host(repo, max_iterations=3, run_id="run-later")
+    later = second.run()
+    assert later.terminal_action == "CLOSED_DERIVED"
+    assert plan_path.read_text(encoding="utf-8") == closed_text
+    assert second.store.read_run_report(PLAN_NUMBER, "run-later") is not None
+
+
+def test_derived_write_on_a_closed_plan_stops_instead_of_writing():
+    """A derived record the closed artifact refuses becomes a stop with evidence."""
+    repo = build_repo(
+        _scratch("closed-record-stop"),
+        plan=plan_text(status="Executed", closed=True),
+    )
+    plan_path = repo / "docs" / "plans" / PLAN_NAME
+    before = plan_path.read_text(encoding="utf-8")
+    run = make_host(repo, max_iterations=4).run()
+    assert run.terminal_action == "STOP_FORBIDDEN_ACTION"
+    assert "did not authorize" in run.rationale
+    assert plan_path.read_text(encoding="utf-8") == before
 
 
 def test_revalidation_is_recorded_as_a2_without_mutating_a1():

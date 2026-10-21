@@ -53,7 +53,7 @@ Este documento **no** declara garantías implementadas. Cada entrada declara su 
 
 ### INV-01 — Authority Preservation
 
-Ningún efecto del host se ejecuta sin autoridad derivada; `AuthorityBoundary` clasifica la acción y la rechaza cuando falta base. Mecanismo: `runtime/orchestrator/authority.py` y `host.py` (la negativa precede al efecto). Verificación: tests del host y de SAE, con contra-prueba de que la escritura sí ocurre cuando está autorizada. Límite: no contiene autoridad fuera del host y el gate exige `--sae`.
+Ningún efecto del host se ejecuta sin autoridad derivada; `AuthorityBoundary` clasifica la acción y la rechaza cuando falta base. Además, los escritores de plan **re-derivan** la autoridad del propio artefacto que van a escribir (`derive_plan_write_authority`, ADR-20 `E1-D3`) y rechazan la escritura cuando el estado declarado no autoriza o cuando el plan declara `Closed`: la aserción del caller no es la autoridad. Mecanismo: `runtime/orchestrator/authority.py`, `host.py` y `governance.py` (la negativa precede al efecto). Verificación: tests del host y de SAE, con contra-prueba de que la escritura sí ocurre cuando está autorizada y de que una aserción favorable no abre un plan cerrado. Límite: no contiene autoridad fuera del host y el gate exige `--sae`.
 
 ### INV-02 — Transition Validity
 
@@ -65,7 +65,7 @@ Toda claim emitida declara una clase de evidencia y una referencia; sólo con ev
 
 ### INV-04 — Historical / Lifecycle Integrity
 
-El contenido gobernante de un artefacto cerrado no se reescribe ni se reabre; las adiciones van a la región append-only de metadatos de lifecycle o fuera del artefacto con referencia. Mecanismo: prohibición normativa y checkers advisory. Verificación: anclas, checkpoints y lineage; el contenido está pinneado por digest en un artefacto. Límite: sin prevención; el pinning de contenido cubre 1 de 178 artefactos.
+El contenido gobernante de un artefacto cerrado no se reescribe ni se reabre; las adiciones van a la región append-only de metadatos de lifecycle o fuera del artefacto con referencia. Mecanismo: prohibición normativa y checkers advisory; el host DEV rechaza escribir el contenido gobernante de un plan que declara `Closed` y sólo admite el apéndice de metadatos de lifecycle (`E1-D4`). Verificación: anclas, checkpoints y lineage; el contenido está pinneado por digest en un artefacto; tests de la negativa del escritor. Límite: fuera del host no hay prevención; el pinning de contenido cubre 1 de 178 artefactos.
 
 ### INV-05 — Identity Integrity
 
@@ -81,7 +81,7 @@ Una sesión normal no modifica el payload; estar dentro del espacio ARgentOS no 
 
 ### INV-08 — Materialization Atomicity / Idempotence
 
-Las operaciones de materialización del layout son atómicas por archivo, con journal, rollback y recuperación, e idempotentes en `install` y `update`. Mecanismo: escritura temp + `fsync` + `os.replace`, journal y `recover`. Verificación: tests de transacción, límites y update/uninstall. Límite: no hay transacción multi-archivo y existe una ventana de crash entre la escritura del archivo y su registro en el journal.
+Las operaciones de materialización del layout son atómicas por archivo, con journal, rollback y recuperación, e idempotentes en `install` y `update`. Mecanismo: escritura temp + `fsync` + `os.replace`, intención registrada en el journal **antes** de cada escritura o unlink, journal y `recover`. Verificación: tests de transacción, límites y update/uninstall. Límite: no hay transacción multi-archivo; ninguna escritura queda fuera del journal.
 
 ### INV-09 — Non-Progress Detection / Termination
 
@@ -125,4 +125,10 @@ Toda modificación de la definición común se registra primero en el Amendment 
 
 ## Trabajo pendiente
 
-Los gaps de enforcement de Priority 0.2 se registran con su dominio, autoridad requerida y riesgo en `docs/plans/170-materialize-canonical-invariants-catalog.md` (`PC-2`) y en `docs/adr/21-attested-escape-evidence-refs-and-transitions.md`. A la fecha, **E1-G1, G-05 y G-09 están implementados**; **G-03 y G-06 fueron rechazados por diseño**; los restantes conservan su vía propia de autorización en Plan 170 `PC-2` y ADR-21. Materializar el catálogo no los implementa.
+Los doce gaps de enforcement de Priority 0.2 tienen ahora un estado terminal explícito; el registro completo, con evidencia y rationale, vive en `docs/working/proposals/PHASE_0_4_INHERITED_DEBT_CLOSURE_2026-10-20.md` y su materialización en `docs/plans/172-phase-0-4-closure-implementation.md`.
+
+- **Implementados:** `E1-G1` (hook deniega el payload), `E1-G2` (autoridad de escritura derivada y verificada en el escritor), `E1-G3` (`Executed` ≠ `Closed` para autoridad de escritura), `E1-G4` (los escritores rechazan modificar el contenido gobernante de un plan cerrado), `E1-G5` (registro externo de ejecución separado del contenido del plan), `G-05` (semántica de `ref` por clase de evidencia, ADR-21) y `G-09` (ventana de crash cerrada).
+- **Rechazados por diseño:** `G-03` (no existe escape autorizado) y `G-06` (no se reintroduce un validation runner), ambos en `docs/adr/21-attested-escape-evidence-refs-and-transitions.md`.
+- **Riesgo residual aceptado:** `G-04` (la exactitud de la clase de enforcement es una meta-propiedad: un checker estructural sólo verificaría la redacción de la declaración, que es precisamente la sobreafirmación que `INV-12` prohíbe) y `G-07` (la desaparición de un registro no es detectable sin una línea base de contenido, que sería un sistema de historial nuevo), registrados en el inventario de Phase 0.4 con su límite, impacto y disparador de reapertura. `G-08` (tests de idempotencia del lifecycle en la suite del payload) queda como riesgo residual de cobertura: la suite del payload pertenece al Protocol y Phase 0.4 no autoriza cambios de protocolo.
+
+Ninguna de estas entradas cambia el `ENFORCEMENT_STATUS` del bloque canónico: el bloque es una definición compartida DEV/Protocol y su modificación exige el Amendment Log de RFC-84 y las dos representaciones en el mismo Change autorizado.

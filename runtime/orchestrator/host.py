@@ -86,6 +86,7 @@ from .derivation import (
     stop_action,
 )
 from .governance import (
+    GovernanceError,
     build_anchor_body,
     build_checkpoint_body,
     build_revalidation_pair,
@@ -770,7 +771,7 @@ class ExecutionHost:
         violations = self._scope_violations(before, delegation)
         if violations:
             stop = forbidden_scope_action(
-                AuthorityBoundary(plan_authorized=True),
+                AuthorityBoundary(plan_authorized=observation.authorized_for_execution),
                 delegation.delegation_id,
                 violations,
                 delegation.declared_scope,
@@ -808,7 +809,7 @@ class ExecutionHost:
         problems = validate_worker_result(payload)
         if problems:
             stop = invalid_result_action(
-                AuthorityBoundary(plan_authorized=True),
+                AuthorityBoundary(plan_authorized=observation.authorized_for_execution),
                 delegation.delegation_id,
                 problems,
             )
@@ -826,7 +827,7 @@ class ExecutionHost:
         if stored is None:
             notes.append("the worker result was not found in the store after execution")
             stop = missing_result_action(
-                AuthorityBoundary(plan_authorized=True), delegation.delegation_id
+                AuthorityBoundary(plan_authorized=observation.authorized_for_execution), delegation.delegation_id
             )
             return self._record(
                 self.observe(),
@@ -852,7 +853,7 @@ class ExecutionHost:
                     "invocation, where the host cannot interpose. The effect of "
                     "record is the worker's own submission, never an authorization"
                 ),
-                AuthorityBoundary(plan_authorized=True),
+                AuthorityBoundary(plan_authorized=observation.authorized_for_execution),
             )
             notes.append(
                 "effect violation detected by the host from the persisted worker "
@@ -918,6 +919,37 @@ class ExecutionHost:
         return tuple(path for path in changed if path not in authorized)
 
     def _apply_record(
+        self, observation: ChangeObservation, action: NextAction, iteration: int
+    ) -> dict[str, Any]:
+        """Record a derived action, or stop when the artifact refuses it.
+
+        ADR-20 `E1-D3`/`E1-D4`: the writer re-derives the plan's write authority
+        from the artifact and refuses to modify a closed plan. The refusal is a
+        stop with evidence — never a crash, and above all never a write the
+        artifact did not authorize.
+        """
+        try:
+            return self._write_record(observation, action, iteration)
+        except GovernanceError as exc:
+            stop = stop_action(
+                STOP_FORBIDDEN_ACTION,
+                (
+                    "the plan artifact did not authorize the derived record: "
+                    + str(exc)
+                ),
+                AuthorityBoundary(
+                    plan_authorized=observation.authorized_for_execution
+                ),
+            )
+            return self._record(
+                self.observe(),
+                stop,
+                iteration,
+                notes=[str(exc)],
+                stop_reason=stop.kind,
+            )
+
+    def _write_record(
         self, observation: ChangeObservation, action: NextAction, iteration: int
     ) -> dict[str, Any]:
         plan_path = self.root / (observation.plan_path or "")
@@ -1123,19 +1155,42 @@ class ExecutionHost:
         return run
 
     def _record_run_note(self, run: HostRun) -> None:
-        """Append one idempotent execution note to the plan (governance record)."""
+        """Register the external execution record's reference (ADR-20 `E1-D2`).
+
+        The run record is an **external execution record**: the operational
+        evidence (delegations, worker results, journal, reconstruction report)
+        lives in the orchestrator's ephemeral store, and the plan carries only a
+        reference to it. `E1-D3`: the authority is derived from the observation,
+        never fixed by the caller. `E1-D4`: a plan whose checkpoint declares
+        `Closed` grants no authority to modify its content, so the note is not
+        written into a closed artifact — the external record already exists and
+        is the record of the run.
+        """
         observation = self.observe()
         if not observation.plan_present or observation.plan_path is None:
             return
-        boundary = AuthorityBoundary(plan_authorized=True)
+        boundary = AuthorityBoundary(
+            plan_authorized=observation.authorized_for_execution
+        )
         decision = boundary.evaluate(RECORD_RUN_NOTE)
         if decision.verdict != AUTHORIZED_EXISTING:
+            return
+        if observation.closure_declared:
             return
         actions = ", ".join(
             f"{record.get('iteration')}:{record.get('action')}" for record in run.records
         )
+        report_path = self.store.runs_dir(self.plan) / f"{run.run_id}.md"
+        try:
+            reference = report_path.resolve().relative_to(
+                self.root.resolve()
+            ).as_posix()
+        except ValueError:
+            reference = str(report_path)
         block = (
-            f"**Corrida autónoma `{run.run_id}` (DEV Autonomous Orchestrator).** "
+            f"**Corrida autónoma `{run.run_id}` — registro externo de ejecución "
+            f"(DEV Autonomous Orchestrator; ADR-20 `E1-D2`).** No es contenido "
+            f"gobernante del Plan: es una referencia al registro externo. "
             f"{run.iterations} iteración(es) conducida(s) por el host sobre este "
             f"Plan: {actions}. Acción terminal: `{run.terminal_action}` — "
             f"{run.rationale} Condiciones derivadas: "
@@ -1143,10 +1198,10 @@ class ExecutionHost:
                 f"{name}={'sí' if value else 'no'}"
                 for name, value in run.derived_conditions.items()
             )
-            + ". Sin release: la autoridad de release es humana y el host nunca la "
-            "ejecuta. La evidencia cruda de cada iteración (delegaciones, worker "
-            "results y journal) queda en el área efímera del orquestador, que no "
-            "se versiona por la convención de artifacts de sesión del repositorio."
+            + f". La evidencia operacional completa (delegaciones, worker results, "
+            f"journal y el informe de reconstrucción) está en `{reference}`, área "
+            f"efímera del orquestador que no se versiona. Sin release: la autoridad "
+            f"de release es humana y el host nunca la ejecuta."
         )
         try:
             record_run_note(

@@ -9,7 +9,11 @@ narrow:
   (``**Status:**``, ``## Validation anchor``, ``## Checkpoint / cierre``,
   ``## Nota de ejecución``, ``### Findings``);
 - every write requires an ``AuthorityDecision`` whose verdict is
-  ``AUTHORIZED_EXISTING`` — an unauthorized write raises instead of happening;
+  ``AUTHORIZED_EXISTING`` — an unauthorized write raises instead of happening —
+  **and** re-derives the plan's write authority from the artifact itself
+  (ADR-20 ``E1-D3``): the decision is the caller's assertion, the derivation is
+  the verification, and a plan whose checkpoint declares ``Closed`` grants no
+  authority to modify its governing content (``E1-D4``);
 - every write is a pure replacement (or a marker-guarded append), so applying the
   same record twice leaves the artifact identical;
 - it never resolves a finding, never approves anything, never publishes, never
@@ -28,6 +32,7 @@ from pathlib import Path
 from typing import Sequence
 
 from .contracts import AUTHORIZED_EXISTING, AuthorityDecision
+from .observation import derive_plan_write_authority, PlanWriteAuthority
 
 _H2_RE = re.compile(r"^##\s+(.+?)\s*$", re.MULTILINE)
 _H3_RE = re.compile(r"^###\s+(.+?)\s*$", re.MULTILINE)
@@ -44,6 +49,35 @@ def _require_authorized(decision: AuthorityDecision, what: str) -> None:
             f"refusing to write {what}: authority verdict is {decision.verdict} "
             f"({decision.reason})"
         )
+
+
+def _require_plan_write_authority(
+    plan_text: str, what: str
+) -> PlanWriteAuthority:
+    """Re-derive the write authority from the artifact being written (ADR-20).
+
+    ``E1-D3``: authority to write a plan must be **derived and verifiable**, and a
+    value supplied by the caller is not evidence of authority. The decision object
+    the host passes in is an assertion; this function is the verification, and it
+    reads the target artifact itself. ``E1-D4``: a plan whose checkpoint declares
+    ``Closed`` grants no authority to modify its governing content, regardless of
+    what the caller asserted.
+    """
+    authority = derive_plan_write_authority(plan_text)
+    if not authority.present:
+        raise GovernanceError(f"refusing to write {what}: no plan artifact to verify")
+    if authority.closure_declared:
+        raise GovernanceError(
+            f"refusing to write {what}: the plan declares the derived condition "
+            "Closed (ADR-20 E1-D4); a closed plan grants no authority to modify "
+            "its governing content"
+        )
+    if not authority.authorized_status:
+        raise GovernanceError(
+            f"refusing to write {what}: the declared status "
+            f"{authority.status!r} does not authorize execution (ADR-20 E1-D3)"
+        )
+    return authority
 
 
 # --------------------------------------------------------------------------- #
@@ -224,6 +258,13 @@ def write_finding(
     """Register one open finding in ``### Findings``. Returns True when written.
 
     Idempotent: an identical record already present is not duplicated.
+
+    This is the one writer that does **not** apply the closure guard, and the
+    exclusion is the design, not an oversight: ``E1-D4`` keeps the designated
+    lifecycle-metadata region append-only and therefore not frozen, so a finding
+    detected after closure can be recorded *in that region* without rewriting the
+    plan's governing content. The write only appends a record; it never edits or
+    removes an existing one.
     """
     _require_authorized(decision, "a finding record")
     text = plan_path.read_text(encoding="utf-8")
@@ -329,6 +370,7 @@ def record_revalidation(
     """
     _require_authorized(decision, "a revalidation record")
     text = plan_path.read_text(encoding="utf-8")
+    _require_plan_write_authority(text, "a revalidation record")
     # The applicable identity is the *last* registered one (A1 is history and is
     # never mutated). The check must ask whether a revalidation for **this**
     # content state was already registered, never whether the identity appears
@@ -376,6 +418,7 @@ def record_validation_anchor(
 ) -> None:
     _require_authorized(decision, "the validation anchor")
     text = plan_path.read_text(encoding="utf-8")
+    _require_plan_write_authority(text, "the validation anchor")
     _write_atomic(plan_path, write_section_body(text, "Validation anchor", body))
 
 
@@ -387,6 +430,7 @@ def record_checkpoint(
 ) -> None:
     _require_authorized(decision, "the checkpoint")
     text = plan_path.read_text(encoding="utf-8")
+    _require_plan_write_authority(text, "the checkpoint")
     _write_atomic(plan_path, write_section_body(text, "Checkpoint", body))
 
 
@@ -398,6 +442,7 @@ def record_plan_status(
 ) -> None:
     _require_authorized(decision, "the plan status")
     text = plan_path.read_text(encoding="utf-8")
+    _require_plan_write_authority(text, "the plan status")
     _write_atomic(plan_path, set_status(text, status))
 
 
@@ -408,7 +453,16 @@ def record_run_note(
     run_id: str,
     block: str,
 ) -> None:
+    """Append the external execution record's reference (ADR-20 `E1-D2`).
+
+    The run record is an **external** execution record: the operational evidence
+    lives in the orchestrator's ephemeral store and the plan carries only a
+    reference to it. `E1-D2`/`E1-D4`: a closed plan grants no authority to modify
+    its content, so this writer refuses one, and the host simply keeps the
+    external record.
+    """
     _require_authorized(decision, "the execution note")
     text = plan_path.read_text(encoding="utf-8")
+    _require_plan_write_authority(text, "the execution note")
     marker = f"<!-- orchestrator-run: {run_id} -->"
     _write_atomic(plan_path, append_marked_block(text, marker, block))

@@ -89,9 +89,7 @@ Estos invariantes son **expectativas normativas de la decisión**, no propiedade
 
 ## Estado de implementación
 
-**`NOT_IMPLEMENTED`.** El ADR registra la decisión; la implementación es una fase posterior y requiere su propia vía de autorización (RFC-56 cuando toque `protocol/.agents/`; plan `Aprobado para ejecución` cuando el Change sea DEV).
-
-Brechas registradas por la auditoría E-1 que esta decisión deja abiertas:
+**Estado en la aceptación (2026-10-20): `NOT_IMPLEMENTED`.** El ADR registró la decisión; la implementación quedó entonces como una fase posterior con su propia vía de autorización (RFC-56 cuando toque `protocol/.agents/`; plan `Aprobado para ejecución` cuando el Change sea DEV). Brechas registradas por la auditoría E-1 que esta decisión dejó abiertas en ese momento:
 
 - **E1-G1** — `hook_gate.py` permite escrituras dentro de `ARGENTOS_ROOT/.agents` y un test fija ese comportamiento, contra `protocol/.agents/standards/runtime/PROTOCOL_BOUNDARIES.md:Protocol immutability`.
 - **E1-G2** — la run note se escribe con `AuthorityBoundary(plan_authorized=True)` fijado por el caller en lugar de derivado de la observación.
@@ -100,3 +98,19 @@ Brechas registradas por la auditoría E-1 que esta decisión deja abiertas:
 - **E1-G5** — la categoría normativa de la run note no estaba definida; este ADR la define como registro externo de ejecución (`E1-D2`) y deja su materialización pendiente.
 
 El status `Accepted` refleja la **decisión registrada**, no el estado de implementación, y no habilita cambios de payload por sí solo.
+
+**Estado vigente (2026-10-20, Phase 0.4, Plan 172): `IMPLEMENTED`.** `E1-G1`, `E1-G2`, `E1-G3`, `E1-G4` y `E1-G5` tienen su materialización y su límite declarado; el detalle y la evidencia están en el `## Amendment Log` y en `docs/working/proposals/PHASE_0_4_INHERITED_DEBT_CLOSURE_2026-10-20.md`.
+
+## Amendment Log
+
+- 2026-10-20 — **Materialización de `E1-G1`…`E1-G5` (Phase 0.4, Plan 172).** No se modifica ninguna de las cuatro decisiones: `E1-D1`…`E1-D4` siguen siendo el texto vigente. Se registra el estado de su implementación y su límite real.
+
+  *E1-D1 (payload).* Implementado en `protocol/.agents/harness/hook_gate.py`: el hook deniega por contención resuelta todo target dentro de `PAYLOAD_ROOT`, antes de cualquier consulta de sesión o de gate (`16224ce`). Límite: el hook es opt-in y fail-open sin hooks instalados (`INV-07` conserva `ENFORCED:session-hook` con ese `LIMIT`).
+
+  *E1-D2 (registro externo).* Materializado: la corrida se persiste como registro externo en `.project/orchestrator/plan-NNN/runs/<run_id>.md` y el plan recibe únicamente una **referencia** marcada como registro externo de ejecución, nunca el registro. Un plan que ya declara `Closed` no recibe la referencia (`runtime/orchestrator/host.py`, función `_record_run_note`).
+
+  *E1-D3 (autoridad derivada y verificable).* Materializado en `runtime/orchestrator/observation.py` (`derive_plan_write_authority`, `PlanWriteAuthority`) y `runtime/orchestrator/governance.py`: cada escritor de plan re-deriva la autoridad del **propio artefacto** que va a escribir y rechaza la escritura cuando el estado declarado no autoriza; la aserción del caller deja de ser la autoridad. Las cinco construcciones de producción que fijaban el literal `plan_authorized=True` derivan ahora su valor de la observación; el literal sobrevive únicamente como cita de esta decisión en un docstring.
+
+  *E1-D4 (terminalidad del contenido gobernante).* Materializado: los escritores de contenido gobernante (`**Status:**`, `## Validation anchor`, `## Checkpoint / cierre`, nota de ejecución, revalidación) rechazan un plan cuyo checkpoint declara `Closed`, y el host convierte la negativa en un `STOP_FORBIDDEN_ACTION` con evidencia en vez de forzar la escritura. La región append-only de metadatos de lifecycle (`### Findings`) sigue admitiendo apéndices: la exclusión es la decisión, no un olvido.
+
+  *Límite que se conserva.* La autoridad se deriva del artefacto y se verifica en el escritor; **no** es criptográfica ni contiene un escritor fuera del host DEV. `INV-04` mantiene `ENFORCEMENT_STATUS = NONE` en el bloque canónico: el guard es del host (opt-in), no una prevención general, y el bloque canónico no se modifica sin el Amendment Log de RFC-84 y las dos representaciones en el mismo Change autorizado.

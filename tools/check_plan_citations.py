@@ -66,6 +66,10 @@ _HEADING_RE = re.compile(r"^#{1,6}\s+(.*?)\s*#*\s*$")
 
 _NUMERIC_ONLY_RE = re.compile(r"^[\d.,\s-]+$")
 
+# A leading section number ("24. Enforcement deferred", "3.2 Applicability").
+# Used only to let a citation that omits the number still resolve the heading.
+_NUMBERED_HEADING_RE = re.compile(r"^\d+(?:\.\d+)*\.?\s+")
+
 # Characters allowed right after a prefix citation inside the real heading
 # (e.g. "B" in "B. Actualizar…", "Stage 10" in "Stage 10 — Prompt Rendering").
 _PREFIX_NEXT_CHARS = " \t.—-)"
@@ -160,11 +164,28 @@ def _heading_matches(candidate: str, headings: set[str]) -> bool:
     numbered and labelled anchors ("5" → "5. Worker Delegation", "D3" →
     "D3. Dos niveles", "Stage 10" → "Stage 10 — Prompt Rendering") while
     still rejecting bare line numbers with no such heading.
+
+    A citation may also name a numbered heading without its number
+    ("Enforcement deferred" → "24. Enforcement deferred"): the number is a
+    locator, and the section name is the cited object. The heading's leading
+    number is stripped for this second comparison only, so a citation that
+    omits the number is not reported as broken when the section exists.
     """
     if not candidate:
         return False
     if candidate in headings:
         return True
+    for heading in headings:
+        body = _NUMBERED_HEADING_RE.sub("", heading, count=1)
+        if body != heading and (
+            body == candidate
+            or (
+                len(body) > len(candidate)
+                and body.startswith(candidate)
+                and body[len(candidate)] in _PREFIX_NEXT_CHARS
+            )
+        ):
+            return True
     return any(
         len(heading) > len(candidate)
         and heading.startswith(candidate)
@@ -259,19 +280,33 @@ def is_historical_source(source: Path) -> bool:
     return posix.startswith(("docs/plans/", "docs/rfc/")) or posix in _LIVE_SOURCE_EXEMPT
 
 
-def find_new_legacy_references(citations: list[Citation]) -> list[BrokenCitation]:
-    """Flag citations that use a legacy path from a live source (RFC-69 I5)."""
+def find_new_legacy_references(
+    citations: list[Citation], root: Path
+) -> list[BrokenCitation]:
+    """Flag citations that use a legacy path from a live source (RFC-69 I5).
+
+    A legacy reference is a citation that resolves **only** through the
+    migration mapping. A path that already exists at its canonical location is
+    not legacy, and the distinction is not cosmetic: the DEV operational layer
+    lives at the repository root in ``.agents/``, which collides with the
+    mapping entry ``.agents/`` → ``protocol/.agents/`` that described the
+    pre-migration payload location. Treating ``.agents/policies/…`` as a legacy
+    reference would flag the repository's own current operational layer.
+    """
     broken: list[BrokenCitation] = []
     for citation in citations:
         if is_historical_source(citation.source):
             continue
-        if legacy_paths.matches_legacy(citation.path):
-            broken.append(
-                BrokenCitation(
-                    citation,
-                    "new reference to legacy path (migration-only mapping)",
-                )
+        if not legacy_paths.matches_legacy(citation.path):
+            continue
+        if (root / citation.path).is_file():
+            continue
+        broken.append(
+            BrokenCitation(
+                citation,
+                "new reference to legacy path (migration-only mapping)",
             )
+        )
     return broken
 
 
@@ -312,7 +347,7 @@ def main(argv: list[str] | None = None) -> int:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     root = args.root.resolve()
     broken = verify_all(root)
-    legacy = find_new_legacy_references(scan_documents(root))
+    legacy = find_new_legacy_references(scan_documents(root), root)
     print(format_report(broken))
     if legacy:
         print(f"Legacy references from live sources: {len(legacy)}")

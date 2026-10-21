@@ -764,6 +764,89 @@ def parse_checkpoint(text: str) -> CheckpointObservation:
 
 
 # --------------------------------------------------------------------------- #
+# Plan write authority (ADR-20 `E1-D2`/`E1-D3`/`E1-D4`)
+# --------------------------------------------------------------------------- #
+
+#: Statuses that authorize execution. `Executed` is admitted because an executed
+#: plan keeps a legitimate window to record execution information (`E1-D3`); the
+#: closure record, not the status, removes that window.
+_STATUS_AUTHORIZING_EXECUTION = ("Aprobado para ejecución", "Executed")
+
+
+def status_authorizes_execution(status: str | None) -> bool:
+    """True when the declared status authorizes execution (not closure)."""
+    value = (status or "").strip()
+    return value in _STATUS_AUTHORIZING_EXECUTION or value.startswith("Executed")
+
+
+def closure_record_declared(
+    anchor: AnchorObservation, checkpoint: CheckpointObservation
+) -> bool:
+    """True when the plan's own checkpoint declares the derived condition `Closed`.
+
+    This reads the artifact's closure record, it does not re-derive every
+    condition of `Closed`: a plan whose checkpoint declares `Closed` is closed for
+    the purposes of writing its governing content even when a legacy finding
+    remains `open` (C-3 reports that case as a declared legacy `GAP`). Requiring
+    the anchor and the consistency literal keeps an isolated `Closed` word in
+    prose from counting as a closure record.
+    """
+    if not (anchor.present and checkpoint.present):
+        return False
+    condition = (checkpoint.condition or "").casefold()
+    return "closed" in condition and checkpoint.consistency_pass
+
+
+@dataclass(frozen=True)
+class PlanWriteAuthority:
+    """The authority a write into a plan artifact rests on (ADR-20 `E1-D3`).
+
+    `E1-D3` requires the authority to write a plan to be **derived and
+    verifiable**, and states that `plan_authorized=True` supplied by the caller is
+    not evidence of authority. This derivation reads only the artifact that is
+    about to be written — the status it declares and the closure record it
+    carries — so a writer can re-derive it from the same text and refuse a write
+    the artifact does not authorize.
+
+    `Executed` and `Closed` are **distinct** for write authority (`E1-D3`): an
+    `Executed` plan has a legitimate window to record execution information; a
+    plan whose checkpoint declares `Closed` (`E1-D4`) grants no authority to
+    modify its governing content.
+    """
+
+    present: bool
+    status: str | None
+    closure_declared: bool
+
+    @property
+    def authorized_status(self) -> bool:
+        return status_authorizes_execution(self.status)
+
+    @property
+    def write_permitted(self) -> bool:
+        return self.present and self.authorized_status and not self.closure_declared
+
+    def describe(self) -> str:
+        return (
+            f"plan artifact status {self.status!r}; closure declared="
+            f"{'yes' if self.closure_declared else 'no'}"
+        )
+
+
+def derive_plan_write_authority(text: str) -> PlanWriteAuthority:
+    """Derive the write authority from the plan artifact's own text."""
+    status_match = _STATUS_RE.search(text)
+    status = status_match.group(1).strip() if status_match else None
+    anchor = parse_anchor(text)
+    checkpoint = parse_checkpoint(text)
+    return PlanWriteAuthority(
+        present=True,
+        status=status,
+        closure_declared=closure_record_declared(anchor, checkpoint),
+    )
+
+
+# --------------------------------------------------------------------------- #
 # The observation
 # --------------------------------------------------------------------------- #
 
@@ -834,8 +917,27 @@ class ChangeObservation:
 
     @property
     def authorized_for_execution(self) -> bool:
-        return self.status in ("Aprobado para ejecución", "Executed") or (
-            self.status is not None and self.status.startswith("Executed")
+        """The declared status admits execution.
+
+        Deliberately status-only: running a gate or re-reading an observation
+        writes nothing, and `Closed` removes the authority to **write**, not the
+        authority to verify (ADR-20 `E1-D3`). The write gate is
+        ``closure_declared`` plus ``derive_plan_write_authority`` at the writer.
+        """
+        return status_authorizes_execution(self.status)
+
+    @property
+    def closure_declared(self) -> bool:
+        """The plan's checkpoint declares the derived condition `Closed` (E1-D4)."""
+        return closure_record_declared(self.anchor, self.checkpoint)
+
+    @property
+    def write_authority(self) -> PlanWriteAuthority:
+        """The authority a write into this plan rests on (E1-D3)."""
+        return PlanWriteAuthority(
+            present=self.plan_present,
+            status=self.status,
+            closure_declared=self.closure_declared,
         )
 
     @property
@@ -899,6 +1001,7 @@ class ChangeObservation:
             "plan_path": self.plan_path,
             "plan_present": self.plan_present,
             "status": self.status,
+            "closure_declared": self.closure_declared,
             "change_level": self.change_level,
             "rfc": self.rfc,
             "entry_criteria": self.entry_criteria.to_dict(),

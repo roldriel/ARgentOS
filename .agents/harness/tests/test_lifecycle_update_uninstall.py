@@ -5,6 +5,8 @@ Plan 154 units U6–U8. Criteria: GATE 3 #9–#15, #26, #36.
 
 from __future__ import annotations
 
+import hashlib
+
 import lifecycle as L
 import lifecycle_contract as contract
 
@@ -13,6 +15,15 @@ def _bump(payload, version, x_content=None):
     (payload / "VERSION").write_text(version + "\n", encoding="utf-8")
     if x_content is not None:
         (payload / "standards" / "X.md").write_text(x_content, encoding="utf-8")
+
+
+def _snapshot(root):
+    """Content snapshot of a project tree: relative path -> sha256."""
+    return {
+        path.relative_to(root).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in sorted(root.rglob("*"))
+        if path.is_file()
+    }
 
 
 def test_update_is_idempotent(project, make_engine, payload):
@@ -164,3 +175,46 @@ def test_exit_states_are_distinguishable(project, make_engine, payload):
     codes["recovery-pending"] = make_engine(crash, crash_at="apply").install().exit_code
     assert len(set(codes.values())) == len(codes)
     assert codes["success"] == 0
+
+
+def test_uninstall_is_idempotent_and_preserves_the_remaining_layout(project, make_engine):
+    """G-08 — a repeated uninstall is a NOOP and changes nothing.
+
+    The first uninstall removes what is eligible and preserves the manifest,
+    the active config, the project backup and any diverged/unknown artifact
+    (GATE 3 #12–#15). The second uninstall finds nothing eligible: it must be a
+    deterministic NOOP, not a rewrite and not a conflict.
+    """
+    assert make_engine(project).install().state == L.SUCCESS
+    assert make_engine(project).uninstall().state == L.SUCCESS
+    before = _snapshot(project)
+    second = make_engine(project).uninstall()
+    assert second.state == L.NOOP
+    assert _snapshot(project) == before
+
+
+def test_doctor_is_deterministic_and_side_effect_free(project, make_engine):
+    """G-08 — doctor repeated over the same state reports the same diagnosis.
+
+    `doctor` is advisory and read-only: two consecutive runs must agree on the
+    diagnosis and must not modify the project tree.
+    """
+    assert make_engine(project).install().state == L.SUCCESS
+    before = _snapshot(project)
+    first = make_engine(project).doctor()
+    second = make_engine(project).doctor()
+    assert first.state == L.SUCCESS
+    assert second.state == L.SUCCESS
+    assert first.details["doctor_state"] == second.details["doctor_state"]
+    assert _snapshot(project) == before
+
+
+def test_recover_is_idempotent_after_a_successful_recovery(project, make_engine):
+    """G-08 — a repeated recover after rollback is a deterministic NOOP."""
+    after_crash = make_engine(project, crash_at="apply").install()
+    assert after_crash.state == L.RECOVERY_PENDING
+    assert make_engine(project).recover().state == L.SUCCESS
+    before = _snapshot(project)
+    assert make_engine(project).recover().state == L.NOOP
+    assert make_engine(project).recover().state == L.NOOP
+    assert _snapshot(project) == before

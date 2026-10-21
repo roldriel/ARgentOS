@@ -12,10 +12,25 @@ Protocol rules MUST be defined in exactly one canonical location. Other files ma
 
 This policy applies to all Markdown files under `.agents/`.
 
-**Approved exception:** `standards/conduct/ANTI_CIRCUMVENTION.md` restates the
-payload-immutability rule inline; that restatement is normative for conduct
-and is the only sanctioned duplication of a full rule. Any new duplication
-requires an explicit exception documented here.
+**Approved exceptions.** Two duplications are sanctioned, and only these two.
+
+1. `standards/conduct/ANTI_CIRCUMVENTION.md` restates the payload-immutability
+   rule inline; that restatement is normative for conduct.
+2. `standards/INVARIANTS.md` carries the canonical block of the invariants and
+   properties catalog, which is also materialized in the development
+   repository. The exception is bounded to that block and to nothing else:
+
+   - it covers exactly the **15 canonical entries** (`INV-01`…`INV-12`,
+     `PROP-01`…`PROP-03`) delimited by the `canonical-invariants-v1` markers;
+   - both representations MUST keep the block **identical byte for byte**;
+   - a change to the common definition MUST update both representations within
+     the same authorized change;
+   - domain interpretation, mechanisms, verification and local limits are
+     **not** part of the equivalence and are not duplicated;
+   - no domain may add, remove or redefine a canonical entry in its own copy,
+     and no copy is the authority of the other.
+
+Any other new duplication requires an explicit exception documented here.
 
 ## Artifact Safety Rule
 

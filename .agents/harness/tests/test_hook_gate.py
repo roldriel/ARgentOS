@@ -78,11 +78,47 @@ def test_non_write_tool_is_allowed(project):
 
 
 def test_writes_inside_protocol_dirs_are_allowed(project):
+    """Session state and config stay writable; the payload does not.
+
+    Payload immutability: a normal session never writes
+    ``ARGENTOS_ROOT/.agents``. Everything else inside the ARgentOS space is
+    not a project deliverable and does not require an H04 PASS.
+    """
     session_uuid, _, _ = project
     event = pre_tool_use(file_path=".argentos/.project/x/00/TASK_ANALYSIS.md")
     assert hook_gate.decide(event) == 0
-    event = pre_tool_use(tool="Edit", file_path=".argentos/.agents/harness/INDEX.md")
+    event = pre_tool_use(file_path=".argentos/features.toml")
     assert hook_gate.decide(event) == 0
+
+
+def test_payload_write_is_denied(project):
+    """The protocol payload is immutable during a normal session.
+
+    ``PROTOCOL_BOUNDARIES: Protocol immutability`` forbids writing inside
+    ``.agents/``; the hook used to allow the whole ARgentOS space, which made
+    the rule unenforced. The denial is by resolved containment, so it applies
+    to relative, absolute and traversal targets alike, and it precedes any
+    session or gate lookup.
+    """
+    session_uuid, _, project_root = project
+    for target in (
+        ".argentos/.agents/harness/INDEX.md",
+        ".argentos/.agents/standards/INVARIANTS.md",
+        str(project_root / ".argentos" / ".agents" / "INDEX.md"),
+        ".argentos/.project/../.agents/INDEX.md",
+    ):
+        assert hook_gate.decide(pre_tool_use(file_path=target)) == 2, target
+        assert hook_gate.decide(pre_tool_use(tool="Edit", file_path=target)) == 2, target
+
+
+def test_payload_denial_survives_an_authorized_session(project):
+    """A recorded H04 PASS authorizes deliverables, never the payload."""
+    session_uuid, project_dir, project_root = project
+    write_state(project_dir, session_uuid, ["H02", "H04"])
+    deliverable = str(project_root / "src" / "app.py")
+    payload = ".argentos/.agents/harness/INDEX.md"
+    assert hook_gate.decide(pre_tool_use(file_path=deliverable)) == 0
+    assert hook_gate.decide(pre_tool_use(file_path=payload)) == 2
 
 
 def test_argentos_config_and_backup_are_not_deliverables(project):
@@ -128,12 +164,15 @@ def test_traversal_never_classifies_as_argentos_space(project):
 
 
 def test_real_argentos_paths_stay_allowed(project):
-    """F5 — only resolved containment decides; the whole ARgentOS space passes."""
+    """F5 — only resolved containment decides; the ARgentOS space outside the
+    payload passes. The payload itself is denied by payload immutability
+    (E1-G1): session state, the active config and the backups are writable, and
+    `.agents/` is not.
+    """
     session_uuid, _, project_root = project
     for rel in (
         (".argentos", "features.toml"),
         (".argentos", ".project", "x", "00", "a.md"),
-        (".argentos", ".agents", "harness", "roots.py"),
         (".argentos", ".backup", "_AGENTS.md"),
     ):
         target = str(project_root.joinpath(*rel))
@@ -141,6 +180,10 @@ def test_real_argentos_paths_stay_allowed(project):
             hook_gate.decide(pre_tool_use(session_uuid=session_uuid, file_path=target))
             == 0
         ), target
+    payload = str(project_root.joinpath(".argentos", ".agents", "harness", "roots.py"))
+    assert (
+        hook_gate.decide(pre_tool_use(session_uuid=session_uuid, file_path=payload)) == 2
+    ), payload
 
 
 def test_root_swap_to_argentos_root_is_detected(project, monkeypatch):

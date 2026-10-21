@@ -223,6 +223,33 @@ class LifecycleEngine:
         contract.atomic_write(target, data)
         return contract.sha256_bytes(data)
 
+    def _journal_then_write(
+        self,
+        rel: str,
+        data,
+        journal: dict,
+        *,
+        key: str = "created",
+        extra: dict | None = None,
+    ) -> str:
+        """Record the intent, then write the file.
+
+        The write used to precede the journal append, so a crash in between
+        left a payload file that rollback could not see. Recording the intent
+        first inverts the window: a crash now leaves a journal entry whose
+        target does not exist yet, which ``_undo_create`` already tolerates.
+        No file can exist without its journal record.
+        """
+        payload = data.encode("utf-8") if isinstance(data, str) else data
+        digest = contract.sha256_bytes(payload)
+        entry: dict = {"path": rel, "sha256": digest}
+        if extra:
+            entry.update(extra)
+        journal[key].append(entry)
+        self._journal_write(journal)
+        self._write_file(rel, payload)
+        return digest
+
     # -- staging ----------------------------------------------------------
 
     def _stage(self) -> tuple[Path, str, dict]:
@@ -358,6 +385,21 @@ class LifecycleEngine:
             return self._result("install", CONFLICT, str(exc))
         self._seam("preflight")
 
+        # An open journal means a previous operation never reached its commit
+        # point. Reporting NOOP from a clean manifest would hide a half-applied
+        # operation (the manifest is written just before the journal commits),
+        # so the only safe answer is recovery-pending.
+        open_journal = self._journal()
+        if open_journal is not None and open_journal.get("status") != "committed":
+            self._cleanup_staging()
+            return self._result(
+                "install",
+                RECOVERY_PENDING,
+                "a previous operation never reached its commit point "
+                f"(open lifecycle journal, phase {open_journal.get('phase')!r}): "
+                "run `recover` before installing again (STOP)",
+            )
+
         try:
             manifest = contract.load_manifest(self.project_root)
         except contract.ManifestError as exc:
@@ -488,45 +530,27 @@ class LifecycleEngine:
             written: dict[str, str] = {}
             for src in self._payload_files(payload_root):
                 rel = f"{contract.PAYLOAD_ROOT_REL}/{src.relative_to(payload_root).as_posix()}"
-                digest = self._write_file(rel, src.read_bytes())
+                digest = self._journal_then_write(rel, src.read_bytes(), journal)
                 written[rel] = digest
-                journal["created"].append({"path": rel, "sha256": digest})
-                self._journal_write(journal)
                 self._seam("apply")
 
             if not config_present:
                 template = payload_root / FEATURES_FILENAME
                 if template.is_file():
-                    digest = self._write_file(
-                        contract.ACTIVE_CONFIG_REL, template.read_bytes()
+                    self._journal_then_write(
+                        contract.ACTIVE_CONFIG_REL, template.read_bytes(), journal
                     )
-                    journal["created"].append(
-                        {"path": contract.ACTIVE_CONFIG_REL, "sha256": digest}
-                    )
-                    self._journal_write(journal)
 
             adapter_generated = False
             if not adapter_present:
-                self._write_file(
-                    contract.ADAPTER_REL, self._adapter_content(version)
+                self._journal_then_write(
+                    contract.ADAPTER_REL, self._adapter_content(version), journal
                 )
-                journal["created"].append(
-                    {
-                        "path": contract.ADAPTER_REL,
-                        "sha256": contract.sha256_file(adapter_path),
-                    }
-                )
-                self._journal_write(journal)
                 adapter_generated = True
             elif self.replace_agents_md:
-                self._write_file(contract.ADAPTER_REL, self._adapter_content(version))
-                journal["created"].append(
-                    {
-                        "path": contract.ADAPTER_REL,
-                        "sha256": contract.sha256_file(adapter_path),
-                    }
+                self._journal_then_write(
+                    contract.ADAPTER_REL, self._adapter_content(version), journal
                 )
-                self._journal_write(journal)
                 adapter_generated = True
             self._seam("apply")
 
@@ -754,9 +778,18 @@ class LifecycleEngine:
 
     def _undo_remove(self, entry: dict) -> dict | None:
         target = contract.resolve_manifest_path(self.project_root, entry["path"])
-        if target.exists():
-            return {"path": entry["path"], "reason": "recreated after removal"}
         backup = contract.resolve_manifest_path(self.project_root, entry["backup"])
+        if target.exists():
+            # The intent is journaled before the unlink, so an existing target
+            # that still matches its backup means the removal never happened:
+            # nothing to undo. A different file was recreated after removal.
+            try:
+                unchanged = target.read_bytes() == backup.read_bytes()
+            except OSError:
+                unchanged = False
+            if unchanged:
+                return None
+            return {"path": entry["path"], "reason": "recreated after removal"}
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(backup.read_bytes())
         return None
@@ -885,16 +918,13 @@ class LifecycleEngine:
                     if contract.sha256_file(target) == contract.sha256_bytes(data):
                         continue  # already identical: idempotent, no rewrite
                     backup = self._backup_file(rel, journal)
-                    digest = self._write_file(rel, data)
-                    journal["replaced"].append(
-                        {"path": rel, "backup": backup, "sha256": digest}
+                    self._journal_then_write(
+                        rel, data, journal, key="replaced", extra={"backup": backup}
                     )
                     changed = True
                 else:
-                    digest = self._write_file(rel, data)
-                    journal["created"].append({"path": rel, "sha256": digest})
+                    self._journal_then_write(rel, data, journal)
                     changed = True
-                self._journal_write(journal)
                 self._seam("apply")
             self._seam("apply")
 
@@ -1047,9 +1077,12 @@ class LifecycleEngine:
                 backup = self._backup_file(rel, journal)
                 target = contract.resolve_manifest_path(self.project_root, rel)
                 self._assert_root_unchanged()
-                target.unlink()
+                # Record the removal before performing it: a crash after the
+                # unlink and before the journal append used to leave a file
+                # gone with no record of its removal.
                 journal["removed"].append({"path": rel, "backup": backup})
                 self._journal_write(journal)
+                target.unlink()
                 self._seam("apply")
             self._seam("apply")
 

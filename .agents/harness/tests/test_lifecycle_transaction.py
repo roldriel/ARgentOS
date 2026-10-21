@@ -6,12 +6,53 @@ Plan 154 unit U5 (and U14 for the root guard). Criteria: GATE 3 #7, #8, #23,
 
 from __future__ import annotations
 
+import json
 import shutil
 
 import pytest
 
 import lifecycle as L
 import lifecycle_contract as contract
+
+
+def test_journal_records_the_intent_before_the_file_exists(project, make_engine):
+    """G-09 — no payload file can exist without its journal record.
+
+    The write used to precede the journal append, so a crash in between left a
+    payload file that rollback could not see. The intent is journaled first: at
+    the moment of the write the entry exists and the target does not, and the
+    rollback that follows leaves no payload file and no open journal.
+    """
+    engine = make_engine(project)
+    journal_path = contract.journal_path(project)
+    observed: dict = {}
+    real = engine._write_file
+
+    def interrupted(rel, data):
+        if "rel" not in observed:
+            disk = json.loads(journal_path.read_text(encoding="utf-8"))
+            observed["rel"] = rel
+            observed["intent"] = any(
+                entry["path"] == rel for entry in disk.get("created", [])
+            )
+            observed["absent"] = not (project / rel).exists()
+            raise OSError("simulated crash between the journal record and the write")
+        return real(rel, data)
+
+    engine._write_file = interrupted
+    result = engine.install()
+
+    assert result.state == L.CONFLICT
+    assert observed["intent"] is True, "the journal must record the intent first"
+    assert observed["absent"] is True, "the file must not exist when the intent is read"
+    payload_root = project / ".argentos" / ".agents"
+    leftovers = (
+        [path for path in payload_root.rglob("*") if path.is_file()]
+        if payload_root.exists()
+        else []
+    )
+    assert leftovers == [], "rollback must leave no payload file behind"
+    assert not journal_path.exists(), "rollback must close or remove the journal"
 
 
 def test_backups_are_verifiable(project, make_engine):

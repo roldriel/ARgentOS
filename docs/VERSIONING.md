@@ -297,56 +297,55 @@ Condiciones derivadas del Change Lifecycle (semántica; RFC-75
   tocar `VERSION`/changelog, o los ítems se acumulan en `[Unreleased]` y la
   numeración se asigna en la promoción.
 
-## 9. Estado actual (2026-10-21, release `12.3.0`)
+## 9. Estado actual (2026-10-21, release `12.3.1`)
 
 Snapshot del estado al 2026-10-21, reconciliado en el punto de promoción que §5
 declara. Sucesión de puntos de reconciliación: la promoción del rango
 `11.3.0`–`11.6.1` (plan 146), la corrección post-release del plan 147, la
 **release de gobernanza `11.6.2`** (plan 148), la **release de gobernanza
 `11.7.1`** (planes 151–153), la **release `12.0.0`** (plan 154, RFC-81), la
-**release `12.1.0`** (plan 168), la **release `12.2.0`** (plan 170, RFC-84) y la
+**release `12.1.0`** (plan 168), la **release `12.2.0`** (plan 170, RFC-84), la
 **release `12.3.0`** (Change Clase A bajo instrucción directa del mantenedor,
-commit `16224ce`), más la **corrección del cierre de Phase 0.4** (Plan 173, en
-`dev`, release pendiente). La fuente inmutable de la verdad son
-`git tag` + `protocol/.agents/VERSION`: este snapshot es un resumen de lectura,
-no una segunda fuente, y una divergencia se resuelve siempre a favor de git.
+commit `16224ce`) y la **release `12.3.1`** (Plan 173: corrección del cierre de
+Phase 0.4 y cobertura de idempotencia del lifecycle), que es el punto vigente.
+La fuente inmutable de la verdad son `git tag` + `protocol/.agents/VERSION`:
+este snapshot es un resumen de lectura, no una segunda fuente, y una divergencia
+se resuelve siempre a favor de git.
 
-- `master` = `12.3.0` (tag `12.3.0` sobre `0bcce23`, la promoción del Change que
-  cerró `PC-3`, `E1-G1` y `G-09`). El rango `dev` → `master` quedó publicado: el
-  **plan 170** (RFC-84, Clase A) materializó el catálogo canónico en `12.2.0` y el
-  Change `16224ce` endureció el enforcement al contrato ya vigente en `12.3.0`
-  (equivalencia canónica en la batería, hook que deniega el payload y ventana de
-  crash cerrada). Ninguno redefine un contrato. La corrección del Plan 173 vive
-  en `dev` y **todavía no está promovida**: se publicará con la próxima release.
-- `dist` = publicado desde `master` en la release `12.3.0` (`publish-dist`):
-  contiene `.agents/` + `AGENTS.md`, con `VERSION` = `12.3.0` y el harness del
-  lifecycle. La **publicación remota ya se ejecutó** (`origin/dist` en `7f6b73f`,
-  `dist: publish from master @ 0bcce23`); ese acto tiene su propia autorización
-  —el Plan 168 lo declaró fuera de su alcance y lo registró como pending
-  decision— y este snapshot **no la verifica**.
+- `master` = `12.3.1` (tag `12.3.1` sobre el commit de promoción). Publica el
+  **Plan 173** —corrección del cierre inválido de Phase 0.4: R5 de C-2,
+  INDEX→archivo en `check_plan_structure`, checker `ENF-001`…`ENF-003`, los tres
+  tests de idempotencia del payload (Clase C) y la corrección por referencia de
+  la identidad del Plan 172— y conserva la corrección del **plan 170**
+  (RFC-84, `12.2.0`) y el endurecimiento de enforcement de `16224ce`
+  (`12.3.0`). Ninguno redefine un contrato; los 22 residual risks genuinos de
+  Phase 0.4 siguen declarados como tales.
+- `dist` = publicado desde `master` en la release `12.3.1` (`publish-dist`):
+  contiene `.agents/` + `AGENTS.md`, con `VERSION` = `12.3.1` y la suite del
+  harness (incluidos los tres tests de idempotencia). El workflow regenera
+  `dist` en cada push a `master` que toque `protocol/**`; la publicación remota
+  forma parte de esta release y CI la materializa desde el commit de promoción.
   **Contrato de distribución:** `dist` transporta el *payload* (`.agents/` +
   `AGENTS.md`), no el layout materializado; el layout canónico
   `<proyecto>/.argentos/…` lo produce el lifecycle al instalar (ver
   `docs/ADOPTION.md` §1 y §1.3).
-- `dev` = `12.3.0` (`protocol/.agents/VERSION`) con **un cambio de payload
-  tests-only pendiente de release**: la cobertura de idempotencia del lifecycle
-  (`G-08`, Clase C, commit `b51d93c`) agrega tres pruebas a
-  `protocol/.agents/harness/tests/`, no cambia comportamiento, contrato ni
-  resultado de checkers y no hace bump de `VERSION` (se consolida en la próxima
-  versión que se corte). Los planes docs-only/tooling 171, 172 y 173 viven en
-  `dev` sin versión de payload; el Plan 173 no se promueve hasta que ese cambio
-  de tests se publique. El `[Unreleased]` acumula los ítems de gobernanza no
-  asignados a una versión.
+- `dev` = `12.3.1` (`protocol/.agents/VERSION`). **No queda ningún cambio de
+  payload sin publicar**: la promoción `dev` → `master` de esta release llevó a
+  `master` todo el payload de `dev`, incluidos los tests de idempotencia. Los
+  planes docs-only/tooling 171, 172 y 173 viven en `dev` y en `master` sin
+  versión de payload propia; el ítem de gobernanza del Plan 172 y los anteriores
+  permanecen en `[Unreleased]`, que acumula los ítems no asignados a una versión.
 - Tags anotados de la serie vigente: `11.6.0`, `11.6.1`, `11.6.2`, `11.7.0`,
-  `11.7.1`, `12.0.0`, `12.1.0`, `12.2.0` y `12.3.0`, cada uno sobre el commit de
-  promoción correspondiente de `master`. `11.7.0` (plan 150, RFC-80) publicó el
-  Memory System reference runtime; `11.7.1` (planes 151–153) fue una release de
-  gobernanza; `12.1.0` (plan 168) publica el payload acumulado de los planes 156
-  y 166; `12.2.0` (plan 170) publica el catálogo canónico de invariantes y
-  properties; `12.3.0` publica el endurecimiento de enforcement de `PC-3`,
-  `E1-G1` y `G-09`.
+  `11.7.1`, `12.0.0`, `12.1.0`, `12.2.0`, `12.3.0` y `12.3.1`, cada uno sobre el
+  commit de promoción correspondiente de `master`. `11.7.0` (plan 150, RFC-80)
+  publicó el Memory System reference runtime; `11.7.1` (planes 151–153) fue una
+  release de gobernanza; `12.1.0` (plan 168) publica el payload acumulado de los
+  planes 156 y 166; `12.2.0` (plan 170) publica el catálogo canónico de
+  invariantes y properties; `12.3.0` publica el endurecimiento de enforcement de
+  `PC-3`, `E1-G1` y `G-09`; `12.3.1` publica la corrección de Phase 0.4 (Plan
+  173) y la cobertura de idempotencia del lifecycle.
 - `VERSION` = `PROTOCOL_VERSION` (`runtime/toolcalls/canonical.py`, el ancla
-  semántica del runtime) = `12.3.0` en `dev` y en `master`.
+  semántica del runtime) = `12.3.1` en `dev` y en `master`.
 
 Notas:
 
@@ -366,15 +365,15 @@ Notas:
   anotados + regeneración de `dist`) se ejecutó en el Change del plan 146, que
   es el primer punto de reconciliación de este snapshot.
 - Mientras `dev` contenga planes sin publicar respecto de `master`/`dist`,
-  `check_dist_sync.py` se espera rojo en `dev` por diseño (ver §4.1). **Desde el
-  cambio tests-only de `G-08`, el payload de `dev` vuelve a estar por delante del
-  de `master`**: el contenido de payload difiere únicamente en tres pruebas de la
-  suite del harness, de modo que el checker está rojo en `dev` por esa causa
-  declarada y volverá a verde en `master` con la próxima release. Su comparación
-  es contra la **ref local** `dist` y contra el payload comprometido en `HEAD`
-  (`--branch` permite apuntarla a otra ref, por ejemplo `origin/dist`); la
-  publicación remota ya se ejecutó y CI regeneró `origin/dist` a partir del tag
-  `12.3.0`, que es el payload que reciben los adoptantes. Advertencia operativa: la **ref local** `dist` puede quedar por detrás de `origin/dist` (es una rama generada
+  `check_dist_sync.py` se espera rojo en `dev` por diseño (ver §4.1). **Tras la
+  release `12.3.1`, el payload de `dev` y el de `master` vuelven a coincidir, y
+  el de `master` es el que publica `dist`**: el cambio tests-only de `G-08` se
+  publicó con esta release, de modo que el checker queda verde en el estado
+  publicado (y `dev` = `master`). Su comparación es contra la **ref local**
+  `dist` y contra el payload comprometido en `HEAD` (`--branch` permite apuntarla
+  a otra ref, por ejemplo `origin/dist`); la publicación remota forma parte de
+  esta release y CI regenera `origin/dist` desde el commit de promoción, que es
+  el payload que reciben los adoptantes. Advertencia operativa: la **ref local** `dist` puede quedar por detrás de `origin/dist` (es una rama generada
   por CI, no un artefacto del working tree); para leer el payload publicado hay
   que resolver `origin/dist`, no la ref local.
 - El job `check-protocol` de CI necesita **historia completa** del repositorio:

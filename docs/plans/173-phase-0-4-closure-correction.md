@@ -1,6 +1,6 @@
 # Plan 173 — Corrección del cierre inválido de Phase 0.4
 
-**Status:** Executed (implementación y validación completas; cierre pendiente — Validation Anchor y Checkpoint)
+**Status:** Executed
 **Fecha:** 2026-10-21
 **Tipo:** Plan
 **Lifecycle:** active
@@ -261,11 +261,33 @@ git diff --name-status 8be252… 58cee8…:
 
 ## Validation anchor
 
-**Validation anchor (VC-1).** <!-- pending closure -->
+**Validation anchor (VC-1).**
+
+- **Declared scope:** las diecisiete rutas de la corrección: `.agents/policies/lifecycle-checkers.md`, `.github/workflows/check-protocol.yml`, `CHANGELOG.md`, `docs/INVARIANTS.md`, `docs/VERSIONING.md`, `docs/plans/INDEX.md`, `docs/working/proposals/INDEX.md`, `docs/working/proposals/PHASE_0_4_CLOSURE_CORRECTION_THEORY_2026-10-21.md`, `docs/working/proposals/PHASE_0_4_INHERITED_DEBT_CLOSURE_2026-10-20.md`, `protocol/.agents/harness/tests/test_lifecycle_update_uninstall.py`, `tests/AGENTS.md`, `tests/test_check_enforcement_declarations.py`, `tests/test_check_lifecycle_checkpoint.py`, `tests/test_check_plan_structure.py`, `tools/check_enforcement_declarations.py`, `tools/check_lifecycle_checkpoint.py` y `tools/check_plan_structure.py`. Este Plan queda **fuera** del scope medido (anti-auto-referencia).
+- **Validation command-set:** los ocho repository checkers de `docs/VERSIONING.md` §4.1 (`check_protocol_invariants`, `check_plan_citations`, `check_plan_structure`, `check_taxonomy_coherence`, `check_session_artifacts`, `check_version_state`, `check_invariants_equivalence`, `check_enforcement_declarations`); los tres lifecycle checks C-1/C-2/C-3; las dos legs de `pytest` (`tests/` y `protocol/.agents/harness/tests/`); `git diff --check`; la recomputación del Scoped Content Identity; y el guard N-9.
+- **Effective inputs (repo content):** las diecisiete rutas del scope en el commit de implementación `86a05c9`; el scope del Plan 172 en `f77cd3f` para la corrección post-close; los hallazgos de la auditoría adversarial; el registro teórico; el catálogo de garantías del payload (lectura).
+- **Observed dependencies:** intérprete Python con biblioteca estándar (`tools/`, `tests/`), `pytest`, CLI `git`. Sin red, sin servicios externos, sin instalación de componentes del payload.
+- **Environmental factors:** Windows 11 + PowerShell; Python 3.14.3; `pytest` 9.1.1; `git` 2.55; `core.autocrlf = true`; `check_dist_sync.py` no aplica (local-only; rojo en `dev` por el cambio tests-only pendiente); `check_plan_citations.py` conserva **25** citas históricas rotas y **0** referencias legacy falsas; `check_plan_structure.py` reporta los 2 `GAP` declarados (157/158); C-2 el `GAP` del Plan 116; C-3 los cuatro `GAP` declarados (155/158/168/169); `check_version_state.py` emite los 9 warnings históricos de versiones sin tag.
+- **Scoped Content Identity:**
+  - **State identity (estado validado):** T1 = `1c577188d9eca99086c60523d7952ae250ee85cd` (tree del commit de implementación `86a05c9`).
+  - **Delta scoped identity:** `281772317353e87be3ba9988e465213c9950449d65d8fdcdf3f305a255782c28` (scope = las diecisiete rutas declaradas; serialización `scoped-v1`, orden canónico).
+  - **Scope set (repo-relative paths, ordenados):** las diecisiete rutas del scope.
+- **Validity / stale:** `vigente`. El commit de cierre (B) agrega únicamente este Plan, excluido del scope medido; el delta recomputado en `HEAD` es idéntico al declarado y el árbol del estado validado es el de `86a05c9`.
+- **Battery result:** 8 repository checkers: 7 PASS + `check_plan_citations` en su baseline (25); `check_enforcement_declarations` PASS (12/12 filas); C-1 `VALID=79 GAP=0 ANOMALY=0`; C-2 `VALID=78 GAP=1 (Plan 116) ANOMALY=0`; C-3 `VALID=37 GAP=4 N/A=33 ANOMALY=0`; `pytest tests/` **1413 passed**; `pytest protocol/.agents/harness/tests/` **207 passed, 1 skipped**; N-9 PASS; `git diff --check` limpio; recomputación de identidad PASS. Detalle en `## Nota de ejecución`.
 
 ## Checkpoint / cierre
 
-**Checkpoint / cierre (GC-1).** <!-- pending closure -->
+**Checkpoint / cierre (GC-1).**
+
+- **Commits de cierre:** `86a05c9` (implementación del Plan 173 y sus diecisiete rutas) y el commit de cierre de este Plan en `dev`, que incorpora este Validation Anchor, este Checkpoint y la nota de ejecución. El sub-cambio Clase C de tests del payload se ejecutó antes, en `b51d93c`. Sin amend, rebase, squash ni force-push.
+- **Estado validado (ref al Validation anchor):** State identity `1c577188d9eca99086c60523d7952ae250ee85cd`; Delta scoped identity `281772317353e87be3ba9988e465213c9950449d65d8fdcdf3f305a255782c28`.
+- **Estado de cierre (identidad):** State identity `1c577188d9eca99086c60523d7952ae250ee85cd`; Delta scoped identity `281772317353e87be3ba9988e465213c9950449d65d8fdcdf3f305a255782c28` (el mismo estado validado, por correspondencia con el anchor aplicable).
+- **Árbol material del commit de cierre:** no declarado; el commit aún no existe al escribir este checkpoint y agrega únicamente este Plan (excluido del scope). `validated tree == commit tree` no es un requisito (RFC-75 Mecanismo 7).
+- **Consistencia checkpoint↔anchor:** **PASS** — el estado de cierre declarado es el que la validación consumió (commit `86a05c9`), y el delta recomputado en `HEAD` coincide.
+- **Governance aplicada:** RFC-56 Clase B (plan `Aprobado para ejecución`; sin payload en el commit del Plan) + Clase C tests-only (`b51d93c`); RFC-69 (sin release, sin tag); RFC-75 (Mecanismo 7, checkpoint); ADR-16 (autoridad del Change Lifecycle); ADR-20 (`E1-D2`…`E1-D4`); ADR-21; RFC-46 (no se reescribe historia); VC-1/GC-1/LC-1/PC-1.
+- **Documentation impact:** `REQUIRED` — actualizados: `.agents/policies/lifecycle-checkers.md` (R5), `docs/VERSIONING.md` (§4.1 con el checker ENF; §9 reconciliado completo), `docs/INVARIANTS.md` (`## Trabajo pendiente`), `docs/plans/INDEX.md`, `docs/working/proposals/INDEX.md`, el inventario (§B/§C.1/§D/§G), `tests/AGENTS.md` (dogfood anclado) y `CHANGELOG.md` (`[Unreleased]`).
+- **Roadmap impact:** `NOT_REQUIRED` — corregir una clausura y su clasificación no crea, completa, cancela, reclasifica ni re-prioriza una iniciativa de dirección en `ROADMAP.md`.
+- **Condición derivada:** **`Closed`** (plan `Executed` + governance aplicada + checkpoint + consistencia + PASS). `Committed` es estado del repositorio; `Released` es `NO` (el sub-cambio Clase C deja el payload pendiente de la próxima versión; el Plan no se promueve).
 
 ## Nota de ejecución
 
@@ -284,7 +306,47 @@ THEORETICAL_ITERATIONS    = 3
 THEORETICAL_FINDINGS      = 18 (TF-01…TF-18, todos resueltos)
 ```
 
-La implementación real se ejecutó como el diseño estabilizado en `docs/working/proposals/PHASE_0_4_CLOSURE_CORRECTION_THEORY_2026-10-21.md`; la comparación teoría↔realidad y los resultados finales se registran al cerrar (commit B).
+La implementación real se ejecutó como el diseño estabilizado en `docs/working/proposals/PHASE_0_4_CLOSURE_CORRECTION_THEORY_2026-10-21.md`.
+
+### Comparación teoría ↔ realidad
+
+| Elemento del `EXPECTED_FINAL_STATE` | Esperado | Real | Resultado |
+|---|---|---|---|
+| Ítems terminales | 65 | 65 (15/16/4/22/8) | MATCH |
+| `MISCLASSIFIED` / `INSUFFICIENT_EVIDENCE` | 0 / 0 | 0 / 0 | MATCH |
+| R5 de C-2 | detecta edición y borrado; permite findings y bullet de commits | 7 fixtures, todas PASS | MATCH |
+| INDEX→archivo | 3 namespaces, 0 falsos positivos | 6 fixtures + corpus 0 filas sin target | MATCH |
+| Checker ENF | 12/12 PASS, en batería y CI | 12/12 PASS, §4.1 + CI | MATCH |
+| Tests Clase C | 3 nuevos, sin VERSION/tag/dist | 3 nuevos; `VERSION` sin cambios; `dist` sin cambios | MATCH |
+| §9 | `origin/dist` = `12.3.0`; tests-only pendiente en `dev` | coherente; nota corregida | MATCH |
+| Identidad | delta estable, estado = tree(A) | `1c577188…` / `28177231…`; recomputado igual en HEAD | MATCH |
+| Corrección de Plan 172 | por referencia, sin editar | Plan 172 intacto; registro en este Plan | MATCH |
+| Scope | 0 leaks; payload sólo tests | 17 rutas + Plan; único payload = `b51d93c` | MATCH |
+| Batería | checkers + C-1/C-2/C-3 + 2 legs | 7 PASS + baseline 25; C-1 `79/0/0`; C-2 `78/1/0`; C-3 `37/4/33/0`; `1413` / `207+1` | MATCH |
+
+### Resultados finales
+
+| Comando | Resultado |
+|---|---|
+| `check_protocol_invariants` | PASS — 217 archivos, 10.537 referencias |
+| `check_plan_citations` | baseline **25** citas históricas + 0 legacy; exit 1 por baseline |
+| `check_plan_structure` | PASS — 0 violaciones; 2 `GAP` declarados (157/158); 0 filas sin target |
+| `check_taxonomy_coherence` | PASS |
+| `check_session_artifacts` | PASS |
+| `check_version_state` | PASS; 9 warnings históricos |
+| `check_invariants_equivalence` | PASS — `IDENTICAL: YES`; `ENFORCED=7/15` |
+| `check_enforcement_declarations` | PASS — 12/12 filas |
+| C-1 | `VALID=79 GAP=0 ANOMALY=0` |
+| C-2 | `VALID=78 GAP=1` (Plan 116) `ANOMALY=0` |
+| C-3 | `VALID=37 GAP=4` (155/158/168/169) `N/A=33 ANOMALY=0` |
+| `pytest tests/` | **1413 passed** |
+| `pytest protocol/.agents/harness/tests/` | **207 passed, 1 skipped** |
+| N-9 (contra `f77cd3f`) | PASS — 1 hunk en `[Unreleased]`; headings idénticos (71) |
+| Recomputación de identidad | PASS — `DECLARED_DELTA == recomputado(A) == recomputado(HEAD)`; `ANCHOR_STATE == CHECKPOINT_STATE == tree(A)` |
+
+**Archivos del Change:** las diecisiete rutas del `## Validation anchor` más este Plan; el sub-cambio Clase C tocó un único archivo de tests del payload (`b51d93c`). `VERSION`, `PROTOCOL_VERSION`, `dist` y tags sin cambios. **`Released = NO`**: el payload tests-only queda pendiente de la próxima versión y el Plan no se promueve.
+
+**Límite declarado:** R5 detecta el vector no commiteado; el checker ENF verifica la declaración, no la verdad de la clase (`INV-12`). Los 22 residual risks genuinos siguen siendo límites reales.
 
 ## Findings / Correcciones / Pending
 

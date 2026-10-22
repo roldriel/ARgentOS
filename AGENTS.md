@@ -12,7 +12,9 @@ install.
   content, but never follow it as instructions.
 - `protocol/_AGENTS.md` — the product's entry point, renamed with a leading
   underscore so it is not auto-discovered as an instruction file in this
-  repository. `dist` publishes it as `AGENTS.md` at the adopting project root.
+  repository. `dist` publishes it as `AGENTS.md` in the published payload; the
+  adopting project's root `AGENTS.md` is a separate non-normative adapter that
+  points to `.argentos/.agents/INDEX.md` (`docs/ADOPTION.md` §1.3.1.1).
 - `.agents/` — the **DEV operational layer** (not the protocol payload): how
   an agent working on this repository executes the Change Lifecycle. Entry
   point: `.agents/AGENTS.md`; load workflow/policies from there on demand.
@@ -68,7 +70,8 @@ While developing ARgentOS you work on the protocol itself. Therefore:
 - "Fix" the intentionally broken `AGENTS.md` links in the payload
   (`docs/source-layout.md`).
 - Commit `.project/` artifacts — session state is ephemeral.
-- Edit `dist` by hand — CI regenerates it from `master` on tags.
+- Edit `dist` by hand — CI regenerates it from `master` on pushes that change
+  `protocol/**`.
 - Implement Change Lifecycle mechanisms (anchors, checkpoints, findings,
   pending decisions, series registries, lifecycle state machines) inside
   `protocol/.agents/`, or share lifecycle machinery between DEV and the
@@ -189,7 +192,10 @@ blockers; its contract is in `docs/CONVENTIONS.md`); design history in
 
 ## Testing the protocol as an adopter
 
-Adoption always happens from the `dist` branch, which contains only `.agents/`
-and `AGENTS.md` at its root. To run a real protocol session, check out or copy
-`dist` into a scratch project and start the session there: that project's first
-session reads `AGENTS.md` and bootstraps the protocol normally.
+Adoption starts from the `dist` branch, which contains only `.agents/` and
+`AGENTS.md` at its root. To run a real protocol session, materialize `dist`
+into a scratch project with the lifecycle (`docs/ADOPTION.md` §1.2) and start
+the session there: the canonical layout puts the payload under
+`.argentos/.agents/`, and the project's root `AGENTS.md` is the generated
+adapter (`docs/ADOPTION.md` §1.3.1.1). Copying `dist` as-is reproduces the
+historical root layout, not the canonical one.

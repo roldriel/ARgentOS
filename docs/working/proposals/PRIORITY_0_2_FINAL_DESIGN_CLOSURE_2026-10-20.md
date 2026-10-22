@@ -3,10 +3,10 @@
 **Naturaleza documental:** Working / design closure — **no normativo**, no constituye autoridad, no decide y no autoriza trabajo. Puede ser provenance, nunca fuente de autoridad.
 **Fecha:** 2026-10-20
 **Autoridad de las decisiones semánticas:** `docs/adr/20-closed-artifact-governance-and-execution-records.md` (ADR-20, `Accepted`).
-**Propuesta normativa que consume este diseño:** `docs/rfc/84-cross-domain-fundamental-invariants-exception.md` (`Proposal`, reformulada 2026-10-20).
-**Estado de implementación:** `NOT_IMPLEMENTED` — este documento cierra el **diseño**; ninguna entrada está implementada por él.
+**Propuesta normativa que consume este diseño:** `docs/rfc/84-cross-domain-fundamental-invariants-exception.md` (`Accepted` el 2026-10-20; `Proposal` al momento de escribir este diseño).
+**Estado de implementación:** `IMPLEMENTED` — el catálogo se materializó en el Plan 170 (`Executed`/`Closed`) y los 12 gaps tienen estado terminal en Phase 0.4 (Plan 172). Este documento sigue siendo el registro del **diseño**; no es autoridad.
 
-> **Registro pendiente.** Este archivo no está registrado en `docs/working/proposals/INDEX.md` porque ese índice es un archivo con cambios preexistentes que la tarea prohíbe tocar. La fila debe agregarse cuando ese trabajo preexistente se integre, en su propio Change. Es una desviación declarada, no un olvido.
+> **Registro.** La fila de este archivo en `docs/working/proposals/INDEX.md` existe desde la corrección de Phase 0.4 (Plan 172, ítem `DOC-03`), que retiró la afirmación anterior de «registro pendiente».
 
 ---
 
@@ -327,7 +327,7 @@ PROVENANCE_CLEAN            sin Audit A/B/C; RFC-84 reformulada; fuentes por ent
 ENFORCEMENT_PLAN_FINALIZED  12 gaps con dominio, autoridad y riesgo
 VERIFICATION_PLAN_FINALIZED verificación existente y requerida por entrada
 LIMITATIONS_DOCUMENTED      11 limitaciones explícitas
-RFC84_UPDATED               catálogo, excepción, equivalencia y materialización incorporados (Status: Proposal)
+RFC84_UPDATED               catálogo, excepción, equivalencia y materialización incorporados (Status: Accepted)
 ```
 
 **`IMPLEMENTATION COMPLETE`** — requiere además:
@@ -341,4 +341,4 @@ EQUIVALENCE_VERIFIED                comparación del bloque canónico en la bate
 BATTERY_GREEN                       batería canónica completa, ejecutada en un entorno válido
 ```
 
-`DESIGN COMPLETE = YES` · `IMPLEMENTATION COMPLETE = NO`.
+`DESIGN COMPLETE = YES` · `IMPLEMENTATION COMPLETE = YES` (Plan 170 materializó las dos representaciones del catálogo; los 12 gaps tienen estado terminal en Phase 0.4, Plan 172, con los límites declarados de los que se aceptan o rechazan por diseño).

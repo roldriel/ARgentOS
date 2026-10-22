@@ -1138,7 +1138,7 @@ quedan documentados con su propia vía de autorización.
 
 | Plan | RFC | Status | Descripción | Vigencia |
 |---|---|---|---|---|
-| `170-materialize-canonical-invariants-catalog.md` | RFC-84 (Clase A; **`Accepted`** 2026-10-20) | Executed | **Materialización del catálogo canónico de invariantes y properties transversales.** Bloque canónico de 15 entradas (12 invariantes + 3 properties) en `docs/INVARIANTS.md` y `protocol/.agents/standards/INVARIANTS.md` con equivalencia **byte a byte**, interpretación de dominio por entrada, `ENFORCEMENT_STATUS` y `LIMIT` obligatorios; segunda excepción aprobada en `PROTOCOL_BOUNDARIES.md` con sus cuatro condiciones; payload a `12.2.0`. **No implementa gaps de enforcement.** Cierre —Validation Anchor y Checkpoint— pendiente (`PC-1`). | active |
+| `170-materialize-canonical-invariants-catalog.md` | RFC-84 (Clase A; **`Accepted`** 2026-10-20) | Executed | **Materialización del catálogo canónico de invariantes y properties transversales.** Bloque canónico de 15 entradas (12 invariantes + 3 properties) en `docs/INVARIANTS.md` y `protocol/.agents/standards/INVARIANTS.md` con equivalencia **byte a byte**, interpretación de dominio por entrada, `ENFORCEMENT_STATUS` y `LIMIT` obligatorios; segunda excepción aprobada en `PROTOCOL_BOUNDARIES.md` con sus cuatro condiciones; payload a `12.2.0`. **No implementa gaps de enforcement.** Cierre registrado (`Closed`): Validation Anchor y Checkpoint con `PC-1` resuelto. | active |
 
 ## Nonagésima sexta serie: regularización de `81bbde1` y reconciliación de pending decisions cerradas (Plan 169) (14 oct 2026)
 

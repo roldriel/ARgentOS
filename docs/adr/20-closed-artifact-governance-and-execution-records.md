@@ -5,7 +5,7 @@
 **Lifecycle:** active
 **Superseded por:** —
 **Decisión original:** — (no deriva del modelo arquitectónico `D#`; deriva de la auditoría E-1)
-**RFC:** — (consumida por RFC-84, en `Proposal`; este ADR no la formaliza)
+**RFC:** — (consumida por RFC-84, `Accepted` el 2026-10-20; seguía en `Proposal` al momento de esta decisión; este ADR no la formaliza)
 **Plan:** — (registro directo del mantenedor; sin plan de ejecución)
 **Clase de cambio:** — (sin efecto payload; no toca `protocol/.agents/`)
 **Problemas que resuelve:** — (E-1A y E-1B; no figuran en el modelo arquitectónico)
@@ -26,7 +26,7 @@ La auditoría de gobierno de artefactos cerrados (E-1) verificó dos caminos de 
 
 **Conflicto resultante.** Tres pares en tensión, ninguno reconciliado por una regla: norma de inmutabilidad del payload frente a permiso implementado y testeado; terminalidad declarada de lo cerrado frente a la práctica aditiva sobre planes cerrados; autoridad derivada frente a autoridad afirmada por el caller.
 
-**Por qué se decide ahora.** Sin esta decisión no puede reformularse `I-05` ni separarse `I-06` en la re-derivación de invariantes de Priority 0.2: ambas dependen de qué significa exactamente «cerrado» y de qué puede registrarse después del cierre. RFC-84 (`docs/rfc/84-cross-domain-fundamental-invariants-exception.md:Problema`) propone la excepción de single-source que habilitaría la materialización, pero sigue en `Proposal` y no resuelve esta semántica.
+**Por qué se decide ahora.** Sin esta decisión no puede reformularse `I-05` ni separarse `I-06` en la re-derivación de invariantes de Priority 0.2: ambas dependen de qué significa exactamente «cerrado» y de qué puede registrarse después del cierre. RFC-84 (`docs/rfc/84-cross-domain-fundamental-invariants-exception.md:Problema`) propone la excepción de single-source que habilitaría la materialización; al momento de esta decisión seguía en `Proposal` (hoy `Accepted`, 2026-10-20) y no resuelve esta semántica.
 
 **Base de evidencia.** Sólo evidencia del repositorio: texto normativo, implementación, tests y corpus. No se citan las auditorías A/B/C ni la matriz de cobertura que RFC-84 declara como origen: **no existen en el repositorio y no son recuperables**, y no constituyen evidencia de estas decisiones.
 
@@ -84,8 +84,8 @@ Estos invariantes son **expectativas normativas de la decisión**, no propiedade
 ## Relaciones
 
 - Depende de: `docs/adr/16-change-lifecycle-authority.md` (autoridad del Change Lifecycle); `docs/adr/18-payload-boundary-provenance-and-classification.md:Invariantes` (`RS-8`/`RS-9`/`RS-10`: qué se distribuye y la frontera del payload); `docs/rfc/62-guarantee-model-and-enforcement-boundaries.md:Invariants` (`ENF-001`…`ENF-003`: ninguna garantía «mecánica» depende del juicio del agente y los hooks son fail-open).
-- Consumida por: RFC-84 (`Proposal`), que propone la excepción de single-source para materializar invariantes transversales; y la re-derivación de los invariantes de Priority 0.2, en particular `I-05` e `I-06`.
-- Formalizada en: pendiente. Este ADR registra la decisión; no autoriza cambios de payload ni de implementación.
+- Consumida por: RFC-84 (`Accepted`, 2026-10-20), que formaliza la excepción de single-source para materializar invariantes transversales; y la re-derivación de los invariantes de Priority 0.2, en particular `I-05` e `I-06`.
+- Formalizada en: Plan 170 (`Executed`/`Closed`, materialización del catálogo canónico de 15 entradas) y Plan 172 (`Executed`/`Closed`, materialización de `E1-G1`…`E1-G5`). Este ADR registra la decisión; no autoriza por sí solo cambios de payload.
 
 ## Estado de implementación
 
@@ -114,3 +114,5 @@ El status `Accepted` refleja la **decisión registrada**, no el estado de implem
   *E1-D4 (terminalidad del contenido gobernante).* Materializado: los escritores de contenido gobernante (`**Status:**`, `## Validation anchor`, `## Checkpoint / cierre`, nota de ejecución, revalidación) rechazan un plan cuyo checkpoint declara `Closed`, y el host convierte la negativa en un `STOP_FORBIDDEN_ACTION` con evidencia en vez de forzar la escritura. La región append-only de metadatos de lifecycle (`### Findings`) sigue admitiendo apéndices: la exclusión es la decisión, no un olvido.
 
   *Límite que se conserva.* La autoridad se deriva del artefacto y se verifica en el escritor; **no** es criptográfica ni contiene un escritor fuera del host DEV. `INV-04` mantiene `ENFORCEMENT_STATUS = NONE` en el bloque canónico: el guard es del host (opt-in), no una prevención general, y el bloque canónico no se modifica sin el Amendment Log de RFC-84 y las dos representaciones en el mismo Change autorizado.
+
+- 2026-10-22 — **Corrección de representación de estado (Priority 2, F-05).** Se alinean la cabecera, las relaciones y la fila de `docs/adr/INDEX.md` con el estado real ya registrado arriba: RFC-84 `Accepted` y `E1-G1`…`E1-G5` materializados por el Plan 172. No cambia ninguna de las cuatro decisiones (`E1-D1`…`E1-D4`) ni su texto vigente; es una corrección de coherencia documental, no una enmienda de la decisión.

@@ -139,10 +139,13 @@
   verdad y no importa mecanismos del Producto (`protocol/.agents/` es data de
   otro dominio; RFC-75 `docs/rfc/75-change-lifecycle.md:Dev vs Protocol`).
 - **Layout fuente (RFC-55)**: el payload del producto vive en `protocol/`
-  (`protocol/.agents/` + `protocol/_AGENTS.md`); el layout adoptado (`dist`)
-  mantiene `.agents/` + `AGENTS.md` en la raíz. Los docs del payload describen
-  el layout adoptado; los links a `AGENTS.md` rotos en fuente son intencionales
-  y se documentan en `docs/source-layout.md`.
+  (`protocol/.agents/` + `protocol/_AGENTS.md`); la rama `dist` contiene el
+  payload en su propia raíz (`.agents/` + `AGENTS.md`). El layout adoptado
+  materializa el payload bajo `.argentos/.agents/` y deja en la raíz del
+  proyecto solo el adapter `AGENTS.md` que apunta a
+  `.argentos/.agents/INDEX.md`. Los docs del payload usan rutas ancladas al
+  payload (`.agents/...`); los links a `AGENTS.md` rotos en fuente son
+  intencionales y se documentan en `docs/source-layout.md`.
 
 ### Convenciones de terminología y nomenclatura (decisiones D1–D5, 2026-09-05)
 

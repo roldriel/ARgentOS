@@ -10,7 +10,7 @@ implícita o excepciones no registradas.
 | Rama/artefacto | Rol | Contenido | Tags | `publish-dist` |
 |---|---|---|---|---|
 | `dev` | Integración y desarrollo | Commits por plan, detalle del changelog, estados de planes/RFCs, versión en curso | Nunca | No corre |
-| `master` | Línea estable | Solo commits de release promovidos desde `dev` | Siempre (uno por versión publicada) | Corre al taggear |
+| `master` | Línea estable | Solo commits de release promovidos desde `dev` | Siempre (uno por versión publicada) | Corre en cada push a `master` que modifique `protocol/**` |
 | `dist` | Artefacto empaquetado | Copia del release generada por el workflow `publish-dist` desde `master` | — | — |
 
 Reglas de rama:
@@ -20,7 +20,10 @@ Reglas de rama:
   `dev` (AGENTS.md raíz).
 - `master` solo recibe promociones de release; nada entra a `master` sin tag.
 - `dev` nunca se taggea; los tags viven exclusivamente en `master`.
-- `dist` se regenera desde `master` en cada tag (workflow `publish-dist.yml`).
+- `dist` se regenera desde `master` en cada push que toque `protocol/**`
+  (workflow `publish-dist.yml`); **el tag no dispara el workflow**. El
+  `workflow_dispatch` es un disparo manual de recuperación: republica el
+  contenido de `master` en `dist`, no crea versión ni tag.
 
 ## 2. Invariantes
 
@@ -126,7 +129,9 @@ Reglas:
    `protocol/.agents/`, INDEX, changelog y `VERSION`.
 7. **Promoción a `master`:** cuando el plan está verificado y el usuario lo
    autoriza, merge `dev` → `master` y creación del **tag anotado** `X.Y.Z`
-   (mensaje que cite la sección del changelog). `publish-dist` corre con el tag.
+   (mensaje que cite la sección del changelog). `publish-dist` corre con el
+   **push a `master` que contiene el cambio de payload** (paths `protocol/**`),
+   no con el tag; el tag se crea sobre el mismo commit de promoción.
 8. **Registro:** el tag queda como checkpoint inmutable; nada de este plan se
    vuelve a tocar salvo por un plan nuevo.
 9. **Sincronización `master` → `dev`:** `dev` es la rama de desarrollo y la promoción
@@ -191,6 +196,12 @@ Reglas:
 - **`check_version_state.py`:** invariante versión ↔ changelog ↔ tag; en `dev`
   las secciones/versión sin tag son warning (excepción declarada), y es error
   cuando una versión no tiene sección o un tag no la tiene.
+- **`check_plan_citations.py`:** las citas `ruta:sección` deben resolver. Las
+  citas históricas a secciones retiradas de `ROADMAP.md` por los planes 157/158
+  se preservan como traza mediante una tabla explícita (`RETIRED_SECTIONS`)
+  restringida a fuentes históricas; una fuente viva que cite una sección
+  retirada, o una sección ausente no declarada, sigue siendo error. La batería
+  exige **PASS**: no hay un baseline de citas rotas tolerado.
 - **`check_dist_sync.py`:** local-only, se espera **verde solo en `master`**
   (compara el payload commiteado contra la rama `dist` publicada; en `dev` con
   planes sin publicar es roja por diseño, y CI no la fetchea).

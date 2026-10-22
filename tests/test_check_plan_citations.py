@@ -451,6 +451,59 @@ def test_legacy_bare_filename_does_not_hide_missing_file(tmp_path):
     assert broken[0].reason == "file not found"
 
 
+# --- Retired sections: historical trace, live error (F-02) ---------------------
+
+
+@pytest.mark.parametrize("section", [
+    "Trabajo activo / dogfood",
+    "Pendientes que requieren autorización",
+    "## Pendientes que requieren autorización",
+])
+def test_retired_section_is_preserved_for_historical_sources(tmp_path, section):
+    """Plans/RFCs written before the retirement keep the citation as trace."""
+    make_repo(tmp_path, {
+        "docs/plans/a.md": f"`ROADMAP.md:{section}`\n",
+        "docs/rfc/b.md": f"`ROADMAP.md:{section}`\n",
+        "ROADMAP.md": "# Roadmap\n\n## NOW\n",
+    })
+    assert cpc.verify_all(tmp_path) == []
+
+
+def test_retired_section_still_fails_for_live_source(tmp_path):
+    """The exemption never licenses a live document to cite a retired anchor."""
+    make_repo(tmp_path, {
+        "docs/CONVENTIONS.md": "`ROADMAP.md:Trabajo activo / dogfood`\n",
+        "ROADMAP.md": "# Roadmap\n\n## NOW\n",
+    })
+    broken = cpc.verify_all(tmp_path)
+    assert len(broken) == 1
+    assert broken[0].citation.source == Path("docs/CONVENTIONS.md")
+    assert broken[0].reason == "section not found"
+
+
+def test_unlisted_missing_section_still_fails_for_historical_source(tmp_path):
+    """Only the declared retired anchors are exempt; other misses stay errors."""
+    make_repo(tmp_path, {
+        "docs/plans/a.md": "`ROADMAP.md:Sección fantasma`\n",
+        "ROADMAP.md": "# Roadmap\n\n## NOW\n",
+    })
+    broken = cpc.verify_all(tmp_path)
+    assert len(broken) == 1
+    assert broken[0].reason == "section not found"
+
+
+def test_retired_section_exemption_is_path_scoped(tmp_path):
+    """The same section name in another document gets no exemption."""
+    make_repo(tmp_path, {
+        "docs/plans/a.md": "`docs/STATUS.md:Trabajo activo / dogfood`\n",
+        "docs/STATUS.md": "# Status\n\n## NOW\n",
+    })
+    broken = cpc.verify_all(tmp_path)
+    assert len(broken) == 1
+    assert broken[0].citation.path == "docs/STATUS.md"
+    assert broken[0].reason == "section not found"
+
+
 # --- AC-7: stdlib only ----------------------------------------------------------
 
 def test_tool_uses_only_stdlib():

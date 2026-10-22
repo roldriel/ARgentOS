@@ -448,3 +448,52 @@ reasoning**: it proves that a worker performing authorized semantic work fits th
 existing boundary without changing it.
 
 **Isolation (declared absence — decision `ID-3`, plan 165).** ARgentOS **does not provide isolation for the actor**: the agent runs in the adopter's environment, with that environment's permissions, and ARgentOS neither sandboxes it nor manages its credentials or its harness. The ARgentOS frontier is **prevention where the host controls the effect** and **detection where it does not** (the host cannot interpose inside the invocation); it is **not an isolation guarantee**. Encapsulation, credential custody and resource isolation belong to the adopter's environment.
+
+## F-C flow: memory as context, objective and actor containment (Plan 165)
+
+`runtime/orchestrator/fc_flow.py` is **part of `AgentWorker`, not a second
+architecture**. `AgentWorker.execute` imports it at the two points where the
+F-C frontier applies: the actor prompt and the containment of the actor's
+result. The host, the `WorkerAdapter` boundary and the `WorkerResult` contract
+(M4) are unchanged.
+
+```text
+AgentWorker.execute
+    ├── build_memory_context + with_memory_context   (FC-3, prompt only)
+    ├── AgentInvoker                                 (external actor)
+    └── contain_actor_result                         (FC-5, after execution)
+```
+
+- **`FC-3` — memory as context.** `build_memory_context` reads the existing
+  `runtime.memory.MemoryStore` (duck-typed: `list_records`/`read`) and renders
+  deterministic text; its only consumer is `with_memory_context`, which appends
+  that text to the actor prompt. Memory is data: it grants no authority, expands
+  no scope and authorizes no effect. `contains_memory_parameter` makes the
+  structural rule executable: the containment function must not accept a memory
+  parameter, so memory can never become an input to authority.
+- **`FC-4` — multi-Change objective.** `start_objective`, `record_change`,
+  `evaluate_change` and `objective_verdict` implement
+  `Objetivo → Change → evaluación → siguiente Change` with an **explicit**
+  evaluation after each Change. The machine refuses an implicit evaluation and
+  refuses another Change while one is pending.
+- **`FC-5` — authority/effect containment.** `contain_actor_result` contains
+  what the external actor produced: it first checks the envelope (requested
+  scope inside the existing scope, requested authority not expanded by the
+  result, a declaration present) and then reuses the F-B effect vocabulary and
+  `worker.classify_executed_effects`; every observed effect must be a recognized
+  class, declared and authorized. The verdict is all-or-nothing and stops with
+  `STOP_FORBIDDEN_ACTION`; the resource ceiling **terminates** and never turns an
+  unauthorized effect into an authorized one.
+- **`FC-1` — actor provenance.** The actor is external and declared
+  (`agent_worker.ActorProvenance`); `fc_flow` never selects, configures or calls
+  a provider or a model.
+- **Isolation is not provided** (declared in the Agent Worker section above);
+  containment is prevention where the host controls the effect and detection
+  where it does not.
+
+Suites: `tests/test_fc_flow.py` (the memory/objective/containment functions and
+their negative criteria), `tests/test_fc_host_integration.py` (the integration
+with `AgentWorker.execute` and the structural rule that containment is
+memory-free) and `tests/test_fc_actor_provenance.py` (the external actor's
+declared provenance). The absence of isolation is asserted by
+`tests/test_fc_isolation_declaration.py`.

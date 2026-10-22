@@ -86,11 +86,12 @@ Reglas de autoridad (ver §8):
 ### 1.3. Adquisición manual del payload (alternativa sin lifecycle)
 
 El repositorio publica la rama **`dist`**, que contiene únicamente `.agents/` y
-`AGENTS.md` en su raíz — nada más del repo de desarrollo. (En el repo fuente el
-payload vive en `protocol/` con el entry file renombrado a `_AGENTS.md`; la
-adopción siempre se hace desde `dist`.) La copia manual deposita el payload en
-`.argentos/.agents/` y el adapter en `AGENTS.md`; no crea manifest, por lo que
-no habilita `update`/`uninstall` gestionados (queda fuera del lifecycle).
+`AGENTS.md` en su raíz — nada más del repo de desarrollo. Ese `AGENTS.md` es el
+**entry del payload** (el `protocol/_AGENTS.md` fuente renombrado) y sus rutas
+`.agents/...` son relativas al payload, no a la raíz del proyecto. La copia
+manual deposita el payload en `.argentos/.agents/` y **crea** el adapter en
+`AGENTS.md` (§1.3.1.1); no crea manifest, por lo que no habilita
+`update`/`uninstall` gestionados (queda fuera del lifecycle).
 
 #### 1.3.1. Copia del payload desde `dist` con git
 
@@ -107,9 +108,41 @@ git worktree add --detach <staging> FETCH_HEAD   # o: git archive FETCH_HEAD | t
 
 # Materializar el layout canónico (copiar, nunca enlazar)
 #   <staging>/.agents/  → <proyecto>/.argentos/.agents/
-#   <staging>/AGENTS.md → <proyecto>/AGENTS.md      (solo si el destino no existe)
 #   <proyecto>/.argentos/features.toml  ← plantilla del payload (`features.toml`)
+#   <proyecto>/AGENTS.md ← adapter no normativo de §1.3.1.1 (solo si no existe)
 ```
+
+`<staging>/AGENTS.md` **no se copia como adapter**: es el entry del payload y
+su cadena de bootstrap es `.agents/INDEX.md`. En el layout canónico el payload
+vive en `.argentos/.agents/`, de modo que el `AGENTS.md` de la raíz del
+proyecto debe ser un adapter distinto que apunte a `.argentos/.agents/INDEX.md`.
+Copiar el entry del payload a la raíz deja un `AGENTS.md` que apunta a
+`<proyecto>/.agents/` (inexistente en el layout canónico).
+
+#### 1.3.1.1. Adapter canónico del layout materializado
+
+El adapter es no normativo: su única función es llevar al bootstrap real. Su
+contenido canónico es el siguiente (expresa el mismo contrato que el adapter
+que genera el lifecycle en §1.2; el generado añade además el marcador
+`<!-- protocol_version: X -->`):
+
+<!-- canonical-adapter -->
+```markdown
+<!-- Non-normative adapter. The protocol source is the installed payload. -->
+# AGENTS.md
+
+This project adopts **ARgentOS**. The normative bootstrap is:
+
+    .argentos/.agents/INDEX.md
+
+Read that file and follow the protocol it defines. This adapter is
+generated for discovery and is not the payload entry point.
+```
+
+El adapter no crea un segundo bootstrap: `.argentos/AGENTS.md` no existe ni
+debe crearse.
+
+Reglas de la copia manual (§1.3.1 y §1.3.2):
 
 - La copia manual no crea manifest: no habilita `update`/`uninstall` gestionados
   (queda fuera del lifecycle). Para gestionarlo, usar el lifecycle de §1.2.
@@ -132,8 +165,13 @@ proyecto adoptante.
 | Copiar | Destino | Obligatorio |
 |---|---|---|
 | `.agents/` (completo) | `<proyecto>/.argentos/.agents/` | Sí |
-| `AGENTS.md` (raíz de `dist`) | `<proyecto>/AGENTS.md` (solo si no existe) | Sí |
+| Adapter de §1.3.1.1 (no el `AGENTS.md` de `dist`) | `<proyecto>/AGENTS.md` (solo si no existe) | Sí |
 | `features.toml` (plantilla del payload) | `<proyecto>/.argentos/features.toml` | Sí |
+
+El `AGENTS.md` de la raíz de `dist` es el entry del payload, no el adapter: no
+se copia al proyecto. El adapter de la raíz se escribe con el contenido de
+§1.3.1.1 (o se genera con el lifecycle de §1.2), porque en el layout canónico
+la entrada normativa es `.argentos/.agents/INDEX.md`.
 
 Actualizar es reemplazar el payload por el de la versión nueva, eliminar los
 archivos declarados como *Removed* en la sección correspondiente del

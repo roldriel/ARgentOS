@@ -117,8 +117,10 @@ D1–D5, 2026-09-05)`.
 Semántica de nombres de archivo (decisión D3, 2026-09-05; no se renombra nada):
 
 - `AGENTS.md` = **instrucciones de agente** por capa: `AGENTS.md` raíz (DEV),
-  `.agents/AGENTS.md` (capa operacional DEV), `AGENTS.md` del adoptante
-  (publicado desde `protocol/_AGENTS.md`).
+  `.agents/AGENTS.md` (capa operacional DEV), `AGENTS.md` de la raíz del
+  adoptante (adapter no normativo generado que apunta a
+  `.argentos/.agents/INDEX.md`; no es el entry del payload, que `dist` publica
+  en su propia raíz desde `protocol/_AGENTS.md`; `docs/ADOPTION.md` §1.3.1.1).
 - `protocol/.agents/INDEX.md` = **bootstrap + navegación** del Protocol (rol
   dual; no es un mero registro).
 - Los `INDEX.md` de `docs/` e internos = **registro/navegación**; nunca
@@ -154,6 +156,18 @@ Cinco clases de referencia:
 **emite** la referencia, no del target: una referencia emitida por un
 documento vivo hacia evidencia working es **Provenance**; una referencia
 contenida en un documento histórico/pre-migración es **Historical**.
+
+**Alcance de la contención (RFC-69 I2):** la garantía «un documento
+referenciado por un artefacto versionado no puede existir solo en el working
+tree» se verifica sobre el corpus de citas canónico que define
+`tools/check_plan_citations.py`: `docs/plans/`, `docs/rfc/`, `docs/adr/` y los
+documentos de `ROOT_DOCS` (raíz y docs canónicos). Los documentos Working no
+son **fuentes** de referencias normativas/documentales —pueden mencionar
+insumos locales no versionados, como el `PRIORITY.md` del mantenedor, sin
+convertirlos en dependencias del repositorio—. Sí son **targets**: un Working
+citado como provenance por un documento canónico debe estar versionado. El
+límite es deliberado y lo verifica `tests/test_repo_containment.py`, que
+declara el mismo dominio.
 
 **Mapping** es un mecanismo de resolución histórica/migratoria, no una nueva
 clase de referencia. Las referencias nuevas no usan paths legacy.

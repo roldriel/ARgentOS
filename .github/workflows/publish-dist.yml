@@ -6,6 +6,11 @@
 # publicable de `master` en cada push que toque el payload fuente
 # (`protocol/`). El payload fuente usa `_AGENTS.md` (entry file inerte en el
 # repo de desarrollo); al publicar se renombra a `AGENTS.md`.
+#
+# Contrato del trigger: push a `master` que modifique `protocol/**`. El tag de
+# release NO dispara este workflow; se crea sobre el mismo commit de promoción
+# (docs/VERSIONING.md §1 y §4 paso 7). El contenido de `dist` queda así atado
+# al commit de master que lo publicó.
 name: publish-dist
 
 on:

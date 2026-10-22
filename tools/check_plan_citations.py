@@ -28,6 +28,10 @@ historical plans may cite them without a persistent target. Citations from
 historical sources (docs/plans/, docs/rfc/, CHANGELOG.md) to artifacts removed
 by a published release (``REMOVED_ARTIFACTS``) are also exempt: historical trace
 is preserved (RFC-46/RFC-69), while live docs must not cite removed artifacts.
+The same historical-only exemption applies to section anchors retired from a
+live document by a published governance change (``RETIRED_SECTIONS``): a plan or
+RFC written before the retirement keeps the citation as trace, while a live
+document that cites a retired anchor still fails.
 
 Additionally, it flags citations that use a legacy path from a live
 (non-historical) source: historical archives (docs/plans/, docs/rfc/) and
@@ -78,7 +82,10 @@ _TRAILING_PUNCT = string.punctuation.replace("#", "")
 
 # Canonical documents scanned as citation sources, in addition to plans/:
 # the root docs plus the canonical component docs. Working/scratch documents
-# (feature.md, audit notes) are intentionally excluded.
+# (feature.md, audit notes) are intentionally excluded **as sources**: their
+# mentions are working notes, not normative/documentary references. A Working
+# document cited *by* a canonical document is still a verified target (see
+# tests/test_repo_containment.py).
 ROOT_DOCS = (
     "AGENTS.md",
     "README.md",
@@ -104,6 +111,25 @@ REMOVED_ARTIFACTS = frozenset({
     ".agents/standards/context/PROJECT_ARTIFACTS.md",
     "protocol/.agents/standards/context/PROJECT_ARTIFACTS.md",
 })
+
+# Section anchors retired from a live document by a published governance change.
+# Keyed by (document path, normalized section). The exemption is historical-only,
+# exactly like REMOVED_ARTIFACTS: it preserves the trace of plans/RFCs written
+# before the retirement (RFC-46/RFC-69 I4) and never licenses a live document to
+# cite an anchor that no longer exists.
+#
+# ROADMAP.md was reduced to its strategic path by plans 157/158; these two
+# sections disappeared then. The cited text was correct when written.
+RETIRED_SECTIONS = {
+    ("ROADMAP.md", "trabajo activo / dogfood"):
+        "retired by plans 157/158 (roadmap reduced to its strategic path)",
+    ("ROADMAP.md", "pendientes que requieren autorización"):
+        "retired by plans 157/158 (roadmap reduced to its strategic path)",
+}
+
+
+# Governance trees scanned recursively as citation sources.
+SOURCE_TREES = ("docs/plans", "docs/rfc", "docs/adr")
 
 
 @dataclass
@@ -216,7 +242,7 @@ def scan_documents(root: Path) -> list[Citation]:
     """Extract citations from docs/plans/ + docs/rfc/ and the root docs."""
     citations: list[Citation] = []
     sources: list[Path] = []
-    for sub in ("docs/plans", "docs/rfc", "docs/adr"):
+    for sub in SOURCE_TREES:
         sub_dir = root / sub
         if sub_dir.is_dir():
             sources.extend(sorted(sub_dir.rglob("*.md")))
@@ -248,6 +274,11 @@ def verify_citation(citation: Citation, root: Path) -> BrokenCitation | None:
         target = mapped
     text = target.read_text(encoding="utf-8", errors="replace")
     if not section_exists(citation.section, text):
+        if (
+            is_historical_source(citation.source)
+            and is_retired_section(citation.path, citation.section)
+        ):
+            return None
         if _NUMERIC_ONLY_RE.match(citation.section.strip()):
             return BrokenCitation(citation, "non-heading anchor")
         return BrokenCitation(citation, "section not found")
@@ -278,6 +309,17 @@ def is_historical_source(source: Path) -> bool:
     """True when the source document is a historical archive or record."""
     posix = source.as_posix()
     return posix.startswith(("docs/plans/", "docs/rfc/")) or posix in _LIVE_SOURCE_EXEMPT
+
+
+def is_retired_section(path: str, section: str) -> bool:
+    """True when the citation names a section retired by a published change.
+
+    ``RETIRED_SECTIONS`` is exact (path + normalized section): the same section
+    name in another document gets no exemption, and a near-miss name does not
+    either. The caller must additionally require a historical source; a live
+    document citing the retired anchor is still broken.
+    """
+    return (path, normalize_heading(section)) in RETIRED_SECTIONS
 
 
 def find_new_legacy_references(

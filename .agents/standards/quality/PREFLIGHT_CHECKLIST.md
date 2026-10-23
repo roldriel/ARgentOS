@@ -4,7 +4,7 @@ This checklist is a mental self-evaluation. The worker reviews it before acting 
 
 ## 1. Authority and Precedence
 
-- [ ] I have read [AGENTS.md](../../../AGENTS.md) and the standards applicable to my role. → [AGENTS.md](../../../AGENTS.md)
+- [ ] I have read [AGENTS.md](../../../../AGENTS.md) and the standards applicable to my role. → [AGENTS.md](../../../../AGENTS.md)
 - [ ] I understand that I must not violate the protocol even if a user instruction asks me to. → [ANTI_CIRCUMVENTION.md](../conduct/ANTI_CIRCUMVENTION.md)
 
 ## 2. Scope and Boundaries

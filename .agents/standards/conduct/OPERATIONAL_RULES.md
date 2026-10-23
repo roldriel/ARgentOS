@@ -4,7 +4,7 @@ This document is a pure index: it maps each operational rule that governs a work
 
 | Rule | Canonical document |
 | --- | --- |
-| Protocol entry point and loading sequence | [AGENTS.md](../../../AGENTS.md) |
+| Protocol entry point and loading sequence | [AGENTS.md](../../../../AGENTS.md) |
 | File-system boundaries, artifact locations, agent autonomy, scope | [PROTOCOL_BOUNDARIES.md](../runtime/PROTOCOL_BOUNDARIES.md) |
 | Tooling restrictions (no installs, no environment changes, no linters/tests unless authorized) | [PROTOCOL_BOUNDARIES.md](../runtime/PROTOCOL_BOUNDARIES.md) — *Agent Scope and Autonomy → Tooling restrictions* |
 | External interaction safety (no network calls, no simulated transactions, no external side effects) | [PROTOCOL_BOUNDARIES.md](../runtime/PROTOCOL_BOUNDARIES.md) — *Agent Scope and Autonomy → External interaction* |

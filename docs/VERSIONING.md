@@ -308,66 +308,64 @@ Condiciones derivadas del Change Lifecycle (semántica; RFC-75
   tocar `VERSION`/changelog, o los ítems se acumulan en `[Unreleased]` y la
   numeración se asigna en la promoción.
 
-## 9. Estado actual (2026-10-23, release `12.3.2`)
+## 9. Estado actual (2026-10-23, release `12.3.3`)
 
-Snapshot del estado al 2026-10-23, reconciliado tras la promoción de la release
-`12.3.2`. Sucesión de puntos de reconciliación: la promoción del rango
+Snapshot del estado al 2026-10-23, reconciliado en el punto de la release
+`12.3.3`. Sucesión de puntos de reconciliación: la promoción del rango
 `11.3.0`–`11.6.1` (plan 146), la corrección post-release del plan 147, la
 **release de gobernanza `11.6.2`** (plan 148), la **release de gobernanza
 `11.7.1`** (planes 151–153), la **release `12.0.0`** (plan 154, RFC-81), la
 **release `12.1.0`** (plan 168), la **release `12.2.0`** (plan 170, RFC-84), la
 **release `12.3.0`** (Change Clase A bajo instrucción directa del mantenedor,
 commit `16224ce`), la **release `12.3.1`** (Plan 173: corrección del cierre de
-Phase 0.4 y cobertura de idempotencia del lifecycle) y la **release `12.3.2`**
+Phase 0.4 y cobertura de idempotencia del lifecycle), la **release `12.3.2`**
 (F-01: referencias al `AGENTS.md` raíz bajo el layout adoptado, commit
-`c3c016d`), que es el punto publicado vigente. `dev` contiene además el
-**root binding post-release del lifecycle** (descriptor relativo POSIX y
-handle sin `FILE_SHARE_DELETE` en Windows), todavía sin versión propia
-(pendiente de la próxima release).
+`c3c016d`) y la **release `12.3.3`** (root binding del lifecycle; implementación
+`8566edd`), que es el punto publicado vigente.
 La fuente inmutable de la verdad son `git tag` + `protocol/.agents/VERSION`:
 este snapshot es un resumen de lectura, no una segunda fuente, y una divergencia
 se resuelve siempre a favor de git.
 
-- `master` = `12.3.2` (tag `12.3.2` sobre `c3c016d`). Publica la corrección
-  **F-01** de las dos referencias al `AGENTS.md` raíz bajo el layout adoptado y
-  conserva la release `12.3.1` (Plan 173) y el catálogo de invariantes de la
-  release `12.2.0` (plan 170, RFC-84). Es un PATCH documental: no agrega
-  capacidades, no redefine contratos y no cambia el layout de adopción.
-- `dist` = publicado desde `master` en la release `12.3.2` (`publish-dist`, run
-  `39898864621`, `completed / success`): contiene `.agents/` + `AGENTS.md`, con
-  `VERSION` = `12.3.2` y las dos correcciones de F-01. El workflow regenera
-  `dist` en cada push a `master` que toque `protocol/**`; la publicación remota
-  forma parte de esta release y CI la materializó desde el commit de promoción
-  (`dist` = `c699fb5`, «publish from master @ c3c016d»).
-  **Contrato de distribución:** `dist` transporta el *payload* (`.agents/` +
-  `AGENTS.md`), no el layout materializado; el layout canónico
+- `master` = `12.3.3` (tag `12.3.3` sobre el commit de release `release: 12.3.3`).
+  Publica el **root binding** del lifecycle: POSIX liga las mutaciones a un
+  descriptor `O_DIRECTORY` (`dir_fd`, `O_NOFOLLOW`); Windows local usa un
+  handle de directorio sin `FILE_SHARE_DELETE`, que impide el reemplazo de la
+  raíz y de sus ancestros. Si no puede establecerse el binding fuerte, la
+  operación falla cerrado; no hay fallback a `realpath + st_dev + st_ino`.
+  Es un **PATCH**: corrige la implementación de #32 sin nueva capacidad ni
+  cambio de contrato. Conserva la release `12.3.2` (F-01), `12.3.1` (Plan 173)
+  y el catálogo de invariantes de `12.2.0` (plan 170, RFC-84).
+- `dist` = publicado desde `master` en la release `12.3.3` por el workflow
+  `publish-dist`, que materializa el payload desde el commit de release. Contiene
+  `.agents/` + `AGENTS.md`, con `VERSION` = `12.3.3`, `lifecycle_root.py` y la
+  suite de transacción actualizada. El workflow regenera `dist` en cada push a
+  `master` que toque `protocol/**`; la publicación remota forma parte de esta
+  release. **Contrato de distribución:** `dist` transporta el *payload*
+  (`.agents/` + `AGENTS.md`), no el layout materializado; el layout canónico
   `<proyecto>/.argentos/…` lo produce el lifecycle al instalar (ver
   `docs/ADOPTION.md` §1 y §1.3).
-- `dev` = `12.3.2` (`protocol/.agents/VERSION`) con un **cambio de payload
-  posterior a la release y sin publicar**: el **root binding** del lifecycle
-  (`protocol/.agents/harness/lifecycle_root.py`, `lifecycle.py` y sus tests de
-  transacción), que sustituye la detección por revalidación por mutaciones
-  ligadas al objeto validado — descriptor relativo en POSIX y handle sin
-  `FILE_SHARE_DELETE` en Windows — y falla cerrado si no puede establecer el
-  binding fuerte. No hay bump de `VERSION` para ese cambio: se consolidará en
-  la próxima versión que se corte. Los planes docs-only/tooling 171, 172 y 173
-  y el saneamiento Priority 2 viven en `dev` sin versión de payload propia; el
-  ítem de gobernanza del Plan 172 y los anteriores permanecen en
-  `[Unreleased]`, que acumula los ítems no asignados a una versión.
+- `dev` = `12.3.3` (`protocol/.agents/VERSION`), en el mismo commit de release
+  que `master` tras la promoción. El delta de payload respecto de `12.3.2` es
+  el root binding: `protocol/.agents/harness/lifecycle_root.py` (nuevo),
+  `lifecycle.py`, el test de transacción, `INDEX.md`, `PYTHON_DEPENDENCIES.md`
+  y la metadata `VERSION`. No queda payload publicado pendiente. Los planes
+  docs-only/tooling 171, 172 y 173 y el saneamiento Priority 2 viven en `dev`
+  sin versión de payload propia; el ítem de gobernanza del Plan 172 y los
+  anteriores permanecen en `[Unreleased]`, que acumula los ítems no asignados a
+  una versión.
 - Tags anotados de la serie vigente: `11.6.0`, `11.6.1`, `11.6.2`, `11.7.0`,
-  `11.7.1`, `12.0.0`, `12.1.0`, `12.2.0`, `12.3.0`, `12.3.1` y `12.3.2`, cada
-  uno sobre el commit de promoción correspondiente de `master`. `11.7.0` (plan
-  150, RFC-80) publicó el Memory System reference runtime; `11.7.1` (planes
-  151–153) fue una release de gobernanza; `12.1.0` (plan 168) publica el
-  payload acumulado de los planes 156 y 166; `12.2.0` (plan 170) publica el
-  catálogo canónico de invariantes y properties; `12.3.0` publica el
+  `11.7.1`, `12.0.0`, `12.1.0`, `12.2.0`, `12.3.0`, `12.3.1`, `12.3.2` y
+  `12.3.3`, cada uno sobre el commit de promoción correspondiente de `master`.
+  `11.7.0` (plan 150, RFC-80) publicó el Memory System reference runtime;
+  `11.7.1` (planes 151–153) fue una release de gobernanza; `12.1.0` (plan 168)
+  publica el payload acumulado de los planes 156 y 166; `12.2.0` (plan 170)
+  publica el catálogo canónico de invariantes y properties; `12.3.0` publica el
   endurecimiento de enforcement de `PC-3`, `E1-G1` y `G-09`; `12.3.1` publica
   la corrección de Phase 0.4 (Plan 173) y la cobertura de idempotencia del
-  lifecycle; `12.3.2` publica la corrección de F-01.
+  lifecycle; `12.3.2` publica la corrección de F-01; `12.3.3` publica el root
+  binding del lifecycle.
 - `VERSION` = `PROTOCOL_VERSION` (`runtime/toolcalls/canonical.py`, el ancla
-  semántica del runtime) = `12.3.2` en `dev` y en `master`. En `dev` el valor
-  identifica la última release publicada; el cambio post-release del lifecycle
-  todavía no tiene número propio.
+  semántica del runtime) = `12.3.3` en `dev` y en `master`.
 
 Notas:
 
@@ -386,20 +384,15 @@ Notas:
   secciones del changelog sin tag. La promoción (`dev` → `master` + tags
   anotados + regeneración de `dist`) se ejecutó en el Change del plan 146, que
   es el primer punto de reconciliación de este snapshot.
-- Tras la release `12.3.2`, `master` y `dist` están sincronizados. `dev`
-  contiene además el **root binding** post-release del lifecycle
-  (`protocol/.agents/harness/lifecycle_root.py`, `lifecycle.py` y sus tests de
-  transacción) **sin publicar**, de modo que `check_dist_sync.py` se espera rojo
-  en `dev` por diseño (ver §4.1): la diferencia es exactamente ese cambio de
-  payload. En el estado publicado (`master`) el checker está verde. Su
-  comparación es contra la **ref local** `dist` y contra el payload comprometido
-  en `HEAD` (`--branch` permite apuntarla a otra ref, por ejemplo
-  `origin/dist`); la publicación remota forma parte de la promoción y CI
-  regenera `origin/dist` desde el commit de promoción, que es el payload que
-  reciben los adoptantes. Advertencia operativa: la **ref local** `dist` puede
+- Tras la release `12.3.3`, `master` y `dist` están sincronizados y `dev` apunta
+  al mismo commit de release. `check_dist_sync.py` debe quedar verde en `dev` y
+  en `master`; su comparación es contra la **ref local** `dist` y contra el
+  payload comprometido en `HEAD` (`--branch` permite apuntarla a otra ref, por
+  ejemplo `origin/dist`). Advertencia operativa: la **ref local** `dist` puede
   quedar por detrás de `origin/dist` (es una rama generada por CI, no un
   artefacto del working tree); para leer el payload publicado hay que resolver
-  `origin/dist`, no la ref local.
+  `origin/dist`, no la ref local. La publicación remota forma parte de la
+  promoción y CI regenera `origin/dist` desde el commit de release.
 - El job `check-protocol` de CI necesita **historia completa** del repositorio:
   los gates de lifecycle (C-2) resuelven tree ids declarados con `git rev-parse`
   y los dogfoods anclados leen commits históricos con `git log`. El workflow usa

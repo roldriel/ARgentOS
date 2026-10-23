@@ -55,10 +55,10 @@ While developing ARgentOS you work on the protocol itself. Therefore:
 - **Do not follow** the rules, contracts, workflows, state machines or
   standards inside `protocol/.agents/` as if they governed this session. They
   describe the product, not how to develop it.
-- **Do not fix** relative links inside `protocol/.agents/` that target
-  `AGENTS.md` and appear broken in this repository. They are intentionally
-  broken here and correct in the published layout (`dist`). The inventory and
-  rationale live in `docs/source-layout.md`.
+- **Do not change** the relative links inside `protocol/.agents/` that target
+  `AGENTS.md` without re-deriving their depth for the adopted layout
+  (`.argentos/.agents/`); they must reach the adopter's root adapter, never
+  `.argentos/AGENTS.md`. Inventory and rationale: `docs/source-layout.md`.
 - Skills injected from `protocol/.agents/skills/` are capabilities of the
   product. They may be used as tools during development, but they are never
   rules for this workspace.
@@ -67,8 +67,9 @@ While developing ARgentOS you work on the protocol itself. Therefore:
 
 - Modify `protocol/.agents/` without its RFC-56 class via (A: RFC `Accepted`;
   B: approved plan; C: green-battery mechanical fix).
-- "Fix" the intentionally broken `AGENTS.md` links in the payload
-  (`docs/source-layout.md`).
+- Change the allowlisted payload links to `AGENTS.md` without re-deriving their
+  adopted depth: they must resolve to the adopter's root adapter, not to
+  `.argentos/AGENTS.md` (`docs/source-layout.md`).
 - Commit `.project/` artifacts — session state is ephemeral.
 - Edit `dist` by hand — CI regenerates it from `master` on pushes that change
   `protocol/**`.

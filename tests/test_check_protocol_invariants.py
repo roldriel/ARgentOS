@@ -188,15 +188,35 @@ def test_agents_md_reference_ok(tmp_path):
 
 
 def test_entry_file_relative_link_ok(tmp_path):
-    """The intentionally broken source links (../../../AGENTS.md) map to the
-    payload entry file and are valid — they are correct in the dist layout."""
+    """The allowlisted entry links resolve to the adopter's root AGENTS.md.
+
+    Four levels up from .agents/standards/<dir>/ reach project/AGENTS.md once
+    .agents/ is materialized at .argentos/.agents/."""
+    make_repo(tmp_path, {
+        ".agents/roles/sample.md": ROLE_OK,
+        ".agents/standards/conduct/OPERATIONAL_RULES.md": (
+            "See [AGENTS.md](../../../../AGENTS.md).\n"
+        ),
+    })
+    assert cpi.verify(tmp_path) == []
+
+
+def test_entry_link_with_wrong_adopted_depth_is_rejected(tmp_path):
+    """The pre-F-01 three-level link resolved to .argentos/AGENTS.md.
+
+    That path must not exist, so the checker rejects the link instead of
+    accepting any path that happens to resolve in the source tree."""
     make_repo(tmp_path, {
         ".agents/roles/sample.md": ROLE_OK,
         ".agents/standards/conduct/OPERATIONAL_RULES.md": (
             "See [AGENTS.md](../../../AGENTS.md).\n"
         ),
     })
-    assert cpi.verify(tmp_path) == []
+    violations = cpi.verify(tmp_path)
+    assert any(
+        v.code == "BOUNDARY" and "adopter's root AGENTS.md" in v.message
+        for v in violations
+    ), violations
 
 
 def test_dev_root_agents_md_not_scanned(tmp_path):
@@ -384,13 +404,13 @@ def test_skills_index_desync_flagged(tmp_path):
 
 
 def test_allowlisted_entry_links_pass(tmp_path):
-    """The two documented files may carry the intentionally broken link."""
+    """The two documented files may carry the adopted entry link."""
     make_repo(tmp_path, {
         ".agents/standards/conduct/OPERATIONAL_RULES.md": (
-            "| entry | [AGENTS.md](../../../AGENTS.md) |\n"
+            "| entry | [AGENTS.md](../../../../AGENTS.md) |\n"
         ),
         ".agents/standards/quality/PREFLIGHT_CHECKLIST.md": (
-            "- [ ] read [AGENTS.md](../../../AGENTS.md)\n"
+            "- [ ] read [AGENTS.md](../../../../AGENTS.md)\n"
         ),
         "AGENTS.md": "# Entry\n",
     })
@@ -401,10 +421,10 @@ def test_third_entry_link_is_a_violation(tmp_path):
     """A path-link to AGENTS.md from any other payload file is flagged."""
     make_repo(tmp_path, {
         ".agents/standards/conduct/OPERATIONAL_RULES.md": (
-            "| entry | [AGENTS.md](../../../AGENTS.md) |\n"
+            "| entry | [AGENTS.md](../../../../AGENTS.md) |\n"
         ),
         ".agents/standards/runtime/OTHER.md": (
-            "See [AGENTS.md](../../../AGENTS.md) now.\n"
+            "See [AGENTS.md](../../../../AGENTS.md) now.\n"
         ),
         "AGENTS.md": "# Entry\n",
     })
@@ -426,9 +446,9 @@ def test_bare_prose_entry_mention_is_allowed(tmp_path):
     assert cpi.verify(tmp_path) == []
 
 
-def test_source_layout_documents_intentionally_broken_links():
-    """docs/source-layout.md must document the two intentionally broken source
-    links so an agent knows not to fix them (allowlist == inventory)."""
+def test_source_layout_documents_entry_links():
+    """docs/source-layout.md must document the two adopted entry links and
+    their depth so an agent does not regress them (allowlist == inventory)."""
     doc = (REPO_ROOT / "docs" / "source-layout.md").read_text(
         encoding="utf-8"
     )
@@ -438,4 +458,4 @@ def test_source_layout_documents_intentionally_broken_links():
     assert (
         "protocol/.agents/standards/quality/PREFLIGHT_CHECKLIST.md" in doc
     )
-    assert "../../../AGENTS.md" in doc
+    assert "../../../../AGENTS.md" in doc

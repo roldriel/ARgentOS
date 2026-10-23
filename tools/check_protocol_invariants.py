@@ -28,6 +28,11 @@ Source-containment rules: the dev root AGENTS.md is NOT scanned (it is the
 development entry point, not a protocol document), and references whose final
 path component is ``AGENTS.md`` map to the payload entry file
 (``_AGENTS.md`` in the source tree; ``AGENTS.md`` in the published dist).
+A path-link to ``AGENTS.md`` from an allowlisted payload file is verified
+against the **adopted** layout instead: from ``project/.argentos/<payload
+path>`` it must resolve to ``project/AGENTS.md``, the adopter's root adapter.
+That is the depth that makes the link correct after installation, and it
+never authorizes ``project/.argentos/AGENTS.md``.
 
 False-positive control: bare artifact names (TASK_SPECIFICATION.md),
 session-artifact placeholders (.project/<session-uuid>/...), URLs and
@@ -46,6 +51,7 @@ Standard library only.
 from __future__ import annotations
 
 import argparse
+import posixpath
 import re
 import sys
 from dataclasses import dataclass
@@ -96,11 +102,13 @@ _BARE_RE = re.compile(
 _DEFAULT_PAYLOAD = "protocol"
 _DEFAULT_ENTRY_FILE = "_AGENTS.md"
 
-# Payload files allowed to carry the intentionally broken source link to the
-# product entry file (e.g. [AGENTS.md](../../../AGENTS.md)): broken in the
-# source tree, correct in the published dist layout. Inventory and rationale:
-# docs/source-layout.md. A path-link to AGENTS.md from any other payload file
-# is a violation; bare prose mentions (no path separator) are allowed.
+# Payload files allowed to carry a path-link to the adopter's root AGENTS.md
+# (e.g. [AGENTS.md](../../../../AGENTS.md)). The depth is derived from the
+# canonical adopted layout: the payload lives at project/.argentos/.agents/,
+# so a file under .agents/standards/<dir>/ needs four levels to reach
+# project/AGENTS.md. Inventory and rationale: docs/source-layout.md. A
+# path-link to AGENTS.md from any other payload file is a violation; bare
+# prose mentions (no path separator) are allowed.
 _ENTRY_LINK_ALLOWLIST = frozenset({
     ".agents/standards/conduct/OPERATIONAL_RULES.md",
     ".agents/standards/quality/PREFLIGHT_CHECKLIST.md",
@@ -245,9 +253,9 @@ def resolve_target(
         candidates.append(agents / fp)
     candidates.append(payload / fp)
     # References to the product entry file (AGENTS.md) map to the payload
-    # entry file; in the source tree it is renamed (_AGENTS.md). This is the
-    # mechanism that keeps the intentionally broken source links valid: they
-    # are correct in the published dist layout.
+    # entry file; in the source tree it is renamed (_AGENTS.md). Path-links
+    # from allowlisted files are verified against the adopted layout before
+    # this point (resolves_to_adopter_root).
     if Path(fp).name == "AGENTS.md":
         candidates.append(payload / entry_file)
     for p in candidates:
@@ -299,6 +307,23 @@ def is_allowed_docs_provenance(source_rel: str, filepart: str) -> bool:
     return filepart in _DOCS_PROVENANCE_ALLOWLIST.get(source_rel, frozenset())
 
 
+def resolves_to_adopter_root(source_rel: str, filepart: str) -> bool:
+    """True when an AGENTS.md path-link reaches ``project/AGENTS.md``.
+
+    The payload is installed at ``project/.argentos/<source_rel>`` and the
+    link is resolved from there. This encodes the established adoption
+    contract (``docs/ADOPTION.md`` §1): ``.agents/`` becomes
+    ``.argentos/.agents/`` and the project root carries the adapter. Resolving
+    to ``project/.argentos/AGENTS.md`` is the defect this guards against.
+    """
+    target = posixpath.normpath(
+        posixpath.join(
+            "project", ".argentos", posixpath.dirname(source_rel), filepart
+        )
+    )
+    return target == "project/AGENTS.md"
+
+
 def verify_reference(
     ref: Reference,
     root: Path,
@@ -319,8 +344,7 @@ def verify_reference(
     if is_allowed_docs_provenance(source_rel, fp):
         return None
     if "/" in fp and Path(fp).name == "AGENTS.md":
-        rel = (root / ref.source).relative_to(payload).as_posix()
-        if rel not in _ENTRY_LINK_ALLOWLIST:
+        if source_rel not in _ENTRY_LINK_ALLOWLIST:
             return Violation(
                 "BOUNDARY",
                 ref.source,
@@ -328,6 +352,18 @@ def verify_reference(
                 f"reference `{token}` links to the entry file from a file "
                 "outside the documented allowlist (docs/source-layout.md)",
             )
+        if not resolves_to_adopter_root(source_rel, fp):
+            return Violation(
+                "BOUNDARY",
+                ref.source,
+                ref.line,
+                f"reference `{token}` does not resolve to the adopter's root "
+                "AGENTS.md after .agents/ is materialized at "
+                ".argentos/.agents/",
+            )
+        # The link is correct for the adopted layout; the source tree has no
+        # equivalent adapter (protocol/_AGENTS.md is the payload entry).
+        return None
     resolved = resolve_target(filepart, root / ref.source, payload, entry_file)
     status = classify(filepart, resolved, payload, entry_file)
     if status == "ok" or status == "skip":

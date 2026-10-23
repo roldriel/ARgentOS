@@ -1,4 +1,4 @@
-# Layout del payload fuente y links rotos intencionales
+# Layout del payload fuente y referencias al entry file
 
 El payload del producto vive en `protocol/` (`protocol/.agents/` +
 `protocol/_AGENTS.md`). La rama `dist` publica ese payload en su propia raíz
@@ -10,28 +10,30 @@ instala como adapter (ver `docs/ADOPTION.md` §1.3.1.1).
 
 ## Regla general
 
-Los links relativos dentro de `protocol/.agents/` que apuntan a `AGENTS.md`
-están **rotos a propósito** en el árbol fuente y **correctos en `dist`**.
-**No arreglarlos**: modificarlos altera el payload inmutable (requiere RFC/plan)
-y rompería el layout publicado. El checker mapea estas referencias al entry
-file fuente (`protocol/_AGENTS.md`) y las considera válidas.
+Los links de path al entry file dentro de `protocol/.agents/` usan la
+**profundidad del layout adoptado**: el payload se materializa en
+`.argentos/.agents/`, de modo que desde `.agents/standards/<dir>/` hacen falta
+**cuatro** niveles (`../../../../AGENTS.md`) para llegar a `AGENTS.md` en la
+raíz del proyecto adoptante. Nunca deben resolver a `.argentos/AGENTS.md`, que
+no existe ni debe crearse (`docs/ADOPTION.md` §1.1).
+
+En el árbol fuente esos cuatro niveles llegan a la raíz del repo de desarrollo,
+cuyo `AGENTS.md` es el entry DEV y no el producto. Por eso el checker no
+resuelve estos links contra el filesystem: los valida contra el **layout
+adoptado** (`project/.argentos/<payload path>` debe llegar a
+`project/AGENTS.md`) y considera el entry del payload
+(`protocol/_AGENTS.md`) como su equivalente fuente. Cambiar la profundidad
+exige re-derivarla del layout adoptado y actualizar esta guarda; no son links
+que deban "arreglarse" a mano en una dirección arbitraria. La rama `dist` no es
+un proyecto materializado: el link resuelve recién al instalar `.agents/` bajo
+`.argentos/`, no leyendo `dist` como si fuera la raíz de un adoptante.
 
 ## Inventario exacto
 
-| Archivo (fuente) | Link | Por qué roto en dev/master | Por qué correcto en dist |
+| Archivo (fuente) | Link | Resolución adoptada | Nota de fuente |
 | --- | --- | --- | --- |
-| `protocol/.agents/standards/conduct/OPERATIONAL_RULES.md` | `[AGENTS.md](../../../AGENTS.md)` | Resuelve a `protocol/AGENTS.md`, que no existe (es `_AGENTS.md`) | Desde `.agents/standards/conduct/` resuelve a la raíz del adoptante, donde `AGENTS.md` existe |
-| `protocol/.agents/standards/quality/PREFLIGHT_CHECKLIST.md` | `[AGENTS.md](../../../AGENTS.md)` | Ídem | Ídem |
-
-**Límite conocido del layout canónico (F-01; requiere Clase A).** En el layout
-canónico el payload vive en `.argentos/.agents/`, de modo que esos dos links
-resuelven a `.argentos/AGENTS.md`, que **no existe ni debe crearse**. El
-contenido al que apuntan (la entrada del protocolo) ahora es
-`.argentos/.agents/INDEX.md`. Corregir los dos links exige modificar
-`protocol/.agents/` y por tanto la vía RFC-56 Clase A; se registra acá como
-límite conocido y no se toca el payload en este saneamiento. La cadena de
-entrada principal del adoptante —adapter `AGENTS.md` →
-`.argentos/.agents/INDEX.md`— sí resuelve (`docs/ADOPTION.md` §1.3.1.1).
+| `protocol/.agents/standards/conduct/OPERATIONAL_RULES.md` | `[AGENTS.md](../../../../AGENTS.md)` | `project/AGENTS.md` (raíz del adoptante) | Cuatro niveles desde `protocol/.agents/standards/conduct/` llegan a la raíz del repo fuente, donde `AGENTS.md` es el entry DEV; el checker valida la resolución adoptada, no esa ruta |
+| `protocol/.agents/standards/quality/PREFLIGHT_CHECKLIST.md` | `[AGENTS.md](../../../../AGENTS.md)` | `project/AGENTS.md` (raíz del adoptante) | Ídem |
 
 ## Prosa que describe el layout adoptado
 
@@ -51,16 +53,17 @@ Lo que sigue siendo correcto y **no se toca**:
 
 - `protocol/.agents/roles/profiles/tech_writer.md` — mención de `AGENTS.md` sin
   patología: no afirma cuál es la entrada normativa.
-- Los links rotos intencionales del inventario de arriba: siguen rotos a
-  propósito en fuente y correctos en `dist`.
+- Las referencias al entry file del inventario de arriba: conservan la
+  profundidad del layout adoptado (cuatro niveles) y están restringidas a la
+  allowlist.
 - Las citas históricas de `docs/plans/` (sección siguiente): son traza
   (RFC-46) y no se reescriben.
 
-La **guarda** de la sección final sigue vigente sin cambios: los links de path al
-entry file permanecen restringidos a la allowlist de los dos archivos del
-inventario, las menciones en prosa (sin separador de path) están permitidas, y
-cualquier excepción futura debe documentarse acá, sumarse a la allowlist y
-cubrirse con test antes de mergear.
+La **guarda** de la sección final sigue vigente: los links de path al entry
+file permanecen restringidos a la allowlist de los dos archivos del inventario,
+las menciones en prosa (sin separador de path) están permitidas, y cualquier
+excepción futura debe documentarse acá, sumarse a la allowlist y cubrirse con
+test antes de mergear.
 
 ## Citas históricas de `docs/plans/`
 
@@ -86,10 +89,11 @@ mismo que `REMOVED_ARTIFACTS` usa para los archivos retirados por una release.
 
 Si aparece un link nuevo roto en fuente que no apunte al entry file, el checker
 lo reporta como violación. Además, los links de path al entry file
-(`[AGENTS.md](../../../AGENTS.md)`) están restringidos mecánicamente a la
+(`[AGENTS.md](../../../../AGENTS.md)`) están restringidos mecánicamente a la
 allowlist de los dos archivos del inventario (`_ENTRY_LINK_ALLOWLIST` en
-`tools/check_protocol_invariants.py`): un tercer archivo con ese link es
-violación BOUNDARY. Las menciones en prosa (sin separador de path) están
-permitidas — son la prosa que describe el layout adoptado. Si un cambio futuro
-agrega una excepción, hay que documentarla acá, sumarla a la allowlist y
-cubrirla con test antes de mergear.
+`tools/check_protocol_invariants.py`) y se validan contra la resolución del
+layout adoptado (`project/AGENTS.md`): un tercer archivo, o una profundidad que
+resuelva a `.argentos/AGENTS.md`, es violación BOUNDARY. Las menciones en prosa
+(sin separador de path) están permitidas — son la prosa que describe el layout
+adoptado. Si un cambio futuro agrega una excepción, hay que documentarla acá,
+sumarla a la allowlist y cubrirla con test antes de mergear.

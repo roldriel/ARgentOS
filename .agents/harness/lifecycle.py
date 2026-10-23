@@ -49,6 +49,7 @@ if str(_HARNESS_DIR) not in sys.path:
     sys.path.insert(0, str(_HARNESS_DIR))
 
 import lifecycle_contract as contract  # noqa: E402
+import lifecycle_root as root_binding  # noqa: E402
 import lifecycle_staging as staging  # noqa: E402
 import roots as _roots  # noqa: E402
 
@@ -98,48 +99,117 @@ class Result:
 
 
 class _Lock:
-    def __init__(self, path: Path):
-        self.path = path
-        self._fd: int | None = None
+    def __init__(self, binding):
+        self.binding = binding
+        self._token = None
 
     def acquire(self) -> None:
-        self.path.parent.mkdir(parents=True, exist_ok=True)
         try:
-            self._fd = os.open(self.path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-        except FileExistsError as exc:
-            raise LifecycleStop(
-                "another lifecycle operation holds the lock on this root"
-            ) from exc
-        os.write(self._fd, f"{os.getpid()} {contract.utc_now()}\n".encode("utf-8"))
+            self._token = self.binding.lock_create()
+        except root_binding.RootBindingError as exc:
+            raise LifecycleStop(str(exc)) from exc
 
     def release(self) -> None:
-        if self._fd is not None:
-            os.close(self._fd)
-            self._fd = None
-        try:
-            self.path.unlink()
-        except FileNotFoundError:
-            pass
+        if self._token is not None:
+            self.binding.lock_release(self._token)
+            self._token = None
 
 
-def _identify(root: Path) -> tuple[str, int, int] | None:
-    try:
-        stat = os.stat(root)
-    except OSError:
+# --- Root identity (TOCTOU guard) -----------------------------------------
+
+#: Cached Win32 function table; populated lazily only on Windows.
+_WIN32 = None
+
+
+def _win32():
+    """Return the Win32 helpers, or ``None`` on non-Windows platforms."""
+    global _WIN32
+    if os.name != "nt":
         return None
-    return (os.path.realpath(str(root)), stat.st_dev, stat.st_ino)
+    if _WIN32 is None:
+        import ctypes
+        from ctypes import wintypes
+
+        class _BY_HANDLE_FILE_INFORMATION(ctypes.Structure):
+            _fields_ = [
+                ("dwFileAttributes", wintypes.DWORD),
+                ("ftCreationTime", wintypes.FILETIME),
+                ("ftLastAccessTime", wintypes.FILETIME),
+                ("ftLastWriteTime", wintypes.FILETIME),
+                ("dwVolumeSerialNumber", wintypes.DWORD),
+                ("nFileSizeHigh", wintypes.DWORD),
+                ("nFileSizeLow", wintypes.DWORD),
+                ("nNumberOfLinks", wintypes.DWORD),
+                ("nFileIndexHigh", wintypes.DWORD),
+                ("nFileIndexLow", wintypes.DWORD),
+            ]
+
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        kernel32.CreateFileW.argtypes = [
+            wintypes.LPCWSTR,
+            wintypes.DWORD,
+            wintypes.DWORD,
+            wintypes.LPVOID,
+            wintypes.DWORD,
+            wintypes.DWORD,
+            wintypes.HANDLE,
+        ]
+        kernel32.CreateFileW.restype = wintypes.HANDLE
+        kernel32.GetFileInformationByHandle.argtypes = [
+            wintypes.HANDLE,
+            ctypes.POINTER(_BY_HANDLE_FILE_INFORMATION),
+        ]
+        kernel32.GetFileInformationByHandle.restype = wintypes.BOOL
+        kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
+        kernel32.CloseHandle.restype = wintypes.BOOL
+        _WIN32 = (ctypes, wintypes, kernel32, _BY_HANDLE_FILE_INFORMATION)
+    return _WIN32
 
 
-def _prune_empty_tree(base: Path) -> None:
-    """Remove ``base`` and any now-empty descendants (bottom-up)."""
-    if not base.is_dir():
+def _win_open_directory(path: Path):
+    """Open a directory handle without delete sharing; ``None`` on failure."""
+    lib = _win32()
+    if lib is None:
+        return None
+    ctypes, _wintypes, kernel32, _info = lib
+    handle = kernel32.CreateFileW(
+        str(path),
+        0x80000000,  # GENERIC_READ
+        # FILE_SHARE_READ | FILE_SHARE_WRITE, deliberately WITHOUT
+        # FILE_SHARE_DELETE: the open handle makes the directory and its
+        # ancestors unrenamable/undeletable while the lifecycle holds it.
+        0x1 | 0x2,
+        None,
+        3,  # OPEN_EXISTING
+        0x02000000,  # FILE_FLAG_BACKUP_SEMANTICS (directories)
+        None,
+    )
+    if handle == ctypes.c_void_p(-1).value:
+        return None
+    return handle
+
+
+def _win_directory_id(handle):
+    """Return ``(volume_serial, file_index)`` for a directory handle."""
+    lib = _win32()
+    if lib is None:
+        return None
+    ctypes, _wintypes, kernel32, info_type = lib
+    info = info_type()
+    if not kernel32.GetFileInformationByHandle(handle, ctypes.byref(info)):
+        return None
+    return (
+        int(info.dwVolumeSerialNumber),
+        (int(info.nFileIndexHigh) << 32) | int(info.nFileIndexLow),
+    )
+
+
+def _win_close(handle) -> None:
+    lib = _win32()
+    if lib is None:
         return
-    for dirpath, _dirnames, _filenames in os.walk(base, topdown=False):
-        try:
-            if not os.listdir(dirpath):
-                os.rmdir(dirpath)
-        except OSError:
-            pass
+    _ctypes, _wintypes, kernel32, _info = lib
+    kernel32.CloseHandle(handle)
 
 
 # --- Engine ---------------------------------------------------------------
@@ -186,8 +256,20 @@ class LifecycleEngine:
         self._hook = hook
         self._fired: set[str] = set()
         self._staging_root: Path | None = None
-        self._root_identity = _identify(self.project_root)
-        self._argentos_existed_before = self.argentos_root.exists()
+        self.binding = None
+        self._binding_error: str | None = None
+        try:
+            self.binding = root_binding.open_root_binding(self.project_root)
+        except root_binding.RootBindingError as exc:
+            self._binding_error = str(exc)
+        self._argentos_existed_before = False
+        if self.binding is not None:
+            try:
+                self._argentos_existed_before = self.binding.exists(".argentos")
+            except root_binding.RootBindingError:
+                # The path is unsafe (for example a symlink). Do not mutate
+                # during construction; the operation will fail closed later.
+                self._argentos_existed_before = False
         self._adapter_inspection: dict | None = None
 
     # -- small helpers ----------------------------------------------------
@@ -208,19 +290,49 @@ class LifecycleEngine:
             raise SimulatedCrash(f"simulated interruption at phase {name!r}")
 
     def _assert_root_unchanged(self) -> None:
-        if _identify(self.project_root) != self._root_identity:
+        binding = self._require_binding()
+        if not binding.unchanged():
             raise LifecycleStop(
                 "PROJECT_ROOT changed between validation and write (STOP)"
             )
 
-    def _assert_within(self, target: Path) -> None:
-        contract.ensure_within_project(self.project_root, target)
+    def _binding_failure(self, operation: str) -> Result | None:
+        """Fail closed when no OS-level root binding could be established."""
+        if self.binding is not None and self.binding.strong:
+            return None
+        detail = self._binding_error or "no strong root binding available"
+        return self._result(
+            operation,
+            CONFLICT,
+            f"strong root binding unavailable: {detail} (fail-closed)",
+            root_guard="unavailable",
+        )
+
+    def _require_binding(self):
+        if self.binding is None:
+            raise LifecycleStop(
+                "strong root binding unavailable; refusing the operation "
+                "(fail-closed)"
+            )
+        return self.binding
+
+    def close(self) -> None:
+        """Release the root binding (idempotent)."""
+        if self.binding is not None:
+            self.binding.close()
+            self.binding = None
+
+    def _root_changed_result(self, operation: str) -> Result | None:
+        """Return a CONFLICT result when the root changed, else ``None``."""
+        try:
+            self._assert_root_unchanged()
+        except LifecycleStop as exc:
+            return self._result(operation, CONFLICT, str(exc))
+        return None
 
     def _write_file(self, rel: str, data: bytes) -> str:
         self._assert_root_unchanged()
-        target = contract.resolve_manifest_path(self.project_root, rel)
-        self._assert_within(target)
-        contract.atomic_write(target, data)
+        self._require_binding().write_atomic(rel, data)
         return contract.sha256_bytes(data)
 
     def _journal_then_write(
@@ -240,6 +352,7 @@ class LifecycleEngine:
         target does not exist yet, which ``_undo_create`` already tolerates.
         No file can exist without its journal record.
         """
+        self._assert_root_unchanged()
         payload = data.encode("utf-8") if isinstance(data, str) else data
         digest = contract.sha256_bytes(payload)
         entry: dict = {"path": rel, "sha256": digest}
@@ -307,18 +420,22 @@ class LifecycleEngine:
     # -- journal ----------------------------------------------------------
 
     def _journal(self) -> dict | None:
-        path = contract.journal_path(self.project_root)
-        if not path.exists():
-            return None
         try:
-            return json.loads(path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError):
+            if not self._require_binding().exists(contract.JOURNAL_REL):
+                return None
+            raw = self._require_binding().read_bytes(contract.JOURNAL_REL)
+            return json.loads(raw.decode("utf-8"))
+        except root_binding.RootBindingError:
+            return {"status": "corrupt", "phase": "unknown"}
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError):
             return {"status": "corrupt", "phase": "unknown"}
 
     def _journal_write(self, journal: dict) -> None:
         journal["updated_at"] = contract.utc_now()
         data = json.dumps(journal, indent=2, ensure_ascii=False) + "\n"
-        contract.atomic_write(contract.journal_path(self.project_root), data.encode("utf-8"))
+        self._require_binding().write_atomic(
+            contract.JOURNAL_REL, data.encode("utf-8")
+        )
 
     def _new_journal(self, operation: str, version: str) -> dict:
         return {
@@ -327,7 +444,7 @@ class LifecycleEngine:
             "operation": operation,
             "phase": "journal",
             "status": "open",
-            "project_root_realpath": os.path.realpath(str(self.project_root)),
+            "project_root_realpath": self._require_binding().root_realpath,
             "argentos_root_existed": self._argentos_existed_before,
             "protocol_version": version,
             "started_at": contract.utc_now(),
@@ -340,21 +457,20 @@ class LifecycleEngine:
 
     def _backup_file(self, rel: str, journal: dict) -> str:
         """Copy the current ``rel`` into ``.backup/<stamp>/<rel>``; return rel."""
+        binding = self._require_binding()
         self._assert_root_unchanged()
-        source = contract.resolve_manifest_path(self.project_root, rel)
+        data = binding.read_bytes(rel)
         stamp = journal["operation_id"]
         backup_rel = f"{contract.BACKUP_DIR_REL}/{stamp}/{rel}"
-        dest = contract.resolve_manifest_path(self.project_root, backup_rel)
-        if dest.exists():
+        if binding.exists(backup_rel):
             raise LifecycleStop(f"backup entry already exists: {backup_rel}")
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        dest.write_bytes(source.read_bytes())
+        binding.write_atomic(backup_rel, data)
         journal["backups"].append(
             {
                 "path": backup_rel,
                 "replaced": rel,
                 "origin": "preexisting",
-                "sha256": contract.sha256_file(source),
+                "sha256": contract.sha256_bytes(data),
                 "created_at": contract.utc_now(),
             }
         )
@@ -364,6 +480,10 @@ class LifecycleEngine:
 
     def install(self) -> Result:
         """Public entry point; staging is always cleaned up."""
+        failure = self._binding_failure("install")
+        if failure is not None:
+            self.close()
+            return failure
         try:
             return self._install_run()
         except SimulatedCrash as exc:
@@ -373,8 +493,15 @@ class LifecycleEngine:
                 "installation interrupted before committing",
                 phase=str(exc),
             )
+        except root_binding.RootBindingError as exc:
+            return self._result(
+                "install",
+                CONFLICT,
+                f"root binding refused a managed path: {exc}",
+            )
         finally:
             self._cleanup_staging()
+            self.close()
 
     def _install_run(self) -> Result:
         try:
@@ -384,6 +511,10 @@ class LifecycleEngine:
             self._cleanup_staging()
             return self._result("install", CONFLICT, str(exc))
         self._seam("preflight")
+        root_changed = self._root_changed_result("install")
+        if root_changed is not None:
+            self._cleanup_staging()
+            return root_changed
 
         # An open journal means a previous operation never reached its commit
         # point. Reporting NOOP from a clean manifest would hide a half-applied
@@ -401,14 +532,14 @@ class LifecycleEngine:
             )
 
         try:
-            manifest = contract.load_manifest(self.project_root)
+            manifest = self._require_binding().load_manifest()
         except contract.ManifestError as exc:
             self._cleanup_staging()
             return self._result(
                 "install", CONFLICT, f"manifest invalid (fail-closed): {exc}"
             )
 
-        if manifest is None and self.argentos_root.exists():
+        if manifest is None and self._require_binding().exists(".argentos"):
             self._cleanup_staging()
             return self._result(
                 "install",
@@ -438,7 +569,7 @@ class LifecycleEngine:
                 incoming_version=version,
             )
 
-        lock = _Lock(contract.lock_path(self.project_root))
+        lock = _Lock(self.binding)
         try:
             lock.acquire()
         except LifecycleStop as exc:
@@ -455,7 +586,9 @@ class LifecycleEngine:
     def _install_is_clean(self, manifest: dict, version: str) -> bool:
         if manifest.get("protocol_version") != version:
             return False
-        if not (self.roots.payload_root / "INDEX.md").is_file():
+        if not self._require_binding().is_file(
+            f"{contract.PAYLOAD_ROOT_REL}/INDEX.md"
+        ):
             return False
         return not self._divergences(manifest)
 
@@ -466,7 +599,7 @@ class LifecycleEngine:
         except (LifecycleStop, staging.StagingError) as exc:
             self._cleanup_staging()
             return self._result("install", CONFLICT, str(exc))
-        lock = _Lock(contract.lock_path(self.project_root))
+        lock = _Lock(self.binding)
         try:
             lock.acquire()
         except LifecycleStop as exc:
@@ -481,13 +614,14 @@ class LifecycleEngine:
         return result
 
     def _divergences(self, manifest: dict) -> list[dict]:
+        binding = self._require_binding()
         out: list[dict] = []
         for entry in manifest.get("files", []):
-            state = contract.classify_entry(entry, self.project_root)
+            state = binding.classify_entry(entry)
             if state != contract.OWNERSHIP_MANAGED_UNCHANGED:
                 out.append({"path": entry["path"], "state": state})
         for entry in manifest.get("generated", []):
-            state = contract.classify_entry(entry, self.project_root)
+            state = binding.classify_entry(entry)
             if state != contract.OWNERSHIP_MANAGED_UNCHANGED:
                 out.append({"path": entry["path"], "state": state})
         return out
@@ -495,29 +629,37 @@ class LifecycleEngine:
     def _install_fresh(
         self, payload_root: Path, method: str, source: dict, version: str
     ) -> Result:
-        adapter_path = self.project_root / contract.ADAPTER_REL
-        adapter_present = adapter_path.exists()
+        root_changed = self._root_changed_result("install")
+        if root_changed is not None:
+            return root_changed
+        binding = self._require_binding()
+        adapter_present = binding.exists(contract.ADAPTER_REL)
         adapter_hash = (
-            contract.sha256_file(adapter_path) if adapter_present else None
+            binding.sha256(contract.ADAPTER_REL) if adapter_present else None
         )
         self._adapter_inspection = {
             "present": adapter_present,
             "sha256": adapter_hash,
         }
-        historical_agents = (self.project_root / ".agents").exists()
-        gitignore_present = (self.project_root / ".gitignore").exists()
-        config_present = contract.active_config_path(self.project_root).exists()
+        historical_agents = binding.exists(".agents")
+        gitignore_present = binding.exists(".gitignore")
+        config_present = binding.exists(contract.ACTIVE_CONFIG_REL)
         self._seam("inventory")
 
         journal = self._new_journal("install", version)
+        try:
+            self._assert_root_unchanged()
+        except LifecycleStop as exc:
+            return self._result("install", CONFLICT, str(exc))
         self._journal_write(journal)
         self._seam("journal")
 
         try:
             # --- backup phase: replace the adapter only with explicit opt-in.
+            self._assert_root_unchanged()
             adapter_origin = "installed"
             if adapter_present and self.replace_agents_md:
-                if contract.sha256_file(adapter_path) != adapter_hash:
+                if binding.sha256(contract.ADAPTER_REL) != adapter_hash:
                     raise LifecycleStop(
                         "AGENTS.md changed between inspection and operation (STOP)"
                     )
@@ -526,7 +668,8 @@ class LifecycleEngine:
             self._seam("backup")
 
             # --- apply phase: payload files, config seed, adapter.
-            contract.backup_root(self.project_root).mkdir(parents=True, exist_ok=True)
+            self._assert_root_unchanged()
+            binding.mkdirs(contract.BACKUP_DIR_REL)
             written: dict[str, str] = {}
             for src in self._payload_files(payload_root):
                 rel = f"{contract.PAYLOAD_ROOT_REL}/{src.relative_to(payload_root).as_posix()}"
@@ -567,10 +710,11 @@ class LifecycleEngine:
                 adapter_generated, config_present,
             )
             self._assert_root_unchanged()
-            contract.save_manifest_atomic(self.project_root, manifest)
+            binding.save_manifest(manifest)
             journal["status"] = "committed"
             journal["phase"] = "commit"
             self._journal_write(journal)
+            self._assert_root_unchanged()
             return self._result(
                 "install",
                 SUCCESS,
@@ -595,12 +739,12 @@ class LifecycleEngine:
             return self._rollback(journal, f"unexpected failure: {exc}")
 
     def _post_validate(self, written: dict[str, str]) -> list[str]:
+        binding = self._require_binding()
         problems: list[str] = []
         for rel, digest in written.items():
-            target = contract.resolve_manifest_path(self.project_root, rel)
-            if not target.exists():
+            if not binding.exists(rel):
                 problems.append(f"missing after write: {rel}")
-            elif contract.sha256_file(target) != digest:
+            elif binding.sha256(rel) != digest:
                 problems.append(f"hash mismatch after write: {rel}")
         return problems
 
@@ -628,17 +772,16 @@ class LifecycleEngine:
         adapter_generated: bool,
         config_present: bool,
     ) -> dict:
+        binding = self._require_binding()
         files = []
         for src in self._payload_files(payload_root):
             rel = f"{contract.PAYLOAD_ROOT_REL}/{src.relative_to(payload_root).as_posix()}"
-            files.append(contract.file_entry(rel, "installed", self.project_root))
-        config = contract.active_config_path(self.project_root)
-        if config.exists():
+            files.append(binding.file_entry(rel, "installed"))
+        if binding.exists(contract.ACTIVE_CONFIG_REL):
             files.append(
-                contract.file_entry(
+                binding.file_entry(
                     contract.ACTIVE_CONFIG_REL,
                     "preexisting" if config_present else "installed",
-                    self.project_root,
                 )
             )
         generated = []
@@ -648,9 +791,7 @@ class LifecycleEngine:
                     "path": contract.ADAPTER_REL,
                     "kind": "adapter",
                     "origin": adapter_origin,
-                    "sha256": contract.sha256_file(
-                        self.project_root / contract.ADAPTER_REL
-                    ),
+                    "sha256": binding.sha256(contract.ADAPTER_REL),
                 }
             )
         manifest = {
@@ -678,6 +819,18 @@ class LifecycleEngine:
         self, journal: dict, reason: str, *, success_state: str = CONFLICT
     ) -> Result:
         op = journal.get("operation", "install")
+        if not self._require_binding().unchanged():
+            # The binding would keep an undo on the original object, but the
+            # pathname no longer identifies the validated root. Stop rather
+            # than mutate either root; the replacement is left untouched and
+            # the original is preserved for manual recovery.
+            return self._result(
+                op,
+                CONFLICT,
+                f"{reason}; PROJECT_ROOT changed: rollback was NOT attempted "
+                "on the replacement root",
+                root_changed=True,
+            )
         if "rollback" in self.fail_at:
             journal["status"] = "recovery-pending"
             journal["phase"] = "rollback"
@@ -734,75 +887,89 @@ class LifecycleEngine:
         """
         if not result.details.get("created_scaffolding"):
             return
-        import shutil
-
+        binding = self._require_binding()
         operation_id = result.details.get("operation_id")
-        batch = contract.backup_root(self.project_root) / str(operation_id)
-        if batch.is_dir():
-            shutil.rmtree(batch, ignore_errors=True)
-        for owned in (
-            contract.journal_path(self.project_root),
-            contract.lock_path(self.project_root),
-        ):
+        batch = f"{contract.BACKUP_DIR_REL}/{str(operation_id)}"
+        if binding.is_dir(batch):
+            binding.remove_tree(batch)
+        for rel in (contract.JOURNAL_REL, contract.LOCK_REL):
             try:
-                owned.unlink()
-            except FileNotFoundError:
+                if binding.exists(rel):
+                    binding.unlink(rel)
+            except (OSError, root_binding.RootBindingError):
                 pass
-        for base in (
-            self.roots.payload_root,
-            contract.backup_root(self.project_root),
-            self.roots.project_dir,
-            self.argentos_root,
+        for rel in (
+            contract.PAYLOAD_ROOT_REL,
+            contract.BACKUP_DIR_REL,
+            contract.PROJECT_STATE_DIR_REL,
+            ".argentos",
         ):
-            _prune_empty_tree(base)
+            binding.prune_empty(rel)
 
     def _undo_create(self, entry: dict) -> dict | None:
-        target = contract.resolve_manifest_path(self.project_root, entry["path"])
-        if not target.exists():
+        binding = self._require_binding()
+        rel = entry["path"]
+        if not binding.exists(rel):
             return None
-        current = contract.sha256_file(target)
+        current = binding.sha256(rel)
         if current != entry.get("sha256"):
-            return {"path": entry["path"], "reason": "modified after write"}
-        target.unlink()
+            return {"path": rel, "reason": "modified after write"}
+        binding.unlink(rel)
         return None
 
     def _undo_replace(self, entry: dict) -> dict | None:
-        target = contract.resolve_manifest_path(self.project_root, entry["path"])
-        if not target.exists():
-            return {"path": entry["path"], "reason": "removed after write"}
-        if contract.sha256_file(target) != entry.get("sha256"):
-            return {"path": entry["path"], "reason": "modified after write"}
-        backup = contract.resolve_manifest_path(self.project_root, entry["backup"])
-        target.write_bytes(backup.read_bytes())
+        binding = self._require_binding()
+        rel = entry["path"]
+        if not binding.exists(rel):
+            return {"path": rel, "reason": "removed after write"}
+        if binding.sha256(rel) != entry.get("sha256"):
+            return {"path": rel, "reason": "modified after write"}
+        binding.write_atomic(rel, binding.read_bytes(entry["backup"]))
         return None
 
     def _undo_remove(self, entry: dict) -> dict | None:
-        target = contract.resolve_manifest_path(self.project_root, entry["path"])
-        backup = contract.resolve_manifest_path(self.project_root, entry["backup"])
-        if target.exists():
+        binding = self._require_binding()
+        rel = entry["path"]
+        backup = entry["backup"]
+        if binding.exists(rel):
             # The intent is journaled before the unlink, so an existing target
             # that still matches its backup means the removal never happened:
             # nothing to undo. A different file was recreated after removal.
             try:
-                unchanged = target.read_bytes() == backup.read_bytes()
+                unchanged = binding.read_bytes(rel) == binding.read_bytes(backup)
             except OSError:
                 unchanged = False
             if unchanged:
                 return None
-            return {"path": entry["path"], "reason": "recreated after removal"}
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_bytes(backup.read_bytes())
+            return {"path": rel, "reason": "recreated after removal"}
+        binding.write_atomic(rel, binding.read_bytes(backup))
         return None
 
     def _prune_empty_dirs(self) -> None:
-        for base in (
-            self.roots.payload_root,
-            self.roots.project_dir,
-            self.argentos_root,
+        binding = self._require_binding()
+        for rel in (
+            contract.PAYLOAD_ROOT_REL,
+            contract.BACKUP_DIR_REL,
+            contract.PROJECT_STATE_DIR_REL,
+            ".argentos",
         ):
-            _prune_empty_tree(base)
+            binding.prune_empty(rel)
 
     def recover(self) -> Result:
+        failure = self._binding_failure("recover")
+        if failure is not None:
+            self.close()
+            return failure
+        try:
+            return self._recover_run()
+        except root_binding.RootBindingError as exc:
+            return self._result(
+                "recover", CONFLICT, f"root binding refused a managed path: {exc}"
+            )
+        finally:
+            self.close()
+
+    def _recover_run(self) -> Result:
         journal = self._journal()
         if journal is None:
             return self._result(
@@ -814,7 +981,7 @@ class LifecycleEngine:
                 NOOP,
                 f"journal already closed ({journal.get('status')})",
             )
-        lock = _Lock(contract.lock_path(self.project_root))
+        lock = _Lock(self.binding)
         try:
             lock.acquire()
         except LifecycleStop as exc:
@@ -831,6 +998,10 @@ class LifecycleEngine:
     # -- update -----------------------------------------------------------
 
     def update(self) -> Result:
+        failure = self._binding_failure("update")
+        if failure is not None:
+            self.close()
+            return failure
         try:
             return self._update_run()
         except SimulatedCrash as exc:
@@ -840,12 +1011,18 @@ class LifecycleEngine:
                 "update interrupted before committing",
                 phase=str(exc),
             )
+        except root_binding.RootBindingError as exc:
+            return self._result(
+                "update",
+                CONFLICT,
+                f"root binding refused a managed path: {exc}",
+            )
         finally:
-            self._cleanup_staging()
+            self.close()
 
     def _update_run(self) -> Result:
         try:
-            manifest = contract.load_manifest(self.project_root)
+            manifest = self._require_binding().load_manifest()
         except contract.ManifestError as exc:
             return self._result("update", CONFLICT, f"manifest invalid: {exc}")
         if manifest is None:
@@ -859,6 +1036,10 @@ class LifecycleEngine:
             self._cleanup_staging()
             return self._result("update", CONFLICT, str(exc))
         self._seam("preflight")
+        root_changed = self._root_changed_result("update")
+        if root_changed is not None:
+            self._cleanup_staging()
+            return root_changed
         version = self._payload_version(payload_root)
 
         divergences = self._divergences(manifest)
@@ -871,7 +1052,7 @@ class LifecycleEngine:
                 divergences=divergences,
             )
 
-        lock = _Lock(contract.lock_path(self.project_root))
+        lock = _Lock(self.binding)
         try:
             lock.acquire()
         except LifecycleStop as exc:
@@ -893,6 +1074,10 @@ class LifecycleEngine:
         source: dict,
         version: str,
     ) -> Result:
+        root_changed = self._root_changed_result("update")
+        if root_changed is not None:
+            return root_changed
+        binding = self._require_binding()
         known = {e["path"]: e for e in manifest.get("files", [])}
         target_files: list[tuple[str, Path, bytes]] = []
         for src in self._payload_files(payload_root):
@@ -906,16 +1091,20 @@ class LifecycleEngine:
         self._seam("inventory")
 
         journal = self._new_journal("update", version)
+        try:
+            self._assert_root_unchanged()
+        except LifecycleStop as exc:
+            return self._result("update", CONFLICT, str(exc))
         self._journal_write(journal)
         self._seam("journal")
 
         changed = False
         try:
+            self._assert_root_unchanged()
             for rel, src, data in target_files:
                 current = known.get(rel)
-                target = contract.resolve_manifest_path(self.project_root, rel)
-                if current is not None and target.exists():
-                    if contract.sha256_file(target) == contract.sha256_bytes(data):
+                if binding.exists(rel):
+                    if binding.sha256(rel) == contract.sha256_bytes(data):
                         continue  # already identical: idempotent, no rewrite
                     backup = self._backup_file(rel, journal)
                     self._journal_then_write(
@@ -940,9 +1129,7 @@ class LifecycleEngine:
                 )
 
             problems = self._post_validate(
-                {rel: contract.sha256_file(
-                    contract.resolve_manifest_path(self.project_root, rel))
-                 for rel, _, _ in target_files}
+                {rel: binding.sha256(rel) for rel, _, _ in target_files}
             )
             if problems:
                 raise LifecycleStop("post-validation failed: " + "; ".join(problems))
@@ -955,19 +1142,17 @@ class LifecycleEngine:
             files = []
             for rel, _, _ in target_files:
                 origin = known.get(rel, {}).get("origin", "installed")
-                files.append(contract.file_entry(rel, origin, self.project_root))
+                files.append(binding.file_entry(rel, origin))
             # Artifacts removed from the payload stay owned and reported, never
             # silently dropped from the manifest.
             files.extend(known[rel] for rel in removed_from_payload)
-            config = contract.active_config_path(self.project_root)
-            if config.exists():
+            if binding.exists(contract.ACTIVE_CONFIG_REL):
                 files.append(
-                    contract.file_entry(
+                    binding.file_entry(
                         contract.ACTIVE_CONFIG_REL,
                         known.get(contract.ACTIVE_CONFIG_REL, {}).get(
                             "origin", "installed"
                         ),
-                        self.project_root,
                     )
                 )
             manifest["files"] = sorted(
@@ -979,10 +1164,11 @@ class LifecycleEngine:
             )
             self._seam("commit")
             self._assert_root_unchanged()
-            contract.save_manifest_atomic(self.project_root, manifest)
+            binding.save_manifest(manifest)
             journal["status"] = "committed"
             journal["phase"] = "commit"
             self._journal_write(journal)
+            self._assert_root_unchanged()
             return self._result(
                 "update",
                 SUCCESS,
@@ -1005,6 +1191,10 @@ class LifecycleEngine:
     # -- uninstall --------------------------------------------------------
 
     def uninstall(self) -> Result:
+        failure = self._binding_failure("uninstall")
+        if failure is not None:
+            self.close()
+            return failure
         try:
             return self._uninstall_run()
         except SimulatedCrash as exc:
@@ -1014,10 +1204,18 @@ class LifecycleEngine:
                 "uninstall interrupted before committing",
                 phase=str(exc),
             )
+        except root_binding.RootBindingError as exc:
+            return self._result(
+                "uninstall",
+                CONFLICT,
+                f"root binding refused a managed path: {exc}",
+            )
+        finally:
+            self.close()
 
     def _uninstall_run(self) -> Result:
         try:
-            manifest = contract.load_manifest(self.project_root)
+            manifest = self._require_binding().load_manifest()
         except contract.ManifestError as exc:
             return self._result("uninstall", CONFLICT, f"manifest invalid: {exc}")
         if manifest is None:
@@ -1026,7 +1224,7 @@ class LifecycleEngine:
                 CONFLICT,
                 "no installation manifest found (fail-closed)",
             )
-        lock = _Lock(contract.lock_path(self.project_root))
+        lock = _Lock(self.binding)
         try:
             lock.acquire()
         except LifecycleStop as exc:
@@ -1039,10 +1237,14 @@ class LifecycleEngine:
         return result
 
     def _uninstall_apply(self, manifest: dict) -> Result:
+        root_changed = self._root_changed_result("uninstall")
+        if root_changed is not None:
+            return root_changed
+        binding = self._require_binding()
         eligible: list[str] = []
         preserved: list[dict] = []
         for entry in manifest.get("files", []):
-            state = contract.classify_entry(entry, self.project_root)
+            state = binding.classify_entry(entry)
             if entry.get("origin") == "installed" and state == contract.OWNERSHIP_MANAGED_UNCHANGED:
                 if entry["path"] == contract.ACTIVE_CONFIG_REL:
                     preserved.append({"path": entry["path"], "reason": "active config"})
@@ -1052,7 +1254,7 @@ class LifecycleEngine:
                 preserved.append({"path": entry["path"], "state": state})
         adapter_remove: str | None = None
         for entry in manifest.get("generated", []):
-            state = contract.classify_entry(entry, self.project_root)
+            state = binding.classify_entry(entry)
             if entry.get("origin") == "installed" and state == contract.OWNERSHIP_MANAGED_UNCHANGED:
                 adapter_remove = entry["path"]
             else:
@@ -1070,19 +1272,23 @@ class LifecycleEngine:
             )
 
         journal = self._new_journal("uninstall", manifest.get("protocol_version", ""))
+        try:
+            self._assert_root_unchanged()
+        except LifecycleStop as exc:
+            return self._result("uninstall", CONFLICT, str(exc))
         self._journal_write(journal)
         self._seam("journal")
         try:
+            self._assert_root_unchanged()
             for rel in eligible + ([adapter_remove] if adapter_remove else []):
                 backup = self._backup_file(rel, journal)
-                target = contract.resolve_manifest_path(self.project_root, rel)
                 self._assert_root_unchanged()
                 # Record the removal before performing it: a crash after the
                 # unlink and before the journal append used to leave a file
                 # gone with no record of its removal.
                 journal["removed"].append({"path": rel, "backup": backup})
                 self._journal_write(journal)
-                target.unlink()
+                binding.unlink(rel)
                 self._seam("apply")
             self._seam("apply")
 
@@ -1092,10 +1298,9 @@ class LifecycleEngine:
 
             self._seam("commit")
             if self.purge:
-                manifest_file = contract.manifest_path(self.project_root)
-                if manifest_file.exists():
+                if binding.exists(contract.MANIFEST_REL):
                     self._assert_root_unchanged()
-                    manifest_file.unlink()
+                    binding.unlink(contract.MANIFEST_REL)
             else:
                 remaining = []
                 for entry in manifest.get("files", []):
@@ -1116,10 +1321,11 @@ class LifecycleEngine:
                     key=lambda e: e["path"].encode("utf-8"),
                 )
                 self._assert_root_unchanged()
-                contract.save_manifest_atomic(self.project_root, manifest)
+                binding.save_manifest(manifest)
             journal["status"] = "committed"
             journal["phase"] = "commit"
             self._journal_write(journal)
+            self._assert_root_unchanged()
             return self._result(
                 "uninstall",
                 SUCCESS,
@@ -1142,21 +1348,22 @@ class LifecycleEngine:
             return self._rollback(journal, f"unexpected failure: {exc}")
 
     def _restore_backups(self, manifest: dict, journal: dict) -> None:
+        binding = self._require_binding()
         for entry in manifest.get("backups", []):
-            dest = contract.resolve_manifest_path(self.project_root, entry["replaced"])
-            if dest.exists():
+            dest = entry["replaced"]
+            if binding.exists(dest):
                 continue  # never overwrite a later adopter file
-            backup = contract.resolve_manifest_path(self.project_root, entry["path"])
-            if not backup.exists():
+            backup = entry["path"]
+            if not binding.exists(backup):
                 continue
-            dest.parent.mkdir(parents=True, exist_ok=True)
-            dest.write_bytes(backup.read_bytes())
+            binding.write_atomic(dest, binding.read_bytes(backup))
 
     def _unknown_artifacts(self, manifest: dict) -> list[str]:
         """Project-relative files under ``.argentos/`` the manifest does not own.
 
         These are the adopter's — reported, never touched (I5, D3).
         """
+        binding = self._require_binding()
         known: set[str] = set()
         for kind in ("files", "generated", "backups"):
             for entry in manifest.get(kind, []):
@@ -1164,14 +1371,8 @@ class LifecycleEngine:
         known.add(contract.MANIFEST_REL)
         known.add(contract.JOURNAL_REL)
         known.add(contract.LOCK_REL)
-        root = self.argentos_root
         out: list[str] = []
-        if not root.is_dir():
-            return out
-        for path in sorted(root.rglob("*"), key=lambda p: p.as_posix()):
-            if not path.is_file():
-                continue
-            rel = path.relative_to(self.project_root).as_posix()
+        for rel in sorted(binding.walk_files(".argentos")):
             if rel in known:
                 continue
             if rel.startswith(contract.BACKUP_DIR_REL + "/"):
@@ -1182,6 +1383,20 @@ class LifecycleEngine:
     # -- doctor -----------------------------------------------------------
 
     def doctor(self) -> Result:
+        failure = self._binding_failure("doctor")
+        if failure is not None:
+            self.close()
+            return failure
+        try:
+            return self._doctor_run()
+        except root_binding.RootBindingError as exc:
+            return self._result(
+                "doctor", CONFLICT, f"root binding refused a managed path: {exc}"
+            )
+        finally:
+            self.close()
+
+    def _doctor_run(self) -> Result:
         journal = self._journal()
         if journal is not None and journal.get("status") not in (
             "committed",
@@ -1195,13 +1410,13 @@ class LifecycleEngine:
             return self._doctor_result(state, journal=journal)
 
         try:
-            manifest = contract.load_manifest(self.project_root)
+            manifest = self._require_binding().load_manifest()
         except contract.ManifestError as exc:
             return self._doctor_result("invalid-manifest", evidence=str(exc))
 
         if manifest is None:
-            if self.argentos_root.exists():
-                if (self.roots.payload_root).exists():
+            if self._require_binding().exists(".argentos"):
+                if self._require_binding().is_dir(contract.PAYLOAD_ROOT_REL):
                     return self._doctor_result("needs-manual-intervention")
                 return self._doctor_result("unrecognized")
             return self._doctor_result("installation-absent")
@@ -1211,9 +1426,11 @@ class LifecycleEngine:
 
         divergences = self._divergences(manifest)
         installed_version = None
-        version_file = self.roots.payload_root / "VERSION"
-        if version_file.is_file():
-            installed_version = version_file.read_text(encoding="utf-8").strip()
+        version_rel = f"{contract.PAYLOAD_ROOT_REL}/VERSION"
+        if self._require_binding().is_file(version_rel):
+            installed_version = (
+                self._require_binding().read_bytes(version_rel).decode("utf-8").strip()
+            )
         if installed_version and installed_version != manifest.get("protocol_version"):
             return self._doctor_result(
                 "version-conflict",
@@ -1224,8 +1441,9 @@ class LifecycleEngine:
             )
         if divergences:
             return self._doctor_result("local-divergence", evidence=divergences)
-        bootstrap = self.roots.payload_root / "INDEX.md"
-        if not bootstrap.is_file():
+        if not self._require_binding().is_file(
+            f"{contract.PAYLOAD_ROOT_REL}/INDEX.md"
+        ):
             return self._doctor_result("needs-manual-intervention")
         return self._doctor_result("valid", evidence=contract.MANIFEST_REL)
 

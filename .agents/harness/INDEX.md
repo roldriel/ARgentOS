@@ -13,7 +13,7 @@ for what is mechanical vs. judgment). It defines the criteria so that:
 4. The process remains auditable and reproducible through a self-reported
    review trail.
 
-The harness is implemented as a set of policies, each carrying a «Gate Checklist» in prose that the Orchestrator evaluates by judgment when the gate fires. There is no executable validation runner. Eight pure-stdlib Python modules ship: the four that enforce and validate during a session — `hook_gate.py` (the CLI enforcement hook), `runner_state.py` (the only writer of `state.json`, via its CLI), `health_check.py` (the state-storage probe) and `gate_validator.py` (the structural validator for the `[gate]` subset) — plus the four that make the layout materializable: `roots.py` (the project-root contract shared by every entry point), `lifecycle.py` (the install/update/uninstall/doctor/recover CLI), `lifecycle_contract.py` (manifest schema, path safety, ownership classification and atomic writes) and `lifecycle_staging.py` (staging from a pinned git ref or a local copy). Recovery routing lives in each policy's §"Recovery Decision Table" and protocol health verification in `.agents/standards/runtime/PROTOCOL_HEALTH.md`.
+The harness is implemented as a set of policies, each carrying a «Gate Checklist» in prose that the Orchestrator evaluates by judgment when the gate fires. There is no executable validation runner. Nine pure-stdlib Python modules ship: the four that enforce and validate during a session — `hook_gate.py` (the CLI enforcement hook), `runner_state.py` (the only writer of `state.json`, via its CLI), `health_check.py` (the state-storage probe) and `gate_validator.py` (the structural validator for the `[gate]` subset) — plus the five that make the layout materializable: `roots.py` (the project-root contract shared by every entry point), `lifecycle.py` (the install/update/uninstall/doctor/recover CLI), `lifecycle_contract.py` (manifest schema, path safety, ownership classification and atomic writes), `lifecycle_root.py` (the root binding: POSIX descriptor-relative mutations, Windows path-stability handle) and `lifecycle_staging.py` (staging from a pinned git ref or a local copy). Recovery routing lives in each policy's §"Recovery Decision Table" and protocol health verification in `.agents/standards/runtime/PROTOCOL_HEALTH.md`.
 
 ## Enforcement model
 
@@ -49,13 +49,14 @@ review, and the third is development-side:
 **Distribution boundary — what ships and what does not.** The two sides are
 distinct and the distinction is intentional:
 
-- **Ships with the payload:** everything under `.agents/`, including the eight
+- **Ships with the payload:** everything under `.agents/`, including the nine
   stdlib harness modules (`hook_gate.py`, `runner_state.py`, `health_check.py`,
   `gate_validator.py`, `roots.py`, `lifecycle.py`, `lifecycle_contract.py`,
-  `lifecycle_staging.py`), the harness policies, this INDEX, and **the harness
-  regression tests at `.agents/harness/tests/`**. The tests exercise the shipped
-  harness scripts — not development tooling — and are part of the harness
-  deliverable; anything inside `.agents/` is distributed as it stands.
+  `lifecycle_root.py`, `lifecycle_staging.py`), the harness policies, this INDEX,
+  and **the harness regression tests at `.agents/harness/tests/`**. The tests
+  exercise the shipped harness scripts — not development tooling — and are part
+  of the harness deliverable; anything inside `.agents/` is distributed as it
+  stands.
 - **Does not ship (DEV-only):** the five development checkers listed in point 3
   above live in `tools/` in the development repository, are run by the canonical
   battery in the development workspace and CI, and are never handed to an

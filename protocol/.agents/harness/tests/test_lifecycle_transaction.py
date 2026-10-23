@@ -7,6 +7,7 @@ Plan 154 unit U5 (and U14 for the root guard). Criteria: GATE 3 #7, #8, #23,
 from __future__ import annotations
 
 import json
+import os
 import shutil
 
 import pytest
@@ -134,4 +135,57 @@ def test_root_change_between_validation_and_write_stops(project, make_engine):
 
     result = make_engine(project, hook=swap).install()
     assert result.state == L.CONFLICT
-    assert not (project / ".argentos").exists()
+    # The replacement root is not the validated one: nothing may be written to
+    # it, not even the journal or the lock scaffolding.
+    assert list(project.iterdir()) == []
+
+
+def test_root_identity_pins_the_validated_directory(project):
+    """The guard pins the root, so an inode reuse cannot mask a replacement.
+
+    Without the pin, ext4 can hand the recreated directory the same
+    ``(st_dev, st_ino)`` immediately (reproduced on Linux). The pinned
+    identity must still report the replacement.
+    """
+    identity = L._RootIdentity(project)
+    try:
+        assert identity.pinned
+        assert identity.unchanged()
+        (project / "keep.txt").write_text("unchanged root\n", encoding="utf-8")
+        assert identity.unchanged()
+        shutil.rmtree(project)
+        project.mkdir()
+        assert identity.unchanged() is False
+    finally:
+        identity.close()
+
+
+@pytest.mark.skipif(
+    os.name == "nt",
+    reason=(
+        "Windows keeps .lifecycle.lock open (no delete-sharing), so the root "
+        "cannot be replaced while the lock is held; the preflight swap covers "
+        "the root guard on this platform"
+    ),
+)
+@pytest.mark.parametrize("seam", ["journal", "apply"])
+def test_root_change_after_a_write_does_not_touch_the_replacement(
+    project, make_engine, seam
+):
+    """A late swap is a CONFLICT, and rollback is not attempted on the new root.
+
+    ``journal`` swaps after the journal was written; ``apply`` swaps after the
+    first payload write. In both cases the old root is no longer the validated
+    one, so rollback must stop without creating or deleting anything in the
+    replacement directory.
+    """
+
+    def swap(name, engine):
+        if name == seam:
+            shutil.rmtree(project)
+            project.mkdir()
+
+    result = make_engine(project, hook=swap).install()
+    assert result.state == L.CONFLICT
+    assert result.details.get("root_changed") is True
+    assert list(project.iterdir()) == []

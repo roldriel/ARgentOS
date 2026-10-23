@@ -196,11 +196,12 @@ Requisitos de entorno, por modo de adopción (§6):
   `state.json`), `health_check.py` (sonda de almacenamiento de estado) y
   `gate_validator.py` (validador estructural de los ítems `[gate]`, obligatorio
   para los triggers soportados; nunca bloquea a nivel de entorno). El payload
-  distribuye **ocho** módulos stdlib en total: a esos cuatro se suman los cuatro
+  distribuye **nueve** módulos stdlib en total: a esos cuatro se suman los cinco
   que hacen materializable el layout adoptado — `roots.py`, `lifecycle.py`,
-  `lifecycle_contract.py` y `lifecycle_staging.py` —, usados por la adquisición
-  con el lifecycle (§1.2) y por sus operaciones de ownership, backups y recovery
-  (§8); ver `.argentos/.agents/standards/runtime/PYTHON_DEPENDENCIES.md`.
+  `lifecycle_contract.py`, `lifecycle_root.py` y `lifecycle_staging.py` —, usados
+  por la adquisición con el lifecycle (§1.2) y por sus operaciones de ownership,
+  backups y recovery (§8); ver
+  `.argentos/.agents/standards/runtime/PYTHON_DEPENDENCIES.md`.
 - `pytest` solo se necesita para **desarrollar el protocolo** (suite reducida
   de tests del harness en `.argentos/.agents/harness/tests/`); no es un requisito de
   adopción.
@@ -468,8 +469,19 @@ como parte del lifecycle.
 - **Exclusión mutua:** cada operación que escribe toma un lock sobre
   `ARGENTOS_ROOT`; una segunda operación concurrente se detiene con estado
   *conflicto* (no espera ni reintenta en silencio).
-- **Raíz cambiada:** la identidad de `PROJECT_ROOT` se revalida antes de cada
-  escritura; si cambió, la operación se detiene.
+- **Raíz ligada al objeto validado:** las mutaciones no se ejecutan por un
+  pathname revalidado. En POSIX se resuelven contra un descriptor
+  `O_DIRECTORY` (`dir_fd`, sin seguir symlinks en los paths gestionados); en
+  Windows se mantiene un handle de directorio **sin** `FILE_SHARE_DELETE`, que
+  impide renombrar o borrar la raíz y sus ancestros mientras dura la operación.
+  Si no puede establecerse ese binding fuerte, las operaciones que escriben
+  fallan cerrado. El binding Windows está verificado en volúmenes locales; los
+  volúmenes remotos/UNC se rechazan en lugar de asumir la garantía.
+- **Symlinks en paths gestionados:** el binding POSIX recorre cada componente
+  con `O_NOFOLLOW` y rechaza cualquier symlink (más estricto que rechazar sólo
+  el escape); Windows conserva la comprobación de escape del contrato de rutas.
+  Un layout con `.argentos` o un artefacto gestionado enlazado simbólicamente
+  falla cerrado en POSIX.
 - **Estados de salida deterministas:** éxito / no-op / conflicto / recuperación
   pendiente se distinguen de forma determinista (`doctor` no reporta sano si la
   instalación no es usable).

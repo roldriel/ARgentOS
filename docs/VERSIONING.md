@@ -320,9 +320,10 @@ Snapshot del estado al 2026-10-23, reconciliado tras la promoción de la release
 commit `16224ce`), la **release `12.3.1`** (Plan 173: corrección del cierre de
 Phase 0.4 y cobertura de idempotencia del lifecycle) y la **release `12.3.2`**
 (F-01: referencias al `AGENTS.md` raíz bajo el layout adoptado, commit
-`c3c016d`), que es el punto publicado vigente. `dev` contiene además una
-**corrección post-release del root guard del lifecycle**, todavía sin versión
-propia (pendiente de la próxima release).
+`c3c016d`), que es el punto publicado vigente. `dev` contiene además el
+**root binding post-release del lifecycle** (descriptor relativo POSIX y
+handle sin `FILE_SHARE_DELETE` en Windows), todavía sin versión propia
+(pendiente de la próxima release).
 La fuente inmutable de la verdad son `git tag` + `protocol/.agents/VERSION`:
 este snapshot es un resumen de lectura, no una segunda fuente, y una divergencia
 se resuelve siempre a favor de git.
@@ -343,15 +344,16 @@ se resuelve siempre a favor de git.
   `<proyecto>/.argentos/…` lo produce el lifecycle al instalar (ver
   `docs/ADOPTION.md` §1 y §1.3).
 - `dev` = `12.3.2` (`protocol/.agents/VERSION`) con un **cambio de payload
-  posterior a la release y sin publicar**: la corrección del root guard del
-  lifecycle (`protocol/.agents/harness/lifecycle.py` y su test de transacción),
-  que detecta el reemplazo de `PROJECT_ROOT` mediante un handle del sistema y
-  no sólo por `(realpath, st_dev, st_ino)`. No hay bump de `VERSION` para ese
-  cambio: se consolidará en la próxima versión que se corte. Los planes
-  docs-only/tooling 171, 172 y 173 y el saneamiento Priority 2 viven en `dev`
-  sin versión de payload propia; el ítem de gobernanza del Plan 172 y los
-  anteriores permanecen en `[Unreleased]`, que acumula los ítems no asignados a
-  una versión.
+  posterior a la release y sin publicar**: el **root binding** del lifecycle
+  (`protocol/.agents/harness/lifecycle_root.py`, `lifecycle.py` y sus tests de
+  transacción), que sustituye la detección por revalidación por mutaciones
+  ligadas al objeto validado — descriptor relativo en POSIX y handle sin
+  `FILE_SHARE_DELETE` en Windows — y falla cerrado si no puede establecer el
+  binding fuerte. No hay bump de `VERSION` para ese cambio: se consolidará en
+  la próxima versión que se corte. Los planes docs-only/tooling 171, 172 y 173
+  y el saneamiento Priority 2 viven en `dev` sin versión de payload propia; el
+  ítem de gobernanza del Plan 172 y los anteriores permanecen en
+  `[Unreleased]`, que acumula los ítems no asignados a una versión.
 - Tags anotados de la serie vigente: `11.6.0`, `11.6.1`, `11.6.2`, `11.7.0`,
   `11.7.1`, `12.0.0`, `12.1.0`, `12.2.0`, `12.3.0`, `12.3.1` y `12.3.2`, cada
   uno sobre el commit de promoción correspondiente de `master`. `11.7.0` (plan
@@ -385,17 +387,19 @@ Notas:
   anotados + regeneración de `dist`) se ejecutó en el Change del plan 146, que
   es el primer punto de reconciliación de este snapshot.
 - Tras la release `12.3.2`, `master` y `dist` están sincronizados. `dev`
-  contiene además la corrección post-release del root guard del lifecycle
-  (`protocol/.agents/harness/lifecycle.py` y su test de transacción) **sin
-  publicar**, de modo que `check_dist_sync.py` se espera rojo en `dev` por
-  diseño (ver §4.1): la diferencia es exactamente ese cambio de payload. En el
-  estado publicado (`master`) el checker está verde. Su comparación es contra la
-  **ref local** `dist` y contra el payload comprometido en `HEAD` (`--branch`
-  permite apuntarla a otra ref, por ejemplo `origin/dist`); la publicación
-  remota forma parte de la promoción y CI regenera `origin/dist` desde el commit
-  de promoción, que es el payload que reciben los adoptantes. Advertencia operativa: la **ref local** `dist` puede quedar por detrás de `origin/dist` (es una rama generada
-  por CI, no un artefacto del working tree); para leer el payload publicado hay
-  que resolver `origin/dist`, no la ref local.
+  contiene además el **root binding** post-release del lifecycle
+  (`protocol/.agents/harness/lifecycle_root.py`, `lifecycle.py` y sus tests de
+  transacción) **sin publicar**, de modo que `check_dist_sync.py` se espera rojo
+  en `dev` por diseño (ver §4.1): la diferencia es exactamente ese cambio de
+  payload. En el estado publicado (`master`) el checker está verde. Su
+  comparación es contra la **ref local** `dist` y contra el payload comprometido
+  en `HEAD` (`--branch` permite apuntarla a otra ref, por ejemplo
+  `origin/dist`); la publicación remota forma parte de la promoción y CI
+  regenera `origin/dist` desde el commit de promoción, que es el payload que
+  reciben los adoptantes. Advertencia operativa: la **ref local** `dist` puede
+  quedar por detrás de `origin/dist` (es una rama generada por CI, no un
+  artefacto del working tree); para leer el payload publicado hay que resolver
+  `origin/dist`, no la ref local.
 - El job `check-protocol` de CI necesita **historia completa** del repositorio:
   los gates de lifecycle (C-2) resuelven tree ids declarados con `git rev-parse`
   y los dogfoods anclados leen commits históricos con `git log`. El workflow usa

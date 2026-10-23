@@ -308,17 +308,19 @@ Condiciones derivadas del Change Lifecycle (semántica; RFC-75
   tocar `VERSION`/changelog, o los ítems se acumulan en `[Unreleased]` y la
   numeración se asigna en la promoción.
 
-## 9. Estado actual (2026-10-21, release `12.3.1`)
+## 9. Estado actual (2026-10-23, release `12.3.2` preparada en `dev`)
 
-Snapshot del estado al 2026-10-21, reconciliado en el punto de promoción que §5
+Snapshot del estado al 2026-10-23, reconciliado en el punto de release que §5
 declara. Sucesión de puntos de reconciliación: la promoción del rango
 `11.3.0`–`11.6.1` (plan 146), la corrección post-release del plan 147, la
 **release de gobernanza `11.6.2`** (plan 148), la **release de gobernanza
 `11.7.1`** (planes 151–153), la **release `12.0.0`** (plan 154, RFC-81), la
 **release `12.1.0`** (plan 168), la **release `12.2.0`** (plan 170, RFC-84), la
 **release `12.3.0`** (Change Clase A bajo instrucción directa del mantenedor,
-commit `16224ce`) y la **release `12.3.1`** (Plan 173: corrección del cierre de
-Phase 0.4 y cobertura de idempotencia del lifecycle), que es el punto vigente.
+commit `16224ce`), la **release `12.3.1`** (Plan 173: corrección del cierre de
+Phase 0.4 y cobertura de idempotencia del lifecycle) y la **preparación de la
+release `12.3.2`** (commit de release en `dev`; promoción y tag pendientes),
+que es el punto vigente.
 La fuente inmutable de la verdad son `git tag` + `protocol/.agents/VERSION`:
 este snapshot es un resumen de lectura, no una segunda fuente, y una divergencia
 se resuelve siempre a favor de git.
@@ -330,7 +332,8 @@ se resuelve siempre a favor de git.
   la identidad del Plan 172— y conserva la corrección del **plan 170**
   (RFC-84, `12.2.0`) y el endurecimiento de enforcement de `16224ce`
   (`12.3.0`). Ninguno redefine un contrato; los 22 residual risks genuinos de
-  Phase 0.4 siguen declarados como tales.
+  Phase 0.4 siguen declarados como tales. La release `12.3.2` está preparada en
+  `dev` y **no está promovida**: `master` sigue en `12.3.1` hasta esa promoción.
 - `dist` = publicado desde `master` en la release `12.3.1` (`publish-dist`):
   contiene `.agents/` + `AGENTS.md`, con `VERSION` = `12.3.1` y la suite del
   harness (incluidos los tres tests de idempotencia). El workflow regenera
@@ -339,13 +342,19 @@ se resuelve siempre a favor de git.
   **Contrato de distribución:** `dist` transporta el *payload* (`.agents/` +
   `AGENTS.md`), no el layout materializado; el layout canónico
   `<proyecto>/.argentos/…` lo produce el lifecycle al instalar (ver
-  `docs/ADOPTION.md` §1 y §1.3).
-- `dev` = `12.3.1` (`protocol/.agents/VERSION`). **No queda ningún cambio de
-  payload sin publicar**: la promoción `dev` → `master` de esta release llevó a
-  `master` todo el payload de `dev`, incluidos los tests de idempotencia. Los
-  planes docs-only/tooling 171, 172 y 173 viven en `dev` y en `master` sin
-  versión de payload propia; el ítem de gobernanza del Plan 172 y los anteriores
-  permanecen en `[Unreleased]`, que acumula los ítems no asignados a una versión.
+  `docs/ADOPTION.md` §1 y §1.3). La release `12.3.2` todavía no se publicó:
+  `dist` permanece en `12.3.1` hasta que el push a `master` dispare
+  `publish-dist`.
+- `dev` = `12.3.2` (`protocol/.agents/VERSION`), con la release **preparada y
+  sin promover**. El delta de contenido de payload respecto de `12.3.1` son
+  exactamente los dos archivos de F-01 (`OPERATIONAL_RULES.md` y
+  `PREFLIGHT_CHECKLIST.md`), que corrigen sus referencias al `AGENTS.md` raíz
+  bajo el layout adoptado; el único otro cambio bajo `protocol/` es `VERSION`,
+  metadata de esta release. `master` y `dist` siguen en `12.3.1` y el tag
+  `12.3.2` todavía no existe. Los planes docs-only/tooling 171, 172 y 173 y el
+  saneamiento Priority 2 viven en `dev` sin versión de payload propia; el ítem
+  de gobernanza del Plan 172 y los anteriores permanecen en `[Unreleased]`, que
+  acumula los ítems no asignados a una versión.
 - Tags anotados de la serie vigente: `11.6.0`, `11.6.1`, `11.6.2`, `11.7.0`,
   `11.7.1`, `12.0.0`, `12.1.0`, `12.2.0`, `12.3.0` y `12.3.1`, cada uno sobre el
   commit de promoción correspondiente de `master`. `11.7.0` (plan 150, RFC-80)
@@ -354,9 +363,11 @@ se resuelve siempre a favor de git.
   planes 156 y 166; `12.2.0` (plan 170) publica el catálogo canónico de
   invariantes y properties; `12.3.0` publica el endurecimiento de enforcement de
   `PC-3`, `E1-G1` y `G-09`; `12.3.1` publica la corrección de Phase 0.4 (Plan
-  173) y la cobertura de idempotencia del lifecycle.
+  173) y la cobertura de idempotencia del lifecycle. El tag `12.3.2` se creará
+  al promover; no existe a la fecha de este snapshot.
 - `VERSION` = `PROTOCOL_VERSION` (`runtime/toolcalls/canonical.py`, el ancla
-  semántica del runtime) = `12.3.1` en `dev` y en `master`.
+  semántica del runtime) = `12.3.2` en `dev` (release preparada) y `12.3.1` en
+  `master` (sin promover todavía).
 
 Notas:
 
@@ -375,16 +386,16 @@ Notas:
   secciones del changelog sin tag. La promoción (`dev` → `master` + tags
   anotados + regeneración de `dist`) se ejecutó en el Change del plan 146, que
   es el primer punto de reconciliación de este snapshot.
-- Mientras `dev` contenga planes sin publicar respecto de `master`/`dist`,
-  `check_dist_sync.py` se espera rojo en `dev` por diseño (ver §4.1). **Tras la
-  release `12.3.1`, el payload de `dev` y el de `master` vuelven a coincidir, y
-  el de `master` es el que publica `dist`**: el cambio tests-only de `G-08` se
-  publicó con esta release, de modo que el checker queda verde en el estado
-  publicado (y `dev` = `master`). Su comparación es contra la **ref local**
-  `dist` y contra el payload comprometido en `HEAD` (`--branch` permite apuntarla
-  a otra ref, por ejemplo `origin/dist`); la publicación remota forma parte de
-  esta release y CI regenera `origin/dist` desde el commit de promoción, que es
-  el payload que reciben los adoptantes. Advertencia operativa: la **ref local** `dist` puede quedar por detrás de `origin/dist` (es una rama generada
+- Mientras `dev` contenga el payload de `12.3.2` sin promover,
+  `check_dist_sync.py` se espera rojo en `dev` por diseño (ver §4.1): la
+  diferencia es exactamente la de esta release —los dos archivos de F-01 y
+  `protocol/.agents/VERSION` (`12.3.2` frente a `12.3.1`)—. Tras la promoción,
+  `master` publicará `12.3.2` y `publish-dist` regenerará `dist`, de modo que el
+  checker quedará verde en el estado publicado. Su comparación es contra la
+  **ref local** `dist` y contra el payload comprometido en `HEAD` (`--branch`
+  permite apuntarla a otra ref, por ejemplo `origin/dist`); la publicación
+  remota forma parte de la promoción y CI regenera `origin/dist` desde el commit
+  de promoción, que es el payload que reciben los adoptantes. Advertencia operativa: la **ref local** `dist` puede quedar por detrás de `origin/dist` (es una rama generada
   por CI, no un artefacto del working tree); para leer el payload publicado hay
   que resolver `origin/dist`, no la ref local.
 - El job `check-protocol` de CI necesita **historia completa** del repositorio:

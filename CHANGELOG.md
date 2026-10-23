@@ -39,6 +39,14 @@ La política de versionado, changelog, tags y estados de planes vive en
 
 - **Phase 0.4 — cierre de la deuda heredada de Phase 0** (Plan 172, DEV-only, sin efecto payload, sin release por RFC-69): inventario completo de los residuos materiales de Phase 0.1, 0.2 y 0.3 (**65 ítems**, cada uno con estado terminal —15 `RESOLVED`, 7 `IMPLEMENTED`, 4 `REJECTED_BY_DESIGN`, 31 `ACCEPTED_RESIDUAL_RISK`, 8 `NON_ACTIONABLE_HISTORICAL`—, evidencia y rationale; `UNCLASSIFIED = 0`) en `docs/working/proposals/PHASE_0_4_INHERITED_DEBT_CLOSURE_2026-10-20.md`; materialización de `E1-G2`…`E1-G5` de ADR-20 (autoridad de escritura derivada del artefacto y verificada en el escritor, `Executed` ≠ `Closed`, rechazo de escritura sobre contenido gobernante cerrado y registro externo de ejecución separado del plan, con `## Amendment Log` en ADR-20); corrección de un falso positivo de path legacy y de la resolución de headings numerados en `tools/check_plan_citations.py`; reconciliación de `docs/VERSIONING.md` §9 (estado actual a `12.3.0`), `docs/plans/INDEX.md` (estado del Plan 171), `docs/working/proposals/INDEX.md` (filas 0.2/0.3) y de la interpretación local de `INV-08` en `docs/INVARIANTS.md`. `protocol/`, `dist/` y el contenido gobernante de planes/RFC/ADRs cerrados no se modifican.
 
+## [12.3.2] — 2026-10-23
+
+### Fixed
+
+- **Referencias al `AGENTS.md` raíz bajo el layout adoptado** (commit `3ba3533`; Clase C de RFC-56 bajo instrucción directa del mantenedor, sin cambio de contrato): `protocol/.agents/standards/conduct/OPERATIONAL_RULES.md` y `protocol/.agents/standards/quality/PREFLIGHT_CHECKLIST.md` corrigen sus links de `../../../AGENTS.md` a `../../../../AGENTS.md`. Con el payload materializado en `.argentos/.agents/`, la ruta anterior resolvía a `.argentos/AGENTS.md` (que no existe ni debe crearse) y la nueva resuelve al `AGENTS.md` de la raíz del proyecto adoptante. El checker de invariantes valida ahora esa resolución adoptada y la suite de adopción simula `dist/.agents/` → `project/.argentos/.agents/` para impedir la regresión; `docs/source-layout.md` documenta la profundidad y la guarda. Sin cambios de comportamiento del protocolo ni del contrato de adopción.
+
+> El tag git `12.3.2` se crea como entregable del release al promover `dev` → `master`.
+
 ## [12.3.1] — 2026-10-21
 
 ### Fixed

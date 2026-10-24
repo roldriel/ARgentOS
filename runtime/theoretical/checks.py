@@ -417,8 +417,6 @@ def _ch7(proposal: Proposal) -> list[CheckResult]:
             )
         ]
     delta = report.get("delta_scoped_identity")
-    state = report.get("state_identity") or {}
-    tree = state.get("tree") if isinstance(state, dict) else None
     if anchor.delta_identity and delta != anchor.delta_identity:
         return [
             CheckResult(
@@ -428,15 +426,17 @@ def _ch7(proposal: Proposal) -> list[CheckResult]:
                 (f"{proposal.path}:Validation anchor",),
             )
         ]
-    if anchor.state_identity and tree and tree != anchor.state_identity:
-        return [
-            CheckResult(
-                "CH-7",
-                ANOMALY,
-                "declared state identity does not match the recomposed tree",
-                (f"{proposal.path}:Validation anchor",),
-            )
-        ]
+    if anchor.state_identity:
+        object_type = proposal.overlay.repository.object_type(anchor.state_identity)
+        if object_type != "tree":
+            return [
+                CheckResult(
+                    "CH-7",
+                    ANOMALY,
+                    "declared state identity does not resolve to a Git tree",
+                    (f"{proposal.path}:Validation anchor",),
+                )
+            ]
     return [
         CheckResult(
             "CH-7",

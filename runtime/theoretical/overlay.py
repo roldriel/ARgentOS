@@ -119,6 +119,15 @@ class GitRepository:
             return None
         return out.decode("ascii", errors="replace").strip() or None
 
+    def object_type(self, oid: str) -> str | None:
+        """The Git object type of ``oid`` (tree/blob/commit), or ``None``."""
+        if not oid or oid.startswith("-"):
+            return None
+        code, out, _ = self._run("cat-file", "-t", oid)
+        if code != 0:
+            return None
+        return out.decode("ascii", errors="replace").strip() or None
+
     def read(self, ref: str, path: str) -> bytes | None:
         rel = normalize_path(path)
         code, out, _ = self._run("cat-file", "blob", f"{ref}:{rel}")

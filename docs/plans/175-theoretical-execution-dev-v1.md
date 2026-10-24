@@ -1,6 +1,6 @@
 # Plan 175 — Theoretical Execution (DEV v1)
 
-**Status:** Executed (parcial: Validation Anchor y Checkpoint pendientes de registro)
+**Status:** Executed
 **Fecha:** 2026-10-24
 **Tipo:** Plan
 **Lifecycle:** active
@@ -101,7 +101,7 @@ TE v1 no escribe, no ejecuta el Plan, no persiste, no se integra al `ExecutionHo
 - [x] La suite cubre no-mutación, no-store, dirección de importación, overlay, identidad, contrato, estados, checks, obligaciones y dogfood.
 - [x] El Gate B deja un registro Working con el `TE_RESULT` y los findings; `CONVERGED` o findings dispositionados por el humano.
 - [x] `runtime/README.md`, `.agents/policies/theoretical-execution.md`, `.agents/AGENTS.md`, `tests/AGENTS.md` y `CHANGELOG.md` actualizados.
-- [ ] Batería canónica, C-1/C-2/C-3 en verde; `## Validation anchor` y `## Checkpoint / cierre` registrados; condición derivada evaluada.
+- [x] Batería canónica, C-1/C-2/C-3 en verde; `## Validation anchor` y `## Checkpoint / cierre` registrados; condición derivada evaluada.
 - [x] Sin cambios en `protocol/`, `dist/`, `VERSION`, `ExecutionHost`, `runtime/orchestrator/derivation.py` ni la batería.
 
 ## Verificación
@@ -127,21 +127,44 @@ La salida de `--emit` se redirige a un archivo fuera del repositorio; la CLI no 
 
 ## Validation anchor
 
-<!-- Se completa al validar (VC-1). -->
+**Validation anchor (VC-1).**
+
+- **Declared scope:** las 23 rutas de la implementación: `.agents/AGENTS.md`, `.agents/policies/theoretical-execution.md`, `CHANGELOG.md`, `docs/plans/INDEX.md`, `docs/working/proposals/INDEX.md`, `docs/working/proposals/THEORETICAL_EXECUTION_PLAN_175_DOGFOOD.md`, `runtime/README.md`, `runtime/theoretical/__init__.py`, `runtime/theoretical/__main__.py`, `runtime/theoretical/checks.py`, `runtime/theoretical/identity.py`, `runtime/theoretical/overlay.py`, `runtime/theoretical/proposal.py`, `runtime/theoretical/result.py`, `tests/AGENTS.md`, `tests/test_theoretical_checks.py`, `tests/test_theoretical_cli.py`, `tests/test_theoretical_dogfood.py`, `tests/test_theoretical_identity.py`, `tests/test_theoretical_isolation.py`, `tests/test_theoretical_overlay.py`, `tests/test_theoretical_proposal.py` y `tests/test_theoretical_result.py`. Este Plan queda **fuera** del scope medido (anti-auto-referencia).
+- **Validation command-set:** los ocho checkers de `docs/VERSIONING.md:4.1 Batería canónica de verificación`; los tres gates de lifecycle C-1/C-2/C-3; `python -m pytest tests/`; `git diff --check`; y la recomputación del Scoped Content Identity con `tools/scoped_content_identity.py`.
+- **Effective inputs (repo content):** las 23 rutas del scope en el estado validado (commit de implementación corregida `3cd450d`, tree `3cc6b1a161c4372098660ac613ca63dada2caa7f`); el corpus completo que consumen los checkers y la suite; el Plan 175 fuera del scope.
+- **Observed dependencies:** intérprete Python con biblioteca estándar (`runtime/theoretical/`, `tools/`, `tests/`), `pytest`, CLI `git`. Sin red, sin servicios externos, sin instalación de componentes del payload.
+- **Environmental factors:** Windows 11 Pro; Python 3.14.3; `pytest` 9.1.1; `git` 2.56.0.windows.3; `core.autocrlf = true`; `check_dist_sync.py` no aplica (local-only; rojo en `dev`); `check_plan_structure.py` reporta los 2 `GAP` declarados (157/158); C-1 reporta el `GAP` del propio anchor y C-2 el `N/A` del propio checkpoint en el estado validado (se escriben después de la validación, por diseño); C-3 reporta los cuatro `GAP` legacy declarados y el `BOUNDARY` de 157; `check_version_state.py` emite sus warnings históricos.
+- **Scoped Content Identity:**
+  - **State identity (estado validado):** `3cc6b1a161c4372098660ac613ca63dada2caa7f` (tree del índice staged del estado validado; tree del commit de implementación corregida `3cd450d`).
+  - **Delta scoped identity:** `f308966511fc33df2e1680b2ad00ebbbfdacb423d05c8eb30d50da721551495c` (scope = las 23 rutas declaradas; serialización `scoped-v1`, orden canónico).
+  - **Scope set (repo-relative paths, ordenados):** `.agents/AGENTS.md`, `.agents/policies/theoretical-execution.md`, `CHANGELOG.md`, `docs/plans/INDEX.md`, `docs/working/proposals/INDEX.md`, `docs/working/proposals/THEORETICAL_EXECUTION_PLAN_175_DOGFOOD.md`, `runtime/README.md`, `runtime/theoretical/__init__.py`, `runtime/theoretical/__main__.py`, `runtime/theoretical/checks.py`, `runtime/theoretical/identity.py`, `runtime/theoretical/overlay.py`, `runtime/theoretical/proposal.py`, `runtime/theoretical/result.py`, `tests/AGENTS.md`, `tests/test_theoretical_checks.py`, `tests/test_theoretical_cli.py`, `tests/test_theoretical_dogfood.py`, `tests/test_theoretical_identity.py`, `tests/test_theoretical_isolation.py`, `tests/test_theoretical_overlay.py`, `tests/test_theoretical_proposal.py`, `tests/test_theoretical_result.py`.
+- **Validity / stale:** `vigente`. El commit de cierre agrega únicamente este Plan, excluido del scope medido; el delta recomputado sobre el estado de cierre es idéntico al declarado y el estado validado es el del commit de implementación.
+- **Battery result (estado validado E):** 8 checkers: 7 PASS + `check_plan_structure` PASS con 2 `GAP` declarados; C-1 `VALID=80 GAP=1 ANOMALY=0` (el `GAP` es el anchor de este Plan, escrito después); C-2 `VALID=79 N/A=1 GAP=1 ANOMALY=0` (el `N/A` es el checkpoint de este Plan; el `GAP` es el Plan 116); C-3 `VALID=38 GAP=4 BOUNDARY=1 N/A=34 ANOMALY=0`; `pytest tests/` **1481 passed**; `git diff --check` limpio; recomputación de identidad PASS.
+- **Re-ejecución sobre el estado de cierre (F):** mismos checkers y gates sobre el estado que incorpora este anchor y este checkpoint — 8 checkers PASS; C-1 `VALID=81 GAP=0 ANOMALY=0`; C-2 `VALID=80 GAP=1` (Plan 116) `ANOMALY=0`; C-3 `VALID=39 GAP=4 BOUNDARY=1 N/A=33 ANOMALY=0`; delta recomputado idéntico. Es una nota de la misma validación, no una A2: el Plan está fuera del scope declarado y ningún path del scope cambió (CL-2).
 
 ## Checkpoint / cierre
 
-<!-- Se completa al cerrar (GC-1). -->
+**Checkpoint / cierre (GC-1).**
+
+- **Commits de cierre:** `3cd450d` (commit de implementación corregida: las 23 rutas del scope y este Plan; tree `3cc6b1a161c4372098660ac613ca63dada2caa7f`) y el commit de cierre en `dev`, que incorpora este Validation Anchor, este Checkpoint y la `## Nota de ejecución`. El commit de cierre se localiza por su mensaje. Sin amend, rebase, squash ni force-push.
+- **Estado validado (ref al Validation anchor):** State identity `3cc6b1a161c4372098660ac613ca63dada2caa7f`; Delta scoped identity `f308966511fc33df2e1680b2ad00ebbbfdacb423d05c8eb30d50da721551495c`.
+- **Estado de cierre (identidad):** State identity `3cc6b1a161c4372098660ac613ca63dada2caa7f`; Delta scoped identity `f308966511fc33df2e1680b2ad00ebbbfdacb423d05c8eb30d50da721551495c` (el mismo estado validado, por correspondencia con el anchor aplicable).
+- **Árbol material del commit de cierre:** no declarado; el commit de cierre aún no existe al escribir este checkpoint y agrega únicamente este Plan (excluido del scope). `validated tree == commit tree` no es un requisito (RFC-75 Mecanismo 7).
+- **Consistencia checkpoint↔anchor:** **PASS** — el estado de cierre declarado es el que la validación consumió; el delta recomputado sobre el estado de cierre coincide con el declarado.
+- **Governance aplicada:** RFC-75 (Mecanismo 7, checkpoint); RFC-56 (**N/A**: sin payload delta); RFC-46 (sin reescritura de historia); RFC-69 (docs/runtime/tests DEV-only, sin release ni tag); ADR-16 (autoridad y evidencia); VC-1/GC-1/LC-1/PC-1; `docs/VERSIONING.md:4.1 Batería canónica de verificación`.
+- **Documentation impact:** `REQUIRED` — actualizados en este Change: `.agents/policies/theoretical-execution.md` (nueva policy), `.agents/AGENTS.md` (puntero), `runtime/README.md` (sección TE), `tests/AGENTS.md` (test anclado), `docs/plans/INDEX.md` (fila), `docs/working/proposals/INDEX.md` (fila) y `CHANGELOG.md` (`[Unreleased]`); más este Plan y el registro Working del Gate B.
+- **Roadmap impact:** `NOT_REQUIRED` — la implementación no crea, completa, cancela, reclasifica ni re-prioriza una iniciativa del mapa operativo de `ROADMAP.md` (no existe allí un ítem de TE); `PRIORITY.md` no es el mapa operativo del repositorio.
+- **Condición derivada:** **`Closed`** (plan `Executed` + governance aplicada + checkpoint + consistencia + PASS). `Committed` es estado del repositorio; `Released` es `NO` (DEV-only, sin payload, RFC-69).
 
 ## Findings / Correcciones / Pending
 
 ### Findings
 
-No findings detected / N/A.
+- `<PLAN-175>:F-1` — estado: `resolved` (corregido por `<PLAN-175>:C-1`); observación: CH-7 comparaba la `State identity` del `## Validation anchor` con el tree del estado actual. El Plan está excluido del scope medido, pero al agregar el anchor y el checkpoint su tree cambia; el check producía un `ANOMALY` falso después del cierre aunque el delta del scope medido fuera idéntico; evidencia original: `runtime/theoretical/checks.py` (CH-7) en `8b2856a`, `## Validation anchor`/`## Checkpoint / cierre` del estado A y `tools/scoped_content_identity.py` sobre las 23 rutas; estado git observado: `dev` @ `3cd450d` con la corrección C-1 en el worktree; provenance original: validación del estado A y re-ejecución de gates sobre el estado C; resolución: `C-1` recomputa el delta del scope, lee el `Scope set` incluyendo archivos raíz (`CHANGELOG.md`, que `parse_anchor` descarta por no tener slash) y verifica que la `State identity` resuelve a un tree de Git, sin exigir igualdad con el tree del estado de cierre.
 
 ### Correcciones
 
-N/A.
+- `<PLAN-175>:C-1` — refs origen: `<PLAN-175>:F-1`; alcance de revalidación: `runtime/theoretical/checks.py` (CH-7 y parser local del `Scope set`), `runtime/theoretical/overlay.py` (`object_type`), el `## Validation anchor` y el `## Checkpoint / cierre` de este Plan; evidencia: `python -m pytest tests/` **1481 passed**, 8 checkers PASS, C-1 `VALID=81 GAP=0 ANOMALY=0`, C-2 `VALID=80 GAP=1` (Plan 116) `ANOMALY=0`, C-3 `VALID=39 GAP=4 BOUNDARY=1 N/A=33 ANOMALY=0`, delta recomputado `f308966511fc33df2e1680b2ad00ebbbfdacb423d05c8eb30d50da721551495c`. La corrección se materializó en `3cd450d` y el cierre en el commit de cierre; el Plan sigue fuera del scope medido.
 
 ### Pending decisions
 
@@ -179,9 +202,10 @@ Closed (dev) · Released = NO (sin payload, RFC-69)
 **Ejecutado el 2026-10-24.** Change DEV **RFC-56 Class: N/A**, Change Level L2, sin payload, sin release (RFC-69). Implementación en `dev`.
 
 - **S1–S6:** `runtime/theoretical/` (`overlay.py`, `identity.py`, `proposal.py`, `checks.py`, `result.py`, `__main__.py`, `__init__.py`), `.agents/policies/theoretical-execution.md` y su puntero, `runtime/README.md`, las ocho suites `tests/test_theoretical_*.py`, `tests/AGENTS.md`, el registro Working del Gate B y su INDEX, y `CHANGELOG.md`.
+- **Corrección F-1/C-1:** la validación de cierre detectó que CH-7 comparaba la `State identity` del anchor con el tree del estado actual; tras agregar el anchor/checkpoint al Plan (excluido del scope), ese tree cambia y producía un `ANOMALY` falso. Además, `parse_anchor` descarta archivos raíz del `Scope set` (`CHANGELOG.md`), por lo que el delta se recomputaba sobre 22 de las 23 rutas. `C-1` corrige CH-7 para recomponer el delta sobre el `Scope set` completo (incluidos archivos raíz) y verificar que la `State identity` resuelve a un tree de Git, sin exigir igualdad con el tree de cierre. Revalidado en el estado E/F.
 - **Gate B (S7):** base `86a7cb0`; productor `agent:deepseek-harness` (declarado, no verificado); el engine validó CH-1…CH-8, cobertura, identidad y obligaciones; `TE_RESULT` **`CONVERGED`** con 49/49 ítems, cinco dimensiones `PERFORMED` y sin findings. Registro: `docs/working/proposals/THEORETICAL_EXECUTION_PLAN_175_DOGFOOD.md`.
-- **Validación (S8):** 8 checkers PASS (`check_plan_structure` con los 2 `GAP` declarados 157/158; `check_version_state` con sus warnings históricos); `python -m pytest tests/` **1481 passed**; `git diff --check` limpio; CLI `--validate`/`--stale`/`--compare` con los exit codes previstos. `C-1/C-2/C-3` y el `## Validation anchor`/`## Checkpoint / cierre` se registran en el commit de cierre.
-- **Condición derivada:** `Executed` (implementación + validación); `Closed` se deriva al registrar el anchor/checkpoint; `Committed` es estado del repositorio; `Released = NO`.
+- **Validación (S8):** 8 checkers PASS (`check_plan_structure` con los 2 `GAP` declarados 157/158; `check_version_state` con sus warnings históricos); `python -m pytest tests/` **1481 passed**; `git diff --check` limpio; CLI `--validate`/`--stale`/`--compare` con los exit codes previstos. Gates: C-1 `VALID=81 GAP=0 ANOMALY=0`; C-2 `VALID=80 GAP=1` (Plan 116) `ANOMALY=0`; C-3 `VALID=39 GAP=4 BOUNDARY=1 N/A=33 ANOMALY=0`; `## Validation anchor` y `## Checkpoint / cierre` registrados con state identity `3cc6b1a161c4372098660ac613ca63dada2caa7f` y delta `f308966511fc33df2e1680b2ad00ebbbfdacb423d05c8eb30d50da721551495c`.
+- **Condición derivada:** **`Closed`** (plan `Executed` + governance aplicada + checkpoint + consistencia + PASS); `Committed` es estado del repositorio; `Released = NO`.
 
 ---
 

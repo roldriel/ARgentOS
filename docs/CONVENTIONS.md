@@ -26,17 +26,32 @@
   documentación del tooling (`tools/`, `runtime/`, `docs/` — el código en
   inglés); `README.md` en inglés (público). Los documentos nuevos siguen esta
   regla; los existentes se alinean de forma incremental.
-- **Inmutabilidad y clases de cambio (RFC-56)**: `protocol/.agents/` solo se
-  modifica por la vía que corresponde a la clase del cambio. **Clase A**
-  (modelo conceptual, contratos, breaking): requiere RFC `Accepted`; una RFC
-  en `Proposal` NO habilita tocar el payload. **Clase B** (mejora documental
-  compatible, sin cambio de significado): plan `Aprobado para ejecución` con
-  justificación documentada + batería en verde. **Clase C** (corrección
-  mecánica: typos, formato, links; cero cambio de significado): commit directo
-  en `dev` con la batería en verde, registrado en el changelog de la próxima
-  versión. Reglas de borde: ante la duda se elige la clase más estricta; la
-  clase se declara en el plan (A/B) o en el commit (C) y es revisable; la
-  batería de verificación corre en las tres clases.
+- **Inmutabilidad y clasificación de cambios del payload (RFC-56)**: `protocol/.agents/`
+  solo se modifica por la vía que corresponde a la **clase RFC-56 del payload delta**
+  (`docs/rfc/56-governance-fast-track.md:Modelo vigente (enmienda 2026-10-23)`).
+  La clasificación pertenece al **payload delta**, no al Change, al Plan ni al documento
+  que lo describe; un Change puede contener **cero, uno o varios** payload deltas con
+  clases distintas.
+  - **Clase A** (modelo conceptual, contratos, breaking): RFC `Accepted` + Plan
+    `Aprobado para ejecución`; una RFC en `Proposal` NO habilita tocar el payload.
+  - **Clase B** (mejora documental compatible **del payload**, sin cambio de
+    significado): Plan `Aprobado para ejecución` con justificación documentada +
+    batería en verde.
+  - **Clase C** (transformación mecánica del payload que **preserva la semántica
+    normativa y los contratos del payload**): commit directo en `dev` con la batería
+    en verde, registrado en el changelog de la próxima versión, cuando la ruta directa
+    es aplicable.
+  - **Ruta efectiva**: la fija la **clase más estricta presente**, `A > B > C > N/A`.
+    No existe una clase `AB`; un delta C puede viajar en el mismo Plan que deltas A/B;
+    no se divide artificialmente el Change para evitar la composición.
+  - **RFC-56 N/A**: un Change sin efecto sobre `protocol/.agents/` no tiene clase
+    A/B/C; su governance es el lifecycle DEV y el Change Level. Clase B **no** es
+    sinónimo de «cambio documental» en general.
+  - **Reglas de borde**: ante la duda se elige la clase más estricta; el checker es
+    **evidencia factual, no autoridad** (un checker que no cambia no demuestra por sí
+    solo que el cambio sea C, y uno que cambia no lo vuelve A/B por sí solo); la clase
+    se declara en el Plan (`**RFC-56 Class:**`) o en el commit y es revisable; la
+    batería de verificación corre en las tres clases.
 - **Ciclo de status (RFCs)**: `Proposal` (borrador) → `Accepted` (aprobada) →
   `Superseded` (reemplazada; el header indica por cuál RFC). No existe
   `Approved`: los documentos que lo usaban se normalizaron a `Accepted`
@@ -54,8 +69,9 @@
   header indica por cuál ADR). El status del ADR refleja la **decisión
   registrada**, no el estado de formalización de su RFC: la matriz de
   `docs/adr/INDEX.md` muestra cada artefacto con su propio status, y un ADR
-  `Accepted` no habilita cambios de payload (la vía sigue siendo RFC `Accepted`
-  + plan, RFC-56).
+  `Accepted` no habilita cambios de payload (la vía la fija la clase RFC-56 del
+  payload delta: A exige RFC `Accepted` + plan; B, plan; C, commit directo cuando
+  la ruta directa aplica).
 - **Trazas históricas (RFC-46)**: los artefactos de sesión son registros
   inmutables de la versión del protocolo vigente al momento de la sesión; no
   se reescriben ni se "reproducen" con una versión nueva. Las entradas de
@@ -390,7 +406,7 @@ y evidencia · `## Validation anchor` **sólo** si cita una validación registra
 |---|---|---|---|
 | `C-1` | Implementación | ¿modifica código (`runtime/`, `tools/`, `tests/`)? | **Plan** |
 | `C-2` | Contenido normativo | ¿modifica `docs/CONVENTIONS.md`, `docs/VERSIONING.md`, `docs/placement-contract.md`, un RFC, un ADR, una policy o un workflow activo? | **Plan** |
-| `C-3` | Payload | ¿toca `protocol/.agents/`? | **Plan** + vía RFC-56 (el tipo **no** exime) |
+| `C-3` | Payload | ¿contiene algún payload delta (toca `protocol/.agents/`)? | Clasificación RFC-56 **por delta** + ruta efectiva (§4 de RFC-56); C puede ser commit directo; el tipo de trabajo no exime |
 | `C-4` | Decisión de diseño/arquitectura | ¿requiere una decisión nueva de diseño o arquitectura? | **Plan** (+ ADR si `AU-6`) |
 | `C-5` | Duración / múltiples sesiones | ¿`duration/complexity` ≥ 2? | **Plan** |
 | `C-6` | Múltiples pasos / multi-capa | ¿el scope abarca ≥2 capas del repo? | **Plan** |
@@ -467,7 +483,10 @@ Note ≠ Clase C/L0
   los referencia sin duplicar la tabla.
 - Change Level y clase RFC-56 son **ejes independientes**: una Clase A pequeña
   puede ser L2; una Clase C grande puede ser L2/L3 por scope; un cambio
-  runtime-only tiene Level sin clase.
+  runtime-only tiene Level sin clase; un cambio sin payload delta es
+  `RFC-56 Class: N/A`. La clase no se computa desde el Level ni el Level desde
+  la clase (`docs/rfc/56-governance-fast-track.md:Modelo vigente (enmienda
+  2026-10-23)`).
 - **L0** es el nivel mínimo (1 agente, 1 sesión, superficie de 1 archivo, sin
   cambio estructural, sin versión, <1 sesión) y es **provisional**: al
   activarse un trigger (finding, revalidación requerida, decisión ADR-worthy,
@@ -540,15 +559,17 @@ cuando no existe tracker de origen (RFC-75 `docs/rfc/75-change-lifecycle.md:Meca
 Reglas operativas:
 
 - El artifact principal de clasificación es el **Plan**: el header declara
-  `**Change Level:**` (L0–L3). Origen/tipo, clase RFC-56, scope, riesgo y
-  coordinación se declaran en los campos y secciones existentes (`Origen`,
-  `Clase`, `RFC`, `Depende de`, alcance y riesgos del cuerpo).
+  `**Change Level:**` (L0–L3) y `**RFC-56 Class:**` (`N/A | A | B | C`;
+  multi-clase: `A, B`). Origen/tipo, scope, riesgo y coordinación se declaran en
+  los campos y secciones existentes (`Origen`, `RFC`, `Depende de`, alcance y
+  riesgos del cuerpo).
 - Cuando la RFC es el primer artifact del cambio, su header puede declarar el
   Change Level de forma **opcional** (intake fallback); al crearse el Plan, el
   nivel del Plan es la declaración vigente y puede corregir la provisional.
-- Para cambios sin Plan (Clase C / acción directa), la clasificación se
-  registra en el mensaje de commit y/o en la Nota correspondiente, con el
-  formato de Conventional Commits existente.
+- Para cambios sin Plan (un cambio Clase C por debajo del Level que exige Plan,
+  o una acción directa sin Plan), la clasificación se registra en el mensaje de
+  commit y/o en la Nota correspondiente, con el formato de Conventional Commits
+  existente.
 - `Level = max(coordination, scope, architectural impact, release impact,
   duration/complexity)` (RFC-75 `docs/rfc/75-change-lifecycle.md:Mecanismo 2 — Change Levels`);
   el número de commits no es dimensión; Change Level y clase RFC-56 son ejes
@@ -894,8 +915,9 @@ Reglas:
   documento arbitrariamente (`git tag` + `protocol/.agents/VERSION` prevalecen).
 - **Dónde se registra.** En el registro `## Checkpoint / cierre` del Plan (el
   template lleva los dos campos), de modo que las determinaciones forman parte
-  del cierre que el checkpoint documenta. Para un cambio sin Plan (Clase C /
-  acción directa) van con la clasificación de intake en el mensaje de commit
+  del cierre que el checkpoint documenta. Para un cambio sin Plan (un cambio
+  Clase C por debajo del Level que exige Plan, o una acción directa sin Plan)
+  van con la clasificación de intake en el mensaje de commit
   —`Documentation impact: REQUIRED: <rutas> — <evidencia>` y
   `Roadmap impact: NOT_REQUIRED: <razón>`—, en el lugar donde el Change
   Lifecycle ya exige clasificar un cambio sin Plan.

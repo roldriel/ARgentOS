@@ -65,8 +65,11 @@ While developing ARgentOS you work on the protocol itself. Therefore:
 
 ## Do NOT
 
-- Modify `protocol/.agents/` without its RFC-56 class via (A: RFC `Accepted`;
-  B: approved plan; C: green-battery mechanical fix).
+- Modify `protocol/.agents/` without classifying its **payload deltas** under
+  RFC-56 (A: `Accepted` RFC + plan; B: approved plan; C: green-battery mechanical
+  transformation that preserves normative semantics; a Change with several
+  deltas takes the strictest class present, and one with no payload effect is
+  RFC-56 N/A).
 - Change the allowlisted payload links to `AGENTS.md` without re-deriving their
   adopted depth: they must resolve to the adopter's root adapter, not to
   `.argentos/AGENTS.md` (`docs/source-layout.md`).
@@ -132,14 +135,17 @@ rule, and they do not replace the normative authorities in `docs/`
 
 ## Task lifecycle
 
-Every change follows the same pipeline: **authorize** (by change class,
-RFC-56: Class A model/contracts requires an `Accepted` RFC; Class B
-documentary improvement requires a plan `Aprobado para ejecución`; Class C
-mechanical fixes commit directly) → **execute** on `dev` → **verify**
-(checkers below) → **close** (plan `Executed`, RFC Amendment Log, INDEX,
-changelog `(plan N, RFC-N)`, VERSION bump) → **commit** (atomic, Conventional
-Commit in English, on `dev`) → **promote** (merge to `master` + annotated tag,
-with user authorization; CI regenerates `dist`).
+Every change follows the same pipeline: **authorize** (by change class over
+**payload deltas**, RFC-56: Class A model/contracts requires an `Accepted` RFC +
+plan; Class B payload documentary improvement requires a plan `Aprobado para
+ejecución`; Class C mechanical transformations that preserve normative semantics
+commit directly when the direct route applies; a Change with several deltas takes
+the strictest class present, `A > B > C`; a Change with no payload effect is
+RFC-56 N/A and follows the DEV lifecycle and its Change Level) → **execute** on
+`dev` → **verify** (checkers below) → **close** (plan `Executed`, RFC Amendment
+Log, INDEX, changelog `(plan N, RFC-N)`, VERSION bump) → **commit** (atomic,
+Conventional Commit in English, on `dev`) → **promote** (merge to `master` +
+annotated tag, with user authorization; CI regenerates `dist`).
 
 Operational instructions for executing this pipeline (change detection,
 classification, plan/authority gates, validation, checkpoint and closure)

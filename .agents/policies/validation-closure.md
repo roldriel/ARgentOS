@@ -210,8 +210,9 @@ arbitrarily; Git (`git tag` + `protocol/.agents/VERSION`) prevails.
 
 **Where it is recorded.** In the `## Checkpoint / cierre` record of the Plan
 (the template carries the field), so the determination is part of the closure
-the checkpoint documents. For a change with no Plan (Class C / direct action),
-it goes with the intake classification in the commit message — `REQUIRED:
+the checkpoint documents. For a change with no Plan (a Class C change below the
+Change Level that requires a Plan, or a direct action without a Plan), it goes
+with the intake classification in the commit message — `REQUIRED:
 <paths> — <evidence>` or `NOT_REQUIRED: <reason>`, or `DEFERRED: <paths> —
 <pending-decision ref>` —, in the place where the Change Lifecycle already
 requires the classification of a Plan-less change.
@@ -287,7 +288,8 @@ Rules:
 
 **Where it is recorded.** Next to the §5.1 determination in the Plan's
 `## Checkpoint / cierre` record (the template carries the field). For a change
-with no Plan (Class C / direct action) it goes with the intake classification in
+with no Plan (a Class C change below the Change Level that requires a Plan, or a
+direct action without a Plan) it goes with the intake classification in
 the commit message — `Roadmap impact: REQUIRED: <items> — <evidence>`,
 `Roadmap impact: NOT_REQUIRED: <reason>` or `Roadmap impact: DEFERRED: <items> —
 <pending-decision ref>`.

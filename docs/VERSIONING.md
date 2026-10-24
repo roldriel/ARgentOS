@@ -109,11 +109,16 @@ Reglas:
 
 ## 4. Flujo por plan (playbook)
 
-1. **Autorización:** verificar la vía según la clase del cambio (RFC-56):
-   **Clase A** (modelo conceptual/contratos) exige RFC `Accepted`; **Clase B**
-   (mejora documental compatible) exige plan `Aprobado para ejecución` con
-   justificación documentada; **Clase C** (corrección mecánica) no requiere
-   plan. Verificar los criterios de entrada (checkers en verde).
+1. **Autorización:** verificar la vía según la **clase RFC-56 de los payload
+   deltas** del Change (`docs/rfc/56-governance-fast-track.md:Modelo vigente
+   (enmienda 2026-10-23)`): **Clase A** (modelo conceptual/contratos) exige RFC
+   `Accepted` + plan; **Clase B** (mejora documental compatible del payload) un
+   plan `Aprobado para ejecución` con justificación documentada; **Clase C**
+   (transformación mecánica que preserva la semántica normativa y los contratos)
+   no requiere plan cuando la ruta directa es aplicable. Un Change con varios
+   payload deltas toma la ruta de la **clase más estricta** presente
+   (`A > B > C > N/A`); un Change sin efecto payload es **RFC-56 N/A** y se rige
+   por el lifecycle DEV. Verificar los criterios de entrada (checkers en verde).
 2. **Ejecución en `dev`:** aplicar los pasos del plan sobre `protocol/.agents/`.
 3. **Verificación:** `python tools/check_protocol_invariants.py --payload protocol .`,
    `python tools/check_plan_citations.py`, `python tools/check_plan_structure.py`,
@@ -249,8 +254,10 @@ Planes:
 
 - `Aprobado para redacción` → entregables documentales que no tocan `protocol/.agents/`.
 - `Aprobado para ejecución` → cambios de `protocol/.agents/` o repo; la vía
-  depende de la clase del cambio (RFC-56): Clase A exige RFC `Accepted`,
-  Clase B alcanza con justificación documentada, Clase C no requiere plan.
+  depende de la clase RFC-56 de los payload deltas: Clase A exige RFC
+  `Accepted` + plan, Clase B un plan con justificación documentada, Clase C no
+  requiere plan cuando la ruta directa es aplicable. Un Change sin efecto
+  payload es RFC-56 N/A y no se clasifica A/B/C.
 - `Executed` → todos los criterios de salida verificados, con `Nota de
   ejecución` (fecha + verificación). Parcial → `Executed (parcial: <qué falta>)`.
 - `Superseded` → reemplazado por otro plan (indicar cuál).

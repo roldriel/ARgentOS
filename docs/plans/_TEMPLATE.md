@@ -11,7 +11,10 @@
 **Tipo:** Plan | Nota (opcional; **ausencia ⇒ `Plan`**; `Nota` = forma mínima dentro de la **misma** familia)
 **Lifecycle:** active | archived | superseded | deprecated (opcional; **ausencia ⇒ `active`**)
 **RFC:** RFC-NN (`docs/rfc/NN-slug.md`) | —
-**Clase:** A | B (solo si el plan toca `protocol/.agents/`; ver RFC-56)
+**RFC-56 Class:** N/A | A | B | C (multi-clase: `A, B`) — **solo payload deltas**:
+efecto sobre `protocol/.agents/` (ver RFC-56). `N/A` = sin payload delta. La ruta
+efectiva la fija la clase más estricta presente (`A > B > C > N/A`); **no** existe
+una clase `AB`. No confundir con `**Change Level:**` (dimensión independiente).
 **Change Level:** L0–L3 (ver RFC-75 Mecanismo 2:
 `Level = max(coordination, scope, architectural impact, release impact,
 duration/complexity)`; el número de commits no es dimensión; Change Level ≠
@@ -21,6 +24,14 @@ clase RFC-56)
 **Work type:** <valor derivado por el criterio de admisión de `docs/CONVENTIONS.md` | GAP> (opcional: se declara **sólo** cuando el valor cambia una decisión de gobernanza; el valor **no** se inventa)
 **Superseded por:** <identidad del sucesor (RFC, ADR, plan o ruta) | —>
 **Motivo de retiro:** <razón explícita y verificable> (obligatorio **sólo** cuando no existe sucesor)
+
+<!-- `**RFC-56 Class:**` pertenece al **payload delta**, no al Plan ni al Change: un
+Change con un delta A y un delta C declara `A, C` y su ruta es RFC `Accepted` +
+Plan; un Change sin efecto sobre `protocol/.agents/` declara `N/A` y no se clasifica
+A/B/C. Los planes históricos que usan `**Clase:**` conservan su header (RFC-46); a
+partir de la enmienda 2026-10-23 (Plan 174) el campo canónico es
+`**RFC-56 Class:**`. Ver
+`docs/rfc/56-governance-fast-track.md:Modelo vigente (enmienda 2026-10-23)`. -->
 
 <!-- Campos adoptados por el acto de autoridad del Plan 152 (2026-10-07; ver
 `docs/CONVENTIONS.md:Change Lifecycle — Vía de autorización por Note` y

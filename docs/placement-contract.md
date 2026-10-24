@@ -38,7 +38,7 @@ Keywords **MUST**, **MUST NOT**, **SHOULD**, **MAY** are normative.
 | Domain | What it owns | Change authority |
 |---|---|---|
 | **DEV** | this repository's governance, operation, verification, runtime, tests, history and policy | a DEV Change (plan / RFC-75 lifecycle) |
-| **Protocol** | the distributed product payload: the artifacts vendored by adopters | RFC-56 (`docs/rfc/56-governance-fast-track.md:Decisión propuesta`) |
+| **Protocol** | the distributed product payload: the artifacts vendored by adopters | RFC-56 (`docs/rfc/56-governance-fast-track.md:Modelo vigente (enmienda 2026-10-23)`) |
 
 **PC-4.** An artifact MUST resolve to **exactly one** domain. The agent MUST resolve it, in this precedence order:
 

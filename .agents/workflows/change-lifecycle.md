@@ -25,7 +25,7 @@ Ask: does this task modify repository content?
 | Axis | Question | Where it is decided |
 |---|---|---|
 | Origin/type | feature, bug, problem, debt, audit finding, observation, direct maintainer action, agent proposal | first artifact (RFC draft, Plan, Note, commit message); RFC-75 Mecanismo 1 |
-| RFC-56 class | only for payload effect on `protocol/.agents/`: A (model/contracts) → RFC `Accepted`; B (compatible documentary) → plan `Aprobado para ejecución`; C (mechanical) → direct commit | `docs/rfc/56-governance-fast-track.md` |
+| RFC-56 class (per payload delta) | only for a payload delta on `protocol/.agents/`: A (model/contracts) → RFC `Accepted` + plan; B (compatible payload documentary) → plan `Aprobado para ejecución`; C (mechanical, preserves normative semantics) → direct commit when applicable. Several deltas → strictest class (`A > B > C`); no payload effect → RFC-56 N/A (DEV lifecycle + Change Level) | `docs/rfc/56-governance-fast-track.md:Modelo vigente (enmienda 2026-10-23)` |
 | Change Level | `max(coordination, scope, architectural impact, release impact, duration/complexity)`, coarse 0–3; commit count is never a dimension | RFC-75 Mecanismo 2; declared in the Plan header (`**Change Level:**`) |
 | Change domain | payload (`protocol/`), DEV docs (`AGENTS.md`, `docs/`), tooling (`tools/`, `tests/`), runtime (`runtime/`), release | scope of the task |
 
@@ -48,15 +48,23 @@ Rules:
 Before touching the repository, resolve authority (`policies/authority.md`):
 
 ```text
+Does the Change have payload deltas (effect on `protocol/.agents/`)?
+  ├─ No (RFC-56 N/A) → resolve the path by Change Level: L0 may be direct;
+  │        L1+ requires an authorized Plan; no A/B/C class applies.
+  └─ Yes → classify each delta, then take the strictest class present
+           (A > B > C):
+        ├─ A → RFC `Accepted` + plan required first; escalate if absent.
+        ├─ B → plan `Aprobado para ejecución` required; STOP and propose it.
+        └─ C → direct commit allowed after the battery is green, when the
+                 Change Level does not require a Plan; register in the next
+                 changelog entry. If the Level requires a Plan, execute it as
+                 a Class C Plan without an RFC.
+
 Is the change pre-authorized?
-  ├─ Yes: existing Plan `Aprobado para ejecución` (or RFC `Accepted` + plan
-  │        for payload) with entry criteria satisfied → continue to §4.
-  ├─ No, and payload effect → RFC `Accepted` required first; escalate.
-  ├─ No, and documentary/implementation change → new Plan required; STOP and
-  │        propose the plan (never create it silently, never execute it).
-  └─ Mechanical Class C (typo, format, link; zero semantic change) → direct
-           commit allowed after the battery is green; register in the next
-           changelog entry.
+  ├─ Yes: existing Plan `Aprobado para ejecución` (or RFC `Accepted` + plan for
+  │        a Class A payload delta) with entry criteria satisfied → continue to §4.
+  ├─ No → STOP; propose the required artifact (never create it silently, never
+  │        execute it) and wait for maintainer authorization.
 ```
 
 Never execute an unapproved plan, never "execute" a plan whose entry criteria
@@ -70,8 +78,10 @@ The Plan is the primary artifact of a tracked change.
 - **Create** a Plan only when authorized to do so (maintainer request /
   approved backlog item). Use `docs/plans/_TEMPLATE.md`; take the next free
   number from `docs/plans/INDEX.md` (chronological order, never reused);
-  register the plan in the INDEX in the same commit; declare `**Change
-  Level:**` in the header (intake classification, Increment 1).
+  register the plan in the INDEX in the same commit; declare `**RFC-56
+  Class:**` (`N/A` when the Change has no payload delta; the strictest class
+  present when it has several) and `**Change Level:**` in the header (intake
+  classification, Increment 1).
 - **Consult** an existing plan when the task matches its scope; read its
   `Objetivo`, `Criterio de entrada`, `Pasos`, `Criterios de salida` and
   `Verificación`.
@@ -273,7 +283,7 @@ Task: "Add a new DEV operational policy document (docs-only change)."
 Intake: dev clean; confirm branch and HEAD (`git status`, `git rev-parse
         HEAD`).
 Classify: origin = maintainer request; domain = DEV docs + new layer;
-         RFC-56 class: none (no payload effect);
+         RFC-56 Class: N/A (no payload delta);
          Change Level = L2 (multi-area scope, new operational seam).
 Authorize: an existing Plan `Aprobado para ejecución` with entry criteria
           met? → Yes: execute its steps. No: STOP; propose the Plan and wait

@@ -18,9 +18,10 @@ not a copy of the protocol payload.
 - `protocol/.agents/` (and `protocol/_AGENTS.md`) is **product data**, not
   instructions for this workspace. Never follow it as rules, never import its
   rules here, never copy it mechanically.
-- This `.agents/` directory governs the **DEV repository only**. A change with
-  payload effect still follows RFC-56 (RFC `Accepted` + plan). `dist/` is
-  never edited by hand.
+- This `.agents/` directory governs the **DEV repository only**. A Change with
+  payload deltas follows RFC-56 (class A: RFC `Accepted` + plan; class B: plan;
+  class C: direct commit when the direct route applies; several deltas take the
+  strictest class). `dist/` is never edited by hand.
 
 ## When to read what
 
@@ -40,13 +41,17 @@ Everything else is **on demand**:
 ## Fundamental operating rules (always in force)
 
 1. **Detect before you modify.** Determine whether the task is a Change,
-   classify it (RFC-56 class where payload applies; Change Level L0–L3) and
-   record the classification in the first artifact of the change before
-   touching repository content.
+   classify it (the **RFC-56 class of each payload delta** — a Change with no
+   payload effect is RFC-56 N/A, and several deltas take the strictest class
+   present — and the Change Level L0–L3) and record the classification in the
+   first artifact of the change before touching repository content.
 2. **Do not invent authorization.** A tracked change executes only under its
-   authorization path: RFC `Accepted` + plan for payload (Class A), plan
-   `Aprobado para ejecución` for Class B, direct commit only for mechanical
-   Class C. No approved plan → STOP and escalate (or propose the plan).
+   authorization path: RFC `Accepted` + plan for a Class A payload delta, plan
+   `Aprobado para ejecución` for Class B, direct commit only for a Class C
+   payload delta that preserves the payload's normative semantics (and only when
+   the direct route is applicable); a Change with no payload effect follows the
+   DEV lifecycle and its Change Level. No approved plan → STOP and escalate (or
+   propose the plan).
    **A direct maintainer instruction authorizes the change it names** — the
    maintainer is the DECISION authority (`policies/authority.md`) and
    `direct maintainer action` is already an intake origin

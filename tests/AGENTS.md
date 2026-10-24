@@ -93,6 +93,7 @@ The anchored set, and what each protects:
 | `test_fc_recovery_alignment.py` (whole module) | the aligned retry semantics: policy ↔ code in lockstep, no internal retry, and the recovery `STOP` that keeps the envelope (`plan 165`, `FC-6` / `ID-8`) |
 | `test_check_invariants_equivalence.py:test_the_repository_itself_passes` | the canonical invariants block is identical byte for byte in both real representations and carries the 15 canonical entries (`RFC-84`, `PC-3`) |
 | `test_check_enforcement_declarations.py:test_real_payload_catalog_passes` | the real payload guarantee catalog respects the declaration-level `ENF-001`…`ENF-003` rules (`G-04`, `plan 173`) |
+| `test_theoretical_dogfood.py` (whole module) | the real Plan 175 is enumerable and structurally valid, the producer dimensions stay `PENDING`, the engine dimensions are computed, and a labeled fixture (not a real TE run) validates (`plan 175`) |
 
 `tests/fixtures/skills/` is **not** in this list: those are synthetic fixtures
 that stand in for payload skills so the isolated tests above do not read

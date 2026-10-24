@@ -1,6 +1,6 @@
 # Plan 175 — Theoretical Execution (DEV v1)
 
-**Status:** Aprobado para ejecución
+**Status:** Executed (parcial: Validation Anchor y Checkpoint pendientes de registro)
 **Fecha:** 2026-10-24
 **Tipo:** Plan
 **Lifecycle:** active
@@ -95,14 +95,14 @@ TE v1 no escribe, no ejecuta el Plan, no persiste, no se integra al `ExecutionHo
 
 ## Criterios de salida
 
-- [ ] `runtime/theoretical/` implementa `DeclaredOverlay`, `InputIdentity`, `RunIdentity`, enumeración, CH-1…CH-8, contrato, validación, status derivado, staleness y CLI.
-- [ ] `--emit` produce un skeleton con dimensiones de productor `PENDING` y dimensiones de engine computadas; `--validate` rechaza `CONVERGED` con `PENDING` o con status no derivado.
-- [ ] `--stale` usa solo `InputIdentity`; `--compare` no afirma `resolved`/`reopened`.
-- [ ] La suite cubre no-mutación, no-store, dirección de importación, overlay, identidad, contrato, estados, checks, obligaciones y dogfood.
-- [ ] El Gate B deja un registro Working con el `TE_RESULT` y los findings; `CONVERGED` o findings dispositionados por el humano.
-- [ ] `runtime/README.md`, `.agents/policies/theoretical-execution.md`, `.agents/AGENTS.md`, `tests/AGENTS.md` y `CHANGELOG.md` actualizados.
+- [x] `runtime/theoretical/` implementa `DeclaredOverlay`, `InputIdentity`, `RunIdentity`, enumeración, CH-1…CH-8, contrato, validación, status derivado, staleness y CLI.
+- [x] `--emit` produce un skeleton con dimensiones de productor `PENDING` y dimensiones de engine computadas; `--validate` rechaza `CONVERGED` con `PENDING` o con status no derivado.
+- [x] `--stale` usa solo `InputIdentity`; `--compare` no afirma `resolved`/`reopened`.
+- [x] La suite cubre no-mutación, no-store, dirección de importación, overlay, identidad, contrato, estados, checks, obligaciones y dogfood.
+- [x] El Gate B deja un registro Working con el `TE_RESULT` y los findings; `CONVERGED` o findings dispositionados por el humano.
+- [x] `runtime/README.md`, `.agents/policies/theoretical-execution.md`, `.agents/AGENTS.md`, `tests/AGENTS.md` y `CHANGELOG.md` actualizados.
 - [ ] Batería canónica, C-1/C-2/C-3 en verde; `## Validation anchor` y `## Checkpoint / cierre` registrados; condición derivada evaluada.
-- [ ] Sin cambios en `protocol/`, `dist/`, `VERSION`, `ExecutionHost`, `runtime/orchestrator/derivation.py` ni la batería.
+- [x] Sin cambios en `protocol/`, `dist/`, `VERSION`, `ExecutionHost`, `runtime/orchestrator/derivation.py` ni la batería.
 
 ## Verificación
 
@@ -176,7 +176,12 @@ Closed (dev) · Released = NO (sin payload, RFC-69)
 
 ## Nota de ejecución
 
-No ejecutado. Este Plan está en `Aprobado para redacción`; la implementación requiere autorización de ejecución (`Aprobado para ejecución`) y el Gate B definido en `## Design and implementation detail` §5.
+**Ejecutado el 2026-10-24.** Change DEV **RFC-56 Class: N/A**, Change Level L2, sin payload, sin release (RFC-69). Implementación en `dev`.
+
+- **S1–S6:** `runtime/theoretical/` (`overlay.py`, `identity.py`, `proposal.py`, `checks.py`, `result.py`, `__main__.py`, `__init__.py`), `.agents/policies/theoretical-execution.md` y su puntero, `runtime/README.md`, las ocho suites `tests/test_theoretical_*.py`, `tests/AGENTS.md`, el registro Working del Gate B y su INDEX, y `CHANGELOG.md`.
+- **Gate B (S7):** base `86a7cb0`; productor `agent:deepseek-harness` (declarado, no verificado); el engine validó CH-1…CH-8, cobertura, identidad y obligaciones; `TE_RESULT` **`CONVERGED`** con 49/49 ítems, cinco dimensiones `PERFORMED` y sin findings. Registro: `docs/working/proposals/THEORETICAL_EXECUTION_PLAN_175_DOGFOOD.md`.
+- **Validación (S8):** 8 checkers PASS (`check_plan_structure` con los 2 `GAP` declarados 157/158; `check_version_state` con sus warnings históricos); `python -m pytest tests/` **1481 passed**; `git diff --check` limpio; CLI `--validate`/`--stale`/`--compare` con los exit codes previstos. `C-1/C-2/C-3` y el `## Validation anchor`/`## Checkpoint / cierre` se registran en el commit de cierre.
+- **Condición derivada:** `Executed` (implementación + validación); `Closed` se deriva al registrar el anchor/checkpoint; `Committed` es estado del repositorio; `Released = NO`.
 
 ---
 
@@ -294,7 +299,7 @@ Reglas:
 
 1. El engine **nunca** marca `PERFORMED` una dimensión de productor; solo acepta la atestación completa.
 2. El engine **nunca** afirma haber ejecutado `completeness`, `consistency` o `adversarial`.
-3. El test automático `test_theoretical_dogfood.py` verifica que el Plan 175 es enumerable, que el skeleton tiene las dimensiones de productor `PENDING`, que `authority`/`verification` están computadas, que una **fixture attestation** (etiquetada `producer: "fixture"`, `provenance.method: "test-fixture"`) valida y que el engine no reclama semántica. La fixture **no** es un TE run real ni evidencia.
+3. El test automático `test_theoretical_dogfood.py` verifica que el Plan 175 es enumerable, que el skeleton tiene las dimensiones de productor `PENDING`, que `authority`/`verification` están computadas, que una **fixture attestation** (etiquetada `producer: "test-fixture"`, `provenance.authority_basis: "TEST_FIXTURE"`) valida y que el engine no reclama semántica. La fixture **no** es un TE run real ni evidencia.
 4. El Gate B real es el run del productor sobre el Plan 175, con su resultado registrado en `docs/working/proposals/THEORETICAL_EXECUTION_PLAN_175_DOGFOOD.md`; el test no lo sustituye.
 5. El `## TE self-evaluation` de este Plan es una atestación conceptual del productor (el autor del Plan), no una ejecución del engine.
 

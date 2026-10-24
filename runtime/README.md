@@ -497,3 +497,38 @@ with `AgentWorker.execute` and the structural rule that containment is
 memory-free) and `tests/test_fc_actor_provenance.py` (the external actor's
 declared provenance). The absence of isolation is asserted by
 `tests/test_fc_isolation_declaration.py`.
+
+## Theoretical Execution (Plan 175)
+
+`runtime/theoretical/` is the DEV reference implementation of **Theoretical
+Execution v1**: a read-only evaluation of a committed Implementation Plan. It is
+not an execution host, an orchestrator, a worker, a state machine or a store.
+
+| Module | Responsibility |
+|---|---|
+| `overlay.py` | immutable `DeclaredOverlay` (declared path → unknown; undeclared path → base commit; never the working tree) |
+| `identity.py` | `InputIdentity`, `RunIdentity`, canonical JSON, check-set |
+| `proposal.py` | load the plan from the base commit, enumerate deliverables/steps/criteria/effects/premises, build the overlay |
+| `checks.py` | CH-1…CH-8, deterministic and read-only |
+| `result.py` | `TE_RESULT` contract, validator, derived `status`, staleness, structural comparison |
+| `__main__.py` | CLI (`--emit`, `--validate`, `--stale`, `--compare`) |
+
+The five dimensions are split: the **producer** (the agent or human who invokes
+TE) performs `completeness`, `consistency` and `adversarial` and attests them;
+the **engine** performs `authority` and `verification` and validates the record.
+The engine never marks a producer dimension `PERFORMED`. The status is derived
+by `result.py`, never declared by the producer.
+
+```bash
+python -m runtime.theoretical --plan N --base HEAD --emit
+python -m runtime.theoretical --validate result.json
+python -m runtime.theoretical --stale result.json
+python -m runtime.theoretical --compare previous.json current.json
+```
+
+The CLI never writes files, invokes no shell, network, model or credentials, and
+does not produce factual evidence. The operational procedure is
+`.agents/policies/theoretical-execution.md`; the design and acceptance criteria
+are `docs/plans/175-theoretical-execution-dev-v1.md`. Suites:
+`tests/test_theoretical_*.py`. The anchored dogfood is
+`tests/test_theoretical_dogfood.py`.

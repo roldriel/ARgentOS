@@ -273,11 +273,34 @@ Closed (dev) · Released = NO (docs-only, RFC-69)
 
 ## Validation anchor
 
-Pendiente de la validación (se completa en la ejecución).
+**Validation anchor (VC-1).**
+
+- **Declared scope:** las once rutas de la materialización: `.agents/AGENTS.md`, `.agents/policies/validation-closure.md`, `.agents/workflows/change-lifecycle.md`, `AGENTS.md`, `CHANGELOG.md`, `docs/CONVENTIONS.md`, `docs/VERSIONING.md`, `docs/placement-contract.md`, `docs/plans/INDEX.md`, `docs/plans/_TEMPLATE.md` y `docs/rfc/56-governance-fast-track.md`. Este Plan queda **fuera** del scope medido (anti-auto-referencia).
+- **Validation command-set:** los ocho checkers de `docs/VERSIONING.md:4.1 Batería canónica de verificación`; los tres gates de lifecycle C-1/C-2/C-3; `python -m pytest tests/`; `git diff --check`; y la recomputación del Scoped Content Identity con `tools/scoped_content_identity.py`.
+- **Effective inputs (repo content):** las once rutas del scope en el estado validado (commit de implementación `03d4001`, tree `cc1d81f703fb250d9ae83a08388fe1c15feffb91`); el corpus completo que consumen los checkers y la suite; el Plan 174 fuera del scope.
+- **Observed dependencies:** intérprete Python con biblioteca estándar (`tools/`, `tests/`), `pytest`, CLI `git`. Sin red, sin servicios externos, sin instalación de componentes del payload.
+- **Environmental factors:** Windows 11 + PowerShell; Python 3.14.3; `pytest` 9.1.1; `git` 2.55; `core.autocrlf = true`; `check_dist_sync.py` no aplica (local-only; rojo en `dev`); `check_plan_structure.py` reporta los 2 `GAP` declarados (157/158); C-1 reporta el `GAP` del propio anchor y C-2 el del propio checkpoint en el estado validado (se escriben después de la validación, por diseño); C-3 reporta los cuatro `GAP` legacy declarados (155/158/168/169); `check_version_state.py` emite los 9 warnings históricos de versiones sin tag.
+- **Scoped Content Identity:**
+  - **State identity (estado validado):** `cc1d81f703fb250d9ae83a08388fe1c15feffb91` (tree del índice staged del estado validado; tree del commit de implementación `03d4001`).
+  - **Delta scoped identity:** `4eedde4da0833d331c7487a540ca8407c939e10cf493542a7d7f60edfa7503b0` (scope = las once rutas declaradas; serialización `scoped-v1`, orden canónico).
+  - **Scope set (repo-relative paths, ordenados):** las once rutas del scope declarado.
+- **Validity / stale:** `vigente`. El commit de cierre agrega únicamente este Plan, excluido del scope medido; el delta recomputado sobre el estado de cierre es idéntico al declarado y el estado validado es el del commit de implementación.
+- **Battery result (estado validado S0):** 8 checkers: 7 PASS + `check_plan_structure` PASS con 2 `GAP` declarados; C-1 `VALID=79 GAP=1 ANOMALY=0` (el `GAP` es el anchor de este Plan, escrito después); C-2 `VALID=78 GAP=2 ANOMALY=0` (116 y el checkpoint de este Plan); C-3 `VALID=38 GAP=4 ANOMALY=0`; `pytest tests/` **1435 passed**; `git diff --check` limpio; recomputación de identidad PASS.
+- **Re-ejecución sobre el estado de cierre (S1):** mismos checkers y gates sobre el estado que incorpora este anchor y este checkpoint — 8 checkers PASS; C-1 `VALID=80 GAP=0 ANOMALY=0`; C-2 `VALID=79 GAP=1` (Plan 116) `ANOMALY=0`; C-3 `VALID=38 GAP=4 ANOMALY=0`; delta recomputado idéntico. Es una nota de la misma validación, no una A2: el Plan está fuera del scope declarado y ningún path del scope cambió (CL-2).
 
 ## Checkpoint / cierre
 
-Pendiente del cierre (se completa en la ejecución).
+**Checkpoint / cierre (GC-1).**
+
+- **Commits de cierre:** `03d4001` (commit de implementación: las once rutas del scope y este Plan; tree `cc1d81f703fb250d9ae83a08388fe1c15feffb91`) y el commit de cierre en `dev`, que incorpora este Validation Anchor, este Checkpoint y la `## Nota de ejecución`. El commit de cierre se localiza por su mensaje. Sin amend, rebase, squash ni force-push.
+- **Estado validado (ref al Validation anchor):** State identity `cc1d81f703fb250d9ae83a08388fe1c15feffb91`; Delta scoped identity `4eedde4da0833d331c7487a540ca8407c939e10cf493542a7d7f60edfa7503b0`.
+- **Estado de cierre (identidad):** State identity `cc1d81f703fb250d9ae83a08388fe1c15feffb91`; Delta scoped identity `4eedde4da0833d331c7487a540ca8407c939e10cf493542a7d7f60edfa7503b0` (el mismo estado validado, por correspondencia con el anchor aplicable).
+- **Árbol material del commit de cierre:** no declarado; el commit de cierre aún no existe al escribir este checkpoint y agrega únicamente este Plan (excluido del scope). `validated tree == commit tree` no es un requisito (RFC-75 Mecanismo 7).
+- **Consistencia checkpoint↔anchor:** **PASS** — el estado de cierre declarado es el que la validación consumió; el delta recomputado sobre el estado de cierre coincide con el declarado.
+- **Governance aplicada:** RFC-56 (enmienda; el Change es **RFC-56 Class: N/A** porque no tiene payload deltas); RFC-46 (texto original de RFC-56 conservado; planes cerrados no editados); RFC-69 (docs-only, sin release ni tag); RFC-75 (Mecanismo 7, checkpoint); ADR-16 (autoridad y evidencia); VC-1/GC-1/LC-1/PC-1; `docs/VERSIONING.md:4.1 Batería canónica de verificación`.
+- **Documentation impact:** `REQUIRED` — actualizados en este Change: `docs/rfc/56-governance-fast-track.md` (modelo vigente, banner y Amendment Log), `docs/CONVENTIONS.md` (clases, `C-3`, intake, Change Levels, ciclo ADR y determinaciones de impacto), `docs/VERSIONING.md` (§4 y §7), `AGENTS.md` (`Do NOT` y `Task lifecycle`), `.agents/AGENTS.md` (frontera DEV/Protocol y reglas 1–2), `.agents/workflows/change-lifecycle.md` (§1–§3 y §11), `.agents/policies/validation-closure.md` (§5.1/§5.2), `docs/plans/_TEMPLATE.md` (campo canónico), `docs/placement-contract.md` (cita de autoridad del dominio Protocol), `docs/plans/INDEX.md` (serie y fila) y `CHANGELOG.md` (`[Unreleased]`). Evidencia: `git show --stat 03d4001` y la batería registrada en el anchor.
+- **Roadmap impact:** `NOT_REQUIRED` — la materialización no crea, completa, cancela, reclasifica ni re-prioriza una iniciativa del mapa operativo de `ROADMAP.md` (no existe allí un ítem de RFC-56/A-B-C); el documento de prioridades del mantenedor no es el mapa operativo del repositorio ni su fuente de verdad.
+- **Condición derivada:** **`Closed`** (plan `Executed` + governance aplicada + checkpoint + consistencia + PASS). `Committed` es estado del repositorio; `Released` es `NO` (docs-only, RFC-69).
 
 ## Findings / Correcciones / Pending
 
@@ -313,4 +336,68 @@ N/A — no hay pending decisions; todas las ambigüedades se resolvieron por nor
 
 ## Nota de ejecución
 
-Se completa al ejecutar.
+**Ejecutado el 2026-10-23.** Change DEV con **RFC-56 Class: N/A** (sin payload delta), conducido en `dev` bajo la instrucción directa del mantenedor.
+
+```text
+PLAN_ID                   = 174
+AUTHORIZATION             = MAINTAINER_AUTHORIZED_FOR_EXECUTION (Priority 3)
+AUTHORITY_CLASS           = DEV_PLAN (RFC-56 Class: N/A)
+EXECUTION_AUTHORIZED      = YES
+RFC_REQUIRED              = NO
+PROTOCOL_AUTHORITY        = UNCHANGED (0 diff en protocol/, dist/, VERSION)
+EXECUTION_BASELINE_HEAD   = 66d132b
+IMPLEMENTATION_COMMIT     = 03d4001 (tree cc1d81f703fb250d9ae83a08388fe1c15feffb91)
+SCOPE_PATHS               = 11
+CONCEPTUAL_DECISIONS_REMAINING = NONE
+```
+
+### TE post-materialización
+
+TE re-ejecutada sobre el texto materializado, no sobre el diseño. Para cada caso: `input → classification → authority route → artifact required → execution permission → validation expectation`. La regla citada es la que un agente encuentra hoy en el repositorio, no la que este Plan quiso escribir.
+
+| # | Caso | Regla materializada (dónde) | Ruta única | Resultado |
+|---|---|---|---|---|
+| T1 | Change C-only | RFC-56, modelo vigente §2 (C) y §4 (fila C); CONVENTIONS, bullet C | Direct, si el Level no exige Plan | una sola ruta; sin Plan/RFC |
+| T2 | Change B-only | RFC-56 §2 (B) y §4 (fila B) | Plan con justificación + batería | una sola ruta; sin RFC |
+| T3 | Change A-only | RFC-56 §2 (A) y §4 (fila A) | RFC `Accepted` + Plan | una sola ruta |
+| T4 | Change A+B | RFC-56 §4 (fila A+B; sin clase `AB`) | RFC `Accepted` + Plan | una sola ruta |
+| T5 | Change B+C | RFC-56 §4 (fila B+C) | Plan (el delta C viaja en el mismo Plan) | una sola ruta |
+| T6 | Change A+C | RFC-56 §4 (fila A+C) | RFC `Accepted` + Plan | una sola ruta |
+| T7 | Change A+B+C | RFC-56 §4 (fila A+B+C) | RFC `Accepted` + Plan | una sola ruta |
+| T8 | Change sin payload effect | RFC-56 §5 (`RFC-56 N/A`); CONVENTIONS, bullet N/A | lifecycle DEV + Change Level; sin A/B/C | una sola ruta |
+| T9 | payload + tooling | RFC-56 §1 (la clase es del delta) y §4 | la del payload delta; el tooling DEV no tiene clase | una sola ruta |
+| T10 | C + L3 | RFC-56 §5 (ruta directa aplicable solo si el Level no exige Plan) + matriz L0–L3 | Plan de clase C, sin RFC | una sola ruta; el Level agrega maquinaria, no rebaja la clase |
+| T11 | A + L0 | RFC-56 §5 (ortogonalidad; el Level se computa de sus cinco dimensiones) | RFC `Accepted` + Plan; el Level solo es L0 si sus dimensiones lo permiten | una sola ruta de autorización |
+| T12 | documentación de payload con cambio semántico | RFC-56 §2 (A) y §3 (no es C si cambia interpretación o contrato) | RFC `Accepted` + Plan | una sola ruta |
+| T13 | documentación de payload sin cambio semántico | RFC-56 §2 (B) y §3 (C solo si es mecánico) | Plan, o Direct si es C y aplica | una sola ruta |
+| T14 | checker sin cambio, semántica modificada | RFC-56 §3 (el checker es evidencia, no autoridad) | A o B según la semántica; nunca C por el checker | una sola ruta |
+| T15 | checker cambiado, semántica preservada | RFC-56 §3 (C posible si se demuestra preservación) | C/Direct si aplica; si no, Plan | una sola ruta |
+
+**Casos irresueltos: 0. Escalamientos: 0.** La TE pre-materialización (sección `## Theoretical execution (pre-materialización)`) y la post-materialización coinciden en la ruta de cada escenario. Las dos precisiones que la materialización hizo explícitas son: (a) T10/T11 — el Level agrega maquinaria y nunca rebaja el mínimo de la clase, y la clase no se computa desde el Level; (b) T14/T15 — el resultado de un checker no determina la clase en ninguna dirección.
+
+### Resultados
+
+| Comando | Resultado |
+|---|---|
+| `check_protocol_invariants` | PASS — 217 archivos, 10.541 referencias |
+| `check_plan_citations` | PASS — todas las citas resuelven |
+| `check_plan_structure` | PASS — 0 violaciones; 2 `GAP` declarados (157/158) |
+| `check_taxonomy_coherence` | PASS |
+| `check_session_artifacts` | PASS |
+| `check_version_state` | PASS; 9 warnings históricos |
+| `check_invariants_equivalence` | PASS — `IDENTICAL: YES`; `ENFORCED=7/15` |
+| `check_enforcement_declarations` | PASS — ENF-001…ENF-003 |
+| C-1 | `VALID=80 GAP=0 ANOMALY=0` sobre el estado de cierre |
+| C-2 | `VALID=79 GAP=1` (Plan 116) `ANOMALY=0` |
+| C-3 | `VALID=38 GAP=4` (155/158/168/169) `ANOMALY=0` |
+| `pytest tests/` | **1435 passed** |
+| `git diff --check` | limpio |
+| Recomputación de identidad | PASS — `DECLARED_DELTA == recomputado(S1) == recomputado(S0)`; `ANCHOR_STATE == CHECKPOINT_STATE == tree(03d4001)` |
+
+**Archivos del Change:** las once rutas del `## Validation anchor` más este Plan. `VERSION`, `PROTOCOL_VERSION`, `protocol/`, `runtime/`, `tools/`, `tests/` y `dist` sin cambios. **`Released = NO`** (docs-only, RFC-69).
+
+### ADR y Pending decisions
+
+**ADR: NO.** El criterio de ADR-worthiness (`.agents/policies/authority.md:ADR-worthiness (when a decision must leave the RFC/Plan)`) no se cumple: la decisión (a) no se consume fuera de RFC-56 —todas las referencias enrutan a RFC-56—, (b) no supersede ni modifica ningún ADR, y (c) no es un invariante arquitectónico persistente independiente de RFC-56; si RFC-56 fuera superseded, el modelo se movería con ella. Elevarla a ADR duplicaría la autoridad sin cambiar ningún gate.
+
+**Pending decisions: ninguna.** Las seis observaciones de la auditoría se dispusieron con normativa vigente + TE (cinco corregidas y una diferida a traza histórica con owner y destino); no queda una decisión que requiera autoridad no disponible.

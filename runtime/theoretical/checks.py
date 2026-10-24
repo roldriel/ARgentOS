@@ -15,7 +15,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Mapping
 
-from .overlay import GitRepository
+from .overlay import GitRepository, normalize_path
 from .proposal import Proposal
 
 VALID = "VALID"
@@ -62,6 +62,38 @@ def _obligation(
         "candidate": candidate,
         "depends_on": list(depends_on),
     }
+
+
+_ANCHOR_HEADING_RE = re.compile(r"^##\s+Validation anchor\s*$", re.MULTILINE)
+_ANCHOR_SCOPE_RE = re.compile(r"^\s*[-*]\s*\**Scope set[^\n]*$", re.MULTILINE)
+_BACKTICK_RE = re.compile(r"`([^`]+)`")
+
+
+def _anchor_scope(proposal: Proposal) -> tuple[str, ...]:
+    """The anchor's declared scope set, including root-level files.
+
+    ``parse_anchor`` only accepts tokens with a slash, so a root file such as
+    ``CHANGELOG.md`` would silently disappear from the measured scope.  TE
+    reads the bullet itself and normalizes every backticked path.
+    """
+    heading = _ANCHOR_HEADING_RE.search(proposal.text)
+    if heading is None:
+        return proposal.anchor.scope_set
+    rest = proposal.text[heading.end() :]
+    next_heading = re.search(r"^##\s+", rest, re.MULTILINE)
+    section = rest[: next_heading.start()] if next_heading else rest
+    line = _ANCHOR_SCOPE_RE.search(section)
+    if line is None:
+        return proposal.anchor.scope_set
+    found: list[str] = []
+    for token in _BACKTICK_RE.findall(line.group(0)):
+        try:
+            path = normalize_path(token)
+        except ValueError:
+            continue
+        if path not in found:
+            found.append(path)
+    return tuple(found) or proposal.anchor.scope_set
 
 
 def _payload_paths(proposal: Proposal) -> tuple[str, ...]:
@@ -395,7 +427,8 @@ def _ch7(proposal: Proposal) -> list[CheckResult]:
                 "no declared Validation Anchor identity in the proposal",
             )
         ]
-    if not anchor.scope_set:
+    scope = _anchor_scope(proposal)
+    if not scope:
         return [
             CheckResult(
                 "CH-7",
@@ -406,7 +439,7 @@ def _ch7(proposal: Proposal) -> list[CheckResult]:
         ]
     tool = _load_tool("scoped_content_identity")
     try:
-        report = tool.compute(proposal.root, list(anchor.scope_set))
+        report = tool.compute(proposal.root, list(scope))
     except Exception as exc:  # noqa: BLE001 - the generator fails closed
         return [
             CheckResult(

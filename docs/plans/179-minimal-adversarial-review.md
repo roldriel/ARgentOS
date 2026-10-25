@@ -1,6 +1,6 @@
 # Plan 179 — Minimal Adversarial Review: diseño, prototipo y experimento de validación
 
-**Status:** Aprobado para ejecución
+**Status:** Executed (2026-10-25; experimento ejecutado, decisión experimental `REJECT`)
 **Fecha:** 2026-10-25
 **Tipo:** Plan
 **Lifecycle:** active
@@ -110,59 +110,64 @@ Batería canónica definida una sola vez en `docs/VERSIONING.md:4.1 Batería can
 
 | Id | Comando | Resultado |
 |---|---|---|
-| verification-01 | `python tools/check_protocol_invariants.py --payload protocol .` | PENDIENTE DE EJECUCIÓN (se completa en el paso 12) |
-| verification-02 | `python tools/check_plan_citations.py` | PENDIENTE DE EJECUCIÓN (se completa en el paso 12) |
-| verification-03 | `python tools/check_plan_structure.py` | PENDIENTE DE EJECUCIÓN (se completa en el paso 12) |
-| verification-04 | `python tools/check_taxonomy_coherence.py` | PENDIENTE DE EJECUCIÓN (se completa en el paso 12) |
-| verification-05 | `python tools/check_session_artifacts.py` | PENDIENTE DE EJECUCIÓN (se completa en el paso 12) |
-| verification-06 | `python tools/check_version_state.py` | PENDIENTE DE EJECUCIÓN (se completa en el paso 12) |
-| verification-07 | `python tools/check_invariants_equivalence.py` | PENDIENTE DE EJECUCIÓN (se completa en el paso 12) |
-| verification-08 | `python tools/check_enforcement_declarations.py` | PENDIENTE DE EJECUCIÓN (se completa en el paso 12) |
-| verification-09 | `python -m pytest tests/` | PENDIENTE DE EJECUCIÓN (se completa en el paso 12) |
-| verification-10 | `python -m pytest tests/test_adversarial_review.py tests/test_adversarial_review_isolation.py -q` | PENDIENTE DE EJECUCIÓN (se completa en el paso 12) |
-| verification-11 | `python tools/check_lifecycle_anchor.py` | PENDIENTE DE EJECUCIÓN (se completa en el paso 12) |
-| verification-12 | `python tools/check_lifecycle_checkpoint.py` | PENDIENTE DE EJECUCIÓN (se completa en el paso 12) |
-| verification-13 | `python tools/check_lifecycle_lineage.py` | PENDIENTE DE EJECUCIÓN (se completa en el paso 12) |
+| verification-01 | `python tools/check_protocol_invariants.py --payload protocol .` | **PASS** (exit 0) |
+| verification-02 | `python tools/check_plan_citations.py` | **PASS** (exit 0; todas las citas resuelven) |
+| verification-03 | `python tools/check_plan_structure.py` | **PASS** (exit 0; 2 `GAP` aditivos preexistentes de los Planes 157/158) |
+| verification-04 | `python tools/check_taxonomy_coherence.py` | **PASS** (exit 0) |
+| verification-05 | `python tools/check_session_artifacts.py` | **PASS** (exit 0) |
+| verification-06 | `python tools/check_version_state.py` | **PASS** (exit 0; warnings de tags esperados en `dev`) |
+| verification-07 | `python tools/check_invariants_equivalence.py` | **PASS** (exit 0; bloque canónico idéntico, 15 entradas) |
+| verification-08 | `python tools/check_enforcement_declarations.py` | **PASS** (exit 0; ENF-001…003 PASS) |
+| verification-09 | `python -m pytest tests/` | **PASS** (exit 0; **1581 passed**, 0 failed, 0:09:08) |
+| verification-10 | `python -m pytest tests/test_adversarial_review.py tests/test_adversarial_review_isolation.py -q` | **PASS** (exit 0; **46 passed**) |
+| verification-11 | `python tools/check_lifecycle_anchor.py` (C-1) | **VALID** para este Plan; `ANOMALY=0`, `GAP=0`, `VALID=85`, `EXCLUDED=94` |
+| verification-12 | `python tools/check_lifecycle_checkpoint.py` (C-2) | **VALID** para este Plan (`A1`); `ANOMALY=0`, `GAP=1` (histórico preexistente del Plan 116), `VALID=84` |
+| verification-13 | `python tools/check_lifecycle_lineage.py` (C-3) | **N/A** para este Plan (ausencia declarada, sin findings); `ANOMALY=0`, `GAP=4` (históricos declarados 155/158/168/169), `VALID=41` |
 
 ## Validation anchor
 
-*Validación A1 — se registra al validar (VC-1; `docs/CONVENTIONS.md:Change Lifecycle — Validation anchors y Scoped Content Identity`).*
+*Validación A1 — registrada al validar (VC-1; `docs/CONVENTIONS.md:Change Lifecycle — Validation anchors y Scoped Content Identity`).*
 
-- **Declared scope:** PENDIENTE — se completa en el paso 12.
-- **Validation command-set:** PENDIENTE — se completa en el paso 12.
-- **Effective inputs (repo content):** PENDIENTE — se completa en el paso 12.
-- **Observed dependencies:** PENDIENTE — se completa en el paso 12.
-- **Environmental factors:** PENDIENTE — se completa en el paso 12.
-- **Scoped Content Identity:** PENDIENTE — se completa en el paso 12 (state identity y delta scoped identity).
-- **Validity / stale:** PENDIENTE — se completa en el paso 12.
+- **Declared scope:** entregables del experimento — `docs/working/research/MINIMAL_ADVERSARIAL_REVIEW_DESIGN_2026-10-25.md`, `docs/working/research/MINIMAL_ADVERSARIAL_REVIEW_FRAME_01_2026-10-25.md`, `docs/working/research/MINIMAL_ADVERSARIAL_REVIEW_VALIDATION_2026-10-25.md`, los 7 módulos de `runtime/adversarial_review/` y las 2 suites nuevas. **Excluye** la governance del Change (este Plan, `docs/plans/INDEX.md`, `docs/working/research/INDEX.md`, `CHANGELOG.md`), para que la identidad quede fijada antes de escribir los registros de cierre.
+- **Validation command-set:** verification-01…09 (batería canónica, `docs/VERSIONING.md:4.1 Batería canónica de verificación`), verification-10 (suites específicas) y verification-11…13 (gates C-1/C-2/C-3, `.agents/policies/lifecycle-checkers.md`).
+- **Effective inputs (repo content):** los 12 archivos del scope; además, como entradas efectivas de la batería: el corpus completo de `docs/plans/`, `docs/rfc/`, `docs/adr/` y documentos raíz (checkers de citas/estructura/lineage), el payload `protocol/.agents/` (entrada de `check_protocol_invariants`), `docs/INVARIANTS.md` y su par del payload, y la suite `tests/` completa (incluidos los dogfoods ancorados al árbol real).
+- **Observed dependencies:** Python 3.14.3 y pytest 9.1.1; stdlib únicamente (sin red); CLI `git` para checkers y resolución de referencias.
+- **Environmental factors:** Windows 11 + PowerShell; repositorio bajo OneDrive (pytest local ≈9 min); rama `dev` con HEAD `ca492ca` al iniciar la validación; sin sesión de proyecto adoptante ni proveedor/modelo externo; `check_dist_sync.py` no se ejecuta (local-only, esperado verde solo en `master`; este Change no promueve).
+- **Scoped Content Identity:**
+  - **State identity (A1, estado validado):** `db961ad3a0f5bb6a2ae530a6dfb9f479503fb7e3` — tree id del índice staged del scope medido (`tools/scoped_content_identity.py`, source `staged`).
+  - **Delta scoped identity (scope S, serialización `scoped-v1`):** `60f9f7c4dcc4989857e9d1ea181a710c577180f15197c3645d8615e53b3fbe3b`.
+  - **Scope set (repo-relative paths, ordenado; reconstruible desde este Plan):** las 12 rutas listadas en `Declared scope`.
+- **Validity / stale:** vigente para el estado validado que el checkpoint certifica; el scope excluye la governance, cuya escritura no cambia la identidad.
+
+*Resultado real de la ejecución:* verificación-01…09 **PASS** (batería canónica, segunda ejecución sobre el estado final: `pytest tests/` **1581 passed / 0 failed**); verificación-10 **PASS** (46 tests); verificación-11/12 **VALID** y verificación-13 **N/A** con `ANOMALY=0` en las tres. Los resultados del experimento y la decisión `REJECT` están en `docs/working/research/MINIMAL_ADVERSARIAL_REVIEW_VALIDATION_2026-10-25.md`.
 
 ## Checkpoint / cierre
 
-*Registro GC-1 — se completa al cerrar (`.agents/policies/validation-closure.md:5. Checkpoint`; `docs/CONVENTIONS.md:Change Lifecycle — Checkpoint y cierre Git`).*
+*Registro GC-1 (`.agents/policies/validation-closure.md:5. Checkpoint`; `docs/CONVENTIONS.md:Change Lifecycle — Checkpoint y cierre Git`).*
 
-- **Commits de cierre:** PENDIENTE — se completa en el paso 13.
-- **Estado validado (ref al Validation anchor):** PENDIENTE — se completa en el paso 13.
-- **Estado de cierre (identidad):** PENDIENTE — se completa en el paso 13.
-- **Árbol material del commit de cierre (tree id):** PENDIENTE — se completa en el paso 13.
-- **Consistencia checkpoint↔anchor:** PENDIENTE — se completa en el paso 13.
-- **Governance aplicada:** PENDIENTE — se completa en el paso 13.
-- **Documentation impact:** PENDIENTE — se completa en el paso 13; determinación independiente (§5.1 de `.agents/policies/validation-closure.md:5.1 Documentation impact`), valor a registrar.
-- **Roadmap impact:** PENDIENTE — se completa en el paso 13; determinación independiente (§5.2 de `.agents/policies/validation-closure.md:5.2 Roadmap impact`), valor a registrar.
-- **Condición derivada:** PENDIENTE — se completa en el paso 13.
+- **Commits de cierre:** dos (2) commits atómicos en `dev`, acción de repositorio autorizada por la directiva del mantenedor: Commit 1 `ca492ca1969a32841638ca6913251c83502a7e70` — `feat(dev): design minimal adversarial review, prototype and frozen validation preregistration (plan 179)` (preregistro + FRAME + prototipo + tests, **antes** de ejecutar); Commit 2 — `docs(dev): execute and close minimal adversarial review validation experiment (plan 179)` (informe de validación, governance de cierre, índices y CHANGELOG). Sin amend, sin merge, sin rebase, sin tag.
+- **Estado validado (ref al Validation anchor):** A1 (arriba), state identity `db961ad3a0f5bb6a2ae530a6dfb9f479503fb7e3`, delta scoped identity `60f9f7c4dcc4989857e9d1ea181a710c577180f15197c3645d8615e53b3fbe3b`.
+- **Estado de cierre (identidad):** delta scoped identity + state identity del anchor aplicable (A1): `60f9f7c4dcc4989857e9d1ea181a710c577180f15197c3645d8615e53b3fbe3b` / `db961ad3a0f5bb6a2ae530a6dfb9f479503fb7e3`. Es el estado que el checkpoint **certifica** por correspondencia GC-1; el scope excluye la governance del Change, de modo que su escritura no cambia la identidad.
+- **Árbol material del commit de cierre (tree id):** no declarado en este registro (el commit de cierre incluye la governance excluida del scope medido; `validated tree == commit tree` no es requisito, RFC-75 Mecanismo 7).
+- **Consistencia checkpoint↔anchor:** PASS — el estado de cierre declarado es el estado que la validación A1 consumió; verificado con C-2 (`179-minimal-adversarial-review.md: VALID — checkpoint consistent with the applicable validation anchor (GC-1): A1`, `ANOMALY=0`).
+- **Governance aplicada:** este Plan con `**Status:** Executed`; fila en `docs/plans/INDEX.md`; tres filas en `docs/working/research/INDEX.md` (diseño, FRAME, informe); `CHANGELOG.md` `[Unreleased]` con el par (plan 179); sin `VERSION` bump, sin release, sin tag (RFC-69: docs-only/DEV-only sin release); campaña T1–T3 intacta.
+- **Documentation impact:** `REQUIRED` — el Change **es** documentación experimental current-state: se crearon/actualizaron el diseño+preregistro, el FRAME congelado, el informe de validación, los dos INDEX y el CHANGELOG, y se registró la decisión `REJECT` con su evidencia; la documentación afectada quedó actualizada dentro del Change antes del cierre.
+- **Roadmap impact:** `NOT_REQUIRED` — MAR no era un ítem del mapa operativo (`ROADMAP.md`); el experimento no crea, completa, cancela, reclasifica ni re-prioriza trabajo del mapa. `ROADMAP.md` con **0 diff**; la eventual continuación es una `RECOMMENDATION` del informe, no un cambio de mapa.
+- **Condición derivada:** **`Closed`** (DEV-only, sin release) — `Executed` ∧ governance aplicada ∧ checkpoint registrado ∧ consistencia PASS. Sin tag, sin promoción a `master`, sin `dist`.
 
 ## Findings / Correcciones / Pending
 
 ### Findings
 
-- Se completan durante la ejecución (pasos 9–13); no se crean findings de lineage para los hallazgos experimentales, que viven en el informe de validación.
+- `N/A` — no se registraron findings de lineage. Los defectos detectados durante la ejecución son **desviaciones del experimento**, no findings del Change Lifecycle, y se registran en el informe de validación (`docs/working/research/MINIMAL_ADVERSARIAL_REVIEW_VALIDATION_2026-10-25.md:2. Experimento ejecutado`) y en la auditoría de integridad: `D2` I-01 (paréntesis de la base de evidencia del FRAME), I-03 (materialidad de anclas excluida del cómputo) e I-04 (candidato solo-síntesis excluido del primario), más `D1` de instrumento/medición. No hay `D3`.
 
 ### Correcciones
 
-- Se completan durante la ejecución (pasos 9–13), con referencia de origen y alcance de revalidación (`.agents/policies/validation-closure.md:4. Findings / corrections / revalidation lineage`).
+- `N/A` — no se requirieron correcciones de lineage; el FRAME congelado no se reescribió (su defecto de ancla se documenta como desviación `D2` en el informe de validación y la auditoría de integridad, no se corrige reescribiendo historia).
 
 ### Pending decisions
 
-- `<PLAN-179>` — decisión: decisión experimental final del mantenedor sobre la continuidad de MAR; blocking: no para completar el experimento, sí para cualquier promoción; owner: mantenedor; escalación: mantenedor; resolución: pendiente, se registra en el paso 13; evidencia: informe de validación y `## Checkpoint / cierre`.
+- `<PLAN-179>` — decisión: continuidad de la línea Minimal Adversarial Review tras el resultado `REJECT` de esta configuración (aceptar el rechazo y cerrar la línea, o autorizar un nuevo experimento preregistrado con una reducción distinta —p. ej. falsificación a profundidad completa sin caps—); blocking: **no** para el cierre del experimento, **sí** para cualquier promoción o nuevo trabajo; owner: mantenedor; escalación: mantenedor; resolución: **pendiente** (la decisión es del mantenedor; este Plan no la toma); evidencia: informe de validación (`docs/working/research/MINIMAL_ADVERSARIAL_REVIEW_VALIDATION_2026-10-25.md:10. Decisión experimental y siguiente paso`).
 
 ## Riesgos
 
@@ -181,4 +186,11 @@ Batería canónica definida una sola vez en `docs/VERSIONING.md:4.1 Batería can
 
 ## Nota de ejecución
 
-2026-10-25 — HEAD `ac7f68074edbb9d67a1f231fac99c9e543a301aa`; árbol con los dos untracked preexistentes del mantenedor preservados. PENDIENTE — se completa durante la ejecución (intake, commit 1, experimento, batería, cierre, commit 2).
+2026-10-25 — HEAD `ac7f68074edbb9d67a1f231fac99c9e543a301aa` al intake; árbol con los dos untracked preexistentes del mantenedor preservados. Ejecución completa el 2026-10-25:
+
+1. **Diseño y preregistro congelado v2** (tras revisión independiente pre-ejecución y registro de disposición de `PRE-F01`…`PRE-F20`): mecanismo mínimo, trigger advisory, presupuesto `MAX_PASSES=2`/objetivo ≤2,0×, autoridad nula, provenance, desacuerdo, Integration Surface experimental y TE como hipótesis.
+2. **Prototipo** `runtime/adversarial_review/` (read-only, stdlib, advisory, sin consumidor) y 2 suites (46 tests verdes; `validate` del registro real del experimento = 0 issues).
+3. **Commit 1** `ca492ca` (preregistro + FRAME + prototipo + tests, antes de ejecutar).
+4. **Experimento MAR-VALID-01:** BASELINE congelado antes del tratamiento (margen 80,18 s); FULL (DEFENSE+PROSECUTION+SYNTHESIS; `NO_REBUTTAL` por desacuerdo normativo) y MAR (PASS 1+PASS 2+síntesis) con ejecutores frescos y aislados; EVALUACIÓN, ADJUDICACIÓN e INTEGRIDAD independientes; `EXPERIMENT_INTEGRITY = VALID_WITH_LIMITATIONS`, sin `D3`.
+5. **Resultado:** `FULL_SET=15`, `MIN_SET=2`, `RETAINED=1`, `VALUE_RETENTION=6,67 %`, `IMPACT_RETENTION=20 %`, `COST_RATIO=1,28×` (`EFFECTIVE`, ≤2,0×), `SPURIOUS_SHARE=10 %` ⇒ regla congelada §9.7 fila 4 ⇒ **`FINAL_DECISION = REJECT`** de esta configuración mínima por pérdida de valor material.
+6. **Cierre:** batería canónica y gates C-1/C-2/C-3 registrados en `## Verificación`; Validation Anchor A1 y Checkpoint GC-1 registrados; `Status` → `Executed`; condición derivada `Closed` (DEV-only, sin release). Commit 2: `docs(dev): execute and close minimal adversarial review validation experiment (plan 179)`.

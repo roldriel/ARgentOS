@@ -123,6 +123,14 @@ versiones 3.9.0–3.19.0). Los planes de construcción del protocolo (dominios,
 taxonomía, discovery) están implementados; sus versiones históricas viven en
 `archive/`.
 
+## Plan 179 — Minimal Adversarial Review: diseño, prototipo y experimento de validación (25 oct 2026)
+
+Change DEV **docs-only de diseño y experimentación** (`RFC-56 Class: N/A`, Change Level L2, DEV-only) que reduce la deliberación adversarial completa a un mecanismo mínimo **Minimal Adversarial Review (MAR)** —selectivo, advisory, presupuestado y no normativo— y lo somete a un experimento de validación preregistrado. El Plan reconstruye de la campaña T1–T3 qué operaciones produjeron el valor material (falsificación dirigida como núcleo; caso favorable condicional a una reversión decisional advisory; síntesis reducida a comparación por criterio; rebuttal eliminado) y fija como objetivo experimental reducir el coste del mecanismo completo (4,01×–5,21×) a ≤2,0× sin destruir el valor: el criterio de éxito exige retención material e impacto, no sólo coste. Entrega un prototipo aislado `runtime/adversarial_review/` (read-only, stdlib, advisory-only, sin consumidor), dos suites nuevas y un experimento con BASELINE congelado antes del tratamiento, comparador FULL y MAR sobre un caso real (`MAR-VALID-01`), evaluación independiente y auditoría de integridad; la decisión se aplica con una regla congelada —`ADOPT_DEV_EXPERIMENT` | `REFINE` | `REJECT` | `DEFER`— y se registra en el informe de validación. **No modifica `protocol/`, `.agents/`, RFCs, ADRs, `VERSIONING`, `ROADMAP.md`, `tools/` ni la batería canónica; no crea autoridad, estado, gate ni contrato del Protocol; sin release.** El Validation Anchor y el Checkpoint GC-1 se registran al ejecutar (pasos 12–13).
+
+| Plan | RFC | Status | Descripción | Vigencia |
+|---|---|---|---|---|
+| `179-minimal-adversarial-review.md` | — (vía plan; DEV-only; RFC-56 N/A) | Aprobado para ejecución | **Minimal Adversarial Review: diseño, prototipo y experimento de validación.** Reducción de la deliberación adversarial completa a un mecanismo mínimo selectivo, advisory y presupuestado (falsificación dirigida + caso favorable condicional + síntesis corta; sin rebuttal ni veredicto como entidad), prototipo aislado `runtime/adversarial_review/` read-only sin consumidor, y experimento preregistrado con baseline congelado antes del tratamiento, FULL vs MAR, evaluación independiente y auditoría de integridad sobre un caso real; decisión por regla congelada `ADOPT_DEV_EXPERIMENT` / `REFINE` / `REJECT` / `DEFER`. **DEV-only, sin payload, sin release; no crea autoridad, estado ni gate; no promueve el Protocol.** | active |
+
 ## Plan 177 — README como puerta de entrada al proyecto (24 oct 2026)
 
 Change DEV **docs-only** (`RFC-56 Class: N/A`, Change Level L1) que reescribe completo el

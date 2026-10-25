@@ -22,6 +22,7 @@ from .checks import (
     VALID,
     CheckResult,
     check_ids,
+    run_checks,
 )
 from .identity import (
     TOOL_VERSION,
@@ -32,7 +33,7 @@ from .identity import (
 from .overlay import GitRepository
 from .proposal import Proposal, ProposalError, load_proposal_at
 
-SCHEMA_VERSION = "1"
+SCHEMA_VERSION = "2"
 TOOL = "runtime.theoretical"
 
 STATUSES = (
@@ -75,6 +76,7 @@ _TOP_KEYS = {
     "identity",
     "model",
     "coverage",
+    "checks",
     "claims",
     "assumptions",
     "findings",
@@ -171,6 +173,7 @@ _DIMENSION_KEYS = {
     "escalation_refs",
     "evidence_refs",
 }
+_CHECK_RECORD_KEYS = {"id", "signal", "statement", "evidence_refs"}
 
 
 def _load_tool(name: str):
@@ -211,16 +214,84 @@ def _finding_key(finding: Mapping[str, Any]) -> tuple[str, str, str]:
     )
 
 
+def check_record(result: CheckResult) -> dict[str, Any]:
+    """The engine-owned record of one check result (``checks[]`` entry)."""
+    return {
+        "id": result.check,
+        "signal": result.signal,
+        "statement": result.statement,
+        "evidence_refs": list(result.evidence_refs),
+    }
+
+
+def check_records(results: Sequence[CheckResult]) -> list[dict[str, Any]]:
+    return [check_record(result) for result in results]
+
+
+def _check_key(record: Mapping[str, Any]) -> tuple[str, str, str, tuple[str, ...]]:
+    refs = record.get("evidence_refs")
+    return (
+        str(record.get("id", "")),
+        str(record.get("signal", "")),
+        str(record.get("statement", "")),
+        tuple(str(ref) for ref in refs) if _check_list(refs) else (),
+    )
+
+
+def _engine_finding_index(
+    engine_checks: Sequence[CheckResult],
+    findings: Sequence[Any],
+    problems: list[str],
+) -> dict[tuple[str, str], Mapping[str, Any]]:
+    """Require the engine's findings to be present and map check → finding.
+
+    Every check result that is not ``VALID``/``N/A`` produced a finding in the
+    skeleton.  The producer may disposition it (``OPEN``/``ESCALATED``/
+    ``RESIDUAL``) but may not make it disappear: a dropped finding would let a
+    contradictory proposal derive ``CONVERGED``.
+    """
+    index: dict[tuple[str, str, str], Mapping[str, Any]] = {}
+    for finding in findings:
+        if not isinstance(finding, Mapping):
+            continue
+        index.setdefault(_finding_key(finding), finding)
+    mapping: dict[tuple[str, str], Mapping[str, Any]] = {}
+    for result in engine_checks:
+        if result.signal in (VALID, NOT_APPLICABLE):
+            continue
+        finding = index.get((result.signal, result.statement, result.check))
+        if finding is None:
+            problems.append(
+                f"check {result.check}: the engine finding is missing from findings"
+            )
+            continue
+        mapping[(result.check, result.statement)] = finding
+    return mapping
+
+
 def fingerprint(payload: Mapping[str, Any]) -> str:
-    """The no-progress fingerprint: items + material findings + status.
+    """The no-progress fingerprint: items + checks + material findings.
 
     Deliberately *not* the plan blob: a cosmetic edit is not progress while the
-    same material findings remain.  A previous result may carry this value.
+    same material findings remain.  The engine's check record participates: a
+    changed check signal is progress even when the findings look the same.
+
+    The declared ``status`` does **not** participate.  It is the *output* of the
+    comparison (``NO_PROGRESS`` is derived from the fingerprint), so including
+    it would make the derived status change the very value it is compared to and
+    ``NO_PROGRESS`` would be unreachable: two identical results would derive
+    different fingerprints merely because one of them declares to be a repeat.
+    The material record (items, checks, findings) is what has to be equal.
     """
     items = sorted(
         str(claim.get("item"))
         for claim in payload.get("claims") or ()
         if isinstance(claim, Mapping) and claim.get("item")
+    )
+    checks = sorted(
+        (str(record.get("id")), str(record.get("signal")), str(record.get("statement")))
+        for record in payload.get("checks") or ()
+        if isinstance(record, Mapping)
     )
     findings = sorted(
         _finding_key(finding)
@@ -229,11 +300,7 @@ def fingerprint(payload: Mapping[str, Any]) -> str:
         and finding.get("disposition") != "RESIDUAL"
     )
     return canonical_json(
-        {
-            "items": items,
-            "findings": findings,
-            "status": payload.get("status"),
-        }
+        {"items": items, "checks": checks, "findings": findings}
     ).strip()
 
 
@@ -393,7 +460,10 @@ def build_skeleton(proposal: Proposal, checks: Sequence[CheckResult]) -> dict[st
 
     Producer dimensions are ``PENDING`` with empty ``probed``; the engine's
     dimensions are marked ``computed`` but not ``PERFORMED`` until the producer
-    reviews them.  The status is ``GAP`` because the attestation is pending.
+    reviews them.  ``checks[]`` is the complete engine record (every signal,
+    including ``VALID``/``N/A``) and is not editable by the producer: the
+    validator recomputes it.  The status is ``GAP`` because the attestation is
+    pending.
     """
     inputs = input_identity(proposal.base, proposal.overlay)
     run = run_identity(inputs, plan=proposal.plan, producer="pending")
@@ -528,6 +598,7 @@ def build_skeleton(proposal: Proposal, checks: Sequence[CheckResult]) -> dict[st
             "content": "unknown",
         },
         "coverage": coverage,
+        "checks": check_records(checks),
         "claims": claims,
         "assumptions": [],
         "findings": findings,
@@ -721,6 +792,109 @@ def _validate_finding(
             )
 
 
+def _validate_checks(
+    payload: Mapping[str, Any],
+    engine_checks: Sequence[CheckResult] | None,
+    problems: list[str],
+) -> None:
+    """Validate the engine-owned ``checks[]`` record.
+
+    The record is authoritative for what the engine observed: with a
+    recomputable proposal it must equal the recomputed check-set exactly
+    (same order, id, signal, statement and evidence).  A producer can neither
+    add, remove, reorder nor reword a check.
+    """
+    declared = payload.get("checks")
+    if not _check_list(declared):
+        problems.append("checks is not a list")
+        return
+    for record in declared:
+        if not isinstance(record, Mapping):
+            problems.append("check is not an object")
+            continue
+        _missing_keys(record, _CHECK_RECORD_KEYS, "check", problems)
+        _unknown_keys(record, _CHECK_RECORD_KEYS, "check", problems)
+        if record.get("id") not in check_ids():
+            problems.append(f"check {record.get('id')!r}: unknown check id")
+        if record.get("signal") not in FINDING_SIGNALS + (VALID, NOT_APPLICABLE):
+            problems.append(
+                f"check {record.get('id')!r}: unknown signal {record.get('signal')!r}"
+            )
+        if not str(record.get("statement") or "").strip():
+            problems.append(f"check {record.get('id')!r}: empty statement")
+        if not _check_list(record.get("evidence_refs")):
+            problems.append(f"check {record.get('id')!r}: evidence_refs is not a list")
+    if engine_checks is None:
+        return
+    expected = check_records(engine_checks)
+    if len(declared) != len(expected):
+        problems.append(
+            "checks does not match the recomputed check-set: declared "
+            f"{len(declared)}, recomputed {len(expected)}"
+        )
+        return
+    for position, (declared_record, expected_record) in enumerate(
+        zip(declared, expected)
+    ):
+        if not isinstance(declared_record, Mapping):
+            continue
+        if _check_key(declared_record) != _check_key(expected_record):
+            problems.append(
+                "checks does not match the recomputed check-set at position "
+                f"{position} ({expected_record['id']})"
+            )
+
+
+def _validate_engine_obligations(
+    engine_checks: Sequence[CheckResult] | None,
+    finding_map: Mapping[tuple[str, str], Mapping[str, Any]],
+    obligations: Sequence[Any],
+    problems: list[str],
+) -> None:
+    """Every engine obligation must survive as a verification obligation.
+
+    The obligation stays ``OPEN`` and traceable to the finding of its check;
+    TE never satisfies it.  Dropping it would erase the verification bridge
+    that the check established.
+    """
+    if engine_checks is None:
+        return
+    by_finding: dict[str, list[Mapping[str, Any]]] = {}
+    for obligation in obligations:
+        if isinstance(obligation, Mapping) and str(obligation.get("finding_ref") or ""):
+            by_finding.setdefault(str(obligation["finding_ref"]), []).append(obligation)
+    for result in engine_checks:
+        expected = result.obligation
+        if expected is None:
+            continue
+        finding = finding_map.get((result.check, result.statement))
+        if finding is None:
+            problems.append(
+                f"check {result.check}: the verification obligation has no finding"
+            )
+            continue
+        candidates = by_finding.get(str(finding.get("id"))) or []
+        match = [
+            obligation
+            for obligation in candidates
+            if str(obligation.get("statement") or "")
+            == str(expected.get("statement") or "")
+        ]
+        if not match:
+            problems.append(
+                f"check {result.check}: the verification obligation is missing from "
+                "verification_obligations"
+            )
+            continue
+        obligation = match[0]
+        for key in ("falsified_if", "candidate"):
+            if str(obligation.get(key) or "") != str(expected.get(key) or ""):
+                problems.append(
+                    f"check {result.check}: the verification obligation {key} does not "
+                    "match the engine"
+                )
+
+
 def validate_result(
     payload: Mapping[str, Any],
     root: str | Path | None = None,
@@ -849,6 +1023,7 @@ def validate_result(
     }
 
     item_ids: set[str] = set()
+    engine_checks: tuple[CheckResult, ...] | None = None
     if root is not None and isinstance(data, Mapping):
         proposal_input = data.get("proposal")
         if isinstance(proposal_input, Mapping):
@@ -888,6 +1063,7 @@ def validate_result(
                     "check_set"
                 ):
                     problems.append("input.check_set does not match the recomputed check-set")
+                engine_checks = run_checks(proposal)
     elif root is None:
         item_ids = {
             str(claim.get("item"))
@@ -986,6 +1162,10 @@ def validate_result(
                 problems.append(f"duplicate finding id: {finding_id}")
             finding_ids.add(finding_id)
 
+    engine_finding_map = _engine_finding_index(
+        engine_checks or (), findings, problems
+    )
+
     corrections = payload.get("corrections")
     if not _check_list(corrections):
         problems.append("corrections is not a list")
@@ -1044,6 +1224,10 @@ def validate_result(
                         "does not exist"
                     )
 
+    _validate_engine_obligations(
+        engine_checks, engine_finding_map, obligations_list, problems
+    )
+
     for escalation in escalations:
         if not isinstance(escalation, Mapping):
             problems.append("escalation is not an object")
@@ -1085,6 +1269,39 @@ def validate_result(
         previous = progress.get("previous_fingerprint")
         if previous is not None and not isinstance(previous, str):
             problems.append("no_progress.previous_fingerprint is not a string or null")
+        declared_fingerprint = progress.get("fingerprint")
+        if declared_fingerprint is not None and not isinstance(
+            declared_fingerprint, str
+        ):
+            problems.append("no_progress.fingerprint is not a string or null")
+        elif declared_fingerprint is not None and declared_fingerprint != fingerprint(
+            payload
+        ):
+            problems.append(
+                "no_progress.fingerprint does not match the computed fingerprint"
+            )
+        previous_te_id = progress.get("previous_te_id")
+        input_previous = (
+            data.get("previous_te_id") if isinstance(data, Mapping) else None
+        )
+        if (previous is None) != (previous_te_id is None):
+            problems.append(
+                "no_progress.previous_fingerprint and previous_te_id must be declared "
+                "together"
+            )
+        if previous is not None and declared_fingerprint is None:
+            problems.append(
+                "no_progress.fingerprint is required when a previous fingerprint is "
+                "declared"
+            )
+        if previous_te_id is not None and input_previous != previous_te_id:
+            problems.append("no_progress.previous_te_id != input.previous_te_id")
+        if input_previous is not None and previous is None:
+            problems.append(
+                "input.previous_te_id is declared without a previous fingerprint"
+            )
+
+    _validate_checks(payload, engine_checks, problems)
 
     derived = derive_status(payload) if not problems else None
     if derived is not None and payload.get("status") != derived:

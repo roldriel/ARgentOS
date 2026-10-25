@@ -283,6 +283,21 @@
   Verified/Closed/Released, etc.; nunca escribir `status: Closed` en un Plan
 - **Related Terms:** State
 
+## Theoretical Execution
+
+- **Scope:** DEV
+- **Status:** current
+- **Authority Reference:** `docs/plans/176-theoretical-execution-dev-complete.md:Objetivo`
+  (alcance completo y delta); `.agents/policies/theoretical-execution.md:1. What TE is and is not`
+  (procedimiento operativo)
+- **Abbreviation / Expansion:** TE (DEV)
+- **Qualification Rule:** `Theoretical Execution (DEV)`; «TE» no designa ejecución
+  real, verificación, autorización ni post-ejecución
+- **Related Terms:** Plan; Verification; Validation; Evidence
+- **Gloss (no normativo):** evaluación hipotética no mutativa de un Plan
+  commiteado antes de materializarlo; produce un `TE_RESULT` teórico, nunca
+  evidencia factual.
+
 ## Validation
 
 - **Scope:** Cross-cutting

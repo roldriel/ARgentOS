@@ -1,9 +1,15 @@
-"""Deterministic checks CH-1…CH-8 of Theoretical Execution (DEV v1).
+"""Deterministic checks CH-1…CH-9 of Theoretical Execution.
 
-Every check is a read-only function of the proposal and the factual base.  It
-returns an explicit signal from the repository's failure vocabulary
-(``VALID``/``ANOMALY``/``BOUNDARY``/``GAP``/``N/A``) plus the evidence it used.
-A check never decides semantics and never completes missing information.
+Every check is a read-only function of the proposal and the **factual base
+commit**.  It returns an explicit signal from the repository's failure
+vocabulary (``VALID``/``ANOMALY``/``BOUNDARY``/``GAP``/``N/A``) plus the
+evidence it used.  A check never decides semantics and never completes missing
+information.
+
+Determinism boundary: a check does not read the working tree or the index.  A
+citation, an artifact status or a scope identity is answered from the base
+commit, so two runs over the same ``InputIdentity`` produce the same signals
+even when the working tree is dirty or the index holds staged changes.
 """
 
 from __future__ import annotations
@@ -24,7 +30,7 @@ BOUNDARY = "BOUNDARY"
 GAP = "GAP"
 NOT_APPLICABLE = "N/A"
 
-_CHECK_IDS = tuple(f"CH-{index}" for index in range(1, 9))
+_CHECK_IDS = tuple(f"CH-{index}" for index in range(1, 10))
 _STATUS_RE = re.compile(r"^\*\*Status:\*\*\s*(.+?)\s*$", re.MULTILINE)
 _CHECKER_PATHS = ("docs/plans/", "docs/rfc/", "docs/adr/")
 _PAYLOAD_PREFIXES = ("protocol/.agents/",)
@@ -112,18 +118,59 @@ def _classes(proposal: Proposal) -> tuple[str, ...]:
     )
 
 
-def _artifact_status(root: Path, path: str) -> str | None:
+def _base_text(proposal: Proposal, path: str) -> str | None:
+    """Text of ``path`` at the base commit; never the working tree."""
+    try:
+        rel = normalize_path(path)
+    except ValueError:
+        return None
+    return proposal.overlay.repository.read_text(proposal.base.commit, rel)
+
+
+def _artifact_status(proposal: Proposal, path: str) -> str | None:
+    """``**Status:**`` of a governed artifact read at the base commit."""
     if not path.startswith(_CHECKER_PATHS):
         return None
-    target = root / path
-    try:
-        text = target.read_text(encoding="utf-8", errors="replace")
-    except OSError:
+    text = _base_text(proposal, path)
+    if text is None:
         return None
     match = _STATUS_RE.search(text)
     if not match:
         return None
     return match.group(1).strip().split("(")[0].strip()
+
+
+def _citation_at_base(
+    proposal: Proposal, tool, citation
+) -> tuple[str | None, str | None]:
+    """Resolve a citation path through the base tree.
+
+    The legacy mapping of ``tools/legacy_paths.py`` applies exactly as in the
+    repository citation checker, but every candidate is resolved against the
+    base commit: a legacy path that exists only in the working tree does not
+    make a citation resolve.
+    """
+    candidates = [citation.path]
+    mapped = tool.legacy_target(citation.path, proposal.root)
+    if mapped is not None:
+        try:
+            relative = mapped.resolve().relative_to(proposal.root.resolve()).as_posix()
+        except (OSError, ValueError):
+            relative = None
+        if relative and relative not in candidates:
+            candidates.append(relative)
+    repository = proposal.overlay.repository
+    for candidate in candidates:
+        try:
+            rel = normalize_path(candidate)
+        except ValueError:
+            continue
+        if not repository.exists(proposal.base.commit, rel):
+            continue
+        text = repository.read_text(proposal.base.commit, rel)
+        if text is not None:
+            return rel, text
+    return None, None
 
 
 def _ch1(proposal: Proposal) -> list[CheckResult]:
@@ -199,7 +246,9 @@ def _ch2(proposal: Proposal) -> list[CheckResult]:
                 ),
             )
         ]
-    outside = tuple(path for path in proposal.deliverables if path not in proposal.scope)
+    outside = tuple(
+        path for path in proposal.deliverables if path not in proposal.scope
+    )
     if outside:
         return [
             CheckResult(
@@ -207,7 +256,10 @@ def _ch2(proposal: Proposal) -> list[CheckResult]:
                 ANOMALY,
                 "deliverable(s) outside the declared editable Scope: "
                 + ", ".join(outside),
-                (f"{proposal.path}:Entregables", f"{proposal.path}:Delegación agentiva"),
+                (
+                    f"{proposal.path}:Entregables",
+                    f"{proposal.path}:Delegación agentiva",
+                ),
             )
         ]
     return [
@@ -245,8 +297,7 @@ def _ch3(proposal: Proposal) -> list[CheckResult]:
                 )
             )
             continue
-        broken = tool.verify_citation(citation, proposal.root)
-        status = _artifact_status(proposal.root, path)
+        status = _artifact_status(proposal, path)
         if status and status.casefold() == "superseded":
             results.append(
                 CheckResult(
@@ -264,18 +315,29 @@ def _ch3(proposal: Proposal) -> list[CheckResult]:
                 )
             )
             continue
-        if broken is not None:
+        _resolved, text = _citation_at_base(proposal, tool, citation)
+        if text is None:
             results.append(
                 CheckResult(
                     "CH-3",
                     ANOMALY,
-                    f"broken citation {ref}: {broken.reason}",
+                    f"broken citation {ref}: file not found at the base commit",
+                    (ref,),
+                )
+            )
+            continue
+        if not tool.section_exists(citation.section, text):
+            results.append(
+                CheckResult(
+                    "CH-3",
+                    ANOMALY,
+                    f"broken citation {ref}: section not found at the base commit",
                     (ref,),
                 )
             )
             continue
         results.append(
-            CheckResult("CH-3", VALID, f"citation {ref} resolves", (ref,))
+            CheckResult("CH-3", VALID, f"citation {ref} resolves at the base", (ref,))
         )
     if not results:
         results.append(
@@ -292,11 +354,14 @@ def _ch4(proposal: Proposal) -> list[CheckResult]:
             continue
         if not proposal.overlay.repository.exists(proposal.base.commit, path):
             continue  # a declared creation is not a write to a closed artifact
-        text = proposal.overlay.repository.read_text(proposal.base.commit, path)
+        text = _base_text(proposal, path)
         if text is None:
             results.append(
                 CheckResult(
-                    "CH-4", GAP, f"{path} is declared but unreadable at the base", (path,)
+                    "CH-4",
+                    GAP,
+                    f"{path} is declared but unreadable at the base",
+                    (path,),
                 )
             )
             continue
@@ -396,7 +461,10 @@ def _ch6(proposal: Proposal) -> list[CheckResult]:
                 "CH-6",
                 BOUNDARY,
                 "exit criteria are declared but no verification command-set exists",
-                (f"{proposal.path}:Criterios de salida", f"{proposal.path}:Verificación"),
+                (
+                    f"{proposal.path}:Criterios de salida",
+                    f"{proposal.path}:Verificación",
+                ),
                 _obligation(
                     "declare commands or explicit manual verification for the exit "
                     "criteria",
@@ -439,7 +507,12 @@ def _ch7(proposal: Proposal) -> list[CheckResult]:
         ]
     tool = _load_tool("scoped_content_identity")
     try:
-        report = tool.compute(proposal.root, list(scope))
+        report = tool.compute(
+            proposal.root,
+            list(scope),
+            ref=proposal.base.commit,
+            content_ref=proposal.base.commit,
+        )
     except Exception as exc:  # noqa: BLE001 - the generator fails closed
         return [
             CheckResult(
@@ -485,7 +558,10 @@ def _ch8(proposal: Proposal) -> list[CheckResult]:
     if not repo.verify_ref(proposal.base.commit):
         return [
             CheckResult(
-                "CH-8", GAP, "the declared base commit does not resolve", (proposal.base.commit,)
+                "CH-8",
+                GAP,
+                "the declared base commit does not resolve",
+                (proposal.base.commit,),
             )
         ]
     if repo.blob(proposal.base.commit, proposal.path) is None:
@@ -507,10 +583,71 @@ def _ch8(proposal: Proposal) -> list[CheckResult]:
     ]
 
 
-def run_checks(proposal: Proposal) -> tuple[CheckResult, ...]:
-    """Run CH-1…CH-8 in a fixed order; deterministic and read-only."""
+def _ch9(proposal: Proposal) -> list[CheckResult]:
+    """Declaration integrity of the enumerated change model.
+
+    A declared deliverable that cannot be represented is not silently dropped:
+    an escaping or non-relative path is present-but-contradictory (``ANOMALY``)
+    and a declaration with no resolvable path is missing information (``GAP``
+    plus an obligation).  An effect class outside the closed DEV vocabulary is
+    ``ANOMALY``: the frontier cannot admit what it cannot classify.
+    """
     results: list[CheckResult] = []
-    for check in (_ch1, _ch2, _ch3, _ch4, _ch5, _ch6, _ch7, _ch8):
+    for token in proposal.rejected_paths:
+        results.append(
+            CheckResult(
+                "CH-9",
+                ANOMALY,
+                "declared deliverable path is not repository-relative and cannot be "
+                f"evaluated: {token}",
+                (f"{proposal.path}:Entregables",),
+            )
+        )
+    for label in proposal.unresolved_deliverables:
+        results.append(
+            CheckResult(
+                "CH-9",
+                GAP,
+                "declared deliverable does not resolve to a repository-relative "
+                f"path: {label}",
+                (f"{proposal.path}:Entregables",),
+                _obligation(
+                    "declare the deliverable as a repository-relative path",
+                    candidate="manual_review",
+                    falsified_if="the deliverable entry resolves to an existing or "
+                    "declared repository-relative path",
+                ),
+            )
+        )
+    vocabulary = _load_tool("check_session_artifacts").EFFECT_KINDS
+    unknown = tuple(effect for effect in proposal.effects if effect not in vocabulary)
+    if unknown:
+        results.append(
+            CheckResult(
+                "CH-9",
+                ANOMALY,
+                "declared effect class is outside the closed vocabulary: "
+                + ", ".join(unknown),
+                (f"{proposal.path}:Efectos declarados",),
+            )
+        )
+    if not results:
+        results.append(
+            CheckResult(
+                "CH-9",
+                VALID,
+                "every declared deliverable resolves and every effect class belongs "
+                "to the closed vocabulary",
+                (f"{proposal.path}:Entregables",),
+            )
+        )
+    return results
+
+
+def run_checks(proposal: Proposal) -> tuple[CheckResult, ...]:
+    """Run CH-1…CH-9 in a fixed order; deterministic and read-only."""
+    results: list[CheckResult] = []
+    for check in (_ch1, _ch2, _ch3, _ch4, _ch5, _ch6, _ch7, _ch8, _ch9):
         results.extend(check(proposal))
     return tuple(results)
 

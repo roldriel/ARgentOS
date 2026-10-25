@@ -1,9 +1,10 @@
-"""Theoretical Execution (DEV v1).
+"""Theoretical Execution (DEV).
 
 A read-only evaluation of a committed Implementation Plan.  The engine builds a
 declared overlay, enumerates the proposal's items, runs the deterministic checks
-and validates a producer-attested ``TE_RESULT``; it never executes the plan,
-writes the repository or produces factual evidence.
+CH-1…CH-9, records every check and validates a producer-attested ``TE_RESULT``
+(schema 2); it never executes the plan, writes the repository or produces
+factual evidence.
 """
 
 from .checks import CheckResult, run_checks

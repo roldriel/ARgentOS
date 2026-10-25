@@ -196,6 +196,75 @@ def test_ref_mode_matches_committed_tree(tmp_path: Path) -> None:
     assert ref_report["state_identity"]["tree"] == head_tree
 
 
+def test_content_ref_mode_reads_the_commit_not_the_index(tmp_path: Path) -> None:
+    """Base-relative mode: the delta depends only on the declared commit."""
+    repo = init_repo(tmp_path)
+    (repo / "a.txt").write_text("committed\n", encoding="utf-8")
+    git(repo, "add", "a.txt")
+    git(repo, "commit", "-q", "-m", "add a.txt")
+    committed = report_of(run_tool(repo, ["a.txt"]))
+
+    (repo / "a.txt").write_text("staged\n", encoding="utf-8")
+    git(repo, "add", "a.txt")
+    staged = report_of(run_tool(repo, ["a.txt"]))
+    base_relative = report_of(
+        run_tool(repo, ["a.txt"], "--ref", "HEAD", "--content-ref", "HEAD")
+    )
+
+    assert staged["delta_scoped_identity"] != committed["delta_scoped_identity"]
+    assert base_relative["delta_scoped_identity"] == committed["delta_scoped_identity"]
+    assert base_relative["state_identity"] == {
+        "source": "ref",
+        "ref": "HEAD",
+        "tree": git(repo, "rev-parse", "HEAD^{tree}"),
+    }
+    # The default mode is unchanged: no --content-ref reads the index.
+    assert staged["delta_scoped_identity"] == expected_delta(repo, ["a.txt"])
+
+
+def test_content_ref_mode_fails_closed_for_a_path_absent_at_the_ref(
+    tmp_path: Path,
+) -> None:
+    repo = init_repo(tmp_path)
+    (repo / "new.txt").write_text("untracked\n", encoding="utf-8")
+
+    result = run_tool(repo, ["new.txt"], "--content-ref", "HEAD")
+
+    assert result.returncode == 1
+    assert result.stdout == ""
+    assert "path not found at HEAD" in result.stderr
+
+
+def test_content_ref_mode_rejects_a_directory_at_the_ref(tmp_path: Path) -> None:
+    repo = init_repo(tmp_path)
+    (repo / "adir").mkdir()
+    (repo / "adir" / "f.txt").write_text("f\n", encoding="utf-8")
+    git(repo, "add", "adir/f.txt")
+    git(repo, "commit", "-q", "-m", "add adir")
+
+    result = run_tool(repo, ["adir"], "--content-ref", "HEAD")
+
+    assert result.returncode == 1
+    assert result.stdout == ""
+    assert "directory" in result.stderr
+
+
+def test_content_ref_is_available_through_the_library_api(tmp_path: Path) -> None:
+    repo = init_repo(tmp_path)
+    (repo / "a.txt").write_text("committed\n", encoding="utf-8")
+    git(repo, "add", "a.txt")
+    git(repo, "commit", "-q", "-m", "add a.txt")
+    (repo / "a.txt").write_text("staged\n", encoding="utf-8")
+    git(repo, "add", "a.txt")
+
+    base_relative = sci.compute(repo, ["a.txt"], ref="HEAD", content_ref="HEAD")
+    staged = sci.compute(repo, ["a.txt"])
+    assert base_relative["delta_scoped_identity"] != staged["delta_scoped_identity"]
+    assert base_relative["delta_scoped_identity"] == sci.compute(
+        repo, ["a.txt"], ref="HEAD", content_ref="HEAD"
+    )["delta_scoped_identity"]
+
+
 def test_missing_path_fail_closed(tmp_path: Path) -> None:
     repo = init_repo(tmp_path)
 

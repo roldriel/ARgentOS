@@ -1,4 +1,4 @@
-"""CLI behaviour of Theoretical Execution (plan 175, S5)."""
+"""CLI behaviour of Theoretical Execution."""
 
 from __future__ import annotations
 
@@ -9,6 +9,8 @@ import sys
 from pathlib import Path
 
 from test_theoretical_overlay import build_repo
+
+from runtime.theoretical import fingerprint
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
@@ -36,11 +38,16 @@ def _emit(repo: Path) -> dict:
 def test_emit_returns_a_gap_skeleton(tmp_path: Path) -> None:
     repo = build_repo("cli-emit")
     payload = _emit(repo)
+    assert payload["schema_version"] == "2"
     assert payload["status"] == "GAP"
     assert payload["provenance"]["producer"] == "pending"
+    assert payload["provenance"]["tool_version"] == "2"
     assert len(payload["claims"]) == 4
     assert payload["coverage"]["dimensions"]["completeness"]["status"] == "PENDING"
     assert payload["coverage"]["dimensions"]["authority"]["computed"] is True
+    assert [record["id"] for record in payload["checks"]][:2] == ["CH-1", "CH-2"]
+    assert len(payload["checks"]) >= 9
+    assert payload["no_progress"]["fingerprint"] is None
 
 
 def test_validate_skeleton_and_forged_status(tmp_path: Path) -> None:
@@ -54,6 +61,7 @@ def test_validate_skeleton_and_forged_status(tmp_path: Path) -> None:
     report = json.loads(proc.stdout)
     assert report["valid"] is True
     assert report["derived_status"] == "GAP"
+    assert report["computed_fingerprint"] == fingerprint(payload)
 
     payload["status"] = "CONVERGED"
     result.write_text(json.dumps(payload), encoding="utf-8")
@@ -62,6 +70,36 @@ def test_validate_skeleton_and_forged_status(tmp_path: Path) -> None:
     report = json.loads(proc.stdout)
     assert report["valid"] is False
     assert report["derived_status"] == "GAP"
+
+
+def test_validate_reports_the_fingerprint_a_producer_must_declare(
+    tmp_path: Path,
+) -> None:
+    repo = build_repo("cli-fingerprint")
+    payload = _emit(repo)
+    result = tmp_path / "skeleton.json"
+    result.write_text(json.dumps(payload), encoding="utf-8")
+    report = json.loads(run_cli(repo, "--validate", str(result)).stdout)
+    assert report["computed_fingerprint"]
+
+    payload["no_progress"]["fingerprint"] = "not-the-fingerprint"
+    result.write_text(json.dumps(payload), encoding="utf-8")
+    proc = run_cli(repo, "--validate", str(result))
+    assert proc.returncode == 1
+    problems = json.loads(proc.stdout)["problems"]
+    assert any("fingerprint does not match" in problem for problem in problems)
+
+
+def test_validate_rejects_a_result_whose_checks_were_removed(tmp_path: Path) -> None:
+    repo = build_repo("cli-checks-removed")
+    payload = _emit(repo)
+    payload["checks"] = payload["checks"][1:]
+    result = tmp_path / "tampered.json"
+    result.write_text(json.dumps(payload), encoding="utf-8")
+    proc = run_cli(repo, "--validate", str(result))
+    assert proc.returncode == 1
+    problems = json.loads(proc.stdout)["problems"]
+    assert any("recomputed check-set" in problem for problem in problems)
 
 
 def test_stale_reports_fresh_at_head(tmp_path: Path) -> None:

@@ -99,6 +99,7 @@ registro. El vocabulario de `Status` es `current | historical | deprecated | sup
 | Session | Protocol | current | `docs/rfc/64-execution-record-model.md:Terminology` |
 | State | Cross-cutting | current | `docs/rfc/63-state-and-artifact-lifecycle-model.md:Terminology` |
 | Status | Cross-cutting | current | `docs/VERSIONING.md:7. Estados de planes y RFCs` |
+| Theoretical Execution | DEV | current | `docs/plans/176-theoretical-execution-dev-complete.md:Objetivo` |
 | Validation | Cross-cutting | current | `docs/rfc/65-evidence-and-verification-model.md:Terminology` |
 | Validation Anchor | DEV | current | `docs/CONVENTIONS.md:Change Lifecycle — Validation anchors y Scoped Content Identity (regla operacional; VC-1, Incremento 1)` |
 | Verification | Cross-cutting | current | `docs/rfc/65-evidence-and-verification-model.md:Terminology` |

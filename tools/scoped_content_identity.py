@@ -16,6 +16,12 @@ Given a scope set S of repository-relative file paths, the tool computes:
   ``git hash-object --path=<p> <p>`` (working-tree content "as it would be
   staged", for new/untracked files); then the sha256 of the canonical
   serialization ``scoped-v1`` plus the pairs ``path <0x00> blob <0x00>``.
+  With ``--content-ref REF`` (equivalently ``compute(..., content_ref=REF)``)
+  the blob of every path is read from ``REF`` instead, so the Delta identity
+  depends only on that commit and never on the index or the working tree; the
+  serialization is **identical** in both modes. This is the base-relative mode
+  used by the DEV theoretical evaluation, which must be a function of its
+  declared base.
 - **State identity**: the tree id of the staged index (``git write-tree``) by
   default, or the tree of a git ref (``git rev-parse <ref>^{tree}``) when
   ``--ref`` is given. The staged tree is the identity of the full repo state
@@ -124,17 +130,51 @@ def _worktree_blob(toplevel: Path, rel: str) -> str:
     return _run_git(toplevel, "hash-object", f"--path={rel}", str(file)).strip()
 
 
-def _delta_identity(toplevel: Path, rels: list[str]) -> str:
-    """Delta scoped identity: sha256 of ``scoped-v1`` + path NUL blob NUL."""
+def _try_git(cwd: Path, *args: str) -> tuple[int, str]:
+    """Run a local git command without raising; return (exit code, stdout)."""
+    proc = subprocess.run(
+        ["git", "-C", str(cwd), *args],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    return proc.returncode, proc.stdout.strip()
+
+
+def _ref_blob(toplevel: Path, ref: str, rel: str) -> str:
+    """Blob id of ``rel`` at ``ref`` (fail-closed when absent or not a file)."""
+    code, oid = _try_git(toplevel, "rev-parse", "--verify", "--quiet", f"{ref}:{rel}")
+    if code != 0 or not oid:
+        raise ToolError(f"path not found at {ref}: {rel}")
+    code, kind = _try_git(toplevel, "cat-file", "-t", oid)
+    if code != 0 or kind != "blob":
+        raise ToolError(f"path is a directory (scope paths must be files): {rel}")
+    return oid
+
+
+def _delta_identity(
+    toplevel: Path, rels: list[str], content_ref: str | None = None
+) -> str:
+    """Delta scoped identity: sha256 of ``scoped-v1`` + path NUL blob NUL.
+
+    By default the blob of a path is read from the index (or the working tree
+    for an untracked path).  With ``content_ref`` the blobs are read from that
+    commit instead, which is the base-relative mode used by a theoretical
+    evaluation: the identity then depends only on the declared base, never on
+    the index or the working tree.
+    """
     payload = bytearray(_SERIALIZATION_PREFIX)
     for rel in rels:
-        if (toplevel / rel).is_dir():
-            raise ToolError(
-                f"path is a directory (scope paths must be files): {rel}"
-            )
-        blob = _index_blob(toplevel, rel)
-        if blob is None:
-            blob = _worktree_blob(toplevel, rel)
+        if content_ref is None:
+            if (toplevel / rel).is_dir():
+                raise ToolError(
+                    f"path is a directory (scope paths must be files): {rel}"
+                )
+            blob = _index_blob(toplevel, rel)
+            if blob is None:
+                blob = _worktree_blob(toplevel, rel)
+        else:
+            blob = _ref_blob(toplevel, content_ref, rel)
         payload += rel.encode("utf-8") + b"\x00" + blob.encode("ascii") + b"\x00"
     return hashlib.sha256(bytes(payload)).hexdigest()
 
@@ -155,6 +195,7 @@ def compute(
     paths: list[str],
     ref: str | None = None,
     *,
+    content_ref: str | None = None,
     expected_toplevel: Path | str | None = None,
 ) -> dict:
     """Compute the v1 Scoped Content Identity of a declared scope.
@@ -162,6 +203,13 @@ def compute(
     Returns a deterministic report with the sorted scope, the Delta scoped
     identity and the State identity. Raises ToolError (fail-closed) on any
     invalid input; never writes the working tree or the index.
+
+    ``content_ref`` reads the per-path blobs from that commit instead of the
+    index/working tree. It is the base-relative mode: the Delta scoped identity
+    then depends only on the commit, so a theoretical evaluation is a function
+    of its declared base and never of the staged or working state. The
+    serialization is the same ``scoped-v1`` in both modes; nothing about the
+    default (index) mode changes.
 
     ``expected_toplevel`` declares the repository root the scope belongs to.
     When it is given, the git toplevel resolved from ``root`` must equal it;
@@ -185,7 +233,7 @@ def compute(
     rels = sorted(unique)
     return {
         "scope": rels,
-        "delta_scoped_identity": _delta_identity(toplevel, rels),
+        "delta_scoped_identity": _delta_identity(toplevel, rels, content_ref),
         "state_identity": _state_identity(toplevel, ref),
     }
 
@@ -211,6 +259,15 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--content-ref",
+        default=None,
+        help=(
+            "read the per-path blobs of the Delta scoped identity from <ref> "
+            "instead of the index/working tree (base-relative mode; the "
+            "serialization is unchanged)"
+        ),
+    )
+    parser.add_argument(
         "--expected-root",
         default=None,
         help=(
@@ -226,6 +283,7 @@ def main(argv: list[str] | None = None) -> int:
             Path(args.root),
             args.paths,
             ref=args.ref,
+            content_ref=args.content_ref,
             expected_toplevel=args.expected_root,
         )
     except ToolError as exc:

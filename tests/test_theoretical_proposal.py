@@ -101,3 +101,49 @@ def test_table_steps_are_enumerated() -> None:
     proposal = load_proposal(repo, 175, "HEAD")
     steps = [item for item in proposal.items if item.kind == "step"]
     assert [item.label for item in steps] == ["S1"]
+
+
+def test_a_deliverable_without_a_resolvable_path_is_not_silently_dropped() -> None:
+    plan = MINIMAL_PLAN.replace(
+        "1. `runtime/foo.py`",
+        "1. `runtime/foo.py`\n2. el paquete nuevo, sin ruta",
+    )
+    repo = build_repo("unresolved-deliverable", plan=plan)
+    proposal = load_proposal(repo, 175, "HEAD")
+    assert proposal.deliverables == ("runtime/foo.py",)
+    assert proposal.unresolved_deliverables == ("el paquete nuevo, sin ruta",)
+    assert proposal.rejected_paths == ()
+
+
+def test_an_escaping_deliverable_is_reported_as_rejected() -> None:
+    plan = MINIMAL_PLAN.replace(
+        "1. `runtime/foo.py`",
+        "1. `runtime/foo.py`\n2. `../outside/secret.py`",
+    )
+    repo = build_repo("rejected-deliverable", plan=plan)
+    proposal = load_proposal(repo, 175, "HEAD")
+    assert proposal.deliverables == ("runtime/foo.py",)
+    assert proposal.unresolved_deliverables == ()
+    assert proposal.rejected_paths == ("../outside/secret.py",)
+
+
+def test_a_line_may_declare_more_than_one_deliverable() -> None:
+    plan = MINIMAL_PLAN.replace(
+        "1. `runtime/foo.py`",
+        "1. `runtime/foo.py`, `runtime/bar.py`",
+    ).replace(
+        "- **Scope:** `runtime/foo.py`",
+        "- **Scope:** `runtime/foo.py`, `runtime/bar.py`",
+    )
+    repo = build_repo("multi-deliverable", plan=plan)
+    proposal = load_proposal(repo, 175, "HEAD")
+    assert proposal.deliverables == ("runtime/foo.py", "runtime/bar.py")
+
+
+def test_a_backticked_annotation_is_not_a_second_deliverable() -> None:
+    plan = MINIMAL_PLAN.replace("1. `runtime/foo.py`", "1. `runtime/foo.py` (`[Unreleased]`)")
+    repo = build_repo("annotation", plan=plan)
+    proposal = load_proposal(repo, 175, "HEAD")
+    assert proposal.deliverables == ("runtime/foo.py",)
+    assert proposal.unresolved_deliverables == ()
+    assert proposal.rejected_paths == ()

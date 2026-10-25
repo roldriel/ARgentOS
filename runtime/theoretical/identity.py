@@ -1,4 +1,4 @@
-"""Identity and provenance primitives of Theoretical Execution (DEV v1).
+"""Identity and provenance primitives of Theoretical Execution.
 
 The design distinguishes two identities and refuses a third:
 
@@ -11,6 +11,11 @@ The design distinguishes two identities and refuses a third:
 ``ResultContentIdentity``
     Deliberately absent.  Semantic findings depend on the producer; comparing
     two runs is a canonical-JSON comparison, not an identity claim.
+
+The label is deterministic: the nonce is derived from the declared content
+(inputs, timestamp, producer and plan), never from a memory address, so the
+skeleton of an interrupted run is recomputable.  It remains a label, not an
+identity of the result.
 
 No new identity primitive is introduced: the factual identity is made of Git
 commit/tree ids and the projected identity is the structured declaration.
@@ -25,20 +30,26 @@ from typing import Any, Mapping, Sequence
 
 from .overlay import BaseState, DeclaredOverlay
 
-TOOL_VERSION = "1"
+#: Contract version of the engine (``TE_RESULT`` schema 2, checks CH-1…CH-9).
+TOOL_VERSION = "2"
 
+#: The check-set, versioned per check.  A semantic change in a check must bump
+#: its version: results produced under a different set are ``INCOMPARABLE``.
 CHECK_SET: tuple[tuple[str, str], ...] = (
     ("CH-1", "1"),
     ("CH-2", "1"),
-    ("CH-3", "1"),
+    ("CH-3", "2"),
     ("CH-4", "1"),
     ("CH-5", "1"),
     ("CH-6", "1"),
-    ("CH-7", "1"),
+    ("CH-7", "2"),
     ("CH-8", "1"),
+    ("CH-9", "1"),
 )
 
-CHECK_SET_VERSION: tuple[str, ...] = tuple(f"{name}:{version}" for name, version in CHECK_SET)
+CHECK_SET_VERSION: tuple[str, ...] = tuple(
+    f"{name}:{version}" for name, version in CHECK_SET
+)
 
 
 def canonical_json(payload: Any) -> str:
@@ -47,7 +58,9 @@ def canonical_json(payload: Any) -> str:
 
 
 def utc_now() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+    return (
+        datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+    )
 
 
 def factual_identity(base: BaseState) -> dict[str, str]:
@@ -64,7 +77,9 @@ def projected_identity(overlay: DeclaredOverlay) -> dict[str, Any]:
     }
 
 
-def check_set_payload(check_set: Sequence[tuple[str, str]] = CHECK_SET) -> list[dict[str, str]]:
+def check_set_payload(
+    check_set: Sequence[tuple[str, str]] = CHECK_SET,
+) -> list[dict[str, str]]:
     return [{"id": name, "version": version} for name, version in check_set]
 
 
@@ -90,6 +105,21 @@ def _slug(value: str) -> str:
     return cleaned.strip("-") or "unknown"
 
 
+def _content_nonce(
+    inputs: Mapping[str, Any], *, plan: int, producer: str, created: str
+) -> str:
+    """Deterministic nonce of the run label (content, never a memory address)."""
+    material = canonical_json(
+        {
+            "plan": plan,
+            "producer": producer,
+            "created_at": created,
+            "inputs": dict(inputs) if isinstance(inputs, Mapping) else {},
+        }
+    )
+    return hashlib.sha256(material.encode("utf-8")).hexdigest()[:8]
+
+
 def run_identity(
     inputs: Mapping[str, Any],
     *,
@@ -100,15 +130,14 @@ def run_identity(
 ) -> dict[str, Any]:
     """Build the ``RunIdentity`` label.
 
-    ``nonce`` and ``created_at`` are injectable so tests can be deterministic.
-    The label is *not* an identity of the result: two runs over the same inputs
-    may legitimately differ in their semantic findings.
+    ``nonce`` and ``created_at`` are injectable so tests can be deterministic;
+    by default the nonce is derived from the declared content.  The label is
+    *not* an identity of the result: two runs over the same inputs may
+    legitimately differ in their semantic findings.
     """
     created = created_at or utc_now()
     if nonce is None:
-        nonce = hashlib.sha256(
-            f"{created}:{producer}:{plan}:{id(inputs)}".encode("utf-8")
-        ).hexdigest()[:8]
+        nonce = _content_nonce(inputs, plan=plan, producer=producer, created=created)
     factual = inputs.get("factual", {}) if isinstance(inputs, Mapping) else {}
     commit = str(factual.get("commit", ""))[:12]
     compact = created.replace("-", "").replace(":", "").replace("Z", "")

@@ -93,6 +93,8 @@ class Proposal:
     premises: tuple[str, ...]
     items: tuple[Item, ...]
     gaps: tuple[str, ...]
+    unresolved_deliverables: tuple[str, ...]
+    rejected_paths: tuple[str, ...]
     anchor: AnchorObservation
     base: BaseState
     overlay: DeclaredOverlay
@@ -131,7 +133,26 @@ def _table_rows(body: str) -> list[list[str]]:
     return rows
 
 
-def _paths_from_text(text: str) -> tuple[str, ...]:
+def _looks_like_path(token: str) -> bool:
+    """True when a backticked token declares a file (a slash or an extension).
+
+    A deliverable line may carry a parenthetical annotation in backticks (for
+    example ``(`[Unreleased]`)``): that token is not a second deliverable.  The
+    rule is deliberately structural, never semantic: a declaration with no
+    slash and no extension is reported as unresolved instead of being guessed.
+    """
+    return "/" in token or "." in token
+
+
+def _paths_from_text(
+    text: str, rejected: list[str] | None = None
+) -> tuple[str, ...]:
+    """Every backticked repository-relative path in ``text``, in order.
+
+    A token that cannot be normalized is not silently dropped when ``rejected``
+    is provided: it is a declared path the change model cannot represent, and
+    CH-9 reports it.
+    """
     found: list[str] = []
     for token in _BACKTICK_RE.findall(text):
         candidate = token.strip()
@@ -140,23 +161,60 @@ def _paths_from_text(text: str) -> tuple[str, ...]:
         try:
             path = normalize_path(candidate)
         except ValueError:
+            if rejected is not None and candidate not in rejected:
+                rejected.append(candidate)
             continue
         if path not in found:
             found.append(path)
     return tuple(found)
 
 
-def _deliverables(text: str) -> tuple[str, ...]:
+def _deliverables(text: str) -> tuple[tuple[str, ...], tuple[str, ...], tuple[str, ...]]:
+    """Deliverables of ``## Entregables``: (paths, unresolved labels, rejected tokens).
+
+    Every file declared on a numbered line is enumerated (a line may declare
+    more than one).  A numbered line with no resolvable path is returned as an
+    *unresolved label*; a token that looks like a path but is not
+    repository-relative is returned as a *rejected token*.  Neither is completed
+    or guessed: CH-9 reports both.
+    """
     body = _section(text, "Entregables") or ""
     found: list[str] = []
+    unresolved: list[str] = []
+    rejected: list[str] = []
     for line in body.splitlines():
         match = _NUMBERED_RE.match(line)
         if not match:
             continue
-        paths = _paths_from_text(match.group(2))
-        if paths and paths[0] not in found:
-            found.append(paths[0])
-    return tuple(found)
+        candidates = [
+            token.strip()
+            for token in _BACKTICK_RE.findall(match.group(2))
+            if token.strip()
+            and " " not in token.strip()
+            and ":" not in token.strip()
+            and _looks_like_path(token.strip())
+        ]
+        paths: list[str] = []
+        line_rejected = False
+        for candidate in candidates:
+            try:
+                path = normalize_path(candidate)
+            except ValueError:
+                line_rejected = True
+                if candidate not in rejected:
+                    rejected.append(candidate)
+                continue
+            if path not in paths:
+                paths.append(path)
+        if not paths and not line_rejected:
+            label = match.group(2).strip()
+            if label and label not in unresolved:
+                unresolved.append(label)
+            continue
+        for path in paths:
+            if path not in found:
+                found.append(path)
+    return tuple(found), tuple(unresolved), tuple(rejected)
 
 
 def _scope(text: str) -> tuple[tuple[str, ...], bool]:
@@ -224,11 +282,11 @@ def _change_level(text: str) -> str:
     return match.group(1).strip() if match else ""
 
 
-def _load_citation_tool():
+def _load_tool(name: str):
     tools = Path(__file__).resolve().parents[2] / "tools"
     if str(tools) not in sys.path:
         sys.path.insert(0, str(tools))
-    return importlib.import_module("check_plan_citations")
+    return importlib.import_module(name)
 
 
 def _find_plan_in_base(repo: GitRepository, base: BaseState, plan: int) -> str | None:
@@ -270,7 +328,7 @@ def _build(
     if status.split("(")[0].strip().casefold().startswith("superseded"):
         raise ProposalError("PROPOSAL_SUPERSEDED", f"{path} is Superseded")
 
-    deliverables = _deliverables(text)
+    deliverables, unresolved_deliverables, rejected_paths = _deliverables(text)
     scope, scope_declared = _scope(text)
     effects = parse_declared_effects(text)
     effects_declared = declared_effects_section_present(text)
@@ -289,7 +347,7 @@ def _build(
     criteria = _checkbox_items(text, "Criterios de salida")
     steps = _steps(text)
     anchor = parse_anchor(text)
-    citations = tuple(_load_citation_tool().extract_citations(text))
+    citations = tuple(_load_tool("check_plan_citations").extract_citations(text))
 
     items: list[Item] = []
     for index, path_item in enumerate(deliverables, start=1):
@@ -339,6 +397,8 @@ def _build(
         premises=tuple(label for label, _ in premises),
         items=tuple(items),
         gaps=tuple(gaps),
+        unresolved_deliverables=unresolved_deliverables,
+        rejected_paths=rejected_paths,
         anchor=anchor,
         base=base,
         overlay=overlay,

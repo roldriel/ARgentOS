@@ -124,7 +124,7 @@ medido por anti-auto-referencia.
 
 - [x] `D-1`: CH-3 y CH-7 son funciones del commit base; ni el working tree ni el índice staged alteran su señal.
 - [x] `D-2`: `TE_RESULT` schema 2 registra `checks[]`; `--validate` recomputa los checks en la base y exige igualdad exacta, finding por check no válido y obligación por check con obligación.
-- [x] `D-3`: `no_progress.fingerprint` se verifica contra el fingerprint computado (que incluye los checks) y se cruza con `previous_te_id`/`input.previous_te_id`; `--validate` publica `computed_fingerprint`.
+- [x] `D-3`: `no_progress.fingerprint` se verifica contra el fingerprint computado (que incluye los checks y excluye el `status`), y se cruza con `previous_te_id`/`input.previous_te_id`; `--validate` publica `computed_fingerprint`.
 - [x] `D-4`: `run_identity` produce la misma etiqueta para los mismos inputs, `created_at`, productor y plan.
 - [x] `D-5`: un entregable declarado sin path resoluble o con path que escapa produce finding; una clase de efecto fuera del vocabulario cerrado produce `ANOMALY`.
 - [x] `D-6`: policy, `runtime/README.md`, glosario, `tests/AGENTS.md`, `CHANGELOG.md` y el INDEX describen exactamente lo que existe; el Plan 175 no se edita y su fila del INDEX se corrige por referencia.
@@ -164,7 +164,7 @@ salir 0.
 |---|---|---|---|
 | `D-1` | CH-3 resuelve citas y estado de artefacto contra el commit base; CH-7 recomputa el delta con blobs del commit base | `runtime/theoretical/checks.py` (`_ch3`: `verify_citation(root)`, `_artifact_status(root)`; `_ch7`: `scoped_content_identity.compute(root)`) | Una edición no commiteada o staged no cambia la señal |
 | `D-2` | `checks[]` en `TE_RESULT` + re-derivación en `--validate` | `runtime/theoretical/result.py` (función `validate_result`) no recomputa checks; un finding del engine puede borrarse | Finding eliminado, check faltante y obligación ausente rechazados |
-| `D-3` | Fingerprint verificado e inclusivo de los checks; `computed_fingerprint` en el reporte | `_PROGRESS_KEYS`; `fingerprint()` ignora checks | Fingerprint mentido e `previous_te_id` incoherente rechazados |
+| `D-3` | Fingerprint verificado e inclusivo de los checks (sin el `status`, que es la salida de la comparación); `computed_fingerprint` en el reporte | `_PROGRESS_KEYS`; `fingerprint()` ignora checks y `NO_PROGRESS` era inalcanzable (`F-2`) | Fingerprint mentido e `previous_te_id` incoherente rechazados |
 | `D-4` | Nonce de `RunIdentity` derivado de contenido | `runtime/theoretical/identity.py` (función `run_identity`) usa `id(inputs)` | Misma etiqueta con mismos inputs y timestamp |
 | `D-5` | CH-9 `declaration integrity` | `runtime/theoretical/proposal.py` (función `_deliverables`) descarta en silencio | Señales por entregable irresoluble, escape y clase de efecto desconocida |
 | `D-6` | Documentación y glosario alineados; corrección por referencia del INDEX | INDEX del Plan 175 desactualizado; policy v1 | Checkers de gobernanza y revisión |
@@ -226,6 +226,22 @@ Reglas nuevas del validador:
 | `DEPENDENCY_ATTACK` | Que TE importe el host o que el host importe TE | `PASS` — dirección de importación testada |
 | `NEGATIVE_PATH_ATTACK` | Inputs malformados, campos desconocidos, estados inválidos | `PASS` — rechazo determinista con exit code |
 | `HISTORICAL_INTEGRITY_ATTACK` | Que el cierre reescriba el Plan 175 o el CHANGELOG histórico | `PASS` — Plan 175 intacto; corrección del INDEX por referencia |
+
+## Findings / Correcciones / Pending
+
+### Findings
+
+- `<PLAN-176>:F-1` — estado: `resolved` (corregido por `<PLAN-176>:C-1`); observación: la narración del Plan 175 en `docs/plans/INDEX.md` (párrafo de estado y sección del Plan) describía «cierre en curso (Validation Anchor/Checkpoint)» y «con Validation Anchor/Checkpoint pendientes» cuando `f613147` ya los había registrado y el Plan declaraba condición derivada `Closed`; evidencia original: `docs/plans/INDEX.md` en `f613147` frente a `docs/plans/175-theoretical-execution-dev-v1.md:Checkpoint / cierre`; provenance: reconstrucción de alcance (H-11 del registro Working); resolución: `C-1` corrige el espejo **por referencia**, sin editar el Plan cerrado.
+- `<PLAN-176>:F-2` — estado: `resolved` (corregido por `<PLAN-176>:C-2`); observación: `NO_PROGRESS` era inalcanzable. El fingerprint incluía el `status` declarado y, a la vez, `NO_PROGRESS` se deriva de la igualdad de fingerprints: al declarar `NO_PROGRESS` el propio status cambiaba el valor comparado, y al declarar el status anterior la igualdad se cumplía pero el status derivado (`NO_PROGRESS`) no coincidía con el declarado. Las dos ramas producían un resultado inválido; el test heredado solo lo evitaba fijando el status final antes de calcular el fingerprint «anterior», algo que ninguna corrida previa real hace. Evidencia original: `runtime/theoretical/result.py` (`fingerprint` y `_no_progress`) en `f613147`; ejecución conceptual de dos corridas idénticas; `tests/test_theoretical_result.py` (caso 4 de la precedencia). Provenance: revisión adversarial de esta ejecución (`TEMPORAL_ATTACK`); resolución: `C-2` excluye el `status` del fingerprint (el status es la **salida** de la comparación, nunca su entrada) y mantiene ítems, checks y findings materiales.
+
+### Correcciones
+
+- `<PLAN-176>:C-1` — refs origen: `<PLAN-176>:F-1`; alcance de revalidación: el párrafo de estado y la sección del Plan 175 en `docs/plans/INDEX.md`; evidencia: `python tools/check_plan_structure.py` PASS y el Plan 175 sin diff (RFC-46: el artefacto cerrado no se reescribe).
+- `<PLAN-176>:C-2` — refs origen: `<PLAN-176>:F-2`; alcance de revalidación: `runtime/theoretical/result.py` (fingerprint), `tests/test_theoretical_result.py`, `tests/test_theoretical_adversarial.py` y la policy; evidencia: `test_temporal_attack_no_progress_needs_a_declared_previous_run` PASS, `test_fingerprint_ignores_cosmetic_edits_and_status_but_tracks_material` PASS y `--validate` verifica el fingerprint declarado.
+
+### Pending decisions
+
+N/A.
 
 ## Riesgos
 

@@ -498,26 +498,28 @@ memory-free) and `tests/test_fc_actor_provenance.py` (the external actor's
 declared provenance). The absence of isolation is asserted by
 `tests/test_fc_isolation_declaration.py`.
 
-## Theoretical Execution (Plan 175)
+## Theoretical Execution (Plans 175, 176)
 
 `runtime/theoretical/` is the DEV reference implementation of **Theoretical
-Execution v1**: a read-only evaluation of a committed Implementation Plan. It is
-not an execution host, an orchestrator, a worker, a state machine or a store.
+Execution**: a read-only evaluation of a committed Implementation Plan. It is not
+an execution host, an orchestrator, a worker, a state machine or a store.
 
 | Module | Responsibility |
 |---|---|
 | `overlay.py` | immutable `DeclaredOverlay` (declared path → unknown; undeclared path → base commit; never the working tree) |
-| `identity.py` | `InputIdentity`, `RunIdentity`, canonical JSON, check-set |
-| `proposal.py` | load the plan from the base commit, enumerate deliverables/steps/criteria/effects/premises, build the overlay |
-| `checks.py` | CH-1…CH-8, deterministic and read-only |
-| `result.py` | `TE_RESULT` contract, validator, derived `status`, staleness, structural comparison |
+| `identity.py` | `InputIdentity`, `RunIdentity` (content-derived nonce), canonical JSON, versioned check-set |
+| `proposal.py` | load the plan from the base commit, enumerate deliverables/steps/criteria/effects/premises and the unresolved/escaping declarations, build the overlay |
+| `checks.py` | CH-1…CH-9, deterministic and read-only; citations, artifact statuses and anchor identities are resolved against the base commit |
+| `result.py` | `TE_RESULT` schema 2 (including the engine-owned `checks[]`), validator that recomputes the checks, derived `status`, verified no-progress fingerprint, staleness, structural comparison |
 | `__main__.py` | CLI (`--emit`, `--validate`, `--stale`, `--compare`) |
 
 The five dimensions are split: the **producer** (the agent or human who invokes
 TE) performs `completeness`, `consistency` and `adversarial` and attests them;
 the **engine** performs `authority` and `verification` and validates the record.
 The engine never marks a producer dimension `PERFORMED`. The status is derived
-by `result.py`, never declared by the producer.
+by `result.py`, never declared by the producer, and the engine's check record
+cannot be edited: `--validate` recomputes it. A result produced under a
+different tool version or check-set is `INCOMPARABLE`, never `fresh`.
 
 ```bash
 python -m runtime.theoretical --plan N --base HEAD --emit
@@ -529,6 +531,10 @@ python -m runtime.theoretical --compare previous.json current.json
 The CLI never writes files, invokes no shell, network, model or credentials, and
 does not produce factual evidence. The operational procedure is
 `.agents/policies/theoretical-execution.md`; the design and acceptance criteria
-are `docs/plans/175-theoretical-execution-dev-v1.md`. Suites:
-`tests/test_theoretical_*.py`. The anchored dogfood is
-`tests/test_theoretical_dogfood.py`.
+are `docs/plans/175-theoretical-execution-dev-v1.md` (v1) and
+`docs/plans/176-theoretical-execution-dev-complete.md` (complete DEV capability);
+the scope reconstruction is
+`docs/working/proposals/THEORETICAL_EXECUTION_DEV_SCOPE_AND_GAPS_2026-10-24.md`.
+Suites: `tests/test_theoretical_*.py`. The anchored dogfood is
+`tests/test_theoretical_dogfood.py`; the Gate TE record is
+`docs/working/proposals/THEORETICAL_EXECUTION_DEV_COMPLETE_DOGFOOD.md`.

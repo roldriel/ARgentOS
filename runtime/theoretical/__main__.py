@@ -1,7 +1,9 @@
-"""CLI of Theoretical Execution (DEV v1).
+"""CLI of Theoretical Execution (DEV).
 
 The command is read-only: it prints JSON to stdout, reads result files, and
 never writes the repository, invokes a shell, a network, a model or a provider.
+The ``--validate`` report includes the computed no-progress fingerprint, the
+only value a producer needs to declare no-progress without guessing.
 
 Exit codes
     ``--emit``     0 skeleton printed; 2 base/proposal unreadable or not committed
@@ -23,6 +25,7 @@ from .proposal import ProposalError, load_proposal
 from .result import (
     build_skeleton,
     compare_results,
+    fingerprint,
     load_result,
     stale_state,
     validate_result,
@@ -73,6 +76,7 @@ def _validate(root: Path, path: str) -> int:
             "valid": not problems,
             "derived_status": derived,
             "declared_status": payload.get("status"),
+            "computed_fingerprint": fingerprint(payload),
             "problems": problems,
         }
     )

@@ -9,6 +9,7 @@ module is read-only and depends only on local Git objects.
 from __future__ import annotations
 
 import subprocess
+from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 

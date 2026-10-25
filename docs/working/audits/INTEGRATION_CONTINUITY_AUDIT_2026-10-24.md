@@ -1,6 +1,6 @@
 # Auditoría de continuidad de integración — 2026-10-24
 
-**Plan:** 177  
+**Plan:** 178 (renumerado desde 177 por colisión concurrente; `<PLAN-178>:C-1`)  
 **Rama:** `dev`  
 **HEAD:** `e07f446bb79b6f4682599c103eb5b1081828105c`  
 **Alcance:** Priority 3.6 — Continuidad de integración y coherencia evolutiva

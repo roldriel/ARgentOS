@@ -1,4 +1,4 @@
-# Plan 177 — Auditoría de continuidad de integración y coherencia evolutiva
+# Plan 178 — Auditoría de continuidad de integración y coherencia evolutiva
 
 **Status:** Aprobado para ejecución
 **Fecha:** 2026-10-24
@@ -8,7 +8,7 @@
 **RFC-56 Class:** N/A
 **Change Level:** L2
 **Depende de:** Plan 176
-**Origen:** solicitud directa del mantenedor + `PRIORITY.md:3.6`
+**Origen:** solicitud directa del mantenedor (prioridad local «Priority 3.6», insumo del mantenedor no versionado)
 **Work type:** auditoría
 **Superseded por:** —
 
@@ -22,7 +22,7 @@ El plan no presupone que toda ausencia de referencia sea un defecto. Las fronter
 
 | Clase | Contenido | Dueño | Fuente / evidencia |
 |---|---|---|---|
-| `P-1` Intención | Auditar Priority 3.6 sobre continuidad de integración en DEV | humano | solicitud directa; `PRIORITY.md:3.6` |
+| `P-1` Intención | Auditar Priority 3.6 sobre continuidad de integración en DEV | humano | solicitud directa; prioridad local del mantenedor (insumo no versionado) |
 | `P-2` Confianza | HIGH | agente | solicitud + Priority 3.6 |
 | `P-3` Contexto | DEV layer, placement, plan template/index, runtime, tests, docs y payload leído como datos | agente | rutas auditadas en el informe |
 | `P-4` Derivabilidad | APPLIES: reconstruir contrato → lifecycle → implementación → consumer → evidencia | agente | Priority 3.6; `.agents/AGENTS.md`; authority policy |
@@ -41,9 +41,9 @@ El plan no presupone que toda ausencia de referencia sea un defecto. Las fronter
 
 ## Entregables
 
-1. `docs/plans/177-integration-continuity-audit.md`
+1. `docs/plans/178-integration-continuity-audit.md`
 2. `docs/working/audits/INTEGRATION_CONTINUITY_AUDIT_2026-10-24.md`
-3. Registro del Plan 177 en `docs/plans/INDEX.md`
+3. Registro del Plan 178 en `docs/plans/INDEX.md`
 
 ## Pasos
 
@@ -90,17 +90,21 @@ Pendiente hasta completar validación y decidir si existen correcciones que requ
 
 ## Findings / Correcciones / Pending
 
+Los hallazgos sustantivos de la auditoría permanecen en el informe hasta el cierre del Plan; los registros siguientes corresponden a la regularización de identidad de este artefacto.
+
 ### Findings
 
-Los hallazgos sustantivos se mantienen en el informe hasta determinar cuáles requieren seguimiento formal del Plan.
+- `<PLAN-178>:F-1` — estado: `resolved` (corregido por `<PLAN-178>:C-1`); observación: dos planes distintos quedaron registrados con el número `177` —este Plan de auditoría y el Plan de README ya cerrado—, lo que rompe la identidad única de los planes y la resolución de referencias por número; evidencia original: `d925d38`/`d3300fd` (alta y corrección de este Plan como `177-integration-continuity-audit.md`) frente a `f982394` (Plan 177 README, `Executed` con condición derivada `Closed`); estado Git observado: merge `4912e0f`, divergencia `dev`/`origin/dev` cerrada localmente; provenance original: auditoría de referencias de la integración (2026-10-25); resolución: este Plan pasa a `178` y el número `177` permanece en el plan cerrado, sin reescribir su artefacto (RFC-46).
+- `<PLAN-178>:F-2` — estado: `resolved` (corregido por `<PLAN-178>:C-2`); observación: el Plan citaba un archivo local del mantenedor no versionado como fuente `ruta:sección`, lo que convierte un insumo untracked en dependencia del repositorio y viola la contención de RFC-69 I2; evidencia original: `python -m pytest tests/test_repo_containment.py` → `untracked citation targets: ['PRIORITY.md']`; estado Git observado: árbol de integración 2026-10-25; provenance original: gate de validación de la integración; resolución: la prioridad se registra como insumo local no versionado, sin cita `ruta:sección`.
 
 ### Correcciones
 
-N/A al inicio. Las correcciones de implementación fuera de la documentación de auditoría requieren alcance/autorización propios.
+- `<PLAN-178>:C-1` — refs origen: `<PLAN-178>:F-1`; alcance de revalidación: este Plan (identidad, título, path, referencias internas `<PLAN-178>` y Trazabilidad), su fila y sección en `docs/plans/INDEX.md`, y la línea `**Plan:**` del informe `docs/working/audits/INTEGRATION_CONTINUITY_AUDIT_2026-10-24.md`; evidencia: renumeración y actualización de referencias verificadas con `git log --graph --all` y auditoría de referencias; `git grep` sin coincidencias del path anterior fuera de este registro de provenance, y `check_plan_structure`/`check_plan_citations` en verde en el commit de integración.
+- `<PLAN-178>:C-2` — refs origen: `<PLAN-178>:F-2`; alcance de revalidación: `P-1`, `**Origen:**` y `## Trazabilidad` de este Plan; evidencia: `python -m pytest tests/test_repo_containment.py` pasa (5 passed, exit 0) y `git grep` no encuentra citas a `PRIORITY.md` desde fuentes canónicas; la prioridad queda como mención no-citable «prioridad local del mantenedor (insumo no versionado)».
 
 ### Pending decisions
 
-- `<PLAN-177>` — determinar si los gaps de integración identificados requieren planes de reparación separados; blocking: no para completar el inventario, sí para ejecutar cambios fuera del alcance; owner: mantenedor; evidencia: informe.
+- `<PLAN-178>` — determinar si los gaps de integración identificados requieren planes de reparación separados; blocking: no para completar el inventario, sí para ejecutar cambios fuera del alcance; owner: mantenedor; evidencia: informe.
 
 ## Riesgos
 
@@ -111,7 +115,7 @@ N/A al inicio. Las correcciones de implementación fuera de la documentación de
 
 ## Trazabilidad
 
-`PRIORITY.md:3.6` → Plan 177 → `INTEGRATION_CONTINUITY_AUDIT_2026-10-24.md` → posibles planes de reparación posteriores.
+`Priority 3.6` (insumo local del mantenedor, no versionado) → Plan 178 → `INTEGRATION_CONTINUITY_AUDIT_2026-10-24.md` → posibles planes de reparación posteriores.
 
 ## Nota de ejecución
 

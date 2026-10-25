@@ -136,7 +136,7 @@ El preregistro congelado fijó: dos trials con el mismo protocolo (`FRAME → BA
 
 ## 5. Desviaciones y validez
 
-Clases: D1 no material; D2 material con trial válido y limitación; D3 invalida. Inventario completo (ver Apéndice P):
+Clases: D1 no material; D2 material con trial válido y limitación; D3 invalida. Inventario completo: **14 desviaciones registradas (8 D2, 6 D1; ninguna D3)**; detalle y verificación en el Apéndice P:
 
 | ID | Desviación | Clase | Efecto |
 |---|---|---|---|
@@ -2254,7 +2254,9 @@ La campaña es **legible y reproducible**: hashes finales verificados, cadena de
 **CAMPAIGN_INTEGRITY = VALID_WITH_LIMITATIONS**
 
 
-## Apéndice Q — Ledger de la campaña (append-only, verbatim)
+## Apéndice Q — Ledger de la campaña (snapshot append-only)
+
+> Snapshot tomado al ensamblar este registro (entradas `[000]`–`[012]`). Las entradas posteriores del ledger —el cierre `[013]` con el hash del commit 2 y la corrección final `[014]` con el hash de este archivo— son append-only y viven en `.project/campaign/ledger.md` (gitignored); no se incorporan aquí para no introducir una segunda fuente ni una auto-referencia. El ledger original conserva la misma forma y la misma cadena `prev`/`hash`.
 
 [000] 2026-10-25T13:33:14.2238100-03:00 | GENESIS | prereg_sha256=0E166E8F10F7F06207063B5F2A0C7F9FD3C2639F7C078DDF066D9DA33B8B37AE frame2_sha256=A64AE4ADBF1C550019A742F036FBA55AF797B926F87740EA5BAC80F359EBE0C2 frame3_sha256=9674C3DF6BBDDEFAF48BCC90269EC9E15914C6873EDCBA330700E6BD24476865 prev=0000000000000000000000000000000000000000000000000000000000000000
 [001] 2026-10-25T13:33:14.2238100-03:00 | LEDGER_HASH_000=6a431651b88df93513ceb6be8dda1ac5ee16c820fff7f8115f37a1ecd1e37bad

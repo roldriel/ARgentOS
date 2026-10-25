@@ -11,6 +11,9 @@ trace of what happened.
 request → understand → plan → execute → verify → evidence → knowledge → next decision
 ```
 
+*Conceptual sequence, not the protocol's state machine — the normative states and gates are
+described below.*
+
 ARgentOS is a **protocol**, not a program: a self-contained payload of Markdown documents
 (roles, a state machine, contracts, gate checklists, evidence rules) plus a small
 standard-library Python harness — the scripts that record gate state, validate artifacts and,
@@ -27,10 +30,10 @@ what was checked, and what evidence supports the word "done".
 ## TL;DR
 
 - **What it is** — a protocol written as documents, read by the agent during a session.
-- **What it changes** — `prompt → edits` becomes a sequence of written, reviewed states:
+- **What it changes** — `prompt → edits` becomes a sequence of written, reviewed steps:
   analysis, specification, context, plan, execution, verification, evidence.
 - **What you get** — explicit task states, review gates, an evidence discipline, an
-  authorization model and a project knowledge base.
+  authorization model and an agent-curated knowledge model.
 - **What it does not do** — run a model, sandbox the agent or guarantee correctness.
   Enforcement is declarative by default; see [Status and declared limits](#status-and-declared-limits).
 - **How to adopt** — pin a published payload, materialize the canonical layout, validate,
@@ -77,7 +80,11 @@ flowchart TD
     K --> G
 ```
 
-`review` in the flow above is a gate on a transition, not a task state.
+The gates are conditions on transitions, not task states. Arrows above may group a gated
+transition with an ungated one, and the intermediate states (`TASK_READY`, `CONTEXT_GATHERED`,
+`CONTEXT_READY`, `PLAN_READY`), `NEEDS_CLARIFICATION` and the recovery loops are omitted for
+readability. The diagram shows the main path of a `standard`-profile task; `trivial` tasks
+skip the context states and their gates are recorded as `skipped: profile`.
 
 - **Every worker-invoked state produces an artifact.** Session artifacts live under
   `.argentos/.project/<session-uuid>/<iteration>/` in an adopting project (under the
@@ -93,12 +100,12 @@ flowchart TD
   `standard` or `complex` in `TASK_ANALYSIS.md`; the profile decides which phases and gates
   are mandatory. A `trivial` task still plans and verifies. Reclassification can only escalate
   to a larger profile, and the change is recorded.
-- **"Done" is derived from evidence, not declared.** `COMPLETED` requires the verification
-  gates (`H06`, `H07`) to pass, every in-scope gate recorded PASS (gates omitted by the task
-  profile are recorded as skipped), a verification report whose in-scope criteria are not
-  failing or pending, human approvals completed or deferred with confirmation, and recorded
-  evidence. `ABORT` requires a founded, recorded cause. Failures go to `RECOVERY`, which
-  routes back to planning or to an earlier artifact.
+- **"Done" is derived from evidence, not declared.** `COMPLETED` requires every in-scope gate
+  recorded PASS — `H06` always, and `H07` when the profile requires the scope gate (a `trivial`
+  task records `H07` as `skipped: profile`) — a verification report whose in-scope criteria
+  are neither failing nor pending, every in-scope human approval completed or deferred with
+  user confirmation, and recorded evidence. `ABORT` requires a founded, recorded cause.
+  Failures go to `RECOVERY`, which routes back to planning or to an earlier artifact.
 - **The state machine is a written contract, not a runtime.** The protocol does not persist
   a "current state" or advance by itself; the artifacts and the gate records are the trail.
   That is a deliberate limit ([Status and declared limits](#status-and-declared-limits)).
@@ -116,13 +123,13 @@ language first, then tied to its ARgentOS name and to where it lives.
 | The idea | ARgentOS name | Where it lives | Maturity |
 |---|---|---|---|
 | Work advances through verifiable states, and each critical transition is reviewed against a written checklist. | **Task lifecycle and review gates** | Protocol payload (`AGENT_STATE_MACHINE.md`, `harness/`) | Protocol — normative; gate checklists judged |
-| Every claim is backed by a recorded entry: a re-readable object, a command result with its exit code, a citation — or, weakest, the agent's own attestation. | **Evidence classes and the `VERIFIED` invariant** | Protocol payload (`standards/quality/EVIDENCE.md`) | Protocol — normative; declarations validated structurally |
+| Every claim is backed by a recorded entry — a re-readable object, a command result with its exit code, a citation, or, weakest, the agent's own attestation — or is explicitly declared as an inference. | **Evidence classes and the `VERIFIED` invariant** | Protocol payload (`standards/quality/EVIDENCE.md`) | Protocol — normative; declarations validated structurally |
 | An agent may act only inside explicit boundaries: a capability is not a permission, and an effect outside the default frontier (what the protocol allows without asking) needs recorded authorization. | **Authority and authorization model** | Protocol payload (`standards/runtime/AUTHORIZATION.md`) | Protocol — normative; judged |
-| Knowledge about the project is kept with freshness, provenance and curation instead of being re-derived every session. | **Knowledge base, Knowledge Lifecycle, Memory System** | Protocol contracts; adopter state under `.argentos/.project/knowledge/`; DEV reference in `runtime/memory/` (not shipped) | Protocol model shipped; implementation not implemented; DEV reference only |
-| A change is governed from intake to closed, and "done" is a derived condition rather than an editable status. | **Change Lifecycle** | DEV only (`docs/rfc/75-change-lifecycle.md`, `docs/`, `.agents/`) | DEV only — operational here; not shipped |
+| Knowledge about the project is kept with freshness, provenance and curation instead of being re-derived every session. | **Knowledge base, Knowledge Lifecycle, Memory System** | Protocol contracts; adopter state under `.argentos/.project/knowledge/`; DEV reference in `runtime/memory/` (not shipped) | Protocol model shipped; protocol implementation NOT IMPLEMENTED (RFC-80); DEV reference only |
+| A change is governed from intake to closed, and "closed" is a derived condition rather than an editable status. | **Change Lifecycle** | DEV only (`docs/rfc/75-change-lifecycle.md`, `docs/`, `.agents/`) | DEV only — operational here; not shipped |
 | Before applying a plan already committed to the repository, the agent walks through it to find missing dependencies, contradictions and unverifiable claims without writing anything. | **Theoretical Execution (TE)** | DEV only (`runtime/theoretical/`, plan 176) | DEV only — implemented here; not shipped |
 | More than one attributed evaluation can examine a proposal before a human decides, preserving the disagreement. | **Adversarial deliberation** | Protocol payload (`skills/adversarial-deliberation/`, `contracts/DELIBERATION_REPORT.md`) | Protocol — shipped; invoked by judgment; advisory |
-| A change should declare the systems, contracts, states and consumers it connects to. | **Integration Surface** | Not a mechanism today | Idea — recorded; not implemented |
+| A change should declare the systems, contracts, states and consumers it connects to. | **Integration Surface** | Not a mechanism today | Idea — only in untracked maintainer notes; not implemented |
 
 **Maturity terms:** *Protocol* = normative or capability content that ships on `dist`; *DEV* =
 capability of this repository only, never shipped; *Idea* = recorded, no mechanism yet.
@@ -170,8 +177,8 @@ workflow in [`.agents/workflows/change-lifecycle.md`](.agents/workflows/change-l
 
 ### Theoretical Execution — thinking a change through before applying it
 
-Before touching the repository, an agent can walk through a plan already committed to the
-repository conceptually: enumerate its declared deliverables, check citations, artifact
+Before touching the repository, an agent can conceptually walk through a plan already committed
+to the repository: enumerate its declared deliverables, check citations, artifact
 statuses, scope and authority against the base commit, and surface missing dependencies,
 contradictions, omissions or claims that cannot be evaluated yet. ARgentOS's development
 layer calls this **Theoretical Execution (TE)**.
@@ -219,11 +226,13 @@ proposal
 
 It is discretionary — the orchestrator invokes it by recorded judgment when a decision has at
 least two material directions; there is no feature flag — and it is never a gate, a vote or an
-authority: its output is advisory attestation, not evidence, and it does not claim epistemic
-independence. A courtroom-style model — prosecution, defense, rebuttal, independent jurors,
-voting — is explicitly out of scope (RFC-77 Non-Goals) and not implemented; the internal
-program that produced the capability was called *Jury Trial*, but that is a label, not a
-mechanism, and the payload contains no jury, panel, juror or voting entity.
+authority. Its output is attestation-class evidence — the weakest class — advisory, and never
+a substitute for externally verifiable evidence; it does not claim epistemic independence.
+A courtroom-style model — prosecution, defense, rebuttal, independent jurors, voting — is not
+part of the capability: RFC-77's Non-Goals explicitly exclude confrontation, voting and
+N-juror semantics, and it is not implemented. The internal program that produced the
+capability was called *Jury Trial*, but that is a label, not a mechanism, and the payload
+contains no jury, panel, juror or voting entity.
 
 ### Integration Surface — an idea that is not a mechanism yet
 
@@ -265,8 +274,9 @@ What this buys, concretely:
 - What the session learned can be curated into the project knowledge base for the next
   session, with provenance and freshness.
 
-A verification report is not prose plus a promise: it carries structured evidence entries
-like this one (format: [`EVIDENCE.md`](protocol/.agents/standards/quality/EVIDENCE.md)).
+A verification report is not prose plus a promise: it carries structured evidence entries,
+for example the following (illustrative entry; the format is defined in
+[`EVIDENCE.md`](protocol/.agents/standards/quality/EVIDENCE.md)).
 
 ```toml
 [[evidence]]
@@ -332,12 +342,13 @@ repository's `.agents/` nor `docs/`, `tools/` or `runtime/`.
 
 ### Status
 
-ARgentOS is actively developed. The current published protocol version is **12.3.3**
+ARgentOS is actively developed. The latest published protocol version is **12.3.3**
 ([`protocol/.agents/VERSION`](protocol/.agents/VERSION), history in
 [`CHANGELOG.md`](CHANGELOG.md)). By policy, development happens on `dev`; a release is a
 verified `dev` → `master` promotion plus an annotated tag, and CI regenerates `dist` from
-`master`. This README does not describe the current branch state — that snapshot belongs to
-[`docs/VERSIONING.md`](docs/VERSIONING.md) §9.
+`master`. This README describes the policy, not the live branch state: `git` is authoritative
+for the current branches, and [`docs/VERSIONING.md`](docs/VERSIONING.md) §9 records the
+2026-10-23 release snapshot.
 
 ### Declared limits
 
@@ -419,9 +430,9 @@ decision procedure itself is prose.
 including the historical layout. Changes per version are in [`CHANGELOG.md`](CHANGELOG.md).
 
 The shipped lifecycle (`install` / `update` / `uninstall` / `doctor` / `recover`) is
-deterministic and reversible: it keeps a manifest, verified backups and a recovery journal,
-reports a state with a matching exit code so automation does not parse prose, and stops on
-ambiguity — detecting a situation never authorizes resolving it.
+deterministic and reversible: it keeps a manifest, backups recorded with their hashes and a
+recovery journal, reports a state with a matching exit code so automation does not parse prose,
+and stops on ambiguity — detecting a situation never authorizes resolving it.
 
 ## Where to look next
 

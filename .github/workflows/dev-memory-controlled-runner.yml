@@ -1,0 +1,14 @@
+name: DEV Memory Controlled Runner
+
+on:
+  push:
+    branches: [refactor]
+  workflow_dispatch:
+
+jobs:
+  runner-self-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run controlled runner self-test
+        run: python3 tools/dev_memory_controlled_runner.py --self-test

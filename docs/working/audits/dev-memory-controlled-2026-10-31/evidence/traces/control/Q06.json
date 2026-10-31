@@ -1,0 +1,400 @@
+{
+  "schema": "argentos.dev-memory.controlled-trace.v1",
+  "condition": "CONTROL",
+  "question_id": "Q06",
+  "question": "Is Agent-Computer Interface design an independent optimization surface?",
+  "run": {
+    "run_id": "full-20261031T171408",
+    "source_digest": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "runner_sha256": "f69e6080b7aaf95a3334b56e9d101040cb2dac900b05adc3523c4662b6297096",
+    "adapter_sha256": "5b27f4f1022332321dff8f65fc0cc3ed6bf670f43fd86b1773c1e02f7c2a4b4c",
+    "tool_set_sha256": "a5013d17a6fd831003f44fc4003db0723ccf173a11c0ad517f8294b8a306d328",
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "prompt_sha256": "9dc876927f1d9f1b5f4da9cae61844263ae08d8ef167e7e18a22ae145fb30afb",
+    "grader_prompt_sha256": "225c1fb3d52a8871b0114058034dd29a216f3fcff713cfbcf9af9519bec84b65",
+    "key_sha256": "bd172b1da52a524ccc0bc6f8ccce8be3864d4889d25e6b64d2a11f7e86017081",
+    "evidence_sha256": "b0e979606dd436db04e990760dca4d642213581418e9958290c2bf7a747cb70c"
+  },
+  "workspace": {
+    "runner": "C:\\Users\\rolda\\AppData\\Local\\Temp\\argentos-memory-control-r0pnvykb\\repo",
+    "agent": "C:\\Users\\rolda\\AppData\\Local\\Temp\\bench-o5roplcm\\repo",
+    "neutral_copy": true
+  },
+  "base_commit": "a5f97c163b56b82dc8fadd4e3f65646899e9c245",
+  "model_label": "deepseek-official/deepseek-flash (DeepSeek-V4.1-Flash)",
+  "dsh_cli": "D:\\Programas\\DeepseekHarness\\resources\\runtime\\cli\\bin\\dsh.cmd",
+  "experimental_infrastructure": "tools/dev_memory_agent_executor.py",
+  "integrity": {
+    "pilot_present": false,
+    "pilot_sha256": null,
+    "runner_pilot_present": false,
+    "workspace_digest_before": "fedb8866755b00d44f9e754b35ea81dcfda4e17a3fd2eb0121f800c0f0a954b0",
+    "workspace_digest_after": "fedb8866755b00d44f9e754b35ea81dcfda4e17a3fd2eb0121f800c0f0a954b0",
+    "workspace_stable": true,
+    "condition_labels_in_child_env": [],
+    "condition_token_in_agent_cwd": false,
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "grader_tool_policy_sha256": "ea826e1e9ceb38bb215a8e5f944dcd9399d1cb0972718e9d4cdcf559dc9c9153",
+    "disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents"
+    ],
+    "grader_disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents",
+      "tool-fs",
+      "tool-fs-search",
+      "tool-skill",
+      "tool-todo",
+      "tool-goal"
+    ],
+    "observed_disallowed_tools": [],
+    "observed_disallowed_tool_attempts": [],
+    "out_of_workspace_calls": [],
+    "failed_reads": [],
+    "agent_sandbox": "read-only"
+  },
+  "instrumentation": {
+    "file_open_events": [
+      "REFACTOR_SWE_AGENT.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md",
+      "runtime/README.md"
+    ],
+    "search_events": [
+      "Agent-Computer Interface|Agent Computer Interface|\\bACI\\b",
+      "**/*.md",
+      "optimization surface|optimisation surface|independent.*surface|AgentWorker tool|tool/feedback surface|execution surface",
+      "AgentWorker|Agent Worker|tool surface|agent-facing|agent facing|tool design|interface design",
+      "AgentWorker|Agent Worker|tool surface|agent-facing|agent facing|tool design|interface design|optimization",
+      "SWE-agent|mini-SWE|REFACTOR_|refactor branch|rama refactor|comparative study|estudio comparativo",
+      "AC[Ii]|Agent.Computer|interfaz.*agente|superficie de optimización|optimization",
+      "(?i)agent[- ]computer|(?i)\\baci\\b|(?i)swe[- ]agent",
+      "(?i)optimization|optimización|optimi[sz]ation surface",
+      "(?i)surface",
+      "docs/plans/18*.md",
+      "(?i)independent|independiente|separate surface|separada|orthogonal|ortogonal",
+      "(?i)optimization|superficie|surface",
+      "REFACTOR_*",
+      "*",
+      "(?i)interface|surface|tool",
+      "(?i)tool|interface|superficie|herramienta",
+      "(?i)tool|interface|superficie|herramienta",
+      "PRIORITY*",
+      "*refactor*",
+      "(?i)bounded observation|history compression|history processor|pre-action|syntax.checking|edit gate|tool ergonomics|agent.computer",
+      "(?i)bounded observation|history compression|history processor|pre-action|syntax.checking|edit gate|tool ergonomics|agent.computer",
+      "DEV Agent Worker|Agent Worker|AgentWorker",
+      "(?i)agent|interface|tool",
+      "(?i)agent.computer|swe.agent|tool surface|optimization surface",
+      "Working|INDEX = registro|nunca autoridad|pre-canónicos"
+    ],
+    "source_rehydration_events": [
+      "REFACTOR_SWE_AGENT.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md"
+    ],
+    "shell_commands": [],
+    "tool_calls": [
+      {
+        "tool": "grep",
+        "query": "Agent-Computer Interface|Agent Computer Interface|\\bACI\\b",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "**/*.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_SWE_AGENT.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_SYNTHESIS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_MATRIX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "optimization surface|optimisation surface|independent.*surface|AgentWorker tool|tool/feedback surface|execution surface",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "AgentWorker|Agent Worker|tool surface|agent-facing|agent facing|tool design|interface design",
+        "path": "docs",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "AgentWorker|Agent Worker|tool surface|agent-facing|agent facing|tool design|interface design|optimization",
+        "path": "protocol",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "SWE-agent|mini-SWE|REFACTOR_|refactor branch|rama refactor|comparative study|estudio comparativo",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "AC[Ii]|Agent.Computer|interfaz.*agente|superficie de optimización|optimization",
+        "path": "docs/plans/INDEX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/180-comparative-architecture-refactor-study.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "(?i)agent[- ]computer|(?i)\\baci\\b|(?i)swe[- ]agent",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "(?i)optimization|optimización|optimi[sz]ation surface",
+        "path": "ROADMAP.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "(?i)surface",
+        "path": "ROADMAP.md",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "docs/plans/18*.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/INDEX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "(?i)independent|independiente|separate surface|separada|orthogonal|ortogonal",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "(?i)optimization|superficie|surface",
+        "path": "docs/plans/180-comparative-architecture-refactor-study.md",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "REFACTOR_*",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "*",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "(?i)interface|surface|tool",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "(?i)tool|interface|superficie|herramienta",
+        "path": "docs/rfc",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "(?i)tool|interface|superficie|herramienta",
+        "path": "docs/adr",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "PRIORITY*",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "*refactor*",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "(?i)bounded observation|history compression|history processor|pre-action|syntax.checking|edit gate|tool ergonomics|agent.computer",
+        "path": "runtime",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "(?i)bounded observation|history compression|history processor|pre-action|syntax.checking|edit gate|tool ergonomics|agent.computer",
+        "path": "tests",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "DEV Agent Worker|Agent Worker|AgentWorker",
+        "path": "runtime/README.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "runtime/README.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "(?i)agent|interface|tool",
+        "path": "ROADMAP.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "(?i)agent.computer|swe.agent|tool surface|optimization surface",
+        "path": "docs/glossary",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Working|INDEX = registro|nunca autoridad|pre-canónicos",
+        "path": "docs/AGENTS.md",
+        "status": "completed"
+      }
+    ],
+    "observed_tools": [
+      "glob",
+      "grep",
+      "read"
+    ],
+    "distinct_files_opened": [
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_SWE_AGENT.md",
+      "REFACTOR_SYNTHESIS.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md",
+      "runtime/README.md"
+    ]
+  },
+  "agent": {
+    "elapsed_seconds": 103.21,
+    "returncode": 0,
+    "timed_out": false,
+    "error": null,
+    "session_id": "session-9ab33da5-3f7f-4c0d-b28d-1371db734381",
+    "turn_end": {
+      "kind": "completed"
+    },
+    "usage": {
+      "inputTokens": 69705,
+      "outputTokens": 12695,
+      "cacheReadTokens": 905984,
+      "cacheWriteTokens": 0,
+      "totalTokens": 988384
+    },
+    "stderr_tail": "[llm-deepseek-api-key] model listing from https://api.deepseek.com/models loaded 2 model(s), skipped 0 row(s)\n",
+    "final_answer": "CONCLUSION: The repository does not establish Agent-Computer Interface (ACI) design as an independent optimization surface. It records it only as a proposed candidate: the SWE-agent study says ARgentOS “should explicitly treat the Agent-Computer Interface as an optimization surface” for AgentWorker, and the synthesis treats ACI as a separate supported direction with its own proposed experiment. Independence is neither defined nor tested, no experiment result exists, and no RFC, ADR, executed plan or implementation adopts an ACI optimization surface. It is a candidate/aspirational surface, not an established independent one.\n\nSCOPE: Applies only to the DEV runtime’s AgentWorker tool/feedback surface, inside the comparative study authorized by plan 180 on the `refactor` branch. It does not extend to `protocol/.agents/` or adopted projects, does not describe implemented runtime behavior, does not cover the unrelated external “ACI” (`context_intelligence_server`) mentioned in `docs/working/audits/architecture-capability-review.md`, and does not establish orthogonality from Memory, execution continuity, evaluation or delegation. The study itself says no architectural abstraction should be added until an experiment demonstrates a real problem (`REFACTOR_SYNTHESIS.md:138`).\n\nEVIDENCE:\n- `REFACTOR_SWE_AGENT.md:7-24` — compares SWE-agent’s ACI; states “the interface between an agent and a computer is itself an engineering surface”; says ARgentOS focuses less on ACI quality and calls this “a real candidate for ARgentOS improvement.”\n- `REFACTOR_SWE_AGENT.md:74-85` — proposes ADAPT-1 ACI review, ADAPT-2 bounded observation tools, ADAPT-3 pre-action validation and ADAPT-4 runtime history compression.\n- `REFACTOR_SWE_AGENT.md:93-97` — proposes an experiment and concludes `ADAPT`: ARgentOS “should explicitly treat the Agent-Computer Interface as an optimization surface while preserving its existing governance boundary.”\n- `REFACTOR_MATRIX.md:15, 42-45, 75, 93-107, 115` — calls ACI “an architectural surface,” says ACI quality “should become an explicit optimization surface for AgentWorker,” lists ACI under Adapt, places it under Runtime in the emerging architecture, and ranks it priority 3.\n- `REFACTOR_SYNTHESIS.md:118-138` — calls ACI the “strongest interface convergence,” asks whether AgentWorker’s execution surface is optimized for an agent, proposes measures, and says “No architectural abstraction should be added until this experiment demonstrates a real problem.”\n- `REFACTOR_SYNTHESIS.md:240-252, 257-280, 333-336` — lists five supported directions (A Memory, B execution continuity, C ACI, D evaluation, E delegation), defines Experiment 3 for ACI, says “Do not implement all five simultaneously,” and ends with `KEEP ... ADAPT selectively. EXPERIMENT before institutionalizing.`\n- `docs/plans/180-comparative-architecture-refactor-study.md:3, 16-20, 55-61, 88, 102-104` — governs the study: status `Aprobado para ejecución`; no authorization to change `dev`, `master`, `protocol/.agents/` or `dist`; the matrix is not authority over the individual analyses; analyses must distinguish observed facts, inferences and proposals; no architectural changes may be implemented in the plan, and future adoptions require separate, explicitly authorized changes.\n- `docs/plans/INDEX.md:15` — records plan 180 as `Aprobado para ejecución`, DEV-only, limited to the `refactor` branch.\n- `docs/AGENTS.md:16-25, 177-179` — Working material is transitory/pre-canonical and never a normative target; INDEX is “registro/navegación” and never authority.\n- `runtime/README.md:366-448` — describes the current AgentWorker boundary and declared limits with no ACI/tool-surface optimization and no ACI implementation.\n- Negative checks: repository-wide searches for `Agent-Computer Interface`, `ACI` and `SWE-agent` returned only the `REFACTOR_*.md` study files and the unrelated external-ACI audit; searches for bounded observations, history compression, pre-action or syntax-gate mechanisms returned no matches under `runtime/` or `tests/`; `ROADMAP.md` and `docs/glossary/` contain no ACI entry.\n\nAUTHORITY:\n- The only Governance artifact is `docs/plans/180-comparative-architecture-refactor-study.md`, which authorizes and scopes the study only; it is not `Executed`/`Closed` and explicitly forbids architectural implementation and requires separate authorization for future adoption.\n- `REFACTOR_SWE_AGENT.md` is the individual analysis and therefore the primary study evidence about ACI, but it is a study deliverable, not a normative artifact.\n- `REFACTOR_MATRIX.md` is a summary/index; plan 180 step 11 explicitly says it must not become authority over the individual analyses.\n- `REFACTOR_SYNTHESIS.md` is a derived synthesis/summary, not primary authority.\n- None of these is an RFC, ADR, roadmap item, glossary term or accepted adoption decision. `docs/AGENTS.md` makes Working/pre-canonical material non-normative and INDEXes non-authoritative.\n- Unverified: whether Experiment 3 was ever run or measured; whether the external SWE-agent documentation cited by the study (URLs, no offline artifact) is accurate; whether “independent” has any operational definition; and whether any future ACI adoption has been authorized.\n\nUNSUPPORTED:\n- That ACI design is an already-established, validated or implemented independent optimization surface.\n- That ACI optimization is independent/orthogonal in effect from context/compression, Memory, execution continuity, evaluation or delegation; the repository does not analyze interactions, and it explicitly folds runtime history compression into the ACI adaptations.\n- That optimizing ACI produces measurable gains; the study only proposes measures and an experiment.\n- That the claim applies to `protocol/.agents/`, adopted projects or the unrelated external system named “ACI.”\n- The word “independent” appears nowhere in the ACI passages, and no test, experiment result or normative decision supports it."
+  },
+  "provenance": {
+    "deterministic": true,
+    "cited": [
+      "docs/working/audits/architecture-capability-review.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_SWE_AGENT.md",
+      "REFACTOR_MATRIX.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md",
+      "docs/AGENTS.md",
+      "AGENTS.md",
+      "runtime/README.md",
+      "README.md",
+      "ROADMAP.md"
+    ],
+    "cited_and_opened": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_SWE_AGENT.md",
+      "REFACTOR_MATRIX.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md",
+      "runtime/README.md"
+    ]
+  },
+  "grader": {
+    "attempted": true,
+    "elapsed_seconds": 12.045,
+    "returncode": 0,
+    "timed_out": false,
+    "usage": {
+      "inputTokens": 18117,
+      "outputTokens": 1573,
+      "cacheReadTokens": 640,
+      "cacheWriteTokens": 0,
+      "totalTokens": 20330
+    },
+    "evidence_included": [
+      "REFACTOR_SWE_AGENT.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/adr/15-change-lifecycle-continuity.md",
+      "docs/adr/16-change-lifecycle-authority.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+    ],
+    "evidence_missing": [],
+    "raw_final": "{\"correct_conclusion\": false, \"correct_scope\": true, \"authority_boundary_preserved\": true, \"unsupported_claim\": true, \"rationale\": \"The expected key concludes that ACI design is a real, independent engineering/optimization surface for AgentWorker that must be empirically validated before abstraction, whereas the answer concludes the repository does not establish it and treats it as merely aspirational, contradicting the decisive point. Its scope stays tied to the DEV AgentWorker tool/feedback surface and the pre-experiment limit, so it is consistent and not over-generalized. It correctly separates the individual study analysis from matrix/synthesis summaries and treats neither as authoritative. However, it makes material repository-state claims not present in the fixed pack (search results, runtime/README contents, ROADMAP/glossary absence, docs/AGENTS.md lines, plan INDEX), so unsupported_claim is true.\"}",
+    "parsed": {
+      "correct_conclusion": false,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true,
+      "rationale": "The expected key concludes that ACI design is a real, independent engineering/optimization surface for AgentWorker that must be empirically validated before abstraction, whereas the answer concludes the repository does not establish it and treats it as merely aspirational, contradicting the decisive point. Its scope stays tied to the DEV AgentWorker tool/feedback surface and the pre-experiment limit, so it is consistent and not over-generalized. It correctly separates the individual study analysis from matrix/synthesis summaries and treats neither as authoritative. However, it makes material repository-state claims not present in the fixed pack (search results, runtime/README contents, ROADMAP/glossary absence, docs/AGENTS.md lines, plan INDEX), so unsupported_claim is true."
+    },
+    "fields_used": {
+      "correct_conclusion": false,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true
+    }
+  },
+  "raw_ndjson": {
+    "agent": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q06.agent.ndjson",
+      "sha256": "38e958aad44493a749c55766ca6930d195f51310b1a509f2da7368c13e428e68",
+      "bytes": 187950
+    },
+    "grader": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q06.grader.ndjson",
+      "sha256": "934d27fbde597e08a5363cd103b6a8c903bf92e448abec0b992eb699290a3ca7",
+      "bytes": 9190
+    }
+  },
+  "notes": []
+}

@@ -1,0 +1,385 @@
+{
+  "schema": "argentos.dev-memory.controlled-trace.v1",
+  "condition": "TREATMENT",
+  "question_id": "Q07",
+  "question": "Are behavioral evaluation and lifecycle verification interchangeable?",
+  "run": {
+    "run_id": "full-20261031T171408",
+    "source_digest": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "runner_sha256": "f69e6080b7aaf95a3334b56e9d101040cb2dac900b05adc3523c4662b6297096",
+    "adapter_sha256": "5b27f4f1022332321dff8f65fc0cc3ed6bf670f43fd86b1773c1e02f7c2a4b4c",
+    "tool_set_sha256": "a5013d17a6fd831003f44fc4003db0723ccf173a11c0ad517f8294b8a306d328",
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "prompt_sha256": "29ce60d1baf5c5fd4b25b270efca028c9a875c117e4d87fabe9a4f6cfdad9b56",
+    "grader_prompt_sha256": "caab2ddce44261295cda8c9444d6ae42ab98302f4a153813919098b65a75fa68",
+    "key_sha256": "bd172b1da52a524ccc0bc6f8ccce8be3864d4889d25e6b64d2a11f7e86017081",
+    "evidence_sha256": "689f79a7600e9597d691efc1e541afa53e44a90150ad4a519e3832be8e9a4b16"
+  },
+  "workspace": {
+    "runner": "C:\\Users\\rolda\\AppData\\Local\\Temp\\argentos-memory-treatment-98f0kc0y\\repo",
+    "agent": "C:\\Users\\rolda\\AppData\\Local\\Temp\\bench-lf9z7g3t\\repo",
+    "neutral_copy": true
+  },
+  "base_commit": "a5f97c163b56b82dc8fadd4e3f65646899e9c245",
+  "model_label": "deepseek-official/deepseek-flash (DeepSeek-V4.1-Flash)",
+  "dsh_cli": "D:\\Programas\\DeepseekHarness\\resources\\runtime\\cli\\bin\\dsh.cmd",
+  "experimental_infrastructure": "tools/dev_memory_agent_executor.py",
+  "integrity": {
+    "pilot_present": true,
+    "pilot_sha256": "44a6a10b8308a76981c12f1798b9461619f030f73fa3b6c5e0378efb67949bcd",
+    "runner_pilot_present": true,
+    "workspace_digest_before": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "workspace_digest_after": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "workspace_stable": true,
+    "condition_labels_in_child_env": [],
+    "condition_token_in_agent_cwd": false,
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "grader_tool_policy_sha256": "ea826e1e9ceb38bb215a8e5f944dcd9399d1cb0972718e9d4cdcf559dc9c9153",
+    "disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents"
+    ],
+    "grader_disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents",
+      "tool-fs",
+      "tool-fs-search",
+      "tool-skill",
+      "tool-todo",
+      "tool-goal"
+    ],
+    "observed_disallowed_tools": [],
+    "observed_disallowed_tool_attempts": [],
+    "out_of_workspace_calls": [],
+    "failed_reads": [],
+    "agent_sandbox": "read-only"
+  },
+  "instrumentation": {
+    "file_open_events": [
+      "DEV_MEMORY_PILOT.md",
+      "REFACTOR_SYNTHESIS.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md",
+      "docs/VERSIONING.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "docs/VERSIONING.md"
+    ],
+    "search_events": [
+      "behavioral evaluation",
+      "lifecycle verification",
+      "behavioral|behavioural",
+      "REFACTOR_*",
+      "evaluat|Eval",
+      "181",
+      "181|DEV Memory|Memory Pilot",
+      "docs/plans/181*",
+      "**/181*",
+      "Plan 181|plan 181|DEV Memory Pilot|DEV-MEM",
+      "verification|verificar|Validation Anchor|validation anchor",
+      "evaluat|Evaluation",
+      "evaluation",
+      "180-comparative|180 \\-|Plan 180|plan 180|180-comparative-architecture",
+      "evaluat|evaluation",
+      "verification|verificación",
+      "behavioral evaluation|evaluation scenario|eval scenario|eval-fix",
+      "**/*eval*",
+      "181-|`181|Plan 181|plan 181|\\| 181",
+      "Plan 181|plan 181|181-"
+    ],
+    "source_rehydration_events": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_GOOGLE_ADK.md"
+    ],
+    "shell_commands": [],
+    "tool_calls": [
+      {
+        "tool": "grep",
+        "query": "behavioral evaluation",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "lifecycle verification",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "DEV_MEMORY_PILOT.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_SYNTHESIS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "behavioral|behavioural",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "REFACTOR_*",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "evaluat|Eval",
+        "path": "REFACTOR_GOOGLE_ADK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "181",
+        "path": "docs/plans/INDEX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "181|DEV Memory|Memory Pilot",
+        "path": "docs/plans/INDEX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "docs/plans/181*",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "**/181*",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Plan 181|plan 181|DEV Memory Pilot|DEV-MEM",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "verification|verificar|Validation Anchor|validation anchor",
+        "path": "docs/VERSIONING.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "evaluat|Evaluation",
+        "path": "REFACTOR_MATRIX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "evaluation",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/180-comparative-architecture-refactor-study.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "180-comparative|180 \\-|Plan 180|plan 180|180-comparative-architecture",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/INDEX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/VERSIONING.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_GOOGLE_ADK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_MATRIX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "evaluat|evaluation",
+        "path": "protocol",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "verification|verificación",
+        "path": "docs/CONVENTIONS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "behavioral evaluation|evaluation scenario|eval scenario|eval-fix",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "**/*eval*",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_MATRIX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_GOOGLE_ADK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/VERSIONING.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "181-|`181|Plan 181|plan 181|\\| 181",
+        "path": "docs/plans/INDEX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Plan 181|plan 181|181-",
+        "status": "completed"
+      }
+    ],
+    "observed_tools": [
+      "glob",
+      "grep",
+      "read"
+    ],
+    "distinct_files_opened": [
+      "DEV_MEMORY_PILOT.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_SYNTHESIS.md",
+      "docs/VERSIONING.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md"
+    ]
+  },
+  "agent": {
+    "elapsed_seconds": 69.888,
+    "returncode": 0,
+    "timed_out": false,
+    "error": null,
+    "session_id": "session-b5b99aa1-0627-4029-8573-e2706c2364dd",
+    "turn_end": {
+      "kind": "completed"
+    },
+    "usage": {
+      "inputTokens": 29184,
+      "outputTokens": 7567,
+      "cacheReadTokens": 422656,
+      "cacheWriteTokens": 0,
+      "totalTokens": 459407
+    },
+    "stderr_tail": "[llm-deepseek-api-key] model listing from https://api.deepseek.com/models loaded 2 model(s), skipped 0 row(s)\n",
+    "final_answer": "CONCLUSION: No. The repository's refactor study explicitly treats behavioral evaluation and lifecycle verification as answering different questions and says they must not be collapsed into one generic verification mechanism; evaluation work is to complement, not replace, lifecycle verification.\n\nSCOPE: This applies only to the DEV-side comparative-study artifacts produced under Plan 180 on branch `refactor` (synthesis and pilot memory). It is not a normative Protocol or DEV rule. `protocol/.agents/` contains no occurrence of \"evaluation\" at all, and no authoritative policy document defines \"behavioral evaluation.\" The study also does not say the two can never share infrastructure; it denies that they are the same thing or interchangeable in purpose.\n\nEVIDENCE:\n- `REFACTOR_SYNTHESIS.md:140-162` — §6 \"Evaluation becomes more important\": ARgentOS has tests, validation anchors and lifecycle verification, \"but those mechanisms are not identical to reusable behavioral evaluation scenarios.\" The diagram assigns unit/integration tests → implementation correctness; evaluation scenarios → agent behavior/trajectory/outcome; lifecycle verification → authorized change closure, and concludes \"These should complement each other rather than collapse into one generic verification mechanism.\"\n- `DEV_MEMORY_PILOT.md:92-101` — DEV-MEM-007 \"Evaluation and lifecycle verification are different\": behavioral evaluation scenarios, implementation tests and Change Lifecycle verification \"answer different questions and should not be collapsed\"; decision impact: \"future evaluation work should complement, not replace, existing lifecycle verification\"; epistemic state is `inferred`.\n- `REFACTOR_GOOGLE_ADK.md:55-62` — §5 Evaluation: ARgentOS already has validation anchors and lifecycle gates; the comparative lesson is to make evaluation datasets/scenarios reusable and explicitly connected to agent behavior (`Decision: ADAPT`).\n- `REFACTOR_MATRIX.md:47-50` — §5: reusable evaluation scenarios are a plausible improvement for integration continuity and runtime behavior, i.e., a behavior-focused concern distinct from lifecycle gates.\n- `docs/plans/180-comparative-architecture-refactor-study.md:55-61,88,102` — defines the `REFACTOR_*` files as study deliverables, requires separating observed facts, inferences and proposals, and states the matrix must not become authority over the individual analyses.\n- `docs/VERSIONING.md:274-306` and `:190-200` — defines lifecycle verification as the Change Lifecycle conditions (`Executed` = implementation + validation; derived `Closed` via Validation Anchor/checkpoint), i.e., authorized change closure; lifecycle gates are \"evidencia factual, nunca autoridad normativa.\"\n- `docs/CONVENTIONS.md:10` — \"Verificación\" is defined as the canonical checker/test battery.\n\nAUTHORITY:\n- The only artifacts that directly address interchangeability are `REFACTOR_SYNTHESIS.md` (a final comparative synthesis deliverable) and `DEV_MEMORY_PILOT.md` (self-declared \"experimental, non-authoritative\" active-retrieval surface; its entry is `inferred`). `REFACTOR_MATRIX.md` is an index by design, and Plan 180 is still `Aprobado para ejecución`, not closed.\n- Authoritative for what lifecycle verification is: `docs/VERSIONING.md`, `docs/CONVENTIONS.md`, and RFC-75/ADR-15/16 which they cite. But none of these defines \"behavioral evaluation\" or rules on its interchangeability with lifecycle verification.\n- `DEV_MEMORY_PILOT.md:3` cites \"Plan 181\" as its pilot, but no `docs/plans/181*` file and no `docs/plans/INDEX.md` entry exists; that provenance cannot be rehydrated. The non-interchangeability claim therefore remains a study inference, not a repository-established norm.\n\nUNSUPPORTED:\n- No normative definition of \"behavioral evaluation\"; no implemented behavioral-evaluation scenario, harness or tests in the repository (only proposed in the study artifacts).\n- No authoritative artifact rules that the two are, or are not, interchangeable.\n- Whether behavioral evaluation could satisfy any part of lifecycle verification in a concrete case, or how they would integrate operationally, is not settled.\n- The existence/status of the cited Plan 181 is unverifiable in this repository."
+  },
+  "provenance": {
+    "deterministic": true,
+    "cited": [
+      "REFACTOR_SYNTHESIS.md",
+      "DEV_MEMORY_PILOT.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_MATRIX.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/VERSIONING.md",
+      "docs/CONVENTIONS.md",
+      "docs/plans/INDEX.md"
+    ],
+    "cited_and_opened": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_MATRIX.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/VERSIONING.md",
+      "docs/plans/INDEX.md"
+    ]
+  },
+  "grader": {
+    "attempted": true,
+    "elapsed_seconds": 24.917,
+    "returncode": 0,
+    "timed_out": false,
+    "usage": {
+      "inputTokens": 17941,
+      "outputTokens": 3968,
+      "cacheReadTokens": 640,
+      "cacheWriteTokens": 0,
+      "totalTokens": 22549
+    },
+    "evidence_included": [
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/adr/15-change-lifecycle-continuity.md",
+      "docs/adr/16-change-lifecycle-authority.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+    ],
+    "evidence_missing": [],
+    "raw_final": "{\"correct_conclusion\": true, \"correct_scope\": true, \"authority_boundary_preserved\": true, \"unsupported_claim\": true, \"rationale\": \"The answer agrees with the key's decisive point: the three layers are complementary and not interchangeable, and eval work must not replace lifecycle verification. It limits applicability to the DEV comparative-study artifacts and explicitly warns the study does not claim the two can never share infrastructure, so it does not over-generalize. It distinguishes the synthesis, the matrix index, and the non-authoritative pilot memory note, treating the non-interchangeability claim as a study inference rather than a repository norm. However, it makes material claims not stated in the fixed pack, notably the content of DEV_MEMORY_PILOT.md:92-101 and its `inferred` status, the docs/VERSIONING.md and docs/CONVENTIONS.md definitions, the absence of any 'evaluation' occurrence in the whole protocol/.agents/ directory, and the nonexistent Plan 181.\"}",
+    "parsed": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true,
+      "rationale": "The answer agrees with the key's decisive point: the three layers are complementary and not interchangeable, and eval work must not replace lifecycle verification. It limits applicability to the DEV comparative-study artifacts and explicitly warns the study does not claim the two can never share infrastructure, so it does not over-generalize. It distinguishes the synthesis, the matrix index, and the non-authoritative pilot memory note, treating the non-interchangeability claim as a study inference rather than a repository norm. However, it makes material claims not stated in the fixed pack, notably the content of DEV_MEMORY_PILOT.md:92-101 and its `inferred` status, the docs/VERSIONING.md and docs/CONVENTIONS.md definitions, the absence of any 'evaluation' occurrence in the whole protocol/.agents/ directory, and the nonexistent Plan 181."
+    },
+    "fields_used": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true
+    }
+  },
+  "raw_ndjson": {
+    "agent": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q07.agent.ndjson",
+      "sha256": "59e25013cb1c6c600eb66d6281dbba30c7f69b9e48af98f524f807d47857a870",
+      "bytes": 123546
+    },
+    "grader": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q07.grader.ndjson",
+      "sha256": "6b2534abd787dea16ddf899163075fb1f53f6c3b2bd781c6627c15174a110789",
+      "bytes": 10872
+    }
+  },
+  "notes": []
+}

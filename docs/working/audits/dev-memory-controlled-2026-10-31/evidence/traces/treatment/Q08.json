@@ -1,0 +1,460 @@
+{
+  "schema": "argentos.dev-memory.controlled-trace.v1",
+  "condition": "TREATMENT",
+  "question_id": "Q08",
+  "question": "Do runtime traces establish authority or lifecycle closure?",
+  "run": {
+    "run_id": "full-20261031T171408",
+    "source_digest": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "runner_sha256": "f69e6080b7aaf95a3334b56e9d101040cb2dac900b05adc3523c4662b6297096",
+    "adapter_sha256": "5b27f4f1022332321dff8f65fc0cc3ed6bf670f43fd86b1773c1e02f7c2a4b4c",
+    "tool_set_sha256": "a5013d17a6fd831003f44fc4003db0723ccf173a11c0ad517f8294b8a306d328",
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "prompt_sha256": "cbe01d4bbaaa6f2483d18db735abaa44efa30203aeca8e1e0ca751f2829b49ff",
+    "grader_prompt_sha256": "a340ecc9cd62dea7e4dabbe5e6c2fcdb3ec3721fd9fcac0a1302390b29ac82ce",
+    "key_sha256": "bd172b1da52a524ccc0bc6f8ccce8be3864d4889d25e6b64d2a11f7e86017081",
+    "evidence_sha256": "28aee721d0b1120f681fad6529a2903b7e6011343ae6052555b5bd88c082c052"
+  },
+  "workspace": {
+    "runner": "C:\\Users\\rolda\\AppData\\Local\\Temp\\argentos-memory-treatment-98f0kc0y\\repo",
+    "agent": "C:\\Users\\rolda\\AppData\\Local\\Temp\\bench-6ki84416\\repo",
+    "neutral_copy": true
+  },
+  "base_commit": "a5f97c163b56b82dc8fadd4e3f65646899e9c245",
+  "model_label": "deepseek-official/deepseek-flash (DeepSeek-V4.1-Flash)",
+  "dsh_cli": "D:\\Programas\\DeepseekHarness\\resources\\runtime\\cli\\bin\\dsh.cmd",
+  "experimental_infrastructure": "tools/dev_memory_agent_executor.py",
+  "integrity": {
+    "pilot_present": true,
+    "pilot_sha256": "44a6a10b8308a76981c12f1798b9461619f030f73fa3b6c5e0378efb67949bcd",
+    "runner_pilot_present": true,
+    "workspace_digest_before": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "workspace_digest_after": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "workspace_stable": true,
+    "condition_labels_in_child_env": [],
+    "condition_token_in_agent_cwd": false,
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "grader_tool_policy_sha256": "ea826e1e9ceb38bb215a8e5f944dcd9399d1cb0972718e9d4cdcf559dc9c9153",
+    "disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents"
+    ],
+    "grader_disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents",
+      "tool-fs",
+      "tool-fs-search",
+      "tool-skill",
+      "tool-todo",
+      "tool-goal"
+    ],
+    "observed_disallowed_tools": [],
+    "observed_disallowed_tool_attempts": [],
+    "out_of_workspace_calls": [],
+    "failed_reads": [],
+    "agent_sandbox": "read-only"
+  },
+  "instrumentation": {
+    "file_open_events": [
+      "AGENTS.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "docs/adr/05-evidence-model.md",
+      "docs/adr/07-execution-record.md",
+      "docs/adr/13-artifact-state-evidence-relationship.md",
+      "docs/adr/20-closed-artifact-governance-and-execution-records.md",
+      "docs/adr/21-attested-escape-evidence-refs-and-transitions.md",
+      ".agents/policies/validation-closure.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "REFACTOR_LANGGRAPH.md",
+      "docs/VERSIONING.md",
+      "docs/adr/16-change-lifecycle-authority.md",
+      "runtime/orchestrator/host.py",
+      "runtime/orchestrator/agent_worker.py",
+      "docs/CONVENTIONS.md",
+      "docs/CONVENTIONS.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "docs/plans/INDEX.md",
+      "docs/CONVENTIONS.md"
+    ],
+    "search_events": [
+      "*",
+      "runtime trace|runtime-trace|Runtime Trace|traces",
+      "trace",
+      "REFACTOR_|refactor",
+      "^#+ .*|runtime|trace|closure|Closed",
+      "evidence.*authority|authority.*evidence|never.*authority|no.*autoridad|autoridad.*evidencia|evidencia.*autoridad",
+      "^#+ |derived|Closed|checkpoint|traza|trace",
+      "trace|run record|run_record|execution record",
+      "evidencia factual|nunca autoridad|evidence.*authority|traza",
+      "REFACTOR_*.md",
+      "trace|authority|closure|lifecycle",
+      "trace|observability|lifecycle closure"
+    ],
+    "source_rehydration_events": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_GOOGLE_ADK.md"
+    ],
+    "shell_commands": [],
+    "tool_calls": [
+      {
+        "tool": "glob",
+        "query": "*",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "AGENTS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "runtime trace|runtime-trace|Runtime Trace|traces",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "trace",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_SYNTHESIS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_MATRIX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_LANGGRAPH.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_OPENAI_AGENTS_SDK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/adr/05-evidence-model.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/adr/07-execution-record.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "REFACTOR_|refactor",
+        "path": "docs",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/adr/13-artifact-state-evidence-relationship.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/adr/20-closed-artifact-governance-and-execution-records.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/adr/21-attested-escape-evidence-refs-and-transitions.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "^#+ .*|runtime|trace|closure|Closed",
+        "path": "docs/VERSIONING.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": ".agents/policies/validation-closure.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/180-comparative-architecture-refactor-study.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_LANGGRAPH.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "evidence.*authority|authority.*evidence|never.*authority|no.*autoridad|autoridad.*evidencia|evidencia.*autoridad",
+        "path": "docs",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "^#+ |derived|Closed|checkpoint|traza|trace",
+        "path": "docs/INVARIANTS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/VERSIONING.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/adr/16-change-lifecycle-authority.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "trace|run record|run_record|execution record",
+        "path": "runtime",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "evidencia factual|nunca autoridad|evidence.*authority|traza",
+        "path": "docs/CONVENTIONS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "runtime/orchestrator/host.py",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "runtime/orchestrator/agent_worker.py",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/CONVENTIONS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/CONVENTIONS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "REFACTOR_*.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "trace|authority|closure|lifecycle",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "trace|observability|lifecycle closure",
+        "path": "protocol",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_OPENAI_AGENTS_SDK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_OPENHANDS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_GOOGLE_ADK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/INDEX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/CONVENTIONS.md",
+        "status": "completed"
+      }
+    ],
+    "observed_tools": [
+      "glob",
+      "grep",
+      "read"
+    ],
+    "distinct_files_opened": [
+      ".agents/policies/validation-closure.md",
+      "AGENTS.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_SYNTHESIS.md",
+      "docs/CONVENTIONS.md",
+      "docs/VERSIONING.md",
+      "docs/adr/05-evidence-model.md",
+      "docs/adr/07-execution-record.md",
+      "docs/adr/13-artifact-state-evidence-relationship.md",
+      "docs/adr/16-change-lifecycle-authority.md",
+      "docs/adr/20-closed-artifact-governance-and-execution-records.md",
+      "docs/adr/21-attested-escape-evidence-refs-and-transitions.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md",
+      "runtime/orchestrator/agent_worker.py",
+      "runtime/orchestrator/host.py"
+    ]
+  },
+  "agent": {
+    "elapsed_seconds": 93.409,
+    "returncode": 0,
+    "timed_out": false,
+    "error": null,
+    "session_id": "session-e52bcc90-1cea-4222-b6ea-0d9fb13e6a77",
+    "turn_end": {
+      "kind": "completed"
+    },
+    "usage": {
+      "inputTokens": 79012,
+      "outputTokens": 12272,
+      "cacheReadTokens": 949760,
+      "cacheWriteTokens": 0,
+      "totalTokens": 1041044
+    },
+    "stderr_tail": "[llm-deepseek-api-key] model listing from https://api.deepseek.com/models loaded 2 model(s), skipped 0 row(s)\n",
+    "final_answer": "CONCLUSION: No. The repository states that runtime traces/events are evidence of what happened, not authority, architectural correctness, or lifecycle closure. Its direct formulation is: “A runtime trace can evidence execution, but it does not establish authorization, architectural correctness or lifecycle closure” (`REFACTOR_LANGGRAPH.md:117`), and “tracing is evidence of what happened; it is not authority, lifecycle closure or architectural truth” (`REFACTOR_OPENAI_AGENTS_SDK.md:54`). A trace may be evidence for a claim; it does not automatically establish the claim (`REFACTOR_SYNTHESIS.md:199-200`). Consistently, the DEV model derives lifecycle closure from governance plus a Git checkpoint and validation-anchor consistency, not from runtime observability: `Closed = Executed ∧ governance applied ∧ ∃ checkpoint ∧ consistency ∧ PASS evidence for the closure state` (`AGENTS.md:180-194`; `.agents/policies/validation-closure.md:323-336`). A trace might feed validation evidence, but it cannot by itself authorize action or close a plan.\n\nSCOPE: This conclusion applies to the ARgentOS DEV Change Lifecycle and to the conclusions of the in-progress comparative refactor study (plan 180). It must not be generalized to (a) the product payload under `protocol/.agents/`, which contains no equivalent rule (a search found only a passing “traceability” mention in `protocol/_AGENTS.md`), (b) adopter projects, or (c) the actual behavior of the external systems compared. The refactor artifacts are DEV-only study material authorized for the `refactor` branch, not a normative DEV or Protocol rule (`docs/plans/INDEX.md:15`; plan 180 lines 20, 104).\n\nEVIDENCE:\n- `REFACTOR_SYNTHESIS.md:183-202` — section “Observability does not become authority”: `event / trace ≠ authorization ≠ correctness ≠ lifecycle closure`; “A trace can be evidence for a claim. It does not automatically establish the claim.”\n- `REFACTOR_SYNTHESIS.md:227-236` — lists “Runtime traces can serve as lifecycle authority” among the study’s falsified/unsupported conclusions.\n- `REFACTOR_MATRIX.md:52-55` — “Observability is evidence, not authority”; ARgentOS may consume runtime events as evidence but “must not let traces silently become authorization, correctness or lifecycle closure.” `:79-89` rejects “Runtime trace as authority.”\n- `REFACTOR_LANGGRAPH.md:113-137` — a runtime trace can evidence execution but does not establish authorization, architectural correctness, or lifecycle closure; the forbidden chain is `trace exists → therefore authorized/correct/closed`. `:194-200` rejects “Runtime trace as proof of authorization or closure.”\n- `REFACTOR_OPENAI_AGENTS_SDK.md:49-56` — tracing is evidence of what happened, “not authority, lifecycle closure or architectural truth”; `:88-89` seeks tracing that can “feed evidence without becoming authority”; `:91-95` rejects “Treating traces as lifecycle evidence by default.”\n- `REFACTOR_OPENHANDS.md:40-49` — runtime events “are observations. They should not become authority automatically.”\n- `REFACTOR_GOOGLE_ADK.md:103-108` — rejects “Treating eval scores as lifecycle authority.”\n- `docs/adr/16-change-lifecycle-authority.md:44-56,108-121` — authority classes are FACTUAL (Git/tests/checkers/tags), NORMATIVE (RFC/ADR/Plan), DECISION (human), RELEASE (tag/dist), DESCRIPTIVE (INDEX). No observability/trace class is given normative authority; `AU-1` makes Git/checkers/tests/tags factual truth, not normative authority.\n- `docs/adr/05-evidence-model.md:25-42,51-58` — evidence classes (`observation`, `measurement`, `attestation`, `assertion`, `reference`); “verified” requires evidence of a class other than bare attestation. Evidence supports a claim; it is not identified with authority.\n- `docs/adr/13-artifact-state-evidence-relationship.md:24-55` — an artifact may declare “verified”/“validated” only with Gate State PASS plus associated evidence; `validated` ⇔ exit-gate PASS. This ties state to gate evidence, not to runtime traces.\n- `docs/VERSIONING.md:274-306` — `Closed` is a derived condition: `Executed` + applicable governance + checkpoint + checkpoint↔anchor consistency + PASS validation evidence for the closure state. `Committed` is repository state, not a checkpoint; `Closed ≠ Released`.\n- `.agents/policies/validation-closure.md:8-38,84-149` — defines the Validation Anchor (declared scope, command-set, effective inputs, environmental factors, Scoped Content Identity) and the Git Checkpoint as the documented relation “closure ↔ Git state”; not a trace artifact, commit, or SHA.\n- `.agents/policies/validation-closure.md:323-336` — explicit derived-condition formula showing `Closed` depends on checkpoint and anchor consistency, not observability.\n- `docs/CONVENTIONS.md:709-716` — “`Closed` no deriva de `Committed` ni de ‘HEAD == commit esperado’: el commit es evidencia factual, no la condición.”\n- `docs/adr/20-closed-artifact-governance-and-execution-records.md:59-63,75-80` — the orchestrator run record is an external execution record; it “no adquiere autoridad sobre el contenido gobernante”; `Closed` is terminal for governing content. Amendment Log `:110` places run records in ephemeral `.project/orchestrator/.../runs/` and says a closed plan receives no run-note reference.\n- `runtime/orchestrator/host.py:1157-1214` — the run record only records a reference; “operational evidence … lives in the orchestrator’s ephemeral store, and the plan carries only a reference to it”; authority is derived from observation, never from the caller; a closed plan grants no write authority.\n- `docs/INVARIANTS.md:18,56` — `INV-01` Authority Preservation: no effect executes without derived, verifiable authority; a caller assertion is not authority. This is independent of any trace.\n- `.agents/AGENTS.md:34-38` — “A checker result is factual evidence, never normative authority”; a trace/checker output cannot be converted into a human decision or normative authority.\n- `runtime/orchestrator/agent_worker.py:764-791` — shows the nuance that traces matter as evidence: “a claim without a trace is not evidence and is not counted as verification.” This supports traces as evidential inputs, not as authority or closure.\n\nAUTHORITY:\n- The authoritative normative evidence for the “evidence ≠ authority / no trace-based closure” position is: `docs/adr/16-change-lifecycle-authority.md` (authority classes), `docs/adr/05-evidence-model.md` and `docs/adr/13-artifact-state-evidence-relationship.md` (evidence model and artifact/state/evidence relation), `docs/adr/20-closed-artifact-governance-and-execution-records.md` (execution records are external and non-governing), `docs/VERSIONING.md` §7 and `.agents/policies/validation-closure.md` §6 (derived `Closed` condition and checkpoint/anchor model), and the closure text in `docs/CONVENTIONS.md`. The code/docstring in `runtime/orchestrator/host.py` is authoritative evidence of the reference implementation’s behavior.\n- The direct “runtime traces do not establish authority or closure” statements come from the study artifacts: `REFACTOR_LANGGRAPH.md`, `REFACTOR_OPENAI_AGENTS_SDK.md`, `REFACTOR_OPENHANDS.md`, and `REFACTOR_GOOGLE_ADK.md` are individual comparative analyses and are the primary study evidence. `REFACTOR_MATRIX.md` is explicitly an “índice/matriz acumulativa” and plan 180 says to keep it updated “sin convertirlo en autoridad sobre los análisis individuales”; `REFACTOR_SYNTHESIS.md` is the final synthesis derived from the eight analyses. Both are derived summaries/aggregations, not independent authorities.\n- The study itself is authorized but not closed: plan 180 is `Aprobado para ejecución`, DEV-only, “limitado a la rama `refactor`,” with its Validation Anchor and Checkpoint still “Pendiente” (`docs/plans/180-comparative-architecture-refactor-study.md:3,20,128-134`; `docs/plans/INDEX.md:15`). Its exit criteria are unchecked. The repository does not define a formal “runtime trace” artifact type; the closest concrete runtime record is the external run record, whose content and authority boundary are described above.\n- What remains unverified: that the study artifacts were actually committed/pushed as plan 180 claims (its exit criteria and anchor/checkpoint are pending); that the external-system observations were independently re-verified within the repository (the analyses cite external documentation, not repository evidence); and whether any future runtime tracing mechanism would be granted evidential status beyond what the existing evidence model permits. No Protocol-level or adopter-level trace-authority rule was found.\n\nUNSUPPORTED:\n- There is no repository evidence that any ARgentOS runtime trace format exists that could have authority or close a lifecycle; no such artifact or contract is defined.\n- The repository does not settle whether a specific runtime trace could be admitted as `measurement`/`observation` evidence in a particular validation; it defines the evidence classes and the closure model, but not a trace schema, and admission is still a validation/governance act, not trace authority.\n- The Protocol payload (`protocol/.agents/`) does not establish a corresponding trace-authority rule; the conclusion is not a Protocol normative claim.\n- The comparative study’s claims about LangGraph, OpenAI Agents SDK, Microsoft Agent Framework, Google ADK, CrewAI, OpenHands, SWE-agent, and Letta are study conclusions, not independently verified repository facts."
+  },
+  "provenance": {
+    "deterministic": true,
+    "cited": [
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_SYNTHESIS.md",
+      "AGENTS.md",
+      ".agents/policies/validation-closure.md",
+      "protocol/_AGENTS.md",
+      "docs/plans/INDEX.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "docs/adr/16-change-lifecycle-authority.md",
+      "docs/adr/05-evidence-model.md",
+      "docs/adr/13-artifact-state-evidence-relationship.md",
+      "docs/VERSIONING.md",
+      "docs/CONVENTIONS.md",
+      "docs/adr/20-closed-artifact-governance-and-execution-records.md",
+      "runtime/orchestrator/host.py",
+      "docs/INVARIANTS.md",
+      "runtime/orchestrator/agent_worker.py",
+      "docs/plans/180-comparative-architecture-refactor-study.md"
+    ],
+    "cited_and_opened": [
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_SYNTHESIS.md",
+      "AGENTS.md",
+      ".agents/policies/validation-closure.md",
+      "docs/plans/INDEX.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "docs/adr/16-change-lifecycle-authority.md",
+      "docs/adr/05-evidence-model.md",
+      "docs/adr/13-artifact-state-evidence-relationship.md",
+      "docs/VERSIONING.md",
+      "docs/CONVENTIONS.md",
+      "docs/adr/20-closed-artifact-governance-and-execution-records.md",
+      "runtime/orchestrator/host.py",
+      "runtime/orchestrator/agent_worker.py",
+      "docs/plans/180-comparative-architecture-refactor-study.md"
+    ]
+  },
+  "grader": {
+    "attempted": true,
+    "elapsed_seconds": 44.264,
+    "returncode": 0,
+    "timed_out": false,
+    "usage": {
+      "inputTokens": 23889,
+      "outputTokens": 7468,
+      "cacheReadTokens": 640,
+      "cacheWriteTokens": 0,
+      "totalTokens": 31997
+    },
+    "evidence_included": [
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/adr/15-change-lifecycle-continuity.md",
+      "docs/adr/16-change-lifecycle-authority.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+    ],
+    "evidence_missing": [],
+    "raw_final": "{\"correct_conclusion\": true, \"correct_scope\": true, \"authority_boundary_preserved\": true, \"unsupported_claim\": true, \"rationale\": \"The answer agrees with the expected key's decisive point: traces/events may be evidence but do not establish authorization, correctness, or lifecycle closure, and it explicitly allows traces as evidential input without authority. Its scope is conservative and consistent with the key (DEV lifecycle and the comparative study), though it adds extra limits about external systems and Protocol/adopters. It also properly distinguishes primary study analyses from the derived REFACTOR_MATRIX and REFACTOR_SYNTHESIS, treating them as non-authoritative summaries. However, it relies on numerous materials not present in the fixed evidence pack (e.g., validation-closure.md, VERSIONING.md, ADR-05/13/20, host.py, agent_worker.py, INVARIANTS.md), so it contains material claims whose support is not visible in the supplied evidence.\"}",
+    "parsed": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true,
+      "rationale": "The answer agrees with the expected key's decisive point: traces/events may be evidence but do not establish authorization, correctness, or lifecycle closure, and it explicitly allows traces as evidential input without authority. Its scope is conservative and consistent with the key (DEV lifecycle and the comparative study), though it adds extra limits about external systems and Protocol/adopters. It also properly distinguishes primary study analyses from the derived REFACTOR_MATRIX and REFACTOR_SYNTHESIS, treating them as non-authoritative summaries. However, it relies on numerous materials not present in the fixed evidence pack (e.g., validation-closure.md, VERSIONING.md, ADR-05/13/20, host.py, agent_worker.py, INVARIANTS.md), so it contains material claims whose support is not visible in the supplied evidence."
+    },
+    "fields_used": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true
+    }
+  },
+  "raw_ndjson": {
+    "agent": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q08.agent.ndjson",
+      "sha256": "3376036d141e9c758c1ff7ffca46737f0dfb86dfaf9405e786de2b506cb9a354",
+      "bytes": 230222
+    },
+    "grader": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q08.grader.ndjson",
+      "sha256": "21852513b333ecb57bc3ec76b5e44e2284950459fec5215dbf72e034e04902e6",
+      "bytes": 10818
+    }
+  },
+  "notes": []
+}

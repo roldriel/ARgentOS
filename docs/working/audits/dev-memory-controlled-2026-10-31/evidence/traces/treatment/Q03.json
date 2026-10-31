@@ -1,0 +1,652 @@
+{
+  "schema": "argentos.dev-memory.controlled-trace.v1",
+  "condition": "TREATMENT",
+  "question_id": "Q03",
+  "question": "Is runtime memory the same problem as DEV Memory?",
+  "run": {
+    "run_id": "full-20261031T171408",
+    "source_digest": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "runner_sha256": "f69e6080b7aaf95a3334b56e9d101040cb2dac900b05adc3523c4662b6297096",
+    "adapter_sha256": "5b27f4f1022332321dff8f65fc0cc3ed6bf670f43fd86b1773c1e02f7c2a4b4c",
+    "tool_set_sha256": "a5013d17a6fd831003f44fc4003db0723ccf173a11c0ad517f8294b8a306d328",
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "prompt_sha256": "c9ecde87ca5f56d130987045cacded3a893708546798ff52c9665792b5d0b4e7",
+    "grader_prompt_sha256": "be5e027217102a0c6f1368b8a6216909eb199246d736ed63acb582506cc98072",
+    "key_sha256": "bd172b1da52a524ccc0bc6f8ccce8be3864d4889d25e6b64d2a11f7e86017081",
+    "evidence_sha256": "5965fdfcd7d06c807f5881d9789a2021cb3470214af9ef0fabc9ceef84b495d6"
+  },
+  "workspace": {
+    "runner": "C:\\Users\\rolda\\AppData\\Local\\Temp\\argentos-memory-treatment-98f0kc0y\\repo",
+    "agent": "C:\\Users\\rolda\\AppData\\Local\\Temp\\bench-r0oeijwa\\repo",
+    "neutral_copy": true
+  },
+  "base_commit": "a5f97c163b56b82dc8fadd4e3f65646899e9c245",
+  "model_label": "deepseek-official/deepseek-flash (DeepSeek-V4.1-Flash)",
+  "dsh_cli": "D:\\Programas\\DeepseekHarness\\resources\\runtime\\cli\\bin\\dsh.cmd",
+  "experimental_infrastructure": "tools/dev_memory_agent_executor.py",
+  "integrity": {
+    "pilot_present": true,
+    "pilot_sha256": "44a6a10b8308a76981c12f1798b9461619f030f73fa3b6c5e0378efb67949bcd",
+    "runner_pilot_present": true,
+    "workspace_digest_before": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "workspace_digest_after": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "workspace_stable": true,
+    "condition_labels_in_child_env": [],
+    "condition_token_in_agent_cwd": false,
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "grader_tool_policy_sha256": "ea826e1e9ceb38bb215a8e5f944dcd9399d1cb0972718e9d4cdcf559dc9c9153",
+    "disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents"
+    ],
+    "grader_disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents",
+      "tool-fs",
+      "tool-fs-search",
+      "tool-skill",
+      "tool-todo",
+      "tool-goal"
+    ],
+    "observed_disallowed_tools": [],
+    "observed_disallowed_tool_attempts": [],
+    "out_of_workspace_calls": [],
+    "failed_reads": [],
+    "agent_sandbox": "read-only"
+  },
+  "instrumentation": {
+    "file_open_events": [
+      "DEV_MEMORY_PILOT.md",
+      "docs/rfc/80-memory-system.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md",
+      "REFACTOR_SYNTHESIS.md",
+      "docs/plans/150-memory-system-implementation.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_LETTA.md",
+      "docs/rfc/14-prompt-rendering-model.md",
+      "docs/plans/18-segunda-materializacion.md",
+      "docs/plans/18-anexo-a-comparativa-y-decision.md",
+      "docs/plans/ec-pipeline-vision.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_SYNTHESIS.md",
+      "docs/rfc/80-memory-system.md",
+      "runtime/memory/__init__.py",
+      "runtime/README.md",
+      "runtime/README.md",
+      "runtime/memory/operational.py",
+      "docs/glossary/INDEX.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "REFACTOR_SWE_AGENT.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "docs/rfc/80-memory-system.md",
+      "README.md",
+      "docs/rfc/80-memory-system.md",
+      "protocol/.agents/standards/context/KNOWLEDGE_LIFECYCLE.md",
+      "runtime/memory/store.py",
+      "docs/rfc/14-prompt-rendering-model.md",
+      "docs/rfc/INDEX.md",
+      "runtime/README.md",
+      "docs/placement-contract.md"
+    ],
+    "search_events": [
+      "DEV Memory|runtime memory|Runtime Memory|runtime-memory",
+      "**/*memory*",
+      "memory|Memory|memoria|Memoria",
+      "Plan 181|181|DEV Memory|DEV-MEM|refactor branch|Runtime memory",
+      "*",
+      "Priority 4|DEV Memory|runtime memory|Runtime Memory|Protocol Memory",
+      "docs/plans/18*.md",
+      "^# Plan 18|^# Plan 17|181|180",
+      "DEV Memory|runtime memory|Runtime Memory|Protocol Memory|runtime continuity|execution continuity",
+      "Priority 4|PRIORITY|DEV Memory",
+      "runtime/memory/**",
+      "Memory System|memory|Memory|knowledge|DEV",
+      "Runtime|runtime|DEV|Memoria|memoria",
+      "Memory|memory|memoria",
+      "Memory|memory|memoria",
+      "DEV|runtime|Runtime|session|Session|scope|project",
+      "memory|Memory|memoria|Memoria|context|Context",
+      "runtime memory|Runtime memory|DEV Memory|Protocol Memory|session memory|agent memory",
+      "runtime/memory|Memory System|RFC-80",
+      "Protocol Memory",
+      "RFC-80|Memory System",
+      "RFC-80|Memory System",
+      "14-prompt-rendering|80-memory-system",
+      "Project-durable knowledge base|\\.project/knowledge",
+      "PRIORITY.md",
+      "docs/plans/181*",
+      "181-comparative|Plan 181|181-"
+    ],
+    "source_rehydration_events": [
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_SWE_AGENT.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_SYNTHESIS.md"
+    ],
+    "shell_commands": [],
+    "tool_calls": [
+      {
+        "tool": "grep",
+        "query": "DEV Memory|runtime memory|Runtime Memory|runtime-memory",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "**/*memory*",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "DEV_MEMORY_PILOT.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "memory|Memory|memoria|Memoria",
+        "path": "docs/glossary",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/rfc/80-memory-system.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "protocol/.agents/standards/context/MEMORY_SYSTEM.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_SYNTHESIS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/150-memory-system-implementation.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Plan 181|181|DEV Memory|DEV-MEM|refactor branch|Runtime memory",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "*",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_CREWAI.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_LANGGRAPH.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Priority 4|DEV Memory|runtime memory|Runtime Memory|Protocol Memory",
+        "path": "ROADMAP.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_MATRIX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_LETTA.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/rfc/14-prompt-rendering-model.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/18-segunda-materializacion.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/18-anexo-a-comparativa-y-decision.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/ec-pipeline-vision.md",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "docs/plans/18*.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "^# Plan 18|^# Plan 17|181|180",
+        "path": "docs/plans",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "DEV Memory|runtime memory|Runtime Memory|Protocol Memory|runtime continuity|execution continuity",
+        "path": "docs",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/180-comparative-architecture-refactor-study.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_SYNTHESIS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_OPENHANDS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Priority 4|PRIORITY|DEV Memory",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_SYNTHESIS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/rfc/80-memory-system.md",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "runtime/memory/**",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "runtime/memory/__init__.py",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "runtime/README.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Memory System|memory|Memory|knowledge|DEV",
+        "path": "runtime",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "runtime/README.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "runtime/memory/operational.py",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Runtime|runtime|DEV|Memoria|memoria",
+        "path": "docs/glossary",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/glossary/INDEX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Memory|memory|memoria",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Memory|memory|memoria",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/180-comparative-architecture-refactor-study.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_SWE_AGENT.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_OPENAI_AGENTS_SDK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_GOOGLE_ADK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "DEV|runtime|Runtime|session|Session|scope|project",
+        "path": "docs/rfc",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/rfc/80-memory-system.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "README.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/rfc/80-memory-system.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "protocol/.agents/standards/context/KNOWLEDGE_LIFECYCLE.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "runtime/memory/store.py",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "memory|Memory|memoria|Memoria|context|Context",
+        "path": "docs/adr",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "runtime memory|Runtime memory|DEV Memory|Protocol Memory|session memory|agent memory",
+        "path": "protocol",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "runtime/memory|Memory System|RFC-80",
+        "path": "docs/plans/150-memory-system-implementation.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Protocol Memory",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "RFC-80|Memory System",
+        "path": "REFACTOR_CREWAI.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "RFC-80|Memory System",
+        "path": "REFACTOR_SYNTHESIS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/rfc/14-prompt-rendering-model.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/rfc/INDEX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "14-prompt-rendering|80-memory-system",
+        "path": "docs/rfc",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "runtime/README.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/placement-contract.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Project-durable knowledge base|\\.project/knowledge",
+        "path": "docs",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "PRIORITY.md",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "docs/plans/181*",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "181-comparative|Plan 181|181-",
+        "path": "docs/plans",
+        "status": "completed"
+      }
+    ],
+    "observed_tools": [
+      "glob",
+      "grep",
+      "read"
+    ],
+    "distinct_files_opened": [
+      "DEV_MEMORY_PILOT.md",
+      "README.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_SWE_AGENT.md",
+      "REFACTOR_SYNTHESIS.md",
+      "docs/glossary/INDEX.md",
+      "docs/placement-contract.md",
+      "docs/plans/150-memory-system-implementation.md",
+      "docs/plans/18-anexo-a-comparativa-y-decision.md",
+      "docs/plans/18-segunda-materializacion.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/ec-pipeline-vision.md",
+      "docs/rfc/14-prompt-rendering-model.md",
+      "docs/rfc/80-memory-system.md",
+      "docs/rfc/INDEX.md",
+      "protocol/.agents/standards/context/KNOWLEDGE_LIFECYCLE.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md",
+      "runtime/README.md",
+      "runtime/memory/__init__.py",
+      "runtime/memory/operational.py",
+      "runtime/memory/store.py"
+    ]
+  },
+  "agent": {
+    "elapsed_seconds": 115.853,
+    "returncode": 0,
+    "timed_out": false,
+    "error": null,
+    "session_id": "session-9e9acff3-5ba5-499f-a0ef-46f85329bb38",
+    "turn_end": {
+      "kind": "completed"
+    },
+    "usage": {
+      "inputTokens": 101625,
+      "outputTokens": 14043,
+      "cacheReadTokens": 1490944,
+      "cacheWriteTokens": 0,
+      "totalTokens": 1606612
+    },
+    "stderr_tail": "[llm-deepseek-api-key] model listing from https://api.deepseek.com/models loaded 2 model(s), skipped 0 row(s)\n",
+    "final_answer": "CONCLUSION: No. The repository consistently treats **runtime memory** as a runtime/execution concern — session/transcript state, checkpoint/continuity, or context representation — and **DEV Memory** as durable, curated development knowledge that survives sessions and requires stronger provenance, applicability, contradiction/supersession and authority semantics. The distinction is explicitly three-way: runtime memory, Protocol Memory and DEV Memory are adjacent but must not silently become one authority or storage model.\n\nSCOPE: This applies to the current comparative study and experimental DEV Memory pilot in this working tree. It does **not** mean a DEV Memory system exists, nor that runtime memory is specified or implemented. It must not be generalized to RFC-80’s project-scoped Memory System, which is Protocol Memory, or to `runtime/memory/`, which is a reference implementation of RFC-80 — not the “runtime memory” discussed in the studies. Nor does it settle whether future DEV Memory should reuse RFC-80 storage or retrieval mechanisms.\n\nEVIDENCE:\n- `DEV_MEMORY_PILOT.md:48-57` — “Runtime memory is not DEV Memory”; runtime/session memory, Protocol Memory and DEV Memory “solve different problems and must not silently become one authority or storage model”; the entry is marked `inferred`.\n- `REFACTOR_SYNTHESIS.md:77-86,233,299` — ARgentOS needs stronger governance than “a typical runtime memory system”; “Agent memory should be the same thing as project knowledge” is listed as falsified/unsupported; guardrail: “Runtime memory remains distinct from DEV Memory and Protocol Memory.”\n- `REFACTOR_MATRIX.md:30-40,93-107` — “Memory is not one thing”; explicitly separates `runtime checkpoint/state`, `session/history`, `Protocol Memory` and `DEV Memory`.\n- `REFACTOR_CREWAI.md:35,90` — CrewAI’s memory is “agent runtime memory,” while ARgentOS DEV Memory has stronger governance/provenance; rejects “Treating runtime agent memory as equivalent to DEV Memory.”\n- `REFACTOR_LANGGRAPH.md:92-97` — `execution checkpoint ≠ transcript/history ≠ Protocol Memory ≠ DEV Memory`.\n- `REFACTOR_SWE_AGENT.md:49-59` — runtime history compression is a context-budget mechanism; DEV Memory compaction is knowledge governance; keep separate from Priority 4 Memory.\n- `REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md:77-86` — execution state, session context, semantic memory and DEV Memory should not be collapsed into one Memory abstraction.\n- `REFACTOR_LETTA.md:19,92,95-98` — DEV Memory is intended to survive individual sessions as project continuity, independent of agent identity; rejects treating every message as Memory or memory persistence as lifecycle persistence.\n- `REFACTOR_OPENHANDS.md:52,65-79` — OpenHands’ persistent memory is close to the DEV Memory problem, but the difference is provenance: DEV Memory must preserve evidence class, applicability, contradiction/supersession and authority relationships.\n- `docs/rfc/14-prompt-rendering-model.md:144` — defines “Runtime Memory” as the part of the Execution Context that persists in runtime memory between executions instead of being represented in each prompt; this is a rendering variant, not DEV Memory.\n- `docs/rfc/80-memory-system.md:24,500-506,604` — defines the project-scoped Protocol Memory System and distinguishes context compaction, session finalization and knowledge consolidation.\n- `protocol/.agents/standards/context/MEMORY_SYSTEM.md:11-34,165-169` — the project-scoped Memory System’s layers; Operational Memory is rebuildable and never the source of truth.\n- `runtime/memory/__init__.py:1-7` and `runtime/README.md:467-473` — `runtime/memory/` is the RFC-80/Plan 150 reference runtime; memory is data and grants no authority.\n- `README.md:128` — the Protocol Memory model is shipped conceptually, the protocol implementation is not implemented, and `runtime/memory/` is a DEV reference only.\n\nAUTHORITY: The Accepted authorities are `docs/rfc/80-memory-system.md`, `protocol/.agents/standards/context/MEMORY_SYSTEM.md` and `docs/rfc/14-prompt-rendering-model.md`; however, they are authoritative for Protocol Memory and the “Runtime Memory” rendering variant respectively, and none defines DEV Memory or decides its relationship to runtime memory. The direct answer comes from Plan 180’s comparative-study artifacts and the synthesis. Plan 180 is only `Aprobado para ejecución`, explicitly authorizes no architectural adoption, and requires future adoption as a separate authorized change (`docs/plans/180-comparative-architecture-refactor-study.md:3,20,102-104`). `REFACTOR_MATRIX.md` is expressly an index, not authority over the individual analyses; `REFACTOR_SYNTHESIS.md` is a derived synthesis. `DEV_MEMORY_PILOT.md` is explicitly experimental and non-authoritative, and it cites “Plan 181,” but no `docs/plans/181-*` file or plan-181 INDEX entry exists in this tree. Thus the repository establishes this as its research position, not as accepted architecture.\n\nUNSUPPORTED: The repository does not define a single canonical meaning for “runtime memory”: it appears both as an RFC-14 rendering variant and, in the studies, as agent/runtime session memory. No DEV Memory implementation exists; the pilot is experimental and contains no runtime integration. No accepted RFC/ADR or protocol standard decides whether DEV Memory and Protocol Memory should share storage, retrieval or authority, and no artifact verifies that the distinction survives implementation. The repository also does not establish that they are wholly unrelated — only that they are distinct and must not be collapsed."
+  },
+  "provenance": {
+    "deterministic": true,
+    "cited": [
+      "DEV_MEMORY_PILOT.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_SWE_AGENT.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_OPENHANDS.md",
+      "docs/rfc/14-prompt-rendering-model.md",
+      "docs/rfc/80-memory-system.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md",
+      "runtime/memory/__init__.py",
+      "runtime/README.md",
+      "README.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md"
+    ],
+    "cited_and_opened": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_SWE_AGENT.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_OPENHANDS.md",
+      "docs/rfc/14-prompt-rendering-model.md",
+      "docs/rfc/80-memory-system.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md",
+      "runtime/memory/__init__.py",
+      "runtime/README.md",
+      "README.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md"
+    ]
+  },
+  "grader": {
+    "attempted": true,
+    "elapsed_seconds": 17.958,
+    "returncode": 0,
+    "timed_out": false,
+    "usage": {
+      "inputTokens": 23387,
+      "outputTokens": 2540,
+      "cacheReadTokens": 768,
+      "cacheWriteTokens": 0,
+      "totalTokens": 26695
+    },
+    "evidence_included": [
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_LETTA.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_SWE_AGENT.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/adr/15-change-lifecycle-continuity.md",
+      "docs/adr/16-change-lifecycle-authority.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md"
+    ],
+    "evidence_missing": [],
+    "raw_final": "{\"correct_conclusion\": true, \"correct_scope\": true, \"authority_boundary_preserved\": true, \"unsupported_claim\": true, \"rationale\": \"The answer agrees with the decisive conclusion that runtime memory is not DEV Memory and distinguishes runtime, Protocol, and DEV Memory without over-generalizing. It largely preserves the authority boundary by labeling the synthesis as derived, the matrix as an index, and the pilot as experimental and non-authoritative. However, it relies materially on artifacts not present in the fixed pack, including DEV_MEMORY_PILOT.md, REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md, RFC-14, RFC-80, README.md, runtime/memory/, and Plan 181, so unsupported_claim is true.\"}",
+    "parsed": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true,
+      "rationale": "The answer agrees with the decisive conclusion that runtime memory is not DEV Memory and distinguishes runtime, Protocol, and DEV Memory without over-generalizing. It largely preserves the authority boundary by labeling the synthesis as derived, the matrix as an index, and the pilot as experimental and non-authoritative. However, it relies materially on artifacts not present in the fixed pack, including DEV_MEMORY_PILOT.md, REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md, RFC-14, RFC-80, README.md, runtime/memory/, and Plan 181, so unsupported_claim is true."
+    },
+    "fields_used": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true
+    }
+  },
+  "raw_ndjson": {
+    "agent": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q03.agent.ndjson",
+      "sha256": "6ac9906a24f413da01601a8672fe345f1d92bede210dd02920e427458e3735f3",
+      "bytes": 335464
+    },
+    "grader": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q03.grader.ndjson",
+      "sha256": "344651c31073098bee59e8f9fd8fdb9c37a030889dd44130b237894fc245d789",
+      "bytes": 10286
+    }
+  },
+  "notes": []
+}

@@ -1,0 +1,319 @@
+{
+  "schema": "argentos.dev-memory.controlled-trace.v1",
+  "condition": "CONTROL",
+  "question_id": "Q02",
+  "question": "Does the comparative study justify a universal Unit/Relationship/State ontology?",
+  "run": {
+    "run_id": "full-20261031T171408",
+    "source_digest": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "runner_sha256": "f69e6080b7aaf95a3334b56e9d101040cb2dac900b05adc3523c4662b6297096",
+    "adapter_sha256": "5b27f4f1022332321dff8f65fc0cc3ed6bf670f43fd86b1773c1e02f7c2a4b4c",
+    "tool_set_sha256": "a5013d17a6fd831003f44fc4003db0723ccf173a11c0ad517f8294b8a306d328",
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "prompt_sha256": "f9de92437861cdac42a8d41b64421a0919ba3ac7609fb684a04dd401b10618d7",
+    "grader_prompt_sha256": "61ecb054b11a664e34cc2fa601e482ddf1ec04f7a730123351f1be46f8d5ab30",
+    "key_sha256": "bd172b1da52a524ccc0bc6f8ccce8be3864d4889d25e6b64d2a11f7e86017081",
+    "evidence_sha256": "2870620d6bab2bd7a71883f5d804a8f87c82b0daf1016be4bdb4047d54f3ce99"
+  },
+  "workspace": {
+    "runner": "C:\\Users\\rolda\\AppData\\Local\\Temp\\argentos-memory-control-r0pnvykb\\repo",
+    "agent": "C:\\Users\\rolda\\AppData\\Local\\Temp\\bench-smobay2_\\repo",
+    "neutral_copy": true
+  },
+  "base_commit": "a5f97c163b56b82dc8fadd4e3f65646899e9c245",
+  "model_label": "deepseek-official/deepseek-flash (DeepSeek-V4.1-Flash)",
+  "dsh_cli": "D:\\Programas\\DeepseekHarness\\resources\\runtime\\cli\\bin\\dsh.cmd",
+  "experimental_infrastructure": "tools/dev_memory_agent_executor.py",
+  "integrity": {
+    "pilot_present": false,
+    "pilot_sha256": null,
+    "runner_pilot_present": false,
+    "workspace_digest_before": "fedb8866755b00d44f9e754b35ea81dcfda4e17a3fd2eb0121f800c0f0a954b0",
+    "workspace_digest_after": "fedb8866755b00d44f9e754b35ea81dcfda4e17a3fd2eb0121f800c0f0a954b0",
+    "workspace_stable": true,
+    "condition_labels_in_child_env": [],
+    "condition_token_in_agent_cwd": false,
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "grader_tool_policy_sha256": "ea826e1e9ceb38bb215a8e5f944dcd9399d1cb0972718e9d4cdcf559dc9c9153",
+    "disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents"
+    ],
+    "grader_disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents",
+      "tool-fs",
+      "tool-fs-search",
+      "tool-skill",
+      "tool-todo",
+      "tool-goal"
+    ],
+    "observed_disallowed_tools": [],
+    "observed_disallowed_tool_attempts": [],
+    "out_of_workspace_calls": [],
+    "failed_reads": [],
+    "agent_sandbox": "read-only"
+  },
+  "instrumentation": {
+    "file_open_events": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_LANGGRAPH.md",
+      "docs/architecture/ARCHITECTURAL_DECISION_MODEL.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "docs/plans/INDEX.md",
+      "REFACTOR_LETTA.md"
+    ],
+    "search_events": [
+      "comparative|comparison|Unit/Relationship|Relationship/State|ontology",
+      "docs/**/*.md",
+      "REFACTOR_*.md",
+      "universal|Unit Model|Relationship Model|State Model|lineage database|ontology",
+      "Plan 180|plan 180|REFACTOR_SYNTHESIS|REFACTOR_MATRIX|comparative architecture",
+      "Unit/Relationship|Relationship Model|Unit Model|universal unit|comprehensive Unit",
+      "graph model|Universal|universal|REJECT|Reject",
+      "REFACTOR_|branch `refactor`|rama `refactor`"
+    ],
+    "source_rehydration_events": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_LETTA.md"
+    ],
+    "shell_commands": [],
+    "tool_calls": [
+      {
+        "tool": "grep",
+        "query": "comparative|comparison|Unit/Relationship|Relationship/State|ontology",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "docs/**/*.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_SYNTHESIS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_MATRIX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/180-comparative-architecture-refactor-study.md",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "REFACTOR_*.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_OPENAI_AGENTS_SDK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "universal|Unit Model|Relationship Model|State Model|lineage database|ontology",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_LANGGRAPH.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/architecture/ARCHITECTURAL_DECISION_MODEL.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_GOOGLE_ADK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Plan 180|plan 180|REFACTOR_SYNTHESIS|REFACTOR_MATRIX|comparative architecture",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/INDEX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Unit/Relationship|Relationship Model|Unit Model|universal unit|comprehensive Unit",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_LETTA.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "graph model|Universal|universal|REJECT|Reject",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "REFACTOR_|branch `refactor`|rama `refactor`",
+        "path": ".",
+        "status": "completed"
+      }
+    ],
+    "observed_tools": [
+      "glob",
+      "grep",
+      "read"
+    ],
+    "distinct_files_opened": [
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_SYNTHESIS.md",
+      "docs/architecture/ARCHITECTURAL_DECISION_MODEL.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md"
+    ]
+  },
+  "agent": {
+    "elapsed_seconds": 41.479,
+    "returncode": 0,
+    "timed_out": false,
+    "error": null,
+    "session_id": "session-29435323-59ad-442f-863f-44532ae71d0e",
+    "turn_end": {
+      "kind": "completed"
+    },
+    "usage": {
+      "inputTokens": 32852,
+      "outputTokens": 5340,
+      "cacheReadTokens": 178944,
+      "cacheWriteTokens": 0,
+      "totalTokens": 217136
+    },
+    "stderr_tail": "[llm-deepseek-api-key] model listing from https://api.deepseek.com/models loaded 2 model(s), skipped 0 row(s)\n",
+    "final_answer": "CONCLUSION: No. The comparative study does not justify a universal Unit/Relationship/State ontology; it explicitly reaches the opposite conclusion. `REFACTOR_SYNTHESIS.md` states that none of the eight comparisons demonstrated ARgentOS needs a \"universal Unit Model, Relationship Model, State Model, Lineage database or filesystem reorganization\" (§1), lists \"ARgentOS needs a universal graph model\" and \"ARgentOS needs a universal state ontology\" as falsified/unsupported (§10), and sets the guardrail \"No universal ontology without a demonstrated problem\" (§13). `REFACTOR_MATRIX.md` likewise says the comparison \"does not justify a universal State Model or graph ontology\" and recommends rejecting \"a comprehensive Unit/Relationship/State registry unless a concrete problem requires it\" (Cross-system findings 1–2), and lists Universal Unit superclass, Universal State Model, Universal graph architecture and Global relationship database under Reject.\n\nSCOPE: This applies to the ARgentOS architecture as assessed by the 2026-10-29 comparative study against eight external systems (LangGraph, OpenAI Agents SDK, Microsoft Agent Framework, Google ADK, CrewAI, OpenHands, SWE-agent/mini-SWE-agent, Letta). It is a recommendation at the architecture-study level, not a prohibition of any bounded or local state/relationship mechanism: the study repeatedly conditions any such model on \"a concrete problem\" and measurable improvement. It does not extend to the protocol payload, adopters, `dist`, or to an empirical conclusion about costs; the study's proposed experiments were recommendations, not executed evaluations.\n\nEVIDENCE:\n- `REFACTOR_SYNTHESIS.md` §1 (lines 8–18): eight comparisons do not support an architectural rewrite; \"None of the comparisons demonstrated that ARgentOS needs a universal Unit Model, Relationship Model, State Model, Lineage database or filesystem reorganization\" and this is called \"the most important negative result.\"\n- `REFACTOR_SYNTHESIS.md` §10 (lines 223–236): the study \"falsified/unsupported\" includes universal graph model, universal state ontology, every relationship persisted explicitly, and a required lineage database.\n- `REFACTOR_SYNTHESIS.md` §13 (line 296): guardrail \"No universal ontology without a demonstrated problem.\"\n- `REFACTOR_MATRIX.md` (lines 20–28, 79–89, 120–124): \"Small primitives outperform universal ontologies\"; reject \"a comprehensive Unit/Relationship/State registry\"; Reject list includes Universal graph architecture, Universal State Model, Universal Unit superclass, Global relationship database; decision is \"incremental adaptation, not architectural replacement.\"\n- `REFACTOR_OPENAI_AGENTS_SDK.md` (lines 24, 74, 92): the SDK is \"a strong counterexample to the idea that a richer agent system requires a larger universal ontology\"; ARgentOS should \"resist introducing Unit/Relationship/State/Lineage abstractions merely because the system is complex\"; reject copying its Agent as ARgentOS's \"universal unit.\"\n- `REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md` (lines 33–35, 104): evidence against \"a monolithic Unit/Component/Capability registry\" and against capabilities \"becoming one universal architectural entity.\"\n- `REFACTOR_LANGGRAPH.md` (lines 57–63, 196–197): \"no universal ARgentOS State Model\"; reject \"Universal graph model for all ARgentOS architecture\" and \"Universal state model.\"\n- `REFACTOR_GOOGLE_ADK.md` (line 38): \"no new universal Memory/State model.\"\n- `docs/plans/180-comparative-architecture-refactor-study.md` (lines 18–20, 58–61, 102, 104): authorizes the study, lists the matrix as a cumulative index and the individual analyses plus a final synthesis as deliverables, says the matrix must not become authority over the individual analyses, and forbids implementing architectural changes derived from the study inside this plan.\n- `docs/plans/INDEX.md` (line 15): Plan 180 is recorded as \"Aprobado para ejecución\" with Vigencia \"active.\"\n- `docs/architecture/ARCHITECTURAL_DECISION_MODEL.md` (lines 629–634, 636–648): a full formal ontology (\"Option C\") was considered and rejected as \"sobre-ingeniería; no es necesario para el objetivo,\" with \"Option B\" chosen. This is corroborating context, but the document is a historical/archived architecture snapshot, not an operative decision on the comparative study.\n\nAUTHORITY: The authoritative artifact for the study's authorization is Plan 180 (`docs/plans/180-comparative-architecture-refactor-study.md`), which is still \"Aprobado para ejecución\"/active and explicitly does not authorize architectural change (step 13). The primary comparison evidence is the individual `REFACTOR_<SYSTEM>.md` analyses; `REFACTOR_MATRIX.md` is a self-declared cumulative index (plan step 11: \"sin convertirlo en autoridad sobre los análisis individuales\"), and `REFACTOR_SYNTHESIS.md` is the derived final synthesis/summary. No canonical RFC, ADR or executed plan in this repository adopts or materializes the study's conclusions, so the negative result is a recommendation, not governing architecture. The individual analyses' claims about external systems rest on URL citations only; no source snapshots are vendored in the repository, so those external-system claims cannot be independently verified offline here. The proposed experiments were not run, and Plan 180's exit criteria remain unchecked.\n\nUNSUPPORTED: The repository does not settle whether a narrower, non-universal Unit/Relationship/State model might later be justified by a specific demonstrated problem — the study leaves that explicitly conditional (\"unless a concrete problem requires it\"). It does not provide empirical cost/benefit measurements for or against such a model, does not prove a universal ontology is inherently impossible, and does not decide protocol-payload or adopter-level consequences. Whether any later governance changed this conclusion is also not established by the artifacts examined."
+  },
+  "provenance": {
+    "deterministic": true,
+    "cited": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md",
+      "docs/architecture/ARCHITECTURAL_DECISION_MODEL.md"
+    ],
+    "cited_and_opened": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md",
+      "docs/architecture/ARCHITECTURAL_DECISION_MODEL.md"
+    ]
+  },
+  "grader": {
+    "attempted": true,
+    "elapsed_seconds": 25.17,
+    "returncode": 0,
+    "timed_out": false,
+    "usage": {
+      "inputTokens": 21579,
+      "outputTokens": 3954,
+      "cacheReadTokens": 768,
+      "cacheWriteTokens": 0,
+      "totalTokens": 26301
+    },
+    "evidence_included": [
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_MATRIX.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/adr/15-change-lifecycle-continuity.md",
+      "docs/adr/16-change-lifecycle-authority.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+    ],
+    "evidence_missing": [],
+    "raw_final": "{\"correct_conclusion\": true, \"correct_scope\": true, \"authority_boundary_preserved\": true, \"unsupported_claim\": true, \"rationale\": \"The answer correctly concludes that the comparative study rejects a universal Unit/Relationship/State ontology and preserves the narrow, problem-justified exception. It also appropriately distinguishes Plan 180's authorization, the individual analyses as primary comparison evidence, and the matrix/synthesis as derived summaries rather than authority. However, it includes material claims not present in the fixed evidence pack, notably the Google ADK quote about no new universal Memory/State model and the ARCHITECTURAL_DECISION_MODEL Option C/Option B history, and asserts that no repository RFC/ADR adopts the conclusions, which the pack does not establish.\"}",
+    "parsed": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true,
+      "rationale": "The answer correctly concludes that the comparative study rejects a universal Unit/Relationship/State ontology and preserves the narrow, problem-justified exception. It also appropriately distinguishes Plan 180's authorization, the individual analyses as primary comparison evidence, and the matrix/synthesis as derived summaries rather than authority. However, it includes material claims not present in the fixed evidence pack, notably the Google ADK quote about no new universal Memory/State model and the ARCHITECTURAL_DECISION_MODEL Option C/Option B history, and asserts that no repository RFC/ADR adopts the conclusions, which the pack does not establish."
+    },
+    "fields_used": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true
+    }
+  },
+  "raw_ndjson": {
+    "agent": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q02.agent.ndjson",
+      "sha256": "99f5a6f459d39d83c406c8d596965280ea224750740f37ad471ef60cbe9e7902",
+      "bytes": 121898
+    },
+    "grader": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q02.grader.ndjson",
+      "sha256": "dc495400384cf65c346465eb0068a9516bdc0b4c29b77f91fa1c6c4f4fe01745",
+      "bytes": 10515
+    }
+  },
+  "notes": []
+}

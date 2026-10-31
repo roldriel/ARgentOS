@@ -1,0 +1,635 @@
+{
+  "schema": "argentos.dev-memory.controlled-trace.v1",
+  "condition": "TREATMENT",
+  "question_id": "Q01",
+  "question": "Should runtime execution continuity remain separate from Change Lifecycle?",
+  "run": {
+    "run_id": "full-20261031T171408",
+    "source_digest": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "runner_sha256": "f69e6080b7aaf95a3334b56e9d101040cb2dac900b05adc3523c4662b6297096",
+    "adapter_sha256": "5b27f4f1022332321dff8f65fc0cc3ed6bf670f43fd86b1773c1e02f7c2a4b4c",
+    "tool_set_sha256": "a5013d17a6fd831003f44fc4003db0723ccf173a11c0ad517f8294b8a306d328",
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "prompt_sha256": "97288572f6a3d0ecf8355e87ac0c50504e6ede27058bb5521252321f68a09444",
+    "grader_prompt_sha256": "e9db3ea3b16e3f7448fcfb7dd1ee2b31d112e0984804350be4e285b0e8dbb0c7",
+    "key_sha256": "bd172b1da52a524ccc0bc6f8ccce8be3864d4889d25e6b64d2a11f7e86017081",
+    "evidence_sha256": "d3144647dd6fae226e7cac1c451d6c416b9f656c310fa46968916518700d9c31"
+  },
+  "workspace": {
+    "runner": "C:\\Users\\rolda\\AppData\\Local\\Temp\\argentos-memory-treatment-98f0kc0y\\repo",
+    "agent": "C:\\Users\\rolda\\AppData\\Local\\Temp\\bench-yryext8h\\repo",
+    "neutral_copy": true
+  },
+  "base_commit": "a5f97c163b56b82dc8fadd4e3f65646899e9c245",
+  "model_label": "deepseek-official/deepseek-flash (DeepSeek-V4.1-Flash)",
+  "dsh_cli": "D:\\Programas\\DeepseekHarness\\resources\\runtime\\cli\\bin\\dsh.cmd",
+  "experimental_infrastructure": "tools/dev_memory_agent_executor.py",
+  "integrity": {
+    "pilot_present": true,
+    "pilot_sha256": "44a6a10b8308a76981c12f1798b9461619f030f73fa3b6c5e0378efb67949bcd",
+    "runner_pilot_present": true,
+    "workspace_digest_before": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "workspace_digest_after": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "workspace_stable": true,
+    "condition_labels_in_child_env": [],
+    "condition_token_in_agent_cwd": false,
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "grader_tool_policy_sha256": "ea826e1e9ceb38bb215a8e5f944dcd9399d1cb0972718e9d4cdcf559dc9c9153",
+    "disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents"
+    ],
+    "grader_disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents",
+      "tool-fs",
+      "tool-fs-search",
+      "tool-skill",
+      "tool-todo",
+      "tool-goal"
+    ],
+    "observed_disallowed_tools": [],
+    "observed_disallowed_tool_attempts": [],
+    "out_of_workspace_calls": [],
+    "failed_reads": [
+      ".git/HEAD",
+      ".git/logs/HEAD"
+    ],
+    "agent_sandbox": "read-only"
+  },
+  "instrumentation": {
+    "file_open_events": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "DEV_MEMORY_PILOT.md",
+      "README.md",
+      "README.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/adr/15-change-lifecycle-continuity.md",
+      "runtime/README.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      ".agents/policies/autonomous-orchestration.md",
+      "docs/CONVENTIONS.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "ROADMAP.md",
+      "docs/working/audits/INTEGRATION_CONTINUITY_AUDIT_2026-10-24.md",
+      "docs/behavior-patterns.md",
+      "docs/working/audits/architecture-capability-review.md",
+      "docs/working/audits/architecture-capability-review.md",
+      "docs/CONVENTIONS.md",
+      "docs/working/audits/architecture-capability-review.md",
+      "docs/working/audits/EXECUTION_HOST_SEMANTIC_AUDIT_2026-10-14.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_CREWAI.md",
+      "docs/plans/INDEX.md",
+      "docs/placement-contract.md",
+      "docs/placement-contract.md",
+      "docs/glossary/terms.md",
+      "docs/rfc/59-recovery-context-session-continuity.md",
+      "docs/rfc/59-recovery-context-session-continuity.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md"
+    ],
+    "search_events": [
+      "execution continuity",
+      "Change Lifecycle",
+      "continuity",
+      "REFACTOR*",
+      "181|runtime execution|execution continuity|checkpoint/resume|checkpoint.*resume",
+      "docs/plans/*181*",
+      "docs/plans/*.md",
+      "REFACTOR_|Plan 181|plan 181|refactor branch|dev_memory_pilot|DEV_MEMORY_PILOT",
+      "180-comparative|Plan 180|180\\b",
+      "runtime|ejecución|execution",
+      "^## ",
+      "runtime|execution state|execution continuity|session|recovery|resume",
+      "Autonomous Orchestrator|Change Lifecycle|isolated|aislad",
+      "continuity|runtime|Memory|execution",
+      "reconstruct|journal|continuity|restart",
+      "[Cc]ontinuity|[Ee]xecution continuity|[Rr]untime",
+      "execution continuity|runtime execution|execution state",
+      "Plan 180|plan 181|181-",
+      "[Cc]ontin",
+      "**/*181*",
+      "\\b181\\b",
+      "runtime|execution|continuity|Change Lifecycle"
+    ],
+    "source_rehydration_events": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md"
+    ],
+    "shell_commands": [],
+    "tool_calls": [
+      {
+        "tool": "grep",
+        "query": "execution continuity",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Change Lifecycle",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "continuity",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "REFACTOR*",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_SYNTHESIS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_MATRIX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "DEV_MEMORY_PILOT.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "181|runtime execution|execution continuity|checkpoint/resume|checkpoint.*resume",
+        "path": "docs",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "README.md",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "docs/plans/*181*",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "docs/plans/*.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "README.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/rfc/75-change-lifecycle.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/adr/15-change-lifecycle-continuity.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "REFACTOR_|Plan 181|plan 181|refactor branch|dev_memory_pilot|DEV_MEMORY_PILOT",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "runtime/README.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/180-comparative-architecture-refactor-study.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_LANGGRAPH.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_LANGGRAPH.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "180-comparative|Plan 180|180\\b",
+        "path": "docs/plans/INDEX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": ".agents/policies/autonomous-orchestration.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "runtime|ejecución|execution",
+        "path": "docs/rfc/75-change-lifecycle.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/CONVENTIONS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "^## ",
+        "path": "docs/rfc/75-change-lifecycle.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "runtime|execution state|execution continuity|session|recovery|resume",
+        "path": "docs/adr/15-change-lifecycle-continuity.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/rfc/75-change-lifecycle.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/rfc/75-change-lifecycle.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/rfc/75-change-lifecycle.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/rfc/75-change-lifecycle.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Autonomous Orchestrator|Change Lifecycle|isolated|aislad",
+        "path": "docs/plans/178-integration-continuity-audit.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "continuity|runtime|Memory|execution",
+        "path": "ROADMAP.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "ROADMAP.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/working/audits/INTEGRATION_CONTINUITY_AUDIT_2026-10-24.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/behavior-patterns.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "reconstruct|journal|continuity|restart",
+        "path": "docs/working/audits/EXECUTION_HOST_SEMANTIC_AUDIT_2026-10-14.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "[Cc]ontinuity|[Ee]xecution continuity|[Rr]untime",
+        "path": "docs/glossary",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "execution continuity|runtime execution|execution state",
+        "path": "docs",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/working/audits/architecture-capability-review.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/working/audits/architecture-capability-review.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/CONVENTIONS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/working/audits/architecture-capability-review.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/working/audits/EXECUTION_HOST_SEMANTIC_AUDIT_2026-10-14.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_LANGGRAPH.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_GOOGLE_ADK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_CREWAI.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/INDEX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Plan 180|plan 181|181-",
+        "path": "CHANGELOG.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/placement-contract.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/placement-contract.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "[Cc]ontin",
+        "path": "docs/glossary",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/glossary/terms.md",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "**/*181*",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "\\b181\\b",
+        "path": "docs/plans",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/rfc/59-recovery-context-session-continuity.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "runtime|execution|continuity|Change Lifecycle",
+        "path": "docs/rfc/59-recovery-context-session-continuity.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/rfc/59-recovery-context-session-continuity.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": ".git/HEAD",
+        "status": "error"
+      },
+      {
+        "tool": "read",
+        "path": ".git/logs/HEAD",
+        "status": "error"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_LETTA.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_OPENAI_AGENTS_SDK.md",
+        "status": "completed"
+      }
+    ],
+    "observed_tools": [
+      "glob",
+      "grep",
+      "read"
+    ],
+    "distinct_files_opened": [
+      ".agents/policies/autonomous-orchestration.md",
+      "DEV_MEMORY_PILOT.md",
+      "README.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_SYNTHESIS.md",
+      "ROADMAP.md",
+      "docs/CONVENTIONS.md",
+      "docs/adr/15-change-lifecycle-continuity.md",
+      "docs/behavior-patterns.md",
+      "docs/glossary/terms.md",
+      "docs/placement-contract.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md",
+      "docs/rfc/59-recovery-context-session-continuity.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/working/audits/EXECUTION_HOST_SEMANTIC_AUDIT_2026-10-14.md",
+      "docs/working/audits/INTEGRATION_CONTINUITY_AUDIT_2026-10-24.md",
+      "docs/working/audits/architecture-capability-review.md",
+      "runtime/README.md"
+    ]
+  },
+  "agent": {
+    "elapsed_seconds": 196.482,
+    "returncode": 0,
+    "timed_out": false,
+    "error": null,
+    "session_id": "session-c19a6c5e-fbbb-4502-aa7c-96481a6b17c4",
+    "turn_end": {
+      "kind": "completed"
+    },
+    "usage": {
+      "inputTokens": 102819,
+      "outputTokens": 28338,
+      "cacheReadTokens": 2442240,
+      "cacheWriteTokens": 0,
+      "totalTokens": 2573397
+    },
+    "stderr_tail": "[llm-deepseek-api-key] model listing from https://api.deepseek.com/models loaded 2 model(s), skipped 0 row(s)\n",
+    "final_answer": "CONCLUSION: Yes — runtime execution continuity should remain a separate runtime concern and should not be merged into the DEV Change Lifecycle. The repository’s current architecture keeps execution state, restart/reconstruction and runtime evidence outside lifecycle state and lifecycle authority, and the authorized refactor study states the recommendation explicitly: “Execution state is not lifecycle state” and “It must remain separate from Change Lifecycle.” Qualification: this is the existing design boundary plus a study recommendation; no Accepted RFC/ADR/plan in the repository adopts the separation as a normative decision.\n\nSCOPE: Applies to ARgentOS DEV — RFC-75’s Change Lifecycle versus `runtime/orchestrator/` and any future runtime execution-continuity mechanism. It is a separation of state and authority, not a prohibition on interaction: the runtime host may read lifecycle artifacts and record authorized lifecycle evidence (anchors, checkpoints), which the integration audit treats as an intentional integration. It must not be generalized to: the Protocol payload/task lifecycle (RFC-75 is DEV-only; RFC-59 governs Protocol session recovery separately); the design, necessity or adequacy of checkpoint/resume/idempotency; the sufficiency of the current reconstruct-based recovery; or Protocol Memory/DEV Memory. It also does not establish a “Protocol Change Lifecycle”; the README states the Change Lifecycle is DEV-only and governs this repository, not the protocol it publishes.\n\nEVIDENCE:\n\n- `docs/rfc/75-change-lifecycle.md:## No-objetivos` and `## Preguntas abiertas` — the Change Lifecycle explicitly excludes “orchestration automática,” “handoff artifact obligatorio,” “lifecycle backend universal,” and marks “handoff mechanism; orchestration” as OUT OF SCOPE. This places runtime orchestration outside the lifecycle’s defined scope.\n- `docs/rfc/75-change-lifecycle.md:## Mecanismo 11 — Series / Continuity` and `## Principios arquitectónicos` — “continuity” here means derived series identity and lifecycle reconstructibility (anchors, lineage, Git closure), not preserved runtime execution state. This is a different concept from runtime execution continuity.\n- `docs/adr/15-change-lifecycle-continuity.md:## Decisión` and `## Invariantes` — ADR-15 defines lifecycle continuity as validation anchorability, anchor-relative validity, Git-verifiable closure, finding/correction/revalidation lineage, and decision lineage (CL-1…CL-10). It contains no runtime execution state, checkpoint/resume or interruption semantics.\n- `.agents/policies/autonomous-orchestration.md:§2` and `§9` — the host is “not a new lifecycle, not a new state machine, not a new authority”; there is “no second persistent representation of the state”; and “The host holds no state. After a restart it reconstructs the situation from the repository … and the persisted evidence, continuing the iteration numbering and the derivation.” A missing store entry is a `GAP`, never a positive fact.\n- `runtime/README.md:## DEV Autonomous Orchestrator (Plan 122)` — `runtime/orchestrator/` “conducts the Change Lifecycle … it does not extend it”; the lifecycle remains the single source of truth; the host only reads it and records evidence into the authorized plan’s artifact; it introduces no state machine, no `next_state`, no registry, no global Change entity and no second persistent representation of state.\n- `docs/behavior-patterns.md:## 2. Patrón de estado: nada se almacena, todo se deriva` — repository state is re-derived each iteration from Git, governance artifacts, persisted evidence, authority and gates; “un reinicio no pierde posición” because the host holds no memory between invocations. Missing evidence is `GAP`.\n- `docs/placement-contract.md:§6 Project / session state` and `§21` — session execution state (`.project/<session-uuid>/<iteration>/`, `.project/orchestrator/`) is `generated`, disposable and “not part of durable state,” while project-durable Change governance is Git-persisted; the Git commit operation remains owned by the Change Lifecycle. This separates runtime execution state from durable lifecycle state.\n- `docs/working/audits/architecture-capability-review.md:### 4.13 execution state persistence — ALREADY_SOLVED` — explicitly separates three persistence layers: execution evidence (delegations, worker results, journal, runs; durable between processes but non-versioned), Change governance (plan artifact; Git-versioned), and host state (“en ningún lugar, deliberadamente”). The audit states “Continuidad (ya poseída por reconstrucción).”\n- `docs/working/audits/INTEGRATION_CONTINUITY_AUDIT_2026-10-24.md:§4` and `§5.1` — Change Lifecycle and Autonomous Orchestrator are classified as separate DEV capabilities, both `INTEGRATED`; the host imports the governance writer and records anchors/checkpoints. This shows deliberate interaction without merging the concerns.\n- `REFACTOR_SYNTHESIS.md:§4` — “ARgentOS currently has strong governance around an execution but less explicit semantics for preserving and resuming runtime execution itself. … It must remain separate from Change Lifecycle. **Execution state is not lifecycle state.**” `§13` adds the guardrail “Runtime state remains distinct from lifecycle state.”\n- `REFACTOR_MATRIX.md` — the LangGraph row says “Execution continuity, checkpoint/resume, idempotency; keep runtime state separate from Change Lifecycle”; the “Preserve” list includes “Change Lifecycle authority and existing lifecycle semantics”; the emerging target architecture places Governance/Change Lifecycle and Runtime/Orchestrator in separate branches.\n- `REFACTOR_LANGGRAPH.md:§2`, `§3`, `§12` — “Execution state should remain distinct from Change Lifecycle state”; “This should live in runtime execution, not in Change Lifecycle”; “a paused execution is not automatically a new lifecycle state”; reject “Runtime checkpoint as governance authority” and “Runtime trace as proof of authorization or closure.”\n- `REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md:§9` and `§10` — “Keep execution topology separate from agent identity and from Change Lifecycle”; reject “Merging Workflow state with Change Lifecycle state.”\n- `REFACTOR_CREWAI.md:§2`, `REFACTOR_GOOGLE_ADK.md:§3`, `REFACTOR_LETTA.md:§4` and `§8` — do not introduce a universal Flow abstraction into governance; execution continuity and durable semantic knowledge are separate concerns; a run/step hierarchy “should not be confused with Change Lifecycle states”; reject “Making memory persistence equivalent to lifecycle persistence.”\n- `DEV_MEMORY_PILOT.md:DEV-MEM-001` and `DEV-MEM-003` — investigate execution continuity “as runtime concerns without merging them into Change Lifecycle”; keep DEV Memory separate from Protocol Memory and runtime continuity. The file header self-describes it as “experimental, non-authoritative.”\n- `docs/plans/180-comparative-architecture-refactor-study.md:## Objetivo` and `## Pasos` (step 13) — the plan authorizes the comparative study, explicitly does not authorize changes to `dev`, `master`, `protocol/.agents/` or `dist`, and says “No implementar cambios arquitectónicos derivados del estudio dentro de este Plan; las adopciones futuras deberán constituir cambios separados y explícitamente autorizados.”\n- `docs/plans/INDEX.md:## Plan 180` — records Plan 180 as `Aprobado para ejecución`, `active`; it is not `Executed`/`Closed`.\n- `README.md:## Key concepts` and `### Change Lifecycle: governing a change, not just doing it` — the Change Lifecycle is “DEV only (`docs/rfc/75-change-lifecycle.md`, `docs/`, `.agents/`)”; it “governs *this repository*, not the protocol it publishes.”\n- `docs/rfc/59-recovery-context-session-continuity.md:§3 Reanudación de sesión` — the accepted Protocol mechanism resumes a partial session from its last intact artifact. This is a separate Protocol session-continuity mechanism, not the DEV Change Lifecycle.\n\nAUTHORITY: Authoritative for the boundary: `docs/rfc/75-change-lifecycle.md` (RFC-75, Accepted; normative for the DEV Change Lifecycle’s scope and non-goals), `docs/adr/15-change-lifecycle-continuity.md` (ADR-15, Accepted; normative for lifecycle-continuity invariants), `docs/CONVENTIONS.md` and `docs/placement-contract.md` (DEV Policy), and `docs/rfc/59-recovery-context-session-continuity.md` (Accepted, but only for the separate Protocol session-recovery boundary). `.agents/policies/autonomous-orchestration.md` is an operational DEV policy, not governance; `.agents/AGENTS.md` locates normative authority in `docs/`. `runtime/README.md` and `docs/behavior-patterns.md` are descriptive/reference material, not normative authority for the decision. Plan 180 is a governance artifact only in the sense of authorizing the study; its status is `Aprobado para ejecución`, not `Executed`/`Closed`, and it does not decide architecture. `REFACTOR_MATRIX.md` is explicitly an index/matrix (Plan 180 step 11 says it must not become authority over the individual analyses); `REFACTOR_SYNTHESIS.md` is a derived final synthesis of those analyses; the individual `REFACTOR_*.md` files are study artifacts, not RFCs/ADRs/plans; `DEV_MEMORY_PILOT.md` self-declares “experimental, non-authoritative” and cites a “Plan 181” that is absent from `docs/plans/` and `docs/plans/INDEX.md`. The Working audits cited above (including `architecture-capability-review.md`, `INTEGRATION_CONTINUITY_AUDIT_2026-10-24.md`, and `EXECUTION_HOST_SEMANTIC_AUDIT_2026-10-14.md`) explicitly declare “Autoridad: ninguna.” Unverified: I could not verify branch/commit state because this snapshot contains no `.git` metadata; I did not execute the tests or checkers; and the external-system claims inside the study were not independently verified (network access is disallowed).\n\nUNSUPPORTED:\n\n- That the separation is an adopted normative rule. No Accepted RFC, ADR or Executed plan records “runtime execution continuity must remain separate from Change Lifecycle”; the statement is a study recommendation and the current design boundary.\n- That the current runtime continuity is inadequate or that a new checkpoint/resume mechanism is required. The study infers “less explicit semantics for preserving and resuming runtime execution itself,” while the Working audit `architecture-capability-review.md` marks execution-state persistence `ALREADY_SOLVED` via reconstruction. No authoritative artifact resolves which assessment governs.\n- A precise repository definition and scope of “runtime execution continuity.” The term is not defined in the glossary, RFCs or ADRs; it appears in the study and the non-authoritative DEV Memory pilot. It is therefore unsettled whether the host’s reconstruct-from-evidence recovery counts as the same thing the study proposes to investigate.\n- The interface rules between a future runtime-continuity mechanism and the Change Lifecycle beyond “runtime state/traces are not authority.” The study rejects runtime checkpoint as governance authority and runtime trace as proof of closure, but does not define a formal contract for sharing evidence or records.\n- Protocol-level applicability. RFC-75 is DEV-only; RFC-59 governs Protocol session recovery; the repository does not settle whether or how “runtime execution continuity” applies to the Protocol payload or its task lifecycle.\n- Whether the separation is a permanent architectural invariant or a phase-specific boundary. Plan 180 explicitly defers any architectural adoption to separate, explicitly authorized future changes.\n- The provenance and status of `DEV_MEMORY_PILOT.md`’s “Plan 181”: no such plan exists in `docs/plans/` or `docs/plans/INDEX.md`.\n- The commit/branch status of the `REFACTOR_*` artifacts. Plan 180 describes them as separate commits on `refactor` and its exit criteria remain unchecked; this snapshot has no Git metadata, so that claim remains unverified."
+  },
+  "provenance": {
+    "deterministic": true,
+    "cited": [
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/adr/15-change-lifecycle-continuity.md",
+      ".agents/policies/autonomous-orchestration.md",
+      "runtime/README.md",
+      "README.md",
+      "docs/behavior-patterns.md",
+      "docs/placement-contract.md",
+      "docs/working/audits/architecture-capability-review.md",
+      "docs/working/audits/INTEGRATION_CONTINUITY_AUDIT_2026-10-24.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_LETTA.md",
+      "DEV_MEMORY_PILOT.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md",
+      "docs/rfc/59-recovery-context-session-continuity.md",
+      "docs/CONVENTIONS.md",
+      "AGENTS.md",
+      "docs/working/audits/EXECUTION_HOST_SEMANTIC_AUDIT_2026-10-14.md"
+    ],
+    "cited_and_opened": [
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/adr/15-change-lifecycle-continuity.md",
+      ".agents/policies/autonomous-orchestration.md",
+      "runtime/README.md",
+      "README.md",
+      "docs/behavior-patterns.md",
+      "docs/placement-contract.md",
+      "docs/working/audits/architecture-capability-review.md",
+      "docs/working/audits/INTEGRATION_CONTINUITY_AUDIT_2026-10-24.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_LETTA.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md",
+      "docs/rfc/59-recovery-context-session-continuity.md",
+      "docs/CONVENTIONS.md",
+      "docs/working/audits/EXECUTION_HOST_SEMANTIC_AUDIT_2026-10-14.md"
+    ]
+  },
+  "grader": {
+    "attempted": true,
+    "elapsed_seconds": 20.093,
+    "returncode": 0,
+    "timed_out": false,
+    "usage": {
+      "inputTokens": 23882,
+      "outputTokens": 2990,
+      "cacheReadTokens": 768,
+      "cacheWriteTokens": 0,
+      "totalTokens": 27640
+    },
+    "evidence_included": [
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/adr/15-change-lifecycle-continuity.md",
+      "docs/adr/16-change-lifecycle-authority.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+    ],
+    "evidence_missing": [],
+    "raw_final": "{\"correct_conclusion\": true, \"correct_scope\": true, \"authority_boundary_preserved\": true, \"unsupported_claim\": true, \"rationale\": \"The answer agrees with the key that runtime execution continuity remains a separate runtime concern and correctly limits the separation to state/authority rather than lifecycle governance, explicitly warning against extending it to Protocol lifecycle, checkpoint design, or memory. It carefully distinguishes normative sources (RFC-75, ADR-15) from study artifacts, the derived synthesis, the matrix/index, and non-authoritative audits, so authority boundaries are preserved. However, it relies on numerous artifacts absent from the fixed evidence pack (e.g., autonomous-orchestration policy, runtime/README, placement-contract, architecture-capability-review, integration audit, RFC-59, DEV_MEMORY_PILOT, Plan 181) and asserts material claims from them, so unsupported_claim is true.\"}",
+    "parsed": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true,
+      "rationale": "The answer agrees with the key that runtime execution continuity remains a separate runtime concern and correctly limits the separation to state/authority rather than lifecycle governance, explicitly warning against extending it to Protocol lifecycle, checkpoint design, or memory. It carefully distinguishes normative sources (RFC-75, ADR-15) from study artifacts, the derived synthesis, the matrix/index, and non-authoritative audits, so authority boundaries are preserved. However, it relies on numerous artifacts absent from the fixed evidence pack (e.g., autonomous-orchestration policy, runtime/README, placement-contract, architecture-capability-review, integration audit, RFC-59, DEV_MEMORY_PILOT, Plan 181) and asserts material claims from them, so unsupported_claim is true."
+    },
+    "fields_used": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true
+    }
+  },
+  "raw_ndjson": {
+    "agent": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q01.agent.ndjson",
+      "sha256": "be377e7d7b63a9b66380f1d21dddcdf25d4375fac7cf0216bc5d6d1c2532411a",
+      "bytes": 341143
+    },
+    "grader": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q01.grader.ndjson",
+      "sha256": "b8fab840e1af21762ca3ca04601f0a6c14a8f489ed79ca53133fbf26ed9f20ac",
+      "bytes": 10737
+    }
+  },
+  "notes": []
+}

@@ -1,0 +1,427 @@
+{
+  "schema": "argentos.dev-memory.controlled-trace.v1",
+  "condition": "CONTROL",
+  "question_id": "Q10",
+  "question": "What evidence supports two-tier DEV Memory?",
+  "run": {
+    "run_id": "full-20261031T171408",
+    "source_digest": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "runner_sha256": "f69e6080b7aaf95a3334b56e9d101040cb2dac900b05adc3523c4662b6297096",
+    "adapter_sha256": "5b27f4f1022332321dff8f65fc0cc3ed6bf670f43fd86b1773c1e02f7c2a4b4c",
+    "tool_set_sha256": "a5013d17a6fd831003f44fc4003db0723ccf173a11c0ad517f8294b8a306d328",
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "prompt_sha256": "ef879d0f462081d1a315eee564ed5e392aaf0da72b44bd018a263b944693a6d9",
+    "grader_prompt_sha256": "0c6622fe568c846942fd975dbea6e85e3c0d73d6df626c90e1a33687c4443f01",
+    "key_sha256": "bd172b1da52a524ccc0bc6f8ccce8be3864d4889d25e6b64d2a11f7e86017081",
+    "evidence_sha256": "cbbecdfef10dee4c5bc37b0557d4c5acc3f712e6ed890e82e161a456cfcd3ba8"
+  },
+  "workspace": {
+    "runner": "C:\\Users\\rolda\\AppData\\Local\\Temp\\argentos-memory-control-r0pnvykb\\repo",
+    "agent": "C:\\Users\\rolda\\AppData\\Local\\Temp\\bench-xmpmgr3q\\repo",
+    "neutral_copy": true
+  },
+  "base_commit": "a5f97c163b56b82dc8fadd4e3f65646899e9c245",
+  "model_label": "deepseek-official/deepseek-flash (DeepSeek-V4.1-Flash)",
+  "dsh_cli": "D:\\Programas\\DeepseekHarness\\resources\\runtime\\cli\\bin\\dsh.cmd",
+  "experimental_infrastructure": "tools/dev_memory_agent_executor.py",
+  "integrity": {
+    "pilot_present": false,
+    "pilot_sha256": null,
+    "runner_pilot_present": false,
+    "workspace_digest_before": "fedb8866755b00d44f9e754b35ea81dcfda4e17a3fd2eb0121f800c0f0a954b0",
+    "workspace_digest_after": "fedb8866755b00d44f9e754b35ea81dcfda4e17a3fd2eb0121f800c0f0a954b0",
+    "workspace_stable": true,
+    "condition_labels_in_child_env": [],
+    "condition_token_in_agent_cwd": false,
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "grader_tool_policy_sha256": "ea826e1e9ceb38bb215a8e5f944dcd9399d1cb0972718e9d4cdcf559dc9c9153",
+    "disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents"
+    ],
+    "grader_disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents",
+      "tool-fs",
+      "tool-fs-search",
+      "tool-skill",
+      "tool-todo",
+      "tool-goal"
+    ],
+    "observed_disallowed_tools": [],
+    "observed_disallowed_tool_attempts": [],
+    "out_of_workspace_calls": [],
+    "failed_reads": [],
+    "agent_sandbox": "read-only"
+  },
+  "instrumentation": {
+    "file_open_events": [
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_CREWAI.md",
+      "docs/working/proposals/PRIORITY_0_3_FAILURE_MODEL_AND_IMPLEMENTATION_CONTRACT_2026-10-20.md",
+      "docs/rfc/80-memory-system.md",
+      "docs/working/proposals/PHASE_0_4_INHERITED_DEBT_CLOSURE_2026-10-20.md",
+      "docs/plans/INDEX.md",
+      "REFACTOR_LANGGRAPH.md",
+      "docs/working/proposals/PRIORITY_0_3_FAILURE_MODEL_AND_IMPLEMENTATION_CONTRACT_2026-10-20.md",
+      "docs/working/proposals/PRIORITY_0_3_FAILURE_MODEL_AND_IMPLEMENTATION_CONTRACT_2026-10-20.md",
+      "docs/working/proposals/PRIORITY_0_3_FAILURE_MODEL_AND_IMPLEMENTATION_CONTRACT_2026-10-20.md"
+    ],
+    "search_events": [
+      "two-tier|two tier|Two-tier|TWO-TIER",
+      "DEV Memory|DEV memory|dev memory",
+      "tier|MEMORY\\.md|memory index|active memory|retrieval surface",
+      "**/*MEMORY*",
+      "**/*refactor*",
+      "Priority 4|PRIORITY 4|Prioridad 4|PRIORITY\\.md",
+      "two-level|Two-level|on-demand|on demand|curated index|compact index",
+      "Status|DEV|Protocol|two|tier",
+      "evidence|Evidence|inference|proposal|unverified|source|URL|http",
+      "RFC-80|Memory System|Operational Memory",
+      "180",
+      "REFACTOR_|two-tier|two-tier DEV",
+      "Memory|memory",
+      "Memory|memory",
+      "REFACTOR_MATRIX|REFACTOR_OPENHANDS|REFACTOR_SYNTHESIS",
+      "pilot|Pilot|rediscovery|re-discovery|DEV Memory pilot",
+      "Priority 4|Priority 14|:14|Priority 3\\.6",
+      "Operational Memory|operacional|Archive|bounded|acotada|retrieval",
+      "Operational|Archive|active|historical|tier|bounded|retrieval"
+    ],
+    "source_rehydration_events": [
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_LANGGRAPH.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+    ],
+    "shell_commands": [],
+    "tool_calls": [
+      {
+        "tool": "grep",
+        "query": "two-tier|two tier|Two-tier|TWO-TIER",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "DEV Memory|DEV memory|dev memory",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_OPENHANDS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_SYNTHESIS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_MATRIX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "tier|MEMORY\\.md|memory index|active memory|retrieval surface",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "**/*MEMORY*",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "**/*refactor*",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Priority 4|PRIORITY 4|Prioridad 4|PRIORITY\\.md",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/180-comparative-architecture-refactor-study.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_LETTA.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_CREWAI.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/working/proposals/PRIORITY_0_3_FAILURE_MODEL_AND_IMPLEMENTATION_CONTRACT_2026-10-20.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "two-level|Two-level|on-demand|on demand|curated index|compact index",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Status|DEV|Protocol|two|tier",
+        "path": "docs/rfc/80-memory-system.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/rfc/80-memory-system.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "evidence|Evidence|inference|proposal|unverified|source|URL|http",
+        "path": "REFACTOR_OPENHANDS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "RFC-80|Memory System|Operational Memory",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "180",
+        "path": "docs/plans/INDEX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "REFACTOR_|two-tier|two-tier DEV",
+        "path": "docs/working",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Memory|memory",
+        "path": "ROADMAP.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Memory|memory",
+        "path": "README.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/working/proposals/PHASE_0_4_INHERITED_DEBT_CLOSURE_2026-10-20.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "REFACTOR_MATRIX|REFACTOR_OPENHANDS|REFACTOR_SYNTHESIS",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/INDEX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "pilot|Pilot|rediscovery|re-discovery|DEV Memory pilot",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Priority 4|Priority 14|:14|Priority 3\\.6",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Operational Memory|operacional|Archive|bounded|acotada|retrieval",
+        "path": "docs/rfc/80-memory-system.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_LANGGRAPH.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/working/proposals/PRIORITY_0_3_FAILURE_MODEL_AND_IMPLEMENTATION_CONTRACT_2026-10-20.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/working/proposals/PRIORITY_0_3_FAILURE_MODEL_AND_IMPLEMENTATION_CONTRACT_2026-10-20.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/working/proposals/PRIORITY_0_3_FAILURE_MODEL_AND_IMPLEMENTATION_CONTRACT_2026-10-20.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Operational|Archive|active|historical|tier|bounded|retrieval",
+        "path": "protocol/.agents/standards/context/MEMORY_SYSTEM.md",
+        "status": "completed"
+      }
+    ],
+    "observed_tools": [
+      "glob",
+      "grep",
+      "read"
+    ],
+    "distinct_files_opened": [
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_SYNTHESIS.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md",
+      "docs/rfc/80-memory-system.md",
+      "docs/working/proposals/PHASE_0_4_INHERITED_DEBT_CLOSURE_2026-10-20.md",
+      "docs/working/proposals/PRIORITY_0_3_FAILURE_MODEL_AND_IMPLEMENTATION_CONTRACT_2026-10-20.md"
+    ]
+  },
+  "agent": {
+    "elapsed_seconds": 84.52,
+    "returncode": 0,
+    "timed_out": false,
+    "error": null,
+    "session_id": "session-d71c72a3-0a4e-4329-b8ef-b6cca86a1631",
+    "turn_end": {
+      "kind": "completed"
+    },
+    "usage": {
+      "inputTokens": 66858,
+      "outputTokens": 10519,
+      "cacheReadTokens": 684928,
+      "cacheWriteTokens": 0,
+      "totalTokens": 762305
+    },
+    "stderr_tail": "[llm-deepseek-api-key] model listing from https://api.deepseek.com/models loaded 2 model(s), skipped 0 row(s)\n",
+    "final_answer": "CONCLUSION: The repository supports **two-tier DEV Memory only as a hypothesis/proposed adaptation from an external comparative study**, not as an established ARgentOS capability. The primary evidence is the OpenHands study: OpenHands’ persistent memory has a small curated `MEMORY.md` index plus daily logs, with only the index injected automatically and detail retrieved on demand; `REFACTOR_OPENHANDS.md` calls this “strong evidence” for a “small always-available memory index + deeper on-demand evidence” pattern and proposes “ADAPT-1 — Two-tier DEV Memory.” Letta independently supports an active-vs-historical split, and CrewAI supports scoped/retrieval/consolidation behavior. The final synthesis and matrix record the decision as `ADAPT` / P1. However, the repository also states that DEV Memory **does not exist** and that building it is out of scope / a later phase; no two-tier DEV Memory implementation, schema, or pilot result is present.\n\nSCOPE: This applies to the comparative refactor study recorded under Plan 180 (`refactor` branch) and to the design question “should ARgentOS adapt a compact-index + on-demand-evidence pattern?” It does **not** establish that ARgentOS has two-tier DEV Memory, that the pattern is approved architecture, or that it has been measured in this repository. It must not be generalized to `dev`/`master`, the Protocol payload, or the separate Protocol Memory System in RFC-80 (Accepted but `NOT IMPLEMENTED`, and not DEV Memory).\n\nEVIDENCE:\n- `REFACTOR_OPENHANDS.md:9-14,51-63,79,95-96,113-117` — records that OpenHands uses two tiers (user memory / project memory), each with a curated `MEMORY.md` index plus daily logs; only the concise index is injected automatically, detail is retrieved on demand. It calls this “strong evidence” for the index-plus-on-demand pattern, decides “ADAPT the two-tier retrieval pattern,” proposes `ADAPT-1 — Two-tier DEV Memory`, and recommends a 5–10 entry DEV Memory pilot.\n- `REFACTOR_LETTA.md:25-36,81-83,103-104` — independently describes a “two-level distinction” between “active memory/context” and “historical retrievable memory,” and proposes `ADAPT-1 — Active vs historical DEV Memory`.\n- `REFACTOR_CREWAI.md:30-45,75-83` — supports scoped memory, atomic knowledge, retrieval ranking and consolidation, but explicitly says CrewAI’s memory is agent runtime memory and that ARgentOS DEV Memory needs stronger governance/provenance. It does not itself establish the “two-tier” model.\n- `REFACTOR_SYNTHESIS.md:50-86,242-243,261-268,296-305,325-336` — says CrewAI, OpenHands and Letta together support a stronger DEV Memory hypothesis, with OpenHands specifically showing “a practical two-tier model”; also says the external lesson is retrieval/maintenance behavior, not a ready-made schema, and that external systems are “sources of mechanisms to test, not architectures to copy.”\n- `REFACTOR_MATRIX.md:13-16,30-41,68-77,113` — records `ADAPT`/P1 for “Compact active Memory index + on-demand evidence” (OpenHands), “Active vs historical DEV Memory” (Letta), and lists “Scoped, two-tier DEV Memory retrieval” under Adapt. It is explicitly a matrix/index of findings.\n- `docs/plans/180-comparative-architecture-refactor-study.md:16-20,28-33,55-61,88,102-104,112-119,128-134` — authorizes the comparative study; designates `REFACTOR_MATRIX.md` as an “índice/matriz acumulativa” and says it must not become authority over the individual analyses; requires analyses to distinguish facts, inferences and proposals; states the plan does not authorize architectural changes, and future adoptions require separate authorization. Its Validation anchor and Checkpoint remain “Pendiente.”\n- `docs/plans/INDEX.md:11-15` — registers Plan 180 as `Aprobado para ejecución`, `active`, DEV-only and limited to the `refactor` branch.\n- `docs/working/proposals/PRIORITY_0_3_FAILURE_MODEL_AND_IMPLEMENTATION_CONTRACT_2026-10-20.md:173-182,366,528,563,768` — states there is “ausencia de memoria DEV,” “no hay DEV Memory,” that context recovery/DEV Memory is `OUT OF SCOPE`, and that DEV Memory is not built.\n- `docs/working/proposals/PHASE_0_4_INHERITED_DEBT_CLOSURE_2026-10-20.md:72,75,89,134` — records “no hay DEV Memory,” “en DEV no hay Memory,” and that building DEV Memory is Phase 1/14, not a debt correction.\n- `docs/rfc/80-memory-system.md:10-24,62-69,279-311,313-315,619-622` and `protocol/.agents/standards/context/MEMORY_SYSTEM.md:29-36,165-180,202-205,220` — define a bounded `Operational Memory` versus growing historical memory/`Archive` in the **Protocol** Memory System, not DEV Memory; RFC-80’s implementation status is `NOT IMPLEMENTED`.\n- `README.md:128` — states the Protocol Memory System implementation is `NOT IMPLEMENTED` and `runtime/memory/` is a DEV reference only.\n\nAUTHORITY:\nThe authoritative basis for the proposed adaptation is the individual comparative studies (`REFACTOR_OPENHANDS.md`, `REFACTOR_LETTA.md`, and, for adjacent support, `REFACTOR_CREWAI.md`), authorized by Plan 180. `REFACTOR_SYNTHESIS.md` is a derived synthesis produced after the individual analyses, and `REFACTOR_MATRIX.md` is explicitly an index/cumulative matrix that “must not become authority over the individual analyses” (`docs/plans/180-...:102`). Plan 180 itself is only `Aprobado para ejecución` (not recorded as `Executed`/`Closed`), and its Validation anchor and Checkpoint are pending, so the study is not recorded as a validated/closed change. The external sources are second-hand summaries: `REFACTOR_OPENHANDS.md` provides no URL or version for the OpenHands documentation it reviewed; `REFACTOR_LETTA.md` and `REFACTOR_CREWAI.md` cite external URLs, but no copy is vendored in the repository. The `PRIORITY.md` file that defines “Priority 4” is untracked and is explicitly treated as non-evidence in the repository (`docs/plans/178-...:116-121`; `docs/working/audits/INTEGRATION_CONTINUITY_AUDIT_2026-10-24.md`). Unverified: the external documentation’s contents, whether the proposed DEV Memory pilot was ever run, and the current branch/commit state of the `REFACTOR_*` deliverables.\n\nUNSUPPORTED:\n- That ARgentOS has implemented two-tier DEV Memory. The repository states the opposite for DEV (`no hay DEV Memory`) and the study itself does not implement anything.\n- That the two-tier pattern has been empirically validated or measured. No pilot results, metrics, or acceptance evidence exist; the pilot is only proposed (`REFACTOR_OPENHANDS.md:113-114`, `REFACTOR_SYNTHESIS.md:261-268`).\n- A single settled meaning of “two-tier.” OpenHands’ two tiers are user/project scopes, while `ADAPT-1` uses “compact index + on-demand detail”; Letta contributes “active vs historical”; the matrix also says “scoped, two-tier.” The repository does not reconcile these axes.\n- That the external claims are verified. The OpenHands evidence lacks a resolvable citation/version, and no external documentation is available in the repository.\n- That “Priority 4” requirements are repository-established. The priority source is the untracked `PRIORITY.md`, which repository rules do not treat as evidence; only the synthesis’ paraphrase (“reducing rediscovery and compacting transient work”) is versioned.\n- That two-tier DEV Memory is compatible with ARgentOS provenance/authority requirements. The study only says it “should preserve” stronger provenance and that ARgentOS “needs stronger governance”; no schema, authority model, or contradiction/supersession design is provided.\n- That the Protocol Memory System (RFC-80 / `MEMORY_SYSTEM.md`) is evidence for DEV Memory. It is a separate Protocol model, is `NOT IMPLEMENTED`, and is not cited by the refactor study."
+  },
+  "provenance": {
+    "deterministic": true,
+    "cited": [
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md",
+      "docs/working/proposals/PRIORITY_0_3_FAILURE_MODEL_AND_IMPLEMENTATION_CONTRACT_2026-10-20.md",
+      "docs/working/proposals/PHASE_0_4_INHERITED_DEBT_CLOSURE_2026-10-20.md",
+      "docs/rfc/80-memory-system.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md",
+      "README.md",
+      "docs/working/audits/INTEGRATION_CONTINUITY_AUDIT_2026-10-24.md"
+    ],
+    "cited_and_opened": [
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md",
+      "docs/working/proposals/PRIORITY_0_3_FAILURE_MODEL_AND_IMPLEMENTATION_CONTRACT_2026-10-20.md",
+      "docs/working/proposals/PHASE_0_4_INHERITED_DEBT_CLOSURE_2026-10-20.md",
+      "docs/rfc/80-memory-system.md"
+    ]
+  },
+  "grader": {
+    "attempted": true,
+    "elapsed_seconds": 27.405,
+    "returncode": 0,
+    "timed_out": false,
+    "usage": {
+      "inputTokens": 21012,
+      "outputTokens": 4417,
+      "cacheReadTokens": 768,
+      "cacheWriteTokens": 0,
+      "totalTokens": 26197
+    },
+    "evidence_included": [
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/adr/15-change-lifecycle-continuity.md",
+      "docs/adr/16-change-lifecycle-authority.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+    ],
+    "evidence_missing": [],
+    "raw_final": "{\"correct_conclusion\": true, \"correct_scope\": true, \"authority_boundary_preserved\": true, \"unsupported_claim\": true, \"rationale\": \"The answer agrees with the key that the comparative studies, especially OpenHands, Letta, and CrewAI, support two-tier DEV Memory only as a proposed adaptation, not as an implemented or validated ARgentOS capability. Its scope is appropriately limited and it distinguishes the primary studies from the derived synthesis and non-authoritative matrix. However, it makes material claims not present in the fixed evidence pack, notably that the repository explicitly states DEV Memory does not exist and is out of scope, that RFC-80 has a particular status, and that PRIORITY.md is untracked and treated as non-evidence.\"}",
+    "parsed": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true,
+      "rationale": "The answer agrees with the key that the comparative studies, especially OpenHands, Letta, and CrewAI, support two-tier DEV Memory only as a proposed adaptation, not as an implemented or validated ARgentOS capability. Its scope is appropriately limited and it distinguishes the primary studies from the derived synthesis and non-authoritative matrix. However, it makes material claims not present in the fixed evidence pack, notably that the repository explicitly states DEV Memory does not exist and is out of scope, that RFC-80 has a particular status, and that PRIORITY.md is untracked and treated as non-evidence."
+    },
+    "fields_used": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true
+    }
+  },
+  "raw_ndjson": {
+    "agent": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q10.agent.ndjson",
+      "sha256": "f904e043d982cdf883f7a1056daa4491c817fed4418142ad2e0788c8a030954b",
+      "bytes": 181696
+    },
+    "grader": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q10.grader.ndjson",
+      "sha256": "7e1b39256c3ab1cf6b3ea59898032302a94306bb50ba22d89777829b6ea9d7b1",
+      "bytes": 10410
+    }
+  },
+  "notes": []
+}

@@ -1,0 +1,431 @@
+{
+  "schema": "argentos.dev-memory.controlled-trace.v1",
+  "condition": "TREATMENT",
+  "question_id": "Q12",
+  "question": "What is the current architectural decision after the comparative study?",
+  "run": {
+    "run_id": "full-20261031T171408",
+    "source_digest": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "runner_sha256": "f69e6080b7aaf95a3334b56e9d101040cb2dac900b05adc3523c4662b6297096",
+    "adapter_sha256": "5b27f4f1022332321dff8f65fc0cc3ed6bf670f43fd86b1773c1e02f7c2a4b4c",
+    "tool_set_sha256": "a5013d17a6fd831003f44fc4003db0723ccf173a11c0ad517f8294b8a306d328",
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "prompt_sha256": "9a3114638c8ba2103960479e050fa2e01be18a2bf68a1113064bda67ecf87a77",
+    "grader_prompt_sha256": "eea86f5ae7ceea94ccc9022b18017a9f1967df37faf8fba4df76d38a41472892",
+    "key_sha256": "bd172b1da52a524ccc0bc6f8ccce8be3864d4889d25e6b64d2a11f7e86017081",
+    "evidence_sha256": "5749fd45d35fd2ed28bae89276a8b2c9f516c23cd714c401468ffbd94ac54b83"
+  },
+  "workspace": {
+    "runner": "C:\\Users\\rolda\\AppData\\Local\\Temp\\argentos-memory-treatment-98f0kc0y\\repo",
+    "agent": "C:\\Users\\rolda\\AppData\\Local\\Temp\\bench-cr7b5nv8\\repo",
+    "neutral_copy": true
+  },
+  "base_commit": "a5f97c163b56b82dc8fadd4e3f65646899e9c245",
+  "model_label": "deepseek-official/deepseek-flash (DeepSeek-V4.1-Flash)",
+  "dsh_cli": "D:\\Programas\\DeepseekHarness\\resources\\runtime\\cli\\bin\\dsh.cmd",
+  "experimental_infrastructure": "tools/dev_memory_agent_executor.py",
+  "integrity": {
+    "pilot_present": true,
+    "pilot_sha256": "44a6a10b8308a76981c12f1798b9461619f030f73fa3b6c5e0378efb67949bcd",
+    "runner_pilot_present": true,
+    "workspace_digest_before": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "workspace_digest_after": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "workspace_stable": true,
+    "condition_labels_in_child_env": [],
+    "condition_token_in_agent_cwd": false,
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "grader_tool_policy_sha256": "ea826e1e9ceb38bb215a8e5f944dcd9399d1cb0972718e9d4cdcf559dc9c9153",
+    "disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents"
+    ],
+    "grader_disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents",
+      "tool-fs",
+      "tool-fs-search",
+      "tool-skill",
+      "tool-todo",
+      "tool-goal"
+    ],
+    "observed_disallowed_tools": [],
+    "observed_disallowed_tool_attempts": [],
+    "out_of_workspace_calls": [],
+    "failed_reads": [],
+    "agent_sandbox": "read-only"
+  },
+  "instrumentation": {
+    "file_open_events": [
+      "REFACTOR_MATRIX.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "DEV_MEMORY_PILOT.md",
+      "REFACTOR_SYNTHESIS.md",
+      "docs/plans/INDEX.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_LETTA.md",
+      "docs/plans/INDEX.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_SWE_AGENT.md"
+    ],
+    "search_events": [
+      "comparative study",
+      "comparative",
+      "REFACTOR_*.md",
+      "*.md",
+      "docs/plans/18*.md",
+      "Plan 181|Plan 182|plan 181|plan 182",
+      "refactor",
+      "REFACTOR_SYNTHESIS|REFACTOR_MATRIX|selective adaptation|evolutionary laboratory|incremental adaptation",
+      "DEV Memory|DEV-MEM|execution continuity|Agent-Computer Interface",
+      "DEV Memory|Memory|Runtime continuity|runtime continuity",
+      "## .*Decision|## .*Decisión|Final decision|Decisión final|Decision: (ADOPT|ADAPT|KEEP|REJECT|DEFER)",
+      "refactor|180|181|DEV Memory|comparative",
+      "refactor|180|181|DEV Memory|comparative",
+      "refactor|DEV Memory|180|181",
+      "Memory|memoria|Prioridad 4|Priority 4",
+      "DEV Memory|REFACTOR_|comparative architecture",
+      "refactor|architectur|evolution|selective",
+      "refactor|comparative|selective adaptation",
+      "Plan 180|plan 180|180-comparative"
+    ],
+    "source_rehydration_events": [
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_SWE_AGENT.md"
+    ],
+    "shell_commands": [],
+    "tool_calls": [
+      {
+        "tool": "grep",
+        "query": "comparative study",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "comparative",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_MATRIX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/180-comparative-architecture-refactor-study.md",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "REFACTOR_*.md",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "*.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "DEV_MEMORY_PILOT.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_SYNTHESIS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/INDEX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "docs/plans/18*.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Plan 181|Plan 182|plan 181|plan 182",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "refactor",
+        "path": "ROADMAP.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "REFACTOR_SYNTHESIS|REFACTOR_MATRIX|selective adaptation|evolutionary laboratory|incremental adaptation",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "DEV Memory|DEV-MEM|execution continuity|Agent-Computer Interface",
+        "path": "ROADMAP.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "DEV Memory|Memory|Runtime continuity|runtime continuity",
+        "path": "ROADMAP.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "## .*Decision|## .*Decisión|Final decision|Decisión final|Decision: (ADOPT|ADAPT|KEEP|REJECT|DEFER)",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_LANGGRAPH.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_OPENAI_AGENTS_SDK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_GOOGLE_ADK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_LETTA.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "refactor|180|181|DEV Memory|comparative",
+        "path": "CHANGELOG.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "refactor|180|181|DEV Memory|comparative",
+        "path": "docs/rfc/INDEX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "refactor|DEV Memory|180|181",
+        "path": "docs/adr/INDEX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Memory|memoria|Prioridad 4|Priority 4",
+        "path": "ROADMAP.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "DEV Memory|REFACTOR_|comparative architecture",
+        "path": "docs",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "refactor|architectur|evolution|selective",
+        "path": "README.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/INDEX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_CREWAI.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_OPENHANDS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_SWE_AGENT.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "refactor|comparative|selective adaptation",
+        "path": "docs/adr",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Plan 180|plan 180|180-comparative",
+        "path": ".",
+        "status": "completed"
+      }
+    ],
+    "observed_tools": [
+      "glob",
+      "grep",
+      "read"
+    ],
+    "distinct_files_opened": [
+      "DEV_MEMORY_PILOT.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_SWE_AGENT.md",
+      "REFACTOR_SYNTHESIS.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md"
+    ]
+  },
+  "agent": {
+    "elapsed_seconds": 56.94,
+    "returncode": 0,
+    "timed_out": false,
+    "error": null,
+    "session_id": "session-5df7afd7-0caa-474f-8cd2-e9ca641b4117",
+    "turn_end": {
+      "kind": "completed"
+    },
+    "usage": {
+      "inputTokens": 23447,
+      "outputTokens": 6286,
+      "cacheReadTokens": 304256,
+      "cacheWriteTokens": 0,
+      "totalTokens": 333989
+    },
+    "stderr_tail": "[llm-deepseek-api-key] model listing from https://api.deepseek.com/models loaded 2 model(s), skipped 0 row(s)\n",
+    "final_answer": "## Findings\n\nI located the comparative study artifacts and verified their status against the repository's governance records. Here is the answer.\n\nCONCLUSION: The study's recorded architectural decision is **KEEP the current architectural foundation, ADAPT selectively, and EXPERIMENT before institutionalizing — no broad architectural rewrite/replacement**. Specifically: preserve ARgentOS's governance architecture (DEV/Protocol/adopter separation, Change Lifecycle authority, orchestrator sovereignty, Worker/WorkerAdapter boundary, Git/documentary provenance, validation anchors, non-provider-specific design); adapt specific mechanisms (runtime execution continuity and checkpoint/resume, explicit delegation payloads, boundary-local validation/interception, runtime tracing/events, reusable evaluation scenarios, Agent-Computer Interface, scoped two-tier DEV Memory with governed consolidation); and reject universal graph/State/Unit/relationship architectures, a generic lifecycle for every object, runtime trace as authority, agent identity as project identity, automatic history→Memory conversion, automatic similarity-based deletion, and provider-specific coupling. The stated priority order is: **DEV Memory first, then runtime execution continuity, then Agent-Computer Interface**, followed by evaluation loop, delegation/interception contracts, and finally the Architectural Index. Every one of the eight individual system studies lands on **ADAPT** (not ADOPT), so no external mechanism is adopted as-is.\n\nSCOPE: This conclusion applies to the eight external systems compared (LangGraph, OpenAI Agents SDK, Microsoft Agent Framework, Google ADK, CrewAI, OpenHands, SWE-agent/mini-SWE-agent, Letta) under the DEV-only study scoped to the `refactor` branch, and to proposals for future ARgentOS runtime/knowledge/DEV adaptations. It does **not** authorize changes to `protocol/.agents/`, `dist`, `dev`, or `master`, and it is not a protocol design decision. It should not be generalized into \"ARgentOS has adopted these mechanisms\": the study only proposes experiments, and explicitly says not to implement all five directions simultaneously. It also does not settle the ARgentOS product's own architecture, only the DEV-side response to the comparison.\n\nEVIDENCE:\n- `REFACTOR_SYNTHESIS.md` — the final synthesis. `§1 Executive conclusion` says the eight comparisons \"do not support a broad architectural rewrite\" and that \"the correct response is selective adaptation, not replacement.\" `§10 What the study falsified` lists universal graph/state/lineage/registry/trace-as-authority as falsified. `Final decision` (line 334): \"KEEP the current architectural foundation. ADAPT selectively. EXPERIMENT before institutionalizing.\" `§12` orders experiments with DEV Memory first.\n- `REFACTOR_MATRIX.md` — cumulative matrix. All eight rows are `ADAPT` / `P1`. `Architectural conclusions` gives the Preserve/Adapt/Reject lists; `Emerging target architecture` (lines 91–109) says the comparison does not support replacing it with a graph/database/registry-centered architecture; `Decision` (line 122): \"The comparative study validates incremental adaptation, not architectural replacement.\"\n- Individual analyses, each ending in an explicit `Final decision` of **ADAPT**: `REFACTOR_LANGGRAPH.md` (line 224), `REFACTOR_OPENAI_AGENTS_SDK.md` (line 101), `REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md` (line 131), `REFACTOR_GOOGLE_ADK.md` (line 113), `REFACTOR_CREWAI.md` (line 98), `REFACTOR_OPENHANDS.md` (line 117), `REFACTOR_SWE_AGENT.md` (line 97), `REFACTOR_LETTA.md` (line 104).\n- `docs/plans/180-comparative-architecture-refactor-study.md` — the governing plan. Defines the study scope, the allowed outcomes (`ADOPT/ADAPT/KEEP/REJECT/DEFER`), says the study \"no autoriza cambios sobre `dev`, `master`, `protocol/.agents/` ni `dist/`\" (line 20), requires a final synthesis (line 61), and forbids implementing derived architectural changes (line 104). Its status is `Aprobado para ejecución`, lifecycle `active`; all exit criteria (lines 114–119) are unchecked and `Validation anchor`/`Checkpoint` are \"Pendiente\" (lines 128–134).\n- `DEV_MEMORY_PILOT.md` — explicitly \"experimental, non-authoritative\" (line 5) active-retrieval surface for knowledge extracted from the study; it labels entries `inferred` and says \"The source artifacts remain authoritative\" (line 14). It references a \"Plan 181\" that **does not exist** as a file in `docs/plans/` (only `180-...` exists).\n\nAUTHORITY: The authoritative artifacts for this answer are `docs/plans/180-comparative-architecture-refactor-study.md` (the governance plan defining scope and output) and the study deliverables `REFACTOR_SYNTHESIS.md` and the eight `REFACTOR_<SYSTEM>.md` analyses. `REFACTOR_MATRIX.md` is expressly a **derived summary/index**, not authority: Plan 180 calls it \"índice/matriz acumulativa\" to be kept \"sin convertirlo en autoridad sobre los análisis individuales.\" `DEV_MEMORY_PILOT.md` is a derived, explicitly non-authoritative experimental surface. Critically, **none of these is an RFC or ADR**: searches of `docs/rfc/`, `docs/adr/`, `docs/plans/INDEX.md`, `CHANGELOG.md`, and `ROADMAP.md` found no acceptance/adoption of this decision outside the study itself (Plan 180 is only listed in `docs/plans/INDEX.md` as `Aprobado para ejecución` / `active`). Unverified: whether the analyses were actually committed/pushed as atomic commits on `refactor` (git history cannot be inspected with the available file tools); whether the study plan was ever formally closed; whether a real Plan 181 exists elsewhere.\n\nUNSUPPORTED: There is no repository evidence that this architectural decision was formally accepted as ARgentOS architecture (no RFC, no ADR, no changelog/release entry, no INDEX status beyond \"Aprobado para ejecución\"). The repository does not establish that any adaptation has been implemented — Plan 180 explicitly forbids implementation, and the synthesis frames the directions as hypotheses/experiments. It does not establish the existence, authorization, or results of the DEV Memory \"Plan 181\" pilot. It does not establish that the decision binds `dev`, `master`, `protocol/.agents/`, or `dist`, and the branch/push state and atomic-commit criteria remain unverified from file contents alone."
+  },
+  "provenance": {
+    "deterministic": true,
+    "cited": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_SWE_AGENT.md",
+      "REFACTOR_LETTA.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "DEV_MEMORY_PILOT.md",
+      "docs/plans/INDEX.md",
+      "CHANGELOG.md",
+      "ROADMAP.md"
+    ],
+    "cited_and_opened": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_SWE_AGENT.md",
+      "REFACTOR_LETTA.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md"
+    ]
+  },
+  "grader": {
+    "attempted": true,
+    "elapsed_seconds": 18.818,
+    "returncode": 0,
+    "timed_out": false,
+    "usage": {
+      "inputTokens": 17113,
+      "outputTokens": 2909,
+      "cacheReadTokens": 768,
+      "cacheWriteTokens": 0,
+      "totalTokens": 20790
+    },
+    "evidence_included": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/adr/15-change-lifecycle-continuity.md",
+      "docs/adr/16-change-lifecycle-authority.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+    ],
+    "evidence_missing": [],
+    "raw_final": "{\"correct_conclusion\": true, \"correct_scope\": true, \"authority_boundary_preserved\": true, \"unsupported_claim\": true, \"rationale\": \"The conclusion matches the expected KEEP/ADAPT/EXPERIMENT decision and priority ordering, and the scope correctly frames it as a DEV/refactor study recommendation under an active Plan 180 with no implementation authorization. The answer properly separates the synthesis and plan as authority from the derived matrix and memory note, avoiding authority-boundary overreach. However, it asserts repository facts absent from the fixed pack — notably DEV_MEMORY_PILOT.md, a nonexistent Plan 181, and searches of CHANGELOG/ROADMAP/INDEX showing no adoption — so it contains at least one unsupported material claim.\"}",
+    "parsed": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true,
+      "rationale": "The conclusion matches the expected KEEP/ADAPT/EXPERIMENT decision and priority ordering, and the scope correctly frames it as a DEV/refactor study recommendation under an active Plan 180 with no implementation authorization. The answer properly separates the synthesis and plan as authority from the derived matrix and memory note, avoiding authority-boundary overreach. However, it asserts repository facts absent from the fixed pack — notably DEV_MEMORY_PILOT.md, a nonexistent Plan 181, and searches of CHANGELOG/ROADMAP/INDEX showing no adoption — so it contains at least one unsupported material claim."
+    },
+    "fields_used": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true
+    }
+  },
+  "raw_ndjson": {
+    "agent": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q12.agent.ndjson",
+      "sha256": "d0dd056c29783177429d4264d96565621e0b7cc6db17163d6bb0a42f11e1335e",
+      "bytes": 101504
+    },
+    "grader": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q12.grader.ndjson",
+      "sha256": "7640833444cd8474ffd31aae3e6df214f562cfce84ce021e7122e2cf6f00e54b",
+      "bytes": 10428
+    }
+  },
+  "notes": []
+}

@@ -1,0 +1,1493 @@
+{
+  "schema": "argentos.dev-memory.controlled-analysis.v1",
+  "question_count": 12,
+  "conditions": [
+    "CONTROL",
+    "TREATMENT"
+  ],
+  "runner_limitations": [
+    "The runner measures only what the external agent reports.",
+    "Missing quality fields remain unknown; no correctness is inferred.",
+    "The runner does not provide an agent/model.",
+    "Control and Treatment use separate filesystem copies."
+  ],
+  "table": {
+    "CONTROL": {
+      "questions_executed": 12,
+      "files_opened_total": 175,
+      "searches_total": 194,
+      "source_consultations_total_runner": 77,
+      "elapsed_total": 1447.07,
+      "elapsed_median": 118.49,
+      "elapsed_min": 72.87,
+      "elapsed_max": 180.12,
+      "runner_errors": [],
+      "quality": {
+        "correct_conclusion": {
+          "true": 11,
+          "false": 1,
+          "na": 0
+        },
+        "correct_scope": {
+          "true": 12,
+          "false": 0,
+          "na": 0
+        },
+        "authority_boundary_preserved": {
+          "true": 12,
+          "false": 0,
+          "na": 0
+        },
+        "unsupported_claim": {
+          "true": 10,
+          "false": 2,
+          "na": 0
+        }
+      },
+      "provenance": {
+        "true": 12,
+        "false": 0,
+        "na": 0
+      },
+      "trace": {
+        "trace_files": 12,
+        "questions_in_trace": [
+          "Q01",
+          "Q02",
+          "Q03",
+          "Q04",
+          "Q05",
+          "Q06",
+          "Q07",
+          "Q08",
+          "Q09",
+          "Q10",
+          "Q11",
+          "Q12"
+        ],
+        "tokens": {
+          "inputTokens": 753900,
+          "outputTokens": 123077,
+          "cacheReadTokens": 9875840,
+          "totalTokens": 10752817
+        },
+        "agent_seconds_total": 1009.86,
+        "agent_seconds_median": 86.43,
+        "grader_seconds_total": 366.05,
+        "grader_seconds_median": 25.33,
+        "timeouts": 0,
+        "agent_errors": 0,
+        "grader_parse_failures": 0,
+        "missing_answers": 0,
+        "disallowed_tools_observed": [],
+        "out_of_workspace_calls": 0,
+        "notes": [],
+        "distinct_files_per_question": [
+          25,
+          10,
+          14,
+          12,
+          16,
+          6,
+          10,
+          23,
+          10,
+          11,
+          11,
+          5
+        ],
+        "distinct_queries_per_question": [
+          20,
+          8,
+          13,
+          15,
+          18,
+          24,
+          22,
+          19,
+          16,
+          18,
+          8,
+          9
+        ],
+        "source_consultations_total": 77,
+        "distinct_source_files_per_question": [
+          10,
+          7,
+          8,
+          7,
+          4,
+          3,
+          3,
+          4,
+          6,
+          7,
+          10,
+          4
+        ],
+        "tool_call_counts": {
+          "grep": 160,
+          "read": 177,
+          "glob": 34
+        },
+        "pilot_open_positions": {},
+        "integrity": {
+          "pilot_present_values": [
+            false
+          ],
+          "runner_pilot_present_values": [
+            false
+          ],
+          "workspace_stable_values": [
+            true
+          ],
+          "condition_labels_in_child_env": [
+            []
+          ],
+          "condition_token_in_agent_cwd_values": [
+            false
+          ],
+          "workspace_digests": [
+            "fedb8866755b00d44f9e754b35ea81dcfda4e17a3fd2eb0121f800c0f0a954b0"
+          ],
+          "tool_set_sha256": [
+            "a5013d17a6fd831003f44fc4003db0723ccf173a11c0ad517f8294b8a306d328"
+          ],
+          "tool_policy_sha256": [
+            "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573"
+          ]
+        },
+        "per_question": {
+          "Q01": {
+            "files_opened_events": 33,
+            "distinct_files": 25,
+            "searches": 20,
+            "distinct_queries": 20,
+            "source_consultations": 10,
+            "tokens_total": 2125866,
+            "agent_seconds": 142.95,
+            "grader_seconds": 30.924,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": true,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": true
+            },
+            "provenance": true,
+            "pilot_open_position": null,
+            "evidence_included": [
+              "REFACTOR_LANGGRAPH.md",
+              "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+              "REFACTOR_CREWAI.md",
+              "REFACTOR_LETTA.md",
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_MATRIX.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+            ],
+            "integrity_notes": []
+          },
+          "Q02": {
+            "files_opened_events": 10,
+            "distinct_files": 10,
+            "searches": 8,
+            "distinct_queries": 8,
+            "source_consultations": 7,
+            "tokens_total": 217136,
+            "agent_seconds": 41.479,
+            "grader_seconds": 25.17,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": true,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": true
+            },
+            "provenance": true,
+            "pilot_open_position": null,
+            "evidence_included": [
+              "REFACTOR_OPENAI_AGENTS_SDK.md",
+              "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_LANGGRAPH.md",
+              "REFACTOR_MATRIX.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+            ],
+            "integrity_notes": []
+          },
+          "Q03": {
+            "files_opened_events": 16,
+            "distinct_files": 14,
+            "searches": 13,
+            "distinct_queries": 13,
+            "source_consultations": 8,
+            "tokens_total": 566197,
+            "agent_seconds": 85.312,
+            "grader_seconds": 25.315,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": true,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": true
+            },
+            "provenance": true,
+            "pilot_open_position": null,
+            "evidence_included": [
+              "REFACTOR_CREWAI.md",
+              "REFACTOR_OPENHANDS.md",
+              "REFACTOR_LETTA.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md",
+              "REFACTOR_LANGGRAPH.md",
+              "REFACTOR_SWE_AGENT.md",
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_MATRIX.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md"
+            ],
+            "integrity_notes": []
+          },
+          "Q04": {
+            "files_opened_events": 13,
+            "distinct_files": 12,
+            "searches": 15,
+            "distinct_queries": 15,
+            "source_consultations": 8,
+            "tokens_total": 846000,
+            "agent_seconds": 87.539,
+            "grader_seconds": 20.427,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": true,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": true
+            },
+            "provenance": true,
+            "pilot_open_position": null,
+            "evidence_included": [
+              "REFACTOR_OPENHANDS.md",
+              "REFACTOR_LETTA.md",
+              "REFACTOR_CREWAI.md",
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_MATRIX.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+            ],
+            "integrity_notes": []
+          },
+          "Q05": {
+            "files_opened_events": 17,
+            "distinct_files": 16,
+            "searches": 19,
+            "distinct_queries": 18,
+            "source_consultations": 5,
+            "tokens_total": 1242943,
+            "agent_seconds": 97.657,
+            "grader_seconds": 56.354,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": true,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": true
+            },
+            "provenance": true,
+            "pilot_open_position": null,
+            "evidence_included": [
+              "REFACTOR_CREWAI.md",
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_MATRIX.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md"
+            ],
+            "integrity_notes": []
+          },
+          "Q06": {
+            "files_opened_events": 6,
+            "distinct_files": 6,
+            "searches": 26,
+            "distinct_queries": 24,
+            "source_consultations": 3,
+            "tokens_total": 988384,
+            "agent_seconds": 103.21,
+            "grader_seconds": 12.045,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": false,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": true
+            },
+            "provenance": true,
+            "pilot_open_position": null,
+            "evidence_included": [
+              "REFACTOR_SWE_AGENT.md",
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_MATRIX.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+            ],
+            "integrity_notes": []
+          },
+          "Q07": {
+            "files_opened_events": 10,
+            "distinct_files": 10,
+            "searches": 22,
+            "distinct_queries": 22,
+            "source_consultations": 3,
+            "tokens_total": 845245,
+            "agent_seconds": 88.583,
+            "grader_seconds": 25.344,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": true,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": true
+            },
+            "provenance": true,
+            "pilot_open_position": null,
+            "evidence_included": [
+              "REFACTOR_GOOGLE_ADK.md",
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_MATRIX.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+            ],
+            "integrity_notes": []
+          },
+          "Q08": {
+            "files_opened_events": 28,
+            "distinct_files": 23,
+            "searches": 19,
+            "distinct_queries": 19,
+            "source_consultations": 5,
+            "tokens_total": 1945461,
+            "agent_seconds": 111.3,
+            "grader_seconds": 24.636,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": true,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": true
+            },
+            "provenance": true,
+            "pilot_open_position": null,
+            "evidence_included": [
+              "REFACTOR_OPENAI_AGENTS_SDK.md",
+              "REFACTOR_OPENHANDS.md",
+              "REFACTOR_GOOGLE_ADK.md",
+              "REFACTOR_LANGGRAPH.md",
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_MATRIX.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+            ],
+            "integrity_notes": []
+          },
+          "Q09": {
+            "files_opened_events": 12,
+            "distinct_files": 10,
+            "searches": 16,
+            "distinct_queries": 16,
+            "source_consultations": 6,
+            "tokens_total": 795858,
+            "agent_seconds": 79.304,
+            "grader_seconds": 21.046,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": true,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": true
+            },
+            "provenance": true,
+            "pilot_open_position": null,
+            "evidence_included": [
+              "REFACTOR_LANGGRAPH.md",
+              "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+              "REFACTOR_CREWAI.md",
+              "REFACTOR_LETTA.md",
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_MATRIX.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+            ],
+            "integrity_notes": []
+          },
+          "Q10": {
+            "files_opened_events": 14,
+            "distinct_files": 11,
+            "searches": 19,
+            "distinct_queries": 18,
+            "source_consultations": 8,
+            "tokens_total": 762305,
+            "agent_seconds": 84.52,
+            "grader_seconds": 27.405,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": true,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": true
+            },
+            "provenance": true,
+            "pilot_open_position": null,
+            "evidence_included": [
+              "REFACTOR_OPENHANDS.md",
+              "REFACTOR_LETTA.md",
+              "REFACTOR_CREWAI.md",
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_MATRIX.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+            ],
+            "integrity_notes": []
+          },
+          "Q11": {
+            "files_opened_events": 11,
+            "distinct_files": 11,
+            "searches": 8,
+            "distinct_queries": 8,
+            "source_consultations": 10,
+            "tokens_total": 260036,
+            "agent_seconds": 47.263,
+            "grader_seconds": 69.363,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": true,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": false
+            },
+            "provenance": true,
+            "pilot_open_position": null,
+            "evidence_included": [
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_MATRIX.md",
+              "REFACTOR_LANGGRAPH.md",
+              "REFACTOR_CREWAI.md",
+              "REFACTOR_OPENHANDS.md",
+              "REFACTOR_LETTA.md",
+              "REFACTOR_SWE_AGENT.md",
+              "REFACTOR_GOOGLE_ADK.md",
+              "REFACTOR_OPENAI_AGENTS_SDK.md",
+              "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+            ],
+            "integrity_notes": []
+          },
+          "Q12": {
+            "files_opened_events": 5,
+            "distinct_files": 5,
+            "searches": 9,
+            "distinct_queries": 9,
+            "source_consultations": 4,
+            "tokens_total": 157386,
+            "agent_seconds": 40.745,
+            "grader_seconds": 28.018,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": true,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": false
+            },
+            "provenance": true,
+            "pilot_open_position": null,
+            "evidence_included": [
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_MATRIX.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+            ],
+            "integrity_notes": []
+          }
+        }
+      },
+      "per_question": {
+        "Q01": {
+          "files_opened": 33,
+          "searches": 20,
+          "source_rehydrations": 10,
+          "elapsed_seconds": 180.12
+        },
+        "Q02": {
+          "files_opened": 10,
+          "searches": 8,
+          "source_rehydrations": 7,
+          "elapsed_seconds": 72.87
+        },
+        "Q03": {
+          "files_opened": 16,
+          "searches": 13,
+          "source_rehydrations": 8,
+          "elapsed_seconds": 115.94
+        },
+        "Q04": {
+          "files_opened": 13,
+          "searches": 15,
+          "source_rehydrations": 8,
+          "elapsed_seconds": 113.22
+        },
+        "Q05": {
+          "files_opened": 17,
+          "searches": 19,
+          "source_rehydrations": 5,
+          "elapsed_seconds": 160.79
+        },
+        "Q06": {
+          "files_opened": 6,
+          "searches": 26,
+          "source_rehydrations": 3,
+          "elapsed_seconds": 122.36
+        },
+        "Q07": {
+          "files_opened": 10,
+          "searches": 22,
+          "source_rehydrations": 3,
+          "elapsed_seconds": 119.71
+        },
+        "Q08": {
+          "files_opened": 28,
+          "searches": 19,
+          "source_rehydrations": 5,
+          "elapsed_seconds": 141.41
+        },
+        "Q09": {
+          "files_opened": 12,
+          "searches": 16,
+          "source_rehydrations": 6,
+          "elapsed_seconds": 106.02
+        },
+        "Q10": {
+          "files_opened": 14,
+          "searches": 19,
+          "source_rehydrations": 8,
+          "elapsed_seconds": 117.27
+        },
+        "Q11": {
+          "files_opened": 11,
+          "searches": 8,
+          "source_rehydrations": 10,
+          "elapsed_seconds": 122.39
+        },
+        "Q12": {
+          "files_opened": 5,
+          "searches": 9,
+          "source_rehydrations": 4,
+          "elapsed_seconds": 74.99
+        }
+      }
+    },
+    "TREATMENT": {
+      "questions_executed": 12,
+      "files_opened_total": 210,
+      "searches_total": 238,
+      "source_consultations_total_runner": 100,
+      "elapsed_total": 1535.58,
+      "elapsed_median": 125.86,
+      "elapsed_min": 80.22,
+      "elapsed_max": 221.82,
+      "runner_errors": [],
+      "quality": {
+        "correct_conclusion": {
+          "true": 12,
+          "false": 0,
+          "na": 0
+        },
+        "correct_scope": {
+          "true": 12,
+          "false": 0,
+          "na": 0
+        },
+        "authority_boundary_preserved": {
+          "true": 12,
+          "false": 0,
+          "na": 0
+        },
+        "unsupported_claim": {
+          "true": 12,
+          "false": 0,
+          "na": 0
+        }
+      },
+      "provenance": {
+        "true": 12,
+        "false": 0,
+        "na": 0
+      },
+      "trace": {
+        "trace_files": 12,
+        "questions_in_trace": [
+          "Q01",
+          "Q02",
+          "Q03",
+          "Q04",
+          "Q05",
+          "Q06",
+          "Q07",
+          "Q08",
+          "Q09",
+          "Q10",
+          "Q11",
+          "Q12"
+        ],
+        "tokens": {
+          "inputTokens": 700876,
+          "outputTokens": 137164,
+          "cacheReadTokens": 9861376,
+          "totalTokens": 10699416
+        },
+        "agent_seconds_total": 1089.09,
+        "agent_seconds_median": 78.16,
+        "grader_seconds_total": 378.61,
+        "grader_seconds_median": 23.26,
+        "timeouts": 0,
+        "agent_errors": 0,
+        "grader_parse_failures": 0,
+        "missing_answers": 0,
+        "disallowed_tools_observed": [],
+        "out_of_workspace_calls": 0,
+        "notes": [],
+        "distinct_files_per_question": [
+          25,
+          9,
+          28,
+          10,
+          15,
+          7,
+          7,
+          20,
+          17,
+          12,
+          12,
+          13
+        ],
+        "distinct_queries_per_question": [
+          22,
+          14,
+          25,
+          26,
+          16,
+          17,
+          20,
+          12,
+          31,
+          20,
+          11,
+          18
+        ],
+        "source_consultations_total": 100,
+        "distinct_source_files_per_question": [
+          8,
+          6,
+          11,
+          4,
+          4,
+          3,
+          3,
+          6,
+          10,
+          8,
+          10,
+          10
+        ],
+        "tool_call_counts": {
+          "grep": 178,
+          "glob": 60,
+          "read": 215
+        },
+        "pilot_open_positions": {
+          "Q01": 3,
+          "Q02": 4,
+          "Q03": 1,
+          "Q04": 1,
+          "Q05": 3,
+          "Q06": 1,
+          "Q07": 1,
+          "Q09": 3,
+          "Q10": 1,
+          "Q11": 4,
+          "Q12": 3
+        },
+        "integrity": {
+          "pilot_present_values": [
+            true
+          ],
+          "runner_pilot_present_values": [
+            true
+          ],
+          "workspace_stable_values": [
+            true
+          ],
+          "condition_labels_in_child_env": [
+            []
+          ],
+          "condition_token_in_agent_cwd_values": [
+            false
+          ],
+          "workspace_digests": [
+            "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9"
+          ],
+          "tool_set_sha256": [
+            "a5013d17a6fd831003f44fc4003db0723ccf173a11c0ad517f8294b8a306d328"
+          ],
+          "tool_policy_sha256": [
+            "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573"
+          ]
+        },
+        "per_question": {
+          "Q01": {
+            "files_opened_events": 37,
+            "distinct_files": 25,
+            "searches": 22,
+            "distinct_queries": 22,
+            "source_consultations": 10,
+            "tokens_total": 2573397,
+            "agent_seconds": 196.482,
+            "grader_seconds": 20.093,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": true,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": true
+            },
+            "provenance": true,
+            "pilot_open_position": 3,
+            "evidence_included": [
+              "REFACTOR_LANGGRAPH.md",
+              "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+              "REFACTOR_CREWAI.md",
+              "REFACTOR_LETTA.md",
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_MATRIX.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+            ],
+            "integrity_notes": []
+          },
+          "Q02": {
+            "files_opened_events": 11,
+            "distinct_files": 9,
+            "searches": 15,
+            "distinct_queries": 14,
+            "source_consultations": 8,
+            "tokens_total": 358056,
+            "agent_seconds": 57.38,
+            "grader_seconds": 17.288,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": true,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": true
+            },
+            "provenance": true,
+            "pilot_open_position": 4,
+            "evidence_included": [
+              "REFACTOR_OPENAI_AGENTS_SDK.md",
+              "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_LANGGRAPH.md",
+              "REFACTOR_MATRIX.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+            ],
+            "integrity_notes": []
+          },
+          "Q03": {
+            "files_opened_events": 37,
+            "distinct_files": 28,
+            "searches": 27,
+            "distinct_queries": 25,
+            "source_consultations": 15,
+            "tokens_total": 1606612,
+            "agent_seconds": 115.853,
+            "grader_seconds": 17.958,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": true,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": true
+            },
+            "provenance": true,
+            "pilot_open_position": 1,
+            "evidence_included": [
+              "REFACTOR_CREWAI.md",
+              "REFACTOR_OPENHANDS.md",
+              "REFACTOR_LETTA.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md",
+              "REFACTOR_LANGGRAPH.md",
+              "REFACTOR_SWE_AGENT.md",
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_MATRIX.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md"
+            ],
+            "integrity_notes": []
+          },
+          "Q04": {
+            "files_opened_events": 11,
+            "distinct_files": 10,
+            "searches": 26,
+            "distinct_queries": 26,
+            "source_consultations": 4,
+            "tokens_total": 704044,
+            "agent_seconds": 86.43,
+            "grader_seconds": 21.593,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": true,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": true
+            },
+            "provenance": true,
+            "pilot_open_position": 1,
+            "evidence_included": [
+              "REFACTOR_OPENHANDS.md",
+              "REFACTOR_LETTA.md",
+              "REFACTOR_CREWAI.md",
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_MATRIX.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+            ],
+            "integrity_notes": []
+          },
+          "Q05": {
+            "files_opened_events": 15,
+            "distinct_files": 15,
+            "searches": 16,
+            "distinct_queries": 16,
+            "source_consultations": 4,
+            "tokens_total": 691099,
+            "agent_seconds": 65.589,
+            "grader_seconds": 67.048,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": true,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": true
+            },
+            "provenance": true,
+            "pilot_open_position": 3,
+            "evidence_included": [
+              "REFACTOR_CREWAI.md",
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_MATRIX.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md"
+            ],
+            "integrity_notes": []
+          },
+          "Q06": {
+            "files_opened_events": 7,
+            "distinct_files": 7,
+            "searches": 17,
+            "distinct_queries": 17,
+            "source_consultations": 4,
+            "tokens_total": 434280,
+            "agent_seconds": 65.249,
+            "grader_seconds": 35.43,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": true,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": true
+            },
+            "provenance": true,
+            "pilot_open_position": 1,
+            "evidence_included": [
+              "REFACTOR_SWE_AGENT.md",
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_MATRIX.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+            ],
+            "integrity_notes": []
+          },
+          "Q07": {
+            "files_opened_events": 10,
+            "distinct_files": 7,
+            "searches": 20,
+            "distinct_queries": 20,
+            "source_consultations": 7,
+            "tokens_total": 459407,
+            "agent_seconds": 69.888,
+            "grader_seconds": 24.917,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": true,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": true
+            },
+            "provenance": true,
+            "pilot_open_position": 1,
+            "evidence_included": [
+              "REFACTOR_GOOGLE_ADK.md",
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_MATRIX.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+            ],
+            "integrity_notes": []
+          },
+          "Q08": {
+            "files_opened_events": 24,
+            "distinct_files": 20,
+            "searches": 12,
+            "distinct_queries": 12,
+            "source_consultations": 8,
+            "tokens_total": 1041044,
+            "agent_seconds": 93.409,
+            "grader_seconds": 44.264,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": true,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": true
+            },
+            "provenance": true,
+            "pilot_open_position": null,
+            "evidence_included": [
+              "REFACTOR_OPENAI_AGENTS_SDK.md",
+              "REFACTOR_OPENHANDS.md",
+              "REFACTOR_GOOGLE_ADK.md",
+              "REFACTOR_LANGGRAPH.md",
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_MATRIX.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+            ],
+            "integrity_notes": []
+          },
+          "Q09": {
+            "files_opened_events": 19,
+            "distinct_files": 17,
+            "searches": 31,
+            "distinct_queries": 31,
+            "source_consultations": 10,
+            "tokens_total": 1451428,
+            "agent_seconds": 136.543,
+            "grader_seconds": 17.079,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": true,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": true
+            },
+            "provenance": true,
+            "pilot_open_position": 3,
+            "evidence_included": [
+              "REFACTOR_LANGGRAPH.md",
+              "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+              "REFACTOR_CREWAI.md",
+              "REFACTOR_LETTA.md",
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_MATRIX.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+            ],
+            "integrity_notes": []
+          },
+          "Q10": {
+            "files_opened_events": 12,
+            "distinct_files": 12,
+            "searches": 21,
+            "distinct_queries": 20,
+            "source_consultations": 9,
+            "tokens_total": 661359,
+            "agent_seconds": 93.364,
+            "grader_seconds": 46.887,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": true,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": true
+            },
+            "provenance": true,
+            "pilot_open_position": 1,
+            "evidence_included": [
+              "REFACTOR_OPENHANDS.md",
+              "REFACTOR_LETTA.md",
+              "REFACTOR_CREWAI.md",
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_MATRIX.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+            ],
+            "integrity_notes": []
+          },
+          "Q11": {
+            "files_opened_events": 13,
+            "distinct_files": 12,
+            "searches": 12,
+            "distinct_queries": 11,
+            "source_consultations": 11,
+            "tokens_total": 384701,
+            "agent_seconds": 51.965,
+            "grader_seconds": 47.231,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": true,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": true
+            },
+            "provenance": true,
+            "pilot_open_position": 4,
+            "evidence_included": [
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_MATRIX.md",
+              "REFACTOR_LANGGRAPH.md",
+              "REFACTOR_CREWAI.md",
+              "REFACTOR_OPENHANDS.md",
+              "REFACTOR_LETTA.md",
+              "REFACTOR_SWE_AGENT.md",
+              "REFACTOR_GOOGLE_ADK.md",
+              "REFACTOR_OPENAI_AGENTS_SDK.md",
+              "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+            ],
+            "integrity_notes": []
+          },
+          "Q12": {
+            "files_opened_events": 14,
+            "distinct_files": 13,
+            "searches": 19,
+            "distinct_queries": 18,
+            "source_consultations": 10,
+            "tokens_total": 333989,
+            "agent_seconds": 56.94,
+            "grader_seconds": 18.818,
+            "agent_error": null,
+            "timed_out": false,
+            "grader_fields": {
+              "correct_conclusion": true,
+              "correct_scope": true,
+              "authority_boundary_preserved": true,
+              "unsupported_claim": true
+            },
+            "provenance": true,
+            "pilot_open_position": 3,
+            "evidence_included": [
+              "REFACTOR_SYNTHESIS.md",
+              "REFACTOR_MATRIX.md",
+              "docs/plans/180-comparative-architecture-refactor-study.md",
+              "docs/rfc/75-change-lifecycle.md",
+              "docs/adr/15-change-lifecycle-continuity.md",
+              "docs/adr/16-change-lifecycle-authority.md",
+              "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+            ],
+            "integrity_notes": []
+          }
+        }
+      },
+      "per_question": {
+        "Q01": {
+          "files_opened": 37,
+          "searches": 22,
+          "source_rehydrations": 10,
+          "elapsed_seconds": 221.82
+        },
+        "Q02": {
+          "files_opened": 11,
+          "searches": 15,
+          "source_rehydrations": 8,
+          "elapsed_seconds": 80.22
+        },
+        "Q03": {
+          "files_opened": 37,
+          "searches": 27,
+          "source_rehydrations": 15,
+          "elapsed_seconds": 139.39
+        },
+        "Q04": {
+          "files_opened": 11,
+          "searches": 26,
+          "source_rehydrations": 4,
+          "elapsed_seconds": 113.54
+        },
+        "Q05": {
+          "files_opened": 15,
+          "searches": 16,
+          "source_rehydrations": 4,
+          "elapsed_seconds": 138.19
+        },
+        "Q06": {
+          "files_opened": 7,
+          "searches": 17,
+          "source_rehydrations": 4,
+          "elapsed_seconds": 106.6
+        },
+        "Q07": {
+          "files_opened": 10,
+          "searches": 20,
+          "source_rehydrations": 7,
+          "elapsed_seconds": 100.4
+        },
+        "Q08": {
+          "files_opened": 24,
+          "searches": 12,
+          "source_rehydrations": 8,
+          "elapsed_seconds": 143.26
+        },
+        "Q09": {
+          "files_opened": 19,
+          "searches": 31,
+          "source_rehydrations": 10,
+          "elapsed_seconds": 159.15
+        },
+        "Q10": {
+          "files_opened": 12,
+          "searches": 21,
+          "source_rehydrations": 9,
+          "elapsed_seconds": 145.87
+        },
+        "Q11": {
+          "files_opened": 13,
+          "searches": 12,
+          "source_rehydrations": 11,
+          "elapsed_seconds": 104.85
+        },
+        "Q12": {
+          "files_opened": 14,
+          "searches": 19,
+          "source_rehydrations": 10,
+          "elapsed_seconds": 82.29
+        }
+      }
+    }
+  },
+  "deltas": {
+    "files_opened": {
+      "absolute": 35,
+      "percent": 20.0
+    },
+    "searches": {
+      "absolute": 44,
+      "percent": 22.7
+    },
+    "source_consultations": {
+      "absolute": 23,
+      "percent": 29.9
+    },
+    "distinct_files": {
+      "absolute": 22,
+      "percent": 14.4
+    },
+    "distinct_queries": {
+      "absolute": 42,
+      "percent": 22.1
+    },
+    "elapsed_total": {
+      "absolute": 88.50999999999999,
+      "percent": 6.1
+    },
+    "elapsed_median": {
+      "absolute": 7.3700000000000045,
+      "percent": 6.2
+    },
+    "agent_seconds_total": {
+      "absolute": 79.2299999999999,
+      "percent": 7.8
+    },
+    "tokens_total": {
+      "absolute": -53401,
+      "percent": -0.5
+    },
+    "input_tokens": {
+      "absolute": -53024,
+      "percent": -7.0
+    },
+    "output_tokens": {
+      "absolute": 14087,
+      "percent": 11.4
+    },
+    "cache_read_tokens": {
+      "absolute": -14464,
+      "percent": -0.1
+    },
+    "runner_errors": {
+      "absolute": 0,
+      "percent": null
+    }
+  },
+  "per_question_delta": {
+    "Q01": {
+      "files_opened": 4,
+      "searches": 2,
+      "source_rehydrations": 0,
+      "elapsed_seconds": 41.69999999999999
+    },
+    "Q02": {
+      "files_opened": 1,
+      "searches": 7,
+      "source_rehydrations": 1,
+      "elapsed_seconds": 7.349999999999994
+    },
+    "Q03": {
+      "files_opened": 21,
+      "searches": 14,
+      "source_rehydrations": 7,
+      "elapsed_seconds": 23.44999999999999
+    },
+    "Q04": {
+      "files_opened": -2,
+      "searches": 11,
+      "source_rehydrations": -4,
+      "elapsed_seconds": 0.3200000000000074
+    },
+    "Q05": {
+      "files_opened": -2,
+      "searches": -3,
+      "source_rehydrations": -1,
+      "elapsed_seconds": -22.599999999999994
+    },
+    "Q06": {
+      "files_opened": 1,
+      "searches": -9,
+      "source_rehydrations": 1,
+      "elapsed_seconds": -15.760000000000005
+    },
+    "Q07": {
+      "files_opened": 0,
+      "searches": -2,
+      "source_rehydrations": 4,
+      "elapsed_seconds": -19.309999999999988
+    },
+    "Q08": {
+      "files_opened": -4,
+      "searches": -7,
+      "source_rehydrations": 3,
+      "elapsed_seconds": 1.8499999999999943
+    },
+    "Q09": {
+      "files_opened": 7,
+      "searches": 15,
+      "source_rehydrations": 4,
+      "elapsed_seconds": 53.13000000000001
+    },
+    "Q10": {
+      "files_opened": -2,
+      "searches": 2,
+      "source_rehydrations": 1,
+      "elapsed_seconds": 28.60000000000001
+    },
+    "Q11": {
+      "files_opened": 2,
+      "searches": 4,
+      "source_rehydrations": 1,
+      "elapsed_seconds": -17.540000000000006
+    },
+    "Q12": {
+      "files_opened": 9,
+      "searches": 10,
+      "source_rehydrations": 6,
+      "elapsed_seconds": 7.300000000000011
+    }
+  },
+  "treatment_lower_counts": {
+    "files_opened_lower_in_treatment": 4,
+    "searches_lower_in_treatment": 4,
+    "time_lower_in_treatment": 4,
+    "questions_compared": 12
+  },
+  "quality_delta": {
+    "correct_conclusion": {
+      "control": {
+        "true": 11,
+        "false": 1,
+        "na": 0
+      },
+      "treatment": {
+        "true": 12,
+        "false": 0,
+        "na": 0
+      }
+    },
+    "correct_scope": {
+      "control": {
+        "true": 12,
+        "false": 0,
+        "na": 0
+      },
+      "treatment": {
+        "true": 12,
+        "false": 0,
+        "na": 0
+      }
+    },
+    "authority_boundary_preserved": {
+      "control": {
+        "true": 12,
+        "false": 0,
+        "na": 0
+      },
+      "treatment": {
+        "true": 12,
+        "false": 0,
+        "na": 0
+      }
+    },
+    "unsupported_claim": {
+      "control": {
+        "true": 10,
+        "false": 2,
+        "na": 0
+      },
+      "treatment": {
+        "true": 12,
+        "false": 0,
+        "na": 0
+      }
+    },
+    "provenance_present": {
+      "control": {
+        "true": 12,
+        "false": 0,
+        "na": 0
+      },
+      "treatment": {
+        "true": 12,
+        "false": 0,
+        "na": 0
+      }
+    }
+  },
+  "manipulation_check": {
+    "treatment_pilot_open_count": 11,
+    "threshold": 8,
+    "passed": true,
+    "positions": {
+      "Q01": 3,
+      "Q02": 4,
+      "Q03": 1,
+      "Q04": 1,
+      "Q05": 3,
+      "Q06": 1,
+      "Q07": 1,
+      "Q09": 3,
+      "Q10": 1,
+      "Q11": 4,
+      "Q12": 3
+    }
+  },
+  "decision_rule_result": {
+    "decision": "REJECT",
+    "reason": "no material retrieval reduction, or quality/authority degraded beyond the pre-registered tolerance",
+    "material_reduction": false,
+    "quality_preserved": false,
+    "integrity_ok": true,
+    "ratios": {
+      "files_opened": 1.2,
+      "searches": 1.227
+    }
+  }
+}

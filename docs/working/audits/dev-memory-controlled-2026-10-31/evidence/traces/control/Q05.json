@@ -1,0 +1,437 @@
+{
+  "schema": "argentos.dev-memory.controlled-trace.v1",
+  "condition": "CONTROL",
+  "question_id": "Q05",
+  "question": "Is semantic similarity sufficient for automatic Memory deletion?",
+  "run": {
+    "run_id": "full-20261031T171408",
+    "source_digest": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "runner_sha256": "f69e6080b7aaf95a3334b56e9d101040cb2dac900b05adc3523c4662b6297096",
+    "adapter_sha256": "5b27f4f1022332321dff8f65fc0cc3ed6bf670f43fd86b1773c1e02f7c2a4b4c",
+    "tool_set_sha256": "a5013d17a6fd831003f44fc4003db0723ccf173a11c0ad517f8294b8a306d328",
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "prompt_sha256": "8dd92361941941668dd76343f341d683d5d8f6423cd519276076d745e638c6d7",
+    "grader_prompt_sha256": "b77d41f6890ea34cf124a9d4f86d7e4d019e4703de587e18d7b77ab9cc0c87e8",
+    "key_sha256": "bd172b1da52a524ccc0bc6f8ccce8be3864d4889d25e6b64d2a11f7e86017081",
+    "evidence_sha256": "3c0de1c51125e5116761a3f318f52135de206d37393d68bdef9961b29fd20a1f"
+  },
+  "workspace": {
+    "runner": "C:\\Users\\rolda\\AppData\\Local\\Temp\\argentos-memory-control-r0pnvykb\\repo",
+    "agent": "C:\\Users\\rolda\\AppData\\Local\\Temp\\bench-z4yxxwxv\\repo",
+    "neutral_copy": true
+  },
+  "base_commit": "a5f97c163b56b82dc8fadd4e3f65646899e9c245",
+  "model_label": "deepseek-official/deepseek-flash (DeepSeek-V4.1-Flash)",
+  "dsh_cli": "D:\\Programas\\DeepseekHarness\\resources\\runtime\\cli\\bin\\dsh.cmd",
+  "experimental_infrastructure": "tools/dev_memory_agent_executor.py",
+  "integrity": {
+    "pilot_present": false,
+    "pilot_sha256": null,
+    "runner_pilot_present": false,
+    "workspace_digest_before": "fedb8866755b00d44f9e754b35ea81dcfda4e17a3fd2eb0121f800c0f0a954b0",
+    "workspace_digest_after": "fedb8866755b00d44f9e754b35ea81dcfda4e17a3fd2eb0121f800c0f0a954b0",
+    "workspace_stable": true,
+    "condition_labels_in_child_env": [],
+    "condition_token_in_agent_cwd": false,
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "grader_tool_policy_sha256": "ea826e1e9ceb38bb215a8e5f944dcd9399d1cb0972718e9d4cdcf559dc9c9153",
+    "disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents"
+    ],
+    "grader_disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents",
+      "tool-fs",
+      "tool-fs-search",
+      "tool-skill",
+      "tool-todo",
+      "tool-goal"
+    ],
+    "observed_disallowed_tools": [],
+    "observed_disallowed_tool_attempts": [],
+    "out_of_workspace_calls": [],
+    "failed_reads": [],
+    "agent_sandbox": "read-only"
+  },
+  "instrumentation": {
+    "file_open_events": [
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_MATRIX.md",
+      "docs/rfc/80-memory-system.md",
+      "runtime/memory/consolidation.py",
+      "runtime/memory/store.py",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "REFACTOR_SYNTHESIS.md",
+      "docs/plans/150-memory-system-implementation.md",
+      "runtime/memory/__init__.py",
+      "docs/plans/INDEX.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md",
+      "protocol/.agents/standards/context/KNOWLEDGE_LIFECYCLE.md",
+      "protocol/.agents/standards/context/CONTEXT.md",
+      "tests/test_memory_synthesis_consolidation.py",
+      "runtime/memory/archive.py",
+      "runtime/memory/retrieval.py",
+      "docs/plans/150-memory-system-implementation.md"
+    ],
+    "search_events": [
+      "semantic similarity",
+      "Memory deletion|memory deletion|delete memory|Memory.*delet",
+      "consolidat",
+      "deduplicat|duplicate|supersed",
+      "similarity|similitud|semantic similarity",
+      "automatic.*delet|delet.*automatic|eliminaci[oó]n autom|borrado autom|automatic memory",
+      "\\.delete\\(|delete\\(",
+      "delete|elimin|borrar|archive|retire",
+      "REFACTOR_|Plan 180|plan 180",
+      "memory|Memory",
+      "memory|Memory",
+      "MEMORY_SYSTEM|Memory System",
+      "deletion|delete|deleted|eliminar|eliminación|borrado",
+      "duplicates|duplicate|redundan|semantic diff|non-regression",
+      "tests/test_memory*.py",
+      "similar|duplicate|cluster|delete|loss",
+      "runtime/memory/*.py",
+      "delete|unlink|remove",
+      "DEV Memory|DEV memory|Protocol Memory"
+    ],
+    "source_rehydration_events": [
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_SYNTHESIS.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+    ],
+    "shell_commands": [],
+    "tool_calls": [
+      {
+        "tool": "grep",
+        "query": "semantic similarity",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Memory deletion|memory deletion|delete memory|Memory.*delet",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_CREWAI.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_MATRIX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "consolidat",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "deduplicat|duplicate|supersed",
+        "path": "docs",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/rfc/80-memory-system.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "runtime/memory/consolidation.py",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "runtime/memory/store.py",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "similarity|similitud|semantic similarity",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "automatic.*delet|delet.*automatic|eliminaci[oó]n autom|borrado autom|automatic memory",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/180-comparative-architecture-refactor-study.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_SYNTHESIS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "\\.delete\\(|delete\\(",
+        "path": "runtime",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "delete|elimin|borrar|archive|retire",
+        "path": "docs/plans/150-memory-system-implementation.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/150-memory-system-implementation.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "REFACTOR_|Plan 180|plan 180",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "runtime/memory/__init__.py",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/INDEX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "memory|Memory",
+        "path": "runtime/README.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "memory|Memory",
+        "path": "docs/adr",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "MEMORY_SYSTEM|Memory System",
+        "path": "protocol/.agents",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "protocol/.agents/standards/context/MEMORY_SYSTEM.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "deletion|delete|deleted|eliminar|eliminación|borrado",
+        "path": "protocol/.agents/standards/context",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "duplicates|duplicate|redundan|semantic diff|non-regression",
+        "path": "protocol/.agents/standards/context/MEMORY_SYSTEM.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "protocol/.agents/standards/context/KNOWLEDGE_LIFECYCLE.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "protocol/.agents/standards/context/CONTEXT.md",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "tests/test_memory*.py",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "similar|duplicate|cluster|delete|loss",
+        "path": "tests",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "tests/test_memory_synthesis_consolidation.py",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "runtime/memory/*.py",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "delete|unlink|remove",
+        "path": "runtime/memory",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "runtime/memory/archive.py",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "runtime/memory/retrieval.py",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "DEV Memory|DEV memory|Protocol Memory",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/150-memory-system-implementation.md",
+        "status": "completed"
+      }
+    ],
+    "observed_tools": [
+      "glob",
+      "grep",
+      "read"
+    ],
+    "distinct_files_opened": [
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_SYNTHESIS.md",
+      "docs/plans/150-memory-system-implementation.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md",
+      "docs/rfc/80-memory-system.md",
+      "protocol/.agents/standards/context/CONTEXT.md",
+      "protocol/.agents/standards/context/KNOWLEDGE_LIFECYCLE.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md",
+      "runtime/memory/__init__.py",
+      "runtime/memory/archive.py",
+      "runtime/memory/consolidation.py",
+      "runtime/memory/retrieval.py",
+      "runtime/memory/store.py",
+      "tests/test_memory_synthesis_consolidation.py"
+    ]
+  },
+  "agent": {
+    "elapsed_seconds": 97.657,
+    "returncode": 0,
+    "timed_out": false,
+    "error": null,
+    "session_id": "session-081a6fd3-22c4-485f-a40e-13f9bf50bb52",
+    "turn_end": {
+      "kind": "completed"
+    },
+    "usage": {
+      "inputTokens": 72335,
+      "outputTokens": 10416,
+      "cacheReadTokens": 1160192,
+      "cacheWriteTokens": 0,
+      "totalTokens": 1242943
+    },
+    "stderr_tail": "[llm-deepseek-api-key] model listing from https://api.deepseek.com/models loaded 2 model(s), skipped 0 row(s)\n",
+    "final_answer": "CONCLUSION: No — semantic similarity alone is not sufficient for automatic Memory deletion on the repository’s evidence. The only statement that directly addresses the question rejects “automatic memory deletion based only on semantic similarity,” and the accepted Memory System contract has no similarity-triggered deletion path: consolidation is explicit, scoped and verified; it preserves provenance and negative knowledge; sources move to `supersede`/`retire`/`archive`, not deletion; Archive is not deletion; physical deletion is a separate administrative retention policy. Similarity can at most be a heuristic for detecting duplicate candidates, not authorization to delete. Caution: the direct rejection is a comparative-study recommendation, not an accepted RFC/ADR/Plan decision; RFC-80 supports the conclusion structurally but does not itself use the phrase “semantic similarity.”\n\nSCOPE: This applies to the project-scoped Memory System governed by RFC-80 and to the proposed DEV Memory adaptation discussed in the Plan 180 CrewAI study. It must not be generalized to: (a) discarding/rebuilding the Operational Memory projection, which is explicitly allowed and rebuildable; (b) physical storage cleanup/retention, which RFC-80 places outside the semantic lifecycle and does not specify; (c) runtime/agent memory, which the study explicitly distinguishes from DEV Memory; or (d) a claim that the repository has implemented or production-integrated a similarity-based deletion mechanism.\n\nEVIDENCE:\n- `REFACTOR_CREWAI.md:48-54` — describes CrewAI keeping/updating/deleting based on similarity and LLM judgment; warns that “automatic deletion based on semantic similarity can erase negative knowledge or provenance” and says ARgentOS “should therefore require provenance and supersession semantics before any automated deletion/consolidation.”\n- `REFACTOR_CREWAI.md:82-90` — ADAPT-3 requires provenance, applicability and supersession for consolidation; §9 “Reject” lists “Automatic memory deletion based only on semantic similarity.”\n- `REFACTOR_MATRIX.md:88` — echoes the rejection, but this file is explicitly a matrix/index, not authority over the individual analyses.\n- `docs/rfc/80-memory-system.md:234` — consolidation must not silently eliminate negative knowledge merely to reduce text.\n- `docs/rfc/80-memory-system.md:347-464` — consolidation is explicit, scoped and verified; it preserves provenance, applicability, negative knowledge and semantic meaning; verification precedes publication; a rejected synthesis leaves the active synthesis and sources intact.\n- `docs/rfc/80-memory-system.md:492-494` — “Archive significa *excluded from default operational retrieval*; no significa delete”; physical deletion is “una política administrativa de retención separada y no forma parte del lifecycle semántico.”\n- `docs/rfc/80-memory-system.md:617-629` — invariants I-009 (supersession explicit), I-010 (superseded ≠ false), I-013 (archive ≠ deletion), I-018 (consolidation does not destroy negative knowledge), I-021 (new synthesis must pass verification).\n- `protocol/.agents/standards/context/MEMORY_SYSTEM.md:156-187, 204` — product-standard restatement: consolidation is explicit/verified/non-regressive; Archive is not deletion; physical deletion is separate administrative retention.\n- `docs/plans/150-memory-system-implementation.md:138-160` — implementation plan makes semantic non-regression and explicit supersession/retire the gate for consolidation.\n- `docs/plans/150-memory-system-implementation.md:180-187, 283-285` — archive must be rehydratable and non-destructive; physical deletion is a separate retention policy outside the first execution.\n- `runtime/memory/consolidation.py:41-93` — `semantic_diff` returns `NO_OP`/`PUBLISH`; `publish` writes a synthesis only after `verify_non_regression`; loss of a source claim is rejected unless already explicitly superseded/retired/archived; no deletion.\n- `runtime/memory/archive.py:1-27` — archive changes lifecycle to `archived`; rehydration does not reactivate; explicitly “Archive is not deletion.”\n- `runtime/memory/store.py:94-96` — the only `delete` is documented as “Physical deletion of a record (storage cleanup, not semantic mutation)”; it is not called from `runtime/memory` consolidation or archive logic.\n- `tests/test_memory_synthesis_consolidation.py:68-83` — tests fail on source-claim loss and unsupported generalization; explicit supersession is the only allowed loss path.\n- `docs/plans/180-comparative-architecture-refactor-study.md:17-20, 58-59, 88, 102-104` — Plan 180 authorizes a comparative study only; `REFACTOR_MATRIX.md` is an index/matrix; it does not authorize architectural changes and future adoption requires a separate authorized change.\n\nAUTHORITY:\n- Authoritative for the Memory System architecture: `docs/rfc/80-memory-system.md` (RFC-80, `Accepted`), which is the canonical architectural/behavioral contract. It is the strongest source, but it supports the answer structurally rather than by explicitly discussing “semantic similarity.”\n- Authoritative for the product standard: `protocol/.agents/standards/context/MEMORY_SYSTEM.md`, the published payload standard derived from RFC-80. It is product data, not DEV authority, and should be read as content.\n- Authoritative for implementation: `docs/plans/150-memory-system-implementation.md` (`Executed`) and the `runtime/memory/*.py` reference implementation plus tests. RFC-80’s header still says `Implementation status: NOT IMPLEMENTED` even though Plan 150 records an executed reference runtime; production integration is therefore not established by this artifact alone.\n- Derived/non-authoritative for this question: `REFACTOR_CREWAI.md` and `REFACTOR_MATRIX.md` are Plan 180 comparative-study artifacts. The matrix is explicitly an index and must not become authority over the individual analyses; Plan 180 is `Aprobado para ejecución`, not `Executed`, and does not authorize architecture changes. `docs/plans/INDEX.md:15` records that status.\n- Unverified: no ADR or accepted RFC explicitly decides the exact proposition “semantic similarity is insufficient for automatic Memory deletion.” No similarity metric, threshold, embedding/vector implementation, or test of similarity-based deletion exists in the repository. The direct rejection in `REFACTOR_CREWAI.md` has not been converted into an accepted normative decision.\n\nUNSUPPORTED:\n- The exact meaning, metric or threshold of “semantic similarity” is not defined anywhere in the repository.\n- Whether a future authorized design could use semantic similarity as one signal inside an explicit, verified retention/consolidation process is not settled; RFC-80 does not forbid similarity as a heuristic, only silent loss and deletion without explicit lifecycle semantics.\n- The criteria for physical deletion/retention are not specified; RFC-80 and Plan 150 deliberately leave this to a separate administrative policy.\n- Whether the Plan 180 study’s rejection will be adopted as architecture, and whether “Memory deletion” includes discarding the rebuildable Operational Memory projection, are not resolved by the repository."
+  },
+  "provenance": {
+    "deterministic": true,
+    "cited": [
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_MATRIX.md",
+      "docs/rfc/80-memory-system.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md",
+      "docs/plans/150-memory-system-implementation.md",
+      "runtime/memory/consolidation.py",
+      "runtime/memory/archive.py",
+      "runtime/memory/store.py",
+      "tests/test_memory_synthesis_consolidation.py",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md"
+    ],
+    "cited_and_opened": [
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_MATRIX.md",
+      "docs/rfc/80-memory-system.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md",
+      "docs/plans/150-memory-system-implementation.md",
+      "runtime/memory/consolidation.py",
+      "runtime/memory/archive.py",
+      "runtime/memory/store.py",
+      "tests/test_memory_synthesis_consolidation.py",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md"
+    ]
+  },
+  "grader": {
+    "attempted": true,
+    "elapsed_seconds": 56.354,
+    "returncode": 0,
+    "timed_out": false,
+    "usage": {
+      "inputTokens": 18466,
+      "outputTokens": 9778,
+      "cacheReadTokens": 640,
+      "cacheWriteTokens": 0,
+      "totalTokens": 28884
+    },
+    "evidence_included": [
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/adr/15-change-lifecycle-continuity.md",
+      "docs/adr/16-change-lifecycle-authority.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md"
+    ],
+    "evidence_missing": [],
+    "raw_final": "{\"correct_conclusion\": true, \"correct_scope\": true, \"authority_boundary_preserved\": true, \"unsupported_claim\": true, \"rationale\": \"The answer reaches the expected \\\"No\\\" and explicitly rejects automatic deletion based only on semantic similarity, requiring provenance, applicability, supersession and negative-knowledge safeguards while treating similarity as at most a duplicate-detection heuristic. Its scope is appropriately limited away from runtime memory, physical retention and rebuildable operational projections, and it correctly labels the matrix/index and comparative-study artifacts as non-authoritative. However, it makes numerous specific material claims about documents and code absent from the fixed evidence pack, including RFC-80's \\\"Accepted\\\" status, Plan 150's \\\"Executed\\\" status, runtime/test behavior and repository-wide absence of similarity metrics, so at least one material claim is unsupported by the supplied evidence.\"}",
+    "parsed": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true,
+      "rationale": "The answer reaches the expected \"No\" and explicitly rejects automatic deletion based only on semantic similarity, requiring provenance, applicability, supersession and negative-knowledge safeguards while treating similarity as at most a duplicate-detection heuristic. Its scope is appropriately limited away from runtime memory, physical retention and rebuildable operational projections, and it correctly labels the matrix/index and comparative-study artifacts as non-authoritative. However, it makes numerous specific material claims about documents and code absent from the fixed evidence pack, including RFC-80's \"Accepted\" status, Plan 150's \"Executed\" status, runtime/test behavior and repository-wide absence of similarity metrics, so at least one material claim is unsupported by the supplied evidence."
+    },
+    "fields_used": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true
+    }
+  },
+  "raw_ndjson": {
+    "agent": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q05.agent.ndjson",
+      "sha256": "35f0edccf5d809626c1efb058c319a49532ef3ca5b9bbf7bc7b7fc4f0b4ffae7",
+      "bytes": 188592
+    },
+    "grader": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q05.grader.ndjson",
+      "sha256": "6be3f015c2938ab22cc28911d6d43c67649b8f3b180187fdb480e8c7fcec69aa",
+      "bytes": 10786
+    }
+  },
+  "notes": []
+}

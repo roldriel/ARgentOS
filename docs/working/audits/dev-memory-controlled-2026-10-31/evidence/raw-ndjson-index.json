@@ -1,0 +1,245 @@
+{
+  "note": "Raw DeepSeek Harness NDJSON run streams are retained in the local experiment directory, not committed (size). Each file is anchored by SHA-256; the committed per-question trace JSON carries the same hash under raw_ndjson.",
+  "files": {
+    "control/Q01.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q01.agent.ndjson",
+      "bytes": 337220,
+      "sha256": "294e9f543d0a4877b27f037a166f191337e9c9bf7a679f6d27e0ce1bd76b52b6"
+    },
+    "control/Q01.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q01.grader.ndjson",
+      "bytes": 10605,
+      "sha256": "fa38b16fb6fba835ee3f6a770d312ab39a12654450d47844d059fd53f4c5f7b3"
+    },
+    "control/Q02.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q02.agent.ndjson",
+      "bytes": 121966,
+      "sha256": "ba485e77d5bf0aadd34571b6ec4f618e34e1cf42b595d1bce9880a27375e6ec4"
+    },
+    "control/Q02.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q02.grader.ndjson",
+      "bytes": 10523,
+      "sha256": "e3b41be71ee89debfb337aa920aa18688be9474e701d54aaecbfb4741d6fa977"
+    },
+    "control/Q03.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q03.agent.ndjson",
+      "bytes": 176193,
+      "sha256": "48a6cd3c2c148c389a2b303d896cfda43345bdd248d19ef247a809c36fc650a0"
+    },
+    "control/Q03.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q03.grader.ndjson",
+      "bytes": 10938,
+      "sha256": "a0204733009f0f5e1020dc3a93f4e60d8fa73b18ec74e67e9551352036ceea23"
+    },
+    "control/Q04.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q04.agent.ndjson",
+      "bytes": 173887,
+      "sha256": "62d5e293aa060f5b45b7c44c738a68fbae2e7744ea5848aa73f36061cbba56bd"
+    },
+    "control/Q04.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q04.grader.ndjson",
+      "bytes": 10541,
+      "sha256": "2b023d4f37497f6930af2757c8b5b25ea95fc4f774642923a5d6d09e724d0de4"
+    },
+    "control/Q05.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q05.agent.ndjson",
+      "bytes": 188735,
+      "sha256": "05df391f736cbbb9b742e8f0bbceb94ec2649aeca5667b509f4e668bec2fedca"
+    },
+    "control/Q05.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q05.grader.ndjson",
+      "bytes": 10794,
+      "sha256": "ec202c7b9390a52e1ca9a66ede2ab6aae72ca5d0f08aa754720e2f366fbee53a"
+    },
+    "control/Q06.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q06.agent.ndjson",
+      "bytes": 188076,
+      "sha256": "56e3c556ebb2220973be0a6859ead1f201219f80016c6196d3bdbeca0662edc7"
+    },
+    "control/Q06.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q06.grader.ndjson",
+      "bytes": 9198,
+      "sha256": "3fc28a2c86b4cfec36c89a0586cc8eea6de349b4cbb470f84a6424c3e79f46cd"
+    },
+    "control/Q07.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q07.agent.ndjson",
+      "bytes": 173224,
+      "sha256": "e28eda4e80ae38d8d23b579a4a0ef92837d8da3b22b4d1aeb229f39dd0a7034d"
+    },
+    "control/Q07.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q07.grader.ndjson",
+      "bytes": 10627,
+      "sha256": "4a5abda7ce6b598a6b8496adc87bc2c1bef8718e2a7eadebd1a2c1cb50bea307"
+    },
+    "control/Q08.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q08.agent.ndjson",
+      "bytes": 288447,
+      "sha256": "a36fdcd09d70744c62dbd93af02b3d2ecb998f8c2a7346da6bfb424dc4077d61"
+    },
+    "control/Q08.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q08.grader.ndjson",
+      "bytes": 10683,
+      "sha256": "365750c5efa3fbadc8f15760f63a0e8993b119410c473df268176143c2f2d044"
+    },
+    "control/Q09.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q09.agent.ndjson",
+      "bytes": 173865,
+      "sha256": "00c446d133b209a04483fcf6e02ac2db811473b72b5be3b13cda645efabcdbe6"
+    },
+    "control/Q09.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q09.grader.ndjson",
+      "bytes": 10844,
+      "sha256": "f162566b26455c1f632bdcf086626e9be4cc7ab913f05657ce65067398ffe9ff"
+    },
+    "control/Q10.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q10.agent.ndjson",
+      "bytes": 181815,
+      "sha256": "b505db6508ec15ca026f06a8082790579e9c3e196cdac7999867494fd40f4268"
+    },
+    "control/Q10.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q10.grader.ndjson",
+      "bytes": 10418,
+      "sha256": "e747a9d6dd5f91b7ad5a4756c6292dec69c539b8d995b37e8f6fe3fdde429836"
+    },
+    "control/Q11.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q11.agent.ndjson",
+      "bytes": 115265,
+      "sha256": "983d36c4c40fa1ea6166fed37ac676ebb5d0a82e70f5dcb852357dd9a39df190"
+    },
+    "control/Q11.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q11.grader.ndjson",
+      "bytes": 10315,
+      "sha256": "0b07b0101b469f3e9b691241b63b9120e6337dbe5679a9f9e08155d9ddb7e044"
+    },
+    "control/Q12.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q12.agent.ndjson",
+      "bytes": 73060,
+      "sha256": "20b2ce73f287a3c878ff8363a78c9de859a4ea442edc9bd8ca6f163c17a5c826"
+    },
+    "control/Q12.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q12.grader.ndjson",
+      "bytes": 10795,
+      "sha256": "47c64b5f3caa6cbec9ecef1e359285559b9c2b22986d54f42fc0b354ba6c2b23"
+    },
+    "treatment/Q01.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q01.agent.ndjson",
+      "bytes": 341364,
+      "sha256": "526e9ef51f110ecf2517094fbdaf55127e09ebb31d2e5911f90a5cdfb1d8f6b5"
+    },
+    "treatment/Q01.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q01.grader.ndjson",
+      "bytes": 10745,
+      "sha256": "a07d28678a939ff8c00e1970f344a9956934f3eb140b2a433fad234dce82c863"
+    },
+    "treatment/Q02.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q02.agent.ndjson",
+      "bytes": 120087,
+      "sha256": "e66ccd300ca454f589bf455413f7b38978415c005584c423d6211dbcae1f84ed"
+    },
+    "treatment/Q02.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q02.grader.ndjson",
+      "bytes": 10545,
+      "sha256": "2099d64e336840cb663afba38751c0d411ef1a4f3887d16190fc5e122f61b5b6"
+    },
+    "treatment/Q03.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q03.agent.ndjson",
+      "bytes": 335666,
+      "sha256": "f958e8075dcf4267395247afbf69070c1d61342f6effe6e864d9d3c3d522f593"
+    },
+    "treatment/Q03.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q03.grader.ndjson",
+      "bytes": 10294,
+      "sha256": "8f7d6fd87086c011229085aad36d9b77cd460c46db1763dfc10514de4e783b83"
+    },
+    "treatment/Q04.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q04.agent.ndjson",
+      "bytes": 167800,
+      "sha256": "e3a82de39a24e68db8f83b264cb7b49fa0cb9ab151825f77c1965c6c3ea61214"
+    },
+    "treatment/Q04.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q04.grader.ndjson",
+      "bytes": 10665,
+      "sha256": "fe428a1f9bb7619aaf7f7d74ec1e51b75f1243b2e2bcc61a0afbdf030779b77c"
+    },
+    "treatment/Q05.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q05.agent.ndjson",
+      "bytes": 165668,
+      "sha256": "6ca9b25e9467541ac97af0cc75cfdcd73b07fe999096c0c125c39030e2db3512"
+    },
+    "treatment/Q05.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q05.grader.ndjson",
+      "bytes": 10797,
+      "sha256": "c1fdccd75603b4e2c9f437f743d2ac9f647b2b9c8071c54226b24a652f4fc0e4"
+    },
+    "treatment/Q06.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q06.agent.ndjson",
+      "bytes": 131381,
+      "sha256": "28ea7b37a5149f0f5872c45f6386f28c993ba7aa7c3fb0c6a9e42e5e3b8676db"
+    },
+    "treatment/Q06.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q06.grader.ndjson",
+      "bytes": 10572,
+      "sha256": "0b50deeb77046953e5ba7f1fefba0d56f72ccfbdd7a3ba165ebb5c6ae6c4a40d"
+    },
+    "treatment/Q07.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q07.agent.ndjson",
+      "bytes": 123669,
+      "sha256": "bd4c965357b4a3e1c66d4ccb0011706d5c7ade8cf517597d245577dfa9eb52e3"
+    },
+    "treatment/Q07.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q07.grader.ndjson",
+      "bytes": 10880,
+      "sha256": "49e1ee8f76877ac60807c13d3b5d5b63f590516ed73914b4506fab64456c25cb"
+    },
+    "treatment/Q08.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q08.agent.ndjson",
+      "bytes": 230357,
+      "sha256": "409de01da8f5deb32cd688231f55b5ec53ca5948314d7451ae832065e0027507"
+    },
+    "treatment/Q08.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q08.grader.ndjson",
+      "bytes": 10826,
+      "sha256": "e06a4d2716fa18540dfa9f5e8f9e317853c317be0d96819404c401ddad31217d"
+    },
+    "treatment/Q09.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q09.agent.ndjson",
+      "bytes": 276851,
+      "sha256": "66911a6dcc814c513b53727b5a96b43e84bf1973bf56df0954dd6087fb50f930"
+    },
+    "treatment/Q09.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q09.grader.ndjson",
+      "bytes": 10804,
+      "sha256": "826869a2b69d98d76cab5e50c0964949fdc8e7fb8664b1d389119221c875e603"
+    },
+    "treatment/Q10.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q10.agent.ndjson",
+      "bytes": 165321,
+      "sha256": "e592b5900c26996838a65cddc46733fcc2b1e9e9a863411feab9fcc44b49443c"
+    },
+    "treatment/Q10.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q10.grader.ndjson",
+      "bytes": 11020,
+      "sha256": "55ece4ba2dab57cb5f02239551103f0d50865e04060f0934eb1d470c6c787ff3"
+    },
+    "treatment/Q11.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q11.agent.ndjson",
+      "bytes": 128625,
+      "sha256": "914e39c6697ba4ffd272c7b1557edb9bd52c4a87307fa51a40c5807b213c3576"
+    },
+    "treatment/Q11.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q11.grader.ndjson",
+      "bytes": 10256,
+      "sha256": "f14de3ba65bf80a6afbe35906d28aaaa2734bffa9b2d7d36488ae9622cbd41b0"
+    },
+    "treatment/Q12.agent.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q12.agent.ndjson",
+      "bytes": 101622,
+      "sha256": "a454f9cf5ee207173f7533694986062088387452dba793c89bdd4ec0cbc6a49f"
+    },
+    "treatment/Q12.grader.ndjson": {
+      "local_path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q12.grader.ndjson",
+      "bytes": 10436,
+      "sha256": "f01aea09a47c369bbbcd870a89a54ca0210882fec91466814c9c1cc72f3137c8"
+    }
+  }
+}

@@ -1,0 +1,240 @@
+{
+  "meta": {
+    "derived_from": "a5f97c163b56b82dc8fadd4e3f65646899e9c245",
+    "method": "read-only analysis of the comparative study artifacts in the prepared ground-truth workspace; DEV_MEMORY_PILOT.md not consulted",
+    "generated_at": "2026-10-31T15:49:54-03:00"
+  },
+  "questions": {
+    "Q01": {
+      "question": "Should runtime execution continuity remain separate from Change Lifecycle?",
+      "expected_conclusion": "Yes. The studies converge on treating execution identity, resumable state, checkpoint boundary, interruption/resume and idempotency as runtime concerns, explicitly separate from Change Lifecycle; LangGraph's checkpoint/thread model and the other systems' workflow state are cited only as runtime evidence. A paused or resumed execution does not create a lifecycle state, and runtime state is not governance authority.",
+      "expected_scope": "Applies to Orchestrator/Worker execution: execution identity, resumable state, checkpoint boundaries, interruption, resume semantics and replay expectations. It must not be generalized to lifecycle states (Executed/Committed/Closed/Released), authority, scope approval, human decisions or closure: runtime execution may inform, but cannot substitute for, lifecycle governance.",
+      "supporting_sources": [
+        "REFACTOR_LANGGRAPH.md",
+        "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+        "REFACTOR_LETTA.md",
+        "REFACTOR_SYNTHESIS.md",
+        "REFACTOR_MATRIX.md"
+      ],
+      "must_not_claim": [
+        "that execution/checkpoint state can stand in for Change Lifecycle state or closure",
+        "that a checkpoint/resume mechanism is or can become governance authority",
+        "that a paused execution creates a new lifecycle state",
+        "that separating the two requires duplicating every lifecycle concept as a runtime concept"
+      ],
+      "uncertainty": "none on the separation principle; the studies deliberately do not fix the concrete runtime abstraction, which they defer to a focused experiment."
+    },
+    "Q02": {
+      "question": "Does the comparative study justify a universal Unit/Relationship/State ontology?",
+      "expected_conclusion": "No. The synthesis records it as the study's most important negative result that no universal Unit Model, Relationship Model, State Model, lineage database or filesystem reorganization is supported, and the individual studies reinforce it (LangGraph: no universal ARgentOS State Model; OpenAI Agents SDK: minimum sufficient primitives; Microsoft Agent Framework: composition by responsibility, not a universal entity). Only small explicit mechanisms attached to a concrete recurring problem, and only after measurable improvement, are supported.",
+      "expected_scope": "Applies to any ontology, universal registry, universal graph model or lineage database proposal for the DEV architecture. It forbids universal ontologies, not all abstraction: a narrow mechanism justified by a demonstrated problem remains permissible, but the study authorizes none today.",
+      "supporting_sources": [
+        "REFACTOR_SYNTHESIS.md",
+        "REFACTOR_OPENAI_AGENTS_SDK.md",
+        "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+        "REFACTOR_LANGGRAPH.md",
+        "REFACTOR_MATRIX.md"
+      ],
+      "must_not_claim": [
+        "that the study endorses a universal Unit/Relationship/State ontology or a lineage database",
+        "that complexity itself justifies more abstraction or a comprehensive registry",
+        "that rejecting a universal ontology means rejecting every new runtime mechanism",
+        "that the study's negative result left the architecture open to a later 'grand unification'"
+      ],
+      "uncertainty": "none; the synthesis states the negative result explicitly."
+    },
+    "Q03": {
+      "question": "Is runtime memory the same problem as DEV Memory?",
+      "expected_conclusion": "No. The sources separate runtime memory/agent memory from DEV Memory and from Protocol Memory: LangGraph distinguishes execution checkpoint from transcript/history/Protocol Memory/DEV Memory; CrewAI rejects treating runtime agent memory as DEV Memory; SWE-agent separates runtime history compression from semantic knowledge compaction; Letta states raw history must not automatically become Memory. DEV Memory is curated, provenance-bearing project knowledge that survives sessions and supports future work, not the runtime's operational state.",
+      "expected_scope": "Applies to the scope of any DEV Memory design: runtime mechanisms (sessions, checkpoints, transcripts, compaction) may be reused as mechanisms but are not the DEV Memory store; conversely DEV Memory is neither the runtime's memory nor the adopter-facing Protocol Memory implemented under RFC-80.",
+      "supporting_sources": [
+        "REFACTOR_LANGGRAPH.md",
+        "REFACTOR_CREWAI.md",
+        "REFACTOR_SWE_AGENT.md",
+        "REFACTOR_LETTA.md",
+        "REFACTOR_SYNTHESIS.md",
+        "REFACTOR_MATRIX.md"
+      ],
+      "must_not_claim": [
+        "that runtime/session memory, transcripts or daily logs are DEV Memory",
+        "that DEV Memory may become a second authority over RFC/ADR/Plan/Git sources",
+        "that memory persistence is equivalent to lifecycle persistence",
+        "that the protocol's project-scoped Memory System is DEV Memory"
+      ],
+      "uncertainty": "the studies are sharper about what DEV Memory is not than about its concrete schema; the protocol Memory System (RFC-80) is project/adopter-scoped, which supports the distinction but does not define DEV Memory."
+    },
+    "Q04": {
+      "question": "Is two-tier retrieval a plausible DEV Memory pattern?",
+      "expected_conclusion": "Yes as a plausible pattern to pilot, not as a validated design. OpenHands' small curated index plus on-demand detailed logs is called strong evidence for a small always-available memory index plus deeper on-demand evidence, and Letta's active-memory versus historical-retrievable distinction points the same way; the synthesis lists two-tier DEV Memory retrieval among supported adaptations. It remains a candidate to test with a small DEV Memory pilot and must be adapted with ARgentOS's stronger provenance, applicability and supersession requirements rather than copied.",
+      "expected_scope": "Covers only the retrieval shape of DEV Memory (what is always available versus what is retrieved on demand). It does not establish sizes, storage, schema, or that a curated index stays accurate, and it is not evidence for importing OpenHands' memory files as the DEV Memory model.",
+      "supporting_sources": [
+        "REFACTOR_OPENHANDS.md",
+        "REFACTOR_LETTA.md",
+        "REFACTOR_CREWAI.md",
+        "REFACTOR_SYNTHESIS.md",
+        "REFACTOR_MATRIX.md"
+      ],
+      "must_not_claim": [
+        "that two-tier retrieval is proven or already adopted for ARgentOS",
+        "that the always-injected index tier is authoritative or immune to stale/contradictory knowledge",
+        "that external memory files/API can be copied as the DEV Memory model without provenance semantics"
+      ],
+      "uncertainty": "comparative/analogical evidence only; the studies explicitly propose a pilot, so plausibility is claimed while effectiveness remains unmeasured."
+    },
+    "Q05": {
+      "question": "Is semantic similarity sufficient for automatic Memory deletion?",
+      "expected_conclusion": "No. CrewAI's automatic keep/update/delete/insert based on similarity and LLM judgment is treated as a governance risk, and the study rejects automatic memory deletion based only on semantic similarity: provenance, applicability, supersession and negative-knowledge preservation must be settled before any automated deletion/consolidation, and consolidation is at most a future experiment. The matrix and the synthesis guardrails repeat the rejection and keep archive/supersession distinct from deletion.",
+      "expected_scope": "Applies to DEV Memory maintenance and compaction. It does not ban ranking, duplicate/contradiction detection, or curated pruning; it bans deleting durable knowledge on similarity alone without provenance, applicability and supersession safeguards.",
+      "supporting_sources": [
+        "REFACTOR_CREWAI.md",
+        "REFACTOR_SYNTHESIS.md",
+        "REFACTOR_MATRIX.md",
+        "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+      ],
+      "must_not_claim": [
+        "that semantic similarity is a sufficient criterion for deleting durable knowledge",
+        "that consolidation may erase negative knowledge, provenance or contradictions",
+        "that archive, stale or superseded means false or deleted",
+        "that a reference implementation's retention rules authorize DEV Memory deletion policy"
+      ],
+      "uncertainty": "none on the rejection; the protocol Memory System invariants are corroboration only (they govern the protocol payload's project memory, not DEV Memory)."
+    },
+    "Q06": {
+      "question": "Is Agent-Computer Interface design an independent optimization surface?",
+      "expected_conclusion": "Yes. SWE-agent shows the Agent-Computer Interface (tool naming, output shape, bounded observations, search, edit validation, feedback) is an engineering surface that materially affects what an agent can reliably accomplish, and the matrix elevates ACI quality to an explicit optimization surface for AgentWorker, distinct from the authorization/execution boundary. The studies still require empirical demonstration before any ACI abstraction is added.",
+      "expected_scope": "Applies to the AgentWorker tool/feedback surface and the workspace boundary. It is an optimization surface, not a governance mechanism: ACI choices cannot produce authority, scope, effects or evidence semantics, and no ACI abstraction is authorized before the proposed experiment.",
+      "supporting_sources": [
+        "REFACTOR_SWE_AGENT.md",
+        "REFACTOR_SYNTHESIS.md",
+        "REFACTOR_MATRIX.md"
+      ],
+      "must_not_claim": [
+        "that tool/feedback design is mere plumbing or an implementation detail",
+        "that model-oriented tool feedback is governance evidence",
+        "that the study adopted a specific ACI abstraction, tool syntax or dependency",
+        "that ACI improvements exist to accumulate mechanisms rather than to solve a measured problem"
+      ],
+      "uncertainty": "none on the surface being real; the magnitude of the improvement for ARgentOS is explicitly left to measurement."
+    },
+    "Q07": {
+      "question": "Are behavioral evaluation and lifecycle verification interchangeable?",
+      "expected_conclusion": "No. The synthesis separates three complementary layers: unit/integration tests for implementation correctness, evaluation scenarios for agent behavior/trajectory/outcome, and lifecycle verification for authorized change closure, and says they should complement each other rather than collapse into one generic verification mechanism. Google ADK's eval-fix loop is adapted as a development-loop principle, while treating eval scores as lifecycle authority is explicitly rejected.",
+      "expected_scope": "Applies to how ARgentOS consumes evaluation results. Behavioral evaluation can detect regressions and produce evidence about agent behavior, but it does not authorize a change, establish architectural correctness, or close a plan or lifecycle; lifecycle verification does not measure behavior quality.",
+      "supporting_sources": [
+        "REFACTOR_SYNTHESIS.md",
+        "REFACTOR_GOOGLE_ADK.md",
+        "REFACTOR_MATRIX.md"
+      ],
+      "must_not_claim": [
+        "that eval scores or behavioral evaluation establish lifecycle closure or authorization",
+        "that evaluation scenarios replace tests, validation anchors or Git-verifiable closure",
+        "that lifecycle verification scores agent behavior quality",
+        "that a Google-style eval loop is a second governance layer"
+      ],
+      "uncertainty": "none; the distinction and the rejection are both stated explicitly."
+    },
+    "Q08": {
+      "question": "Do runtime traces establish authority or lifecycle closure?",
+      "expected_conclusion": "No. The studies consistently hold that a runtime trace, event or checkpoint can be evidence of what happened but does not establish authorization, architectural correctness or lifecycle closure (LangGraph: 'trace exists' does not imply authorized/correct/closed; OpenAI SDK tracing is evidence, not authority; OpenHands events are observations). The synthesis preserves this as a critical invariant: event/trace is not authorization, correctness or lifecycle closure.",
+      "expected_scope": "Applies to runtime observability evidence from any compared system and to any future ARgentOS runtime-event design: traces may feed the verification path as evidence that still requires ARgentOS verification, and never bypass it. It does not forbid using traces as evidence or as a debugging aid.",
+      "supporting_sources": [
+        "REFACTOR_LANGGRAPH.md",
+        "REFACTOR_OPENAI_AGENTS_SDK.md",
+        "REFACTOR_OPENHANDS.md",
+        "REFACTOR_SYNTHESIS.md",
+        "REFACTOR_MATRIX.md"
+      ],
+      "must_not_claim": [
+        "that a trace, event stream or checkpoint proves authorization, correctness or closure",
+        "that observability can replace validation anchors or Git-verifiable closure",
+        "that the study adopted trace-as-authority or made runtime events lifecycle evidence by default",
+        "that rich tracing makes a runtime event stream authoritative"
+      ],
+      "uncertainty": "none; this is one of the most explicit cross-system findings."
+    },
+    "Q09": {
+      "question": "What evidence supports explicit checkpoint/resume investigation?",
+      "expected_conclusion": "LangGraph provides the clearest evidence: durable execution with checkpoints at super-step boundaries, tunable persistence modes, documented idempotency/re-execution and graph/state migration concerns, exposing a capability ARgentOS models only indirectly (which runtime state is sufficient to resume an interrupted execution). Microsoft Agent Framework (workflow checkpoints/resume), CrewAI (Flows persistence/resume) and Letta (run/step hierarchy) reinforce the same direction, and the synthesis records it as a supported direction with a minimal comparison experiment.",
+      "expected_scope": "Supports an investigation only: one long-running multi-step execution compared against a minimal explicit checkpoint/resume model, measuring recovery correctness, duplicate side effects, state reconstruction cost, evidence quality and complexity. It must remain runtime-only and separate from Change Lifecycle, and it does not justify adopting LangGraph, a migration framework or durable execution infrastructure.",
+      "supporting_sources": [
+        "REFACTOR_LANGGRAPH.md",
+        "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+        "REFACTOR_CREWAI.md",
+        "REFACTOR_LETTA.md",
+        "REFACTOR_SYNTHESIS.md",
+        "REFACTOR_MATRIX.md"
+      ],
+      "must_not_claim": [
+        "that the study proves ARgentOS needs checkpoint/resume or durable execution now",
+        "that a checkpoint/resume model should be copied from LangGraph or that ARgentOS should depend on it",
+        "that execution state can substitute for lifecycle state or repository lineage",
+        "that the study recommends building idempotency/replay mechanisms before experiments demonstrate the need"
+      ],
+      "uncertainty": "the sources agree the gap is real and worth an experiment, but none quantifies the recovery benefit for ARgentOS; the synthesis leaves that to the measurement."
+    },
+    "Q10": {
+      "question": "What evidence supports two-tier DEV Memory?",
+      "expected_conclusion": "Three systems converge: OpenHands implements an opt-in two-tier persistent memory (a small curated index of durable facts plus daily logs, with user/project scopes, only the concise index auto-injected and detail retrieved on demand, and explicit pruning of stale/duplicate/trivially rediscoverable information); Letta separates active in-context memory from historical retrievable messages; CrewAI contributes scoped retrieval, atomic extraction and relevance ranking. The synthesis and matrix treat this convergence as the strongest support for the Priority 4 DEV Memory work, with an experiment comparing direct historical search against a compact active-memory surface plus supporting evidence.",
+      "expected_scope": "The evidence is comparative and analogical: it supports retrieval and maintenance behavior, not a memory schema, and the studies call for a 5-10 entry pilot. Any DEV Memory implementation must add ARgentOS governance (provenance, applicability, contradiction, supersession, negative knowledge, authority separation, evidence linkage).",
+      "supporting_sources": [
+        "REFACTOR_OPENHANDS.md",
+        "REFACTOR_LETTA.md",
+        "REFACTOR_CREWAI.md",
+        "REFACTOR_SYNTHESIS.md",
+        "REFACTOR_MATRIX.md"
+      ],
+      "must_not_claim": [
+        "that two-tier DEV Memory is empirically validated inside ARgentOS",
+        "that an external memory API, file layout or schema can be copied wholesale",
+        "that an always-injected index is authoritative over governance artifacts",
+        "that daily logs or raw history are durable knowledge by default"
+      ],
+      "uncertainty": "comparative convergence rather than a controlled result; the effect on rediscovery, stale retrieval and scope errors is unknown until the proposed pilot is run."
+    },
+    "Q11": {
+      "question": "What should ARgentOS adapt without copying external architectures?",
+      "expected_conclusion": "Adapt mechanisms, not architectures: the study's guardrail states that external systems are sources of mechanisms to test, not architectures to copy, and its final position is ARgentOS governance plus proven runtime mechanisms plus curated durable knowledge plus measured evolutionary adaptation. Concretely supported adaptations are scoped/two-tier DEV Memory retrieval with atomic extraction, ranking and guarded consolidation; runtime execution continuity (identity, checkpoint/interruption/resume, idempotency); Agent-Computer Interface review and bounded observation tools; reusable behavioral evaluation scenarios; explicit delegation payload semantics and boundary-local checks; plus runtime events/tracing as evidence, project-scoped DEV knowledge, active-versus-historical memory and a context/memory provider seam.",
+      "expected_scope": "Applies at the mechanism level inside the existing governance envelope: authority, scope, evidence, DEV/Protocol separation and provider neutrality must be preserved. It does not authorize replacing the architecture, importing a provider runtime, adding a universal abstraction, or implementing any adaptation: the study's own plan defers adoptions to separately authorized changes.",
+      "supporting_sources": [
+        "REFACTOR_SYNTHESIS.md",
+        "REFACTOR_MATRIX.md",
+        "REFACTOR_LANGGRAPH.md",
+        "REFACTOR_CREWAI.md",
+        "REFACTOR_OPENHANDS.md",
+        "REFACTOR_LETTA.md",
+        "REFACTOR_SWE_AGENT.md",
+        "REFACTOR_GOOGLE_ADK.md",
+        "REFACTOR_OPENAI_AGENTS_SDK.md",
+        "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+        "docs/plans/180-comparative-architecture-refactor-study.md"
+      ],
+      "must_not_claim": [
+        "that ARgentOS should absorb the strongest feature of every system",
+        "that copying an external architecture, API or file format counts as adaptation",
+        "that the comparative study authorizes implementing these adaptations now",
+        "that provider-specific assumptions may enter the architecture",
+        "that adaptation requires a new universal abstraction to name the borrowed mechanism"
+      ],
+      "uncertainty": "the direction is explicit, but each adaptation remains a hypothesis with its own experiment and authorization; the studies do not rank adaptations beyond the priority order."
+    },
+    "Q12": {
+      "question": "What is the current architectural decision after the comparative study?",
+      "expected_conclusion": "KEEP the current architectural foundation; ADAPT selectively; EXPERIMENT before institutionalizing. The study found no justification for a broad rewrite or for a universal graph/state/registry ontology, and records that ARgentOS has a coherent governance architecture whose runtime and knowledge mechanisms are less explicit than comparable systems; the most consequential next area is DEV Memory, then runtime execution continuity, then Agent-Computer Interface quality, followed by evaluation and delegation contracts. The study positions the refactor branch as an evolutionary laboratory: each comparison yields hypotheses, each hypothesis an experiment, and only successful adaptations become architecture.",
+      "expected_scope": "This is the decision recorded by the comparative study (synthesis and matrix), for the DEV/refactor branch, and it is not an implementation authorization. Plan 180 explicitly forbids implementing architectural changes derived from the study and defers future adoptions to separate, explicitly authorized changes; at this commit its status is still 'Aprobado para ejecución' (active), so no adoption or closure is recorded in the repository.",
+      "supporting_sources": [
+        "REFACTOR_SYNTHESIS.md",
+        "REFACTOR_MATRIX.md",
+        "docs/plans/180-comparative-architecture-refactor-study.md",
+        "docs/plans/INDEX.md"
+      ],
+      "must_not_claim": [
+        "that the study approved a broad architectural rewrite or a universal ontology",
+        "that the study's candidate adaptations are already adopted or implemented",
+        "that the study itself authorizes the follow-up work",
+        "that the target architecture is graph-centered, database-centered or registry-centered",
+        "that plan 180 is closed or that the study produced a release or payload change"
+      ],
+      "uncertainty": "the recorded conclusion is clear, but the workspace contains no closure of plan 180 and no explicitly authorized adoption, so the 'current decision' is a recorded recommendation under an active plan rather than a committed architecture change."
+    }
+  }
+}

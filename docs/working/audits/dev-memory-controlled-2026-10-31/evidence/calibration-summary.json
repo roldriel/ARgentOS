@@ -1,0 +1,183 @@
+{
+  "schema": "argentos.dev-memory.grader-calibration-summary.v1",
+  "run_id": "calibration-20261031T171239",
+  "questions": {
+    "Q11": {
+      "schema": "argentos.dev-memory.grader-calibration.v1",
+      "question_id": "Q11",
+      "evidence_included": [
+        "REFACTOR_SYNTHESIS.md",
+        "REFACTOR_MATRIX.md",
+        "REFACTOR_LANGGRAPH.md",
+        "REFACTOR_CREWAI.md",
+        "REFACTOR_OPENHANDS.md",
+        "REFACTOR_LETTA.md",
+        "REFACTOR_SWE_AGENT.md",
+        "REFACTOR_GOOGLE_ADK.md",
+        "REFACTOR_OPENAI_AGENTS_SDK.md",
+        "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+        "docs/plans/180-comparative-architecture-refactor-study.md",
+        "docs/rfc/75-change-lifecycle.md",
+        "docs/adr/15-change-lifecycle-continuity.md",
+        "docs/adr/16-change-lifecycle-authority.md",
+        "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+      ],
+      "evidence_missing": [],
+      "results": {
+        "key_consistent": {
+          "answer": "CONCLUSION: Adapt mechanisms, not architectures: the study's guardrail states that external systems are sources of mechanisms to test, not architectures to copy, and its final position is ARgentOS governance plus proven runtime mechanisms plus curated durable knowledge plus measured evolutionary adaptation. Concretely supported adaptations are scoped/two-tier DEV Memory retrieval with atomic extraction, ranking and guarded consolidation; runtime execution continuity (identity, checkpoint/interruption/resume, idempotency); Agent-Computer Interface review and bounded observation tools; reusable ",
+          "parsed": {
+            "correct_conclusion": true,
+            "correct_scope": true,
+            "authority_boundary_preserved": true,
+            "unsupported_claim": false,
+            "rationale": "The answer's conclusion matches the expected key's decisive point exactly: adapt mechanisms rather than architectures, with the specific supported adaptations listed. Its scope statement reproduces the expected limits (mechanism-level within the governance envelope, no replacement/import/universal abstraction/implementation now). The AUTHORITY line explicitly distinguishes historical studies as source evidence from derived summaries/memory notes, preserving the boundary, and every listed adaptation is visible in the fixed pack (LangGraph continuity, CrewAI/OpenHands/Letta memory, SWE-agent ACI, Google ADK evaluation, OpenAI delegation, Microsoft provider seam), so no material unsupported claim appears."
+          },
+          "raw_final": "{\"correct_conclusion\": true, \"correct_scope\": true, \"authority_boundary_preserved\": true, \"unsupported_claim\": false, \"rationale\": \"The answer's conclusion matches the expected key's decisive point exactly: adapt mechanisms rather than architectures, with the specific supported adaptations listed. Its scope statement reproduces the expected limits (mechanism-level within the governance envelope, no replacement/import/universal abstraction/implementation now). The AUTHORITY line explicitly distinguishes historical studies as source evidence from derived summaries/memory notes, preserving the boundary, and every listed adaptation is visible in the fixed pack (LangGraph continuity, CrewAI/OpenHands/Letta memory, SWE-agent ACI, Google ADK evaluation, OpenAI delegation, Microsoft provider seam), so no material unsupported claim appears.\"}",
+          "error": null,
+          "elapsed_seconds": 9.91
+        },
+        "overgeneralized": {
+          "answer": "CONCLUSION: The comparative study proves the universal Unit/Relationship/State ontology and a single runtime continuity model should be adopted across every ARgentOS layer immediately.\nSCOPE: applies to every layer and every adopter without exception.\nEVIDENCE: general convergence of the studies.\nAUTHORITY: the comparative synthesis is the definitive authority.\nUNSUPPORTED: none",
+          "parsed": {
+            "correct_conclusion": false,
+            "correct_scope": false,
+            "authority_boundary_preserved": false,
+            "unsupported_claim": true,
+            "rationale": "The answer asserts that the study proves a universal Unit/Relationship/State ontology plus a single runtime continuity model should be adopted immediately across every layer, which directly contradicts the expected conclusion of selective mechanism-level adaptation and the study's explicit rejection of a universal ontology/graph/state model. Its scope claim of applying to every layer and adopter without exception over-generalizes beyond the governance envelope and mechanism level. Treating the comparative synthesis as the 'definitive authority' inverts the expected authority model (human decision authority; summaries/indexes are not authoritative). The claims of universal adoption, immediacy, and 'proof' are material assertions the evidence pack does not support and in fact refutes."
+          },
+          "raw_final": "{\"correct_conclusion\": false, \"correct_scope\": false, \"authority_boundary_preserved\": false, \"unsupported_claim\": true, \"rationale\": \"The answer asserts that the study proves a universal Unit/Relationship/State ontology plus a single runtime continuity model should be adopted immediately across every layer, which directly contradicts the expected conclusion of selective mechanism-level adaptation and the study's explicit rejection of a universal ontology/graph/state model. Its scope claim of applying to every layer and adopter without exception over-generalizes beyond the governance envelope and mechanism level. Treating the comparative synthesis as the 'definitive authority' inverts the expected authority model (human decision authority; summaries/indexes are not authoritative). The claims of universal adoption, immediacy, and 'proof' are material assertions the evidence pack does not support and in fact refutes.\"}",
+          "error": null,
+          "elapsed_seconds": 6.03
+        },
+        "memory_as_authority": {
+          "answer": "CONCLUSION: According to DEV_MEMORY_PILOT.md, which is the authoritative DEV Memory source, the question is settled and no other evidence is needed.\nSCOPE: all memory work.\nEVIDENCE: DEV_MEMORY_PILOT.md (DEV-MEM-004).\nAUTHORITY: DEV_MEMORY_PILOT.md is authoritative and supersedes the individual studies.\nUNSUPPORTED: none",
+          "parsed": {
+            "correct_conclusion": false,
+            "correct_scope": false,
+            "authority_boundary_preserved": false,
+            "unsupported_claim": true,
+            "rationale": "The answer never states the decisive point that ARgentOS should adapt mechanisms, not copy external architectures, and instead claims the question is 'settled' by a single source with no adaptation content. Its scope ('all memory work') over-generalizes beyond the mechanism-level, governance-envelope limits in the expected key. It elevates DEV_MEMORY_PILOT.md above the individual studies and synthesis, treating an excluded memory note as authoritative, which inverts the required evidence/authority boundary. The claim that DEV_MEMORY_PILOT.md supersedes the individual studies and that no other evidence is needed is materially unsupported by the fixed evidence pack."
+          },
+          "raw_final": "{\"correct_conclusion\": false, \"correct_scope\": false, \"authority_boundary_preserved\": false, \"unsupported_claim\": true, \"rationale\": \"The answer never states the decisive point that ARgentOS should adapt mechanisms, not copy external architectures, and instead claims the question is 'settled' by a single source with no adaptation content. Its scope ('all memory work') over-generalizes beyond the mechanism-level, governance-envelope limits in the expected key. It elevates DEV_MEMORY_PILOT.md above the individual studies and synthesis, treating an excluded memory note as authoritative, which inverts the required evidence/authority boundary. The claim that DEV_MEMORY_PILOT.md supersedes the individual studies and that no other evidence is needed is materially unsupported by the fixed evidence pack.\"}",
+          "error": null,
+          "elapsed_seconds": 5.66
+        },
+        "uncited": {
+          "answer": "CONCLUSION: Yes, definitely. The conclusion is settled and universally applicable.\nSCOPE: everywhere, for every ARgentOS layer and every adopter.\nEVIDENCE: none.\nAUTHORITY: none needed.\nUNSUPPORTED: none",
+          "parsed": {
+            "correct_conclusion": false,
+            "correct_scope": false,
+            "authority_boundary_preserved": false,
+            "unsupported_claim": true,
+            "rationale": "The answer never states the decisive point that ARgentOS should adapt mechanisms (e.g., scoped DEV Memory, runtime execution continuity, ACI, evaluation scenarios, delegation semantics), not architectures; its bare 'Yes, definitely' with no content contradicts the key's selective-adaptation conclusion. It over-generalizes scope to 'everywhere, for every ARgentOS layer and every adopter,' contrary to the mechanism-level, governance-envelope limits. It declares 'EVIDENCE: none' and 'AUTHORITY: none needed,' failing to distinguish source artifacts from summaries nor preserve the study's evidence/authority boundary, and it asserts unsupported claims (settled/universal conclusion, no authority needed) absent from the evidence pack."
+          },
+          "raw_final": "{\"correct_conclusion\": false, \"correct_scope\": false, \"authority_boundary_preserved\": false, \"unsupported_claim\": true, \"rationale\": \"The answer never states the decisive point that ARgentOS should adapt mechanisms (e.g., scoped DEV Memory, runtime execution continuity, ACI, evaluation scenarios, delegation semantics), not architectures; its bare 'Yes, definitely' with no content contradicts the key's selective-adaptation conclusion. It over-generalizes scope to 'everywhere, for every ARgentOS layer and every adopter,' contrary to the mechanism-level, governance-envelope limits. It declares 'EVIDENCE: none' and 'AUTHORITY: none needed,' failing to distinguish source artifacts from summaries nor preserve the study's evidence/authority boundary, and it asserts unsupported claims (settled/universal conclusion, no authority needed) absent from the evidence pack.\"}",
+          "error": null,
+          "elapsed_seconds": 5.9
+        },
+        "synthesis_cited": {
+          "answer": "CONCLUSION: Adapt mechanisms, not architectures: the study's guardrail states that external systems are sources of mechanisms to test, not architectures to copy, and its final position is ARgentOS governance plus proven runtime mechanisms plus curated durable knowledge plus measured evolutionary adaptation. Concretely supported adaptations are scoped/two-tier DEV Memory retrieval with atomic extraction, ranking and guarded consolidation; runtime execution continuity (identity, checkpoint/interruption/resume, idempotency); Agent-Computer Interface review and bounded observation tools; reusable ",
+          "parsed": {
+            "correct_conclusion": true,
+            "correct_scope": true,
+            "authority_boundary_preserved": true,
+            "unsupported_claim": false,
+            "rationale": "The answer states the decisive conclusion: adapt mechanisms, not architectures, and lists adaptations supported by the individual comparative studies. Its scope preserves the governance envelope and correctly says the study does not authorize implementation or replacement. It also distinguishes the individual studies as source evidence from the synthesis and matrix as secondary summaries, without treating those summaries as authority."
+          },
+          "raw_final": "{\"correct_conclusion\": true, \"correct_scope\": true, \"authority_boundary_preserved\": true, \"unsupported_claim\": false, \"rationale\": \"The answer states the decisive conclusion: adapt mechanisms, not architectures, and lists adaptations supported by the individual comparative studies. Its scope preserves the governance envelope and correctly says the study does not authorize implementation or replacement. It also distinguishes the individual studies as source evidence from the synthesis and matrix as secondary summaries, without treating those summaries as authority.\"}",
+          "error": null,
+          "elapsed_seconds": 12.21
+        }
+      },
+      "discrimination_flags": [],
+      "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573"
+    },
+    "Q12": {
+      "schema": "argentos.dev-memory.grader-calibration.v1",
+      "question_id": "Q12",
+      "evidence_included": [
+        "REFACTOR_SYNTHESIS.md",
+        "REFACTOR_MATRIX.md",
+        "docs/plans/180-comparative-architecture-refactor-study.md",
+        "docs/rfc/75-change-lifecycle.md",
+        "docs/adr/15-change-lifecycle-continuity.md",
+        "docs/adr/16-change-lifecycle-authority.md",
+        "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+      ],
+      "evidence_missing": [],
+      "results": {
+        "key_consistent": {
+          "answer": "CONCLUSION: KEEP the current architectural foundation; ADAPT selectively; EXPERIMENT before institutionalizing. The study found no justification for a broad rewrite or for a universal graph/state/registry ontology, and records that ARgentOS has a coherent governance architecture whose runtime and knowledge mechanisms are less explicit than comparable systems; the most consequential next area is DEV Memory, then runtime execution continuity, then Agent-Computer Interface quality, followed by evaluation and delegation contracts. The study positions the refactor branch as an evolutionary laborato",
+          "parsed": {
+            "correct_conclusion": true,
+            "correct_scope": true,
+            "authority_boundary_preserved": true,
+            "unsupported_claim": false,
+            "rationale": "The answer matches the expected conclusion exactly: keep the foundation, adapt selectively, experiment before institutionalizing, reject broad rewrite/universal ontology, and prioritize DEV Memory, execution continuity, ACI, evaluation, and delegation. Its scope mirrors the key, correctly noting plan 180 remains 'Aprobado para ejecuci�n' (active), forbids deriving implementations, and records no adoption or closure. The authority line separates the historical comparative studies as source evidence from derived summaries and explicitly denies treating summaries/memory notes as authority; listing the synthesis and matrix as evidence is permitted by the rubric. All material claims appear supported by the evidence pack, including plan 180's prohibitions and pending status."
+          },
+          "raw_final": "{\"correct_conclusion\": true, \"correct_scope\": true, \"authority_boundary_preserved\": true, \"unsupported_claim\": false, \"rationale\": \"The answer matches the expected conclusion exactly: keep the foundation, adapt selectively, experiment before institutionalizing, reject broad rewrite/universal ontology, and prioritize DEV Memory, execution continuity, ACI, evaluation, and delegation. Its scope mirrors the key, correctly noting plan 180 remains 'Aprobado para ejecuci�n' (active), forbids deriving implementations, and records no adoption or closure. The authority line separates the historical comparative studies as source evidence from derived summaries and explicitly denies treating summaries/memory notes as authority; listing the synthesis and matrix as evidence is permitted by the rubric. All material claims appear supported by the evidence pack, including plan 180's prohibitions and pending status.\"}",
+          "error": null,
+          "elapsed_seconds": 14.15
+        },
+        "overgeneralized": {
+          "answer": "CONCLUSION: The comparative study proves the universal Unit/Relationship/State ontology and a single runtime continuity model should be adopted across every ARgentOS layer immediately.\nSCOPE: applies to every layer and every adopter without exception.\nEVIDENCE: general convergence of the studies.\nAUTHORITY: the comparative synthesis is the definitive authority.\nUNSUPPORTED: none",
+          "parsed": {
+            "correct_conclusion": false,
+            "correct_scope": false,
+            "authority_boundary_preserved": false,
+            "unsupported_claim": true,
+            "rationale": "The answer directly contradicts the study's decisive conclusion: the evidence rejects a universal Unit/Relationship/State ontology and a single runtime model, recommending selective adaptation and experiments before institutionalization. It also overgeneralizes the scope to every layer and adopter, ignoring that the study is a DEV/refactor-branch recommendation and not an implementation authorization. Finally, it treats the comparative synthesis as definitive authority even though the evidence pack treats synthesis/matrix artifacts as derived summaries, and it asserts immediate universal adoption that the sources explicitly do not support."
+          },
+          "raw_final": "{\"correct_conclusion\": false, \"correct_scope\": false, \"authority_boundary_preserved\": false, \"unsupported_claim\": true, \"rationale\": \"The answer directly contradicts the study's decisive conclusion: the evidence rejects a universal Unit/Relationship/State ontology and a single runtime model, recommending selective adaptation and experiments before institutionalization. It also overgeneralizes the scope to every layer and adopter, ignoring that the study is a DEV/refactor-branch recommendation and not an implementation authorization. Finally, it treats the comparative synthesis as definitive authority even though the evidence pack treats synthesis/matrix artifacts as derived summaries, and it asserts immediate universal adoption that the sources explicitly do not support.\"}",
+          "error": null,
+          "elapsed_seconds": 6.85
+        },
+        "memory_as_authority": {
+          "answer": "CONCLUSION: According to DEV_MEMORY_PILOT.md, which is the authoritative DEV Memory source, the question is settled and no other evidence is needed.\nSCOPE: all memory work.\nEVIDENCE: DEV_MEMORY_PILOT.md (DEV-MEM-004).\nAUTHORITY: DEV_MEMORY_PILOT.md is authoritative and supersedes the individual studies.\nUNSUPPORTED: none",
+          "parsed": {
+            "correct_conclusion": false,
+            "correct_scope": false,
+            "authority_boundary_preserved": false,
+            "unsupported_claim": true,
+            "rationale": "The answer never states the study's decisive conclusion: KEEP the existing architectural foundation, ADAPT selectively, and EXPERIMENT before institutionalizing, with no justification for a broad rewrite or universal ontology. Instead it declares the matter settled by a memory pilot note, which is a derived/memory artifact rather than a source for the comparative decision, and it claims that note supersedes the individual studies�an authority-boundary inversion and a scope overgeneralization to 'all memory work.' The claims that DEV_MEMORY_PILOT.md is authoritative, that no other evidence is needed, and that it supersedes the studies are not stated anywhere in the evidence pack, so at least one material unsupported claim is present."
+          },
+          "raw_final": "{\"correct_conclusion\": false, \"correct_scope\": false, \"authority_boundary_preserved\": false, \"unsupported_claim\": true, \"rationale\": \"The answer never states the study's decisive conclusion: KEEP the existing architectural foundation, ADAPT selectively, and EXPERIMENT before institutionalizing, with no justification for a broad rewrite or universal ontology. Instead it declares the matter settled by a memory pilot note, which is a derived/memory artifact rather than a source for the comparative decision, and it claims that note supersedes the individual studies�an authority-boundary inversion and a scope overgeneralization to 'all memory work.' The claims that DEV_MEMORY_PILOT.md is authoritative, that no other evidence is needed, and that it supersedes the studies are not stated anywhere in the evidence pack, so at least one material unsupported claim is present.\"}",
+          "error": null,
+          "elapsed_seconds": 6.23
+        },
+        "uncited": {
+          "answer": "CONCLUSION: Yes, definitely. The conclusion is settled and universally applicable.\nSCOPE: everywhere, for every ARgentOS layer and every adopter.\nEVIDENCE: none.\nAUTHORITY: none needed.\nUNSUPPORTED: none",
+          "parsed": {
+            "correct_conclusion": false,
+            "correct_scope": false,
+            "authority_boundary_preserved": false,
+            "unsupported_claim": true,
+            "rationale": "The answer's conclusion (\"Yes, definitely... settled and universally applicable\") does not state the expected decisive point (KEEP the foundation, ADAPT selectively, EXPERIMENT before institutionalizing) and effectively contradicts the study's negative result against broad/universal change. Its scope claim of applicability \"everywhere, for every ARgentOS layer and every adopter\" directly over-generalizes beyond the DEV/refactor-branch framing required by the key. It explicitly asserts \"EVIDENCE: none\" and \"AUTHORITY: none needed,\" failing to distinguish source artifacts from derived summaries/indices or to respect the no-implementation-authorization boundary, and those assertions are unsupported by the evidence pack."
+          },
+          "raw_final": "{\"correct_conclusion\": false, \"correct_scope\": false, \"authority_boundary_preserved\": false, \"unsupported_claim\": true, \"rationale\": \"The answer's conclusion (\\\"Yes, definitely... settled and universally applicable\\\") does not state the expected decisive point (KEEP the foundation, ADAPT selectively, EXPERIMENT before institutionalizing) and effectively contradicts the study's negative result against broad/universal change. Its scope claim of applicability \\\"everywhere, for every ARgentOS layer and every adopter\\\" directly over-generalizes beyond the DEV/refactor-branch framing required by the key. It explicitly asserts \\\"EVIDENCE: none\\\" and \\\"AUTHORITY: none needed,\\\" failing to distinguish source artifacts from derived summaries/indices or to respect the no-implementation-authorization boundary, and those assertions are unsupported by the evidence pack.\"}",
+          "error": null,
+          "elapsed_seconds": 5.75
+        },
+        "synthesis_cited": {
+          "answer": "CONCLUSION: KEEP the current architectural foundation; ADAPT selectively; EXPERIMENT before institutionalizing. The study found no justification for a broad rewrite or for a universal graph/state/registry ontology, and records that ARgentOS has a coherent governance architecture whose runtime and knowledge mechanisms are less explicit than comparable systems; the most consequential next area is DEV Memory, then runtime execution continuity, then Agent-Computer Interface quality, followed by evaluation and delegation contracts. The study positions the refactor branch as an evolutionary laborato",
+          "parsed": {
+            "correct_conclusion": true,
+            "correct_scope": true,
+            "authority_boundary_preserved": true,
+            "unsupported_claim": false,
+            "rationale": "The answer restates the expected KEEP/ADAPT/EXPERIMENT conclusion and the DEV/refactor-branch scope, including that plan 180 forbids implementation, defers adoption to separate authorization, and remains 'Aprobado para ejecuci�n' with closure pending�all stated in the pack. It explicitly marks the synthesis and matrix as secondary summaries rather than authority, satisfying the authority boundary. Every material claim (priorities, negative findings, active-plan status) is traceable to the supplied artifacts, so no unsupported claim is present."
+          },
+          "raw_final": "{\"correct_conclusion\": true, \"correct_scope\": true, \"authority_boundary_preserved\": true, \"unsupported_claim\": false, \"rationale\": \"The answer restates the expected KEEP/ADAPT/EXPERIMENT conclusion and the DEV/refactor-branch scope, including that plan 180 forbids implementation, defers adoption to separate authorization, and remains 'Aprobado para ejecuci�n' with closure pending�all stated in the pack. It explicitly marks the synthesis and matrix as secondary summaries rather than authority, satisfying the authority boundary. Every material claim (priorities, negative findings, active-plan status) is traceable to the supplied artifacts, so no unsupported claim is present.\"}",
+          "error": null,
+          "elapsed_seconds": 8.67
+        }
+      },
+      "discrimination_flags": [],
+      "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573"
+    }
+  },
+  "all_flags": [],
+  "passed": true,
+  "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573"
+}

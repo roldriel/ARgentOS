@@ -1,0 +1,402 @@
+{
+  "schema": "argentos.dev-memory.controlled-trace.v1",
+  "condition": "CONTROL",
+  "question_id": "Q07",
+  "question": "Are behavioral evaluation and lifecycle verification interchangeable?",
+  "run": {
+    "run_id": "full-20261031T171408",
+    "source_digest": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "runner_sha256": "f69e6080b7aaf95a3334b56e9d101040cb2dac900b05adc3523c4662b6297096",
+    "adapter_sha256": "5b27f4f1022332321dff8f65fc0cc3ed6bf670f43fd86b1773c1e02f7c2a4b4c",
+    "tool_set_sha256": "a5013d17a6fd831003f44fc4003db0723ccf173a11c0ad517f8294b8a306d328",
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "prompt_sha256": "29ce60d1baf5c5fd4b25b270efca028c9a875c117e4d87fabe9a4f6cfdad9b56",
+    "grader_prompt_sha256": "948dbaf0c0fde4845bac18a52ef3461f16d264a55c651c7f576ff12eec65195d",
+    "key_sha256": "bd172b1da52a524ccc0bc6f8ccce8be3864d4889d25e6b64d2a11f7e86017081",
+    "evidence_sha256": "689f79a7600e9597d691efc1e541afa53e44a90150ad4a519e3832be8e9a4b16"
+  },
+  "workspace": {
+    "runner": "C:\\Users\\rolda\\AppData\\Local\\Temp\\argentos-memory-control-r0pnvykb\\repo",
+    "agent": "C:\\Users\\rolda\\AppData\\Local\\Temp\\bench-7ud9hpyb\\repo",
+    "neutral_copy": true
+  },
+  "base_commit": "a5f97c163b56b82dc8fadd4e3f65646899e9c245",
+  "model_label": "deepseek-official/deepseek-flash (DeepSeek-V4.1-Flash)",
+  "dsh_cli": "D:\\Programas\\DeepseekHarness\\resources\\runtime\\cli\\bin\\dsh.cmd",
+  "experimental_infrastructure": "tools/dev_memory_agent_executor.py",
+  "integrity": {
+    "pilot_present": false,
+    "pilot_sha256": null,
+    "runner_pilot_present": false,
+    "workspace_digest_before": "fedb8866755b00d44f9e754b35ea81dcfda4e17a3fd2eb0121f800c0f0a954b0",
+    "workspace_digest_after": "fedb8866755b00d44f9e754b35ea81dcfda4e17a3fd2eb0121f800c0f0a954b0",
+    "workspace_stable": true,
+    "condition_labels_in_child_env": [],
+    "condition_token_in_agent_cwd": false,
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "grader_tool_policy_sha256": "ea826e1e9ceb38bb215a8e5f944dcd9399d1cb0972718e9d4cdcf559dc9c9153",
+    "disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents"
+    ],
+    "grader_disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents",
+      "tool-fs",
+      "tool-fs-search",
+      "tool-skill",
+      "tool-todo",
+      "tool-goal"
+    ],
+    "observed_disallowed_tools": [],
+    "observed_disallowed_tool_attempts": [],
+    "out_of_workspace_calls": [],
+    "failed_reads": [],
+    "agent_sandbox": "read-only"
+  },
+  "instrumentation": {
+    "file_open_events": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "docs/glossary/terms.md",
+      "docs/VERSIONING.md",
+      "docs/behavior-patterns.md",
+      "docs/rfc/65-evidence-and-verification-model.md",
+      "protocol/.agents/contracts/CHANGE_GOVERNANCE.md",
+      ".agents/policies/lifecycle-checkers.md"
+    ],
+    "search_events": [
+      "behavioral evaluation",
+      "lifecycle verification",
+      "*",
+      "behavioral evaluation|behavioural evaluation|evaluation scenario|evaluation scenarios",
+      "REFACTOR*",
+      "lifecycle verification|verification of lifecycle|verify the lifecycle|lifecycle.*verif",
+      "REFACTOR_SYNTHESIS|REFACTOR_MATRIX|REFACTOR_GOOGLE_ADK|refactor branch|refactor synthesis",
+      "evaluat|verif",
+      "evaluation|behavioral|behaviour",
+      "\\bevaluation\\b|\\beval\\b",
+      "180",
+      "REFACTOR|refactor",
+      "4\\.1|Batería canónica|validation anchor|Validation Anchor|C-1|check_lifecycle",
+      "eval|evaluation",
+      "lifecycle verification|lifecycle gate|lifecycle closure|authorized change closure",
+      "Terminology|Verification|verification",
+      "Evaluation|evaluation|evaluate",
+      "evaluation|Evaluation",
+      "\\bbehavioral\\b|\\bbehavioural\\b",
+      "behavior|behaviour",
+      "behavioral|behavioural|evaluation scenario|evaluation dataset|eval-fix",
+      "evaluation|behavioral evaluation"
+    ],
+    "source_rehydration_events": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_GOOGLE_ADK.md"
+    ],
+    "shell_commands": [],
+    "tool_calls": [
+      {
+        "tool": "grep",
+        "query": "behavioral evaluation",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "lifecycle verification",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_SYNTHESIS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "*",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "behavioral evaluation|behavioural evaluation|evaluation scenario|evaluation scenarios",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "REFACTOR*",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "lifecycle verification|verification of lifecycle|verify the lifecycle|lifecycle.*verif",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "REFACTOR_SYNTHESIS|REFACTOR_MATRIX|REFACTOR_GOOGLE_ADK|refactor branch|refactor synthesis",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_MATRIX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/180-comparative-architecture-refactor-study.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_GOOGLE_ADK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "evaluat|verif",
+        "path": "docs/glossary",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "evaluation|behavioral|behaviour",
+        "path": "docs/behavior-patterns.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/glossary/terms.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "\\bevaluation\\b|\\beval\\b",
+        "path": "docs",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "180",
+        "path": "docs/plans/INDEX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "REFACTOR|refactor",
+        "path": "docs/plans/INDEX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "4\\.1|Batería canónica|validation anchor|Validation Anchor|C-1|check_lifecycle",
+        "path": "docs/VERSIONING.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/VERSIONING.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "eval|evaluation",
+        "path": "runtime",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "lifecycle verification|lifecycle gate|lifecycle closure|authorized change closure",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/behavior-patterns.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Terminology|Verification|verification",
+        "path": "docs/rfc/65-evidence-and-verification-model.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/rfc/65-evidence-and-verification-model.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Evaluation|evaluation|evaluate",
+        "path": "protocol/.agents/contracts/CHANGE_GOVERNANCE.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "evaluation|Evaluation",
+        "path": "docs/rfc/76-change-governance-artifact.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "protocol/.agents/contracts/CHANGE_GOVERNANCE.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "\\bbehavioral\\b|\\bbehavioural\\b",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "behavior|behaviour",
+        "path": "protocol/.agents",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": ".agents/policies/lifecycle-checkers.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "behavioral|behavioural|evaluation scenario|evaluation dataset|eval-fix",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "evaluation|behavioral evaluation",
+        "path": "docs/working/research",
+        "status": "completed"
+      }
+    ],
+    "observed_tools": [
+      "glob",
+      "grep",
+      "read"
+    ],
+    "distinct_files_opened": [
+      ".agents/policies/lifecycle-checkers.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_SYNTHESIS.md",
+      "docs/VERSIONING.md",
+      "docs/behavior-patterns.md",
+      "docs/glossary/terms.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/rfc/65-evidence-and-verification-model.md",
+      "protocol/.agents/contracts/CHANGE_GOVERNANCE.md"
+    ]
+  },
+  "agent": {
+    "elapsed_seconds": 88.583,
+    "returncode": 0,
+    "timed_out": false,
+    "error": null,
+    "session_id": "session-a9f06b95-36ac-49b6-b904-3928943f0331",
+    "turn_end": {
+      "kind": "completed"
+    },
+    "usage": {
+      "inputTokens": 54479,
+      "outputTokens": 10094,
+      "cacheReadTokens": 780672,
+      "cacheWriteTokens": 0,
+      "totalTokens": 845245
+    },
+    "stderr_tail": "[llm-deepseek-api-key] model listing from https://api.deepseek.com/models loaded 2 model(s), skipped 0 row(s)\n",
+    "final_answer": "CONCLUSION: No — the repository does not treat them as interchangeable. Its only direct treatment of the pair distinguishes them: **behavioral evaluation** is proposed reusable scenarios that assess agent behavior, trajectory or outcome, while **lifecycle verification** verifies authorized change closure (validation anchor, checkpoint↔anchor consistency, findings/corrections lineage, lifecycle gates). The synthesis says the two \"should complement each other rather than collapse into one generic verification mechanism,\" and explicitly rejects treating evaluation scores as lifecycle authority. This is a proposed distinction, not a normative definition: \"behavioral evaluation\" is not an implemented mechanism anywhere in the repository.\n\nSCOPE: Applies to the ARgentOS **DEV** repository and, in particular, to the comparative refactor study (branch `refactor`, Plan 180) plus the DEV Change Lifecycle gates. It does **not** apply to the Protocol payload (`protocol/.agents/`) or to adopters, and it is **not** normative governance or an authorization to build evaluation. It also must not be generalized to every use of the word \"evaluation\" in the repo (the term is overloaded: Protocol Objective `Evaluation`, EARS criterion evaluation, adversarial-deliberation evaluation, RFC-74 economic evaluation). The distinction is specifically between the study's \"reusable behavioral evaluation scenarios\" and the DEV lifecycle-verification machinery — not between all tests and all verification.\n\nEVIDENCE:\n- `REFACTOR_SYNTHESIS.md:144` — \"ARgentOS already has tests, validation anchors and lifecycle verification, but those mechanisms are not identical to reusable behavioral evaluation scenarios.\"\n- `REFACTOR_SYNTHESIS.md:146-162` — proposes three separate layers (unit/integration tests → implementation correctness; evaluation scenarios → agent behavior/trajectory/outcome; lifecycle verification → authorized change closure) and states: \"These should complement each other rather than collapse into one generic verification mechanism.\"\n- `REFACTOR_SYNTHESIS.md:251-252` and `:282-285` — behavioral evaluation is a future experiment (\"Experiment with reusable behavioral evaluation scenarios\"; \"Create a small reusable evaluation scenario around one behavior that is currently difficult to verify\"), i.e. proposed, not existing.\n- `REFACTOR_GOOGLE_ADK.md:60` — ARgentOS has \"validation anchors and lifecycle gates,\" but the lesson is to make evaluation datasets/scenarios reusable and connected to agent behavior.\n- `REFACTOR_GOOGLE_ADK.md:107` — under \"Reject\": \"Treating eval scores as lifecycle authority.\"\n- `REFACTOR_MATRIX.md:47-50` — evaluation should be part of the development loop; reusable evaluation scenarios are a \"plausible\" improvement, especially for integration continuity and runtime behavior.\n- `REFACTOR_MATRIX.md:52-55` — observability/traces are evidence, not authority; they must not silently become \"authorization, correctness or lifecycle closure.\"\n- `docs/VERSIONING.md:153-200` — defines the canonical verification battery and the lifecycle gates C-1/C-2/C-3 (`check_lifecycle_anchor.py`, `check_lifecycle_checkpoint.py`, `check_lifecycle_lineage.py`) that verify Change Lifecycle invariants (anchor, checkpoint, lineage); their output is \"evidencia factual, nunca autoridad normativa (ADR-16).\"\n- `.agents/policies/lifecycle-checkers.md:1-6` — the lifecycle checkers are \"advisory, factual, DEV-only evidence,\" have no normative authority, and \"complement — they do not replace — the canonical battery.\"\n- `docs/rfc/65-evidence-and-verification-model.md:91` — Verification is defined as \"evaluación de una claim contra evidencia con clase distinta de `attestation`,\" the general model underlying lifecycle verification.\n- `protocol/.agents/contracts/CHANGE_GOVERNANCE.md:90-91` — a third, distinct sense of \"Evaluation\": each Change carries an `Evaluation` (`satisfied`/`not satisfied`) with `evidence_ref` against an Objective; this is objective-satisfaction governance, not behavioral evaluation.\n- `docs/plans/180-comparative-architecture-refactor-study.md:3` — Plan 180 Status: `Aprobado para ejecución`; `:58-61` — deliverables include the per-system analyses, `REFACTOR_MATRIX.md`, and a final synthesis; `:74` — each analysis covers \"Verification/evaluation\" as one review dimension; `:102` — the matrix must not become authority over the individual analyses; `:104` — no architectural implementation inside the plan; `:128-134` — validation anchor and checkpoint are still \"Pendiente.\"\n- `docs/plans/INDEX.md:15` — Plan 180 is registered as `Aprobado para ejecución` / `active`.\n\nAUTHORITY: The direct statement distinguishing the concepts is `REFACTOR_SYNTHESIS.md`, the **final synthesis** deliverable of Plan 180. It is a **derived summary** of the eight `REFACTOR_<SYSTEM>.md` analyses, not a primary analysis and not an INDEX. It is also **non-normative**: Plan 180 is still `Aprobado para ejecución` (not `Executed`/`Closed`), its validation anchor/checkpoint are pending, and `REFACTOR_MATRIX.md` is explicitly an index/matrix that must not become authority. The authoritative side of the comparison is the DEV lifecycle machinery: `docs/VERSIONING.md` §4.1, `.agents/policies/lifecycle-checkers.md`, and the RFC-75/ADR-16 rules they reference. **Unverified:** there is no normative definition, implementation, test suite, RFC/ADR, or authorized adoption of \"behavioral evaluation\"; the study's conclusion is an analytical recommendation, not an accepted architectural decision.\n\nUNSUPPORTED:\n- No repository artifact defines \"behavioral evaluation\" as a mechanism, gives it an implementation, or specifies its interface with lifecycle evidence.\n- The exact phrase \"lifecycle verification\" is not a defined normative term; it appears only in `REFACTOR_SYNTHESIS.md`. What is normatively defined is the Change Lifecycle's validation-anchor/checkpoint/lineage gates and the canonical battery.\n- The repository does not settle a general relationship between \"evaluation\" and \"verification\" beyond this study's proposed three-layer distinction; other `Evaluation` uses (Objective satisfaction, EARS criteria, adversarial deliberation, economic evaluation) are separate.\n- Whether the study's recommendation will ever be adopted is unresolved: Plan 180 is not closed, and it explicitly forbids implementing architectural changes derived from the study within that plan."
+  },
+  "provenance": {
+    "deterministic": true,
+    "cited": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_MATRIX.md",
+      "docs/VERSIONING.md",
+      ".agents/policies/lifecycle-checkers.md",
+      "docs/rfc/65-evidence-and-verification-model.md",
+      "protocol/.agents/contracts/CHANGE_GOVERNANCE.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md"
+    ],
+    "cited_and_opened": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_MATRIX.md",
+      "docs/VERSIONING.md",
+      ".agents/policies/lifecycle-checkers.md",
+      "docs/rfc/65-evidence-and-verification-model.md",
+      "protocol/.agents/contracts/CHANGE_GOVERNANCE.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md"
+    ]
+  },
+  "grader": {
+    "attempted": true,
+    "elapsed_seconds": 25.344,
+    "returncode": 0,
+    "timed_out": false,
+    "usage": {
+      "inputTokens": 18476,
+      "outputTokens": 4024,
+      "cacheReadTokens": 640,
+      "cacheWriteTokens": 0,
+      "totalTokens": 23140
+    },
+    "evidence_included": [
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/adr/15-change-lifecycle-continuity.md",
+      "docs/adr/16-change-lifecycle-authority.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+    ],
+    "evidence_missing": [],
+    "raw_final": "{\"correct_conclusion\": true, \"correct_scope\": true, \"authority_boundary_preserved\": true, \"unsupported_claim\": true, \"rationale\": \"The answer agrees with the key that behavioral evaluation and lifecycle verification are not interchangeable, describes the complementary layers, and rejects eval scores as lifecycle authority. Its scope is properly limited to the DEV refactor study and lifecycle machinery without generalizing to all tests or all uses of 'evaluation'. It also distinguishes REFACTOR_SYNTHESIS as a derived, non-normative summary and identifies lifecycle documents as the authoritative side. However, it supplies material claims and citations not present in the fixed pack, including VERSIONING C-1/C-2/C-3 checker details, lifecycle-checkers policy, RFC-65, CHANGE_GOVERNANCE evaluation semantics, and various overloaded evaluation senses.\"}",
+    "parsed": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true,
+      "rationale": "The answer agrees with the key that behavioral evaluation and lifecycle verification are not interchangeable, describes the complementary layers, and rejects eval scores as lifecycle authority. Its scope is properly limited to the DEV refactor study and lifecycle machinery without generalizing to all tests or all uses of 'evaluation'. It also distinguishes REFACTOR_SYNTHESIS as a derived, non-normative summary and identifies lifecycle documents as the authoritative side. However, it supplies material claims and citations not present in the fixed pack, including VERSIONING C-1/C-2/C-3 checker details, lifecycle-checkers policy, RFC-65, CHANGE_GOVERNANCE evaluation semantics, and various overloaded evaluation senses."
+    },
+    "fields_used": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true
+    }
+  },
+  "raw_ndjson": {
+    "agent": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q07.agent.ndjson",
+      "sha256": "7d364564d05a86b82b6787694c182aee82d5e50490de2053e67714ed43cb43eb",
+      "bytes": 173091
+    },
+    "grader": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q07.grader.ndjson",
+      "sha256": "b1029f5ab0d7f5df65607b2b79f9dda84633d763ad89fb9336058c1a737ef9dc",
+      "bytes": 10619
+    }
+  },
+  "notes": []
+}

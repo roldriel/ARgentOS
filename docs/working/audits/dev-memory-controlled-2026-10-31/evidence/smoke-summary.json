@@ -1,0 +1,34 @@
+[
+  {
+    "condition": "CONTROL",
+    "question": "Q01",
+    "workspace": "C:\\Users\\rolda\\AppData\\Local\\Temp\\argentos-memory-control-x_6x_opo\\repo",
+    "pilot_present": false,
+    "returncode": 0,
+    "elapsed_seconds": 194.73,
+    "event_counts": {
+      "file_open": 31,
+      "search": 19,
+      "source_rehydrated": 9,
+      "answer": 1
+    },
+    "trace_written": true,
+    "stderr": ""
+  },
+  {
+    "condition": "TREATMENT",
+    "question": "Q01",
+    "workspace": "C:\\Users\\rolda\\AppData\\Local\\Temp\\argentos-memory-treatment-xv3amn_4\\repo",
+    "pilot_present": true,
+    "returncode": 0,
+    "elapsed_seconds": 155.46,
+    "event_counts": {
+      "file_open": 30,
+      "search": 29,
+      "source_rehydrated": 15,
+      "answer": 1
+    },
+    "trace_written": true,
+    "stderr": ""
+  }
+]

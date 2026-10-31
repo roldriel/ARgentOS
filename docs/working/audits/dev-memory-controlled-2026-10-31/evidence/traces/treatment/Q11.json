@@ -1,0 +1,375 @@
+{
+  "schema": "argentos.dev-memory.controlled-trace.v1",
+  "condition": "TREATMENT",
+  "question_id": "Q11",
+  "question": "What should ARgentOS adapt without copying external architectures?",
+  "run": {
+    "run_id": "full-20261031T171408",
+    "source_digest": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "runner_sha256": "f69e6080b7aaf95a3334b56e9d101040cb2dac900b05adc3523c4662b6297096",
+    "adapter_sha256": "5b27f4f1022332321dff8f65fc0cc3ed6bf670f43fd86b1773c1e02f7c2a4b4c",
+    "tool_set_sha256": "a5013d17a6fd831003f44fc4003db0723ccf173a11c0ad517f8294b8a306d328",
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "prompt_sha256": "3146ecd543dde793ac9afc5628602215f8167f563f89290d4feddd5e372256fe",
+    "grader_prompt_sha256": "c55023329d7d93bcd41bd99441d07d91d20a42dca7ccdaf4b3dcebb506ae62e4",
+    "key_sha256": "bd172b1da52a524ccc0bc6f8ccce8be3864d4889d25e6b64d2a11f7e86017081",
+    "evidence_sha256": "507cf728f6696533acaf7509b14b4a8c44deff884d0c87b6b9e6628dfc0c1087"
+  },
+  "workspace": {
+    "runner": "C:\\Users\\rolda\\AppData\\Local\\Temp\\argentos-memory-treatment-98f0kc0y\\repo",
+    "agent": "C:\\Users\\rolda\\AppData\\Local\\Temp\\bench-02v34dzx\\repo",
+    "neutral_copy": true
+  },
+  "base_commit": "a5f97c163b56b82dc8fadd4e3f65646899e9c245",
+  "model_label": "deepseek-official/deepseek-flash (DeepSeek-V4.1-Flash)",
+  "dsh_cli": "D:\\Programas\\DeepseekHarness\\resources\\runtime\\cli\\bin\\dsh.cmd",
+  "experimental_infrastructure": "tools/dev_memory_agent_executor.py",
+  "integrity": {
+    "pilot_present": true,
+    "pilot_sha256": "44a6a10b8308a76981c12f1798b9461619f030f73fa3b6c5e0378efb67949bcd",
+    "runner_pilot_present": true,
+    "workspace_digest_before": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "workspace_digest_after": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "workspace_stable": true,
+    "condition_labels_in_child_env": [],
+    "condition_token_in_agent_cwd": false,
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "grader_tool_policy_sha256": "ea826e1e9ceb38bb215a8e5f944dcd9399d1cb0972718e9d4cdcf559dc9c9153",
+    "disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents"
+    ],
+    "grader_disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents",
+      "tool-fs",
+      "tool-fs-search",
+      "tool-skill",
+      "tool-todo",
+      "tool-goal"
+    ],
+    "observed_disallowed_tools": [],
+    "observed_disallowed_tool_attempts": [],
+    "out_of_workspace_calls": [],
+    "failed_reads": [],
+    "agent_sandbox": "read-only"
+  },
+  "instrumentation": {
+    "file_open_events": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "DEV_MEMORY_PILOT.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_SWE_AGENT.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_LANGGRAPH.md"
+    ],
+    "search_events": [
+      "without copying",
+      "external architectures",
+      "adapt",
+      "REFACTOR_*.md",
+      "cop(y|ying)|not.*copy|mechanism level|architecture to copy|sources of mechanisms",
+      "REFACTOR_SYNTHESIS|REFACTOR_MATRIX|REFACTOR_",
+      "*.md",
+      "*.md",
+      "180-comparative|REFACTOR|refactor",
+      "selective adaptation|adapt selectively|ADAPT selectively|mechanism level|sources of mechanisms",
+      "docs/plans/18*.md",
+      "181|DEV Memory Pilot"
+    ],
+    "source_rehydration_events": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_SWE_AGENT.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_LANGGRAPH.md"
+    ],
+    "shell_commands": [],
+    "tool_calls": [
+      {
+        "tool": "grep",
+        "query": "without copying",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "external architectures",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "adapt",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_SYNTHESIS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_MATRIX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/180-comparative-architecture-refactor-study.md",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "REFACTOR_*.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "cop(y|ying)|not.*copy|mechanism level|architecture to copy|sources of mechanisms",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "REFACTOR_SYNTHESIS|REFACTOR_MATRIX|REFACTOR_",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "DEV_MEMORY_PILOT.md",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "*.md",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_OPENAI_AGENTS_SDK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_LANGGRAPH.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_CREWAI.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_GOOGLE_ADK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_OPENHANDS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_SWE_AGENT.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_LETTA.md",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "*.md",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "180-comparative|REFACTOR|refactor",
+        "path": "docs/plans",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_LANGGRAPH.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "selective adaptation|adapt selectively|ADAPT selectively|mechanism level|sources of mechanisms",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "docs/plans/18*.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "181|DEV Memory Pilot",
+        "path": "docs/plans",
+        "status": "completed"
+      }
+    ],
+    "observed_tools": [
+      "glob",
+      "grep",
+      "read"
+    ],
+    "distinct_files_opened": [
+      "DEV_MEMORY_PILOT.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_SWE_AGENT.md",
+      "REFACTOR_SYNTHESIS.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md"
+    ]
+  },
+  "agent": {
+    "elapsed_seconds": 51.965,
+    "returncode": 0,
+    "timed_out": false,
+    "error": null,
+    "session_id": "session-4349f49a-d5dd-4d44-b2f1-8dd3f8bc4d9e",
+    "turn_end": {
+      "kind": "completed"
+    },
+    "usage": {
+      "inputTokens": 42716,
+      "outputTokens": 6369,
+      "cacheReadTokens": 335616,
+      "cacheWriteTokens": 0,
+      "totalTokens": 384701
+    },
+    "stderr_tail": "[llm-deepseek-api-key] model listing from https://api.deepseek.com/models loaded 2 model(s), skipped 0 row(s)\n",
+    "final_answer": "I have gathered sufficient evidence. Here is my answer.\n\nCONCLUSION: ARgentOS should adapt **specific mechanisms, not external architectures**. The study's explicit principle is that \"external systems are sources of mechanisms to test, not architectures to copy\" (`REFACTOR_SYNTHESIS.md:305`), and comparisons must compare mechanisms, guarantees, limits and consequences rather than copy features by nominal similarity (`docs/plans/180-comparative-architecture-refactor-study.md:88`). Concretely, the supported adaptations are:\n\n1. **Runtime execution continuity** — execution identity, checkpoint/interruption/resume, idempotency, and explicit runtime state kept separate from Change Lifecycle state (LangGraph, Microsoft, CrewAI, Letta).\n2. **Scoped, two-tier DEV Memory** — a compact active retrieval surface plus on-demand supporting evidence, atomic knowledge, relevance ranking, and consolidation guarded by provenance/supersession (CrewAI, OpenHands, Letta).\n3. **Agent-Computer Interface quality** — bounded observations, pre-action validation, feedback designed for the agent, runtime history compression (SWE-agent).\n4. **Reusable behavioral evaluation loop** — evaluation scenarios distinct from unit tests and lifecycle verification (Google ADK).\n5. **Explicit Orchestrator→Worker delegation and boundary-local validation/interception** — make task, authority, context, tools, verification, result and evidence explicit (OpenAI Agents SDK, Microsoft).\n6. **Structured runtime tracing/events as evidence only** — never as authorization, correctness or lifecycle authority.\n\nARgentOS should **keep its governance foundation** (DEV/Protocol/adopter separation, Change Lifecycle authority, Orchestrator sovereignty, Worker boundary/WorkerAdapter, Git/documentary provenance, validation anchors, provider-agnostic architecture) and **reject** universal graph/state/unit models, a global relationship database, generic lifecycle per object, runtime trace as authority, agent identity as project identity, automatic similarity-based deletion, and provider-specific architectural coupling.\n\nSCOPE: This applies to the `refactor`-branch comparative study (Plan 180) and the proposed DEV/runtime direction it recommends. It is **not** normative for `protocol/.agents/`, `dist`, or Change Lifecycle semantics, and it does **not** authorize or describe an implemented change: the study says \"KEEP the current architectural foundation. ADAPT selectively. EXPERIMENT before institutionalizing\" (`REFACTOR_SYNTHESIS.md:334`) and Plan 180 explicitly forbids implementing derived architectural changes within the study (`docs/plans/180-comparative-architecture-refactor-study.md:104`). The claim also must not be generalized to mean \"ARgentOS needs a broad rewrite\" — the study explicitly rejects that (`REFACTOR_SYNTHESIS.md:8-12`, `REFACTOR_MATRIX.md:122`).\n\nEVIDENCE:\n- `REFACTOR_SYNTHESIS.md` — §1: correct response is \"selective adaptation, not replacement\"; §11: supports DEV Memory, runtime continuity, ACI, evaluation, delegation; §13 guardrail 10: \"External systems are sources of mechanisms to test, not architectures to copy\"; Final decision: \"KEEP the current architectural foundation. ADAPT selectively. EXPERIMENT before institutionalizing.\"\n- `REFACTOR_MATRIX.md` — all eight systems marked `ADAPT` (P1); \"Preserve\" list (DEV/Protocol separation, Change Lifecycle, Orchestrator authority, Worker boundary, provenance, validation anchors, non-provider-specific architecture); \"Adapt\" list (runtime continuity, checkpoint/resume, delegation payloads, boundary-local validation, tracing, evaluation scenarios, ACI, scoped two-tier DEV Memory, guarded consolidation); \"Reject\" list (universal graph/state/unit, global relationship DB, trace-as-authority, etc.); decision: \"incremental adaptation, not architectural replacement.\"\n- `REFACTOR_LANGGRAPH.md:99,101,111,137,176-192,194-200,222-226` — adapt conceptual separation and execution continuity, not LangGraph's implementation or graph model.\n- `REFACTOR_CREWAI.md:45,54,75-92` — \"ADAPT the retrieval/maintenance principles; do not copy the unified Memory API\"; reject automatic similarity-based deletion.\n- `REFACTOR_OPENHANDS.md:94-111` — two-tier DEV Memory; reject copying OpenHands memory files or binding to its runtime.\n- `REFACTOR_LETTA.md:81-98` — active vs historical DEV Memory, memory blocks, run/step evidence hierarchy; reject agent-memory API/persona identity.\n- `REFACTOR_SWE_AGENT.md:74-91` — ACI review, bounded observations, pre-action validation, history compression; reject copying tool syntax wholesale.\n- `REFACTOR_GOOGLE_ADK.md:90-107` — evaluation loop, machine-oriented navigation; reject provider-specific lifecycle and eval scores as lifecycle authority.\n- `REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md:108-125` — harness boundary, middleware/interceptor, workflow-vs-agent separation; reject universal Harness or merging workflow state with lifecycle state.\n- `REFACTOR_OPENAI_AGENTS_SDK.md:78-95` — minimal primitives, explicit delegation payload, boundary-local checks, structured tracing; reject copying its Agent abstraction.\n- `docs/plans/180-comparative-architecture-refactor-study.md` — authorizes the study, declares deliverables, limits scope to `refactor`, and states no copying by nominal similarity (line 88) and no architectural implementation (line 104).\n\nAUTHORITY: The primary authoritative evidence is the individual `REFACTOR_<SYSTEM>.md` analyses, which contain the observations, inference and per-system decisions. `REFACTOR_MATRIX.md` is explicitly an \"índice/matriz acumulativa\" and must **not** become authority over the individual analyses (`docs/plans/180-comparative-architecture-refactor-study.md:58,102`). `REFACTOR_SYNTHESIS.md` is the final derived synthesis of those analyses, not an independent source. `DEV_MEMORY_PILOT.md` is explicitly \"experimental, non-authoritative\" and derived from the studies. Plan 180 is the authorizing governance artifact but is still `Aprobado para ejecución` / `active` with unchecked exit criteria, so the study is not closed. None of these files is a normative protocol artifact, and no RFC or ADR records adoption of these adaptations. Unverified: whether the study was committed/closed, whether any adaptation was actually implemented or approved for `dev`/`master`, and the dangling reference to \"Plan 181\" (see below).\n\nUNSUPPORTED:\n- Whether any of these adaptations is actually adopted, implemented, or authorized outside the `refactor` branch — the documents propose experiments, and the repository does not establish successful adoption.\n- Plan 181: `DEV_MEMORY_PILOT.md:3` says \"Pilot: Plan 181\", but no Plan 181 exists under `docs/plans/` (the latest is 180). That provenance link is unresolved in this repository.\n- The precise priority/order among adaptations is only a recommendation in the synthesis/matrix; it is not a settled decision.\n- The question's phrase \"external architectures\" is not defined by a specific repository artifact; the study treats it as the eight compared systems (LangGraph, OpenAI Agents SDK, Microsoft Agent Framework, Google ADK, CrewAI, OpenHands, SWE-agent, Letta), so no claim is made about other external systems."
+  },
+  "provenance": {
+    "deterministic": true,
+    "cited": [
+      "REFACTOR_SYNTHESIS.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_SWE_AGENT.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "DEV_MEMORY_PILOT.md"
+    ],
+    "cited_and_opened": [
+      "REFACTOR_SYNTHESIS.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_SWE_AGENT.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md"
+    ]
+  },
+  "grader": {
+    "attempted": true,
+    "elapsed_seconds": 47.231,
+    "returncode": 0,
+    "timed_out": false,
+    "usage": {
+      "inputTokens": 27893,
+      "outputTokens": 7186,
+      "cacheReadTokens": 896,
+      "cacheWriteTokens": 0,
+      "totalTokens": 35975
+    },
+    "evidence_included": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_SWE_AGENT.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/adr/15-change-lifecycle-continuity.md",
+      "docs/adr/16-change-lifecycle-authority.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+    ],
+    "evidence_missing": [],
+    "raw_final": "{\"correct_conclusion\": true, \"correct_scope\": true, \"authority_boundary_preserved\": true, \"unsupported_claim\": true, \"rationale\": \"The conclusion and scope align with the expected key: adapt runtime, memory, ACI, evaluation, delegation and tracing mechanisms within ARgentOS's existing governance envelope, without authorizing implementation or provider-specific coupling. The answer also correctly treats the individual REFACTOR studies as primary and the matrix/synthesis as derived rather than authoritative. However, it asserts provenance details from DEV_MEMORY_PILOT.md and the nonexistence of Plan 181 that the fixed evidence pack does not establish.\"}",
+    "parsed": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true,
+      "rationale": "The conclusion and scope align with the expected key: adapt runtime, memory, ACI, evaluation, delegation and tracing mechanisms within ARgentOS's existing governance envelope, without authorizing implementation or provider-specific coupling. The answer also correctly treats the individual REFACTOR studies as primary and the matrix/synthesis as derived rather than authoritative. However, it asserts provenance details from DEV_MEMORY_PILOT.md and the nonexistence of Plan 181 that the fixed evidence pack does not establish."
+    },
+    "fields_used": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true
+    }
+  },
+  "raw_ndjson": {
+    "agent": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q11.agent.ndjson",
+      "sha256": "99399ed7cf2a38bedff1ad8176ebd4f02601bbb4e96788e29ed615470084633f",
+      "bytes": 128528
+    },
+    "grader": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\treatment\\Q11.grader.ndjson",
+      "sha256": "822c712bc06d0e77f1e77993c6ea38a35ad2493b2bd1496ac17dbd5c747900c8",
+      "bytes": 10248
+    }
+  },
+  "notes": []
+}

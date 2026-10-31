@@ -1,0 +1,401 @@
+{
+  "schema": "argentos.dev-memory.controlled-trace.v1",
+  "condition": "CONTROL",
+  "question_id": "Q09",
+  "question": "What evidence supports explicit checkpoint/resume investigation?",
+  "run": {
+    "run_id": "full-20261031T171408",
+    "source_digest": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "runner_sha256": "f69e6080b7aaf95a3334b56e9d101040cb2dac900b05adc3523c4662b6297096",
+    "adapter_sha256": "5b27f4f1022332321dff8f65fc0cc3ed6bf670f43fd86b1773c1e02f7c2a4b4c",
+    "tool_set_sha256": "a5013d17a6fd831003f44fc4003db0723ccf173a11c0ad517f8294b8a306d328",
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "prompt_sha256": "b78ec7893e799bd88333267b6a34d072f9dfdee5d950c764f945a4ef7e8da1da",
+    "grader_prompt_sha256": "e0713f890a7b468c138afbd6d649f9b9967e70819969a3e529f8071617d5005b",
+    "key_sha256": "bd172b1da52a524ccc0bc6f8ccce8be3864d4889d25e6b64d2a11f7e86017081",
+    "evidence_sha256": "d3144647dd6fae226e7cac1c451d6c416b9f656c310fa46968916518700d9c31"
+  },
+  "workspace": {
+    "runner": "C:\\Users\\rolda\\AppData\\Local\\Temp\\argentos-memory-control-r0pnvykb\\repo",
+    "agent": "C:\\Users\\rolda\\AppData\\Local\\Temp\\bench-jqg44bg2\\repo",
+    "neutral_copy": true
+  },
+  "base_commit": "a5f97c163b56b82dc8fadd4e3f65646899e9c245",
+  "model_label": "deepseek-official/deepseek-flash (DeepSeek-V4.1-Flash)",
+  "dsh_cli": "D:\\Programas\\DeepseekHarness\\resources\\runtime\\cli\\bin\\dsh.cmd",
+  "experimental_infrastructure": "tools/dev_memory_agent_executor.py",
+  "integrity": {
+    "pilot_present": false,
+    "pilot_sha256": null,
+    "runner_pilot_present": false,
+    "workspace_digest_before": "fedb8866755b00d44f9e754b35ea81dcfda4e17a3fd2eb0121f800c0f0a954b0",
+    "workspace_digest_after": "fedb8866755b00d44f9e754b35ea81dcfda4e17a3fd2eb0121f800c0f0a954b0",
+    "workspace_stable": true,
+    "condition_labels_in_child_env": [],
+    "condition_token_in_agent_cwd": false,
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "grader_tool_policy_sha256": "ea826e1e9ceb38bb215a8e5f944dcd9399d1cb0972718e9d4cdcf559dc9c9153",
+    "disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents"
+    ],
+    "grader_disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents",
+      "tool-fs",
+      "tool-fs-search",
+      "tool-skill",
+      "tool-todo",
+      "tool-goal"
+    ],
+    "observed_disallowed_tools": [],
+    "observed_disallowed_tool_attempts": [],
+    "out_of_workspace_calls": [],
+    "failed_reads": [
+      ".git/HEAD"
+    ],
+    "agent_sandbox": "read-only"
+  },
+  "instrumentation": {
+    "file_open_events": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/working/audits/architecture-capability-review.md",
+      "docs/working/audits/architecture-capability-review.md",
+      "REFACTOR_CREWAI.md",
+      "docs/plans/INDEX.md",
+      "docs/working/audits/architecture-capability-review.md",
+      "docs/plans/175-theoretical-execution-dev-v1.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md"
+    ],
+    "search_events": [
+      "checkpoint",
+      "docs/plans/*",
+      "resume|resumable|resumption",
+      "execution continuity|runtime continuity|Execution continuity|Runtime continuity|REFACTOR_|refactor branch|checkpoint/resume",
+      "checkpoint|resume|continuity|Runtime",
+      "180",
+      "REFACTOR_*.md",
+      "checkpoint|resume|continuity",
+      "resume|checkpoint|continuidad de ejecución|recovery",
+      "**/PRIORITY.md",
+      "Plan 180|plan 180",
+      "checkpoint/resume|execution continuity|runtime continuity",
+      "run|step|state|persistence|ADAPT",
+      "180|refactor|Refactor",
+      "resume|checkpoint|execution identity",
+      "checkpoint|resume|continuity|runtime"
+    ],
+    "source_rehydration_events": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md"
+    ],
+    "shell_commands": [],
+    "tool_calls": [
+      {
+        "tool": "grep",
+        "query": "checkpoint",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "docs/plans/*",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "resume|resumable|resumption",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_SYNTHESIS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_MATRIX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_LANGGRAPH.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "execution continuity|runtime continuity|Execution continuity|Runtime continuity|REFACTOR_|refactor branch|checkpoint/resume",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/180-comparative-architecture-refactor-study.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "checkpoint|resume|continuity|Runtime",
+        "path": "ROADMAP.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "180",
+        "path": "docs/plans",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/working/audits/architecture-capability-review.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/working/audits/architecture-capability-review.md",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "REFACTOR_*.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "checkpoint|resume|continuity",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": ".git/HEAD",
+        "status": "error"
+      },
+      {
+        "tool": "grep",
+        "query": "resume|checkpoint|continuidad de ejecución|recovery",
+        "path": "docs/plans/178-integration-continuity-audit.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_CREWAI.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/INDEX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "**/PRIORITY.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Plan 180|plan 180",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/working/audits/architecture-capability-review.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "checkpoint/resume|execution continuity|runtime continuity",
+        "path": "docs/rfc",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "run|step|state|persistence|ADAPT",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/175-theoretical-execution-dev-v1.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "180|refactor|Refactor",
+        "path": ".",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_OPENAI_AGENTS_SDK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "resume|checkpoint|execution identity",
+        "path": "runtime",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "checkpoint|resume|continuity|runtime",
+        "path": "docs/plans/analisis-explicitud.md",
+        "status": "completed"
+      }
+    ],
+    "observed_tools": [
+      "glob",
+      "grep",
+      "read"
+    ],
+    "distinct_files_opened": [
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_SYNTHESIS.md",
+      "docs/plans/175-theoretical-execution-dev-v1.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md",
+      "docs/working/audits/architecture-capability-review.md"
+    ]
+  },
+  "agent": {
+    "elapsed_seconds": 79.304,
+    "returncode": 0,
+    "timed_out": false,
+    "error": null,
+    "session_id": "session-7335c411-0cc6-4010-8563-0702e0d7b462",
+    "turn_end": {
+      "kind": "completed"
+    },
+    "usage": {
+      "inputTokens": 57714,
+      "outputTokens": 9440,
+      "cacheReadTokens": 728704,
+      "cacheWriteTokens": 0,
+      "totalTokens": 795858
+    },
+    "stderr_tail": "[llm-deepseek-api-key] model listing from https://api.deepseek.com/models loaded 2 model(s), skipped 0 row(s)\n",
+    "final_answer": "CONCLUSION: The repository supports an **investigation/experiment**, not an adoption, of explicit runtime checkpoint/resume. The support comes from the maintainer-authorized comparative study (Plan 180) and its per-system analyses: the LangGraph analysis concludes ARgentOS should \"Investigate a small runtime abstraction for execution identity, checkpoint boundary, interruption and resume\" (ADAPT-1); the synthesis elevates \"Runtime continuity\" to a supported direction and proposes \"Experiment 2 — Execution continuity\" comparing current execution with \"a minimal explicit checkpoint/resume model\"; the matrix ranks \"Runtime execution continuity\" second and marks LangGraph \"ADAPT / P1\". Microsoft Agent Framework (\"checkpoint/resume as a workflow capability\"), CrewAI (Flow persistence/resume), Letta (run/step hierarchy), OpenAI Agents SDK and Google ADK reinforce the same separation of execution state from memory. Crucially, this is evidence for a **proposed, bounded investigation**, not proof that ARgentOS needs checkpoint/resume: Plan 180 explicitly forbids implementing architectural changes, and a prior Working audit classifies durable execution and interruption/resume as `ALREADY_SOLVED` for ARgentOS's reconstruction-based model, leaving in-flight cancellation/abort (`POST_AUTONOMY`) as the real gap. No executed investigation, RFC, ADR or implementation plan for runtime checkpoint/resume exists in the repository.\n\nSCOPE: Applies only to the DEV runtime-design discussion recorded in the `refactor`-branch comparative study (Plan 180, 2026-10-29). It does not apply to `dev`, `master`, `protocol/.agents/`, `dist/`, Change Lifecycle closure checkpoints, validation anchors, Protocol Memory or the Git checkpoint/`Closed` machinery. It must not be generalized into \"ARgentOS requires checkpoint/resume\", \"the investigation was performed\", or \"the study is an approved architectural decision\".\n\nEVIDENCE:\n- `docs/plans/180-comparative-architecture-refactor-study.md` — maintainer-authorized comparative study (origin: direct maintainer instruction, 2026-10-29); scope limited to branch `refactor`; system list includes LangGraph, Microsoft Agent Framework, CrewAI, Letta; §Pasos 13 and §Criterios de salida forbid architectural implementation and changes to `dev`/`master`/`protocol/.agents/`/`dist`; Status `Aprobado para ejecución`, `RFC-56 Class: N/A`, `Validation anchor` and `Checkpoint / cierre` \"Pendiente\".\n- `REFACTOR_LANGGRAPH.md` — strongest single source: §3 \"Durable execution\" lists execution identity, resumable execution state, checkpoint boundary, interruption, resume semantics and idempotency; §7 says ARgentOS lacks \"an equally explicit runtime-resume compatibility model\"; §11 ADAPT-1; §12 rejects \"Runtime checkpoint as governance authority\"; §13 proposes an interrupt-and-resume experiment; final decision is a \"focused investigation\", not rearchitecture.\n- `REFACTOR_SYNTHESIS.md` — §4 \"Strongest runtime convergence: execution continuity\" and \"Execution state is not lifecycle state\"; §11 \"Supported direction B — Runtime continuity: Investigate execution identity, checkpointing, interruption, resume and idempotency\"; §12 \"Experiment 2 — Execution continuity: Compare current execution with a minimal explicit checkpoint/resume model\"; guardrail 3 keeps runtime state distinct from lifecycle state.\n- `REFACTOR_MATRIX.md` — LangGraph row: \"Explicit execution topology + durable checkpoint/resume\" → \"ADAPT\" / \"P1\"; cross-system finding 1: LangGraph, Microsoft, CrewAI and Letta expose more explicit runtime state/persistence/resume than ARgentOS; Adapt list includes \"Runtime execution continuity\" and \"Checkpoint/resume semantics where needed\"; priority 2 is \"Runtime execution continuity\". Plan 180 §11 states the matrix is an index and not authority over the individual analyses.\n- `REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md` — §5 separates execution state, session context, semantic memory and DEV Memory; §7 lists \"Checkpoint/resume as a workflow capability\"; §10 rejects merging Workflow state with Change Lifecycle state.\n- `REFACTOR_CREWAI.md` — §2 Flows provide \"persistence and resume for longer-running executions\"; §2 says this overlaps the LangGraph finding that execution continuity benefits from an explicit runtime composition model.\n- `REFACTOR_LETTA.md` — §4 distinguishes agent run from inference/tool steps and proposes a run/step evidence hierarchy (ADAPT-3), without making it authoritative.\n- `REFACTOR_OPENAI_AGENTS_SDK.md` — §4: preserve the distinction between session/transcript context, execution checkpoint state and durable semantic Memory.\n- `REFACTOR_GOOGLE_ADK.md` — §lines 34–36 reinforce separating execution continuity from durable semantic knowledge.\n- `docs/plans/INDEX.md` — derived registry: the Plan 180 row records only `Aprobado para ejecución` / `active`, with no `Executed`/`Closed` status.\n- `docs/working/audits/architecture-capability-review.md` — counter-evidence and limit: it declares \"Autoridad de este documento: ninguna\"; §3 classifies \"Durable Execution\" and \"interruption / resume\" as `ALREADY_SOLVED`, describing reconstruction from repository + append-only journal + \"last intact artifact\"; §4.4 says the mechanisms preserve continuity and identifies only in-flight cancellation/abort as a real gap, classified `POST_AUTONOMY`, `PREREQUISITE = NO`.\n- `docs/plans/175-theoretical-execution-dev-v1.md` — §10: \"Reinicio: ... No hay resume\"; line 560: \"Recovery: rerun desde inputs; sin resume\" — Theoretical Execution deliberately reruns from inputs, so any checkpoint/resume investigation would have to reconcile with that design choice.\n- `runtime/orchestrator/contracts.py` — line 190: stops mean \"a human must act; the host resumes later from evidence\"; `runtime/orchestrator/host.py` and `runtime/orchestrator/observation.py` contain lifecycle/authorization checkpoints only (e.g. `record_checkpoint`, `parse_checkpoint`), not a runtime execution checkpoint/resume mechanism.\n- `ROADMAP.md` — contains no mention of checkpoint, resume, execution continuity or Plan 180, so the study's recommendation is not reflected in the strategic roadmap.\n\nAUTHORITY: The authoritative artifact for the *authorization* is `docs/plans/180-comparative-architecture-refactor-study.md` (a Governance/Plan, RFC-56 N/A, approved for execution), but it authorizes only the comparative study on `refactor` and explicitly does not authorize implementation; it is not `Executed`/`Closed` and has no validation anchor or checkpoint. The `REFACTOR_*.md` files are the study's primary analyses, but they are observational summaries of external documentation (only URLs are cited; no local copies of the external sources), and `REFACTOR_MATRIX.md` is explicitly declared a non-authoritative index over them. `docs/plans/INDEX.md` is a derived navigation registry, not authority. `docs/working/audits/architecture-capability-review.md` is Working/provenance with self-declared \"ninguna\" authority. Remains unverified: the external-system facts (no network access and no primary sources in the repo), the actual Git branch/commit state of the study (no readable `.git` metadata in this workspace; branch `refactor` is only declared in Plan 180 and the study files), and whether Plan 180's exit criteria were met.\n\nUNSUPPORTED: The repository does not settle whether ARgentOS actually needs explicit checkpoint/resume; whether such a mechanism was ever implemented or evaluated (no runtime execution checkpoint/resume implementation was found); whether the maintainer approved follow-up work beyond the study (Plan 180 requires future separately authorized changes); whether `ROADMAP.md` or any RFC/ADR prioritizes it; and whether the external comparisons are accurate, since their sources are not present locally. It also does not establish that ARgentOS is currently unable to resume — the Working audit argues the opposite for its reconstruction-based model."
+  },
+  "provenance": {
+    "deterministic": true,
+    "cited": [
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "docs/plans/INDEX.md",
+      "docs/working/audits/architecture-capability-review.md",
+      "docs/plans/175-theoretical-execution-dev-v1.md",
+      "runtime/orchestrator/contracts.py",
+      "runtime/orchestrator/host.py",
+      "runtime/orchestrator/observation.py",
+      "ROADMAP.md"
+    ],
+    "cited_and_opened": [
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "docs/plans/INDEX.md",
+      "docs/working/audits/architecture-capability-review.md",
+      "docs/plans/175-theoretical-execution-dev-v1.md"
+    ]
+  },
+  "grader": {
+    "attempted": true,
+    "elapsed_seconds": 21.046,
+    "returncode": 0,
+    "timed_out": false,
+    "usage": {
+      "inputTokens": 23003,
+      "outputTokens": 3307,
+      "cacheReadTokens": 768,
+      "cacheWriteTokens": 0,
+      "totalTokens": 27078
+    },
+    "evidence_included": [
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_LETTA.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/adr/15-change-lifecycle-continuity.md",
+      "docs/adr/16-change-lifecycle-authority.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+    ],
+    "evidence_missing": [],
+    "raw_final": "{\"correct_conclusion\": true, \"correct_scope\": true, \"authority_boundary_preserved\": true, \"unsupported_claim\": true, \"rationale\": \"The conclusion matches the key's decisive point: LangGraph is the clearest evidence, and the synthesis/matrix support only a bounded runtime-only investigation, not adoption or proof that ARgentOS needs checkpoint/resume. Scope is properly limited to the refactor-branch study and explicitly excludes Change Lifecycle, dev/master/protocol, and architectural implementation. Authority is handled well: Plan 180 is framed as authorization only, REFACTOR_MATRIX as a non-authoritative index, and synthesis as study evidence rather than authority. However, the answer relies on material claims absent from the fixed evidence pack, including the Working audit's ALREADY_SOLVED classification, Plan 175's 'no resume' statement, ROADMAP/INDEX statuses, runtime contracts/host/observation details, and REFACTOR_OPENAI/GOOGLE_ADK content.\"}",
+    "parsed": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true,
+      "rationale": "The conclusion matches the key's decisive point: LangGraph is the clearest evidence, and the synthesis/matrix support only a bounded runtime-only investigation, not adoption or proof that ARgentOS needs checkpoint/resume. Scope is properly limited to the refactor-branch study and explicitly excludes Change Lifecycle, dev/master/protocol, and architectural implementation. Authority is handled well: Plan 180 is framed as authorization only, REFACTOR_MATRIX as a non-authoritative index, and synthesis as study evidence rather than authority. However, the answer relies on material claims absent from the fixed evidence pack, including the Working audit's ALREADY_SOLVED classification, Plan 175's 'no resume' statement, ROADMAP/INDEX statuses, runtime contracts/host/observation details, and REFACTOR_OPENAI/GOOGLE_ADK content."
+    },
+    "fields_used": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true
+    }
+  },
+  "raw_ndjson": {
+    "agent": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q09.agent.ndjson",
+      "sha256": "a5386fff212bfcebd8677d22ff7c4f6e07d495b79a31f74948337255adbafe70",
+      "bytes": 173753
+    },
+    "grader": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q09.grader.ndjson",
+      "sha256": "751bceea68712cd73fc209dcbe8ce1ce2841e8a6afd50d7adffe87faaa20bde3",
+      "bytes": 10836
+    }
+  },
+  "notes": []
+}

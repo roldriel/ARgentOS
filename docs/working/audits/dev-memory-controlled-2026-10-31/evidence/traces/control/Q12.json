@@ -1,0 +1,278 @@
+{
+  "schema": "argentos.dev-memory.controlled-trace.v1",
+  "condition": "CONTROL",
+  "question_id": "Q12",
+  "question": "What is the current architectural decision after the comparative study?",
+  "run": {
+    "run_id": "full-20261031T171408",
+    "source_digest": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "runner_sha256": "f69e6080b7aaf95a3334b56e9d101040cb2dac900b05adc3523c4662b6297096",
+    "adapter_sha256": "5b27f4f1022332321dff8f65fc0cc3ed6bf670f43fd86b1773c1e02f7c2a4b4c",
+    "tool_set_sha256": "a5013d17a6fd831003f44fc4003db0723ccf173a11c0ad517f8294b8a306d328",
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "prompt_sha256": "9a3114638c8ba2103960479e050fa2e01be18a2bf68a1113064bda67ecf87a77",
+    "grader_prompt_sha256": "263619adcc13eaebd3611983653ed9998bfdd122e5b364229f625c871dc80e7a",
+    "key_sha256": "bd172b1da52a524ccc0bc6f8ccce8be3864d4889d25e6b64d2a11f7e86017081",
+    "evidence_sha256": "5749fd45d35fd2ed28bae89276a8b2c9f516c23cd714c401468ffbd94ac54b83"
+  },
+  "workspace": {
+    "runner": "C:\\Users\\rolda\\AppData\\Local\\Temp\\argentos-memory-control-r0pnvykb\\repo",
+    "agent": "C:\\Users\\rolda\\AppData\\Local\\Temp\\bench-m7ow8_2o\\repo",
+    "neutral_copy": true
+  },
+  "base_commit": "a5f97c163b56b82dc8fadd4e3f65646899e9c245",
+  "model_label": "deepseek-official/deepseek-flash (DeepSeek-V4.1-Flash)",
+  "dsh_cli": "D:\\Programas\\DeepseekHarness\\resources\\runtime\\cli\\bin\\dsh.cmd",
+  "experimental_infrastructure": "tools/dev_memory_agent_executor.py",
+  "integrity": {
+    "pilot_present": false,
+    "pilot_sha256": null,
+    "runner_pilot_present": false,
+    "workspace_digest_before": "fedb8866755b00d44f9e754b35ea81dcfda4e17a3fd2eb0121f800c0f0a954b0",
+    "workspace_digest_after": "fedb8866755b00d44f9e754b35ea81dcfda4e17a3fd2eb0121f800c0f0a954b0",
+    "workspace_stable": true,
+    "condition_labels_in_child_env": [],
+    "condition_token_in_agent_cwd": false,
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "grader_tool_policy_sha256": "ea826e1e9ceb38bb215a8e5f944dcd9399d1cb0972718e9d4cdcf559dc9c9153",
+    "disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents"
+    ],
+    "grader_disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents",
+      "tool-fs",
+      "tool-fs-search",
+      "tool-skill",
+      "tool-todo",
+      "tool-goal"
+    ],
+    "observed_disallowed_tools": [],
+    "observed_disallowed_tool_attempts": [],
+    "out_of_workspace_calls": [],
+    "failed_reads": [],
+    "agent_sandbox": "read-only"
+  },
+  "instrumentation": {
+    "file_open_events": [
+      "REFACTOR_MATRIX.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_CREWAI.md"
+    ],
+    "search_events": [
+      "comparative|estudio comparativo|comparativa",
+      "docs/**/*.md",
+      "REFACTOR_*.md",
+      "^## (Decision|Decisión|Final|Synthesis|Síntesis|Architectural)",
+      "REFACTOR_SYNTHESIS|REFACTOR_MATRIX",
+      "selective adaptation|incremental adaptation|evolutionary laboratory|KEEP the current architectural foundation|broad architectural rewrite",
+      "^## Final decision|^\\*\\*(ADOPT|ADAPT|KEEP|REJECT|DEFER)",
+      "docs/plans/18*.md",
+      "^\\| `180|^\\| `181|^\\| `179|^\\| `178"
+    ],
+    "source_rehydration_events": [
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_CREWAI.md"
+    ],
+    "shell_commands": [],
+    "tool_calls": [
+      {
+        "tool": "grep",
+        "query": "comparative|estudio comparativo|comparativa",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "docs/**/*.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_MATRIX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/180-comparative-architecture-refactor-study.md",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "REFACTOR_*.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "^## (Decision|Decisión|Final|Synthesis|Síntesis|Architectural)",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_SYNTHESIS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "REFACTOR_SYNTHESIS|REFACTOR_MATRIX",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_LANGGRAPH.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_CREWAI.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "selective adaptation|incremental adaptation|evolutionary laboratory|KEEP the current architectural foundation|broad architectural rewrite",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "^## Final decision|^\\*\\*(ADOPT|ADAPT|KEEP|REJECT|DEFER)",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "docs/plans/18*.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "^\\| `180|^\\| `181|^\\| `179|^\\| `178",
+        "path": "docs/plans/INDEX.md",
+        "status": "completed"
+      }
+    ],
+    "observed_tools": [
+      "glob",
+      "grep",
+      "read"
+    ],
+    "distinct_files_opened": [
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_SYNTHESIS.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md"
+    ]
+  },
+  "agent": {
+    "elapsed_seconds": 40.745,
+    "returncode": 0,
+    "timed_out": false,
+    "error": null,
+    "session_id": "session-4ccd4132-a33f-4daf-bfc6-14f4c43081a8",
+    "turn_end": {
+      "kind": "completed"
+    },
+    "usage": {
+      "inputTokens": 18641,
+      "outputTokens": 4473,
+      "cacheReadTokens": 134272,
+      "cacheWriteTokens": 0,
+      "totalTokens": 157386
+    },
+    "stderr_tail": "[llm-deepseek-api-key] model listing from https://api.deepseek.com/models loaded 2 model(s), skipped 0 row(s)\n",
+    "final_answer": "CONCLUSION: The comparative study’s recorded decision is **not to replace ARgentOS’s architecture**. The final synthesis states: **“KEEP the current architectural foundation. ADAPT selectively. EXPERIMENT before institutionalizing.”** It rejects a broad rewrite, a universal graph/state/ontology/registry, and treating runtime traces as authority. The study instead endorses mechanism-level adaptation, with **DEV Memory** first, followed by **runtime execution continuity** and **Agent-Computer Interface** quality; the eight individual comparisons each conclude `ADAPT`. `REFACTOR_MATRIX.md` summarizes this as: **“The comparative study validates incremental adaptation, not architectural replacement.”**\n\nSCOPE: This applies to the **ARgentOS DEV architecture** and specifically to the comparative-study artifacts on the `refactor` branch, dated 2026-10-29. It is a study conclusion about the current foundation and candidate mechanisms. It does **not** authorize changes to `dev`, `master`, `protocol/.agents/`, or `dist`, does not establish an RFC/ADR, and does not by itself approve any implementation. It also does not generalize to adopter or Protocol architecture.\n\nEVIDENCE:\n- `REFACTOR_SYNTHESIS.md` — final synthesis: eight comparisons do not support a broad rewrite; “selective adaptation, not replacement”; guardrails include no universal ontology, runtime state distinct from lifecycle state, evidence never becomes authority; final decision: “KEEP the current architectural foundation. ADAPT selectively. EXPERIMENT before institutionalizing.” It also ranks DEV Memory, runtime continuity and ACI as the next areas.\n- `REFACTOR_MATRIX.md` — cumulative matrix: all eight systems marked `ADAPT`; “Architectural conclusions” lists what to Preserve, Adapt and Reject; says the comparison does not support a graph/database/registry-centered architecture; Decision section: “incremental adaptation, not architectural replacement.”\n- `REFACTOR_LANGGRAPH.md`, `REFACTOR_OPENAI_AGENTS_SDK.md`, `REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md`, `REFACTOR_GOOGLE_ADK.md`, `REFACTOR_CREWAI.md`, `REFACTOR_OPENHANDS.md`, `REFACTOR_SWE_AGENT.md`, `REFACTOR_LETTA.md` — each has a `## Final decision` of `ADAPT`.\n- `docs/plans/180-comparative-architecture-refactor-study.md` — authorizes the comparative study only; states it does not authorize changes to `dev`, `master`, `protocol/.agents/` or `dist`, and that future adoptions must be separate, explicitly authorized changes.\n- `docs/plans/INDEX.md` — records plan 180 as `Aprobado para ejecución`, status `active`, DEV-only, no payload, limited to the `refactor` branch.\n\nAUTHORITY: Plan 180 is the governance artifact authorizing the study, not the decision itself. The eight `REFACTOR_<SYSTEM>.md` analyses are the evidence-bearing comparison records, and each contains its own final decision. `REFACTOR_SYNTHESIS.md` is the final synthesis deliverable of that study, but it remains a study/working artifact rather than an RFC, ADR, or approved architectural change. `REFACTOR_MATRIX.md` is explicitly characterized by plan 180 as an “índice/matriz acumulativa” and is not authority over the individual analyses. `docs/plans/INDEX.md` is navigation only. No RFC or ADR in this repository records adoption of this conclusion, and plan 180’s exit criteria remain unchecked, so formal study closure is not verified.\n\nUNSUPPORTED: The repository does not show that any adaptation has been approved or implemented; the synthesis only proposes experiments. It does not establish that DEV Memory, execution continuity or ACI adaptations actually improve outcomes, nor which concrete implementation will be adopted. It does not settle any Protocol-payload or adopter-facing change. The study’s external-system observations cannot be independently verified from this repository, and commit/branch history for the claimed atomic `refactor` commits is not verified here."
+  },
+  "provenance": {
+    "deterministic": true,
+    "cited": [
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_MICROSOFT_AGENT_FRAMEWORK.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_CREWAI.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_SWE_AGENT.md",
+      "REFACTOR_LETTA.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/plans/INDEX.md"
+    ],
+    "cited_and_opened": [
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_CREWAI.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md"
+    ]
+  },
+  "grader": {
+    "attempted": true,
+    "elapsed_seconds": 28.018,
+    "returncode": 0,
+    "timed_out": false,
+    "usage": {
+      "inputTokens": 16526,
+      "outputTokens": 4518,
+      "cacheReadTokens": 768,
+      "cacheWriteTokens": 0,
+      "totalTokens": 21812
+    },
+    "evidence_included": [
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/adr/15-change-lifecycle-continuity.md",
+      "docs/adr/16-change-lifecycle-authority.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+    ],
+    "evidence_missing": [],
+    "raw_final": "{\"correct_conclusion\": true, \"correct_scope\": true, \"authority_boundary_preserved\": true, \"unsupported_claim\": false, \"rationale\": \"The answer correctly states the study's decisive conclusion: keep the foundation, adapt selectively, experiment before institutionalizing, and reject a broad rewrite or universal graph/state/ontology/registry, with DEV Memory, runtime continuity, and ACI as priorities. It properly limits scope to the DEV/refactor branch and notes that the study authorizes no implementation, no payload change, and no formal closure. It also clearly distinguishes the individual comparison records from the synthesis and matrix, and explicitly denies authority to the matrix as an acumulative index and to INDEX.md as navigation. Its claims either appear in or are directly supported by the supplied synthesis, matrix, plan 180, and governance artifacts; no material unsupported assertion was found.\"}",
+    "parsed": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": false,
+      "rationale": "The answer correctly states the study's decisive conclusion: keep the foundation, adapt selectively, experiment before institutionalizing, and reject a broad rewrite or universal graph/state/ontology/registry, with DEV Memory, runtime continuity, and ACI as priorities. It properly limits scope to the DEV/refactor branch and notes that the study authorizes no implementation, no payload change, and no formal closure. It also clearly distinguishes the individual comparison records from the synthesis and matrix, and explicitly denies authority to the matrix as an acumulative index and to INDEX.md as navigation. Its claims either appear in or are directly supported by the supplied synthesis, matrix, plan 180, and governance artifacts; no material unsupported assertion was found."
+    },
+    "fields_used": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": false
+    }
+  },
+  "raw_ndjson": {
+    "agent": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q12.agent.ndjson",
+      "sha256": "4272613b69f263c4c052cc8f950429d5b7832df226bd66f4af1e01b67123c8e8",
+      "bytes": 73003
+    },
+    "grader": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q12.grader.ndjson",
+      "sha256": "9f4c40de3c35a443157e55c1879d5c041a74eb721afcb6431b305619f648f9aa",
+      "bytes": 10787
+    }
+  },
+  "notes": []
+}

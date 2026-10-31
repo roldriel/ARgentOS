@@ -1,0 +1,537 @@
+{
+  "schema": "argentos.dev-memory.controlled-trace.v1",
+  "condition": "CONTROL",
+  "question_id": "Q08",
+  "question": "Do runtime traces establish authority or lifecycle closure?",
+  "run": {
+    "run_id": "full-20261031T171408",
+    "source_digest": "b1ffb2fc080453d3e6f47d7878dc0c365561b9e2cbb9127b84aafb02c03d57a9",
+    "runner_sha256": "f69e6080b7aaf95a3334b56e9d101040cb2dac900b05adc3523c4662b6297096",
+    "adapter_sha256": "5b27f4f1022332321dff8f65fc0cc3ed6bf670f43fd86b1773c1e02f7c2a4b4c",
+    "tool_set_sha256": "a5013d17a6fd831003f44fc4003db0723ccf173a11c0ad517f8294b8a306d328",
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "prompt_sha256": "cbe01d4bbaaa6f2483d18db735abaa44efa30203aeca8e1e0ca751f2829b49ff",
+    "grader_prompt_sha256": "b3e8bd9d4d427e4c6d1e74fa2f28c55c93f066e1747d99567302add3211438a6",
+    "key_sha256": "bd172b1da52a524ccc0bc6f8ccce8be3864d4889d25e6b64d2a11f7e86017081",
+    "evidence_sha256": "28aee721d0b1120f681fad6529a2903b7e6011343ae6052555b5bd88c082c052"
+  },
+  "workspace": {
+    "runner": "C:\\Users\\rolda\\AppData\\Local\\Temp\\argentos-memory-control-r0pnvykb\\repo",
+    "agent": "C:\\Users\\rolda\\AppData\\Local\\Temp\\bench-ncjzt054\\repo",
+    "neutral_copy": true
+  },
+  "base_commit": "a5f97c163b56b82dc8fadd4e3f65646899e9c245",
+  "model_label": "deepseek-official/deepseek-flash (DeepSeek-V4.1-Flash)",
+  "dsh_cli": "D:\\Programas\\DeepseekHarness\\resources\\runtime\\cli\\bin\\dsh.cmd",
+  "experimental_infrastructure": "tools/dev_memory_agent_executor.py",
+  "integrity": {
+    "pilot_present": false,
+    "pilot_sha256": null,
+    "runner_pilot_present": false,
+    "workspace_digest_before": "fedb8866755b00d44f9e754b35ea81dcfda4e17a3fd2eb0121f800c0f0a954b0",
+    "workspace_digest_after": "fedb8866755b00d44f9e754b35ea81dcfda4e17a3fd2eb0121f800c0f0a954b0",
+    "workspace_stable": true,
+    "condition_labels_in_child_env": [],
+    "condition_token_in_agent_cwd": false,
+    "tool_policy_sha256": "15fd469ec8411adac63bb70b1deb99b7c4d1f11357cc4dc8a895d57a574dc573",
+    "grader_tool_policy_sha256": "ea826e1e9ceb38bb215a8e5f944dcd9399d1cb0972718e9d4cdcf559dc9c9153",
+    "disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents"
+    ],
+    "grader_disabled_tools": [
+      "tool-web",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "tool-workflow",
+      "tool-jobs",
+      "tool-working-directory",
+      "tool-pwsh",
+      "tool-bash",
+      "tool-subagent-control",
+      "tool-subagent-list-agents",
+      "tool-fs",
+      "tool-fs-search",
+      "tool-skill",
+      "tool-todo",
+      "tool-goal"
+    ],
+    "observed_disallowed_tools": [],
+    "observed_disallowed_tool_attempts": [],
+    "out_of_workspace_calls": [],
+    "failed_reads": [],
+    "agent_sandbox": "read-only"
+  },
+  "instrumentation": {
+    "file_open_events": [
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_SYNTHESIS.md",
+      "runtime/README.md",
+      "runtime/orchestrator/observation.py",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "docs/architecture/ARCHITECTURAL_PROBLEM_MODEL.md",
+      "docs/VERSIONING.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "runtime/orchestrator/store.py",
+      "runtime/orchestrator/host.py",
+      "runtime/orchestrator/agent_worker.py",
+      ".agents/AGENTS.md",
+      "docs/CONVENTIONS.md",
+      "docs/INVARIANTS.md",
+      ".agents/policies/validation-closure.md",
+      ".agents/policies/authority.md",
+      "docs/rfc/74-cache-economics-telemetry-admission-evidence.md",
+      "tools/check_plan_citations.py",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      ".agents/policies/autonomous-orchestration.md",
+      "docs/CONVENTIONS.md",
+      "docs/CONVENTIONS.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "runtime/orchestrator/authority.py",
+      "runtime/orchestrator/derivation.py"
+    ],
+    "search_events": [
+      "runtime trace|runtime traces|Runtime Trace|Runtime traces",
+      "runtime/**/*",
+      "trace|Trace|observab|Observab",
+      "trace|Trace",
+      "not authority|never authority|does not establish|no authority|not evidence|no es autoridad|nunca autoridad|no constituye",
+      "trace|transcript|journal|telemetry|observab",
+      "Closed|closure|checkpoint|anchor|evidence|authority",
+      "Authority|Evidence|Closure|closure|evidencia",
+      "docs/rfc/74*",
+      "telemetr|Telemetr|observabilidad|observability",
+      "Runtime trace|runtime trace|trace as|traces as|trazas",
+      "ROOT_DOCS|REFACTOR_",
+      "REFACTOR_*",
+      "REFACTOR|refactor",
+      "not authority|never authority|transcript|journal.*authority|authority.*journal",
+      "trace|transcript|journal",
+      "Estado de cierre|Validation Anchor|Checkpoint|evidencia de validación|PASS",
+      "Closed|closure|checkpoint|anchor|authority|EVIDENCE|evidence",
+      "Closed|closure|checkpoint|anchor"
+    ],
+    "source_rehydration_events": [
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md"
+    ],
+    "shell_commands": [],
+    "tool_calls": [
+      {
+        "tool": "grep",
+        "query": "runtime trace|runtime traces|Runtime Trace|Runtime traces",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "runtime/**/*",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_LANGGRAPH.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "trace|Trace|observab|Observab",
+        "path": "runtime",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_SYNTHESIS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "trace|Trace",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "runtime/README.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "runtime/orchestrator/observation.py",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "not authority|never authority|does not establish|no authority|not evidence|no es autoridad|nunca autoridad|no constituye",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "trace|transcript|journal|telemetry|observab",
+        "path": "runtime",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_SYNTHESIS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_MATRIX.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "REFACTOR_OPENAI_AGENTS_SDK.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/architecture/ARCHITECTURAL_PROBLEM_MODEL.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Closed|closure|checkpoint|anchor|evidence|authority",
+        "path": "docs",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/VERSIONING.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Authority|Evidence|Closure|closure|evidencia",
+        "path": "docs/rfc",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/rfc/75-change-lifecycle.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/rfc/75-change-lifecycle.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "runtime/orchestrator/store.py",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "runtime/orchestrator/host.py",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "runtime/orchestrator/agent_worker.py",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": ".agents/AGENTS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/CONVENTIONS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/INVARIANTS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": ".agents/policies/validation-closure.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": ".agents/policies/authority.md",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "docs/rfc/74*",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "telemetr|Telemetr|observabilidad|observability",
+        "path": "docs/rfc",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/rfc/74-cache-economics-telemetry-admission-evidence.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Runtime trace|runtime trace|trace as|traces as|trazas",
+        "path": "docs",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "ROOT_DOCS|REFACTOR_",
+        "path": "tools",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "query": "REFACTOR_*",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "tools/check_plan_citations.py",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "REFACTOR|refactor",
+        "path": "docs",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/plans/180-comparative-architecture-refactor-study.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "not authority|never authority|transcript|journal.*authority|authority.*journal",
+        "path": "tests",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "trace|transcript|journal",
+        "path": ".agents/policies",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": ".agents/policies/autonomous-orchestration.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Estado de cierre|Validation Anchor|Checkpoint|evidencia de validación|PASS",
+        "path": "docs",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/CONVENTIONS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/CONVENTIONS.md",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "docs/rfc/75-change-lifecycle.md",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Closed|closure|checkpoint|anchor|authority|EVIDENCE|evidence",
+        "path": "runtime/orchestrator",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "query": "Closed|closure|checkpoint|anchor",
+        "path": "runtime/orchestrator",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "runtime/orchestrator/authority.py",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "path": "runtime/orchestrator/derivation.py",
+        "status": "completed"
+      }
+    ],
+    "observed_tools": [
+      "glob",
+      "grep",
+      "read"
+    ],
+    "distinct_files_opened": [
+      ".agents/AGENTS.md",
+      ".agents/policies/authority.md",
+      ".agents/policies/autonomous-orchestration.md",
+      ".agents/policies/validation-closure.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_SYNTHESIS.md",
+      "docs/CONVENTIONS.md",
+      "docs/INVARIANTS.md",
+      "docs/VERSIONING.md",
+      "docs/architecture/ARCHITECTURAL_PROBLEM_MODEL.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/rfc/74-cache-economics-telemetry-admission-evidence.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "runtime/README.md",
+      "runtime/orchestrator/agent_worker.py",
+      "runtime/orchestrator/authority.py",
+      "runtime/orchestrator/derivation.py",
+      "runtime/orchestrator/host.py",
+      "runtime/orchestrator/observation.py",
+      "runtime/orchestrator/store.py",
+      "tools/check_plan_citations.py"
+    ]
+  },
+  "agent": {
+    "elapsed_seconds": 111.3,
+    "returncode": 0,
+    "timed_out": false,
+    "error": null,
+    "session_id": "session-be01ff23-8cbc-4c35-907e-c735281b837e",
+    "turn_end": {
+      "kind": "completed"
+    },
+    "usage": {
+      "inputTokens": 110726,
+      "outputTokens": 13167,
+      "cacheReadTokens": 1821568,
+      "cacheWriteTokens": 0,
+      "totalTokens": 1945461
+    },
+    "stderr_tail": "[llm-deepseek-api-key] model listing from https://api.deepseek.com/models loaded 2 model(s), skipped 0 row(s)\n",
+    "final_answer": "CONCLUSION: No. Runtime traces can evidence that an execution happened, but they do not establish authority and do not establish lifecycle closure.\n\nThe repository treats traces/transcripts/journals as **FACTUAL** evidence only. Authority is a separate class: **NORMATIVE** (Accepted RFC, ADR, approved Plan), **DECISION** (the human maintainer), and **RELEASE** (tag/dist). `Closed` is a **derived condition** — `Executed` + applicable governance + a Git checkpoint + checkpoint↔anchor consistency + PASS validation evidence for the closure state — not something a trace can produce. The comparative study states this explicitly: \"A runtime trace can evidence execution, but it does not establish authorization, architectural correctness or lifecycle closure\"; `Runtime traces can serve as lifecycle authority` is listed among the conclusions the study falsified; and `Runtime trace as proof of authorization or closure` is under \"what not to adopt.\"\n\nSCOPE: This applies to ARgentOS DEV's Change Lifecycle and to the DEV orchestrator runtime (`runtime/orchestrator/`), and to the comparative study's stated position on external tracing systems. It must not be generalized to:\n- the protocol payload (`protocol/.agents/`), which is product data, not this DEV runtime;\n- adopter runtimes or external systems (LangGraph/LangSmith, OpenAI Agents SDK, etc.), whose semantics are only described in the study, not implemented here;\n- the claim that traces have no evidential value. The repository says a trace **can be evidence for a claim**; it simply does not automatically establish the claim, authorization, correctness, or closure;\n- the claim that closure needs no validation evidence. Closure *does* require PASS validation evidence for the closure state; the point is that the trace alone neither supplies authority nor derives `Closed`, and the durable closure record must live in the plan artifact.\n- an implemented observability system. This repository implements no telemetry/trace backend: `runtime/README.md` says the runtime writes no telemetry (RFC-74), and RFC-74 is a requirements contract, not an implementation.\n\nEVIDENCE:\n- `REFACTOR_LANGGRAPH.md` §6: \"A runtime trace can evidence execution, but it does not establish authorization, architectural correctness or lifecycle closure\"; §12 puts \"Runtime trace as proof of authorization or closure\" under \"What not to adopt\"; §6 rejects the inference \"trace exists ↓ therefore authorized/correct/closed.\"\n- `REFACTOR_SYNTHESIS.md` §8: `event / trace ≠ authorization ≠ correctness ≠ lifecycle closure`; \"A trace can be evidence for a claim. It does not automatically establish the claim.\" §10 lists \"Runtime traces can serve as lifecycle authority\" as falsified/unsupported. Guardrail #5: \"Evidence never becomes authority merely by existing.\"\n- `REFACTOR_MATRIX.md` §6: \"Observability is evidence, not authority… must not let traces silently become authorization, correctness or lifecycle closure\"; Architectural conclusions → Reject: \"Runtime trace as authority.\"\n- `REFACTOR_OPENAI_AGENTS_SDK.md` §5: \"tracing is evidence of what happened; it is not authority, lifecycle closure or architectural truth\"; §10 rejects \"Treating traces as lifecycle evidence by default.\"\n- `runtime/README.md`: \"A worker recommendation is never an authorization\" and the authority boundary returns `AUTHORIZED_EXISTING` / `REQUIRES_HUMAN` / `FORBIDDEN` (§DEV Autonomous Orchestrator); the Agent Worker's \"transcript is evidence, never authority\" (DEV Agent Worker); the runtime \"implements the capability, not its use: no provider is invoked, no telemetry is written (RFC-74).\"\n- `runtime/orchestrator/agent_worker.py` module docstring: the worker has \"execution capability, never sovereign authority\"; it cannot approve, resolve findings, release, promote or self-certify; \"The transcript is *evidence*, never authority.\"\n- `runtime/orchestrator/store.py` §journal: \"The journal itself is not authority: the reconstruction always re-observes the repository.\"\n- `runtime/orchestrator/host.py`: the autonomy-frontier verdict is \"Evidence for the journal record; never a source of authority and never persisted as state\"; the next iteration re-derives everything from the repository.\n- `.agents/policies/autonomous-orchestration.md` §8 and §11.1: the journal, delegations, worker results, command captures and run reports are persisted evidence in `.project/orchestrator/`; the durable governance record lives in the plan artifact; the worker's transcript \"is evidence and never authority.\"\n- `docs/rfc/75-change-lifecycle.md`: principles (\"Persistir ≠ materializar; una vista derivada nunca es autoridad\"; \"Garantía ≠ evidencia\"); derived conditions `Closed = Executed ∧ governance-checklist ∧ ∃ checkpoint ∧ consistencia`; Mecanismo 10 (`FACTUAL ≠ NORMATIVE ≠ DECISION ≠ RELEASE ≠ DESCRIPTIVE`; `checker output = factual evidence ≠ normative authority`); Mecanismo 13 (observability metrics, no backend/writer).\n- `docs/VERSIONING.md` §7: `Closed` is a derived condition: `Executed` + governance + checkpoint + checkpoint↔anchor consistency + PASS validation evidence; `Committed` is repository state and \"no es un checkpoint\"; `Closed` does not derive from `Committed`.\n- `docs/CONVENTIONS.md` \"Change Lifecycle — Checkpoint y cierre Git (GC-1)\": `Closed` is derived from `Executed` + governance + checkpoint + consistency + PASS evidence; \"`Closed` no deriva de `Committed` ni de 'HEAD == commit esperado': el commit es evidencia factual, no la condición.\"\n- `.agents/policies/validation-closure.md` §5–§6: checkpoint is the closure↔Git relation; `Closed` is derived; §7 makes closure without explicit impact determinations and without required validation/consistency evidence a stop condition.\n- `.agents/policies/authority.md`: authority classes; `FACTUAL` = \"what actually happened\" produced by Git/tests/checkers/tags and \"never normative meaning\"; \"Checker output is factual evidence, not normative authority.\"\n- `docs/INVARIANTS.md` INV-01/INV-03: no effect executes without derived, verifiable authority; a caller assertion is not authority; every claim declares an evidence class and reference, and only non-attestation evidence can be called \"verified.\"\n- `runtime/orchestrator/derivation.py` / `authority.py`: `Closed` is \"derived here and released nowhere: release is human authority\"; `CLOSED_DERIVED` is \"derivation only; nothing is written and nothing is released.\"\n- `docs/plans/180-comparative-architecture-refactor-study.md`: authorizes the study on the `refactor` branch; says the matrix is an \"índice/matriz acumulativa\" and must not become \"autoridad sobre los análisis individuales\"; no architectural change is implemented or authorized by the study.\n\nAUTHORITY:\n- **Authoritative for this answer:** `docs/rfc/75-change-lifecycle.md` (Accepted lifecycle model), `docs/VERSIONING.md` and `docs/CONVENTIONS.md` (normative lifecycle/closure semantics), `docs/INVARIANTS.md` (RFC-84 canonical invariants), `.agents/policies/authority.md` and `.agents/policies/validation-closure.md` (operational definitions of those normative sources), and `runtime/README.md` plus the `runtime/orchestrator/` code/docstrings (the actual DEV implementation).\n- **Derived summaries/indexes, not authority:** `REFACTOR_MATRIX.md` is explicitly the study's cumulative index/matrix (Plan 180 §11.2), and Plan 180 says it must not become authority over the individual analyses; `REFACTOR_SYNTHESIS.md` is the study's final synthesis (a derived summary); the individual `REFACTOR_*.md` files are study deliverables, not normative sources. Plan 180 is only `Aprobado para ejecución` with `Validation anchor` and `Checkpoint / cierre` still \"Pendiente\", so the study's conclusions are unclosed, unvalidated study results and authorize no architectural change.\n- `docs/architecture/ARCHITECTURAL_PROBLEM_MODEL.md` is historical/archived per `docs/AGENTS.md`; it can be provenance but is not normative authority.\n- **Unverified/not established:** no runtime tracing or telemetry backend is implemented in this repository (RFC-74 implementation is future, and `runtime/README.md` says no telemetry is written); there is no dedicated test mechanically enforcing \"trace ≠ authority\" as a general proposition (tests assert transcripts/journals are produced and readable, and that recommendations are not authority); and the study's statements about external systems rest on external sources not verifiable in this repository.\n\nUNSUPPORTED:\n- The exact evidential weight/class of a runtime trace in a verification claim. `docs/INVARIANTS.md` INV-03 defines evidence classes and refs for claims, but no mechanism classifies or validates a runtime trace as evidence.\n- Whether a future runtime-event/tracing design could register traces as evidence and how. `REFACTOR_SYNTHESIS.md` says the principle \"should remain explicit in any future runtime-event design\"; the repository does not settle such a design.\n- Whether any external tracing system's traces could ever serve as lifecycle authority. The study rejects treating them as authority (and rejects \"traces as lifecycle evidence by default\"), but that is a study conclusion about external systems, not a general proof or an implemented rule.\n- Whether the question's \"authority\" means normative authority, authorization to act, or release authority. The repository distinguishes these classes and shows traces are not any of them, but it does not define a single undifferentiated sense of \"authority\" for traces.\n- Any adoption of the study's recommendations: Plan 180 explicitly does not authorize architectural changes, and its closure criteria remain open."
+  },
+  "provenance": {
+    "deterministic": true,
+    "cited": [
+      "runtime/README.md",
+      "README.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "runtime/orchestrator/agent_worker.py",
+      "runtime/orchestrator/store.py",
+      "runtime/orchestrator/host.py",
+      ".agents/policies/autonomous-orchestration.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/VERSIONING.md",
+      "docs/CONVENTIONS.md",
+      ".agents/policies/validation-closure.md",
+      ".agents/policies/authority.md",
+      "docs/INVARIANTS.md",
+      "runtime/orchestrator/derivation.py",
+      "runtime/orchestrator/authority.py",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/architecture/ARCHITECTURAL_PROBLEM_MODEL.md",
+      "docs/AGENTS.md",
+      "AGENTS.md",
+      ".agents/AGENTS.md"
+    ],
+    "cited_and_opened": [
+      "runtime/README.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "runtime/orchestrator/agent_worker.py",
+      "runtime/orchestrator/store.py",
+      "runtime/orchestrator/host.py",
+      ".agents/policies/autonomous-orchestration.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/VERSIONING.md",
+      "docs/CONVENTIONS.md",
+      ".agents/policies/validation-closure.md",
+      ".agents/policies/authority.md",
+      "docs/INVARIANTS.md",
+      "runtime/orchestrator/derivation.py",
+      "runtime/orchestrator/authority.py",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "docs/architecture/ARCHITECTURAL_PROBLEM_MODEL.md",
+      ".agents/AGENTS.md"
+    ]
+  },
+  "grader": {
+    "attempted": true,
+    "elapsed_seconds": 24.636,
+    "returncode": 0,
+    "timed_out": false,
+    "usage": {
+      "inputTokens": 24234,
+      "outputTokens": 4303,
+      "cacheReadTokens": 256,
+      "cacheWriteTokens": 0,
+      "totalTokens": 28793
+    },
+    "evidence_included": [
+      "REFACTOR_OPENAI_AGENTS_SDK.md",
+      "REFACTOR_OPENHANDS.md",
+      "REFACTOR_GOOGLE_ADK.md",
+      "REFACTOR_LANGGRAPH.md",
+      "REFACTOR_SYNTHESIS.md",
+      "REFACTOR_MATRIX.md",
+      "docs/rfc/75-change-lifecycle.md",
+      "docs/adr/15-change-lifecycle-continuity.md",
+      "docs/adr/16-change-lifecycle-authority.md",
+      "docs/plans/180-comparative-architecture-refactor-study.md",
+      "protocol/.agents/standards/context/MEMORY_SYSTEM.md"
+    ],
+    "evidence_missing": [],
+    "raw_final": "{\"correct_conclusion\": true, \"correct_scope\": true, \"authority_boundary_preserved\": true, \"unsupported_claim\": true, \"rationale\": \"The answer's conclusion matches the key: traces are factual evidence and do not establish authority, authorization, correctness, or lifecycle closure. Its scope limits are consistent with the key (evidence remains usable, closure still needs validation evidence, and the finding is not over-generalized to unrelated systems or payload data). It correctly treats REFACTOR_MATRIX/SYNTHESIS as derived, not authoritative, and notes Plan 180's unclosed status. However, it makes numerous material claims sourced to documents not present in the fixed evidence pack (runtime/README.md, orchestrator code/docstrings, docs/VERSIONING.md, docs/CONVENTIONS.md, .agents/policies/*, docs/INVARIANTS.md, RFC-74), so support is not visible in the supplied evidence.\"}",
+    "parsed": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true,
+      "rationale": "The answer's conclusion matches the key: traces are factual evidence and do not establish authority, authorization, correctness, or lifecycle closure. Its scope limits are consistent with the key (evidence remains usable, closure still needs validation evidence, and the finding is not over-generalized to unrelated systems or payload data). It correctly treats REFACTOR_MATRIX/SYNTHESIS as derived, not authoritative, and notes Plan 180's unclosed status. However, it makes numerous material claims sourced to documents not present in the fixed evidence pack (runtime/README.md, orchestrator code/docstrings, docs/VERSIONING.md, docs/CONVENTIONS.md, .agents/policies/*, docs/INVARIANTS.md, RFC-74), so support is not visible in the supplied evidence."
+    },
+    "fields_used": {
+      "correct_conclusion": true,
+      "correct_scope": true,
+      "authority_boundary_preserved": true,
+      "unsupported_claim": true
+    }
+  },
+  "raw_ndjson": {
+    "agent": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q08.agent.ndjson",
+      "sha256": "977178fc33a900b8cdcd03030000a9e4511c291a5f92e9292f8eab034550c4f8",
+      "bytes": 288272
+    },
+    "grader": {
+      "path": "C:\\Users\\rolda\\AppData\\Local\\ARgentOS-dev-memory-2026-10-31\\traces\\control\\Q08.grader.ndjson",
+      "sha256": "8fdc9f202c034fc830d59ce2c6224d53d02588bf09cc7e45b9f84737ceef9a91",
+      "bytes": 10675
+    }
+  },
+  "notes": []
+}

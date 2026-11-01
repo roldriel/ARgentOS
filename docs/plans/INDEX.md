@@ -4,7 +4,7 @@
 
 | Plan | RFC | Status | Descripción | Vigencia |
 |---|---|---|---|---|
-| `183-adversarial-deliberation-evolution-study.md` | — | Aprobado para ejecución | Investigación DEV sobre la evolución de la deliberación adversarial después del rechazo de MAR: contrasta Jury existente, evidencia T1–T3 y mecanismos de Court Skill; no implementa ni promueve nueva arquitectura. | active |
+| `183-adversarial-deliberation-evolution-study.md` | — | Closed — REFORMULATE | Investigación DEV sobre la evolución de la deliberación adversarial después del rechazo de MAR: contrasta Jury existente, evidencia T1–T3 y mecanismos de Court Skill; no implementa ni promueve nueva arquitectura. | closed |
 
 
 > **Migración (RFC-69, Plan A):** este registro vive ahora en

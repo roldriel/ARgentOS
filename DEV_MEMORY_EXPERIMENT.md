@@ -2,8 +2,8 @@
 
 **Plan:** 181
 **Branch:** `refactor`
-**Date:** 2026-10-29
-**Status:** initial pilot result
+**Date:** 2026-10-29 — 2026-10-31
+**Status:** closed — initial structural result superseded by controlled agent test (REJECT)
 
 ## 1. Experimental question
 
@@ -53,7 +53,27 @@ An agent reads `DEV_MEMORY_PILOT.md` first. Q1–Q8 have a direct candidate entr
 | Source rehydration | required for detailed verification | still required for material claims | Memory does not replace evidence |
 | Authority transfer | possible failure mode | explicitly prohibited by pilot contract | Treatment adds a guardrail |
 
-## 6. What this does and does not demonstrate
+## 6. Controlled agent result
+
+The initial structural replay was followed by the preregistered controlled agent test on 2026-10-31. The test used 12 paired questions, a real DeepSeek agent, symmetric Control/Treatment workspaces, an independent condition-blind grader, and 24/24 valid executions.
+
+| Metric | CONTROL | TREATMENT | Δ T−C |
+|---|---:|---:|---:|
+| Files opened | 175 | 210 | +20.0% |
+| Searches | 194 | 238 | +22.7% |
+| Historical source consultations | 77 | 100 | +29.9% |
+| Total elapsed time | 1447.07 s | 1535.58 s | +6.1% |
+| Total tokens | 10,752,817 | 10,699,416 | -0.5% |
+| Correct conclusion | 11/12 | 12/12 | — |
+| Scope / provenance / authority | 12/12 | 12/12 | — |
+
+The treatment discovered and opened `DEV_MEMORY_PILOT.md` in 11/12 runs. Therefore the negative retrieval result is not explained by failure to discover the memory surface.
+
+**Decision: REJECT.** The tested manipulation — memory available and discoverable without memory-first priming — did not reduce retrieval work. It increased it on every primary retrieval measure and did not produce a meaningful token saving.
+
+The earlier structural result remains historical evidence only. It must not be interpreted as validation of the retrieval hypothesis after the controlled test.
+
+## 7. What this does and does not demonstrate
 
 ### Demonstrated at pilot level
 - A small memory surface can encode recurring conclusions from the comparative study.
@@ -72,7 +92,7 @@ An agent reads `DEV_MEMORY_PILOT.md` first. Q1–Q8 have a direct candidate entr
 
 These require a larger and controlled experiment.
 
-## 7. Initial observations
+## 8. Initial observations
 
 ### O-01 — Retrieval compression looks promising
 The pilot collapses 8 separate comparison artifacts into one small retrieval surface without copying their full content.
@@ -91,7 +111,7 @@ Several entries are derived from multiple studies. As the comparison corpus grow
 
 ## 8. Preliminary conclusion
 
-**PILOT SIGNAL: POSITIVE, NOT YET VALIDATED.**
+**PILOT SIGNAL: REJECTED BY CONTROLLED AGENT TEST.**
 
 The experiment provides enough evidence to continue the DEV Memory investigation, but not enough to justify a production Memory subsystem.
 

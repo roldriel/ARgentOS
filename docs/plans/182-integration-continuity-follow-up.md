@@ -1,9 +1,9 @@
 # Plan 182 — Integration Continuity Follow-up
 
-**Status:** Aprobado para ejecución
+**Status:** Closed — Executed
 **Fecha:** 2026-10-31
 **Tipo:** Plan
-**Lifecycle:** active
+**Lifecycle:** closed
 **RFC:** —
 **RFC-56 Class:** N/A
 **Change Level:** L2
@@ -84,8 +84,13 @@ El plan debe distinguir tres problemas: declarar obligaciones de integración, c
 
 ## Validation anchor
 
-Pendiente de ejecución.
+- **Declared scope:** docs/plans/_TEMPLATE.md, docs/CONVENTIONS.md, docs/working/audits/INTEGRATION_CONTINUITY_FOLLOWUP_2026-10-31.md y governance del Plan 182.
+- **Validation command-set:** revisión cruzada de Plan 178 §9–§10, RFC-80 y runtime/orchestrator/agent_worker.py; verificación estructural de las nuevas declaraciones. La suite completa no se ejecutó desde este canal y no se presenta como PASS.
+- **Observed dependencies:** F-01/F-02/F-03 resueltos según el follow-up.
+- **Validity:** vigente al 2026-10-31.
 
 ## Checkpoint / cierre
 
-Pendiente de ejecución.
+- **Commits de cierre:** commits del template, convenciones y follow-up de auditoría sobre refactor.
+- **Estado de cierre:** F-01 RESOLVED; F-02 RESOLVED; F-03 INTENTIONALLY_ISOLATED.
+- **Governance aplicada:** DEV-only, RFC-56 N/A, sin payload/runtime/dist.

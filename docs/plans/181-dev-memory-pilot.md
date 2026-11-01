@@ -1,9 +1,9 @@
 # Plan 181 — DEV Memory Pilot
 
-**Status:** Aprobado para ejecución
+**Status:** Closed — REJECT
 **Fecha:** 2026-10-29
 **Tipo:** Plan
-**Lifecycle:** active
+**Lifecycle:** closed
 **RFC:** —
 **RFC-56 Class:** N/A
 **Change Level:** L2
@@ -123,6 +123,14 @@ Excluido:
 Este piloto mide una **hipótesis de retrieval/knowledge utility**, no demuestra que el modelo de Memory System definitivo deba tener esta representación.
 
 Un resultado negativo es válido.
+
+## Cierre
+
+El experimento controlado de 2026-10-31 ejecutó 24/24 corridas válidas (12 CONTROL, 12 TREATMENT) con un agente DeepSeek real, grader independiente y condiciones simétricas. La manipulación fue descubierta en 11/12 corridas de treatment. El tratamiento aumentó el trabajo de recuperación: archivos abiertos +20.0 %, búsquedas +22.7 %, consultas a fuentes históricas +29.9 % y tiempo total +6.1 %, con tokens totales prácticamente planos (-0.5 %). La decisión pre-registrada es **REJECT**.
+
+El resultado rechaza la hipótesis de que la mera disponibilidad y descubribilidad de la superficie piloto reduzca el coste de recuperación. No demuestra que todo diseño de DEV Memory sea inútil. Un tratamiento distinto debe considerarse un experimento nuevo y no una continuación de este plan.
+
+**Conocimiento durable derivado:** DEV Memory no debe justificarse como una capa paralela de optimización de retrieval documental. La documentación fuente continúa siendo la superficie de autoridad; cualquier futura memoria DEV debe demostrar un valor distinto y medible, como continuidad de decisiones, rationale o conocimiento negativo, sin convertirse en autoridad paralela.
 
 ## Autorización
 

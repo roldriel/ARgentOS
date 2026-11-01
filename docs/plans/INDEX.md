@@ -8,6 +8,12 @@
 
 
 
+## Plan 181 — DEV Memory Pilot (29–31 oct 2026)
+
+| Plan | RFC | Status | Descripción | Vigencia |
+|---|---|---|---|---|
+| `181-dev-memory-pilot.md` | — | Closed — REJECT | Piloto controlado de DEV Memory. La medición estructural inicial fue seguida por un benchmark controlado con agente DeepSeek real (12 preguntas por condición, 24/24 ejecuciones válidas). La superficie de Memory aumentó el trabajo de recuperación en la configuración probada; la hipótesis de retrieval queda rechazada. Se conserva conocimiento negativo y no se amplía la arquitectura de Memory a partir de este resultado. | closed |
+
 ## Plan 180 — Comparative Architecture Refactor Study (29 oct 2026)
 
 | Plan | RFC | Status | Descripción | Vigencia |

@@ -225,6 +225,21 @@ los checkers dev. No gobierna automáticamente la evolución del Protocol
   persistir ≠ materializar; separación entre evidencia factual y autoridad
   normativa) quedan como principios, no como mecanismos
   (`docs/rfc/75-change-lifecycle.md:Dev vs Protocol`).
+### Integration continuity (adoptado por Plan 182, 2026-10-31)
+
+La continuidad de integración se verifica en dos dimensiones separadas: **declaración de obligación** y **evidencia de resultado**. Un Plan puede declarar qué consumer existente debe consumir/extender la capacidad, qué contrato/lifecycle se extiende y, cuando corresponda, por qué la capacidad queda deliberadamente aislada. Esa declaración no constituye evidencia de integración.
+
+La clasificación de auditoría es:
+
+- `INTEGRATED`: existe el camino requerido entre capacidad y consumer/extension y existe verificación asociada.
+- `PARTIALLY_INTEGRATED`: existe un seam real pero el camino requerido está incompleto, diferido o no es estándar.
+- `INTENTIONALLY_ISOLATED`: no se espera consumer porque existe una frontera explícita y respaldada por autoridad documental.
+- `ORPHANED`: el propósito exige integración, pero no existe consumer ni justificación de aislamiento.
+- `CONFLICTING`: la evidencia establece expectativas o caminos de integración incompatibles.
+- `UNKNOWN`: la evidencia disponible no permite clasificar con seguridad.
+
+La taxonomía es una **convención de auditoría DEV**: no agrega estados al Change Lifecycle, no crea registry y no establece autoridad. La ausencia de un import o de un test no basta para declarar `ORPHANED`; primero debe demostrarse que el consumer era exigible. Del mismo modo, un test verde demuestra comportamiento cubierto, no integración transversal.
+
 ### premises(D), derivación y reglas HD-K (adoptado por el Plan 151, 2026-10-07)
 
 Reglas documentales **adoptadas por el acto de autoridad del Plan 151** (mantenedor,

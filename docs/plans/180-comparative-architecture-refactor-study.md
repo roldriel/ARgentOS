@@ -1,9 +1,9 @@
 # Plan 180 — Comparative Architecture Refactor Study
 
-**Status:** Aprobado para ejecución
+**Status:** Closed — Executed
 **Fecha:** 2026-10-29
 **Tipo:** Plan
-**Lifecycle:** active
+**Lifecycle:** closed
 **RFC:** —
 **RFC-56 Class:** N/A
 **Change Level:** L2
@@ -37,7 +37,7 @@ El resultado de cada estudio será un artefacto independiente en la rama `refact
 - [x] Rama `refactor` creada desde `dev`.
 - [x] El scope de escritura está limitado a `refactor`.
 - [x] No se modificará `protocol/.agents/` ni `dist/`.
-- [ ] Cada sistema comparado debe tener un análisis con evidencia y decisión explícita.
+- [x] Cada sistema comparado tiene un análisis con evidencia y decisión explícita.
 
 ## Sistemas objetivo
 
@@ -127,8 +127,13 @@ Los análisis deben distinguir hechos observados, inferencias y propuestas. No s
 
 ## Validation anchor
 
-Pendiente de validación y cierre.
+- **Declared scope:** los ocho análisis comparativos, `REFACTOR_MATRIX.md`, `REFACTOR_SYNTHESIS.md` y los artefactos de governance del Plan.
+- **Validation command-set:** revisión estructural del corpus y verificación de commits sobre `refactor`; no se modifica payload ni runtime por este Plan.
+- **Observed result:** los ocho sistemas objetivo fueron analizados y la síntesis final separa ADAPT/KEEP/REJECT/DEFER. Las adaptaciones identificadas quedan como hipótesis separadas; no fueron implementadas bajo este Plan.
+- **Validity:** vigente para el cierre del estudio al 2026-10-31.
 
 ## Checkpoint / cierre
 
-Pendiente de ejecución y cierre.
+- **Commits de cierre:** commits incrementales del estudio en `refactor`, culminando en la síntesis comparativa.
+- **Estado de cierre:** el estudio comparativo queda cerrado; sus propuestas requieren planes independientes para implementación o experimentación.
+- **Governance aplicada:** DEV-only; sin payload delta; sin cambios en `dev`, `master`, `protocol/.agents/` ni `dist`.

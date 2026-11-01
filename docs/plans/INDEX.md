@@ -8,6 +8,12 @@
 
 
 
+## Plan 182 — Integration Continuity Follow-up (31 oct 2026)
+
+| Plan | RFC | Status | Descripción | Vigencia |
+|---|---|---|---|---|
+| `182-integration-continuity-follow-up.md` | — | Closed — Executed | Continuación de Priority 3.6: se adopta una declaración mínima de obligaciones de integración en Implementation Plans, una taxonomía transversal como convención de auditoría y se clasifica el seam de DEV Memory como `INTENTIONALLY_ISOLATED` para la implementación actual. Sin payload, runtime ni registry. | closed |
+
 ## Plan 181 — DEV Memory Pilot (29–31 oct 2026)
 
 | Plan | RFC | Status | Descripción | Vigencia |

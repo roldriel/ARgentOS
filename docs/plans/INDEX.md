@@ -1,5 +1,12 @@
 # Índice de planes — ARgentOS
 
+## Plan 183 — Adversarial Deliberation Evolution Study (31 oct 2026)
+
+| Plan | RFC | Status | Descripción | Vigencia |
+|---|---|---|---|---|
+| `183-adversarial-deliberation-evolution-study.md` | — | Aprobado para ejecución | Investigación DEV sobre la evolución de la deliberación adversarial después del rechazo de MAR: contrasta Jury existente, evidencia T1–T3 y mecanismos de Court Skill; no implementa ni promueve nueva arquitectura. | active |
+
+
 > **Migración (RFC-69, Plan A):** este registro vive ahora en
 > `docs/plans/INDEX.md`. Las convenciones normativas se migraron a
 > `docs/CONVENTIONS.md`; el registro de RFCs vive en `docs/rfc/INDEX.md`.

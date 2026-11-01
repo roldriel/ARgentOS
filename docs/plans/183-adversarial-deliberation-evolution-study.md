@@ -1,9 +1,9 @@
 # Plan 183 — Adversarial Deliberation Evolution Study
 
-**Status:** Aprobado para ejecución
+**Status:** Closed — REFORMULATE
 **Fecha:** 2026-10-31
 **Tipo:** Plan
-**Lifecycle:** active
+**Lifecycle:** closed
 **RFC:** —
 **RFC-56 Class:** N/A
 **Change Level:** L2
@@ -110,6 +110,12 @@ Este Plan debe preservar la distinción:
 `advisory deliberation != authority != execution != verification`
 
 Una deliberación no puede convertirse por sí sola en evidencia de ejecución exitosa, autorización ni cierre de lifecycle.
+
+## Resultado
+
+La investigación fue completada. No se implementa Court, no se amplía el Jury y no se reactiva MAR. La hipótesis candidata es la independencia estructurada de perspectivas, que requiere un experimento separado si el mantenedor decide continuar.
+
+**Validation anchor:** `docs/working/research/ADVERSARIAL_DELIBERATION_EVOLUTION_2026-10-31.md`
 
 ## Checkpoint / cierre
 

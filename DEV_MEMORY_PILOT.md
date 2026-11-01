@@ -2,16 +2,24 @@
 
 **Pilot:** Plan 181
 **Branch:** `refactor`
-**Status:** experimental, non-authoritative
+**Status:** closed — REJECT; retained as experimental evidence, non-authoritative
 **Created:** 2026-10-29
 
 ## Purpose
 
-This file is an experimental **active retrieval surface** for durable DEV knowledge extracted from the comparative architecture study.
+This file was the experimental **active retrieval surface** for durable DEV knowledge extracted from the comparative architecture study. The retrieval hypothesis was tested and rejected on 2026-10-31.
 
 It is not a registry, source of authority, replacement for the individual studies, or implementation of Protocol Memory.
 
 The source artifacts remain authoritative for what they actually state.
+
+## Pilot closure
+
+The controlled agent experiment on 2026-10-31 executed 12 paired questions with a real DeepSeek agent. The pilot was discovered in 11/12 treatment runs, but treatment increased file-open events by 20.0%, searches by 22.7%, historical source consultations by 29.9%, and elapsed time by 6.1%; total tokens changed by only -0.5%. The pre-registered decision is **REJECT**.
+
+This file therefore must not be treated as a recommended retrieval layer. In particular, `DEV-MEM-004` is superseded by the controlled result: a compact active surface plus on-demand history was plausible before measurement but did not reduce retrieval work in the tested configuration.
+
+The entries below are retained as experimental evidence and historical learning, not as an active retrieval contract.
 
 ## Retrieval contract
 
@@ -62,10 +70,21 @@ Historical source artifacts remain necessary for detailed rationale and evidence
 - **Applicable when:** designing retrieval for durable DEV knowledge.
 - **Not applicable when:** the active surface would become authoritative or the supporting evidence cannot be rehydrated.
 - **Epistemic state:** inferred
-- **Lifecycle:** active
+- **Lifecycle:** superseded by controlled test on 2026-10-31
 - **Observed:** 2026-10-29
-- **Evidence:** `REFACTOR_OPENHANDS.md`, `REFACTOR_LETTA.md`
+- **Evidence:** `REFACTOR_OPENHANDS.md`, `REFACTOR_LETTA.md`, `DEV_MEMORY_CONTROLLED_RESULT.md`
 - **Decision impact:** test compact-memory-first retrieval before considering a larger memory system.
+
+### DEV-MEM-009 — Retrieval-surface pilot was rejected
+- **Type:** negative knowledge
+- **Claim:** Making a compact, provenance-backed DEV Memory surface available and discoverable did not reduce retrieval work in the controlled 2026-10-31 test. It increased file-open events, searches, historical source consultations and elapsed time, while total tokens were effectively flat.
+- **Applicable when:** evaluating whether DEV Memory should be introduced primarily as a parallel retrieval/navigation layer.
+- **Not applicable when:** evaluating a materially different Memory purpose or treatment, such as decision continuity or an explicitly instructed workflow; those require separate evidence.
+- **Epistemic state:** verified for the tested configuration
+- **Lifecycle:** active as negative knowledge
+- **Observed:** 2026-10-31
+- **Evidence:** `DEV_MEMORY_CONTROLLED_RESULT.md`, `docs/working/audits/dev-memory-controlled-2026-10-31/evidence/analysis.json`
+- **Decision impact:** do not expand this retrieval architecture; any future DEV Memory proposal must state a distinct measurable value proposition.
 
 ### DEV-MEM-005 — Memory consolidation needs stronger governance than similarity
 - **Type:** constraint

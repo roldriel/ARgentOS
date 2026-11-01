@@ -80,6 +80,33 @@ declara su valor y su fuente citada (`ruta:sección`). -->
 | `P-7` Reglas aplicables | veredictos `APPLIES`/`NOT_APPLICABLE` con su cita | agente | `.agents/policies/authority.md:Document discovery` |
 | `P-8` Autoridad y scope | autoridad requerida y conjunto declarado de rutas | **humano** | declaración del humano |
 
+## Integration continuity
+
+<!-- Declarative integration obligations are change-scoped metadata, not a permanent entity or state machine. They make expected consumers and deliberate isolation auditable; they do not prove integration by themselves. -->
+
+### Integration obligations
+
+| Obligation | Declaration |
+|---|---|
+| **Expected consumer(s)** | Existing component(s), workflow(s), contract(s) or entry point(s) expected to consume or extend the capability; use `—` only when no consumer is required. |
+| **Contract / lifecycle extended** | Existing contract, lifecycle or capability boundary that the change extends; use `—` when the change is intentionally standalone. |
+| **Intentional isolation** | If no consumer is expected, state the boundary and its authoritative justification (RFC, ADR, plan, contract or policy). Otherwise state `—`. |
+
+This declaration is an integration **obligation**, not evidence of completion. Verification must independently establish whether the expected consumer exists and is exercised. A declared `—` is not equivalent to `INTENTIONALLY_ISOLATED` unless the stated boundary is supported by authoritative evidence.
+
+### Integration result vocabulary
+
+The following vocabulary is a **DEV audit convention**, not a state machine, registry or authority layer:
+
+- `INTEGRATED`: required consumer/extension path exists and has associated verification.
+- `PARTIALLY_INTEGRATED`: a real seam exists but the required path is incomplete, deferred or non-standard.
+- `INTENTIONALLY_ISOLATED`: absence of consumer is explicitly justified by an authoritative boundary.
+- `ORPHANED`: integration is required by purpose, but no consumer or isolation justification exists.
+- `CONFLICTING`: evidence establishes incompatible integration expectations or paths.
+- `UNKNOWN`: available evidence is insufficient to classify the relationship safely.
+
+A green test proves that tested behavior works; it does not by itself prove `INTEGRATED`.
+
 ## Criterio de entrada
 
 <!-- Checklist verificable de lo que debe existir ANTES de ejecutar: archivos,

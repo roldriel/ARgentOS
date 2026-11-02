@@ -30,12 +30,12 @@ No se asumirá que pasar health checks o tests estructurales demuestra conforman
 | Clase | Contenido | Dueño | Fuente / evidencia |
 |---|---|---|---|
 | `P-1` Intención | Medir conformance agentiva de una adopción real antes de introducir nuevas capas arquitectónicas. | humano | solicitud de continuar el análisis y ejecutar lo que sea posible |
-| `P-2` Confianza de intención | HIGH | agente | `NO_ASSUMPTIONS.md`; alcance explícito del pedido |
+| `P-2` Confianza de intención | HIGH | agente | `protocol/.agents/standards/requirements/NO_ASSUMPTIONS.md`; alcance explícito del pedido |
 | `P-3` Conjunto de contexto | payload, adopción, lifecycle, state machine, harness, skills y evidencia DEV reciente | agente | rutas del repo y Planes 181–183 |
 | `P-4` Derivabilidad | Existe evidencia de adopción documental y runtime/lifecycle; falta evidencia de operación por agente nuevo. | agente | `docs/ADOPTION.md:1. Layout canónico e instalación`, `docs/ADOPTION.md:3. Validación inicial`, `.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md` |
 | `P-5` `work_type` | GAP: falta evidencia de conformance conductual, no una feature declarada como ausente. | agente | derivación del propio Plan |
 | `P-6` Conocimiento vigente | Plans 181 y 183 están cerrados y conservan sus resultados experimentales. | documento | `docs/plans/INDEX.md` |
-| `P-7` Reglas aplicables | payload read-only, bootstrap, state machine, no-assumption, artifact safety, authority hierarchy | agente | `PROTOCOL_BOUNDARIES.md`, `AGENT_STATE_MACHINE.md`, `NO_ASSUMPTIONS.md`, `SKILLS.md` |
+| `P-7` Reglas aplicables | payload read-only, bootstrap, state machine, no-assumption, artifact safety, authority hierarchy | agente | `protocol/.agents/standards/runtime/PROTOCOL_BOUNDARIES.md`, `protocol/.agents/orchestrators/core/states/AGENT_STATE_MACHINE.md`, `protocol/.agents/standards/requirements/NO_ASSUMPTIONS.md`, `protocol/.agents/standards/orchestration/SKILLS.md` |
 | `P-8` Autoridad y scope | Solo DEV/refactor; no modificar `protocol/.agents/` ni `dist/`; experimento y tooling DEV-only. | humano | autorización vigente del mantenedor |
 
 ## Integration continuity

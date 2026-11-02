@@ -151,7 +151,20 @@ La propiedad buscada es exclusivamente:
 
 ## Resultado
 
-Pendiente de ejecución real del agente. La instrumentación y el fixture deben poder prepararse sin depender de un proveedor concreto.
+Pendiente de ejecución real válida del agente. La instrumentación y el fixture deben poder prepararse sin depender de un proveedor concreto.
+
+## Execution record
+
+### Attempt 1 — 2026-11-02 — INCONCLUSIVE
+
+The local agent was run against the ARgentOS development checkout rather than an adopted-project fixture. The workspace had no root .argentos/, no adopter adapter/bootstrap, no A02/A03 task inputs, and no A04 deliverable. The agent stopped without modifying files or claiming success. All four tasks were unobservable; this attempt does not establish agent conformance and is not a protocol failure.
+
+### Attempt 2 — prepared, not yet executed
+
+A corrected fixture/runbook has been prepared outside the repository. It provisions four independent adopted workspaces through the official lifecycle CLI from pinned dist commit 2d131b24fe3129e99628194f669c133c8c9037bc (Protocol 12.3.3). Each task is to run in a fresh agent session. The corrected procedure permits protocol-required orchestrator/worker delegation; inability to provide that runtime mechanism is recorded as INCONCLUSIVE, not bypassed.
+
+Plan status remains Aprobado para ejecución. No Protocol payload or dist change is authorized or required by this correction.
+
 
 ## Checkpoint / cierre
 

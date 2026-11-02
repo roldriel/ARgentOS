@@ -1,5 +1,11 @@
 # Índice de planes — ARgentOS
 
+## Plan 184 — New-Agent Adoption and Conformance Test (1 nov 2026)
+
+| Plan | RFC | Status | Descripción | Vigencia |
+|---|---|---|---|---|
+| `184-new-agent-adoption-conformance-test.md` | — | Aprobado para ejecución | Experimento DEV para determinar si un agente nuevo puede adoptar y operar ARgentOS respetando bootstrap, no-assumption, boundaries, lifecycle y verification sin documentación interna de desarrollo; no modifica payload. | active |
+
 ## Plan 183 — Adversarial Deliberation Evolution Study (31 oct 2026)
 
 | Plan | RFC | Status | Descripción | Vigencia |

@@ -62,7 +62,7 @@ No se asumirá que pasar health checks o tests estructurales demuestra conforman
 
 1. `docs/plans/184-new-agent-adoption-conformance-test.md`
 2. `DEV_ADOPTION_CONFORMANCE_TEST.md`
-3. `tools/dev_adoption_conformance_runner.py`
+3. Instrumentación JSONL del agente o harness externo, solo si el agente ejecutable la soporta; no se introduce un runner permanente en esta primera ejecución.
 4. Registro del plan en `docs/plans/INDEX.md`
 5. Resultado experimental, si existe un agente ejecutable bajo condiciones controladas.
 
@@ -127,7 +127,7 @@ Un PASS no demuestra que el protocolo sea universalmente robusto; solo demuestra
 
 ## Criterios de salida
 
-- [ ] El runner reproduce condiciones aisladas sin contaminar el workspace.
+- [ ] La ejecución reproduce condiciones aisladas sin contaminar el workspace.
 - [ ] Las tareas y expected outcomes quedan congeladas antes de una ejecución real.
 - [ ] La ejecución real, si existe, registra evidencia suficiente para cada criterio crítico.
 - [ ] El resultado se clasifica como PASS, PARTIAL, FAIL o INCONCLUSIVE.
@@ -136,8 +136,7 @@ Un PASS no demuestra que el protocolo sea universalmente robusto; solo demuestra
 
 ## Verificación
 
-- Validación sintáctica del runner.
-- Self-test del runner.
+- Validación del fixture y de la instrumentación utilizada.
 - Ejecución del conjunto de tests DEV disponible.
 - Revisión manual de scope y ausencia de cambios en `protocol/.agents/` y `dist/`.
 - Para una ejecución real: evidencia de workspace aislado y trazas de eventos.

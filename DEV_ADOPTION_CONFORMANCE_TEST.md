@@ -97,3 +97,32 @@ One failure is evidence about the tested configuration. It is not by itself evid
 If A01–A04 reveal a real protocol gap, formulate a minimal follow-up hypothesis. Do not immediately add a feature.
 
 If all four pass, the next high-value property is context recovery after an interrupted session.
+
+## Execution log
+
+### Attempt 1 — 2026-11-02 — INCONCLUSIVE
+
+The local agent was launched in the ARgentOS development checkout (repository roldriel/ARgentOS, branch refactor, HEAD 87f6ca7) instead of an adopted-project fixture.
+
+Observed precondition failures:
+
+- no root .argentos/ installation;
+- root AGENTS.md identified itself as the development-workspace adapter;
+- no adopted root adapter or adopter-level bootstrap was present;
+- A02/A03 task inputs and the A04 deliverable were not provisioned.
+
+The agent correctly stopped without reading prohibited DEV material, fabricating a fixture, modifying files, or claiming task success. A01–A04 are all INCONCLUSIVE. This is evidence of correct handling of an invalid test environment, not evidence of agent conformance.
+
+### Attempt 2 — fixture prepared; execution pending
+
+The fixture design is corrected to install four independent project workspaces through the official lifecycle CLI from the pinned published payload:
+
+- dist commit: 2d131b24fe3129e99628194f669c133c8c9037bc
+- protocol version: 12.3.3
+- one clean fixture per task (A01–A04);
+- separate fresh agent session per fixture;
+- baseline SHA-256 manifests for payload and project deliverables.
+
+The first prompt incorrectly prohibited subagents. This conflicted with the installed bootstrap's orchestrator/worker delegation model. Attempt 2 permits protocol-required worker delegation; if the local runtime cannot provide it, the affected result must remain INCONCLUSIVE rather than bypassing the protocol.
+
+The local preparation/runbook files are operator-side artifacts and are not part of the adopted fixture. No protocol payload or dist content was changed.

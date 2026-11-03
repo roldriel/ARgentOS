@@ -68,6 +68,16 @@ _RFC_STATUSES = frozenset({"Proposal", "Accepted", "Superseded"})
 # "Executed (parcial: ...)", "Executed. Criterio...", "A | B" (template).
 _STATUS_SUFFIX_CHARS = "(.|"
 
+# Historical plan headers may encode the derived Closed condition as
+# Closed — <outcome>. This is legacy representation only: canonical plan
+# statuses remain the values in _PLAN_STATUSES. It is accepted only when the
+# plan explicitly declares Lifecycle: closed and is normalized to
+# Executed for status/index comparison.
+_LEGACY_CLOSED_STATUS_RE = re.compile(r"^Closed\s+—\s+.+$")
+_LIFECYCLE_CLOSED_RE = re.compile(
+    r"^\*\*Lifecycle:\*\*\s*closed\s*$", re.MULTILINE | re.IGNORECASE
+)
+
 # Plans whose header/INDEX status mismatch is a declared historical legacy
 # case (contract 0.3, D-0.3-23). Reported as GAP, never as a violation.
 _LEGACY_STATUS_INDEX = frozenset({
@@ -132,12 +142,39 @@ def _base_status(raw: str) -> str:
     return base.strip()
 
 
+def _is_legacy_closed_plan(text: str) -> bool:
+    """True for the historical derived-status representation of a closed plan."""
+    m = _STATUS_RE.search(text)
+    return bool(
+        m
+        and _LEGACY_CLOSED_STATUS_RE.fullmatch(m.group(1).strip())
+        and _LIFECYCLE_CLOSED_RE.search(text)
+    )
+
+
+def _plan_status_for_comparison(raw: str, text: str | None = None) -> str:
+    """Normalize a historical Closed annotation to its canonical plan status."""
+    value = _base_status(raw)
+    if text is not None and _is_legacy_closed_plan(text):
+        return "Executed"
+    if text is None and _LEGACY_CLOSED_STATUS_RE.fullmatch(raw.strip()):
+        return "Executed"
+    return value
+
+
 def check_status(rel: Path, kind: str, text: str) -> Violation | None:
-    """The **Status:** field must use a value from the closed status cycle."""
+    """The **Status:** field must use the canonical cycle or a guarded legacy form."""
     m = _STATUS_RE.search(text)
     if not m:
         return Violation(rel, 1, "status", "missing **Status:** field")
     raw = m.group(1)
+    if kind == "plan" and _LEGACY_CLOSED_STATUS_RE.fullmatch(raw.strip()):
+        if _is_legacy_closed_plan(text):
+            return None
+        return Violation(
+            rel, 1, "status",
+            "legacy Closed — <outcome> status requires **Lifecycle:** closed",
+        )
     base = _base_status(raw)
     allowed = _ADR_STATUSES if kind == "adr" else (
         _RFC_STATUSES if kind == "rfc" else _PLAN_STATUSES
@@ -197,7 +234,7 @@ def index_status_for(index_text: str, basename: str) -> str | None:
         if not cells or cells[0].strip("`") != basename:
             continue
         for cell in cells[1:5]:
-            base = _base_status(cell.strip("`"))
+            base = _plan_status_for_comparison(cell.strip("`"))
             if base in _PLAN_STATUSES:
                 return base
     return None
@@ -217,7 +254,7 @@ def check_status_index(
     m = _STATUS_RE.search(text)
     if not m:
         return None
-    header_status = _base_status(m.group(1))
+    header_status = _plan_status_for_comparison(m.group(1), text)
     if header_status not in _PLAN_STATUSES:
         return None
     index_status = index_status_for(index_text, rel.name)

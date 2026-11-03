@@ -1,5 +1,11 @@
 # Índice de planes — ARgentOS
 
+## Plan 185 — Reconcile Historical Closed Plan Statuses (3 nov 2026)
+
+| Plan | RFC | Status | Descripción | Vigencia |
+|---|---|---|---|---|
+| `185-reconcile-historical-closed-plan-statuses.md` | — | Aprobado para ejecución | Corrección DEV-only para hacer compatible el checker estructural con la representación histórica `Closed — <outcome>` de planes ya cerrados, sin reescribir esos artefactos ni ampliar el ciclo canónico de status. | active |
+
 ## Plan 184 — New-Agent Adoption and Conformance Test (1 nov 2026)
 
 | Plan | RFC | Status | Descripción | Vigencia |

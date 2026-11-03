@@ -109,11 +109,11 @@ Populated only after validation and commit.
 
 ### Findings
 
-- `<PLAN-185>:F-01` — estado: open; observación: the current structural checker rejects four closed historical plans because their headers use `Closed — <outcome>` while current conventions define `Closed` as derived.
+N/A — no lineage finding is registered before execution; the blocking condition is recorded in the plan origin and validation anchor.
 
 ### Correcciones
 
-- `<PLAN-185>:C-01` — refs origen: `<PLAN-185>:F-01`; alcance de revalidación: checker + focused tests + Plan 184 closeout battery; evidencia: populated at validation.
+N/A — no correction is considered validated until the focused tests and Plan 184 closeout battery pass.
 
 ### Pending decisions
 

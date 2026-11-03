@@ -144,6 +144,55 @@ def test_plan_status_cycle_accepted(tmp_path, status):
     assert not [v for v in cps.verify_all(tmp_path) if v.rule == "status"]
 
 
+def test_historical_closed_status_requires_closed_lifecycle(tmp_path):
+    make_repo(tmp_path, {
+        "docs/plans/01-sample-plan.md": (
+            "# Plan 01 — Sample\n\n"
+            "**Status:** Closed — Executed\n\n"
+            "**Lifecycle:** closed\n\n"
+            "## Objetivo\n\nTexto.\n"
+        ),
+        "docs/plans/INDEX.md": (
+            "| `01-sample-plan.md` | — | Closed — Executed | sample | closed |\n"
+        ),
+    })
+    violations = cps.verify_all(tmp_path)
+    assert not [v for v in violations if v.rule == "status"]
+    assert not [v for v in violations if v.rule == "status-index"]
+
+
+def test_closed_status_without_closed_lifecycle_is_rejected(tmp_path):
+    make_repo(tmp_path, {
+        "docs/plans/01-sample-plan.md": (
+            "# Plan 01 — Sample\n\n"
+            "**Status:** Closed — Executed\n\n"
+            "**Lifecycle:** active\n\n"
+            "## Objetivo\n\nTexto.\n"
+        ),
+        "docs/plans/INDEX.md": (
+            "| `01-sample-plan.md` | — | Closed — Executed | sample | active |\n"
+        ),
+    })
+    violations = cps.verify_all(tmp_path)
+    assert any(v.rule == "status" for v in violations)
+
+
+def test_historical_closed_status_normalizes_to_executed_for_index(tmp_path):
+    make_repo(tmp_path, {
+        "docs/plans/01-sample-plan.md": (
+            "# Plan 01 — Sample\n\n"
+            "**Status:** Closed — REJECT\n\n"
+            "**Lifecycle:** closed\n\n"
+            "## Objetivo\n\nTexto.\n"
+        ),
+        "docs/plans/INDEX.md": (
+            "| `01-sample-plan.md` | — | Executed | sample | closed |\n"
+        ),
+    })
+    violations = cps.verify_all(tmp_path)
+    assert not [v for v in violations if v.rule in {"status", "status-index"}]
+
+
 @pytest.mark.parametrize("status", [
     "Proposal",
     "Accepted",

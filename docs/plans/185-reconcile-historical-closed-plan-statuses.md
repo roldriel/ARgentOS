@@ -24,7 +24,7 @@ This is a DEV-only governance/tooling correction. It does not modify `protocol/.
 | Clase | Contenido | Dueño | Fuente / evidencia |
 |---|---|---|---|
 | `P-1` Intención | Corregir el bloqueo real de cierre de Plan 184 sin reescribir planes cerrados. | humano | instrucción del mantenedor de continuar y ejecutar la corrección |
-| `P-2` Confianza de intención | HIGH | agente | failure observado en `tests/test_check_plan_structure.py::test_real_repo_has_no_violations` |
+| `P-2` Confianza de intención | HIGH | agente | failure observado durante el cierre de Plan 184; ver `docs/plans/184-new-agent-adoption-conformance-test.md:Execution record` |
 | `P-3` Conjunto de contexto | conventions, checker, tests y Plans 180–184 | agente | `docs/CONVENTIONS.md:Convenciones`, `tools/check_plan_structure.py`, `tests/test_check_plan_structure.py`, `docs/plans/180-comparative-architecture-refactor-study.md` … `184-new-agent-adoption-conformance-test.md` |
 | `P-4` Derivabilidad | El bloqueo es una incompatibilidad entre checker vigente y representación histórica cerrada; la evidencia no justifica editar los planes cerrados. | agente | failure report + `AGENTS.md:Task lifecycle` |
 | `P-5` `work_type` | GAP | agente | `docs/CONVENTIONS.md:premises(D), derivación y reglas HD-K` |
